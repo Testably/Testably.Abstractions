@@ -9,8 +9,7 @@ public partial class ExceptionTests
 {
 	[Theory]
 	[MemberData(nameof(GetFileInfoFactoryCallbacks), "Illegal\tCharacter?InPath")]
-	public void
-		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowArgumentException_OnNetFramework(
+	public async Task Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowArgumentException_OnNetFramework(
 			Expression<Action<IFileInfoFactory>> callback, string paramName,
 			bool ignoreParamCheck)
 	{
@@ -28,9 +27,7 @@ public partial class ExceptionTests
 		}
 		else
 		{
-			exception.Should()
-				.BeNull(
-					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+			await That(exception).IsNull().Because($"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 	}
 

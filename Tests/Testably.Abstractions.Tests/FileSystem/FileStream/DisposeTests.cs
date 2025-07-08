@@ -31,7 +31,7 @@ public partial class DisposeTests
 
 	[Theory]
 	[AutoData]
-	public void Dispose_ShouldNotResurrectFile(string path, string contents)
+	public async Task Dispose_ShouldNotResurrectFile(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 		FileSystemStream stream = FileSystem.File.Open(path,
@@ -45,14 +45,14 @@ public partial class DisposeTests
 		stream.Dispose();
 		int fileCount3 = FileSystem.Directory.GetFiles(".", "*").Length;
 
-		fileCount1.Should().Be(1, "File should have existed");
-		fileCount2.Should().Be(0, "File should have been deleted");
-		fileCount3.Should().Be(0, "Dispose should not have resurrected the file");
+		await That(fileCount1).IsEqualTo(1).Because("File should have existed");
+		await That(fileCount2).IsEqualTo(0).Because("File should have been deleted");
+		await That(fileCount3).IsEqualTo(0).Because("Dispose should not have resurrected the file");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetFileStreamCallbacks))]
-	public void Operations_ShouldThrowAfterStreamIsDisposed(
+	public async Task Operations_ShouldThrowAfterStreamIsDisposed(
 		Expression<Action<FileSystemStream>> callback)
 	{
 		FileSystem.File.WriteAllText("foo", "some content");
@@ -64,14 +64,12 @@ public partial class DisposeTests
 			callback.Compile().Invoke(stream);
 		});
 
-		exception.Should()
-			.BeOfType<ObjectDisposedException>(
-				$"\n{callback}\n executed after Dispose() was called.");
+		await That(exception).IsExactly<ObjectDisposedException>().Because($"\n{callback}\n executed after Dispose() was called.");
 	}
 
 	#region Helpers
 
-	#pragma warning disable MA0018
+#pragma warning disable MA0018
 	public static TheoryData<Expression<Action<FileSystemStream>>> GetFileStreamCallbacks()
 		=> new(GetFileStreamCallbackTestParameters());
 	#pragma warning restore MA0018

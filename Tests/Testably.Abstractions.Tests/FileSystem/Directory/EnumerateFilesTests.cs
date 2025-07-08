@@ -1,3 +1,4 @@
+using NSubstitute.ExceptionExtensions;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,25 +11,23 @@ public partial class EnumerateFilesTests
 {
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		EnumerateFiles_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
-		Exception? exception =
-			Record.Exception(()
-				=> FileSystem.Directory.EnumerateFiles(path).ToList());
+		void Act()
+				=> FileSystem.Directory.EnumerateFiles(path).ToList();
 
-		exception.Should().BeException<DirectoryNotFoundException>(
-			$"'{expectedPath}'",
-			hResult: -2147024893);
-		FileSystem.Directory.Exists(path).Should().BeFalse();
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{expectedPath}'").And
+			.WithHResult(-2147024893);
+		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		EnumerateFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
+	public async Task EnumerateFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -42,14 +41,14 @@ public partial class EnumerateFilesTests
 				"*", SearchOption.AllDirectories)
 			.ToList();
 
-		result.Count.Should().Be(2);
-		result.Should().Contain(initialized[0].FullName);
-		result.Should().Contain(initialized[2].FullName);
+		await That(result.Count).IsEqualTo(2);
+		await That(result).Contains(initialized[0].FullName);
+		await That(result).Contains(initialized[2].FullName);
 	}
 
 	[Theory]
 	[AutoData]
-	public void EnumerateFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
+	public async Task EnumerateFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
 		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -62,9 +61,9 @@ public partial class EnumerateFilesTests
 			.EnumerateFiles(".", "*", SearchOption.AllDirectories)
 			.ToList();
 
-		result.Count.Should().Be(2);
-		result.Should().Contain(initialized[0].ToString());
-		result.Should().Contain(initialized[2].ToString());
+		await That(result.Count).IsEqualTo(2);
+		await That(result).Contains(initialized[0].ToString());
+		await That(result).Contains(initialized[2].ToString());
 	}
 
 	[Theory]
@@ -81,7 +80,7 @@ public partial class EnumerateFilesTests
 	[InlineData(true, "abc?", "abc")]
 	[InlineData(false, "ab?c", "abc")]
 	[InlineData(false, "ac", "abc")]
-	public void EnumerateFiles_SearchPattern_ShouldReturnExpectedValue(
+	public async Task EnumerateFiles_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
 		FileSystem.Initialize().WithFile(fileName);
@@ -91,14 +90,11 @@ public partial class EnumerateFilesTests
 
 		if (expectToBeFound)
 		{
-			result.Should().ContainSingle(
-				fileName,
-				$"it should match {searchPattern}");
+			await That(result).HasSingle().Which.EndsWith(fileName).Because($"it should match {searchPattern}");
 		}
 		else
 		{
-			result.Should()
-				.BeEmpty($"{fileName} should not match {searchPattern}");
+			await That(result).IsEmpty().Because($"{fileName} should not match {searchPattern}");
 		}
 	}
 
@@ -112,7 +108,7 @@ public partial class EnumerateFilesTests
 #endif
 	[InlineAutoData(false, "foo.x", ".xls", "foo")]
 	[InlineAutoData(false, "?.xls", ".xlsx", "a")]
-	public void EnumerateFiles_SearchPattern_WithFileExtension_ShouldReturnExpectedValue(
+	public async Task EnumerateFiles_SearchPattern_WithFileExtension_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string extension,
 		string fileNameWithoutExtension)
 	{
@@ -124,22 +120,18 @@ public partial class EnumerateFilesTests
 
 		if (expectToBeFound)
 		{
-			result.Should().ContainSingle(
-				extension,
-				$"it should match {searchPattern}");
+			await That(result).HasSingle().Which.EndsWith(extension).Because($"it should match {searchPattern}");
 		}
 		else
 		{
-			result.Should()
-				.BeEmpty($"{extension} should not match {searchPattern}");
+			await That(result).IsEmpty().Because($"{extension} should not match {searchPattern}");
 		}
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Theory]
 	[AutoData]
-	public void
-		EnumerateFiles_WithEnumerationOptions_ShouldConsiderAttributesToSkip(
+	public async Task EnumerateFiles_WithEnumerationOptions_ShouldConsiderAttributesToSkip(
 			string path)
 	{
 		EnumerationOptions enumerationOptions = new()
@@ -155,9 +147,9 @@ public partial class EnumerateFilesTests
 		List<string> result = FileSystem.Directory
 			.EnumerateFiles(path, "*", enumerationOptions).ToList();
 
-		result.Count.Should().Be(1);
-		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
-		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+		await That(result.Count).IsEqualTo(1);
+		await That(result).Contains(FileSystem.Path.Combine(path, "foo"));
+		await That(result).DoesNotContain(FileSystem.Path.Combine(path, "bar"));
 	}
 #endif
 
@@ -165,8 +157,7 @@ public partial class EnumerateFilesTests
 	[Theory]
 	[InlineAutoData(MatchCasing.CaseInsensitive)]
 	[InlineAutoData(MatchCasing.CaseSensitive)]
-	public void
-		EnumerateFiles_WithEnumerationOptions_ShouldConsiderMatchCasing(
+	public async Task EnumerateFiles_WithEnumerationOptions_ShouldConsiderMatchCasing(
 			MatchCasing matchCasing,
 			string path)
 	{
@@ -181,13 +172,13 @@ public partial class EnumerateFilesTests
 		List<string> result = FileSystem.Directory
 			.EnumerateFiles(path, "FOO", enumerationOptions).ToList();
 
-		result.Count.Should().Be(matchCasing == MatchCasing.CaseInsensitive ? 1 : 0);
+		await That(result.Count).IsEqualTo(matchCasing == MatchCasing.CaseInsensitive ? 1 : 0);
 		if (matchCasing == MatchCasing.CaseInsensitive)
 		{
-			result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+			await That(result).Contains(FileSystem.Path.Combine(path, "foo"));
 		}
 
-		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+		await That(result).DoesNotContain(FileSystem.Path.Combine(path, "bar"));
 	}
 #endif
 
@@ -195,8 +186,7 @@ public partial class EnumerateFilesTests
 	[Theory]
 	[InlineAutoData(MatchType.Simple)]
 	[InlineAutoData(MatchType.Win32)]
-	public void
-		EnumerateFiles_WithEnumerationOptions_ShouldConsiderMatchType(
+	public async Task EnumerateFiles_WithEnumerationOptions_ShouldConsiderMatchType(
 			MatchType matchType,
 			string path)
 	{
@@ -211,11 +201,11 @@ public partial class EnumerateFilesTests
 		List<string> result = FileSystem.Directory
 			.EnumerateFiles(path, "*.", enumerationOptions).ToList();
 
-		result.Count.Should().Be(matchType == MatchType.Win32 ? 2 : 0);
+		await That(result.Count).IsEqualTo(matchType == MatchType.Win32 ? 2 : 0);
 		if (matchType == MatchType.Win32)
 		{
-			result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
-			result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
+			await That(result).Contains(FileSystem.Path.Combine(path, "foo"));
+			await That(result).Contains(FileSystem.Path.Combine(path, "bar"));
 		}
 	}
 #endif
@@ -227,8 +217,7 @@ public partial class EnumerateFilesTests
 	[InlineAutoData(true, 2)]
 	[InlineAutoData(true, 3)]
 	[InlineAutoData(false, 2)]
-	public void
-		EnumerateFiles_WithEnumerationOptions_ShouldConsiderMaxRecursionDepthWhenRecurseSubdirectoriesIsSet(
+	public async Task EnumerateFiles_WithEnumerationOptions_ShouldConsiderMaxRecursionDepthWhenRecurseSubdirectoriesIsSet(
 			bool recurseSubdirectories,
 			int maxRecursionDepth,
 			string path)
@@ -255,26 +244,26 @@ public partial class EnumerateFilesTests
 		List<string> result = FileSystem.Directory
 			.EnumerateFiles(path, "foo", enumerationOptions).ToList();
 
-		result.Count.Should().Be(recurseSubdirectories ? maxRecursionDepth : 0);
+		await That(result.Count).IsEqualTo(recurseSubdirectories ? maxRecursionDepth : 0);
 		if (recurseSubdirectories)
 		{
 			if (maxRecursionDepth > 0)
 			{
-				result.Should().Contain(FileSystem.Path.Combine(path, "a", "foo"));
+				await That(result).Contains(FileSystem.Path.Combine(path, "a", "foo"));
 			}
 
 			if (maxRecursionDepth > 1)
 			{
-				result.Should().Contain(FileSystem.Path.Combine(path, "a", "b", "foo"));
+				await That(result).Contains(FileSystem.Path.Combine(path, "a", "b", "foo"));
 			}
 
 			if (maxRecursionDepth > 2)
 			{
-				result.Should().Contain(FileSystem.Path.Combine(path, "a", "b", "c", "foo"));
+				await That(result).Contains(FileSystem.Path.Combine(path, "a", "b", "c", "foo"));
 			}
 		}
 
-		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+		await That(result).DoesNotContain(FileSystem.Path.Combine(path, "bar"));
 	}
 #endif
 
@@ -282,8 +271,7 @@ public partial class EnumerateFilesTests
 	[Theory]
 	[InlineAutoData(true)]
 	[InlineAutoData(false)]
-	public void
-		EnumerateFiles_WithEnumerationOptions_ShouldConsiderRecurseSubdirectories(
+	public async Task EnumerateFiles_WithEnumerationOptions_ShouldConsiderRecurseSubdirectories(
 			bool recurseSubdirectories,
 			string path)
 	{
@@ -298,14 +286,14 @@ public partial class EnumerateFilesTests
 		List<string> result = FileSystem.Directory
 			.EnumerateFiles(path, "foo", enumerationOptions).ToList();
 
-		result.Count.Should().Be(recurseSubdirectories ? 1 : 0);
-		result.Should().NotContain(FileSystem.Path.Combine(path, "xyz"));
+		await That(result.Count).IsEqualTo(recurseSubdirectories ? 1 : 0);
+		await That(result).DoesNotContain(FileSystem.Path.Combine(path, "xyz"));
 		if (recurseSubdirectories)
 		{
-			result.Should().Contain(FileSystem.Path.Combine(path, "xyz", "foo"));
+			await That(result).Contains(FileSystem.Path.Combine(path, "xyz", "foo"));
 		}
 
-		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+		await That(result).DoesNotContain(FileSystem.Path.Combine(path, "bar"));
 	}
 #endif
 
@@ -313,8 +301,7 @@ public partial class EnumerateFilesTests
 	[Theory]
 	[InlineAutoData(true)]
 	[InlineAutoData(false)]
-	public void
-		EnumerateFiles_WithEnumerationOptions_ShouldIgnoreReturnSpecialDirectories(
+	public async Task EnumerateFiles_WithEnumerationOptions_ShouldIgnoreReturnSpecialDirectories(
 			bool returnSpecialDirectories,
 			string path)
 	{
@@ -329,34 +316,35 @@ public partial class EnumerateFilesTests
 		List<string> result = FileSystem.Directory
 			.EnumerateFiles(path, "*", enumerationOptions).ToList();
 
-		result.Count.Should().Be(2);
-		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
-		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
+		await That(result.Count).IsEqualTo(2);
+		await That(result).Contains(FileSystem.Path.Combine(path, "foo"));
+		await That(result).Contains(FileSystem.Path.Combine(path, "bar"));
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void EnumerateFiles_WithNewline_ShouldThrowArgumentException(
+	public async Task EnumerateFiles_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
 		string searchPattern = "foo\0bar";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.Directory.EnumerateFiles(path, searchPattern)
 				.FirstOrDefault();
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809,
-			// The searchPattern is not included in .NET Framework
-			messageContains: Test.IsNetFramework ? null : $"'{searchPattern}'");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithMessageContaining(
+				// The searchPattern is not included in .NET Framework
+				Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		EnumerateFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
+	public async Task EnumerateFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -370,15 +358,15 @@ public partial class EnumerateFilesTests
 			.EnumerateFiles(".")
 			.ToList();
 
-		result.Count.Should().Be(2);
-		result.Should().Contain(initialized[0].ToString());
-		result.Should().Contain(initialized[1].ToString());
-		result.Should().NotContain(initialized[3].ToString());
+		await That(result.Count).IsEqualTo(2);
+		await That(result).Contains(initialized[0].ToString());
+		await That(result).Contains(initialized[1].ToString());
+		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
 	[Theory]
 	[AutoData]
-	public void EnumerateFiles_WithSearchPattern_ShouldReturnMatchingFiles(
+	public async Task EnumerateFiles_WithSearchPattern_ShouldReturnMatchingFiles(
 		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -392,15 +380,14 @@ public partial class EnumerateFilesTests
 			.EnumerateFiles(".", initialized[0].Name)
 			.ToList();
 
-		result.Count.Should().Be(1);
-		result.Should().Contain(initialized[0].ToString());
-		result.Should().NotContain(initialized[1].ToString());
-		result.Should().NotContain(initialized[3].ToString());
+		await That(result.Count).IsEqualTo(1);
+		await That(result).Contains(initialized[0].ToString());
+		await That(result).DoesNotContain(initialized[1].ToString());
+		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
 	[Fact]
-	public void
-		EnumerateFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
+	public async Task EnumerateFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
@@ -415,8 +402,8 @@ public partial class EnumerateFilesTests
 			.EnumerateFiles(".", "*.foobar", SearchOption.AllDirectories)
 			.ToArray();
 
-		result.Count().Should().Be(2);
-		result.Should().Contain(initialized[1].ToString());
-		result.Should().Contain(initialized[3].ToString());
+		await That(result).HasCount(2);
+		await That(result).Contains(initialized[1].ToString());
+		await That(result).Contains(initialized[3].ToString());
 	}
 }

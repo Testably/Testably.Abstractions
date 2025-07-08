@@ -25,30 +25,30 @@ public partial class CreateSubdirectoryTests
 
 	[Theory]
 	[AutoData]
-	public void CreateSubdirectory_MissingParent_ShouldCreateDirectory(
+	public async Task CreateSubdirectory_MissingParent_ShouldCreateDirectory(
 		string path, string subdirectory)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
-		result.Exists.Should().BeTrue();
+		await That(result.Exists).IsTrue();
 		FileSystem.Directory.Exists(result.FullName).Should().BeTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateSubdirectory_ShouldCreateDirectory(string path, string subdirectory)
+	public async Task CreateSubdirectory_ShouldCreateDirectory(string path, string subdirectory)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		sut.Create();
 		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
-		result.Exists.Should().BeTrue();
+		await That(result.Exists).IsTrue();
 		FileSystem.Directory.Exists(result.FullName).Should().BeTrue();
 	}
 }

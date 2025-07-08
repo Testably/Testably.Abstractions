@@ -60,7 +60,7 @@ public partial class AppendAllTextTests
 
 	[Theory]
 	[AutoData]
-	public void AppendAllText_ShouldAdjustTimes(string path, string contents)
+	public async Task AppendAllText_ShouldAdjustTimes(string path, string contents)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -80,8 +80,7 @@ public partial class AppendAllTextTests
 		{
 			creationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -89,8 +88,7 @@ public partial class AppendAllTextTests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[Theory]
@@ -126,7 +124,7 @@ public partial class AppendAllTextTests
 
 	[Theory]
 	[AutoData]
-	public void AppendAllText_WhenFileIsHidden_ShouldNotThrowException(
+	public async Task AppendAllText_WhenFileIsHidden_ShouldNotThrowException(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
@@ -137,12 +135,12 @@ public partial class AppendAllTextTests
 			FileSystem.File.AppendAllText(path, contents);
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
-	public void AppendAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
+	public async Task AppendAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding)
 	{
 		string path = new Fixture().Create<string>();
@@ -150,10 +148,9 @@ public partial class AppendAllTextTests
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 
-		result.Should().NotBeEquivalentTo(contents,
-			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+		await That(result).IsNotEqualTo([contents]);
 	}
-	
+
 #if FEATURE_FILE_SPAN
 	[Theory]
 	[AutoData]
@@ -208,7 +205,7 @@ public partial class AppendAllTextTests
 
 	[Theory]
 	[AutoData]
-	public void AppendAllText_Span_ShouldAdjustTimes(string path, string contents)
+	public async Task AppendAllText_Span_ShouldAdjustTimes(string path, string contents)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -228,8 +225,7 @@ public partial class AppendAllTextTests
 		{
 			creationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -237,8 +233,7 @@ public partial class AppendAllTextTests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[Theory]
@@ -274,7 +269,7 @@ public partial class AppendAllTextTests
 
 	[Theory]
 	[AutoData]
-	public void AppendAllText_Span_WhenFileIsHidden_ShouldNotThrowException(
+	public async Task AppendAllText_Span_WhenFileIsHidden_ShouldNotThrowException(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
@@ -285,12 +280,12 @@ public partial class AppendAllTextTests
 			FileSystem.File.AppendAllText(path, contents.AsSpan());
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
-	public void AppendAllText_Span_WithDifferentEncoding_ShouldNotReturnWrittenText(
+	public async Task AppendAllText_Span_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding)
 	{
 		string path = new Fixture().Create<string>();
@@ -298,8 +293,7 @@ public partial class AppendAllTextTests
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 
-		result.Should().NotBeEquivalentTo(contents,
-			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
-	}	
+		await That(result).IsNotEqualTo([contents]);
+	}
 #endif
 }

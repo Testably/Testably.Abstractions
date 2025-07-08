@@ -3,10 +3,10 @@
 public sealed class FileSystemInitializerOptionsTests
 {
 	[Fact]
-	public void InitializeTempDirectory_ShouldBeInitializedToTrue()
+	public async Task InitializeTempDirectory_ShouldBeInitializedToTrue()
 	{
 		FileSystemInitializerOptions sut = new();
 
-		sut.InitializeTempDirectory.Should().BeTrue();
+		await That(sut.InitializeTempDirectory).IsTrue();
 	}
 }

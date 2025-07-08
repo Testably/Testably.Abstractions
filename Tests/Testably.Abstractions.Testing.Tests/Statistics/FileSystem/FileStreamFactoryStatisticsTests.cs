@@ -12,7 +12,7 @@ public class FileStreamFactoryStatisticsTests
 {
 #if NET6_0_OR_GREATER
 	[Fact]
-	public void Method_New_SafeFileHandle_FileAccess_Int_Bool_ShouldRegisterCall()
+	public async Task Method_New_SafeFileHandle_FileAccess_Int_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -25,15 +25,15 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(handle, access, bufferSize, isAsync);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.FileStream).OnlyContainsMethodCall(nameof(IFileStreamFactory.New),
 			handle, access, bufferSize, isAsync);
 	}
 #endif
 
 #if NET6_0_OR_GREATER
 	[Fact]
-	public void Method_New_SafeFileHandle_FileAccess_Int_ShouldRegisterCall()
+	public async Task Method_New_SafeFileHandle_FileAccess_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -45,14 +45,14 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(handle, access, bufferSize);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.FileStream).OnlyContainsMethodCall(nameof(IFileStreamFactory.New),
 			handle, access, bufferSize);
 	}
 #endif
 #if NET6_0_OR_GREATER
 	[Fact]
-	public void Method_New_SafeFileHandle_FileAccess_ShouldRegisterCall()
+	public async Task Method_New_SafeFileHandle_FileAccess_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -63,14 +63,14 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(handle, access);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.FileStream).OnlyContainsMethodCall(nameof(IFileStreamFactory.New),
 			handle, access);
 	}
 #endif
 
 	[Fact]
-	public void Method_New_String_FileMode_FileAccess_FileShare_Int_Bool_ShouldRegisterCall()
+	public async Task Method_New_String_FileMode_FileAccess_FileShare_Int_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -83,13 +83,13 @@ public class FileStreamFactoryStatisticsTests
 		using FileSystemStream result =
 			sut.FileStream.New(path, mode, access, share, bufferSize, useAsync);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.FileStream).OnlyContainsMethodCall(nameof(IFileStreamFactory.New),
 			path, mode, access, share, bufferSize, useAsync);
 	}
 
 	[Fact]
-	public void Method_New_String_FileMode_FileAccess_FileShare_Int_FileOptions_ShouldRegisterCall()
+	public async Task Method_New_String_FileMode_FileAccess_FileShare_Int_FileOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -102,13 +102,13 @@ public class FileStreamFactoryStatisticsTests
 		using FileSystemStream result =
 			sut.FileStream.New(path, mode, access, share, bufferSize, options);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.FileStream).OnlyContainsMethodCall(nameof(IFileStreamFactory.New),
 			path, mode, access, share, bufferSize, options);
 	}
 
 	[Fact]
-	public void Method_New_String_FileMode_FileAccess_FileShare_Int_ShouldRegisterCall()
+	public async Task Method_New_String_FileMode_FileAccess_FileShare_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -119,13 +119,13 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(path, mode, access, share, bufferSize);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.FileStream).OnlyContainsMethodCall(nameof(IFileStreamFactory.New),
 			path, mode, access, share, bufferSize);
 	}
 
 	[Fact]
-	public void Method_New_String_FileMode_FileAccess_FileShare_ShouldRegisterCall()
+	public async Task Method_New_String_FileMode_FileAccess_FileShare_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -135,13 +135,13 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(path, mode, access, share);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.FileStream).OnlyContainsMethodCall(nameof(IFileStreamFactory.New),
 			path, mode, access, share);
 	}
 
 	[Fact]
-	public void Method_New_String_FileMode_FileAccess_ShouldRegisterCall()
+	public async Task Method_New_String_FileMode_FileAccess_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -150,13 +150,13 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(path, mode, access);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.FileStream).OnlyContainsMethodCall(nameof(IFileStreamFactory.New),
 			path, mode, access);
 	}
 
 	[Fact]
-	public void Method_New_String_FileMode_ShouldRegisterCall()
+	public async Task Method_New_String_FileMode_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -164,14 +164,14 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(path, mode);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.FileStream).OnlyContainsMethodCall(nameof(IFileStreamFactory.New),
 			path, mode);
 	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 	[Fact]
-	public void Method_New_String_FileStreamOptions_ShouldRegisterCall()
+	public async Task Method_New_String_FileStreamOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -180,14 +180,14 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(path, options);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.FileStream).OnlyContainsMethodCall(nameof(IFileStreamFactory.New),
 			path, options);
 	}
 #endif
 
 	[Fact]
-	public void Method_Wrap_FileStream_ShouldRegisterCall()
+	public async Task Method_Wrap_FileStream_ShouldRegisterCall()
 	{
 		string path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 		MockFileSystem sut = new();
@@ -204,8 +204,8 @@ public class FileStreamFactoryStatisticsTests
 				// Wrap is not possible on the MockFileSystem, but should still be registered!
 			}
 
-			sut.Statistics.TotalCount.Should().Be(1);
-			sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.Wrap),
+			await That(sut.Statistics.TotalCount).IsEqualTo(1);
+			await That(sut.Statistics.FileStream).OnlyContainsMethodCall(nameof(IFileStreamFactory.Wrap),
 				fileStream);
 		}
 		finally
@@ -215,13 +215,13 @@ public class FileStreamFactoryStatisticsTests
 	}
 
 	[Fact]
-	public void ToString_ShouldBeFileStream()
+	public async Task ToString_ShouldBeFileStream()
 	{
 		IPathStatistics<IFileStreamFactory, FileSystemStream> sut
 			= new MockFileSystem().Statistics.FileStream;
 
 		string? result = sut.ToString();
 
-		result.Should().Be("FileStream");
+		await That(result).IsEqualTo("FileStream");
 	}
 }

@@ -9,11 +9,11 @@ public sealed partial class ExecuteTests
 		[InlineData(SimulationMode.Linux)]
 		[InlineData(SimulationMode.MacOS)]
 		[InlineData(SimulationMode.Windows)]
-		public void FileSystem_ShouldBeMockFileSystem(SimulationMode simulationMode)
+		public async Task FileSystem_ShouldBeMockFileSystem(SimulationMode simulationMode)
 		{
 			MockFileSystem sut = new(o => o.SimulatingOperatingSystem(simulationMode));
 
-			sut.Execute.Path.FileSystem.Should().BeSameAs(sut);
+			await That(sut.Execute.Path.FileSystem).IsSameAs(sut);
 		}
 	}
 #endif

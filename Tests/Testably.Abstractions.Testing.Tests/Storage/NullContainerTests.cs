@@ -7,96 +7,96 @@ public class NullContainerTests
 {
 	[Theory]
 	[AutoData]
-	public void AppendBytes_ShouldReturnEmptyArray(byte[] bytes)
+	public async Task AppendBytes_ShouldReturnEmptyArray(byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		sut.AppendBytes(bytes);
 
-		sut.GetBytes().Should().BeEmpty();
+		await That(sut.GetBytes()).IsEmpty();
 	}
 
 	[Fact]
-	public void ClearBytes_ShouldReturnEmptyArray()
+	public async Task ClearBytes_ShouldReturnEmptyArray()
 	{
 		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		sut.ClearBytes();
 
-		sut.GetBytes().Should().BeEmpty();
+		await That(sut.GetBytes()).IsEmpty();
 	}
 
 	[Fact]
-	public void Constructor_ShouldSetFileAndTimeSystem()
+	public async Task Constructor_ShouldSetFileAndTimeSystem()
 	{
 		MockFileSystem fileSystem = new();
 
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
-		sut.FileSystem.Should().BeSameAs(fileSystem);
-		sut.TimeSystem.Should().BeSameAs(fileSystem.TimeSystem);
+		await That(sut.FileSystem).IsSameAs(fileSystem);
+		await That(sut.TimeSystem).IsSameAs(fileSystem.TimeSystem);
 	}
 
 	[Fact]
-	public void CreationTime_WithUnspecifiedKind_ShouldReturnNullTime()
+	public async Task CreationTime_WithUnspecifiedKind_ShouldReturnNullTime()
 	{
 		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		DateTime result = sut.CreationTime.Get(DateTimeKind.Unspecified);
 
-		result.Should().Be(new DateTime(1601, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+		await That(result).IsEqualTo(new DateTime(1601, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 	}
 
 	[Fact]
-	public void Decrypt_ShouldReturnEmptyArray()
+	public async Task Decrypt_ShouldReturnEmptyArray()
 	{
 		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		sut.Decrypt();
 
-		sut.GetBytes().Should().BeEmpty();
+		await That(sut.GetBytes()).IsEmpty();
 	}
 
 	[Fact]
-	public void Encrypt_ShouldReturnEmptyArray()
+	public async Task Encrypt_ShouldReturnEmptyArray()
 	{
 		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		sut.Encrypt();
 
-		sut.GetBytes().Should().BeEmpty();
+		await That(sut.GetBytes()).IsEmpty();
 	}
 
 	[Fact]
-	public void GetBytes_ShouldReturnEmptyArray()
+	public async Task GetBytes_ShouldReturnEmptyArray()
 	{
 		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
-		sut.GetBytes().Should().BeEmpty();
+		await That(sut.GetBytes()).IsEmpty();
 	}
 
 	[Theory]
 	[AutoData]
-	public void LinkTarget_ShouldAlwaysReturnNull(string linkTarget)
+	public async Task LinkTarget_ShouldAlwaysReturnNull(string linkTarget)
 	{
 		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
-		sut.LinkTarget.Should().BeNull();
+		await That(sut.LinkTarget).IsNull();
 
 		sut.LinkTarget = linkTarget;
 
-		sut.LinkTarget.Should().BeNull();
+		await That(sut.LinkTarget).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void RequestAccess_Dispose_Twice_ShouldDoNothing(FileAccess access, FileShare share)
+	public async Task RequestAccess_Dispose_Twice_ShouldDoNothing(FileAccess access, FileShare share)
 	{
 		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
@@ -109,12 +109,12 @@ public class NullContainerTests
 			result.Dispose();
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void RequestAccess_ShouldReturnNullObject(FileAccess access, FileShare share,
+	public async Task RequestAccess_ShouldReturnNullObject(FileAccess access, FileShare share,
 		bool deleteAccess)
 	{
 		MockFileSystem fileSystem = new();
@@ -122,29 +122,29 @@ public class NullContainerTests
 
 		IStorageAccessHandle result = sut.RequestAccess(access, share, deleteAccess);
 
-		result.Access.Should().Be(access);
-		result.Share.Should().Be(share);
-		result.DeleteAccess.Should().Be(deleteAccess);
+		await That(result.Access).IsEqualTo(access);
+		await That(result.Share).IsEqualTo(share);
+		await That(result.DeleteAccess).IsEqualTo(deleteAccess);
 	}
 
 	[Fact]
-	public void Type_ShouldBeDirectoryOrFile()
+	public async Task Type_ShouldBeDirectoryOrFile()
 	{
 		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
-		sut.Type.Should().Be(FileSystemTypes.DirectoryOrFile);
+		await That(sut.Type).IsEqualTo(FileSystemTypes.DirectoryOrFile);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteBytes_ShouldReturnEmptyArray(byte[] bytes)
+	public async Task WriteBytes_ShouldReturnEmptyArray(byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		sut.WriteBytes(bytes);
 
-		sut.GetBytes().Should().BeEmpty();
+		await That(sut.GetBytes()).IsEmpty();
 	}
 }

@@ -7,10 +7,10 @@ public partial class DeleteTests
 {
 	[Theory]
 	[AutoData]
-	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(string path)
+	public async Task Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -23,7 +23,7 @@ public partial class DeleteTests
 
 	[Theory]
 	[AutoData]
-	public void Delete_Recursive_WithOpenFile_ShouldThrowIOException_OnWindows(
+	public async Task Delete_Recursive_WithOpenFile_ShouldThrowIOException_OnWindows(
 		string path, string filename)
 	{
 		FileSystem.Initialize()
@@ -48,20 +48,20 @@ public partial class DeleteTests
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 			FileSystem.File.Exists(filePath).Should().BeFalse();
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
+	public async Task Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
 		string path, string subdirectory)
 	{
 		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectory);
 		FileSystem.Directory.CreateDirectory(subdirectoryPath);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 
 		sut.Delete(true);
 
@@ -69,7 +69,7 @@ public partial class DeleteTests
 		// The DirectoryInfo is not updated in .NET Framework!
 		sut.Exists.Should().BeTrue();
 #else
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 #endif
 		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
 		FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
@@ -77,11 +77,11 @@ public partial class DeleteTests
 
 	[Theory]
 	[AutoData]
-	public void Delete_ShouldDeleteDirectory(string path)
+	public async Task Delete_ShouldDeleteDirectory(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 
 		sut.Delete();
 
@@ -89,19 +89,19 @@ public partial class DeleteTests
 		// The DirectoryInfo is not updated in .NET Framework!
 		sut.Exists.Should().BeTrue();
 #else
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 #endif
 		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_WithSubdirectory_ShouldThrowIOException_AndNotDeleteDirectory(
+	public async Task Delete_WithSubdirectory_ShouldThrowIOException_AndNotDeleteDirectory(
 		string path, string subdirectory)
 	{
 		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subdirectory));
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -115,7 +115,7 @@ public partial class DeleteTests
 				? null
 				: $"'{sut.FullName}'");
 
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
 	}
 }

@@ -46,7 +46,7 @@ public partial class AppendAllBytesTests
 
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_ShouldAdjustTimes(string path, byte[] bytes)
+	public async Task AppendAllBytes_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -66,8 +66,7 @@ public partial class AppendAllBytesTests
 		{
 			creationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -75,8 +74,7 @@ public partial class AppendAllBytesTests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[Theory]
@@ -119,7 +117,7 @@ public partial class AppendAllBytesTests
 
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_Span_ShouldAdjustTimes(string path, byte[] bytes)
+	public async Task AppendAllBytes_Span_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -139,8 +137,7 @@ public partial class AppendAllBytesTests
 		{
 			creationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -148,8 +145,7 @@ public partial class AppendAllBytesTests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[Theory]
@@ -173,7 +169,7 @@ public partial class AppendAllBytesTests
 
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_Span_WhenFileIsHidden_ShouldNotThrowException(
+	public async Task AppendAllBytes_Span_WhenFileIsHidden_ShouldNotThrowException(
 		string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
@@ -184,7 +180,7 @@ public partial class AppendAllBytesTests
 			FileSystem.File.AppendAllBytes(path, bytes.AsSpan());
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]
@@ -208,7 +204,7 @@ public partial class AppendAllBytesTests
 
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_WhenFileIsHidden_ShouldNotThrowException(
+	public async Task AppendAllBytes_WhenFileIsHidden_ShouldNotThrowException(
 		string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
@@ -219,7 +215,7 @@ public partial class AppendAllBytesTests
 			FileSystem.File.AppendAllBytes(path, bytes);
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 }
 #endif

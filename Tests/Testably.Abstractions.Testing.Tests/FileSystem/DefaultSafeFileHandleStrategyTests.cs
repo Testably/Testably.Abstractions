@@ -14,19 +14,18 @@ public class DefaultSafeFileHandleStrategyTests
 	#endregion
 
 	[Fact]
-	public void Constructor_NullCallback_ShouldThrowArgumentNullException()
+	public async Task Constructor_NullCallback_ShouldThrowArgumentNullException()
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = new DefaultSafeFileHandleStrategy(null!);
-		});
+		}
 
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("callback");
+		await That(Act).ThrowsExactly<ArgumentNullException>().WithParamName("callback");
 	}
 
 	[Fact]
-	public void MapSafeFileHandle_ShouldReturnExpectedValue()
+	public async Task MapSafeFileHandle_ShouldReturnExpectedValue()
 	{
 		SafeFileHandle fooSafeFileHandle = new();
 		SafeFileHandle barSafeFileHandle = new();
@@ -44,8 +43,8 @@ public class DefaultSafeFileHandleStrategyTests
 
 		DefaultSafeFileHandleStrategy sut = new(fileHandle => mapping[fileHandle]);
 
-		sut.MapSafeFileHandle(fooSafeFileHandle).Path.Should().Be("foo");
-		sut.MapSafeFileHandle(barSafeFileHandle).Path.Should().Be("bar");
+		await That(sut.MapSafeFileHandle(fooSafeFileHandle).Path).IsEqualTo("foo");
+		await That(sut.MapSafeFileHandle(barSafeFileHandle).Path).IsEqualTo("bar");
 	}
 }
 #endif

@@ -81,7 +81,7 @@ public partial class WriteAllLinesAsyncTests
 		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), TestContext.Current.CancellationToken);
 
 		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -92,7 +92,7 @@ public partial class WriteAllLinesAsyncTests
 		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), TestContext.Current.CancellationToken);
 
 		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -105,7 +105,7 @@ public partial class WriteAllLinesAsyncTests
 		await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
 		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -116,7 +116,7 @@ public partial class WriteAllLinesAsyncTests
 		await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
 		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]

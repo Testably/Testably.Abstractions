@@ -8,7 +8,7 @@ public partial class Tests
 	[Theory]
 	[InlineData(259)]
 	[InlineData(260)]
-	public void New_PathTooLong_ShouldThrowPathTooLongException_OnNetFramework(
+	public async Task New_PathTooLong_ShouldThrowPathTooLongException_OnNetFramework(
 		int maxLength)
 	{
 		string rootDrive = FileTestHelper.RootDrive(Test);
@@ -24,23 +24,23 @@ public partial class Tests
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void New_ShouldCreateNewFileInfoFromPath(string path)
+	public async Task New_ShouldCreateNewFileInfoFromPath(string path)
 	{
 		IFileInfo result = FileSystem.FileInfo.New(path);
 
 		result.ToString().Should().Be(path);
-		result.Exists.Should().BeFalse();
+		await That(result.Exists).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void New_ShouldOpenWithExistingContent(string path, string contents)
+	public async Task New_ShouldOpenWithExistingContent(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
@@ -48,12 +48,12 @@ public partial class Tests
 
 		using StreamReader streamReader = new(sut.OpenRead());
 		string result = streamReader.ReadToEnd();
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void New_ShouldSetLength(string path, byte[] bytes)
+	public async Task New_ShouldSetLength(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
 
@@ -65,21 +65,21 @@ public partial class Tests
 
 		stream.Dispose();
 
-		result.Should().Be(bytes.Length);
+		await That(result).IsEqualTo(bytes.Length);
 	}
 
 	[Theory]
 	[AutoData]
-	public void New_WithTrailingDirectorySeparatorChar_ShouldHaveEmptyName(string path)
+	public async Task New_WithTrailingDirectorySeparatorChar_ShouldHaveEmptyName(string path)
 	{
 		IFileInfo result =
 			FileSystem.FileInfo.New($"{path}{FileSystem.Path.DirectorySeparatorChar}");
 
-		result.Name.Should().Be(string.Empty);
+		await That(result.Name).IsEqualTo(string.Empty);
 	}
 
 	[Fact]
-	public void New_WithUnicodeWhitespace_ShouldNotThrow()
+	public async Task New_WithUnicodeWhitespace_ShouldNotThrow()
 	{
 		Exception? exception = Record.Exception(() =>
 		{
@@ -88,16 +88,16 @@ public partial class Tests
 
 		if (Test.IsNetFramework)
 		{
-			exception.Should().BeOfType<ArgumentException>();
+			await That(exception).IsExactly<ArgumentException>();
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 	}
 
 	[Fact]
-	public void New_WithWhitespace_ShouldThrowOnlyOnWindows()
+	public async Task New_WithWhitespace_ShouldThrowOnlyOnWindows()
 	{
 		Exception? exception = Record.Exception(() =>
 		{
@@ -106,56 +106,55 @@ public partial class Tests
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<ArgumentException>();
+			await That(exception).IsExactly<ArgumentException>();
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 	}
 
 	[Fact]
-	public void Wrap_Null_ShouldReturnNull()
+	public async Task Wrap_Null_ShouldReturnNull()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
-		        mockFileSystem.SimulationMode != SimulationMode.Native);
+				mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		IFileInfo? result = FileSystem.FileInfo.Wrap(null);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Wrap_ShouldWrapFromFileInfo(string path)
+	public async Task Wrap_ShouldWrapFromFileInfo(string path)
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
-		        mockFileSystem.SimulationMode != SimulationMode.Native);
+				mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		System.IO.FileInfo fileInfo = new(path);
 
 		IFileInfo result = FileSystem.FileInfo.Wrap(fileInfo);
 
-		result.FullName.Should().Be(fileInfo.FullName);
-		result.Exists.Should().Be(fileInfo.Exists);
+		await That(result.FullName).IsEqualTo(fileInfo.FullName);
+		await That(result.Exists).IsEqualTo(fileInfo.Exists);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException(string path)
+	public async Task Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException(string path)
 	{
 		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&
-		           mockFileSystem.SimulationMode != SimulationMode.Native);
+				   mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		System.IO.FileInfo fileInfo = new(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.FileInfo.Wrap(fileInfo);
-		});
+		}
 
-		exception.Should().BeOfType<NotSupportedException>().Which
-			.Message.Should()
-			.Contain("Wrapping a FileInfo in a simulated file system is not supported");
+		await That(Act).ThrowsExactly<NotSupportedException>()
+			.WithMessage($"Wrapping a FileInfo in a simulated file system is not supported").AsPrefix();
 	}
 }

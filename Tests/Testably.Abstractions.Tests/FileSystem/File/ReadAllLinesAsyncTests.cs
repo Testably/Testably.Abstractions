@@ -61,7 +61,7 @@ public partial class ReadAllLinesAsyncTests
 
 		string[] results = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 
-		results.Should().BeEquivalentTo(lines, o => o.WithStrictOrdering());
+		await That(results).IsEqualTo(lines);
 	}
 
 	[Theory]
@@ -77,9 +77,8 @@ public partial class ReadAllLinesAsyncTests
 
 		string[] result = await FileSystem.File.ReadAllLinesAsync(path, readEncoding, TestContext.Current.CancellationToken);
 
-		result.Should().NotBeEquivalentTo(lines,
-			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
-		result[0].Should().Be(lines[0]);
+		await That(result).IsNotEqualTo(lines).InAnyOrder();
+		await That(result[0]).IsEqualTo(lines[0]);
 	}
 }
 #endif

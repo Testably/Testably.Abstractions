@@ -64,35 +64,35 @@ public partial class CreateTests
 
 	[Theory]
 	[AutoData]
-	public void Create_ShouldUseReadWriteAccessAndNoneShare(string path)
+	public async Task Create_ShouldUseReadWriteAccessAndNoneShare(string path)
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
 
 		FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.ReadWrite);
 		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
-		stream.CanRead.Should().BeTrue();
-		stream.CanWrite.Should().BeTrue();
-		stream.CanSeek.Should().BeTrue();
-		stream.CanTimeout.Should().BeFalse();
+		await That(stream.CanRead).IsTrue();
+		await That(stream.CanWrite).IsTrue();
+		await That(stream.CanSeek).IsTrue();
+		await That(stream.CanTimeout).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Create_WithBufferSize_ShouldUseReadWriteAccessAndNoneShare(
+	public async Task Create_WithBufferSize_ShouldUseReadWriteAccessAndNoneShare(
 		string path, int bufferSize)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
 		using FileSystemStream stream = FileSystem.File.Create(path, bufferSize);
 
-		stream.IsAsync.Should().BeFalse();
+		await That(stream.IsAsync).IsFalse();
 		FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.ReadWrite);
 		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Create_WithBufferSizeAndFileOptions_ShouldUseReadWriteAccessAndNoneShare(
+	public async Task Create_WithBufferSizeAndFileOptions_ShouldUseReadWriteAccessAndNoneShare(
 		string path, int bufferSize)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -100,7 +100,7 @@ public partial class CreateTests
 		using FileSystemStream stream =
 			FileSystem.File.Create(path, bufferSize, FileOptions.Asynchronous);
 
-		stream.IsAsync.Should().BeTrue();
+		await That(stream.IsAsync).IsTrue();
 		FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.ReadWrite);
 		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
 	}

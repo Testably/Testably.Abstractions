@@ -14,39 +14,36 @@ public class DriveInfoMockTests
 
 	[Theory]
 	[AutoData]
-	public void AvailableFreeSpace_CannotGetNegative(long size)
+	public async Task AvailableFreeSpace_CannotGetNegative(long size)
 	{
 		FileSystem.WithDrive(d => d.SetTotalSize(size));
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
 
 		FileSystem.WithDrive(d => d.ChangeUsedBytes(-1));
 
-		drive.AvailableFreeSpace.Should().Be(size);
+		await That(drive.AvailableFreeSpace).IsEqualTo(size);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AvailableFreeSpace_NotEnoughSpace_ShouldThrowIOException(
+	public async Task AvailableFreeSpace_NotEnoughSpace_ShouldThrowIOException(
 		int fileSize, string path)
 	{
 		byte[] bytes = new byte[fileSize];
 		FileSystem.WithDrive(d => d.SetTotalSize(fileSize - 1));
 		FileSystem.RandomSystem.Random.Shared.NextBytes(bytes);
 
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.WriteAllBytes(path, bytes);
-		});
+		void Act()
+			=> FileSystem.File.WriteAllBytes(path, bytes);
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
-		exception.Should().BeOfType<IOException>()
-			.Which.Message.Should().Contain($"'{drive.Name}'");
-		drive.AvailableFreeSpace.Should().Be(fileSize - 1);
+		await That(Act).ThrowsExactly<IOException>().WithMessage($"*'{drive.Name}'*").AsWildcard();
+		await That(drive.AvailableFreeSpace).IsEqualTo(fileSize - 1);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AvailableFreeSpace_ShouldBeChangedWhenAppendingToAFile(
+	public async Task AvailableFreeSpace_ShouldBeChangedWhenAppendingToAFile(
 		string fileContent1, string fileContent2, int expectedRemainingBytes,
 		string path, Encoding encoding)
 	{
@@ -57,17 +54,17 @@ public class DriveInfoMockTests
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
 
 		FileSystem.File.WriteAllText(path, fileContent1, encoding);
-		drive.AvailableFreeSpace.Should().Be(expectedRemainingBytes + fileSize2);
+		await That(drive.AvailableFreeSpace).IsEqualTo(expectedRemainingBytes + fileSize2);
 		FileSystem.File.AppendAllText(path, fileContent2, encoding);
 
-		drive.AvailableFreeSpace.Should().Be(expectedRemainingBytes);
+		await That(drive.AvailableFreeSpace).IsEqualTo(expectedRemainingBytes);
 	}
 
 	[Theory]
 	[InlineAutoData(0)]
 	[InlineAutoData(1)]
 	[InlineAutoData(10)]
-	public void AvailableFreeSpace_ShouldBeChangedWhenWorkingWithStreams(
+	public async Task AvailableFreeSpace_ShouldBeChangedWhenWorkingWithStreams(
 		int reduceLength, string path, string previousContent)
 	{
 		FileSystem.File.WriteAllText(path, previousContent);
@@ -81,12 +78,12 @@ public class DriveInfoMockTests
 			stream.SetLength(stream.Length - reduceLength);
 		}
 
-		drive.AvailableFreeSpace.Should().Be(previousFreeSpace + reduceLength);
+		await That(drive.AvailableFreeSpace).IsEqualTo(previousFreeSpace + reduceLength);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AvailableFreeSpace_ShouldBeReducedByWritingToFile(
+	public async Task AvailableFreeSpace_ShouldBeReducedByWritingToFile(
 		int fileSize, string path)
 	{
 		byte[] bytes = new byte[fileSize];
@@ -97,12 +94,12 @@ public class DriveInfoMockTests
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
 
-		drive.AvailableFreeSpace.Should().Be(0);
+		await That(drive.AvailableFreeSpace).IsEqualTo(0);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AvailableFreeSpace_ShouldBeReleasedWhenDeletingAFile(
+	public async Task AvailableFreeSpace_ShouldBeReleasedWhenDeletingAFile(
 		int fileSize, string path)
 	{
 		byte[] bytes = new byte[fileSize];
@@ -114,25 +111,25 @@ public class DriveInfoMockTests
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
 
-		drive.AvailableFreeSpace.Should().Be(fileSize);
+		await That(drive.AvailableFreeSpace).IsEqualTo(fileSize);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AvailableFreeSpace_ShouldBeSetTotalSize(long size)
+	public async Task AvailableFreeSpace_ShouldBeSetTotalSize(long size)
 	{
 		FileSystem.WithDrive(d => d.SetTotalSize(size));
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
 
-		drive.AvailableFreeSpace.Should().Be(size);
+		await That(drive.AvailableFreeSpace).IsEqualTo(size);
 	}
 
 	[Theory]
 	[InlineData(@"//foo", @"//foo")]
 	[InlineData(@"//foo/bar", @"//foo")]
 	[InlineData(@"//foo/bar/xyz", @"//foo")]
-	public void New_DriveNameWithUncPath_ShouldUseTopMostDirectory(
+	public async Task New_DriveNameWithUncPath_ShouldUseTopMostDirectory(
 		string driveName, string expectedName)
 	{
 		expectedName = expectedName
@@ -141,54 +138,54 @@ public class DriveInfoMockTests
 		DriveInfoMock drive =
 			DriveInfoMock.New(driveName, FileSystem);
 
-		drive.Name.Should().Be(expectedName);
+		await That(drive.Name).IsEqualTo(expectedName);
 	}
 
 	[Theory]
 	[InlineData("foo")]
-	public void New_InvalidDriveName_ShouldThrowArgumentException(string driveName)
+	public async Task New_InvalidDriveName_ShouldThrowArgumentException(string driveName)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
 			DriveInfoMock.New(driveName, FileSystem);
 		});
 
-		exception.Should().BeOfType<ArgumentException>();
+		await That(exception).IsExactly<ArgumentException>();
 	}
 
 	[Fact]
-	public void New_Null_ShouldReturnNull()
+	public async Task New_Null_ShouldReturnNull()
 	{
 		IDriveInfo? drive =
 			DriveInfoMock.New(null, FileSystem);
 
-		drive.Should().BeNull();
+		await That(drive).IsNull();
 	}
 
 	[Fact]
-	public void New_UncPath_ShouldSetFlag()
+	public async Task New_UncPath_ShouldSetFlag()
 	{
 		IDriveInfo drive =
 			DriveInfoMock.New(@"//foo", FileSystem);
 
-		(drive as DriveInfoMock)?.IsUncPath.Should().BeTrue();
+		await That((drive as DriveInfoMock)?.IsUncPath).IsTrue();
 	}
 
 	[Theory]
 	[InlineData("C", "C:\\")]
 	[InlineData("d", "D:\\")]
-	public void New_ValidDriveName_ShouldAppendColonAndSlash(
+	public async Task New_ValidDriveName_ShouldAppendColonAndSlash(
 		string driveName, string expectedDriveName)
 	{
 		DriveInfoMock result =
 			DriveInfoMock.New(driveName, FileSystem);
 
-		result.Name.Should().Be(expectedDriveName);
+		await That(result.Name).IsEqualTo(expectedDriveName);
 	}
 
 	[Theory]
 	[AutoData]
-	public void NotReady_AccessDirectory_ShouldThrowIOException(
+	public async Task NotReady_AccessDirectory_ShouldThrowIOException(
 		string path)
 	{
 		FileSystem.WithDrive(d => d.SetIsReady(false));
@@ -198,12 +195,12 @@ public class DriveInfoMockTests
 			FileSystem.Directory.CreateDirectory(path);
 		});
 
-		exception.Should().BeOfType<IOException>();
+		await That(exception).IsExactly<IOException>();
 	}
 
 	[Theory]
 	[AutoData]
-	public void NotReady_AccessFile_ShouldThrowIOException(
+	public async Task NotReady_AccessFile_ShouldThrowIOException(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -214,65 +211,65 @@ public class DriveInfoMockTests
 			FileSystem.File.ReadAllText(path);
 		});
 
-		exception.Should().BeOfType<IOException>();
+		await That(exception).IsExactly<IOException>();
 	}
 
 	[Fact]
-	public void SetDriveFormat_Default_ShouldBeNTFS()
+	public async Task SetDriveFormat_Default_ShouldBeNTFS()
 	{
 		FileSystem.WithDrive(d => d.SetDriveFormat());
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
-		drive.DriveFormat.Should().Be("NTFS");
+		await That(drive.DriveFormat).IsEqualTo("NTFS");
 	}
 
 	[Theory]
 	[AutoData]
-	public void SetDriveFormat_ShouldChangeDriveFormat(string driveFormat)
+	public async Task SetDriveFormat_ShouldChangeDriveFormat(string driveFormat)
 	{
 		FileSystem.WithDrive(d => d.SetDriveFormat(driveFormat));
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
-		drive.DriveFormat.Should().Be(driveFormat);
+		await That(drive.DriveFormat).IsEqualTo(driveFormat);
 	}
 
 	[Fact]
-	public void SetDriveType_Default_ShouldBeFixed()
+	public async Task SetDriveType_Default_ShouldBeFixed()
 	{
 		FileSystem.WithDrive(d => d.SetDriveType());
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
-		drive.DriveType.Should().Be(DriveType.Fixed);
+		await That(drive.DriveType).IsEqualTo(DriveType.Fixed);
 	}
 
 	[Theory]
 	[AutoData]
-	public void SetDriveType_ShouldChangeDriveType(DriveType driveType)
+	public async Task SetDriveType_ShouldChangeDriveType(DriveType driveType)
 	{
 		FileSystem.WithDrive(d => d.SetDriveType(driveType));
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
-		drive.DriveType.Should().Be(driveType);
+		await That(drive.DriveType).IsEqualTo(driveType);
 	}
 
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	public void SetIsReady_ShouldChangeIsReady(bool isReady)
+	public async Task SetIsReady_ShouldChangeIsReady(bool isReady)
 	{
 		FileSystem.WithDrive(d => d.SetIsReady(isReady));
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
-		drive.IsReady.Should().Be(isReady);
+		await That(drive.IsReady).IsEqualTo(isReady);
 	}
 
 	[Fact]
-	public void SetTotalSize_Default_ShouldBe1Gigabyte()
+	public async Task SetTotalSize_Default_ShouldBe1Gigabyte()
 	{
 		FileSystem.WithDrive(d => d.SetTotalSize());
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
 
-		drive.AvailableFreeSpace.Should().Be(1024 * 1024 * 1024);
+		await That(drive.AvailableFreeSpace).IsEqualTo(1024 * 1024 * 1024);
 	}
 }

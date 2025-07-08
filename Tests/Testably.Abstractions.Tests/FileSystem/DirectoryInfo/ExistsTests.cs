@@ -5,122 +5,122 @@ public partial class ExistsTests
 {
 	[Theory]
 	[AutoData]
-	public void Exists_ArbitraryPath_ShouldBeFalse(string path)
+	public async Task Exists_ArbitraryPath_ShouldBeFalse(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Exists_ExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
+	public async Task Exists_ExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 		FileSystem.Directory.Delete(path);
 
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Exists_File_ShouldReturnFalse(string path)
+	public async Task Exists_File_ShouldReturnFalse(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 	}
 
 	[Fact]
-	public void Exists_ForwardSlash_ShouldReturnTrue()
+	public async Task Exists_ForwardSlash_ShouldReturnTrue()
 	{
 		FileSystem.InitializeIn("D:");
 
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("/");
 
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Exists_NotExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
+	public async Task Exists_NotExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 		FileSystem.Directory.CreateDirectory(path);
 
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Exists_ShouldNotChangeOnMoveTo(string path, string destination)
+	public async Task Exists_ShouldNotChangeOnMoveTo(string path, string destination)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 
 		sut.MoveTo(destination);
 
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Exists_ShouldUpdateOnCreateWhenNotNetFramework(string path)
+	public async Task Exists_ShouldUpdateOnCreateWhenNotNetFramework(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 
 		sut.Create();
 
-		sut.Exists.Should().Be(!Test.IsNetFramework);
+		await That(sut.Exists).IsEqualTo(!Test.IsNetFramework);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Exists_ShouldUpdateOnDeleteWhenNotNetFramework(string path)
+	public async Task Exists_ShouldUpdateOnDeleteWhenNotNetFramework(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 
 		sut.Delete();
 
-		sut.Exists.Should().Be(Test.IsNetFramework);
+		await That(sut.Exists).IsEqualTo(Test.IsNetFramework);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Exists_ShouldUpdateOnRecursiveDeleteWhenNotNetFramework(string path)
+	public async Task Exists_ShouldUpdateOnRecursiveDeleteWhenNotNetFramework(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 
 		sut.Delete(true);
 
-		sut.Exists.Should().Be(Test.IsNetFramework);
+		await That(sut.Exists).IsEqualTo(Test.IsNetFramework);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Exists_ShouldUpdateOnRefresh(string path)
+	public async Task Exists_ShouldUpdateOnRefresh(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 		FileSystem.Directory.Delete(path);
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 
 		sut.Refresh();
 
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 	}
 }

@@ -10,8 +10,7 @@ public partial class ExceptionTests
 {
 	[Theory]
 	[MemberData(nameof(GetDirectoryInfoCallbacks), "Illegal\tCharacter?InPath")]
-	public void
-		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
+	public async Task Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IDirectoryInfo>> callback, string paramName,
 			bool ignoreParamCheck)
 	{
@@ -24,8 +23,7 @@ public partial class ExceptionTests
 		{
 			if (exception is IOException ioException)
 			{
-				ioException.HResult.Should().NotBe(-2147024809,
-					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+				await That(ioException.HResult).IsNotEqualTo(-2147024809).Because($"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 		}
 		else
@@ -84,7 +82,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetDirectoryInfoCallbacks), "  ")]
-	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IDirectoryInfo>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -97,9 +95,7 @@ public partial class ExceptionTests
 
 		if (Test.IsNetFramework)
 		{
-			exception.Should()
-				.BeNull(
-					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+			await That(exception).IsNull().Because($"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 		else
 		{
@@ -113,7 +109,7 @@ public partial class ExceptionTests
 
 	#region Helpers
 
-	#pragma warning disable MA0018
+#pragma warning disable MA0018
 	public static TheoryData<Expression<Action<IDirectoryInfo>>, string, bool>
 		GetDirectoryInfoCallbacks(string? path)
 	{

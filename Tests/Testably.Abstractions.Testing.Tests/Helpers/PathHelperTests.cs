@@ -7,23 +7,22 @@ namespace Testably.Abstractions.Testing.Tests.Helpers;
 public class PathHelperTests
 {
 	[Fact]
-	public void
-		EnsureValidFormat_WithWhiteSpaceAndIncludeIsEmptyCheck_ShouldThrowArgumentException()
+	public async Task EnsureValidFormat_WithWhiteSpaceAndIncludeIsEmptyCheck_ShouldThrowArgumentException()
 	{
 		string whiteSpace = " ";
 		MockFileSystem fileSystem = new();
-		Exception? exception = Record.Exception(() =>
+
+		void Act()
 		{
 			whiteSpace.EnsureValidFormat(fileSystem, "foo", true);
-		});
+		}
 
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
+		await That(Act).ThrowsExactly<ArgumentException>().WithHResult(-2147024809);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetFullPathOrWhiteSpace_NormalPath_ShouldReturnFullPath(string path)
+	public async Task GetFullPathOrWhiteSpace_NormalPath_ShouldReturnFullPath(string path)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.Initialize();
@@ -31,59 +30,59 @@ public class PathHelperTests
 
 		string result = path.GetFullPathOrWhiteSpace(fileSystem);
 
-		result.Should().Be(expectedPath);
+		await That(result).IsEqualTo(expectedPath);
 	}
 
 	[Fact]
-	public void GetFullPathOrWhiteSpace_Null_ShouldReturnEmptyString()
+	public async Task GetFullPathOrWhiteSpace_Null_ShouldReturnEmptyString()
 	{
 		MockFileSystem fileSystem = new();
 		string? sut = null;
 
 		string result = sut.GetFullPathOrWhiteSpace(fileSystem);
 
-		result.Should().Be("");
+		await That(result).IsEqualTo("");
 	}
 
 	[Theory]
 	[InlineData("  ")]
 	[InlineData("\t")]
-	public void GetFullPathOrWhiteSpace_WhiteSpace_ShouldReturnPath(string path)
+	public async Task GetFullPathOrWhiteSpace_WhiteSpace_ShouldReturnPath(string path)
 	{
 		MockFileSystem fileSystem = new();
 
 		string result = path.GetFullPathOrWhiteSpace(fileSystem);
 
-		result.Should().Be(path);
+		await That(result).IsEqualTo(path);
 	}
 
 	[Theory]
 	[AutoData]
-	public void IsUncPath_AltDirectorySeparatorChar_ShouldReturnTrue(string path)
+	public async Task IsUncPath_AltDirectorySeparatorChar_ShouldReturnTrue(string path)
 	{
 		string prefix = new(Path.AltDirectorySeparatorChar, 2);
 		path = prefix + path;
 
 		bool result = path.IsUncPath(new MockFileSystem());
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void IsUncPath_DirectorySeparatorChar_ShouldReturnTrue(string path)
+	public async Task IsUncPath_DirectorySeparatorChar_ShouldReturnTrue(string path)
 	{
 		string prefix = new(Path.DirectorySeparatorChar, 2);
 		path = prefix + path;
 
 		bool result = path.IsUncPath(new MockFileSystem());
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void IsUncPath_MixedDirectorySeparatorChars_ShouldReturnFalse(string path)
+	public async Task IsUncPath_MixedDirectorySeparatorChars_ShouldReturnFalse(string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows,
 			"Mac and Linux don't have distinctive directory separator chars.");
@@ -92,32 +91,30 @@ public class PathHelperTests
 
 		bool result = path.IsUncPath(new MockFileSystem());
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Fact]
-	public void IsUncPath_Null_ShouldReturnFalse()
+	public async Task IsUncPath_Null_ShouldReturnFalse()
 	{
 		string? path = null;
 
 		bool result = path!.IsUncPath(new MockFileSystem());
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Fact]
-	public void
-		ThrowCommonExceptionsIfPathIsInvalid_StartWithNull_ShouldThrowArgumentException()
+	public async Task ThrowCommonExceptionsIfPathIsInvalid_StartWithNull_ShouldThrowArgumentException()
 	{
 		string path = "\0foo";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			path.EnsureValidFormat(new MockFileSystem());
-		});
+		}
 
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.Message.Should().Contain($"'{path}'");
+		await That(Act).ThrowsExactly<ArgumentException>().WithMessage($"*'{path}'*").AsWildcard();
 	}
 
 #if CAN_SIMULATE_OTHER_OS
@@ -125,35 +122,33 @@ public class PathHelperTests
 	[InlineData('|')]
 	[InlineData((char)1)]
 	[InlineData((char)31)]
-	public void ThrowCommonExceptionsIfPathIsInvalid_WithInvalidCharacters(
+	public async Task ThrowCommonExceptionsIfPathIsInvalid_WithInvalidCharacters(
 		char invalidChar)
 	{
 		MockFileSystem fileSystem = new(o => o
 			.SimulatingOperatingSystem(SimulationMode.Windows));
 		string path = invalidChar + "path";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			path.EnsureValidFormat(fileSystem);
-		});
-		exception.Should().BeOfType<IOException>()
-			.Which.Message.Should().Contain(path);
+		}
+
+		await That(Act).ThrowsExactly<IOException>().WithMessage($"*{path}*").AsWildcard();
 	}
 #endif
 
 	[Fact]
-	public void
-		ThrowCommonExceptionsIfPathToTargetIsInvalid_NullCharacter_ShouldThrowArgumentException()
+	public async Task ThrowCommonExceptionsIfPathToTargetIsInvalid_NullCharacter_ShouldThrowArgumentException()
 	{
 		MockFileSystem fileSystem = new();
 		string path = "path-with\0 invalid character";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			path.ThrowCommonExceptionsIfPathToTargetIsInvalid(fileSystem);
-		});
+		}
 
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.Message.Should().Contain($"'{path}'");
+		await That(Act).ThrowsExactly<ArgumentException>().WithMessage($"*'{path}'*").AsWildcard();
 	}
 }

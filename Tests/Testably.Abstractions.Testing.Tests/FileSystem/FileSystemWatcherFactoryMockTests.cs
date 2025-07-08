@@ -31,7 +31,7 @@ public sealed class FileSystemWatcherFactoryMockTests : IDisposable
 
 	[Theory]
 	[AutoData]
-	public void Wrap_ShouldUsePropertiesFromFileSystemWatcher(
+	public async Task Wrap_ShouldUsePropertiesFromFileSystemWatcher(
 		string path, bool includeSubdirectories, NotifyFilters notifyFilter,
 		int internalBufferSize, bool enableRaisingEvents, string filter)
 	{
@@ -47,18 +47,18 @@ public sealed class FileSystemWatcherFactoryMockTests : IDisposable
 
 		IFileSystemWatcher result = FileSystem.FileSystemWatcher.Wrap(fileSystemWatcher);
 
-		result.Path.Should().Be(fileSystemWatcher.Path);
-		result.IncludeSubdirectories.Should().Be(fileSystemWatcher.IncludeSubdirectories);
-		result.NotifyFilter.Should().Be(fileSystemWatcher.NotifyFilter);
-		result.InternalBufferSize.Should().Be(fileSystemWatcher.InternalBufferSize);
-		result.EnableRaisingEvents.Should().Be(fileSystemWatcher.EnableRaisingEvents);
-		result.Filter.Should().Be(fileSystemWatcher.Filter);
+		await That(result.Path).IsEqualTo(fileSystemWatcher.Path);
+		await That(result.IncludeSubdirectories).IsEqualTo(fileSystemWatcher.IncludeSubdirectories);
+		await That(result.NotifyFilter).IsEqualTo(fileSystemWatcher.NotifyFilter);
+		await That(result.InternalBufferSize).IsEqualTo(fileSystemWatcher.InternalBufferSize);
+		await That(result.EnableRaisingEvents).IsEqualTo(fileSystemWatcher.EnableRaisingEvents);
+		await That(result.Filter).IsEqualTo(fileSystemWatcher.Filter);
 	}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 	[Theory]
 	[AutoData]
-	public void Wrap_WithFilters_ShouldUsePropertiesFromFileSystemWatcher(
+	public async Task Wrap_WithFilters_ShouldUsePropertiesFromFileSystemWatcher(
 		string[] filters)
 	{
 		FileSystemWatcher fileSystemWatcher = new(".");
@@ -69,7 +69,7 @@ public sealed class FileSystemWatcherFactoryMockTests : IDisposable
 
 		IFileSystemWatcher result = FileSystem.FileSystemWatcher.Wrap(fileSystemWatcher);
 
-		result.Filters.Should().BeEquivalentTo(filters);
+		await That(result.Filters).IsEqualTo(filters).InAnyOrder();
 	}
 #endif
 }

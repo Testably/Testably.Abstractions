@@ -4,24 +4,24 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 public partial class GetTempFileNameTests
 {
 	[Fact]
-	public void GetTempFileName_ShouldBeInTempPath()
+	public async Task GetTempFileName_ShouldBeInTempPath()
 	{
 		string tempPath = FileSystem.Path.GetTempPath();
 
-		#pragma warning disable CS0618 // Type or member is obsolete
+#pragma warning disable CS0618 // Type or member is obsolete
 		string result = FileSystem.Path.GetTempFileName();
-		#pragma warning restore CS0618 // Type or member is obsolete
+#pragma warning restore CS0618 // Type or member is obsolete
 
-		result.Should().StartWith(tempPath);
+		await That(result).StartsWith(tempPath);
 	}
 
 	[Fact]
-	public void GetTempFileName_ShouldExist()
+	public async Task GetTempFileName_ShouldExist()
 	{
 		#pragma warning disable CS0618 // Type or member is obsolete
 		string result = FileSystem.Path.GetTempFileName();
 		#pragma warning restore CS0618 // Type or member is obsolete
 
-		FileSystem.File.Exists(result).Should().BeTrue();
+		await That(FileSystem.File.Exists(result)).IsTrue();
 	}
 }

@@ -6,35 +6,35 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 public partial class Tests
 {
 	[Fact]
-	public void AltDirectorySeparatorChar_ShouldReturnSlash()
+	public async Task AltDirectorySeparatorChar_ShouldReturnSlash()
 	{
 		char result = FileSystem.Path.AltDirectorySeparatorChar;
 
-		result.Should().Be('/');
+		await That(result).IsEqualTo('/');
 	}
 
 	[Fact]
-	public void DirectorySeparatorChar_WhenNotOnWindows_ShouldReturnSlash()
+	public async Task DirectorySeparatorChar_WhenNotOnWindows_ShouldReturnSlash()
 	{
 		Skip.If(Test.RunsOnWindows);
 
 		char result = FileSystem.Path.DirectorySeparatorChar;
 
-		result.Should().Be('/');
+		await That(result).IsEqualTo('/');
 	}
 
 	[Fact]
-	public void DirectorySeparatorChar_WhenOnWindows_ShouldReturnBackslash()
+	public async Task DirectorySeparatorChar_WhenOnWindows_ShouldReturnBackslash()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		char result = FileSystem.Path.DirectorySeparatorChar;
 
-		result.Should().Be('\\');
+		await That(result).IsEqualTo('\\');
 	}
 
 	[Fact]
-	public void GetInvalidFileNameChars_WhenNotOnWindows_ShouldReturnCorrectValues()
+	public async Task GetInvalidFileNameChars_WhenNotOnWindows_ShouldReturnCorrectValues()
 	{
 		Skip.If(Test.RunsOnWindows);
 
@@ -42,11 +42,11 @@ public partial class Tests
 
 		char[] result = FileSystem.Path.GetInvalidFileNameChars();
 
-		result.Should().BeEquivalentTo(expected);
+		await That(result).IsEqualTo(expected).InAnyOrder();
 	}
 
 	[Fact]
-	public void GetInvalidFileNameChars_WhenOnWindows_ShouldReturnCorrectValues()
+	public async Task GetInvalidFileNameChars_WhenOnWindows_ShouldReturnCorrectValues()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -61,11 +61,11 @@ public partial class Tests
 
 		char[] result = FileSystem.Path.GetInvalidFileNameChars();
 
-		result.Should().BeEquivalentTo(expected);
+		await That(result).IsEqualTo(expected).InAnyOrder();
 	}
 
 	[Fact]
-	public void GetInvalidPathChars_WhenNotOnWindows_ShouldReturnCorrectValues()
+	public async Task GetInvalidPathChars_WhenNotOnWindows_ShouldReturnCorrectValues()
 	{
 		Skip.If(Test.RunsOnWindows);
 
@@ -73,11 +73,11 @@ public partial class Tests
 
 		char[] result = FileSystem.Path.GetInvalidPathChars();
 
-		result.Should().BeEquivalentTo(expected);
+		await That(result).IsEqualTo(expected).InAnyOrder();
 	}
 
 	[Fact]
-	public void GetInvalidPathChars_WhenOnWindows_ShouldReturnCorrectValues()
+	public async Task GetInvalidPathChars_WhenOnWindows_ShouldReturnCorrectValues()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -95,46 +95,46 @@ public partial class Tests
 
 		char[] result = FileSystem.Path.GetInvalidPathChars();
 
-		result.Should().BeEquivalentTo(expected);
+		await That(result).IsEqualTo(expected).InAnyOrder();
 	}
 
 	[Fact]
-	public void PathSeparator_WhenNotOnWindows_ShouldReturnColon()
+	public async Task PathSeparator_WhenNotOnWindows_ShouldReturnColon()
 	{
 		Skip.If(Test.RunsOnWindows);
 
 		char result = FileSystem.Path.PathSeparator;
 
-		result.Should().Be(':');
+		await That(result).IsEqualTo(':');
 	}
 
 	[Fact]
-	public void PathSeparator_WhenOnWindows_ShouldReturnSemicolon()
+	public async Task PathSeparator_WhenOnWindows_ShouldReturnSemicolon()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		char result = FileSystem.Path.PathSeparator;
 
-		result.Should().Be(';');
+		await That(result).IsEqualTo(';');
 	}
 
 	[Fact]
-	public void VolumeSeparatorChar_WhenNotOnWindows_ShouldReturnSlash()
+	public async Task VolumeSeparatorChar_WhenNotOnWindows_ShouldReturnSlash()
 	{
 		Skip.If(Test.RunsOnWindows);
 
 		char result = FileSystem.Path.VolumeSeparatorChar;
 
-		result.Should().Be('/');
+		await That(result).IsEqualTo('/');
 	}
 
 	[Fact]
-	public void VolumeSeparatorChar_WhenOnWindows_ShouldReturnColon()
+	public async Task VolumeSeparatorChar_WhenOnWindows_ShouldReturnColon()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		char result = FileSystem.Path.VolumeSeparatorChar;
 
-		result.Should().Be(':');
+		await That(result).IsEqualTo(':');
 	}
 }

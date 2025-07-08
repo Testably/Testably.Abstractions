@@ -11,8 +11,7 @@ public partial class SearchFilterTests
 	[InlineAutoData("../", 4)]
 	[InlineAutoData("../*", 4)]
 	[InlineAutoData("../a*", 2)]
-	public void
-		SearchPattern_Containing1InstanceOfTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
+	public async Task SearchPattern_Containing1InstanceOfTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
 			string searchPattern, int expectedMatchingFiles)
 	{
 		Skip.If(Test.IsNetFramework);
@@ -26,16 +25,15 @@ public partial class SearchFilterTests
 		string[] result = FileSystem.Directory
 			.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 
-		result.Length.Should().Be(expectedMatchingFiles);
-		result.Should().Contain(FileSystem.Path.Combine(".", "..", "xyz", "a.test"));
+		await That(result.Length).IsEqualTo(expectedMatchingFiles);
+		await That(result).Contains(FileSystem.Path.Combine(".", "..", "xyz", "a.test"));
 	}
 
 	[Theory]
 	[InlineAutoData("../../", 5)]
 	[InlineAutoData("../../*", 5)]
 	[InlineAutoData("../../a*", 2)]
-	public void
-		SearchPattern_Containing2InstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
+	public async Task SearchPattern_Containing2InstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
 			string searchPattern, int expectedMatchingFiles)
 	{
 		Skip.If(Test.IsNetFramework);
@@ -49,23 +47,21 @@ public partial class SearchFilterTests
 		string[] result = FileSystem.Directory
 			.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 
-		result.Length.Should().Be(expectedMatchingFiles);
+		await That(result.Length).IsEqualTo(expectedMatchingFiles);
 		if (!searchPattern.EndsWith("a*", StringComparison.Ordinal))
 		{
-			result.Should().Contain(FileSystem.Path.Combine(".", "../..", "bar"));
-			result.Should().Contain(FileSystem.Path.Combine(".", "../..", "bar", "xyz"));
+			await That(result).Contains(FileSystem.Path.Combine(".", "../..", "bar"));
+			await That(result).Contains(FileSystem.Path.Combine(".", "../..", "bar", "xyz"));
 		}
 
-		result.Should()
-			.Contain(FileSystem.Path.Combine(".", "../..", "bar", "xyz", "a.test"));
+		await That(result).Contains(FileSystem.Path.Combine(".", "../..", "bar", "xyz", "a.test"));
 	}
 
 	[Theory]
 	[InlineAutoData("../../../", 6)]
 	[InlineAutoData("../../../*", 6)]
 	[InlineAutoData("../../../a*", 2)]
-	public void
-		SearchPattern_Containing3InstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
+	public async Task SearchPattern_Containing3InstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
 			string searchPattern, int expectedMatchingFiles)
 	{
 		Skip.If(Test.IsNetFramework);
@@ -79,23 +75,19 @@ public partial class SearchFilterTests
 		string[] result = FileSystem.Directory
 			.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 
-		result.Length.Should().Be(expectedMatchingFiles);
+		await That(result.Length).IsEqualTo(expectedMatchingFiles);
 		if (!searchPattern.EndsWith("a*", StringComparison.Ordinal))
 		{
-			result.Should().Contain(FileSystem.Path.Combine(".", "../../..", "foo"));
-			result.Should()
-				.Contain(FileSystem.Path.Combine(".", "../../..", "foo", "bar"));
-			result.Should()
-				.Contain(FileSystem.Path.Combine(".", "../../..", "foo", "bar", "xyz"));
+			await That(result).Contains(FileSystem.Path.Combine(".", "../../..", "foo"));
+			await That(result).Contains(FileSystem.Path.Combine(".", "../../..", "foo", "bar"));
+			await That(result).Contains(FileSystem.Path.Combine(".", "../../..", "foo", "bar", "xyz"));
 		}
 
-		result.Should()
-			.Contain(
-				FileSystem.Path.Combine(".", "../../..", "foo", "bar", "xyz", "a.test"));
+		await That(result).Contains(FileSystem.Path.Combine(".", "../../..", "foo", "bar", "xyz", "a.test"));
 	}
 
 	[Fact]
-	public void SearchPattern_ContainingAsterisk_ShouldReturnMatchingFiles()
+	public async Task SearchPattern_ContainingAsterisk_ShouldReturnMatchingFiles()
 	{
 		FileSystem.Initialize()
 			.WithFile("a.test")
@@ -106,13 +98,13 @@ public partial class SearchFilterTests
 		string[] result = FileSystem.Directory
 			.GetFileSystemEntries(".", "a*.t*.", SearchOption.AllDirectories);
 
-		result.Length.Should().Be(2);
-		result.Should().Contain(FileSystem.Path.Combine(".", "a.test"));
-		result.Should().Contain(FileSystem.Path.Combine(".", "another.test"));
+		await That(result.Length).IsEqualTo(2);
+		await That(result).Contains(FileSystem.Path.Combine(".", "a.test"));
+		await That(result).Contains(FileSystem.Path.Combine(".", "another.test"));
 	}
 
 	[Fact]
-	public void SearchPattern_ContainingQuestionMark_ShouldReturnMatchingFiles()
+	public async Task SearchPattern_ContainingQuestionMark_ShouldReturnMatchingFiles()
 	{
 		FileSystem.Initialize()
 			.WithFile("a-test")
@@ -123,8 +115,8 @@ public partial class SearchFilterTests
 		string[] result = FileSystem.Directory
 			.GetFileSystemEntries(".", "a-??s*", SearchOption.AllDirectories);
 
-		result.Length.Should().Be(1);
-		result[0].Should().Be(FileSystem.Path.Combine(".", "a-test"));
+		await That(result.Length).IsEqualTo(1);
+		await That(result[0]).IsEqualTo(FileSystem.Path.Combine(".", "a-test"));
 	}
 
 	[Fact]
@@ -164,8 +156,7 @@ public partial class SearchFilterTests
 	[InlineAutoData("../", 4)]
 	[InlineAutoData("../*", 4)]
 	[InlineAutoData("../a*", 2)]
-	public void
-		SearchPattern_ContainingTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
+	public async Task SearchPattern_ContainingTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
 			string searchPattern, int expectedMatchingFiles, string path)
 	{
 		Skip.If(Test.IsNetFramework);
@@ -178,8 +169,8 @@ public partial class SearchFilterTests
 		string[] result = FileSystem.Directory
 			.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 
-		result.Length.Should().Be(expectedMatchingFiles);
-		result.Should().Contain(FileSystem.Path.Combine(".", "..", path, "a.test"));
+		await That(result.Length).IsEqualTo(expectedMatchingFiles);
+		await That(result).Contains(FileSystem.Path.Combine(".", "..", path, "a.test"));
 	}
 
 	[Theory]
@@ -205,7 +196,7 @@ public partial class SearchFilterTests
 	}
 
 	[Fact]
-	public void SearchPattern_ContainingWithTwoDots_ShouldContainMatchingFiles()
+	public async Task SearchPattern_ContainingWithTwoDots_ShouldContainMatchingFiles()
 	{
 		FileSystem.Initialize()
 			.WithFile("test..x")
@@ -215,11 +206,11 @@ public partial class SearchFilterTests
 		string[] result = FileSystem.Directory
 			.GetFileSystemEntries(".", "*t..x", SearchOption.AllDirectories);
 
-		result.Length.Should().Be(1);
+		await That(result.Length).IsEqualTo(1);
 	}
 
 	[Fact]
-	public void SearchPattern_EndingWithTwoDots_ShouldNotMatchAnyFile()
+	public async Task SearchPattern_EndingWithTwoDots_ShouldNotMatchAnyFile()
 	{
 		Skip.If(Test.IsNetFramework);
 
@@ -233,17 +224,17 @@ public partial class SearchFilterTests
 
 		if (Test.RunsOnWindows)
 		{
-			result.Should().BeEmpty();
+			await That(result).IsEmpty();
 		}
 		else
 		{
-			result.Length.Should().Be(1);
-			result.Should().Contain(FileSystem.Path.Combine(".", "test.."));
+			await That(result.Length).IsEqualTo(1);
+			await That(result).Contains(FileSystem.Path.Combine(".", "test.."));
 		}
 	}
 
 	[Fact]
-	public void SearchPattern_Extension_ShouldReturnAllFilesWithTheExtension()
+	public async Task SearchPattern_Extension_ShouldReturnAllFilesWithTheExtension()
 	{
 		FileSystem.Initialize()
 			.WithAFile(".gif")
@@ -257,7 +248,7 @@ public partial class SearchFilterTests
 		string[] result = FileSystem.Directory
 			.GetFileSystemEntries(".", "*.gif", SearchOption.AllDirectories);
 
-		result.Length.Should().Be(3);
+		await That(result.Length).IsEqualTo(3);
 	}
 
 	[Fact]
@@ -275,7 +266,7 @@ public partial class SearchFilterTests
 	}
 
 	[Fact]
-	public void SearchPattern_StarDot_ShouldReturnFilesWithoutExtension()
+	public async Task SearchPattern_StarDot_ShouldReturnFilesWithoutExtension()
 	{
 		FileSystem.Initialize()
 			.WithFile("test.")
@@ -287,13 +278,13 @@ public partial class SearchFilterTests
 
 		if (Test.RunsOnWindows)
 		{
-			result.Length.Should().Be(1);
-			result.Should().Contain(FileSystem.Path.Combine(".", "test"));
+			await That(result.Length).IsEqualTo(1);
+			await That(result).Contains(FileSystem.Path.Combine(".", "test"));
 		}
 		else
 		{
-			result.Length.Should().Be(3);
-			result.Should().Contain(FileSystem.Path.Combine(".", "test."));
+			await That(result.Length).IsEqualTo(3);
+			await That(result).Contains(FileSystem.Path.Combine(".", "test."));
 		}
 	}
 
@@ -306,7 +297,7 @@ public partial class SearchFilterTests
 	[InlineAutoData(true, "*")]
 	[InlineAutoData(true, ".")]
 	[InlineAutoData(true, "*.*")]
-	public void SearchPattern_WildCard_ShouldReturnFile(
+	public async Task SearchPattern_WildCard_ShouldReturnFile(
 		bool expectToBeFound, string searchPattern, string path)
 	{
 		FileSystem.Initialize().WithFile(path);
@@ -316,14 +307,11 @@ public partial class SearchFilterTests
 
 		if (expectToBeFound)
 		{
-			result.Should().ContainSingle(
-				path,
-				$"{searchPattern} should match any path.");
+			await That(result).HasSingle().Which.EndsWith(path).Because($"it should match {searchPattern}");
 		}
 		else
 		{
-			result.Should()
-				.BeEmpty($"{searchPattern} should not match {path}");
+			await That(result).IsEmpty().Because($"{searchPattern} should not match {path}");
 		}
 	}
 }

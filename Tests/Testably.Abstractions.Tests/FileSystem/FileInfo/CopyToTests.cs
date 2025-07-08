@@ -7,7 +7,7 @@ public partial class CopyToTests
 {
 	[Theory]
 	[AutoData]
-	public void CopyTo_DestinationExists_ShouldThrowIOException_AndNotCopyFile(
+	public async Task CopyTo_DestinationExists_ShouldThrowIOException_AndNotCopyFile(
 		string sourceName,
 		string destinationName,
 		string sourceContents,
@@ -24,7 +24,7 @@ public partial class CopyToTests
 
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024816 : 17);
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(sourceContents);
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
@@ -34,7 +34,7 @@ public partial class CopyToTests
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	[Theory]
 	[AutoData]
-	public void CopyTo_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
+	public async Task CopyTo_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
 		string destinationName,
 		string sourceContents,
@@ -46,10 +46,10 @@ public partial class CopyToTests
 
 		IFileInfo result = sut.CopyTo(destinationName, true);
 
-		sut.Exists.Should().BeTrue();
-		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(sourceName));
-		result.Exists.Should().BeTrue();
-		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
+		await That(sut.Exists).IsTrue();
+		await That(sut.FullName).IsEqualTo(FileSystem.Path.GetFullPath(sourceName));
+		await That(result.Exists).IsTrue();
+		await That(result.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(sourceContents);
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
@@ -77,7 +77,7 @@ public partial class CopyToTests
 	[Theory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
 	[InlineAutoData(FileAttributes.System)]
-	public void CopyTo_ShouldAddArchiveAttribute_OnWindows(
+	public async Task CopyTo_ShouldAddArchiveAttribute_OnWindows(
 		FileAttributes fileAttributes,
 		string sourceName,
 		string destinationName,
@@ -95,14 +95,14 @@ public partial class CopyToTests
 
 		IFileInfo result = sut.CopyTo(destinationName);
 
-		result.Attributes.Should().Be(expectedAttributes);
+		await That(result.Attributes).IsEqualTo(expectedAttributes);
 		FileSystem.File.GetAttributes(destinationName)
 			.Should().Be(expectedAttributes);
 	}
 
 	[Theory]
 	[AutoData]
-	public void CopyTo_ShouldCopyFileWithContent(
+	public async Task CopyTo_ShouldCopyFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -114,10 +114,10 @@ public partial class CopyToTests
 
 		IFileInfo result = sut.CopyTo(destinationName);
 
-		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(sourceName));
-		sut.Exists.Should().BeTrue();
-		result.Exists.Should().BeTrue();
-		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
+		await That(sut.FullName).IsEqualTo(FileSystem.Path.GetFullPath(sourceName));
+		await That(sut.Exists).IsTrue();
+		await That(result.Exists).IsTrue();
+		await That(result.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(contents);
 		FileSystem.File.Exists(destinationName).Should().BeTrue();

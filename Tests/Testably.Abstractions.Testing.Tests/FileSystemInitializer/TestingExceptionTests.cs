@@ -1,6 +1,7 @@
 ﻿#if !NET8_0_OR_GREATER
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
@@ -9,7 +10,7 @@ public class TestingExceptionTests
 {
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		TestingException_SerializationAndDeserialization_ShouldKeepMessageAndInnerException(
 			string message, Exception innerException)
 	{
@@ -24,11 +25,10 @@ public class TestingExceptionTests
 		formatter.Serialize(ms, originalException);
 		TestingException deserializedException =
 			(TestingException)formatter.Deserialize(ms2);
-		#pragma warning restore SYSLIB0011
+#pragma warning restore SYSLIB0011
 
-		Assert.Equal(originalException.InnerException?.Message,
-			deserializedException.InnerException?.Message);
-		Assert.Equal(originalException.Message, deserializedException.Message);
+		await That(deserializedException.InnerException?.Message).IsEqualTo(originalException.InnerException?.Message);
+		await That(deserializedException.Message).IsEqualTo(originalException.Message);
 	}
 }
 #endif

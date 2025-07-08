@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
@@ -82,39 +83,35 @@ public partial class TimeFactoryTests
 	[Theory]
 	[InlineData(-2)]
 	[InlineData(-500)]
-	public void New_InvalidDueTime_ShouldThrowArgumentOutOfRangeException(int dueTime)
+	public async Task New_InvalidDueTime_ShouldThrowArgumentOutOfRangeException(int dueTime)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			using ITimer timer = TimeSystem.Timer.New(_ =>
 			{
 			}, null, dueTime, 0);
-		});
+		}
 
-		exception.Should()
-			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086,
-				paramName: nameof(dueTime));
+		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086).And.WithParamName(nameof(dueTime));
 	}
 
 	[Theory]
 	[InlineData(-2)]
 	[InlineData(-500)]
-	public void New_InvalidPeriod_ShouldThrowArgumentOutOfRangeException(int period)
+	public async Task New_InvalidPeriod_ShouldThrowArgumentOutOfRangeException(int period)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			using ITimer timer = TimeSystem.Timer.New(_ =>
 			{
 			}, null, 0, period);
-		});
+		}
 
-		exception.Should()
-			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086,
-				paramName: nameof(period));
+		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086).And.WithParamName(nameof(period));
 	}
 
 	[Fact]
-	public void New_WithPeriod_ShouldStartTimer()
+	public async Task New_WithPeriod_ShouldStartTimer()
 	{
 		int count = 0;
 		using ManualResetEventSlim ms = new();
@@ -135,8 +132,8 @@ public partial class TimeFactoryTests
 			}
 		}, null, 0, 50);
 
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
-		count.Should().BeGreaterOrEqualTo(2);
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(count).IsGreaterThanOrEqualTo(2);
 	}
 
 	[Fact]
@@ -158,13 +155,13 @@ public partial class TimeFactoryTests
 			}
 		}, null, 5, 0);
 
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await Task.Delay(100, TestContext.Current.CancellationToken);
-		count.Should().Be(1);
+		await That(count).IsEqualTo(1);
 	}
 
 	[Fact]
-	public void New_WithoutPeriod_ShouldNotStartTimer()
+	public async Task New_WithoutPeriod_ShouldNotStartTimer()
 	{
 		using ManualResetEventSlim ms = new();
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -180,6 +177,6 @@ public partial class TimeFactoryTests
 			}
 		});
 
-		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
 	}
 }

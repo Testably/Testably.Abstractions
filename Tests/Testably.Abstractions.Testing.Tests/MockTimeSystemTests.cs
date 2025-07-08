@@ -13,7 +13,7 @@ public class MockTimeSystemTests
 		Exception? exception =
 			await Record.ExceptionAsync(() => timeSystem.Task.Delay(Timeout.Infinite, TestContext.Current.CancellationToken));
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Fact]
@@ -24,104 +24,101 @@ public class MockTimeSystemTests
 			await Record.ExceptionAsync(()
 				=> timeSystem.Task.Delay(Timeout.InfiniteTimeSpan, TestContext.Current.CancellationToken));
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Fact]
 	public async Task Delay_LessThanInfinite_ShouldNotThrowException()
 	{
 		MockTimeSystem timeSystem = new();
-		Exception? exception =
-			await Record.ExceptionAsync(() => timeSystem.Task.Delay(-2, TestContext.Current.CancellationToken));
+		async Task Act()
+			=> await timeSystem.Task.Delay(-2, TestContext.Current.CancellationToken);
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>()
-			.Which.ParamName.Should().Be("millisecondsDelay");
+		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>().WithParamName("millisecondsDelay");
 	}
 
 	[Fact]
 	public async Task Delay_LessThanInfiniteTimeSpan_ShouldNotThrowException()
 	{
 		MockTimeSystem timeSystem = new();
-		Exception? exception =
-			await Record.ExceptionAsync(()
-				=> timeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2), TestContext.Current.CancellationToken));
+		async Task Act()
+			=> await timeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2), TestContext.Current.CancellationToken);
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>()
-			.Which.ParamName.Should().Be("delay");
+		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>().WithParamName("delay");
 	}
 
 	[Fact]
-	public void Sleep_Infinite_ShouldNotThrowException()
+	public async Task Sleep_Infinite_ShouldNotThrowException()
 	{
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
 			Record.Exception(() => timeSystem.Thread.Sleep(Timeout.Infinite));
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Fact]
-	public void Sleep_InfiniteTimeSpan_ShouldNotThrowException()
+	public async Task Sleep_InfiniteTimeSpan_ShouldNotThrowException()
 	{
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
 			Record.Exception(() => timeSystem.Thread.Sleep(Timeout.InfiniteTimeSpan));
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Fact]
-	public void Sleep_LessThanInfinite_ShouldThrowArgumentOutOfRangeException()
+	public async Task Sleep_LessThanInfinite_ShouldThrowArgumentOutOfRangeException()
 	{
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
 			Record.Exception(() => timeSystem.Thread.Sleep(-2));
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>();
+		await That(exception).IsExactly<ArgumentOutOfRangeException>();
 	}
 
 	[Fact]
-	public void Sleep_LessThanInfiniteTimeSpan_ShouldThrowArgumentOutOfRangeException()
+	public async Task Sleep_LessThanInfiniteTimeSpan_ShouldThrowArgumentOutOfRangeException()
 	{
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
 			Record.Exception(()
 				=> timeSystem.Thread.Sleep(TimeSpan.FromMilliseconds(-2)));
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>();
+		await That(exception).IsExactly<ArgumentOutOfRangeException>();
 	}
 
 	[Fact]
-	public void ToString_WithFixedContainer_ShouldContainTimeProvider()
+	public async Task ToString_WithFixedContainer_ShouldContainTimeProvider()
 	{
 		DateTime now = TimeTestHelper.GetRandomTime();
 		MockTimeSystem timeSystem = new(TimeProvider.Use(now));
 
 		string result = timeSystem.ToString();
 
-		result.Should().Contain("Fixed");
-		result.Should().Contain($"{now.ToUniversalTime()}Z");
+		await That(result).Contains("Fixed");
+		await That(result).Contains($"{now.ToUniversalTime()}Z");
 	}
 
 	[Fact]
-	public void ToString_WithNowContainer_ShouldContainTimeProvider()
+	public async Task ToString_WithNowContainer_ShouldContainTimeProvider()
 	{
 		MockTimeSystem timeSystem = new(TimeProvider.Now());
 
 		string result = timeSystem.ToString();
 
-		result.Should().Contain("Now");
-		result.Should().Contain($"{timeSystem.DateTime.UtcNow}Z");
+		await That(result).Contains("Now");
+		await That(result).Contains($"{timeSystem.DateTime.UtcNow}Z");
 	}
 
 	[Fact]
-	public void ToString_WithRandomContainer_ShouldContainTimeProvider()
+	public async Task ToString_WithRandomContainer_ShouldContainTimeProvider()
 	{
 		MockTimeSystem timeSystem = new(TimeProvider.Random());
 
 		string result = timeSystem.ToString();
 
-		result.Should().Contain("Random");
-		result.Should().Contain($"{timeSystem.DateTime.UtcNow}Z");
+		await That(result).Contains("Random");
+		await That(result).Contains($"{timeSystem.DateTime.UtcNow}Z");
 	}
 }

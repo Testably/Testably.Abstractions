@@ -25,66 +25,66 @@ public partial class GetPathRootTests
 	[InlineData(@"//X\ABC\a\b\c\d", @"\\X\ABC", TestOS.Windows)]
 	[InlineData(@"\??\ABC\a\b\c\d", @"\??\ABC\", TestOS.Windows)]
 	[InlineData(@"/??/ABC\a\b\c\d", @"\", TestOS.Windows)]
-	public void GetPathRoot_EdgeCases_ShouldReturnExpectedValue(
+	public async Task GetPathRoot_EdgeCases_ShouldReturnExpectedValue(
 		string path, string expected, TestOS operatingSystem)
 	{
 		Skip.IfNot(Test.RunsOn(operatingSystem));
 
 		string? result = FileSystem.Path.GetPathRoot(path);
 
-		result.Should().Be(expected);
+		await That(result).IsEqualTo(expected);
 	}
 
 	[Fact]
-	public void GetPathRoot_Null_ShouldReturnNull()
+	public async Task GetPathRoot_Null_ShouldReturnNull()
 	{
 		string? result = FileSystem.Path.GetPathRoot(null);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[InlineData("D:")]
 	[InlineData("D:\\")]
-	public void GetPathRoot_RootedDrive_ShouldReturnDriveOnWindows(string path)
+	public async Task GetPathRoot_RootedDrive_ShouldReturnDriveOnWindows(string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		string? result = FileSystem.Path.GetPathRoot(path);
 
-		result.Should().Be(path);
+		await That(result).IsEqualTo(path);
 	}
 
 	[Theory]
 	[InlineData("D:some-path", "D:")]
 	[InlineData("D:\\some-path", "D:\\")]
-	public void GetPathRoot_RootedDriveWithPath_ShouldReturnDriveOnWindows(
+	public async Task GetPathRoot_RootedDriveWithPath_ShouldReturnDriveOnWindows(
 		string path, string expected)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		string? result = FileSystem.Path.GetPathRoot(path);
 
-		result.Should().Be(expected);
+		await That(result).IsEqualTo(expected);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetPathRoot_ShouldReturnDefaultValue(string path)
+	public async Task GetPathRoot_ShouldReturnDefaultValue(string path)
 	{
 		string? result = FileSystem.Path.GetPathRoot(path);
 
-		result.Should().Be("");
+		await That(result).IsEqualTo("");
 	}
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void GetPathRoot_Span_ShouldReturnDefaultValue(string path)
+	public async Task GetPathRoot_Span_ShouldReturnDefaultValue(string path)
 	{
 		ReadOnlySpan<char> result = FileSystem.Path.GetPathRoot(path.AsSpan());
 
-		result.ToArray().Should().BeEquivalentTo(
+		await That(result.ToArray()).IsEqualTo(
 			System.IO.Path.GetPathRoot(path.AsSpan()).ToArray());
 	}
 #endif

@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Tests;
 public class NotificationTests
 {
 	[Fact]
-	public void AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
+	public async Task AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
 	{
 		MockTimeSystem timeSystem = new();
 		int receivedCount = 0;
@@ -30,7 +30,7 @@ public class NotificationTests
 		}, TestContext.Current.CancellationToken);
 
 		wait.Wait(count: 7);
-		receivedCount.Should().BeGreaterOrEqualTo(7);
+		await That(receivedCount).IsGreaterThanOrEqualTo(7);
 	}
 
 	[Fact]
@@ -48,7 +48,7 @@ public class NotificationTests
 
 		timeSystem.Thread.Sleep(1);
 		await Task.Delay(10, TestContext.Current.CancellationToken);
-		isCalled.Should().BeFalse();
+		await That(isCalled).IsFalse();
 	}
 
 	[Fact]
@@ -68,11 +68,11 @@ public class NotificationTests
 
 		timeSystem.Thread.Sleep(1);
 		await Task.Delay(10, TestContext.Current.CancellationToken);
-		isCalled.Should().BeFalse();
+		await That(isCalled).IsFalse();
 	}
 
 	[Fact]
-	public void AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
+	public async Task AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		MockTimeSystem timeSystem = new();
 		int receivedCount = 0;
@@ -93,11 +93,11 @@ public class NotificationTests
 		}, TestContext.Current.CancellationToken);
 
 		wait.Wait(t => t.TotalMilliseconds > 6);
-		receivedCount.Should().BeGreaterOrEqualTo(6);
+		await That(receivedCount).IsGreaterThanOrEqualTo(6);
 	}
 
 	[Fact]
-	public void AwaitableCallback_Predicate_ShouldOnlyUpdateAfterFilteredValue()
+	public async Task AwaitableCallback_Predicate_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		MockTimeSystem timeSystem = new();
 		int receivedCount = 0;
@@ -128,11 +128,11 @@ public class NotificationTests
 		}, TestContext.Current.CancellationToken);
 
 		ms.Wait(30000, TestContext.Current.CancellationToken);
-		receivedCount.Should().BeLessOrEqualTo(4);
+		await That(receivedCount).IsLessThanOrEqualTo(4);
 	}
 
 	[Fact]
-	public void AwaitableCallback_ShouldWaitForCallbackExecution()
+	public async Task AwaitableCallback_ShouldWaitForCallbackExecution()
 	{
 		using ManualResetEventSlim ms = new();
 		try
@@ -163,7 +163,7 @@ public class NotificationTests
 			}, TestContext.Current.CancellationToken);
 
 			wait.Wait();
-			isCalled.Should().BeTrue();
+			await That(isCalled).IsTrue();
 		}
 		finally
 		{
@@ -172,7 +172,7 @@ public class NotificationTests
 	}
 
 	[Fact]
-	public void AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
+	public async Task AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
 	{
 		MockTimeSystem timeSystem = new();
 		bool isCalled = false;
@@ -202,13 +202,13 @@ public class NotificationTests
 			wait.Wait(timeout: 10);
 		});
 
-		exception.Should().BeOfType<TimeoutException>();
-		isCalled.Should().BeFalse();
+		await That(exception).IsExactly<TimeoutException>();
+		await That(isCalled).IsFalse();
 		ms.Set();
 	}
 
 	[Fact]
-	public void AwaitableCallback_Wait_AfterDispose_ShouldThrowObjectDisposedException()
+	public async Task AwaitableCallback_Wait_AfterDispose_ShouldThrowObjectDisposedException()
 	{
 		MockTimeSystem timeSystem = new();
 		IAwaitableCallback<TimeSpan> wait =
@@ -221,11 +221,11 @@ public class NotificationTests
 			wait.Wait(timeout: 100);
 		});
 
-		exception.Should().BeOfType<ObjectDisposedException>();
+		await That(exception).IsExactly<ObjectDisposedException>();
 	}
 
 	[Fact]
-	public void AwaitableCallback_WaitedPreviously_ShouldWaitAgainForCallbackExecution()
+	public async Task AwaitableCallback_WaitedPreviously_ShouldWaitAgainForCallbackExecution()
 	{
 		int secondThreadMilliseconds = 42;
 		int firstThreadMilliseconds = secondThreadMilliseconds + 1;
@@ -290,12 +290,12 @@ public class NotificationTests
 
 		wait.Wait();
 		ms.Set();
-		isCalledFromSecondThread.Should().BeTrue();
+		await That(isCalledFromSecondThread).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Execute_ShouldBeExecutedBeforeWait(int milliseconds)
+	public async Task Execute_ShouldBeExecutedBeforeWait(int milliseconds)
 	{
 		MockTimeSystem timeSystem = new();
 		int receivedMilliseconds = -1;
@@ -315,13 +315,13 @@ public class NotificationTests
 				isExecuted = true;
 			});
 
-		receivedMilliseconds.Should().Be(milliseconds);
-		isExecuted.Should().BeTrue();
+		await That(receivedMilliseconds).IsEqualTo(milliseconds);
+		await That(isExecuted).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Execute_WithReturnValue_ShouldBeExecutedAndReturnValue(
+	public async Task Execute_WithReturnValue_ShouldBeExecutedAndReturnValue(
 		int milliseconds, string result)
 	{
 		MockTimeSystem timeSystem = new();
@@ -343,13 +343,13 @@ public class NotificationTests
 				isExecuted = true;
 			});
 
-		receivedMilliseconds.Should().Be(milliseconds);
-		actualResult.Should().Be(result);
-		isExecuted.Should().BeTrue();
+		await That(receivedMilliseconds).IsEqualTo(milliseconds);
+		await That(actualResult).IsEqualTo(result);
+		await That(isExecuted).IsTrue();
 	}
 
 	[Fact]
-	public void ExecuteWhileWaiting_ShouldExecuteCallback()
+	public async Task ExecuteWhileWaiting_ShouldExecuteCallback()
 	{
 		MockTimeSystem timeSystem = new();
 		bool isExecuted = false;
@@ -363,12 +363,12 @@ public class NotificationTests
 			})
 			.Wait();
 
-		isExecuted.Should().BeTrue();
+		await That(isExecuted).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void ExecuteWhileWaiting_WithReturnValue_ShouldExecuteCallback(int result)
+	public async Task ExecuteWhileWaiting_WithReturnValue_ShouldExecuteCallback(int result)
 	{
 		MockTimeSystem timeSystem = new();
 		bool isExecuted = false;
@@ -383,7 +383,7 @@ public class NotificationTests
 			})
 			.Wait();
 
-		actualResult.Should().Be(result);
-		isExecuted.Should().BeTrue();
+		await That(actualResult).IsEqualTo(result);
+		await That(isExecuted).IsTrue();
 	}
 }

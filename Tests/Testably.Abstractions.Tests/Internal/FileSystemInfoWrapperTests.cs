@@ -5,37 +5,37 @@ namespace Testably.Abstractions.Tests.Internal;
 public class FileSystemInfoWrapperTests
 {
 	[Fact]
-	public void FromFileSystemInfo_Null_ShouldReturnNull()
+	public async Task FromFileSystemInfo_Null_ShouldReturnNull()
 	{
 		RealFileSystem fileSystem = new();
 
 		FileSystemInfoWrapper? result = FileSystemInfoWrapper
 			.FromFileSystemInfo(null, fileSystem);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void FromFileSystemInfo_WithDirectoryInfo_ShouldReturnDirectoryInfoWrapper(string path)
+	public async Task FromFileSystemInfo_WithDirectoryInfo_ShouldReturnDirectoryInfoWrapper(string path)
 	{
 		RealFileSystem fileSystem = new();
 
 		FileSystemInfoWrapper result = FileSystemInfoWrapper
 			.FromFileSystemInfo(new DirectoryInfo(path), fileSystem);
 
-		result.Should().BeOfType<DirectoryInfoWrapper>();
+		await That(result).IsExactly<DirectoryInfoWrapper>();
 	}
 
 	[Theory]
 	[AutoData]
-	public void FromFileSystemInfo_WithFileInfo_ShouldReturnFileInfoWrapper(string path)
+	public async Task FromFileSystemInfo_WithFileInfo_ShouldReturnFileInfoWrapper(string path)
 	{
 		RealFileSystem fileSystem = new();
 
 		FileSystemInfoWrapper result = FileSystemInfoWrapper
 			.FromFileSystemInfo(new FileInfo(path), fileSystem);
 
-		result.Should().BeOfType<FileInfoWrapper>();
+		await That(result).IsExactly<FileInfoWrapper>();
 	}
 }

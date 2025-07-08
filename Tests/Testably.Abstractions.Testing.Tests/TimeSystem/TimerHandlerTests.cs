@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 public class TimerHandlerTests
 {
 	[Fact]
-	public void Index_AccessDisposedIndex_ShouldThrowException()
+	public async Task Index_AccessDisposedIndex_ShouldThrowException()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
 			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
@@ -23,11 +23,11 @@ public class TimerHandlerTests
 			_ = sut[0];
 		});
 
-		exception.Should().BeOfType<KeyNotFoundException>();
+		await That(exception).IsExactly<KeyNotFoundException>();
 	}
 
 	[Fact]
-	public void Index_MultipleTimers_ShouldIncrement()
+	public async Task Index_MultipleTimers_ShouldIncrement()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
 			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
@@ -36,12 +36,12 @@ public class TimerHandlerTests
 		using ITimer timer0 = timeSystem.Timer.New(_ => { }, null, 0, 100);
 		using ITimer timer1 = timeSystem.Timer.New(_ => { }, null, 0, 100);
 
-		sut[0].Should().Be(timer0);
-		sut[1].Should().Be(timer1);
+		await That(sut[0]).IsEqualTo(timer0);
+		await That(sut[1]).IsEqualTo(timer1);
 	}
 
 	[Fact]
-	public void Index_ShouldNotReuseDisposedIndexes()
+	public async Task Index_ShouldNotReuseDisposedIndexes()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
 			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
@@ -53,7 +53,7 @@ public class TimerHandlerTests
 		timer0.Dispose();
 		using ITimer timer2 = timeSystem.Timer.New(_ => { }, null, 0, 100);
 
-		sut[1].Should().Be(timer1);
-		sut[2].Should().Be(timer2);
+		await That(sut[1]).IsEqualTo(timer1);
+		await That(sut[2]).IsEqualTo(timer2);
 	}
 }

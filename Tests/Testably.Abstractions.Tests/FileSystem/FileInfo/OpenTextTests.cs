@@ -24,7 +24,7 @@ public partial class OpenTextTests
 
 	[Theory]
 	[AutoData]
-	public void OpenText_ShouldReturnFileContent(
+	public async Task OpenText_ShouldReturnFileContent(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -33,6 +33,6 @@ public partial class OpenTextTests
 		using StreamReader stream = fileInfo.OpenText();
 
 		string result = stream.ReadToEnd();
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 }

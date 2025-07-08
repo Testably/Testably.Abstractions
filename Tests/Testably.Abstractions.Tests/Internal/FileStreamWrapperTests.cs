@@ -30,7 +30,7 @@ public sealed class FileStreamWrapperTests : IDisposable
 
 	[Theory]
 	[AutoData]
-	public void RetrieveMetadata_ShouldReturnStoredValue(string path, string key, object value)
+	public async Task RetrieveMetadata_ShouldReturnStoredValue(string path, string key, object value)
 	{
 		using FileSystemStream sut = FileSystem.FileStream.New(path, FileMode.OpenOrCreate);
 
@@ -40,12 +40,12 @@ public sealed class FileStreamWrapperTests : IDisposable
 
 		object? result = extensibility.RetrieveMetadata<object>(key);
 
-		result.Should().Be(value);
+		await That(result).IsEqualTo(value);
 	}
 
 	[Theory]
 	[AutoData]
-	public void TryGetWrappedInstance_ShouldReturnWrappedInstance(string path)
+	public async Task TryGetWrappedInstance_ShouldReturnWrappedInstance(string path)
 	{
 		using FileSystemStream sut = FileSystem.FileStream.New(path, FileMode.OpenOrCreate);
 
@@ -53,7 +53,7 @@ public sealed class FileStreamWrapperTests : IDisposable
 
 		bool result = extensibility!.TryGetWrappedInstance(out FileStream? fileStream);
 
-		result.Should().BeTrue();
-		fileStream.Should().NotBeNull();
+		await That(result).IsTrue();
+		await That(fileStream).IsNotNull();
 	}
 }

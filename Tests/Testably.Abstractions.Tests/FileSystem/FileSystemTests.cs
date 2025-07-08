@@ -4,15 +4,14 @@ namespace Testably.Abstractions.Tests.FileSystem;
 public partial class FileSystemTests
 {
 	[Fact]
-	public void Paths_UnderWindows_ShouldUseNormalSlashAndBackslashInterchangeable()
+	public async Task Paths_UnderWindows_ShouldUseNormalSlashAndBackslashInterchangeable()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystem.Directory.CreateDirectory("foo\\bar");
 		FileSystem.File.WriteAllText("foo\\bar\\file.txt", "some content");
 
-		FileSystem.File.Exists("foo/bar/file.txt").Should().BeTrue();
-		FileSystem.Directory.GetFiles("foo/bar").Length
-			.Should().Be(1);
+		await That(FileSystem.File.Exists("foo/bar/file.txt")).IsTrue();
+		await That(FileSystem.Directory.GetFiles("foo/bar")).HasCount(1);
 	}
 }

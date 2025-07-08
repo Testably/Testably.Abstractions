@@ -4,38 +4,38 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 public partial class GetExtensionTests
 {
 	[Fact]
-	public void GetExtension_Empty_ShouldReturnEmpty()
+	public async Task GetExtension_Empty_ShouldReturnEmpty()
 	{
 		string? result = FileSystem.Path.GetExtension(string.Empty);
 
-		result.Should().BeEmpty();
+		await That(result).IsEmpty();
 	}
 
 	[Fact]
-	public void GetExtension_Null_ShouldReturnNull()
+	public async Task GetExtension_Null_ShouldReturnNull()
 	{
 		string? result = FileSystem.Path.GetExtension(null);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetExtension_ShouldReturnExtensionWithLeadingDot(
+	public async Task GetExtension_ShouldReturnExtensionWithLeadingDot(
 		string directory, string filename, string extension)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
-		              "." + extension;
+					  "." + extension;
 
 		string result = FileSystem.Path.GetExtension(path);
 
-		result.Should().Be("." + extension);
+		await That(result).IsEqualTo("." + extension);
 	}
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void GetExtension_Span_ShouldReturnExtensionWithLeadingDot(
+	public async Task GetExtension_Span_ShouldReturnExtensionWithLeadingDot(
 		string directory, string filename, string extension)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
@@ -43,31 +43,31 @@ public partial class GetExtensionTests
 
 		ReadOnlySpan<char> result = FileSystem.Path.GetExtension(path.AsSpan());
 
-		result.ToString().Should().Be("." + extension);
+		await That(result.ToString()).IsEqualTo("." + extension);
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void GetExtension_StartingDot_ShouldReturnCompleteFileName(
+	public async Task GetExtension_StartingDot_ShouldReturnCompleteFileName(
 		string directory, string filename)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + "." + filename;
 
 		string result = FileSystem.Path.GetExtension(path);
 
-		result.Should().Be("." + filename);
+		await That(result).IsEqualTo("." + filename);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetExtension_TrailingDot_ShouldReturnEmptyString(
+	public async Task GetExtension_TrailingDot_ShouldReturnEmptyString(
 		string directory, string filename)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename + ".";
 
 		string result = FileSystem.Path.GetExtension(path);
 
-		result.Should().Be("");
+		await That(result).IsEqualTo("");
 	}
 }

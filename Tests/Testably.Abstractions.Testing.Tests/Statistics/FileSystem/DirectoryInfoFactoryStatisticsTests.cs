@@ -7,39 +7,39 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 public sealed class DirectoryInfoFactoryStatisticsTests
 {
 	[Fact]
-	public void Method_New_String_ShouldRegisterCall()
+	public async Task Method_New_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
 
 		sut.DirectoryInfo.New(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.DirectoryInfo.ShouldOnlyContainMethodCall(nameof(IDirectoryInfoFactory.New),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.DirectoryInfo).OnlyContainsMethodCall(nameof(IDirectoryInfoFactory.New),
 			path);
 	}
 
 	[Fact]
-	public void Method_Wrap_DirectoryInfo_ShouldRegisterCall()
+	public async Task Method_Wrap_DirectoryInfo_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		DirectoryInfo directoryInfo = new(".");
 
 		sut.DirectoryInfo.Wrap(directoryInfo);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.DirectoryInfo.ShouldOnlyContainMethodCall(nameof(IDirectoryInfoFactory.Wrap),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.DirectoryInfo).OnlyContainsMethodCall(nameof(IDirectoryInfoFactory.Wrap),
 			directoryInfo);
 	}
 
 	[Fact]
-	public void ToString_ShouldBeDirectoryInfo()
+	public async Task ToString_ShouldBeDirectoryInfo()
 	{
 		IPathStatistics<IDirectoryInfoFactory, IDirectoryInfo> sut
 			= new MockFileSystem().Statistics.DirectoryInfo;
 
 		string? result = sut.ToString();
 
-		result.Should().Be("DirectoryInfo");
+		await That(result).IsEqualTo("DirectoryInfo");
 	}
 }

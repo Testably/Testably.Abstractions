@@ -5,105 +5,101 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 public partial class EndsInDirectorySeparatorTests
 {
 	[Fact]
-	public void EndsInDirectorySeparator_Empty_ShouldReturnExpectedResult()
+	public async Task EndsInDirectorySeparator_Empty_ShouldReturnExpectedResult()
 	{
 		bool result = FileSystem.Path.EndsInDirectorySeparator(string.Empty);
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Fact]
-	public void EndsInDirectorySeparator_Null_ShouldReturnExpectedResult()
+	public async Task EndsInDirectorySeparator_Null_ShouldReturnExpectedResult()
 	{
 		bool result = FileSystem.Path.EndsInDirectorySeparator(null!);
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Fact]
-	public void EndsInDirectorySeparator_Span_Empty_ShouldReturnExpectedResult()
+	public async Task EndsInDirectorySeparator_Span_Empty_ShouldReturnExpectedResult()
 	{
 		bool result = FileSystem.Path.EndsInDirectorySeparator(string.Empty.AsSpan());
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Theory]
 	[InlineAutoData('.')]
 	[InlineAutoData('a')]
-	public void
-		EndsInDirectorySeparator_Span_WithoutTrailingDirectorySeparator_ShouldReturnFalse(
+	public async Task EndsInDirectorySeparator_Span_WithoutTrailingDirectorySeparator_ShouldReturnFalse(
 			char lastCharacter, string path)
 	{
 		path += lastCharacter;
 
 		bool result = FileSystem.Path.EndsInDirectorySeparator(path.AsSpan());
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		EndsInDirectorySeparator_Span_WithTrailingAltDirectorySeparator_ShouldReturnTrue(
+	public async Task EndsInDirectorySeparator_Span_WithTrailingAltDirectorySeparator_ShouldReturnTrue(
 			string path)
 	{
 		path += FileSystem.Path.AltDirectorySeparatorChar;
 
 		bool result = FileSystem.Path.EndsInDirectorySeparator(path.AsSpan());
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		EndsInDirectorySeparator_Span_WithTrailingDirectorySeparator_ShouldReturnTrue(
+	public async Task EndsInDirectorySeparator_Span_WithTrailingDirectorySeparator_ShouldReturnTrue(
 			string path)
 	{
 		path += FileSystem.Path.DirectorySeparatorChar;
 
 		bool result = FileSystem.Path.EndsInDirectorySeparator(path.AsSpan());
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 	[Theory]
 	[InlineAutoData('.')]
 	[InlineAutoData('a')]
-	public void
-		EndsInDirectorySeparator_WithoutTrailingDirectorySeparator_ShouldReturnFalse(
+	public async Task EndsInDirectorySeparator_WithoutTrailingDirectorySeparator_ShouldReturnFalse(
 			char lastCharacter, string path)
 	{
 		path += lastCharacter;
 
 		bool result = FileSystem.Path.EndsInDirectorySeparator(path);
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void EndsInDirectorySeparator_WithTrailingAltDirectorySeparator_ShouldReturnTrue(
+	public async Task EndsInDirectorySeparator_WithTrailingAltDirectorySeparator_ShouldReturnTrue(
 		string path)
 	{
 		path += FileSystem.Path.AltDirectorySeparatorChar;
 
 		bool result = FileSystem.Path.EndsInDirectorySeparator(path);
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void EndsInDirectorySeparator_WithTrailingDirectorySeparator_ShouldReturnTrue(
+	public async Task EndsInDirectorySeparator_WithTrailingDirectorySeparator_ShouldReturnTrue(
 		string path)
 	{
 		path += FileSystem.Path.DirectorySeparatorChar;
 
 		bool result = FileSystem.Path.EndsInDirectorySeparator(path);
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 }
 #endif

@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 public partial class PathTests
 {
 	[Fact]
-	public void Path_Empty_ShouldNotThrowException()
+	public async Task Path_Empty_ShouldNotThrowException()
 	{
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
@@ -15,11 +15,11 @@ public partial class PathTests
 			fileSystemWatcher.Path = "";
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Fact]
-	public void Path_Null_ShouldNotThrowException()
+	public async Task Path_Null_ShouldNotThrowException()
 	{
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
@@ -30,7 +30,7 @@ public partial class PathTests
 			fileSystemWatcher.Path = null!;
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]

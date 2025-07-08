@@ -34,7 +34,7 @@ public partial class ReadTests
 
 	[Theory]
 	[AutoData]
-	public void BeginRead_ShouldCopyContentsToBuffer(
+	public async Task BeginRead_ShouldCopyContentsToBuffer(
 		string path, byte[] bytes)
 	{
 		using ManualResetEventSlim ms = new();
@@ -58,7 +58,7 @@ public partial class ReadTests
 		}, null);
 
 		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
-		buffer.Should().BeEquivalentTo(bytes);
+		await That(buffer).IsEqualTo(bytes).InAnyOrder();
 	}
 
 	[Theory]
@@ -149,7 +149,7 @@ public partial class ReadTests
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void Read_AsSpan_ShouldFillBuffer(string path, byte[] bytes)
+	public async Task Read_AsSpan_ShouldFillBuffer(string path, byte[] bytes)
 	{
 		byte[] buffer = new byte[bytes.Length];
 		FileSystem.File.WriteAllBytes(path, bytes);
@@ -157,15 +157,15 @@ public partial class ReadTests
 
 		int result = stream.Read(buffer.AsSpan());
 
-		result.Should().Be(bytes.Length);
-		buffer.Should().BeEquivalentTo(bytes);
+		await That(result).IsEqualTo(bytes.Length);
+		await That(buffer).IsEqualTo(bytes).InAnyOrder();
 	}
 #endif
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void Read_AsSpan_ShouldUseSharedBuffer(string path)
+	public async Task Read_AsSpan_ShouldUseSharedBuffer(string path)
 	{
 		List<int> results = [];
 		using FileSystemStream fileStream1 = FileSystem.FileStream.New(
@@ -186,7 +186,7 @@ public partial class ReadTests
 			results.Add(BitConverter.ToInt32(buffer));
 		}
 
-		results.Should().BeEquivalentTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+		await That(results).IsEqualTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).InAnyOrder();
 	}
 #endif
 
@@ -213,7 +213,7 @@ public partial class ReadTests
 
 	[Theory]
 	[AutoData]
-	public void Read_ShouldFillBuffer(string path, byte[] bytes)
+	public async Task Read_ShouldFillBuffer(string path, byte[] bytes)
 	{
 		byte[] buffer = new byte[bytes.Length];
 		FileSystem.File.WriteAllBytes(path, bytes);
@@ -221,8 +221,8 @@ public partial class ReadTests
 
 		int result = stream.Read(buffer, 0, bytes.Length);
 
-		result.Should().Be(bytes.Length);
-		buffer.Should().BeEquivalentTo(bytes);
+		await That(result).IsEqualTo(bytes.Length);
+		await That(buffer).IsEqualTo(bytes).InAnyOrder();
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
@@ -291,12 +291,12 @@ public partial class ReadTests
 		await FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token);
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		#pragma warning disable CA1835
+#pragma warning disable CA1835
 		int result = await stream.ReadAsync(buffer, 0, bytes.Length, cts.Token);
-		#pragma warning restore CA1835
+#pragma warning restore CA1835
 
-		result.Should().Be(bytes.Length);
-		buffer.Should().BeEquivalentTo(bytes);
+		await That(result).IsEqualTo(bytes.Length);
+		await That(buffer).IsEqualTo(bytes).InAnyOrder();
 	}
 #endif
 
@@ -322,7 +322,7 @@ public partial class ReadTests
 
 	[Theory]
 	[AutoData]
-	public void ReadByte_ShouldReadSingleByteAndAdvancePosition(
+	public async Task ReadByte_ShouldReadSingleByteAndAdvancePosition(
 		string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
@@ -332,9 +332,9 @@ public partial class ReadTests
 		int result1 = stream.ReadByte();
 		int result2 = stream.ReadByte();
 
-		stream.Position.Should().Be(2);
-		result1.Should().Be(bytes[0]);
-		result2.Should().Be(bytes[1]);
+		await That(stream.Position).IsEqualTo(2);
+		await That(result1).IsEqualTo(bytes[0]);
+		await That(result2).IsEqualTo(bytes[1]);
 	}
 
 	[Theory]

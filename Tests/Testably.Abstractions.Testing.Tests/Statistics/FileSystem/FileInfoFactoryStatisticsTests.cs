@@ -7,39 +7,39 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 public class FileInfoFactoryStatisticsTests
 {
 	[Fact]
-	public void Method_New_String_ShouldRegisterCall()
+	public async Task Method_New_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string fileName = "foo";
 
 		sut.FileInfo.New(fileName);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.FileInfo.ShouldOnlyContainMethodCall(nameof(IFileInfoFactory.New),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.FileInfo).OnlyContainsMethodCall(nameof(IFileInfoFactory.New),
 			fileName);
 	}
 
 	[Fact]
-	public void Method_Wrap_FileInfo_ShouldRegisterCall()
+	public async Task Method_Wrap_FileInfo_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		FileInfo fileInfo = new("foo");
 
 		sut.FileInfo.Wrap(fileInfo);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.FileInfo.ShouldOnlyContainMethodCall(nameof(IFileInfoFactory.Wrap),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.FileInfo).OnlyContainsMethodCall(nameof(IFileInfoFactory.Wrap),
 			fileInfo);
 	}
 
 	[Fact]
-	public void ToString_ShouldBeFileInfo()
+	public async Task ToString_ShouldBeFileInfo()
 	{
 		IPathStatistics<IFileInfoFactory, IFileInfo> sut
 			= new MockFileSystem().Statistics.FileInfo;
 
 		string? result = sut.ToString();
 
-		result.Should().Be("FileInfo");
+		await That(result).IsEqualTo("FileInfo");
 	}
 }

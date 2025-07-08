@@ -12,7 +12,7 @@ public partial class EventTests
 {
 	[Theory]
 	[AutoData]
-	public void Changed_ShouldTriggerUntilEventIsRemoved(string path)
+	public async Task Changed_ShouldTriggerUntilEventIsRemoved(string path)
 	{
 		int callCount = 0;
 		FileSystem.InitializeIn(BasePath);
@@ -75,18 +75,18 @@ public partial class EventTests
 			ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		}
 
-		callCount.Should().BeGreaterThanOrEqualTo(1);
+		await That(callCount).IsGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
 		ms1.Reset();
 		ms1.Wait(ExpectSuccess, token).Should().BeTrue();
-		callCount.Should().Be(previousCallCount);
+		await That(callCount).IsEqualTo(previousCallCount);
 		cts.Cancel();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Created_ShouldTriggerUntilEventIsRemoved(string path)
+	public async Task Created_ShouldTriggerUntilEventIsRemoved(string path)
 	{
 		int callCount = 0;
 		FileSystem.Initialize();
@@ -143,20 +143,20 @@ public partial class EventTests
 			ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		}
 
-		callCount.Should().BeGreaterThanOrEqualTo(1);
+		await That(callCount).IsGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
 		ms1.Reset();
 		ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		FileSystem.Directory.CreateDirectory("other" + path);
 		FileSystem.Directory.Delete("other" + path);
-		callCount.Should().Be(previousCallCount);
+		await That(callCount).IsEqualTo(previousCallCount);
 		cts.Cancel();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Deleted_ShouldTriggerUntilEventIsRemoved(string path)
+	public async Task Deleted_ShouldTriggerUntilEventIsRemoved(string path)
 	{
 		int callCount = 0;
 		FileSystem.Initialize();
@@ -213,20 +213,20 @@ public partial class EventTests
 			ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		}
 
-		callCount.Should().BeGreaterThanOrEqualTo(1);
+		await That(callCount).IsGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
 		ms1.Reset();
 		ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		FileSystem.Directory.CreateDirectory("other" + path);
 		FileSystem.Directory.Delete("other" + path);
-		callCount.Should().Be(previousCallCount);
+		await That(callCount).IsEqualTo(previousCallCount);
 		cts.Cancel();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Renamed_ShouldTriggerUntilEventIsRemoved(string path)
+	public async Task Renamed_ShouldTriggerUntilEventIsRemoved(string path)
 	{
 		int callCount = 0;
 		FileSystem.InitializeIn(BasePath);
@@ -285,13 +285,13 @@ public partial class EventTests
 			ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		}
 
-		callCount.Should().BeGreaterThanOrEqualTo(1);
+		await That(callCount).IsGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
 		ms1.Reset();
 		ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		FileSystem.File.Move(path, "other-path");
-		callCount.Should().Be(previousCallCount);
+		await That(callCount).IsEqualTo(previousCallCount);
 		cts.Cancel();
 	}
 }

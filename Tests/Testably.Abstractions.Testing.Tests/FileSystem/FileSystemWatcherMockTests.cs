@@ -35,7 +35,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 
 	[Theory]
 	[AutoData]
-	public void Error_DefaultTo64Messages_ShouldBeTriggeredWhenBufferOverflows(
+	public async Task Error_DefaultTo64Messages_ShouldBeTriggeredWhenBufferOverflows(
 		string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -83,15 +83,15 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path}");
 		}
 
-		block2.Wait(10000, TestContext.Current.CancellationToken).Should().BeTrue();
-		result.Should().NotBeNull();
-		result!.GetException().Should().BeOfType<InternalBufferOverflowException>();
+		await That(block2.Wait(10000, TestContext.Current.CancellationToken)).IsTrue();
+		await That(result).IsNotNull();
+		await That(result!.GetException()).IsExactly<InternalBufferOverflowException>();
 	}
 
 	[Theory]
 	[InlineAutoData(4096)]
 	[InlineAutoData(8192)]
-	public void Error_ShouldBeTriggeredWhenBufferOverflows(
+	public async Task Error_ShouldBeTriggeredWhenBufferOverflows(
 		int internalBufferSize, string path)
 	{
 		int maxMessages = internalBufferSize / 128;
@@ -141,15 +141,15 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path}");
 		}
 
-		block2.Wait(5000, TestContext.Current.CancellationToken).Should().BeTrue();
-		result.Should().NotBeNull();
-		result!.GetException().Should().BeOfType<InternalBufferOverflowException>();
+		await That(block2.Wait(5000, TestContext.Current.CancellationToken)).IsTrue();
+		await That(result).IsNotNull();
+		await That(result!.GetException()).IsExactly<InternalBufferOverflowException>();
 	}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 	[Theory]
 	[AutoData]
-	public void Filter_ShouldResetFiltersToOnlyContainASingleValue(
+	public async Task Filter_ShouldResetFiltersToOnlyContainASingleValue(
 		string[] filters, string expectedFilter)
 	{
 		using IFileSystemWatcher fileSystemWatcher =
@@ -159,19 +159,19 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			fileSystemWatcher.Filters.Add(filter);
 		}
 
-		fileSystemWatcher.Filters.Count.Should().Be(filters.Length);
+		await That(fileSystemWatcher.Filters.Count).IsEqualTo(filters.Length);
 
 		fileSystemWatcher.Filter = expectedFilter;
 
-		fileSystemWatcher.Filters.Count.Should().Be(1);
-		fileSystemWatcher.Filters.Should().ContainSingle(expectedFilter);
-		fileSystemWatcher.Filter.Should().Be(expectedFilter);
+		await That(fileSystemWatcher.Filters.Count).IsEqualTo(1);
+		await That(fileSystemWatcher.Filters).HasSingle().Because(expectedFilter);
+		await That(fileSystemWatcher.Filter).IsEqualTo(expectedFilter);
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void InternalBufferSize_ShouldResetQueue(string path1, string path2)
+	public async Task InternalBufferSize_ShouldResetQueue(string path1, string path2)
 	{
 		Skip.If(true, "Brittle test fails on build system (disabled in #284)");
 
@@ -231,8 +231,8 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path2}");
 		}
 
-		block2.Wait(100, TestContext.Current.CancellationToken).Should().BeFalse();
-		result.Should().BeNull();
+		await That(block2.Wait(100, TestContext.Current.CancellationToken)).IsFalse();
+		await That(result).IsNull();
 	}
 
 #if CAN_SIMULATE_OTHER_OS
@@ -242,7 +242,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		[InlineAutoData(SimulationMode.Linux)]
 		[InlineAutoData(SimulationMode.MacOS)]
 		[InlineAutoData(SimulationMode.Windows)]
-		public void FileSystemEventArgs_ShouldUseDirectorySeparatorFromSimulatedFileSystem(
+		public async Task FileSystemEventArgs_ShouldUseDirectorySeparatorFromSimulatedFileSystem(
 			SimulationMode simulationMode, string parentDirectory, string directoryName)
 		{
 			MockFileSystem fileSystem = new(o => o.SimulatingOperatingSystem(simulationMode));
@@ -273,10 +273,10 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			fileSystem.Directory.CreateDirectory(expectedName);
 			ms.Wait(5000, TestContext.Current.CancellationToken);
 
-			result.Should().NotBeNull();
-			result!.FullPath.Should().Be(expectedFullPath);
-			result.Name.Should().Be(expectedName);
-			result.ChangeType.Should().Be(WatcherChangeTypes.Created);
+			await That(result).IsNotNull();
+			await That(result!.FullPath).IsEqualTo(expectedFullPath);
+			await That(result.Name).IsEqualTo(expectedName);
+			await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
 		}
 #endif
 
@@ -285,7 +285,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		[InlineAutoData(SimulationMode.Linux)]
 		[InlineAutoData(SimulationMode.MacOS)]
 		[InlineAutoData(SimulationMode.Windows)]
-		public void RenamedEventArgs_ShouldUseDirectorySeparatorFromSimulatedFileSystem(
+		public async Task RenamedEventArgs_ShouldUseDirectorySeparatorFromSimulatedFileSystem(
 			SimulationMode simulationMode, string parentDirectory,
 			string sourceName, string destinationName)
 		{
@@ -320,12 +320,12 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			fileSystem.File.Move(expectedOldFullPath, expectedFullPath);
 			ms.Wait(5000, TestContext.Current.CancellationToken);
 
-			result.Should().NotBeNull();
-			result!.FullPath.Should().Be(expectedFullPath);
-			result.Name.Should().Be(destinationName);
-			result!.OldFullPath.Should().Be(expectedOldFullPath);
-			result.OldName.Should().Be(sourceName);
-			result.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
+			await That(result).IsNotNull();
+			await That(result!.FullPath).IsEqualTo(expectedFullPath);
+			await That(result.Name).IsEqualTo(destinationName);
+			await That(result!.OldFullPath).IsEqualTo(expectedOldFullPath);
+			await That(result.OldName).IsEqualTo(sourceName);
+			await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
 		}
 	}
 #endif

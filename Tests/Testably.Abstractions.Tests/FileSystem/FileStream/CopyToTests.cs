@@ -29,7 +29,7 @@ public partial class CopyToTests
 
 	[Theory]
 	[AutoData]
-	public void CopyTo_ShouldCopyBytes(
+	public async Task CopyTo_ShouldCopyBytes(
 		string path, byte[] bytes)
 	{
 		byte[] buffer = new byte[bytes.Length];
@@ -40,7 +40,7 @@ public partial class CopyToTests
 		stream.CopyTo(destination);
 
 		destination.Flush();
-		buffer.Should().BeEquivalentTo(bytes);
+		await That(buffer).IsEqualTo(bytes).InAnyOrder();
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
@@ -80,7 +80,7 @@ public partial class CopyToTests
 		await stream.CopyToAsync(destination, TestContext.Current.CancellationToken);
 
 		await destination.FlushAsync(TestContext.Current.CancellationToken);
-		buffer.Should().BeEquivalentTo(bytes);
+		await That(buffer).IsEqualTo(bytes).InAnyOrder();
 	}
 #endif
 
@@ -103,7 +103,7 @@ public partial class CopyToTests
 
 		Exception? exception = await Record.ExceptionAsync(Act);
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>();
+		await That(exception).IsExactly<ArgumentOutOfRangeException>();
 	}
 #endif
 
@@ -120,11 +120,8 @@ public partial class CopyToTests
 		{
 			await source.CopyToAsync(destination, TestContext.Current.CancellationToken);
 		}
-		
-		Exception? exception = await Record.ExceptionAsync(Act);
 
-		exception.Should().BeOfType<ObjectDisposedException>()
-			.Which.Message.Should().Match("Cannot access a*");
+		await That(Act).ThrowsExactly<ObjectDisposedException>().WithMessage("Cannot access a*").AsWildcard();
 	}
 #endif
 
@@ -140,10 +137,7 @@ public partial class CopyToTests
 			await source.CopyToAsync(null!, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.Message.Should().Match("*cannot be null*");
+		await That(Act).ThrowsExactly<ArgumentNullException>().WithMessage("*cannot be null*").AsWildcard();
 	}
 #endif
 
@@ -161,10 +155,7 @@ public partial class CopyToTests
 			await source.CopyToAsync(destination, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.Message.Should().Match("Stream does not support writing*");
+		await That(Act).ThrowsExactly<NotSupportedException>().WithMessage("Stream does not support writing*").AsWildcard();
 	}
 #endif
 
@@ -183,10 +174,7 @@ public partial class CopyToTests
 			await source.CopyToAsync(destination, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeOfType<ObjectDisposedException>()
-			.Which.Message.Should().Match("Cannot access a*");
+		await That(Act).ThrowsExactly<ObjectDisposedException>().WithMessage("Cannot access a*").AsWildcard();
 	}
 #endif
 
@@ -204,10 +192,7 @@ public partial class CopyToTests
 			await source.CopyToAsync(destination, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.Message.Should().Match("Stream does not support reading*");
+		await That(Act).ThrowsExactly<NotSupportedException>().WithMessage("Stream does not support reading*").AsWildcard();
 	}
 #endif
 }

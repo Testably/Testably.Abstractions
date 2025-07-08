@@ -9,7 +9,7 @@ public partial class WriteAllLinesTests
 {
 	[Theory]
 	[AutoData]
-	public void WriteAllLines_Enumerable_PreviousFile_ShouldOverwriteFileWithText(
+	public async Task WriteAllLines_Enumerable_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string[] contents)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
@@ -17,34 +17,34 @@ public partial class WriteAllLinesTests
 		FileSystem.File.WriteAllLines(path, contents.AsEnumerable());
 
 		string[] result = FileSystem.File.ReadAllLines(path);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllLines_Enumerable_ShouldCreateFileWithText(
+	public async Task WriteAllLines_Enumerable_ShouldCreateFileWithText(
 		string path, string[] contents)
 	{
 		FileSystem.File.WriteAllLines(path, contents.AsEnumerable());
 
 		string[] result = FileSystem.File.ReadAllLines(path);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllLines_Enumerable_WithEncoding_ShouldCreateFileWithText(
+	public async Task WriteAllLines_Enumerable_WithEncoding_ShouldCreateFileWithText(
 		Encoding encoding, string path, string[] contents)
 	{
 		FileSystem.File.WriteAllLines(path, contents.AsEnumerable(), encoding);
 
 		string[] result = FileSystem.File.ReadAllLines(path, encoding);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllLines_PreviousFile_ShouldOverwriteFileWithText(
+	public async Task WriteAllLines_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string[] contents)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
@@ -52,17 +52,17 @@ public partial class WriteAllLinesTests
 		FileSystem.File.WriteAllLines(path, contents);
 
 		string[] result = FileSystem.File.ReadAllLines(path);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllLines_ShouldCreateFileWithText(string path, string[] contents)
+	public async Task WriteAllLines_ShouldCreateFileWithText(string path, string[] contents)
 	{
 		FileSystem.File.WriteAllLines(path, contents);
 
 		string[] result = FileSystem.File.ReadAllLines(path);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -104,12 +104,12 @@ public partial class WriteAllLinesTests
 
 	[Theory]
 	[AutoData]
-	public void WriteAllLines_WithEncoding_ShouldCreateFileWithText(
+	public async Task WriteAllLines_WithEncoding_ShouldCreateFileWithText(
 		Encoding encoding, string path, string[] contents)
 	{
 		FileSystem.File.WriteAllLines(path, contents, encoding);
 
 		string[] result = FileSystem.File.ReadAllLines(path, encoding);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		await That(result).IsEqualTo(contents);
 	}
 }

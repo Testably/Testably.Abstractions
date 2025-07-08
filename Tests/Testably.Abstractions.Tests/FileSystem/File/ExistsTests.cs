@@ -5,28 +5,28 @@ public partial class ExistsTests
 {
 	[Theory]
 	[AutoData]
-	public void Exists_Directory_ShouldReturnFalse(string path)
+	public async Task Exists_Directory_ShouldReturnFalse(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
 		bool result = FileSystem.File.Exists(path);
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Fact]
-	public void Exists_Empty_ShouldReturnFalse()
+	public async Task Exists_Empty_ShouldReturnFalse()
 	{
 		bool result = FileSystem.File.Exists(string.Empty);
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Fact]
-	public void Exists_Null_ShouldReturnFalse()
+	public async Task Exists_Null_ShouldReturnFalse()
 	{
 		bool result = FileSystem.File.Exists(null);
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 }

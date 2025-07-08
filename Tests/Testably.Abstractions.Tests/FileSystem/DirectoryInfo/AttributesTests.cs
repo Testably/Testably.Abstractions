@@ -7,7 +7,7 @@ public partial class AttributesTests
 {
 	[Theory]
 	[AutoData]
-	public void Attributes_ClearAllAttributes_ShouldRemainDirectory(string path)
+	public async Task Attributes_ClearAllAttributes_ShouldRemainDirectory(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -16,13 +16,13 @@ public partial class AttributesTests
 
 		FileSystem.Directory.Exists(path).Should().BeTrue();
 		FileSystem.File.Exists(path).Should().BeFalse();
-		sut.Attributes.Should().HaveFlag(FileAttributes.Directory);
+		await That(sut.Attributes).HasFlag(FileAttributes.Directory);
 	}
 
 	[Theory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
 	[InlineAutoData(FileAttributes.Normal)]
-	public void Attributes_WhenFileIsExisting_SetterShouldChangeAttributesOnFileSystem(
+	public async Task Attributes_WhenFileIsExisting_SetterShouldChangeAttributesOnFileSystem(
 		FileAttributes attributes, string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -32,7 +32,7 @@ public partial class AttributesTests
 		sut1.Attributes = attributes;
 		FileAttributes expectedAttributes = sut1.Attributes;
 
-		sut2.Attributes.Should().Be(expectedAttributes);
+		await That(sut2.Attributes).IsEqualTo(expectedAttributes);
 	}
 
 	[Fact]
@@ -49,11 +49,11 @@ public partial class AttributesTests
 	}
 
 	[Fact]
-	public void Attributes_WhenFileIsMissing_ShouldReturnMinusOne()
+	public async Task Attributes_WhenFileIsMissing_ShouldReturnMinusOne()
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("missing file");
 		FileAttributes expected = (FileAttributes)(-1);
 
-		sut.Attributes.Should().Be(expected);
+		await That(sut.Attributes).IsEqualTo(expected);
 	}
 }

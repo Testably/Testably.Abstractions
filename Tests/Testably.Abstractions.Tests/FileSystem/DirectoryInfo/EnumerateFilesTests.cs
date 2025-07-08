@@ -10,8 +10,7 @@ public partial class EnumerateFilesTests
 {
 	[Theory]
 	[AutoData]
-	public void
-		EnumerateFiles_SearchOptionAllFiles_ShouldReturnAllFiles(
+	public async Task EnumerateFiles_SearchOptionAllFiles_ShouldReturnAllFiles(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -28,10 +27,10 @@ public partial class EnumerateFilesTests
 		IFileInfo[] result = baseDirectory
 			.EnumerateFiles("*", SearchOption.AllDirectories).ToArray();
 
-		result.Length.Should().Be(3);
-		result.Should().Contain(d => d.Name == initialized[2].Name);
-		result.Should().Contain(d => d.Name == initialized[3].Name);
-		result.Should().Contain(d => d.Name == initialized[5].Name);
+		await That(result.Length).IsEqualTo(3);
+		await That(result).Contains(d => d.Name == initialized[2].Name);
+		await That(result).Contains(d => d.Name == initialized[3].Name);
+		await That(result).Contains(d => d.Name == initialized[5].Name);
 	}
 
 	[Theory]
@@ -48,7 +47,7 @@ public partial class EnumerateFilesTests
 	[InlineData(true, "abc?", "abc")]
 	[InlineData(false, "ab?c", "abc")]
 	[InlineData(false, "ac", "abc")]
-	public void EnumerateFiles_SearchPattern_ShouldReturnExpectedValue(
+	public async Task EnumerateFiles_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
 		IDirectoryInfo baseDirectory =
@@ -61,20 +60,17 @@ public partial class EnumerateFilesTests
 
 		if (expectToBeFound)
 		{
-			result.Should().ContainSingle(d => d.Name == fileName,
-				$"it should match '{searchPattern}'");
+			await That(result).HasSingle().Matching(d => d.Name == fileName).Because($"it should match '{searchPattern}'");
 		}
 		else
 		{
-			result.Should()
-				.BeEmpty($"{fileName} should not match '{searchPattern}'");
+			await That(result).IsEmpty().Because($"{fileName} should not match '{searchPattern}'");
 		}
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Fact]
-	public void
-		EnumerateFiles_WithEnumerationOptions_ShouldConsiderSetOptions()
+	public async Task EnumerateFiles_WithEnumerationOptions_ShouldConsiderSetOptions()
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()
@@ -93,10 +89,10 @@ public partial class EnumerateFilesTests
 					AttributesToSkip = FileAttributes.System,
 				}).ToArray();
 
-		result.Length.Should().Be(1);
-		result.Should().NotContain(d => d.Name == "foo");
-		result.Should().Contain(d => d.Name == "xyz");
-		result.Should().NotContain(d => d.Name == "bar");
+		await That(result.Length).IsEqualTo(1);
+		await That(result).DoesNotContain(d => d.Name == "foo");
+		await That(result).Contains(d => d.Name == "xyz");
+		await That(result).DoesNotContain(d => d.Name == "bar");
 	}
 #endif
 
@@ -118,8 +114,7 @@ public partial class EnumerateFilesTests
 	}
 
 	[Fact]
-	public void
-		EnumerateFiles_WithoutSearchString_ShouldReturnAllDirectFiles()
+	public async Task EnumerateFiles_WithoutSearchString_ShouldReturnAllDirectFiles()
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()
@@ -132,14 +127,14 @@ public partial class EnumerateFilesTests
 		IFileInfo[] result = baseDirectory
 			.EnumerateFiles().ToArray();
 
-		result.Length.Should().Be(2);
-		result.Should().Contain(d => d.Name == "foo");
-		result.Should().NotContain(d => d.Name == "xyz");
-		result.Should().Contain(d => d.Name == "bar");
+		await That(result.Length).IsEqualTo(2);
+		await That(result).Contains(d => d.Name == "foo");
+		await That(result).DoesNotContain(d => d.Name == "xyz");
+		await That(result).Contains(d => d.Name == "bar");
 	}
 
 	[Fact]
-	public void EnumerateFiles_WithSearchPattern_ShouldReturnMatchingFiles()
+	public async Task EnumerateFiles_WithSearchPattern_ShouldReturnMatchingFiles()
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()
@@ -150,7 +145,7 @@ public partial class EnumerateFilesTests
 		IEnumerable<IFileInfo> result = baseDirectory
 			.EnumerateFiles("foo").ToArray();
 
-		result.Should().ContainSingle(d => d.Name == "foo");
+		await That(result).HasSingle().Matching(d => d.Name == "foo");
 		result.Count().Should().Be(1);
 	}
 
@@ -171,12 +166,11 @@ public partial class EnumerateFilesTests
 		IEnumerable<IFileInfo> result = baseDirectory
 			.EnumerateFiles("xyz", SearchOption.AllDirectories);
 
-		result.Count().Should().Be(2);
+		await That(result).HasCount(2);
 	}
 
 	[Fact]
-	public void
-		EnumerateFiles_WithSearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
+	public async Task EnumerateFiles_WithSearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()
@@ -190,15 +184,15 @@ public partial class EnumerateFilesTests
 
 		if (Test.RunsOnWindows)
 		{
-			result1.Count.Should().Be(1);
+			await That(result1.Count).IsEqualTo(1);
 			FileSystem.File.ReadAllText(result1.Single().FullName).Should().Be("inner");
-			result2.Count.Should().Be(1);
+			await That(result2.Count).IsEqualTo(1);
 			FileSystem.File.ReadAllText(result2.Single().FullName).Should().Be("outer");
 		}
 		else
 		{
-			result1.Should().BeEmpty();
-			result2.Should().BeEmpty();
+			await That(result1).IsEmpty();
+			await That(result2).IsEmpty();
 		}
 	}
 }

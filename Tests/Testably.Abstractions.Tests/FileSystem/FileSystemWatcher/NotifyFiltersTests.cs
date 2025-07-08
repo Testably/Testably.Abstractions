@@ -8,7 +8,7 @@ public partial class NotifyFiltersTests
 {
 	[Theory]
 	[AutoData]
-	public void NotifyFilter_AppendFile_ShouldNotNotifyOnOtherFilters(string fileName)
+	public async Task NotifyFilter_AppendFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -31,7 +31,7 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName |
-		                                 NotifyFilters.FileName;
+										 NotifyFilters.FileName;
 		if (!Test.RunsOnMac)
 		{
 			fileSystemWatcher.NotifyFilter |= NotifyFilters.CreationTime;
@@ -51,7 +51,7 @@ public partial class NotifyFiltersTests
 		FileSystem.File.AppendAllText(fileName, "foo");
 
 		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
@@ -60,7 +60,7 @@ public partial class NotifyFiltersTests
 	[InlineAutoData(NotifyFilters.LastWrite)]
 	[InlineAutoData(NotifyFilters.Security)]
 	[InlineAutoData(NotifyFilters.Size)]
-	public void NotifyFilter_AppendFile_ShouldTriggerChangedEventOnNotifyFilters(
+	public async Task NotifyFilter_AppendFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string fileName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -107,15 +107,15 @@ public partial class NotifyFiltersTests
 		FileSystem.File.AppendAllText(fileName, "foo");
 
 		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
-		result.Should().NotBeNull();
-		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(fileName));
-		result.ChangeType.Should().Be(WatcherChangeTypes.Changed);
-		result.Name.Should().Be(FileSystem.Path.GetFileName(fileName));
+		await That(result).IsNotNull();
+		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(fileName));
+		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Changed);
+		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(fileName));
 	}
 
 	[Theory]
 	[AutoData]
-	public void NotifyFilter_CreateDirectory_ShouldNotNotifyOnOtherFilters(string path)
+	public async Task NotifyFilter_CreateDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -138,23 +138,23 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
-		                                 NotifyFilters.CreationTime |
-		                                 NotifyFilters.FileName |
-		                                 NotifyFilters.LastAccess |
-		                                 NotifyFilters.LastWrite |
-		                                 NotifyFilters.Security |
-		                                 NotifyFilters.Size;
+										 NotifyFilters.CreationTime |
+										 NotifyFilters.FileName |
+										 NotifyFilters.LastAccess |
+										 NotifyFilters.LastWrite |
+										 NotifyFilters.Security |
+										 NotifyFilters.Size;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
 		FileSystem.Directory.CreateDirectory(path);
 
 		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[InlineAutoData(NotifyFilters.DirectoryName)]
-	public void NotifyFilter_CreateDirectory_ShouldTriggerCreatedEventOnNotifyFilters(
+	public async Task NotifyFilter_CreateDirectory_ShouldTriggerCreatedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -183,15 +183,15 @@ public partial class NotifyFiltersTests
 		FileSystem.Directory.CreateDirectory(path);
 
 		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
-		result.Should().NotBeNull();
-		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
-		result.ChangeType.Should().Be(WatcherChangeTypes.Created);
-		result.Name.Should().Be(FileSystem.Path.GetFileName(path));
+		await That(result).IsNotNull();
+		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
+		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
+		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(path));
 	}
 
 	[Theory]
 	[AutoData]
-	public void NotifyFilter_CreateFile_ShouldNotNotifyOnOtherFilters(string path)
+	public async Task NotifyFilter_CreateFile_ShouldNotNotifyOnOtherFilters(string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -214,23 +214,23 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
-		                                 NotifyFilters.CreationTime |
-		                                 NotifyFilters.DirectoryName |
-		                                 NotifyFilters.LastAccess |
-		                                 NotifyFilters.LastWrite |
-		                                 NotifyFilters.Security |
-		                                 NotifyFilters.Size;
+										 NotifyFilters.CreationTime |
+										 NotifyFilters.DirectoryName |
+										 NotifyFilters.LastAccess |
+										 NotifyFilters.LastWrite |
+										 NotifyFilters.Security |
+										 NotifyFilters.Size;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
 		FileSystem.File.WriteAllText(path, "foo");
 
 		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[InlineAutoData(NotifyFilters.FileName)]
-	public void NotifyFilter_CreateFile_ShouldTriggerCreatedEventOnNotifyFilters(
+	public async Task NotifyFilter_CreateFile_ShouldTriggerCreatedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -259,15 +259,15 @@ public partial class NotifyFiltersTests
 		FileSystem.File.WriteAllText(path, "foo");
 
 		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
-		result.Should().NotBeNull();
-		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
-		result.ChangeType.Should().Be(WatcherChangeTypes.Created);
-		result.Name.Should().Be(FileSystem.Path.GetFileName(path));
+		await That(result).IsNotNull();
+		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
+		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
+		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(path));
 	}
 
 	[Theory]
 	[AutoData]
-	public void NotifyFilter_DeleteDirectory_ShouldNotNotifyOnOtherFilters(string path)
+	public async Task NotifyFilter_DeleteDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -290,23 +290,23 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
-		                                 NotifyFilters.CreationTime |
-		                                 NotifyFilters.FileName |
-		                                 NotifyFilters.LastAccess |
-		                                 NotifyFilters.LastWrite |
-		                                 NotifyFilters.Security |
-		                                 NotifyFilters.Size;
+										 NotifyFilters.CreationTime |
+										 NotifyFilters.FileName |
+										 NotifyFilters.LastAccess |
+										 NotifyFilters.LastWrite |
+										 NotifyFilters.Security |
+										 NotifyFilters.Size;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
 		FileSystem.Directory.Delete(path);
 
 		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[InlineAutoData(NotifyFilters.DirectoryName)]
-	public void NotifyFilter_DeleteDirectory_ShouldTriggerDeletedEventOnNotifyFilters(
+	public async Task NotifyFilter_DeleteDirectory_ShouldTriggerDeletedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -335,15 +335,15 @@ public partial class NotifyFiltersTests
 		FileSystem.Directory.Delete(path);
 
 		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
-		result.Should().NotBeNull();
-		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
-		result.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
-		result.Name.Should().Be(FileSystem.Path.GetFileName(path));
+		await That(result).IsNotNull();
+		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
+		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
+		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(path));
 	}
 
 	[Theory]
 	[AutoData]
-	public void NotifyFilter_DeleteFile_ShouldNotNotifyOnOtherFilters(string path)
+	public async Task NotifyFilter_DeleteFile_ShouldNotNotifyOnOtherFilters(string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -366,23 +366,23 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
-		                                 NotifyFilters.CreationTime |
-		                                 NotifyFilters.DirectoryName |
-		                                 NotifyFilters.LastAccess |
-		                                 NotifyFilters.LastWrite |
-		                                 NotifyFilters.Security |
-		                                 NotifyFilters.Size;
+										 NotifyFilters.CreationTime |
+										 NotifyFilters.DirectoryName |
+										 NotifyFilters.LastAccess |
+										 NotifyFilters.LastWrite |
+										 NotifyFilters.Security |
+										 NotifyFilters.Size;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
 		FileSystem.File.Delete(path);
 
 		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[InlineAutoData(NotifyFilters.FileName)]
-	public void NotifyFilter_DeleteFile_ShouldTriggerDeletedEventOnNotifyFilters(
+	public async Task NotifyFilter_DeleteFile_ShouldTriggerDeletedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -411,16 +411,15 @@ public partial class NotifyFiltersTests
 		FileSystem.File.Delete(path);
 
 		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
-		result.Should().NotBeNull();
-		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
-		result.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
-		result.Name.Should().Be(FileSystem.Path.GetFileName(path));
+		await That(result).IsNotNull();
+		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
+		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
+		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(path));
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		NotifyFilter_MoveFile_DifferentDirectories_ShouldNotifyOnLinuxOrMac(
+	public async Task NotifyFilter_MoveFile_DifferentDirectories_ShouldNotifyOnLinuxOrMac(
 			string sourcePath, string sourceName,
 			string destinationPath, string destinationName)
 	{
@@ -457,21 +456,17 @@ public partial class NotifyFiltersTests
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
 		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
-		result.Should().NotBeNull();
-		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
-		result.FullPath.Should()
-			.Be(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
-		result.Name.Should()
-			.Be(FileSystem.Path.Combine(destinationPath, destinationName));
-		result.OldFullPath.Should()
-			.Be(FileSystem.Path.Combine(BasePath, sourcePath, sourceName));
-		result.OldName.Should().Be(FileSystem.Path.Combine(sourcePath, sourceName));
+		await That(result).IsNotNull();
+		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
+		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
+		await That(result.Name).IsEqualTo(FileSystem.Path.Combine(destinationPath, destinationName));
+		await That(result.OldFullPath).IsEqualTo(FileSystem.Path.Combine(BasePath, sourcePath, sourceName));
+		await That(result.OldName).IsEqualTo(FileSystem.Path.Combine(sourcePath, sourceName));
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		NotifyFilter_MoveFile_DifferentDirectories_ShouldNotNotify_OnWindows(
+	public async Task NotifyFilter_MoveFile_DifferentDirectories_ShouldNotNotify_OnWindows(
 			string sourcePath, string sourceName,
 			string destinationPath, string destinationName)
 	{
@@ -508,12 +503,12 @@ public partial class NotifyFiltersTests
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
 		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void NotifyFilter_MoveFile_ShouldNotNotifyOnOtherFilters(
+	public async Task NotifyFilter_MoveFile_ShouldNotNotifyOnOtherFilters(
 		string sourceName, string destinationName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -538,24 +533,24 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
-		                                 NotifyFilters.CreationTime |
-		                                 NotifyFilters.DirectoryName |
-		                                 NotifyFilters.LastAccess |
-		                                 NotifyFilters.LastWrite |
-		                                 NotifyFilters.Security |
-		                                 NotifyFilters.Size;
+										 NotifyFilters.CreationTime |
+										 NotifyFilters.DirectoryName |
+										 NotifyFilters.LastAccess |
+										 NotifyFilters.LastWrite |
+										 NotifyFilters.Security |
+										 NotifyFilters.Size;
 
 		fileSystemWatcher.EnableRaisingEvents = true;
 
 		FileSystem.File.Move(sourceName, destinationName);
 
 		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[InlineAutoData(NotifyFilters.FileName)]
-	public void NotifyFilter_MoveFile_ShouldTriggerChangedEventOnNotifyFilters(
+	public async Task NotifyFilter_MoveFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string sourceName, string destinationName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -587,17 +582,17 @@ public partial class NotifyFiltersTests
 		FileSystem.File.Move(sourceName, destinationName);
 
 		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
-		result.Should().NotBeNull();
-		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
-		result.FullPath.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		result.Name.Should().Be(FileSystem.Path.GetFileName(destinationName));
-		result.OldFullPath.Should().Be(FileSystem.Path.GetFullPath(sourceName));
-		result.OldName.Should().Be(FileSystem.Path.GetFileName(sourceName));
+		await That(result).IsNotNull();
+		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
+		await That(result.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
+		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(destinationName));
+		await That(result.OldFullPath).IsEqualTo(FileSystem.Path.GetFullPath(sourceName));
+		await That(result.OldName).IsEqualTo(FileSystem.Path.GetFileName(sourceName));
 	}
 
 	[Theory]
 	[AutoData]
-	public void NotifyFilter_WriteFile_ShouldNotNotifyOnOtherFilters(string fileName)
+	public async Task NotifyFilter_WriteFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -621,7 +616,7 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName |
-		                                 NotifyFilters.FileName;
+										 NotifyFilters.FileName;
 		if (!Test.RunsOnMac)
 		{
 			fileSystemWatcher.NotifyFilter |= NotifyFilters.CreationTime;
@@ -641,7 +636,7 @@ public partial class NotifyFiltersTests
 		FileSystem.File.WriteAllText(fileName, "foo");
 
 		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
@@ -650,7 +645,7 @@ public partial class NotifyFiltersTests
 	[InlineAutoData(NotifyFilters.LastWrite)]
 	[InlineAutoData(NotifyFilters.Security)]
 	[InlineAutoData(NotifyFilters.Size)]
-	public void NotifyFilter_WriteFile_ShouldTriggerChangedEventOnNotifyFilters(
+	public async Task NotifyFilter_WriteFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string fileName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -697,9 +692,9 @@ public partial class NotifyFiltersTests
 		FileSystem.File.WriteAllText(fileName, "foo");
 
 		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
-		result.Should().NotBeNull();
-		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(fileName));
-		result.ChangeType.Should().Be(WatcherChangeTypes.Changed);
-		result.Name.Should().Be(FileSystem.Path.GetFileName(fileName));
+		await That(result).IsNotNull();
+		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(fileName));
+		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Changed);
+		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(fileName));
 	}
 }

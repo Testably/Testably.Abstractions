@@ -24,35 +24,35 @@ public partial class CreateTextTests
 #if NET8_0_OR_GREATER
 	[Theory]
 	[AutoData]
-	public void CreateText_ShouldRefreshExistsCache(
+	public async Task CreateText_ShouldRefreshExistsCache(
 		string path, string appendText)
 	{
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
-		fileInfo.Exists.Should().BeFalse();
+		await That(fileInfo.Exists).IsFalse();
 
 		using (StreamWriter stream = fileInfo.CreateText())
 		{
 			stream.Write(appendText);
 		}
 
-		fileInfo.Exists.Should().BeTrue();
+		await That(fileInfo.Exists).IsTrue();
 		FileSystem.File.Exists(path).Should().BeTrue();
 	}
 #else
 	[Theory]
 	[AutoData]
-	public void CreateText_ShouldNotRefreshExistsCache(
+	public async Task CreateText_ShouldNotRefreshExistsCache(
 		string path, string appendText)
 	{
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
-		fileInfo.Exists.Should().BeFalse();
+		await That(fileInfo.Exists).IsFalse();
 
 		using (StreamWriter stream = fileInfo.CreateText())
 		{
 			stream.Write(appendText);
 		}
 
-		fileInfo.Exists.Should().BeFalse();
+		await That(fileInfo.Exists).IsFalse();
 		FileSystem.File.Exists(path).Should().BeTrue();
 	}
 #endif

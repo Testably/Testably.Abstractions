@@ -12,7 +12,7 @@ public partial class IsPathFullyQualifiedTests
 	[InlineData(@"\\", true, TestOS.Windows)]
 	[InlineData("/?", true, TestOS.Windows)]
 	[InlineData(@"\?", true, TestOS.Windows)]
-	public void IsPathFullyQualified_EdgeCases_ShouldReturnExpectedValue(
+	public async Task IsPathFullyQualified_EdgeCases_ShouldReturnExpectedValue(
 		string path, bool expected, TestOS operatingSystem)
 	{
 		Skip.IfNot(Test.RunsOn(operatingSystem));
@@ -20,53 +20,53 @@ public partial class IsPathFullyQualifiedTests
 		bool result = FileSystem.Path
 			.IsPathFullyQualified(path);
 
-		result.Should().Be(expected);
+		await That(result).IsEqualTo(expected);
 	}
 
 	[Theory]
 	[AutoData]
-	public void IsPathFullyQualified_PrefixedRoot_ShouldReturnTrue(
+	public async Task IsPathFullyQualified_PrefixedRoot_ShouldReturnTrue(
 		string directory)
 	{
 		string path = FileTestHelper.RootDrive(Test, directory);
 		bool result = FileSystem.Path.IsPathFullyQualified(path);
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void IsPathFullyQualified_Span_PrefixedRoot_ShouldReturnTrue(
+	public async Task IsPathFullyQualified_Span_PrefixedRoot_ShouldReturnTrue(
 		string directory)
 	{
 		string path = FileTestHelper.RootDrive(Test, directory);
 		bool result = FileSystem.Path.IsPathFullyQualified(path.AsSpan());
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 #endif
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void IsPathFullyQualified_Span_WithoutPrefixedRoot_ShouldReturnFalse(
+	public async Task IsPathFullyQualified_Span_WithoutPrefixedRoot_ShouldReturnFalse(
 		string path)
 	{
 		bool result = FileSystem.Path.IsPathFullyQualified(path.AsSpan());
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void IsPathFullyQualified_WithoutPrefixedRoot_ShouldReturnFalse(
+	public async Task IsPathFullyQualified_WithoutPrefixedRoot_ShouldReturnFalse(
 		string path)
 	{
 		bool result = FileSystem.Path.IsPathFullyQualified(path);
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 }
 #endif

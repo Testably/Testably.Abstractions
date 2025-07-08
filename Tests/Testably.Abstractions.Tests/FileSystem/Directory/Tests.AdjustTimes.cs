@@ -4,7 +4,7 @@ public partial class Tests
 {
 	[Theory]
 	[AutoData]
-	public void AdjustTimes_WhenCreatingAFile_ShouldAdjustTimes(
+	public async Task AdjustTimes_WhenCreatingAFile_ShouldAdjustTimes(
 		string path1, string path2, string fileName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -30,8 +30,7 @@ public partial class Tests
 		{
 			parentCreationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			parentLastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(parentLastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -39,8 +38,7 @@ public partial class Tests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		parentLastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(parentLastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 
 		DateTime rootCreationTime = FileSystem.Directory.GetCreationTimeUtc(path1);
 		DateTime rootLastAccessTime = FileSystem.Directory.GetLastAccessTimeUtc(path1);
@@ -57,7 +55,7 @@ public partial class Tests
 #if FEATURE_FILESYSTEM_LINK
 	[Theory]
 	[AutoData]
-	public void AdjustTimes_WhenCreatingASymbolicLink_ShouldAdjustTimes(
+	public async Task AdjustTimes_WhenCreatingASymbolicLink_ShouldAdjustTimes(
 		string path1, string path2, string fileName, string pathToTarget)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -85,8 +83,7 @@ public partial class Tests
 		{
 			parentCreationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			parentLastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(parentLastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -94,8 +91,7 @@ public partial class Tests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		parentLastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(parentLastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 
 		DateTime rootCreationTime = FileSystem.Directory.GetCreationTimeUtc(path1);
 		DateTime rootLastAccessTime = FileSystem.Directory.GetLastAccessTimeUtc(path1);
@@ -112,7 +108,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void AdjustTimes_WhenDeletingAFile_ShouldAdjustTimes(
+	public async Task AdjustTimes_WhenDeletingAFile_ShouldAdjustTimes(
 		string path1, string path2, string fileName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -139,8 +135,7 @@ public partial class Tests
 		{
 			parentCreationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			parentLastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(parentLastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -148,8 +143,7 @@ public partial class Tests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		parentLastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(parentLastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 
 		DateTime rootCreationTime = FileSystem.Directory.GetCreationTimeUtc(path1);
 		DateTime rootLastAccessTime = FileSystem.Directory.GetLastAccessTimeUtc(path1);
@@ -165,7 +159,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void AdjustTimes_WhenUpdatingAFile_ShouldAdjustTimesOnlyOnWindows(
+	public async Task AdjustTimes_WhenUpdatingAFile_ShouldAdjustTimesOnlyOnWindows(
 		string path1, string path2, string fileName)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
@@ -194,8 +188,7 @@ public partial class Tests
 			.BeBetween(creationTimeStart, creationTimeEnd);
 		if (Test.RunsOnWindows)
 		{
-			parentLastAccessTime.Should()
-				.BeOnOrAfter(updateTimeStart.ApplySystemClockTolerance());
+			await That(parentLastAccessTime).IsOnOrAfter(updateTimeStart.ApplySystemClockTolerance());
 		}
 		else
 		{

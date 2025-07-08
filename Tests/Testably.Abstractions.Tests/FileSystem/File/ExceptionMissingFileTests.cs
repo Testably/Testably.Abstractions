@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
+using System.Threading.Tasks;
 #endif
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
@@ -14,57 +15,54 @@ public partial class ExceptionMissingFileTests
 {
 	[Theory]
 	[MemberData(nameof(GetFileCallbacks), (int)MissingFileTestCases.DirectoryMissing)]
-	public void Operations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
+	public async Task Operations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
 		Expression<Action<IFile, string>> callback, Func<Test, bool> skipTest)
 	{
 		Skip.If(skipTest(Test));
 
 		string path = FileSystem.Path.Combine("missing-directory", "file.txt");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			callback.Compile().Invoke(FileSystem.File, path);
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<DirectoryNotFoundException>(
-				hResult: -2147024893,
-				because: $"\n{callback}\n was called with a missing directory");
+			await That(Act).Throws<DirectoryNotFoundException>()
+				.WithHResult(-2147024893)
+				.Because($"\n{callback}\n was called with a missing directory");
 		}
 		else
 		{
-			exception.Should()
-				.BeFileOrDirectoryNotFoundException(
-					$"\n{callback}\n was called with a missing directory");
+			await That(Act).ThrowsAFileOrDirectoryNotFoundException().Because($"\n{callback}\n was called with a missing directory");
 		}
 	}
 
 	[Theory]
 	[MemberData(nameof(GetFileCallbacks), (int)MissingFileTestCases.FileMissing)]
-	public void Operations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
+	public async Task Operations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
 		Expression<Action<IFile, string>> callback, Func<Test, bool> skipTest)
 	{
 		Skip.If(skipTest(Test));
 
 		string path = "missing-file.txt";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			callback.Compile().Invoke(FileSystem.File, path);
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<FileNotFoundException>(
-				hResult: -2147024894,
-				because: $"\n{callback}\n was called with a missing file");
+			await That(Act).Throws<FileNotFoundException>()
+				.WithHResult(-2147024894)
+				.Because($"\n{callback}\n was called with a missing file");
 		}
 		else
 		{
-			exception.Should()
-				.BeFileOrDirectoryNotFoundException(
-					$"\n{callback}\n was called with a missing file");
+			await That(Act).ThrowsAFileOrDirectoryNotFoundException()
+				.Because($"\n{callback}\n was called with a missing file");
 		}
 	}
 

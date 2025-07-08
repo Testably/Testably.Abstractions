@@ -10,29 +10,30 @@ public sealed class PathMockTests
 	[InlineAutoData(SimulationMode.Linux)]
 	[InlineAutoData(SimulationMode.MacOS)]
 	[InlineAutoData(SimulationMode.Windows)]
-	public void GetTempFileName_WithCollisions_ShouldThrowIOException(
+	public async Task GetTempFileName_WithCollisions_ShouldThrowIOException(
 		SimulationMode simulationMode, int fixedRandomValue)
 	{
 		MockFileSystem fileSystem = new(o => o
 			.SimulatingOperatingSystem(simulationMode)
 			.UseRandomProvider(RandomProvider.Generate(
 				intGenerator: new RandomProvider.Generator<int>(() => fixedRandomValue))));
-		#pragma warning disable CS0618
+#pragma warning disable CS0618
 		string result = fileSystem.Path.GetTempFileName();
-
-		Exception? exception = Record.Exception(() =>
+		
+		void Act()
 		{
 			_ = fileSystem.Path.GetTempFileName();
-		});
-		#pragma warning restore CS0618
+		}
+#pragma warning restore CS0618
 
-		exception.Should().BeOfType<IOException>();
-		fileSystem.File.Exists(result).Should().BeTrue();
+
+		await That(Act).ThrowsExactly<IOException>();
+		await That(fileSystem.File.Exists(result)).IsTrue();
 	}
 #else
 	[Theory]
 	[AutoData]
-	public void GetTempFileName_WithCollisions_ShouldThrowIOException(
+	public async Task GetTempFileName_WithCollisions_ShouldThrowIOException(
 		int fixedRandomValue)
 	{
 		MockFileSystem fileSystem = new(o => o
@@ -40,13 +41,13 @@ public sealed class PathMockTests
 				intGenerator: new RandomProvider.Generator<int>(() => fixedRandomValue))));
 		string result = fileSystem.Path.GetTempFileName();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = fileSystem.Path.GetTempFileName();
-		});
+		}
 
-		exception.Should().BeOfType<IOException>();
-		fileSystem.File.Exists(result).Should().BeTrue();
+		await That(Act).ThrowsExactly<IOException>();
+		await That(fileSystem.File.Exists(result)).IsTrue();
 	}
 #endif
 }

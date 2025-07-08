@@ -29,7 +29,7 @@ public partial class GetFilesTests
 
 	[Theory]
 	[AutoData]
-	public void GetFiles_Path_NotOnLinux_ShouldBeCaseInsensitive(string path)
+	public async Task GetFiles_Path_NotOnLinux_ShouldBeCaseInsensitive(string path)
 	{
 		Skip.If(Test.RunsOnLinux);
 
@@ -39,12 +39,12 @@ public partial class GetFilesTests
 
 		string[] result = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
 
-		result.Length.Should().Be(1);
+		await That(result.Length).IsEqualTo(1);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetFiles_Path_OnLinux_ShouldBeCaseSensitive(string path)
+	public async Task GetFiles_Path_OnLinux_ShouldBeCaseSensitive(string path)
 	{
 		Skip.IfNot(Test.RunsOnLinux);
 
@@ -58,14 +58,13 @@ public partial class GetFilesTests
 		});
 		string[] result2 = FileSystem.Directory.GetFiles(path.ToUpperInvariant());
 
-		exception.Should().BeOfType<DirectoryNotFoundException>();
-		result2.Length.Should().Be(1);
+		await That(exception).IsExactly<DirectoryNotFoundException>();
+		await That(result2.Length).IsEqualTo(1);
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		GetFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
+	public async Task GetFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -79,14 +78,14 @@ public partial class GetFilesTests
 				"*", SearchOption.AllDirectories)
 			.ToList();
 
-		result.Count.Should().Be(2);
-		result.Should().Contain(initialized[0].FullName);
-		result.Should().Contain(initialized[2].FullName);
+		await That(result.Count).IsEqualTo(2);
+		await That(result).Contains(initialized[0].FullName);
+		await That(result).Contains(initialized[2].FullName);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
+	public async Task GetFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
 		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -99,9 +98,9 @@ public partial class GetFilesTests
 			.GetFiles(".", "*", SearchOption.AllDirectories)
 			.ToList();
 
-		result.Count.Should().Be(2);
-		result.Should().Contain(initialized[0].ToString());
-		result.Should().Contain(initialized[2].ToString());
+		await That(result.Count).IsEqualTo(2);
+		await That(result).Contains(initialized[0].ToString());
+		await That(result).Contains(initialized[2].ToString());
 	}
 
 	[Theory]
@@ -118,7 +117,7 @@ public partial class GetFilesTests
 	[InlineData(true, "abc?", "abc")]
 	[InlineData(false, "ab?c", "abc")]
 	[InlineData(false, "ac", "abc")]
-	public void GetFiles_SearchPattern_ShouldReturnExpectedValue(
+	public async Task GetFiles_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
 		FileSystem.Initialize().WithFile(fileName);
@@ -128,19 +127,16 @@ public partial class GetFilesTests
 
 		if (expectToBeFound)
 		{
-			result.Should().ContainSingle(
-				fileName,
-				$"it should match {searchPattern}");
+			await That(result).HasSingle().Which.EndsWith(fileName).Because($"it should match {searchPattern}");
 		}
 		else
 		{
-			result.Should()
-				.BeEmpty($"{fileName} should not match {searchPattern}");
+			await That(result).IsEmpty().Because($"{fileName} should not match {searchPattern}");
 		}
 	}
 
 	[Fact]
-	public void GetFiles_SearchPatternForFileWithoutExtension_ShouldWorkConsistently()
+	public async Task GetFiles_SearchPatternForFileWithoutExtension_ShouldWorkConsistently()
 	{
 		FileSystem.Initialize()
 			.WithFile("file_without_extension")
@@ -148,12 +144,11 @@ public partial class GetFilesTests
 
 		string[] result = FileSystem.Directory.GetFiles(".", "*.");
 
-		result.Length.Should().Be(1);
+		await That(result.Length).IsEqualTo(1);
 	}
 
 	[Fact]
-	public void
-		GetFiles_SearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
+	public async Task GetFiles_SearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo").Initialized(d => d
@@ -165,34 +160,33 @@ public partial class GetFilesTests
 
 		if (Test.RunsOnWindows)
 		{
-			result1.Length.Should().Be(1);
+			await That(result1.Length).IsEqualTo(1);
 			FileSystem.File.ReadAllText(result1[0]).Should().Be("inner");
-			result2.Length.Should().Be(1);
+			await That(result2.Length).IsEqualTo(1);
 			FileSystem.File.ReadAllText(result2[0]).Should().Be("outer");
 		}
 		else
 		{
-			result1.Should().BeEmpty();
-			result2.Should().BeEmpty();
+			await That(result1).IsEmpty();
+			await That(result2).IsEmpty();
 		}
 	}
 
 	[Fact]
-	public void GetFiles_SearchPatternWithTooManyAsterisk_ShouldWorkConsistently()
+	public async Task GetFiles_SearchPatternWithTooManyAsterisk_ShouldWorkConsistently()
 	{
 		FileSystem.Initialize()
 			.WithFile("result.test.001.txt");
 
 		string[] result = FileSystem.Directory.GetFiles(".", "*.test.*.*.*.*");
 
-		result.Length.Should().Be(1);
+		await That(result.Length).IsEqualTo(1);
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Theory]
 	[AutoData]
-	public void
-		GetFiles_WithEnumerationOptions_ShouldConsiderSetOptions(
+	public async Task GetFiles_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -212,9 +206,9 @@ public partial class GetFilesTests
 					AttributesToSkip = FileAttributes.System,
 				}).ToList();
 
-		result.Count.Should().Be(1);
-		result.Should().NotContain(initialized[0].ToString());
-		result.Should().Contain(initialized[2].ToString());
+		await That(result.Count).IsEqualTo(1);
+		await That(result).DoesNotContain(initialized[0].ToString());
+		await That(result).Contains(initialized[2].ToString());
 	}
 #endif
 
@@ -238,8 +232,7 @@ public partial class GetFilesTests
 
 	[Theory]
 	[AutoData]
-	public void
-		GetFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
+	public async Task GetFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -253,15 +246,15 @@ public partial class GetFilesTests
 			.GetFiles(".")
 			.ToList();
 
-		result.Count.Should().Be(2);
-		result.Should().Contain(initialized[0].ToString());
-		result.Should().Contain(initialized[1].ToString());
-		result.Should().NotContain(initialized[3].ToString());
+		await That(result.Count).IsEqualTo(2);
+		await That(result).Contains(initialized[0].ToString());
+		await That(result).Contains(initialized[1].ToString());
+		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetFiles_WithRelativePathAndSubfolders_ShouldReturnRelativeFilePath(
+	public async Task GetFiles_WithRelativePathAndSubfolders_ShouldReturnRelativeFilePath(
 		string subfolder1, string subfolder2, string[] files)
 	{
 		string workingDirectory = FileSystem.Path.Combine(BasePath, subfolder1, subfolder2);
@@ -278,12 +271,12 @@ public partial class GetFilesTests
 
 		List<string> result = FileSystem.Directory.GetFiles(path).ToList();
 
-		result.Should().BeEquivalentTo(expectation);
+		await That(result).IsEqualTo(expectation).InAnyOrder();
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetFiles_WithSearchPattern_ShouldReturnMatchingFiles(
+	public async Task GetFiles_WithSearchPattern_ShouldReturnMatchingFiles(
 		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -297,15 +290,14 @@ public partial class GetFilesTests
 			.GetFiles(".", initialized[0].Name)
 			.ToList();
 
-		result.Count.Should().Be(1);
-		result.Should().Contain(initialized[0].ToString());
-		result.Should().NotContain(initialized[1].ToString());
-		result.Should().NotContain(initialized[3].ToString());
+		await That(result.Count).IsEqualTo(1);
+		await That(result).Contains(initialized[0].ToString());
+		await That(result).DoesNotContain(initialized[1].ToString());
+		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
 	[Fact]
-	public void
-		GetFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
+	public async Task GetFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
@@ -320,8 +312,8 @@ public partial class GetFilesTests
 			.GetFiles(".", "*.foobar", SearchOption.AllDirectories)
 			.ToArray();
 
-		result.Count().Should().Be(2);
-		result.Should().Contain(initialized[1].ToString());
-		result.Should().Contain(initialized[3].ToString());
+		await That(result).HasCount(2);
+		await That(result).Contains(initialized[1].ToString());
+		await That(result).Contains(initialized[3].ToString());
 	}
 }

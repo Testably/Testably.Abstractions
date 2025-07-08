@@ -6,71 +6,71 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcherFactory;
 public partial class Tests
 {
 	[Fact]
-	public void New_ShouldInitializeWithDefaultValues()
+	public async Task New_ShouldInitializeWithDefaultValues()
 	{
 		using IFileSystemWatcher result =
 			FileSystem.FileSystemWatcher.New();
 
-		result.Path.Should().Be("");
+		await That(result.Path).IsEqualTo("");
 #if NETFRAMEWORK
 		result.Filter.Should().Be("*.*");
 #else
-		result.Filter.Should().Be("*");
+		await That(result.Filter).IsEqualTo("*");
 #endif
-		result.IncludeSubdirectories.Should().BeFalse();
-		result.InternalBufferSize.Should().Be(8192);
-		result.NotifyFilter.Should().Be(NotifyFilters.FileName |
-		                                NotifyFilters.DirectoryName |
-		                                NotifyFilters.LastWrite);
-		result.EnableRaisingEvents.Should().BeFalse();
+		await That(result.IncludeSubdirectories).IsFalse();
+		await That(result.InternalBufferSize).IsEqualTo(8192);
+		await That(result.NotifyFilter).IsEqualTo(NotifyFilters.FileName |
+										NotifyFilters.DirectoryName |
+										NotifyFilters.LastWrite);
+		await That(result.EnableRaisingEvents).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void New_WithPath_ShouldInitializeWithDefaultValues(string path)
+	public async Task New_WithPath_ShouldInitializeWithDefaultValues(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		using IFileSystemWatcher result =
 			FileSystem.FileSystemWatcher.New(path);
 
-		result.Path.Should().Be(path);
+		await That(result.Path).IsEqualTo(path);
 #if NETFRAMEWORK
 		result.Filter.Should().Be("*.*");
 #else
-		result.Filter.Should().Be("*");
+		await That(result.Filter).IsEqualTo("*");
 #endif
-		result.IncludeSubdirectories.Should().BeFalse();
-		result.InternalBufferSize.Should().Be(8192);
-		result.NotifyFilter.Should().Be(NotifyFilters.FileName |
-		                                NotifyFilters.DirectoryName |
-		                                NotifyFilters.LastWrite);
-		result.EnableRaisingEvents.Should().BeFalse();
+		await That(result.IncludeSubdirectories).IsFalse();
+		await That(result.InternalBufferSize).IsEqualTo(8192);
+		await That(result.NotifyFilter).IsEqualTo(NotifyFilters.FileName |
+										NotifyFilters.DirectoryName |
+										NotifyFilters.LastWrite);
+		await That(result.EnableRaisingEvents).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void New_WithPathAndFilter_ShouldInitializeWithDefaultValues(
+	public async Task New_WithPathAndFilter_ShouldInitializeWithDefaultValues(
 		string path, string filter)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		using IFileSystemWatcher result =
 			FileSystem.FileSystemWatcher.New(path, filter);
 
-		result.Path.Should().Be(path);
-		result.Filter.Should().Be(filter);
-		result.IncludeSubdirectories.Should().BeFalse();
-		result.InternalBufferSize.Should().Be(8192);
-		result.NotifyFilter.Should().Be(NotifyFilters.FileName |
-		                                NotifyFilters.DirectoryName |
-		                                NotifyFilters.LastWrite);
-		result.EnableRaisingEvents.Should().BeFalse();
+		await That(result.Path).IsEqualTo(path);
+		await That(result.Filter).IsEqualTo(filter);
+		await That(result.IncludeSubdirectories).IsFalse();
+		await That(result.InternalBufferSize).IsEqualTo(8192);
+		await That(result.NotifyFilter).IsEqualTo(NotifyFilters.FileName |
+										NotifyFilters.DirectoryName |
+										NotifyFilters.LastWrite);
+		await That(result.EnableRaisingEvents).IsFalse();
 	}
 
 	[Fact]
-	public void Wrap_Null_ShouldReturnNull()
+	public async Task Wrap_Null_ShouldReturnNull()
 	{
 		using IFileSystemWatcher? result = FileSystem.FileSystemWatcher.Wrap(null);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 }

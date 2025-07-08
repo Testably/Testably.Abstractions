@@ -39,7 +39,7 @@ public partial class CreateAsSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_TargetFileMissing_ShouldNotThrowException(
+	public async Task CreateAsSymbolicLink_TargetFileMissing_ShouldNotThrowException(
 		string path, string pathToTarget)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -47,7 +47,7 @@ public partial class CreateAsSymbolicLinkTests
 			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(pathToTarget);
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]
@@ -116,8 +116,7 @@ public partial class CreateAsSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public void
-		CreateAsSymbolicLink_WithIllegalPath_ShouldThrowArgumentException_OnWindows(
+	public async Task CreateAsSymbolicLink_WithIllegalPath_ShouldThrowArgumentException_OnWindows(
 			string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, "some content");
@@ -133,13 +132,13 @@ public partial class CreateAsSymbolicLinkTests
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_WithIllegalTarget_ShouldNotThrowException(
+	public async Task CreateAsSymbolicLink_WithIllegalTarget_ShouldNotThrowException(
 		string path)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -147,7 +146,7 @@ public partial class CreateAsSymbolicLinkTests
 			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(" ");
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]

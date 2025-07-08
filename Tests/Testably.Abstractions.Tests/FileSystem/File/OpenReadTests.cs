@@ -37,7 +37,7 @@ public partial class OpenReadTests
 
 	[Theory]
 	[AutoData]
-	public void OpenRead_ShouldUseReadAccessAndReadShare(string path)
+	public async Task OpenRead_ShouldUseReadAccessAndReadShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
@@ -46,10 +46,10 @@ public partial class OpenReadTests
 		FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.Read);
 		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(
 			Test.RunsOnWindows ? FileShare.Read : FileShare.ReadWrite);
-		stream.CanRead.Should().BeTrue();
-		stream.CanWrite.Should().BeFalse();
-		stream.CanSeek.Should().BeTrue();
-		stream.CanTimeout.Should().BeFalse();
+		await That(stream.CanRead).IsTrue();
+		await That(stream.CanWrite).IsFalse();
+		await That(stream.CanSeek).IsTrue();
+		await That(stream.CanTimeout).IsFalse();
 	}
 
 	[Theory]

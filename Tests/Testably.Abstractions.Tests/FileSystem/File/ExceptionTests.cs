@@ -14,8 +14,7 @@ public partial class ExceptionTests
 {
 	[Theory]
 	[MemberData(nameof(GetFileCallbacks), "Illegal\tCharacter?InPath")]
-	public void
-		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
+	public async Task Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck,
 			Func<Test, bool> skipTest)
 	{
@@ -30,8 +29,7 @@ public partial class ExceptionTests
 		{
 			if (exception is IOException ioException)
 			{
-				ioException.HResult.Should().NotBe(-2147024809,
-					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+				await That(ioException.HResult).IsNotEqualTo(-2147024809).Because($"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 		}
 		else

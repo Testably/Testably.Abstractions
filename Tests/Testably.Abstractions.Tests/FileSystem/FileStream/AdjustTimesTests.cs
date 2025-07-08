@@ -10,7 +10,7 @@ public partial class AdjustTimesTests
 {
 	[Theory]
 	[AutoData]
-	public void CopyTo_ShouldAdjustTimes(string path, byte[] bytes)
+	public async Task CopyTo_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
 			"Works unreliable on .NET Framework");
@@ -42,8 +42,7 @@ public partial class AdjustTimesTests
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
 		lastWriteTime.Should()
@@ -53,7 +52,7 @@ public partial class AdjustTimesTests
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void Read_AsSpan_ShouldAdjustTimes(string path, byte[] bytes)
+	public async Task Read_AsSpan_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -81,8 +80,7 @@ public partial class AdjustTimesTests
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
 		lastWriteTime.Should()
@@ -92,7 +90,7 @@ public partial class AdjustTimesTests
 
 	[Theory]
 	[AutoData]
-	public void Read_ShouldAdjustTimes(string path, byte[] bytes)
+	public async Task Read_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
 			"Works unreliable on .NET Framework");
@@ -122,8 +120,7 @@ public partial class AdjustTimesTests
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
 		lastWriteTime.Should()
@@ -161,8 +158,7 @@ public partial class AdjustTimesTests
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
 		lastWriteTime.Should()
@@ -187,9 +183,9 @@ public partial class AdjustTimesTests
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		#pragma warning disable CA1835
+#pragma warning disable CA1835
 		_ = await stream.ReadAsync(buffer, 0, 2, TestContext.Current.CancellationToken);
-		#pragma warning restore CA1835
+#pragma warning restore CA1835
 
 		DateTime lastAccessTime = WaitToBeUpdatedToAfter(
 			() => FileSystem.File.GetLastAccessTimeUtc(path), updateTime);
@@ -205,8 +201,7 @@ public partial class AdjustTimesTests
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
 		lastWriteTime.Should()
@@ -216,7 +211,7 @@ public partial class AdjustTimesTests
 
 	[Theory]
 	[AutoData]
-	public void ReadByte_ShouldAdjustTimes(string path, byte[] bytes)
+	public async Task ReadByte_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
 			"Works unreliable on .NET Framework");
@@ -245,8 +240,7 @@ public partial class AdjustTimesTests
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
 		lastWriteTime.Should()
@@ -288,7 +282,7 @@ public partial class AdjustTimesTests
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void Write_AsSpan_ShouldAdjustTimes(string path, byte[] bytes)
+	public async Task Write_AsSpan_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -312,8 +306,7 @@ public partial class AdjustTimesTests
 		{
 			creationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -321,14 +314,13 @@ public partial class AdjustTimesTests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void Write_ShouldAdjustTimes(string path, byte[] bytes)
+	public async Task Write_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
 			"Works unreliable on .NET Framework");
@@ -354,8 +346,7 @@ public partial class AdjustTimesTests
 		{
 			creationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -363,8 +354,7 @@ public partial class AdjustTimesTests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 #if FEATURE_SPAN
@@ -394,8 +384,7 @@ public partial class AdjustTimesTests
 		{
 			creationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -403,8 +392,7 @@ public partial class AdjustTimesTests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 #endif
 
@@ -425,9 +413,9 @@ public partial class AdjustTimesTests
 
 		await using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
 		{
-			#pragma warning disable CA1835
+#pragma warning disable CA1835
 			await stream.WriteAsync(bytes, 0, 2, TestContext.Current.CancellationToken);
-			#pragma warning restore CA1835
+#pragma warning restore CA1835
 		}
 
 		DateTime lastWriteTime = WaitToBeUpdatedToAfter(
@@ -439,8 +427,7 @@ public partial class AdjustTimesTests
 		{
 			creationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -448,14 +435,13 @@ public partial class AdjustTimesTests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void WriteByte_ShouldAdjustTimes(string path, byte[] bytes, byte singleByte)
+	public async Task WriteByte_ShouldAdjustTimes(string path, byte[] bytes, byte singleByte)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
 			"Works unreliable on .NET Framework");
@@ -481,8 +467,7 @@ public partial class AdjustTimesTests
 		{
 			creationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -490,8 +475,7 @@ public partial class AdjustTimesTests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	#region Helpers

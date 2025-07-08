@@ -15,7 +15,7 @@ public partial class Tests
 	}
 
 	[Fact]
-	public void VolumeLabel_ShouldBeWritable_OnWindows()
+	public async Task VolumeLabel_ShouldBeWritable_OnWindows()
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -27,15 +27,15 @@ public partial class Tests
 		{
 			Exception? exception = Record.Exception(() =>
 			{
-				#pragma warning disable CA1416
+#pragma warning disable CA1416
 				result.VolumeLabel = "TEST";
-				#pragma warning restore CA1416
+#pragma warning restore CA1416
 			});
 
 			if (Test.RunsOnWindows)
 			{
-				exception.Should().BeNull();
-				result.VolumeLabel.Should().Be("TEST");
+				await That(exception).IsNull();
+				await That(result.VolumeLabel).IsEqualTo("TEST");
 			}
 			else
 			{
@@ -46,9 +46,9 @@ public partial class Tests
 		{
 			if (Test.RunsOnWindows)
 			{
-				#pragma warning disable CA1416
+#pragma warning disable CA1416
 				result.VolumeLabel = previousVolumeLabel;
-				#pragma warning restore CA1416
+#pragma warning restore CA1416
 			}
 		}
 	}

@@ -7,7 +7,7 @@ public partial class CreateDirectoryTests
 {
 	[Theory]
 	[AutoData]
-	public void CreateDirectory_AlreadyExisting_ShouldDoNothing(string path)
+	public async Task CreateDirectory_AlreadyExisting_ShouldDoNothing(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
@@ -16,35 +16,34 @@ public partial class CreateDirectoryTests
 			FileSystem.Directory.CreateDirectory(path);
 		});
 
-		exception.Should().BeNull();
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		await That(exception).IsNull();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateDirectory_ReadOnlyParent_ShouldStillCreateDirectoryUnderWindows(string parent,
+	public async Task CreateDirectory_ReadOnlyParent_ShouldStillCreateDirectoryUnderWindows(string parent,
 		string subdirectory)
 	{
 		string subdirectoryPath = FileSystem.Path.Combine(parent, subdirectory);
 		FileSystem.Directory.CreateDirectory(parent);
 		FileSystem.DirectoryInfo.New(parent).Attributes = FileAttributes.ReadOnly;
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory.CreateDirectory(subdirectoryPath);
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeNull();
-			FileSystem.Directory.Exists(subdirectoryPath).Should().BeTrue();
-			FileSystem.DirectoryInfo.New(parent).Attributes
-				.Should().HaveFlag(FileAttributes.ReadOnly);
+			await That(Act).DoesNotThrow();
+			await That(FileSystem.Directory.Exists(subdirectoryPath)).IsTrue();
+			await That(FileSystem.DirectoryInfo.New(parent).Attributes).HasFlag(FileAttributes.ReadOnly);
 		}
 		else
 		{
-			exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
-			FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
+			await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+			await That(FileSystem.Directory.Exists(subdirectoryPath)).IsFalse();
 		}
 	}
 
@@ -60,22 +59,22 @@ public partial class CreateDirectoryTests
 
 	[Theory]
 	[AutoData]
-	public void CreateDirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)
+	public async Task CreateDirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)
 	{
 		FileSystem.File.WriteAllText(name, "");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory.CreateDirectory(name);
-		});
+		}
 
-		exception.Should().BeException<IOException>(
-			hResult: Test.RunsOnWindows ? -2147024713 : 17);
-		FileSystem.Directory.Exists(name).Should().BeFalse();
+		await That(Act).Throws<IOException>()
+			.WithHResult(Test.RunsOnWindows ? -2147024713 : 17);
+		await That(FileSystem.Directory.Exists(name)).IsFalse();
 	}
 
 	[Fact]
-	public void CreateDirectory_Root_ShouldNotThrowException()
+	public async Task CreateDirectory_Root_ShouldNotThrowException()
 	{
 		string path = FileTestHelper.RootDrive(Test);
 		FileSystem.Directory.CreateDirectory(path);
@@ -85,13 +84,13 @@ public partial class CreateDirectoryTests
 			FileSystem.Directory.CreateDirectory(path);
 		});
 
-		exception.Should().BeNull();
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		await That(exception).IsNull();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateDirectory_ShouldTrimTrailingSpaces_OnWindows(string path)
+	public async Task CreateDirectory_ShouldTrimTrailingSpaces_OnWindows(string path)
 	{
 		string pathWithSpaces = path + "  ";
 
@@ -99,17 +98,17 @@ public partial class CreateDirectoryTests
 
 		if (Test.RunsOnWindows)
 		{
-			result.Name.Should().Be(path);
+			await That(result.Name).IsEqualTo(path);
 		}
 		else
 		{
-			result.Name.Should().Be(pathWithSpaces);
+			await That(result.Name).IsEqualTo(pathWithSpaces);
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateDirectory_ShouldAdjustTimes(string path, string subdirectoryName)
+	public async Task CreateDirectory_ShouldAdjustTimes(string path, string subdirectoryName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -128,24 +127,20 @@ public partial class CreateDirectoryTests
 
 		if (Test.RunsOnWindows)
 		{
-			creationTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd);
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateDirectory_ShouldAdjustTimesOnlyForDirectParentDirectory(
+	public async Task CreateDirectory_ShouldAdjustTimesOnlyForDirectParentDirectory(
 		string rootPath)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -173,16 +168,14 @@ public partial class CreateDirectoryTests
 			DateTime lastWriteTime =
 				FileSystem.Directory.GetLastWriteTimeUtc(path);
 
-			lastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastWriteTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd);
+			await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd);
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateDirectory_ShouldSetCreationTime(string path)
+	public async Task CreateDirectory_ShouldSetCreationTime(string path)
 	{
 		DateTime start = TimeSystem.DateTime.Now;
 
@@ -190,13 +183,13 @@ public partial class CreateDirectoryTests
 
 		DateTime end = TimeSystem.DateTime.Now;
 		DateTime result = FileSystem.Directory.GetCreationTime(path);
-		result.Should().BeBetween(start, end);
-		result.Kind.Should().Be(DateTimeKind.Local);
+		await That(result).IsBetween(start).And(end);
+		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateDirectory_ShouldSetCreationTimeUtc(string path)
+	public async Task CreateDirectory_ShouldSetCreationTimeUtc(string path)
 	{
 		DateTime start = TimeSystem.DateTime.UtcNow;
 
@@ -204,31 +197,31 @@ public partial class CreateDirectoryTests
 
 		DateTime end = TimeSystem.DateTime.UtcNow;
 		DateTime result = FileSystem.Directory.GetCreationTimeUtc(path);
-		result.Should().BeBetween(start, end);
-		result.Kind.Should().Be(DateTimeKind.Utc);
+		await That(result).IsBetween(start).And(end);
+		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
 	}
 
 	[Fact]
-	public void CreateDirectory_NullCharacter_ShouldThrowArgumentException()
+	public async Task CreateDirectory_NullCharacter_ShouldThrowArgumentException()
 	{
 		string path = "foo\0bar";
-		Exception? exception =
-			Record.Exception(() => FileSystem.Directory.CreateDirectory(path));
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
+		void Act() => FileSystem.Directory.CreateDirectory(path);
+
+		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
 	[Fact]
-	public void CreateDirectory_ShouldCreateDirectoryInBasePath()
+	public async Task CreateDirectory_ShouldCreateDirectoryInBasePath()
 	{
 		IDirectoryInfo result = FileSystem.Directory.CreateDirectory("foo");
 
-		FileSystem.Directory.Exists("foo").Should().BeTrue();
-		result.FullName.Should().StartWith(BasePath);
+		await That(FileSystem.Directory.Exists("foo")).IsTrue();
+		await That(result.FullName).StartsWith(BasePath);
 	}
 
 	[Fact]
-	public void CreateDirectory_ShouldCreateParentDirectories()
+	public async Task CreateDirectory_ShouldCreateParentDirectories()
 	{
 		string directoryLevel1 = "lvl1";
 		string directoryLevel2 = "lvl2";
@@ -238,19 +231,19 @@ public partial class CreateDirectoryTests
 
 		IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
 
-		result.Name.Should().Be(directoryLevel3);
-		result.Parent!.Name.Should().Be(directoryLevel2);
-		result.Parent.Parent!.Name.Should().Be(directoryLevel1);
-		result.Exists.Should().BeTrue();
-		result.Parent.Exists.Should().BeTrue();
-		result.Parent.Parent.Exists.Should().BeTrue();
+		await That(result.Name).IsEqualTo(directoryLevel3);
+		await That(result.Parent!.Name).IsEqualTo(directoryLevel2);
+		await That(result.Parent.Parent!.Name).IsEqualTo(directoryLevel1);
+		await That(result.Exists).IsTrue();
+		await That(result.Parent.Exists).IsTrue();
+		await That(result.Parent.Parent.Exists).IsTrue();
 	}
 
 #if NETFRAMEWORK
 	[Theory]
 	[InlineData("/")]
 	[InlineData("\\")]
-	public void CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
+	public async Task CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
 		string suffix)
 	{
 		string nameWithSuffix = "foobar" + suffix;
@@ -260,13 +253,13 @@ public partial class CreateDirectoryTests
 		IDirectoryInfo result =
 			FileSystem.Directory.CreateDirectory(nameWithSuffix);
 
-		result.Name.Should().Be(expectedName.TrimEnd(
+		await That(result.Name).IsEqualTo(expectedName.TrimEnd(
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
-		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
+		await That(result.FullName).IsEqualTo(System.IO.Path.Combine(BasePath, expectedName
 			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
-		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(nameWithSuffix)).IsTrue();
 	}
 #endif
 
@@ -274,7 +267,7 @@ public partial class CreateDirectoryTests
 	[Theory]
 	[InlineData("")]
 	[InlineData(" ")]
-	public void CreateDirectory_EmptyOrWhitespace_ShouldReturnEmptyString(
+	public async Task CreateDirectory_EmptyOrWhitespace_ShouldReturnEmptyString(
 		string suffix)
 	{
 		string nameWithSuffix = "foobar" + suffix;
@@ -284,13 +277,13 @@ public partial class CreateDirectoryTests
 		IDirectoryInfo result =
 			FileSystem.Directory.CreateDirectory(nameWithSuffix);
 
-		result.Name.Should().Be(expectedName.TrimEnd(
+		await That(result.Name).IsEqualTo(expectedName.TrimEnd(
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
-		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
+		await That(result.FullName).IsEqualTo(System.IO.Path.Combine(BasePath, expectedName
 			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
-		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(nameWithSuffix)).IsTrue();
 	}
 #else
 	[Theory]
@@ -298,7 +291,7 @@ public partial class CreateDirectoryTests
 	[InlineData(" ")]
 	[InlineData("/")]
 	[InlineData("\\")]
-	public void CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
+	public async Task CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
 		string suffix)
 	{
 		string nameWithSuffix = "foobar" + suffix;
@@ -316,14 +309,13 @@ public partial class CreateDirectoryTests
 		IDirectoryInfo result =
 			FileSystem.Directory.CreateDirectory(nameWithSuffix);
 
-		result.Name.Should().Be(expectedName.TrimEnd(
+		await That(result.Name).IsEqualTo(expectedName.TrimEnd(
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
-		result.FullName.Should().Be(
-			$"{BasePath}{FileSystem.Path.DirectorySeparatorChar}{expectedName}"
+		await That(result.FullName).IsEqualTo($"{BasePath}{FileSystem.Path.DirectorySeparatorChar}{expectedName}"
 				.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 					FileSystem.Path.DirectorySeparatorChar));
-		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(nameWithSuffix)).IsTrue();
 	}
 #endif
 }

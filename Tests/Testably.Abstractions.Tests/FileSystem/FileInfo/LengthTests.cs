@@ -64,19 +64,19 @@ public partial class LengthTests
 
 	[Theory]
 	[AutoData]
-	public void Length_WhenFileExists_ShouldBeSetCorrectly(string path, byte[] bytes)
+	public async Task Length_WhenFileExists_ShouldBeSetCorrectly(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
 		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		long result = sut.Length;
 
-		result.Should().Be(bytes.Length);
+		await That(result).IsEqualTo(bytes.Length);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Length_WhenFileIsCreated_ShouldBeSetCorrectly(string path, byte[] bytes)
+	public async Task Length_WhenFileIsCreated_ShouldBeSetCorrectly(string path, byte[] bytes)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
 
@@ -84,12 +84,12 @@ public partial class LengthTests
 
 		long result = sut.Length;
 
-		result.Should().Be(bytes.Length);
+		await That(result).IsEqualTo(bytes.Length);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Length_WhenFileIsCreatedAfterAccessed_ShouldBeSetCorrectly(
+	public async Task Length_WhenFileIsCreatedAfterAccessed_ShouldBeSetCorrectly(
 		string path, byte[] bytes)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
@@ -103,8 +103,8 @@ public partial class LengthTests
 
 		long result = sut.Length;
 
-		exception.Should().NotBeNull();
-		result.Should().Be(bytes.Length);
+		await That(exception).IsNotNull();
+		await That(result).IsEqualTo(bytes.Length);
 	}
 
 	[Theory]

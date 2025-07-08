@@ -11,7 +11,7 @@ public class InMemoryContainerTests
 {
 	[Theory]
 	[AutoData]
-	public void AdjustAttributes_Decrypt_ShouldNotHaveEncryptedAttribute(string path)
+	public async Task AdjustAttributes_Decrypt_ShouldNotHaveEncryptedAttribute(string path)
 	{
 		MockFileSystem fileSystem = new();
 		DriveInfoMock drive =
@@ -25,12 +25,12 @@ public class InMemoryContainerTests
 
 		FileAttributes result = container.AdjustAttributes(FileAttributes.Normal);
 
-		result.Should().NotHaveFlag(FileAttributes.Encrypted);
+		await That(result).DoesNotHaveFlag(FileAttributes.Encrypted);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AdjustAttributes_Encrypt_ShouldHaveEncryptedAttribute(string path)
+	public async Task AdjustAttributes_Encrypt_ShouldHaveEncryptedAttribute(string path)
 	{
 		MockFileSystem fileSystem = new();
 		DriveInfoMock drive =
@@ -43,12 +43,12 @@ public class InMemoryContainerTests
 
 		FileAttributes result = container.AdjustAttributes(FileAttributes.Normal);
 
-		result.Should().HaveFlag(FileAttributes.Encrypted);
+		await That(result).HasFlag(FileAttributes.Encrypted);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AdjustAttributes_LeadingDot_ShouldBeHiddenOnLinux(string path)
+	public async Task AdjustAttributes_LeadingDot_ShouldBeHiddenOnLinux(string path)
 	{
 		path = "." + path;
 		MockFileSystem fileSystem = new();
@@ -63,11 +63,11 @@ public class InMemoryContainerTests
 
 		if (Test.RunsOnLinux)
 		{
-			result.Should().HaveFlag(FileAttributes.Hidden);
+			await That(result).HasFlag(FileAttributes.Hidden);
 		}
 		else
 		{
-			result.Should().NotHaveFlag(FileAttributes.Hidden);
+			await That(result).DoesNotHaveFlag(FileAttributes.Hidden);
 		}
 	}
 
@@ -75,7 +75,7 @@ public class InMemoryContainerTests
 	[Theory]
 	[InlineAutoData(null, false)]
 	[InlineAutoData("foo", true)]
-	public void AdjustAttributes_ShouldHaveReparsePointAttributeWhenLinkTargetIsNotNull(
+	public async Task AdjustAttributes_ShouldHaveReparsePointAttributeWhenLinkTargetIsNotNull(
 		string? linkTarget, bool shouldHaveReparsePoint, string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -93,30 +93,30 @@ public class InMemoryContainerTests
 
 		if (shouldHaveReparsePoint)
 		{
-			result.Should().HaveFlag(FileAttributes.ReparsePoint);
+			await That(result).HasFlag(FileAttributes.ReparsePoint);
 		}
 		else
 		{
-			result.Should().NotHaveFlag(FileAttributes.ReparsePoint);
+			await That(result).DoesNotHaveFlag(FileAttributes.ReparsePoint);
 		}
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void Container_ShouldProvideCorrectTimeAndFileSystem(string path)
+	public async Task Container_ShouldProvideCorrectTimeAndFileSystem(string path)
 	{
 		MockFileSystem fileSystem = new();
 		IStorageLocation location = InMemoryLocation.New(fileSystem, null, path);
 		IStorageContainer sut = InMemoryContainer.NewFile(location, fileSystem);
 
-		sut.FileSystem.Should().BeSameAs(fileSystem);
-		sut.TimeSystem.Should().BeSameAs(fileSystem.TimeSystem);
+		await That(sut.FileSystem).IsSameAs(fileSystem);
+		await That(sut.TimeSystem).IsSameAs(fileSystem.TimeSystem);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Decrypt_Encrypted_ShouldDecryptBytes(
+	public async Task Decrypt_Encrypted_ShouldDecryptBytes(
 		string path, byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
@@ -130,13 +130,13 @@ public class InMemoryContainerTests
 
 		fileContainer.Decrypt();
 
-		fileContainer.Attributes.Should().NotHaveFlag(FileAttributes.Encrypted);
-		fileContainer.GetBytes().Should().BeEquivalentTo(bytes);
+		await That(fileContainer.Attributes).DoesNotHaveFlag(FileAttributes.Encrypted);
+		await That(fileContainer.GetBytes()).IsEqualTo(bytes);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Decrypt_Unencrypted_ShouldDoNothing(
+	public async Task Decrypt_Unencrypted_ShouldDoNothing(
 		string path, byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
@@ -149,12 +149,12 @@ public class InMemoryContainerTests
 
 		fileContainer.Decrypt();
 
-		fileContainer.GetBytes().Should().BeEquivalentTo(bytes);
+		await That(fileContainer.GetBytes()).IsEqualTo(bytes);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Encrypt_Encrypted_ShouldDoNothing(
+	public async Task Encrypt_Encrypted_ShouldDoNothing(
 		string path, byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
@@ -169,12 +169,12 @@ public class InMemoryContainerTests
 		fileContainer.Encrypt();
 
 		fileContainer.Decrypt();
-		fileContainer.GetBytes().Should().BeEquivalentTo(bytes);
+		await That(fileContainer.GetBytes()).IsEqualTo(bytes);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Encrypt_ShouldEncryptBytes(
+	public async Task Encrypt_ShouldEncryptBytes(
 		string path, byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
@@ -187,13 +187,13 @@ public class InMemoryContainerTests
 
 		fileContainer.Encrypt();
 
-		fileContainer.Attributes.Should().HaveFlag(FileAttributes.Encrypted);
-		fileContainer.GetBytes().Should().NotBeEquivalentTo(bytes);
+		await That(fileContainer.Attributes).HasFlag(FileAttributes.Encrypted);
+		await That(fileContainer.GetBytes()).IsNotEqualTo(bytes);
 	}
 
 	[Theory]
 	[AutoData]
-	public void RequestAccess_ToString_DeleteAccess_ShouldContainAccessAndShare(string path,
+	public async Task RequestAccess_ToString_DeleteAccess_ShouldContainAccessAndShare(string path,
 		FileAccess access, FileShare share)
 	{
 		MockFileSystem fileSystem = new();
@@ -204,14 +204,14 @@ public class InMemoryContainerTests
 
 		IStorageAccessHandle result = sut.RequestAccess(access, share, true);
 
-		result.ToString().Should().NotContain(access.ToString());
-		result.ToString().Should().Contain("Delete");
-		result.ToString().Should().Contain(share.ToString());
+		await That(result.ToString()).DoesNotContain(access.ToString());
+		await That(result.ToString()).Contains("Delete");
+		await That(result.ToString()).Contains(share.ToString());
 	}
 
 	[Theory]
 	[AutoData]
-	public void RequestAccess_ToString_ShouldContainAccessAndShare(string path, FileAccess access,
+	public async Task RequestAccess_ToString_ShouldContainAccessAndShare(string path, FileAccess access,
 		FileShare share)
 	{
 		MockFileSystem fileSystem = new();
@@ -222,13 +222,13 @@ public class InMemoryContainerTests
 
 		IStorageAccessHandle result = sut.RequestAccess(access, share);
 
-		result.ToString().Should().Contain(access.ToString());
-		result.ToString().Should().Contain(share.ToString());
+		await That(result.ToString()).Contains(access.ToString());
+		await That(result.ToString()).Contains(share.ToString());
 	}
 
 	[Theory]
 	[AutoData]
-	public void RequestAccess_WithoutDrive_ShouldThrowDirectoryNotFoundException(
+	public async Task RequestAccess_WithoutDrive_ShouldThrowDirectoryNotFoundException(
 		string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -240,13 +240,13 @@ public class InMemoryContainerTests
 			fileContainer.RequestAccess(FileAccess.Read, FileShare.Read);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>();
+		await That(exception).IsExactly<DirectoryNotFoundException>();
 	}
 
 	[Theory]
 	[InlineAutoData(DateTimeKind.Local)]
 	[InlineAutoData(DateTimeKind.Utc)]
-	public void TimeContainer_Time_Set_WithUnspecifiedKind_ShouldSetToProvidedKind(
+	public async Task TimeContainer_Time_Set_WithUnspecifiedKind_ShouldSetToProvidedKind(
 		DateTimeKind kind, string path, DateTime time)
 	{
 		time = DateTime.SpecifyKind(time, DateTimeKind.Unspecified);
@@ -258,13 +258,13 @@ public class InMemoryContainerTests
 
 		DateTime result = fileContainer.CreationTime.Get(DateTimeKind.Unspecified);
 
-		result.Should().Be(time);
-		result.Kind.Should().Be(kind);
+		await That(result).IsEqualTo(time);
+		await That(result.Kind).IsEqualTo(kind);
 	}
 
 	[Theory]
 	[AutoData]
-	public void TimeContainer_ToString_ShouldReturnUtcTime(
+	public async Task TimeContainer_ToString_ShouldReturnUtcTime(
 		string path, DateTime time)
 	{
 		time = DateTime.SpecifyKind(time, DateTimeKind.Local);
@@ -278,27 +278,27 @@ public class InMemoryContainerTests
 
 		string? result = fileContainer.CreationTime.ToString();
 
-		result.Should().Be(expectedString);
+		await That(result).IsEqualTo(expectedString);
 	}
 
 	[Fact]
-	public void ToString_Directory_ShouldIncludePath()
+	public async Task ToString_Directory_ShouldIncludePath()
 	{
 		MockFileSystem fileSystem = new();
 		string expectedPath = fileSystem.Path.GetFullPath("foo");
 		fileSystem.Directory.CreateDirectory(expectedPath);
-		#pragma warning disable CA1826
+#pragma warning disable CA1826
 		IStorageContainer sut = fileSystem.StorageContainers.Last();
-		#pragma warning restore CA1826
+#pragma warning restore CA1826
 
 		string? result = sut.ToString();
 
-		result.Should().Be($"{expectedPath}: Directory");
+		await That(result).IsEqualTo($"{expectedPath}: Directory");
 	}
 
 	[Theory]
 	[AutoData]
-	public void ToString_File_ShouldIncludePathAndFileSize(byte[] bytes)
+	public async Task ToString_File_ShouldIncludePathAndFileSize(byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
 		string expectedPath = fileSystem.Path.GetFullPath("foo.txt");
@@ -307,11 +307,11 @@ public class InMemoryContainerTests
 
 		string? result = sut.ToString();
 
-		result.Should().Be($"{expectedPath}: File ({bytes.Length} bytes)");
+		await That(result).IsEqualTo($"{expectedPath}: File ({bytes.Length} bytes)");
 	}
 
 	[Fact]
-	public void ToString_UnknownContainer_ShouldIncludePath()
+	public async Task ToString_UnknownContainer_ShouldIncludePath()
 	{
 		MockFileSystem fileSystem = new();
 		string expectedPath = fileSystem.Path.GetFullPath("foo");
@@ -321,6 +321,6 @@ public class InMemoryContainerTests
 
 		string result = sut.ToString();
 
-		result.Should().Be($"{expectedPath}: Unknown Container");
+		await That(result).IsEqualTo($"{expectedPath}: Unknown Container");
 	}
 }

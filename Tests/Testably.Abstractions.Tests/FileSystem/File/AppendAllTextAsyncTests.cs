@@ -123,10 +123,9 @@ public partial class AppendAllTextAsyncTests
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 
-		result.Should().NotBeEquivalentTo(contents,
-			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+		await That(result).IsNotEqualTo([contents]);
 	}
-	
+
 #if FEATURE_FILE_SPAN
 	[Theory]
 	[AutoData]
@@ -241,8 +240,7 @@ public partial class AppendAllTextAsyncTests
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 
-		result.Should().NotBeEquivalentTo(contents,
-			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+		await That(result).IsNotEqualTo([contents]);
 	}
 #endif
 }

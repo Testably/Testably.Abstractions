@@ -5,25 +5,25 @@ namespace Testably.Abstractions.Tests.Internal;
 public class FileInfoWrapperTests
 {
 	[Fact]
-	public void FromFileInfo_Null_ShouldReturnNull()
+	public async Task FromFileInfo_Null_ShouldReturnNull()
 	{
 		RealFileSystem fileSystem = new();
 
 		FileInfoWrapper? result = FileInfoWrapper
 			.FromFileInfo(null, fileSystem);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void FromFileInfo_ShouldBePartOfFileSystem(string path)
+	public async Task FromFileInfo_ShouldBePartOfFileSystem(string path)
 	{
 		RealFileSystem fileSystem = new();
 
 		FileInfoWrapper result = FileInfoWrapper
 			.FromFileInfo(new FileInfo(path), fileSystem);
 
-		result.Directory.Should().NotBeNull();
+		await That(result.Directory).IsNotNull();
 	}
 }

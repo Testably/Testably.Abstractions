@@ -8,26 +8,21 @@ public partial class ReadAllBytesTests
 {
 	[Theory]
 	[AutoData]
-	public void ReadAllBytes_MissingFile_ShouldThrowFileNotFoundException(string path)
+	public async Task ReadAllBytes_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.ReadAllBytes(path);
-		});
+		}
 
-		exception.Should()
-			.BeOfType<FileNotFoundException>()
-			.Which.HResult.Should()
-			.Be(-2147024894);
-		exception.Should()
-			.BeOfType<FileNotFoundException>()
-			.Which.Message.Should()
-			.Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		await That(Act).ThrowsExactly<FileNotFoundException>()
+			.WithHResult(-2147024894).And
+			.WithMessage($"*'{FileSystem.Path.GetFullPath(path)}'*").AsWildcard();
 	}
 
 	[Theory]
 	[AutoData]
-	public void ReadAllBytes_ShouldAdjustTimes(string path, byte[] bytes)
+	public async Task ReadAllBytes_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
 			"Works unreliable on .NET Framework");
@@ -54,8 +49,7 @@ public partial class ReadAllBytesTests
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
 		lastWriteTime.Should()
@@ -64,7 +58,7 @@ public partial class ReadAllBytesTests
 
 	[Theory]
 	[AutoData]
-	public void ReadAllBytes_ShouldNotGetAReferenceToFileContent(
+	public async Task ReadAllBytes_ShouldNotGetAReferenceToFileContent(
 		string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes.ToArray());
@@ -74,24 +68,24 @@ public partial class ReadAllBytesTests
 
 		byte[] result = FileSystem.File.ReadAllBytes(path);
 
-		result.Should().BeEquivalentTo(bytes);
+		await That(result).IsEqualTo(bytes).InAnyOrder();
 	}
 
 	[Theory]
 	[AutoData]
-	public void ReadAllBytes_ShouldReturnWrittenBytes(
+	public async Task ReadAllBytes_ShouldReturnWrittenBytes(
 		byte[] bytes, string path)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
 
 		byte[] result = FileSystem.File.ReadAllBytes(path);
 
-		result.Should().BeEquivalentTo(bytes);
+		await That(result).IsEqualTo(bytes).InAnyOrder();
 	}
 
 	[Theory]
 	[AutoData]
-	public void ReadAllBytes_ShouldTolerateAltDirectorySeparatorChar(
+	public async Task ReadAllBytes_ShouldTolerateAltDirectorySeparatorChar(
 		byte[] bytes, string directory, string fileName)
 	{
 		FileSystem.Directory.CreateDirectory(directory);
@@ -101,6 +95,6 @@ public partial class ReadAllBytesTests
 
 		byte[] result = FileSystem.File.ReadAllBytes(altFilePath);
 
-		result.Should().BeEquivalentTo(bytes);
+		await That(result).IsEqualTo(bytes).InAnyOrder();
 	}
 }

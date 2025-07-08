@@ -7,7 +7,7 @@ public partial class CopyTests
 {
 	[Theory]
 	[AutoData]
-	public void Copy_CaseOnlyChange_ShouldThrowIOException_ExceptOnLinux(
+	public async Task Copy_CaseOnlyChange_ShouldThrowIOException_ExceptOnLinux(
 		string name, string contents)
 	{
 		string sourceName = name.ToLowerInvariant();
@@ -21,7 +21,7 @@ public partial class CopyTests
 
 		if (Test.RunsOnLinux)
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 			FileSystem.File.Exists(sourceName).Should().BeTrue();
 			FileSystem.File.Exists(destinationName).Should().BeTrue();
 		}
@@ -158,7 +158,7 @@ public partial class CopyTests
 
 	[Theory]
 	[AutoData]
-	public void Copy_ShouldAdjustTimes(
+	public async Task Copy_ShouldAdjustTimes(
 		string source, string destination)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -189,8 +189,7 @@ public partial class CopyTests
 			sourceLastAccessTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
 #else
-			sourceLastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(sourceLastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 #endif
 		}
 		else if (Test.RunsOnWindows)
@@ -200,16 +199,14 @@ public partial class CopyTests
 		}
 		else
 		{
-			sourceLastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(sourceLastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
 		sourceLastWriteTime.Should()
 			.BeBetween(creationTimeStart, creationTimeEnd);
 		if (Test.RunsOnWindows)
 		{
-			destinationCreationTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(destinationCreationTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -219,8 +216,7 @@ public partial class CopyTests
 
 		if (!Test.RunsOnMac)
 		{
-			destinationLastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(destinationLastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
 		destinationLastWriteTime.Should()

@@ -44,7 +44,7 @@ public partial class ReadAllBytesAsyncTests
 
 		byte[] result = await FileSystem.File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken);
 
-		result.Should().BeEquivalentTo(bytes);
+		await That(result).IsEqualTo(bytes).InAnyOrder();
 	}
 }
 #endif

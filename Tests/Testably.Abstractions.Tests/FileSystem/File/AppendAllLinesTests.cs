@@ -100,7 +100,7 @@ public partial class AppendAllLinesTests
 
 	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
-	public void AppendAllLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
+	public async Task AppendAllLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding)
 	{
 		string path = new Fixture().Create<string>();
@@ -110,8 +110,7 @@ public partial class AppendAllLinesTests
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 
-		result.Should().NotBeEquivalentTo(lines,
-			$"{lines} should be different when encoding from {writeEncoding} to {readEncoding}.");
-		result[0].Should().Be(lines[0]);
+		await That(result).IsNotEqualTo(lines).InAnyOrder();
+		await That(result[0]).IsEqualTo(lines[0]);
 	}
 }

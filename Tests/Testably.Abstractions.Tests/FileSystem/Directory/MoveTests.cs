@@ -171,7 +171,7 @@ public partial class MoveTests
 
 	[Theory]
 	[AutoData]
-	public void Move_WithLockedFile_ShouldStillMoveDirectory_NotOnWindows(
+	public async Task Move_WithLockedFile_ShouldStillMoveDirectory_NotOnWindows(
 		string source, string destination)
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -193,7 +193,7 @@ public partial class MoveTests
 			FileSystem.Directory.Move(source, destination);
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 		FileSystem.Directory.Exists(source).Should().BeFalse();
 		FileSystem.Directory.Exists(destination).Should().BeTrue();
 		IDirectoryInfo destinationDirectory =

@@ -23,7 +23,7 @@ public class InMemoryStorageTests
 
 	[Theory]
 	[AutoData]
-	public void Copy_Overwrite_ShouldAdjustAvailableFreeSpace(
+	public async Task Copy_Overwrite_ShouldAdjustAvailableFreeSpace(
 		int file1Size, int file2Size)
 	{
 		MockFileSystem fileSystem = new();
@@ -41,19 +41,18 @@ public class InMemoryStorageTests
 		fileSystem.File.Copy("foo", "bar", true);
 
 		long availableFreeSpaceAfter = mainDrive.AvailableFreeSpace;
-		availableFreeSpaceAfter.Should()
-			.Be(availableFreeSpaceBefore + file2Size - file1Size);
+		await That(availableFreeSpaceAfter).IsEqualTo(availableFreeSpaceBefore + file2Size - file1Size);
 	}
 
 	[Fact]
-	public void CurrentDirectory_ShouldBeInitializedToDefaultRoot()
+	public async Task CurrentDirectory_ShouldBeInitializedToDefaultRoot()
 	{
 		string expectedRoot = string.Empty.PrefixRoot(new MockFileSystem());
-		Storage.CurrentDirectory.Should().Be(expectedRoot);
+		await That(Storage.CurrentDirectory).IsEqualTo(expectedRoot);
 	}
 
 	[Fact]
-	public void Delete_RaceCondition_ShouldReturnFalse()
+	public async Task Delete_RaceCondition_ShouldReturnFalse()
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.Directory.CreateDirectory("foo");
@@ -72,7 +71,7 @@ public class InMemoryStorageTests
 			fileSystem.Directory.Delete("foo");
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>();
+		await That(exception).IsExactly<DirectoryNotFoundException>();
 	}
 
 	[Theory]
@@ -80,23 +79,23 @@ public class InMemoryStorageTests
 	[InlineData("")]
 	[InlineData(" ")]
 	[InlineData("\t")]
-	public void GetDrive_NullOrWhitespace_ShouldReturnNull(string? driveName)
+	public async Task GetDrive_NullOrWhitespace_ShouldReturnNull(string? driveName)
 	{
 		IStorageDrive? result = Storage.GetDrive(driveName);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Fact]
-	public void GetOrAddDrive_Null_ShouldReturnNull()
+	public async Task GetOrAddDrive_Null_ShouldReturnNull()
 	{
 		IStorageDrive? result = Storage.GetOrAddDrive(driveName: null);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Fact]
-	public void GetOrCreateContainer_WithMetadata_ShouldBeKept()
+	public async Task GetOrCreateContainer_WithMetadata_ShouldBeKept()
 	{
 		FileSystemExtensibility extensibility = new();
 		extensibility.StoreMetadata("foo1", "bar1");
@@ -109,14 +108,14 @@ public class InMemoryStorageTests
 			extensibility);
 
 		string? result1 = container.Extensibility.RetrieveMetadata<string>("foo1");
-		result1.Should().Be("bar1");
+		await That(result1).IsEqualTo("bar1");
 		int result2 = container.Extensibility.RetrieveMetadata<int>("foo2");
-		result2.Should().Be(42);
+		await That(result2).IsEqualTo(42);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_RequestDeniedForChild_ShouldRollback(
+	public async Task Move_RequestDeniedForChild_ShouldRollback(
 		string locationPath, string destinationPath)
 	{
 		IStorageLocation location = Storage.GetLocation(locationPath);
@@ -146,15 +145,15 @@ public class InMemoryStorageTests
 			Storage.Move(location, destination, recursive: true);
 		});
 
-		Storage.GetContainer(location).Should().NotBeOfType<NullContainer>();
-		Storage.GetContainer(child1Location).Should().NotBeOfType<NullContainer>();
-		Storage.GetContainer(child2Location).Should().NotBeOfType<NullContainer>();
-		exception.Should().BeOfType<IOException>();
+		await That(Storage.GetContainer(location)).IsNot<NullContainer>();
+		await That(Storage.GetContainer(child1Location)).IsNot<NullContainer>();
+		await That(Storage.GetContainer(child2Location)).IsNot<NullContainer>();
+		await That(exception).IsExactly<IOException>();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Replace_WithBackup_ShouldChangeAvailableFreeSpace(
+	public async Task Replace_WithBackup_ShouldChangeAvailableFreeSpace(
 		int file1Size, int file2Size, int file3Size)
 	{
 		MockFileSystem fileSystem = new();
@@ -175,13 +174,12 @@ public class InMemoryStorageTests
 		fileSystem.File.Replace("foo", "bar", "backup", true);
 
 		long availableFreeSpaceAfter = mainDrive.AvailableFreeSpace;
-		availableFreeSpaceAfter.Should()
-			.Be(availableFreeSpaceBefore + file2Size);
+		await That(availableFreeSpaceAfter).IsEqualTo(availableFreeSpaceBefore + file2Size);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Replace_WithoutBackup_ShouldNotChangeAvailableFreeSpace(
+	public async Task Replace_WithoutBackup_ShouldNotChangeAvailableFreeSpace(
 		int file1Size, int file2Size)
 	{
 		MockFileSystem fileSystem = new();
@@ -199,13 +197,12 @@ public class InMemoryStorageTests
 		fileSystem.File.Replace("foo", "bar", "backup");
 
 		long availableFreeSpaceAfter = mainDrive.AvailableFreeSpace;
-		availableFreeSpaceAfter.Should()
-			.Be(availableFreeSpaceBefore);
+		await That(availableFreeSpaceAfter).IsEqualTo(availableFreeSpaceBefore);
 	}
 
 	[Theory]
 	[AutoData]
-	public void TryAddContainer_ShouldNotifyWhenAdded(string path)
+	public async Task TryAddContainer_ShouldNotifyWhenAdded(string path)
 	{
 		bool receivedNotification = false;
 		FileSystem.Notify.OnEvent(_ => receivedNotification = true);
@@ -215,14 +212,14 @@ public class InMemoryStorageTests
 			InMemoryContainer.NewDirectory,
 			out IStorageContainer? container);
 
-		result.Should().BeTrue();
-		receivedNotification.Should().BeTrue();
-		container!.Type.Should().Be(FileSystemTypes.Directory);
+		await That(result).IsTrue();
+		await That(receivedNotification).IsTrue();
+		await That(container!.Type).IsEqualTo(FileSystemTypes.Directory);
 	}
 
 	[Theory]
 	[AutoData]
-	public void TryAddContainer_ShouldNotNotifyWhenExistsPreviously(string path)
+	public async Task TryAddContainer_ShouldNotNotifyWhenExistsPreviously(string path)
 	{
 		IStorageLocation location = Storage.GetLocation(path);
 		Storage.TryAddContainer(
@@ -236,8 +233,8 @@ public class InMemoryStorageTests
 			InMemoryContainer.NewDirectory,
 			out IStorageContainer? container);
 
-		result.Should().BeFalse();
-		receivedNotification.Should().BeFalse();
-		container.Should().BeNull();
+		await That(result).IsFalse();
+		await That(receivedNotification).IsFalse();
+		await That(container).IsNull();
 	}
 }

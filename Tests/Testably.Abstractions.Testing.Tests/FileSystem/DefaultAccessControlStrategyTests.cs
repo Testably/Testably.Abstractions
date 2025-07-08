@@ -12,23 +12,22 @@ public class DefaultAccessControlStrategyTests
 	#endregion
 
 	[Fact]
-	public void Constructor_NullCallback_ShouldThrowArgumentNullException()
+	public async Task Constructor_NullCallback_ShouldThrowArgumentNullException()
 	{
-		Exception? exception = Record.Exception(() =>
-		{
+		void Act()
+		{ 
 			_ = new DefaultAccessControlStrategy(null!);
-		});
+		}
 
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("callback");
+		await That(Act).ThrowsExactly<ArgumentNullException>().WithParamName("callback");
 	}
 
 	[Fact]
-	public void IsAccessGranted_ShouldUseCallback()
+	public async Task IsAccessGranted_ShouldUseCallback()
 	{
 		DefaultAccessControlStrategy sut = new((p, _) => p.StartsWith('a'));
 
-		sut.IsAccessGranted("abc", new FileSystemExtensibility()).Should().BeTrue();
-		sut.IsAccessGranted("xyz", new FileSystemExtensibility()).Should().BeFalse();
+		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility())).IsTrue();
+		await That(sut.IsAccessGranted("xyz", new FileSystemExtensibility())).IsFalse();
 	}
 }

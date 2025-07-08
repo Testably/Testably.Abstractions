@@ -17,23 +17,23 @@ public class RandomSystemExtensibilityTests
 
 	[Theory]
 	[MemberData(nameof(GetRandomSystems))]
-	public void Guid_ShouldSetExtensionPoint(IRandomSystem randomSystem)
+	public async Task Guid_ShouldSetExtensionPoint(IRandomSystem randomSystem)
 	{
 		IGuid sut = randomSystem.Guid;
 
 		IRandomSystem result = sut.RandomSystem;
 
-		result.Should().Be(randomSystem);
+		await That(result).IsEqualTo(randomSystem);
 	}
 
 	[Theory]
 	[MemberData(nameof(GetRandomSystems))]
-	public void RandomFactory_ShouldSetExtensionPoint(IRandomSystem randomSystem)
+	public async Task RandomFactory_ShouldSetExtensionPoint(IRandomSystem randomSystem)
 	{
 		IRandomFactory sut = randomSystem.Random;
 
 		IRandomSystem result = sut.RandomSystem;
 
-		result.Should().Be(randomSystem);
+		await That(result).IsEqualTo(randomSystem);
 	}
 }

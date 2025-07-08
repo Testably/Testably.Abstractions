@@ -148,7 +148,7 @@ public partial class MoveTests
 
 	[Theory]
 	[AutoData]
-	public void Move_SourceAndDestinationIdentical_ShouldNotThrowException(string path)
+	public async Task Move_SourceAndDestinationIdentical_ShouldNotThrowException(string path)
 	{
 		FileSystem.Initialize()
 			.WithFile(path);
@@ -158,7 +158,7 @@ public partial class MoveTests
 			FileSystem.File.Move(path, path);
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]

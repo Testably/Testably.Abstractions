@@ -5,76 +5,76 @@ public partial class GetFileNameWithoutExtensionTests
 {
 	[Theory]
 	[AutoData]
-	public void GetFileNameWithoutExtension_MultipleDots_ShouldReturnOnlyRemoveTheLastExtension(
+	public async Task GetFileNameWithoutExtension_MultipleDots_ShouldReturnOnlyRemoveTheLastExtension(
 		string directory, string filename1, string filename2, string extension)
 	{
 		string filename = filename1 + "." + filename2;
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
-		              "." + extension;
+					  "." + extension;
 
 		string result = FileSystem.Path.GetFileNameWithoutExtension(path);
 
-		result.Should().Be(filename);
+		await That(result).IsEqualTo(filename);
 	}
 
 	[Fact]
-	public void GetFileNameWithoutExtension_Null_ShouldReturnNull()
+	public async Task GetFileNameWithoutExtension_Null_ShouldReturnNull()
 	{
 		string? result = FileSystem.Path.GetFileNameWithoutExtension(null);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetFileNameWithoutExtension_ShouldReturnFileNameWithoutExtension(
+	public async Task GetFileNameWithoutExtension_ShouldReturnFileNameWithoutExtension(
 		string directory, string filename, string extension)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
-		              "." + extension;
+					  "." + extension;
 
 		string result = FileSystem.Path.GetFileNameWithoutExtension(path);
 
-		result.Should().Be(filename);
+		await That(result).IsEqualTo(filename);
 	}
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void GetFileNameWithoutExtension_Span_ShouldReturnFileNameWithoutExtension(
+	public async Task GetFileNameWithoutExtension_Span_ShouldReturnFileNameWithoutExtension(
 		string directory, string filename, string extension)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
-		              "." + extension;
+					  "." + extension;
 
 		ReadOnlySpan<char> result =
 			FileSystem.Path.GetFileNameWithoutExtension(path.AsSpan());
 
-		result.ToString().Should().Be(filename);
+		await That(result.ToString()).IsEqualTo(filename);
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void GetFileNameWithoutExtension_StartingDot_ShouldReturnEmptyString(
+	public async Task GetFileNameWithoutExtension_StartingDot_ShouldReturnEmptyString(
 		string directory, string filename)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + "." + filename;
 
 		string result = FileSystem.Path.GetFileNameWithoutExtension(path);
 
-		result.Should().Be("");
+		await That(result).IsEqualTo("");
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetFileNameWithoutExtension_TrailingDot_ShouldReturnFilenameWithoutTrailingDot(
+	public async Task GetFileNameWithoutExtension_TrailingDot_ShouldReturnFilenameWithoutTrailingDot(
 		string directory, string filename)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename + ".";
 
 		string result = FileSystem.Path.GetFileNameWithoutExtension(path);
 
-		result.Should().Be(filename);
+		await That(result).IsEqualTo(filename);
 	}
 }

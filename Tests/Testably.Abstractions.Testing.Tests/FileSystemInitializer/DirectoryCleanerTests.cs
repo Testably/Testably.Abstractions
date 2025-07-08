@@ -19,7 +19,7 @@ public class DirectoryCleanerTests
 
 	[Theory]
 	[AutoData]
-	public void Dispose_PermanentFailure_ShouldNotThrowException(
+	public async Task Dispose_PermanentFailure_ShouldNotThrowException(
 		Exception exception)
 	{
 		MockFileSystem sut = new();
@@ -41,23 +41,23 @@ public class DirectoryCleanerTests
 			directoryCleaner.Dispose();
 		});
 
-		receivedException.Should().BeNull();
-		exceptionCount.Should().BeGreaterThan(10);
+		await That(receivedException).IsNull();
+		await That(exceptionCount).IsGreaterThan(10);
 		foreach (string retryMessage in Enumerable
 			.Range(1, 10)
 			.Select(i => $"Retry again {i} times"))
 		{
-			receivedLogs.Should().Contain(m => m.Contains(retryMessage));
+			await That(receivedLogs).Contains(m => m.Contains(retryMessage));
 		}
 
-		receivedLogs.Should().Contain(m =>
+		await That(receivedLogs).Contains(m =>
 			m.Contains(exception.Message) &&
 			m.Contains($"'{parentOfCurrentDirectory}'"));
-		receivedLogs.Should().NotContain("Cleanup was successful :-)");
+		await That(receivedLogs).DoesNotContain("Cleanup was successful :-)");
 	}
 
 	[Fact]
-	public void Dispose_ShouldForceDeleteCurrentDirectory()
+	public async Task Dispose_ShouldForceDeleteCurrentDirectory()
 	{
 		MockFileSystem sut = new();
 		List<string> receivedLogs = [];
@@ -66,24 +66,24 @@ public class DirectoryCleanerTests
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 
 		directoryCleaner.Dispose();
-		sut.Directory.Exists(currentDirectory).Should().BeFalse();
-		receivedLogs.Should().Contain("Cleanup was successful :-)");
+		await That(sut.Directory.Exists(currentDirectory)).IsFalse();
+		await That(receivedLogs).Contains("Cleanup was successful :-)");
 	}
 
 	[Fact]
-	public void Dispose_ShouldResetCurrentDirectory()
+	public async Task Dispose_ShouldResetCurrentDirectory()
 	{
 		MockFileSystem sut = new();
 		IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		directoryCleaner.Dispose();
-		sut.Directory.GetCurrentDirectory().Should().NotBe(currentDirectory);
+		await That(sut.Directory.GetCurrentDirectory()).IsNotEqualTo(currentDirectory);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Dispose_TemporaryFailure_ShouldRetryAgain(
+	public async Task Dispose_TemporaryFailure_ShouldRetryAgain(
 		Exception exception)
 	{
 		MockFileSystem sut = new();
@@ -100,11 +100,11 @@ public class DirectoryCleanerTests
 			     c.ChangeType.HasFlag(WatcherChangeTypes.Deleted));
 
 		directoryCleaner.Dispose();
-		sut.Directory.Exists(currentDirectory).Should().BeFalse();
+		await That(sut.Directory.Exists(currentDirectory)).IsFalse();
 	}
 
 	[Fact]
-	public void InitializeBasePath_ShouldCreateDirectoryAndLogBasePath()
+	public async Task InitializeBasePath_ShouldCreateDirectoryAndLogBasePath()
 	{
 		MockFileSystem sut = new();
 		List<string> receivedLogs = [];
@@ -112,9 +112,9 @@ public class DirectoryCleanerTests
 		using IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(logger: t => receivedLogs.Add(t));
 
-		sut.Statistics.TotalCount.Should().Be(0);
+		await That(sut.Statistics.TotalCount).IsEqualTo(0);
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
-		sut.Directory.Exists(currentDirectory).Should().BeTrue();
-		receivedLogs.Should().Contain(m => m.Contains($"'{currentDirectory}'"));
+		await That(sut.Directory.Exists(currentDirectory)).IsTrue();
+		await That(receivedLogs).Contains(m => m.Contains($"'{currentDirectory}'"));
 	}
 }

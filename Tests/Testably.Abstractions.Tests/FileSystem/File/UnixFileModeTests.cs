@@ -8,22 +8,22 @@ public partial class UnixFileModeTests
 {
 	[Theory]
 	[AutoData]
-	public void GetUnixFileMode_ShouldBeInitializedCorrectly(
+	public async Task GetUnixFileMode_ShouldBeInitializedCorrectly(
 		string path)
 	{
 		Skip.If(Test.RunsOnWindows);
-		
+
 		FileSystem.File.WriteAllText(path, "");
 		UnixFileMode expected = UnixFileMode.OtherRead |
-		                        UnixFileMode.GroupRead |
-		                        UnixFileMode.UserWrite |
-		                        UnixFileMode.UserRead;
+								UnixFileMode.GroupRead |
+								UnixFileMode.UserWrite |
+								UnixFileMode.UserRead;
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		UnixFileMode result = FileSystem.File.GetUnixFileMode(path);
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		result.Should().Be(expected);
+		await That(result).IsEqualTo(expected);
 	}
 
 	[Theory]
@@ -62,19 +62,19 @@ public partial class UnixFileModeTests
 
 	[Theory]
 	[AutoData]
-	public void SetUnixFileMode_ShouldBeSettableOnLinux(
+	public async Task SetUnixFileMode_ShouldBeSettableOnLinux(
 		string path, UnixFileMode unixFileMode)
 	{
 		Skip.If(Test.RunsOnWindows);
 
 		FileSystem.File.WriteAllText(path, "some content");
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		FileSystem.File.SetUnixFileMode(path, unixFileMode);
 
 		UnixFileMode result = FileSystem.File.GetUnixFileMode(path);
-		#pragma warning restore CA1416
-		result.Should().Be(unixFileMode);
+#pragma warning restore CA1416
+		await That(result).IsEqualTo(unixFileMode);
 	}
 
 	[Theory]

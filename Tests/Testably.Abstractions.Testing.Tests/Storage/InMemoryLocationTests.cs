@@ -8,8 +8,7 @@ public class InMemoryLocationTests
 {
 	[Theory]
 	[AutoData]
-	public void
-		Equals_AsObject_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
+	public async Task Equals_AsObject_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
 			string path1, string path2)
 	{
 		MockFileSystem fileSystem = new();
@@ -18,12 +17,12 @@ public class InMemoryLocationTests
 
 		bool result = location1.Equals(location2);
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Equals_ForDummyLocation_ShouldCompareFullPath(
+	public async Task Equals_ForDummyLocation_ShouldCompareFullPath(
 		string path)
 	{
 		string fullPath = Path.GetFullPath(path);
@@ -32,12 +31,12 @@ public class InMemoryLocationTests
 
 		bool result = location1.Equals(location2);
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Equals_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
+	public async Task Equals_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
 		string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -49,23 +48,23 @@ public class InMemoryLocationTests
 
 		bool result = location1.Equals(location2);
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Equals_Null_ShouldReturnFalse(string path)
+	public async Task Equals_Null_ShouldReturnFalse(string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(new MockFileSystem(), null, path);
 
 		bool result = location.Equals(null!);
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Equals_Object_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
+	public async Task Equals_Object_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
 		string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -77,45 +76,45 @@ public class InMemoryLocationTests
 
 		bool result = location1.Equals(location2);
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Equals_Object_Null_ShouldReturnFalse(string path)
+	public async Task Equals_Object_Null_ShouldReturnFalse(string path)
 	{
 		object location = InMemoryLocation.New(new MockFileSystem(), null, path);
 
 		bool result = location.Equals(null);
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Equals_Object_SameInstance_ShouldReturnTrue(string path)
+	public async Task Equals_Object_SameInstance_ShouldReturnTrue(string path)
 	{
 		object location = InMemoryLocation.New(new MockFileSystem(), null, path);
 		object other = location;
 
 		bool result = location.Equals(other);
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Equals_SameInstance_ShouldReturnTrue(string path)
+	public async Task Equals_SameInstance_ShouldReturnTrue(string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(new MockFileSystem(), null, path);
 
 		bool result = location.Equals(location);
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 	[Fact]
-	public void GetParent_Root_ShouldReturnNull()
+	public async Task GetParent_Root_ShouldReturnNull()
 	{
 		MockFileSystem fileSystem = new();
 		IStorageLocation location =
@@ -123,28 +122,27 @@ public class InMemoryLocationTests
 
 		IStorageLocation? result = location.GetParent();
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Fact]
-	public void New_EmptyPath_ShouldThrowArgumentException()
+	public async Task New_EmptyPath_ShouldThrowArgumentException()
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			InMemoryLocation.New(new MockFileSystem(), null, "");
-		});
+		}
 
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
+		await That(Act).ThrowsExactly<ArgumentException>().WithHResult(-2147024809);
 	}
 
 	[Theory]
 	[AutoData]
-	public void ToString_ShouldReturnPath(string path)
+	public async Task ToString_ShouldReturnPath(string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(new MockFileSystem(), null, path);
 
-		location.ToString().Should().Be(path);
+		await That(location.ToString()).IsEqualTo(path);
 	}
 
 	private sealed class DummyLocation(string fullPath) : IStorageLocation

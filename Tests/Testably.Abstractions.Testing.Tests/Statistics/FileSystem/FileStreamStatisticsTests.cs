@@ -10,7 +10,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 public class FileStreamStatisticsTests
 {
 	[Fact]
-	public void Method_BeginRead_ByteArray_Int_Int_AsyncCallback_Object_ShouldRegisterCall()
+	public async Task Method_BeginRead_ByteArray_Int_Int_AsyncCallback_Object_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -22,14 +22,14 @@ public class FileStreamStatisticsTests
 
 		fileStream.BeginRead(buffer, offset, count, callback, state);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.BeginRead),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.BeginRead),
 				buffer, offset, count, callback, state);
 	}
 
 	[Fact]
-	public void Method_BeginWrite_ByteArray_Int_Int_AsyncCallback_Object_ShouldRegisterCall()
+	public async Task Method_BeginWrite_ByteArray_Int_Int_AsyncCallback_Object_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -41,26 +41,26 @@ public class FileStreamStatisticsTests
 
 		fileStream.BeginWrite(buffer, offset, count, callback, state);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.BeginWrite),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.BeginWrite),
 				buffer, offset, count, callback, state);
 	}
 
 	[Fact]
-	public void Method_Close_ShouldRegisterCall()
+	public async Task Method_Close_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 			
 		fileStream.Close();
 
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Close));
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.Close));
 	}
 
 	[Fact]
-	public void Method_CopyTo_Stream_Int_ShouldRegisterCall()
+	public async Task Method_CopyTo_Stream_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -69,9 +69,9 @@ public class FileStreamStatisticsTests
 
 		fileStream.CopyTo(destination, bufferSize);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.CopyTo),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.CopyTo),
 				destination, bufferSize);
 	}
 
@@ -86,14 +86,14 @@ public class FileStreamStatisticsTests
 
 		await fileStream.CopyToAsync(destination, bufferSize, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.CopyToAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.CopyToAsync),
 				destination, bufferSize, cancellationToken);
 	}
 
 	[Fact]
-	public void Method_EndRead_IAsyncResult_ShouldRegisterCall()
+	public async Task Method_EndRead_IAsyncResult_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -102,16 +102,16 @@ public class FileStreamStatisticsTests
 
 		fileStream.EndRead(asyncResult);
 
-		sut.Statistics.TotalCount.Should().Be(3);
-		sut.Statistics.FileStream["foo"].Methods.Length.Should().Be(2);
-		sut.Statistics.FileStream["foo"].Methods.Should()
-			.ContainSingle(c => c.Name == nameof(FileSystemStream.EndRead) &&
-			                    c.Parameters.Length == 1 &&
-			                    c.Parameters[0].Is(asyncResult));
+		await That(sut.Statistics.TotalCount).IsEqualTo(3);
+		await That(sut.Statistics.FileStream["foo"].Methods.Length).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"].Methods).HasSingle().Matching(c =>
+			string.Equals(c.Name, nameof(FileSystemStream.EndRead), StringComparison.Ordinal) &&
+			c.Parameters.Length == 1 &&
+			c.Parameters[0].Is(asyncResult));
 	}
 
 	[Fact]
-	public void Method_EndWrite_IAsyncResult_ShouldRegisterCall()
+	public async Task Method_EndWrite_IAsyncResult_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -120,16 +120,16 @@ public class FileStreamStatisticsTests
 
 		fileStream.EndWrite(asyncResult);
 
-		sut.Statistics.TotalCount.Should().Be(3);
-		sut.Statistics.FileStream["foo"].Methods.Length.Should().Be(2);
-		sut.Statistics.FileStream["foo"].Methods.Should()
-			.ContainSingle(c => c.Name == nameof(FileSystemStream.EndWrite) &&
-			                    c.Parameters.Length == 1 &&
-			                    c.Parameters[0].Is(asyncResult));
+		await That(sut.Statistics.TotalCount).IsEqualTo(3);
+		await That(sut.Statistics.FileStream["foo"].Methods.Length).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"].Methods).HasSingle().Matching(c => 
+			string.Equals(c.Name, nameof(FileSystemStream.EndWrite), StringComparison.Ordinal) &&
+			c.Parameters.Length == 1 &&
+			c.Parameters[0].Is(asyncResult));
 	}
 
 	[Fact]
-	public void Method_Flush_Bool_ShouldRegisterCall()
+	public async Task Method_Flush_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -137,23 +137,23 @@ public class FileStreamStatisticsTests
 
 		fileStream.Flush(flushToDisk);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Flush),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.Flush),
 				flushToDisk);
 	}
 
 	[Fact]
-	public void Method_Flush_ShouldRegisterCall()
+	public async Task Method_Flush_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
 		fileStream.Flush();
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Flush));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.Flush));
 	}
 
 	[Fact]
@@ -165,14 +165,14 @@ public class FileStreamStatisticsTests
 
 		await fileStream.FlushAsync(cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.FlushAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.FlushAsync),
 				cancellationToken);
 	}
 
 	[Fact]
-	public void Method_Read_ByteArray_Int_Int_ShouldRegisterCall()
+	public async Task Method_Read_ByteArray_Int_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -182,15 +182,15 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.Read(buffer, offset, count);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Read),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.Read),
 				buffer, offset, count);
 	}
 
 #if FEATURE_SPAN
 	[Fact]
-	public void Method_Read_SpanByte_ShouldRegisterCall()
+	public async Task Method_Read_SpanByte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -198,10 +198,10 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.Read(buffer);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Read),
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.Read),
 				buffer);
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
 	}
 #endif
 
@@ -215,13 +215,13 @@ public class FileStreamStatisticsTests
 		int count = 2;
 		CancellationToken cancellationToken = CancellationToken.None;
 
-		#pragma warning disable CA1835 // Change the 'ReadAsync' method call to use the 'Stream.ReadAsync(Memory<byte>, CancellationToken)' overload
+#pragma warning disable CA1835 // Change the 'ReadAsync' method call to use the 'Stream.ReadAsync(Memory<byte>, CancellationToken)' overload
 		_ = await fileStream.ReadAsync(buffer, offset, count, cancellationToken);
-		#pragma warning restore CA1835
+#pragma warning restore CA1835
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.ReadAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.ReadAsync),
 				buffer, offset, count, cancellationToken);
 	}
 
@@ -236,28 +236,28 @@ public class FileStreamStatisticsTests
 
 		_ = await fileStream.ReadAsync(buffer, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.ReadAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.ReadAsync),
 				buffer, cancellationToken);
 	}
 #endif
 
 	[Fact]
-	public void Method_ReadByte_ShouldRegisterCall()
+	public async Task Method_ReadByte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
 		fileStream.ReadByte();
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.ReadByte));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.ReadByte));
 	}
 
 	[Fact]
-	public void Method_Seek_Int64_SeekOrigin_ShouldRegisterCall()
+	public async Task Method_Seek_Int64_SeekOrigin_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -266,14 +266,14 @@ public class FileStreamStatisticsTests
 
 		fileStream.Seek(offset, origin);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Seek),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.Seek),
 				offset, origin);
 	}
 
 	[Fact]
-	public void Method_SetLength_Int64_ShouldRegisterCall()
+	public async Task Method_SetLength_Int64_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -281,27 +281,27 @@ public class FileStreamStatisticsTests
 
 		fileStream.SetLength(value);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.SetLength),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.SetLength),
 				value);
 	}
 
 	[Fact]
-	public void Method_ToString_ShouldRegisterCall()
+	public async Task Method_ToString_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
 		_ = fileStream.ToString();
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.ToString));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.ToString));
 	}
 
 	[Fact]
-	public void Method_Write_ByteArray_Int_Int_ShouldRegisterCall()
+	public async Task Method_Write_ByteArray_Int_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -311,15 +311,15 @@ public class FileStreamStatisticsTests
 
 		fileStream.Write(buffer, offset, count);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Write),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.Write),
 				buffer, offset, count);
 	}
 
 #if FEATURE_SPAN
 	[Fact]
-	public void Method_Write_ReadOnlySpanByte_ShouldRegisterCall()
+	public async Task Method_Write_ReadOnlySpanByte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -327,10 +327,10 @@ public class FileStreamStatisticsTests
 
 		fileStream.Write(buffer);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Write),
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.Write),
 				buffer);
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
 	}
 #endif
 
@@ -344,13 +344,13 @@ public class FileStreamStatisticsTests
 		int count = 2;
 		CancellationToken cancellationToken = CancellationToken.None;
 
-		#pragma warning disable CA1835 // Change the 'WriteAsync' method call to use the 'Stream.WriteAsync(ReadOnlyMemory<byte>, CancellationToken)' overload
+#pragma warning disable CA1835 // Change the 'WriteAsync' method call to use the 'Stream.WriteAsync(ReadOnlyMemory<byte>, CancellationToken)' overload
 		await fileStream.WriteAsync(buffer, offset, count, cancellationToken);
-		#pragma warning restore CA1835
+#pragma warning restore CA1835
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.WriteAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.WriteAsync),
 				buffer, offset, count, cancellationToken);
 	}
 
@@ -365,15 +365,15 @@ public class FileStreamStatisticsTests
 
 		await fileStream.WriteAsync(buffer, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.WriteAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.WriteAsync),
 				buffer, cancellationToken);
 	}
 #endif
 
 	[Fact]
-	public void Method_WriteByte_Byte_ShouldRegisterCall()
+	public async Task Method_WriteByte_Byte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -381,118 +381,118 @@ public class FileStreamStatisticsTests
 
 		fileStream.WriteByte(value);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.WriteByte),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsMethodCall(nameof(FileSystemStream.WriteByte),
 				value);
 	}
 
 	[Fact]
-	public void Property_CanRead_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_CanRead_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
 		_ = fileStream.CanRead;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.CanRead));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(FileSystemStream.CanRead));
 	}
 
 	[Fact]
-	public void Property_CanSeek_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_CanSeek_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
 		_ = fileStream.CanSeek;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.CanSeek));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(FileSystemStream.CanSeek));
 	}
 
 	[Fact]
-	public void Property_CanTimeout_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_CanTimeout_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
 		_ = fileStream.CanTimeout;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.CanTimeout));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(FileSystemStream.CanTimeout));
 	}
 
 	[Fact]
-	public void Property_CanWrite_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_CanWrite_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
 		_ = fileStream.CanWrite;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.CanWrite));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(FileSystemStream.CanWrite));
 	}
 
 	[Fact]
-	public void Property_IsAsync_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_IsAsync_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
 		_ = fileStream.IsAsync;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.IsAsync));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(FileSystemStream.IsAsync));
 	}
 
 	[Fact]
-	public void Property_Length_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_Length_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
 		_ = fileStream.Length;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.Length));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(FileSystemStream.Length));
 	}
 
 	[Fact]
-	public void Property_Name_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_Name_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
 		_ = fileStream.Name;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.Name));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(FileSystemStream.Name));
 	}
 
 	[Fact]
-	public void Property_Position_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_Position_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
 		_ = fileStream.Position;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.Position));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(FileSystemStream.Position));
 	}
 
 	[Fact]
-	public void Property_Position_Set_ShouldRegisterPropertyAccess()
+	public async Task Property_Position_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -500,13 +500,13 @@ public class FileStreamStatisticsTests
 
 		fileStream.Position = value;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainPropertySetAccess(nameof(FileSystemStream.Position));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsPropertySetAccess(nameof(FileSystemStream.Position));
 	}
 
 	[Fact]
-	public void Property_ReadTimeout_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_ReadTimeout_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -520,13 +520,13 @@ public class FileStreamStatisticsTests
 			// Timeouts are not supported on this stream.
 		}
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.ReadTimeout));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(FileSystemStream.ReadTimeout));
 	}
 
 	[Fact]
-	public void Property_ReadTimeout_Set_ShouldRegisterPropertyAccess()
+	public async Task Property_ReadTimeout_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -541,13 +541,13 @@ public class FileStreamStatisticsTests
 			// Timeouts are not supported on this stream.
 		}
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainPropertySetAccess(nameof(FileSystemStream.ReadTimeout));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsPropertySetAccess(nameof(FileSystemStream.ReadTimeout));
 	}
 
 	[Fact]
-	public void Property_WriteTimeout_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_WriteTimeout_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -561,13 +561,13 @@ public class FileStreamStatisticsTests
 			// Timeouts are not supported on this stream.
 		}
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.WriteTimeout));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(FileSystemStream.WriteTimeout));
 	}
 
 	[Fact]
-	public void Property_WriteTimeout_Set_ShouldRegisterPropertyAccess()
+	public async Task Property_WriteTimeout_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
@@ -582,18 +582,18 @@ public class FileStreamStatisticsTests
 			// Timeouts are not supported on this stream.
 		}
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileStream["foo"]
-			.ShouldOnlyContainPropertySetAccess(nameof(FileSystemStream.WriteTimeout));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileStream["foo"])
+			.OnlyContainsPropertySetAccess(nameof(FileSystemStream.WriteTimeout));
 	}
 
 	[Fact]
-	public void ToString_ShouldBeFileStreamWithPath()
+	public async Task ToString_ShouldBeFileStreamWithPath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.FileStream[@"\\some\path"];
 
 		string? result = sut.ToString();
 
-		result.Should().Be(@"FileStream[\\some\path]");
+		await That(result).IsEqualTo(@"FileStream[\\some\path]");
 	}
 }

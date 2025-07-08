@@ -39,7 +39,7 @@ public partial class CreateSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public void CreateSymbolicLink_TargetFileMissing_ShouldNotThrowException(
+	public async Task CreateSymbolicLink_TargetFileMissing_ShouldNotThrowException(
 		string path, string pathToTarget)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -47,7 +47,7 @@ public partial class CreateSymbolicLinkTests
 			FileSystem.File.CreateSymbolicLink(path, pathToTarget);
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 }
 #endif

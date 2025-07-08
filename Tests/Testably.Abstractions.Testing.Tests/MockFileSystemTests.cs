@@ -13,68 +13,68 @@ public class MockFileSystemTests
 {
 	[Theory]
 	[AutoData]
-	public void FileSystemMock_File_Decrypt(string path, string contents)
+	public async Task FileSystemMock_File_Decrypt(string path, string contents)
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		sut.File.Encrypt(path);
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		sut.File.Decrypt(path);
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		sut.File.ReadAllText(path).Should().Be(contents);
+		await That(sut.File.ReadAllText(path)).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void FileSystemMock_File_Encrypt(string path, string contents)
+	public async Task FileSystemMock_File_Encrypt(string path, string contents)
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		sut.File.Encrypt(path);
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		sut.File.ReadAllText(path).Should().NotBe(contents);
+		await That(sut.File.ReadAllText(path)).IsNotEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void FileSystemMock_FileInfo_Decrypt(string path, string contents)
+	public async Task FileSystemMock_FileInfo_Decrypt(string path, string contents)
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		sut.FileInfo.New(path).Encrypt();
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		sut.FileInfo.New(path).Decrypt();
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		sut.File.ReadAllText(path).Should().Be(contents);
+		await That(sut.File.ReadAllText(path)).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void FileSystemMock_FileInfo_Encrypt(string path, string contents)
+	public async Task FileSystemMock_FileInfo_Encrypt(string path, string contents)
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		sut.FileInfo.New(path).Encrypt();
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		sut.File.ReadAllText(path).Should().NotBe(contents);
+		await That(sut.File.ReadAllText(path)).IsNotEqualTo(contents);
 	}
 
 	[Fact]
-	public void FileSystemMock_ShouldBeInitializedWithADefaultDrive()
+	public async Task FileSystemMock_ShouldBeInitializedWithADefaultDrive()
 	{
 		MockFileSystem sut = new();
 		string expectedDriveName = "".PrefixRoot(sut);
@@ -82,46 +82,44 @@ public class MockFileSystemTests
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 		IDriveInfo drive = sut.GetDefaultDrive();
 
-		drives.Should().NotBeEmpty();
-		drive.Name.Should().Be(expectedDriveName);
-		drive.AvailableFreeSpace.Should().BeGreaterThan(0);
-		drive.DriveFormat.Should()
-			.Be(DriveInfoMock.DefaultDriveFormat);
-		drive.DriveType.Should()
-			.Be(DriveInfoMock.DefaultDriveType);
-		drive.VolumeLabel.Should().NotBeNullOrEmpty();
+		await That(drives).IsNotEmpty();
+		await That(drive.Name).IsEqualTo(expectedDriveName);
+		await That(drive.AvailableFreeSpace).IsGreaterThan(0);
+		await That(drive.DriveFormat).IsEqualTo(DriveInfoMock.DefaultDriveFormat);
+		await That(drive.DriveType).IsEqualTo(DriveInfoMock.DefaultDriveType);
+		await That(drive.VolumeLabel).IsNotNullOrEmpty();
 	}
 
 	[Theory]
 	[InlineData("A:\\")]
 	[InlineData("G:\\")]
 	[InlineData("z:\\")]
-	public void FileSystemMock_ShouldInitializeDriveFromCurrentDirectory(string driveName)
+	public async Task FileSystemMock_ShouldInitializeDriveFromCurrentDirectory(string driveName)
 	{
 		Skip.If(!Test.RunsOnWindows);
 
 		MockFileSystem sut = new(o => o.UseCurrentDirectory($"{driveName}foo\\bar"));
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
-		drives.Length.Should().Be(2);
-		drives.Should().Contain(d => d.Name == "C:\\");
-		drives.Should().Contain(d => d.Name == driveName);
+		await That(drives.Length).IsEqualTo(2);
+		await That(drives).Contains(d => string.Equals(d.Name, "C:\\", StringComparison.Ordinal));
+		await That(drives).Contains(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
 	}
 
 	[Fact]
-	public void ToString_ShouldContainStorageInformation()
+	public async Task ToString_ShouldContainStorageInformation()
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText("foo", "bar");
 
 		string result = sut.ToString();
 
-		result.Should().Contain("directories: 0, files: 1");
+		await That(result).Contains("directories: 0, files: 1");
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithAccessControl_Denied_CreateDirectoryShouldThrowIOException(
+	public async Task WithAccessControl_Denied_CreateDirectoryShouldThrowIOException(
 		string path)
 	{
 		MockFileSystem sut = new();
@@ -133,12 +131,12 @@ public class MockFileSystemTests
 			sut.Directory.CreateDirectory(path);
 		});
 
-		exception.Should().BeOfType<IOException>();
+		await That(exception).IsExactly<IOException>();
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithAccessControl_ShouldConsiderPath(
+	public async Task WithAccessControl_ShouldConsiderPath(
 		string allowedPath, string deniedPath)
 	{
 		MockFileSystem sut = new();
@@ -152,29 +150,29 @@ public class MockFileSystemTests
 			sut.Directory.CreateDirectory(deniedPath);
 		});
 
-		exception.Should().BeOfType<IOException>();
+		await That(exception).IsExactly<IOException>();
 	}
 
 	[Theory]
 	[InlineData("D:\\")]
-	public void WithDrive_Duplicate_ShouldUpdateExistingDrive(string driveName)
+	public async Task WithDrive_Duplicate_ShouldUpdateExistingDrive(string driveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
 
 		MockFileSystem sut = new();
 		sut.WithDrive(driveName, d => d.SetTotalSize(100));
-		sut.DriveInfo.GetDrives().Length.Should().Be(2);
+		await That(sut.DriveInfo.GetDrives().Length).IsEqualTo(2);
 		IDriveInfo drive = sut.DriveInfo.GetDrives()
 			.Single(x => string.Equals(x.Name, driveName, StringComparison.Ordinal));
-		drive.TotalSize.Should().Be(100);
+		await That(drive.TotalSize).IsEqualTo(100);
 
 		sut.WithDrive(driveName, d => d.SetTotalSize(200));
-		sut.DriveInfo.GetDrives().Length.Should().Be(2);
-		drive.TotalSize.Should().Be(200);
+		await That(sut.DriveInfo.GetDrives().Length).IsEqualTo(2);
+		await That(drive.TotalSize).IsEqualTo(200);
 	}
 
 	[Fact]
-	public void WithDrive_ExistingName_ShouldUpdateDrive()
+	public async Task WithDrive_ExistingName_ShouldUpdateDrive()
 	{
 		MockFileSystem sut = new();
 		string driveName = "".PrefixRoot(sut);
@@ -182,13 +180,13 @@ public class MockFileSystemTests
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 
-		drives.Length.Should().BeGreaterOrEqualTo(1);
-		drives.Should().ContainSingle(d => d.Name == driveName);
+		await That(drives.Length).IsGreaterThanOrEqualTo(1);
+		await That(drives).HasSingle().Matching(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
 	}
 
 	[Theory]
 	[InlineData("D:\\")]
-	public void WithDrive_NewName_ShouldCreateNewDrives(string driveName)
+	public async Task WithDrive_NewName_ShouldCreateNewDrives(string driveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
 
@@ -197,14 +195,14 @@ public class MockFileSystemTests
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 
-		drives.Length.Should().Be(2);
-		drives.Should().ContainSingle(d => d.Name == driveName);
+		await That(drives.Length).IsEqualTo(2);
+		await That(drives).HasSingle().Matching(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
 	}
 
 	[Theory]
 	[InlineData("D")]
 	[InlineData("D:")]
-	public void WithDrive_ShouldHavePathSeparatorSuffix(string driveName)
+	public async Task WithDrive_ShouldHavePathSeparatorSuffix(string driveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
 
@@ -214,29 +212,28 @@ public class MockFileSystemTests
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 
-		drives.Length.Should().BeLessOrEqualTo(2);
-		drives.Should().ContainSingle(d => d.Name == expectedDriveName);
+		await That(drives.Length).IsLessThanOrEqualTo(2);
+		await That(drives).HasSingle().Matching(d => string.Equals(d.Name, expectedDriveName, StringComparison.Ordinal));
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithDrive_WithCallback_ShouldUpdateDrive(long totalSize)
+	public async Task WithDrive_WithCallback_ShouldUpdateDrive(long totalSize)
 	{
 		MockFileSystem sut = new();
 		sut.WithDrive(d => d.SetTotalSize(totalSize));
 
 		IDriveInfo drive = sut.GetDefaultDrive();
 
-		drive.TotalSize.Should().Be(totalSize);
-		drive.TotalFreeSpace.Should().Be(totalSize);
-		drive.AvailableFreeSpace.Should().Be(totalSize);
+		await That(drive.TotalSize).IsEqualTo(totalSize);
+		await That(drive.TotalFreeSpace).IsEqualTo(totalSize);
+		await That(drive.AvailableFreeSpace).IsEqualTo(totalSize);
 	}
 
 #if NET6_0_OR_GREATER
 	[Theory]
 	[AutoData]
-	public void
-		WithSafeFileHandleStrategy_DefaultStrategy_ShouldUseMappedSafeFileHandleMock(
+	public async Task WithSafeFileHandleStrategy_DefaultStrategy_ShouldUseMappedSafeFileHandleMock(
 			string path, string contents)
 	{
 		MockFileSystem sut = new();
@@ -249,32 +246,29 @@ public class MockFileSystemTests
 		using StreamReader streamReader = new(stream);
 		string result = streamReader.ReadToEnd();
 
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 #endif
 
 #if NET6_0_OR_GREATER
 	[Theory]
 	[AutoData]
-	public void WithSafeFileHandleStrategy_NullStrategy_ShouldThrowException(
+	public async Task WithSafeFileHandleStrategy_NullStrategy_ShouldThrowException(
 		string path, string contents)
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
 
-		Exception? exception = Record.Exception(() =>
-		{
-			sut.FileStream.New(new SafeFileHandle(), FileAccess.Read);
-		});
+		void Act()
+			=> sut.FileStream.New(new SafeFileHandle(), FileAccess.Read);
 
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.ParamName.Should().Be("handle");
+		await That(Act).ThrowsExactly<ArgumentException>().WithParamName("handle");
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void WithUncDrive_ShouldCreateUncDrive(
+	public async Task WithUncDrive_ShouldCreateUncDrive(
 		string path, string contents)
 	{
 		MockFileSystem sut = new();
@@ -283,12 +277,12 @@ public class MockFileSystemTests
 		sut.File.WriteAllText(fullPath, contents);
 
 		string result = sut.File.ReadAllText(fullPath);
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithUncDrive_ShouldNotBeIncludedInGetDrives(
+	public async Task WithUncDrive_ShouldNotBeIncludedInGetDrives(
 		string server)
 	{
 		MockFileSystem sut = new();
@@ -299,13 +293,13 @@ public class MockFileSystemTests
 
 		sut.WithUncDrive(uncDrive);
 
-		sut.Directory.GetLogicalDrives().Length.Should().Be(expectedLogicalDrives);
-		sut.DriveInfo.GetDrives().Length.Should().Be(expectedDrives);
+		await That(sut.Directory.GetLogicalDrives().Length).IsEqualTo(expectedLogicalDrives);
+		await That(sut.DriveInfo.GetDrives().Length).IsEqualTo(expectedDrives);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithUncDrive_WriteBytes_ShouldReduceAvailableFreeSpace(
+	public async Task WithUncDrive_WriteBytes_ShouldReduceAvailableFreeSpace(
 		string server, string path, byte[] bytes)
 	{
 		MockFileSystem sut = new();
@@ -317,12 +311,12 @@ public class MockFileSystemTests
 
 		sut.File.WriteAllBytes(Path.Combine(uncDrive, path), bytes);
 
-		drive.AvailableFreeSpace.Should().Be(previousFreeSpace - bytes.Length);
+		await That(drive.AvailableFreeSpace).IsEqualTo(previousFreeSpace - bytes.Length);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_OnUncPath_ShouldThrowDirectoryNotFoundException(
+	public async Task WriteAllText_OnUncPath_ShouldThrowDirectoryNotFoundException(
 		string path, string contents)
 	{
 		MockFileSystem sut = new();
@@ -332,6 +326,6 @@ public class MockFileSystemTests
 			sut.File.WriteAllText(fullPath, contents);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>();
+		await That(exception).IsExactly<DirectoryNotFoundException>();
 	}
 }

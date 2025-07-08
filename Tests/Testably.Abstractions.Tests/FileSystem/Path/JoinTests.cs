@@ -7,14 +7,14 @@ public partial class JoinTests
 	[Theory]
 	[InlineAutoData((string?)null)]
 	[InlineAutoData("")]
-	public void Join_2Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
+	public async Task Join_2Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string? path)
 	{
 		string result1 = FileSystem.Path.Join(path, missingPath);
 		string result2 = FileSystem.Path.Join(missingPath, path);
 
-		result1.Should().Be(path);
-		result2.Should().Be(path);
+		await That(result1).IsEqualTo(path);
+		await That(result2).IsEqualTo(path);
 	}
 
 	[Theory]
@@ -24,7 +24,7 @@ public partial class JoinTests
 	[InlineAutoData("foo", "/bar", "foo/bar")]
 	[InlineAutoData("foo", "bar", "foo/bar")]
 	[InlineAutoData("/foo", "bar/", "/foo/bar/")]
-	public void Join_2Paths_ShouldReturnExpectedResult(
+	public async Task Join_2Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string expectedResult)
 	{
 		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
@@ -33,41 +33,41 @@ public partial class JoinTests
 
 		string result = FileSystem.Path.Join(path1, path2);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Join_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
+	public async Task Join_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2)
 	{
 		string expectedResult = path1
-		                        + FileSystem.Path.DirectorySeparatorChar + path2;
+								+ FileSystem.Path.DirectorySeparatorChar + path2;
 
 		string result = FileSystem.Path.Join(path1, path2);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Join_2Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
+	public async Task Join_2Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2)
 	{
 		string expectedResult = path1
-		                        + FileSystem.Path.DirectorySeparatorChar + path2;
+								+ FileSystem.Path.DirectorySeparatorChar + path2;
 
 		string result = FileSystem.Path.Join(
 			path1.AsSpan(),
 			path2.AsSpan());
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[InlineAutoData((string?)null)]
 	[InlineAutoData("")]
-	public void Join_3Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
+	public async Task Join_3Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string path1, string path2)
 	{
 		string expectedPath = $"{path1}{FileSystem.Path.DirectorySeparatorChar}{path2}";
@@ -76,9 +76,9 @@ public partial class JoinTests
 		string result2 = FileSystem.Path.Join(path1, missingPath, path2);
 		string result3 = FileSystem.Path.Join(path1, path2, missingPath);
 
-		result1.Should().Be(expectedPath);
-		result2.Should().Be(expectedPath);
-		result3.Should().Be(expectedPath);
+		await That(result1).IsEqualTo(expectedPath);
+		await That(result2).IsEqualTo(expectedPath);
+		await That(result3).IsEqualTo(expectedPath);
 	}
 
 	[Theory]
@@ -89,7 +89,7 @@ public partial class JoinTests
 	[InlineAutoData("foo", "/bar/", "baz", "foo/bar/baz")]
 	[InlineAutoData("foo", "bar", "baz", "foo/bar/baz")]
 	[InlineAutoData("/foo", "bar", "baz/", "/foo/bar/baz/")]
-	public void Join_3Paths_ShouldReturnExpectedResult(
+	public async Task Join_3Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string expectedResult)
 	{
 		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
@@ -99,44 +99,44 @@ public partial class JoinTests
 
 		string result = FileSystem.Path.Join(path1, path2, path3);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Join_3Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
+	public async Task Join_3Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3)
 	{
 		string expectedResult = path1
-		                        + FileSystem.Path.DirectorySeparatorChar + path2
-		                        + FileSystem.Path.DirectorySeparatorChar + path3;
+								+ FileSystem.Path.DirectorySeparatorChar + path2
+								+ FileSystem.Path.DirectorySeparatorChar + path3;
 
 		string result = FileSystem.Path.Join(path1, path2, path3);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Join_3Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
+	public async Task Join_3Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3)
 	{
 		string expectedResult = path1
-		                        + FileSystem.Path.DirectorySeparatorChar + path2
-		                        + FileSystem.Path.DirectorySeparatorChar + path3;
+								+ FileSystem.Path.DirectorySeparatorChar + path2
+								+ FileSystem.Path.DirectorySeparatorChar + path3;
 
 		string result = FileSystem.Path.Join(
 			path1.AsSpan(),
 			path2.AsSpan(),
 			path3.AsSpan());
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[InlineAutoData((string?)null)]
 	[InlineAutoData("")]
-	public void Join_4Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
+	public async Task Join_4Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string path1, string path2, string path3)
 	{
 		string expectedPath =
@@ -147,10 +147,10 @@ public partial class JoinTests
 		string result3 = FileSystem.Path.Join(path1, path2, missingPath, path3);
 		string result4 = FileSystem.Path.Join(path1, path2, path3, missingPath);
 
-		result1.Should().Be(expectedPath);
-		result2.Should().Be(expectedPath);
-		result3.Should().Be(expectedPath);
-		result4.Should().Be(expectedPath);
+		await That(result1).IsEqualTo(expectedPath);
+		await That(result2).IsEqualTo(expectedPath);
+		await That(result3).IsEqualTo(expectedPath);
+		await That(result4).IsEqualTo(expectedPath);
 	}
 
 	[Theory]
@@ -161,7 +161,7 @@ public partial class JoinTests
 	[InlineAutoData("foo", "/bar/", "baz/", "muh", "foo/bar/baz/muh")]
 	[InlineAutoData("foo", "bar", "baz", "muh", "foo/bar/baz/muh")]
 	[InlineAutoData("/foo", "bar", "baz", "muh/", "/foo/bar/baz/muh/")]
-	public void Join_4Paths_ShouldReturnExpectedResult(
+	public async Task Join_4Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string path4, string expectedResult)
 	{
 		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
@@ -172,33 +172,33 @@ public partial class JoinTests
 
 		string result = FileSystem.Path.Join(path1, path2, path3, path4);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Join_4Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
+	public async Task Join_4Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4)
 	{
 		string expectedResult = path1
-		                        + FileSystem.Path.DirectorySeparatorChar + path2
-		                        + FileSystem.Path.DirectorySeparatorChar + path3
-		                        + FileSystem.Path.DirectorySeparatorChar + path4;
+								+ FileSystem.Path.DirectorySeparatorChar + path2
+								+ FileSystem.Path.DirectorySeparatorChar + path3
+								+ FileSystem.Path.DirectorySeparatorChar + path4;
 
 		string result = FileSystem.Path.Join(path1, path2, path3, path4);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Join_4Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
+	public async Task Join_4Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4)
 	{
 		string expectedResult = path1
-		                        + FileSystem.Path.DirectorySeparatorChar + path2
-		                        + FileSystem.Path.DirectorySeparatorChar + path3
-		                        + FileSystem.Path.DirectorySeparatorChar + path4;
+								+ FileSystem.Path.DirectorySeparatorChar + path2
+								+ FileSystem.Path.DirectorySeparatorChar + path3
+								+ FileSystem.Path.DirectorySeparatorChar + path4;
 
 		string result = FileSystem.Path.Join(
 			path1.AsSpan(),
@@ -206,34 +206,34 @@ public partial class JoinTests
 			path3.AsSpan(),
 			path4.AsSpan());
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Fact]
-	public void Join_ParamPaths_Empty_ShouldReturnEmptyString()
+	public async Task Join_ParamPaths_Empty_ShouldReturnEmptyString()
 	{
 		string?[] paths = [];
 
 		string result = FileSystem.Path.Join(paths);
 
-		result.Should().Be(string.Empty);
+		await That(result).IsEqualTo(string.Empty);
 	}
 
 	[Fact]
-	public void Join_ParamPaths_Null_ShouldThrow()
+	public async Task Join_ParamPaths_Null_ShouldThrow()
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.Path.Join(null!);
-		});
+		}
 
-		exception.Should().BeException<ArgumentNullException>(paramName: "paths");
+		await That(Act).Throws<ArgumentNullException>().WithParamName("paths");
 	}
 
 	[Theory]
 	[InlineAutoData((string?)null)]
 	[InlineAutoData("")]
-	public void Join_ParamPaths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
+	public async Task Join_ParamPaths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string path1, string path2, string path3, string path4)
 	{
 		string expectedPath =
@@ -285,11 +285,11 @@ public partial class JoinTests
 				missingPath,
 			});
 
-		result1.Should().Be(expectedPath);
-		result2.Should().Be(expectedPath);
-		result3.Should().Be(expectedPath);
-		result4.Should().Be(expectedPath);
-		result5.Should().Be(expectedPath);
+		await That(result1).IsEqualTo(expectedPath);
+		await That(result2).IsEqualTo(expectedPath);
+		await That(result3).IsEqualTo(expectedPath);
+		await That(result4).IsEqualTo(expectedPath);
+		await That(result5).IsEqualTo(expectedPath);
 	}
 
 	[Theory]
@@ -300,7 +300,7 @@ public partial class JoinTests
 	[InlineAutoData("foo", "/bar/", "baz/", "muh/", "maeh", "foo/bar/baz/muh/maeh")]
 	[InlineAutoData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
 	[InlineAutoData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
-	public void Join_ParamPaths_ShouldReturnExpectedResult(
+	public async Task Join_ParamPaths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string path4, string path5, string expectedResult)
 	{
 		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
@@ -319,41 +319,41 @@ public partial class JoinTests
 			path5,
 		});
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Join_ParamPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
+	public async Task Join_ParamPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4, string path5)
 	{
 		string expectedResult = path1
-		                        + FileSystem.Path.DirectorySeparatorChar + path2
-		                        + FileSystem.Path.DirectorySeparatorChar + path3
-		                        + FileSystem.Path.DirectorySeparatorChar + path4
-		                        + FileSystem.Path.DirectorySeparatorChar + path5;
+								+ FileSystem.Path.DirectorySeparatorChar + path2
+								+ FileSystem.Path.DirectorySeparatorChar + path3
+								+ FileSystem.Path.DirectorySeparatorChar + path4
+								+ FileSystem.Path.DirectorySeparatorChar + path5;
 
 		string result = FileSystem.Path.Join(path1, path2, path3, path4, path5);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 #if FEATURE_PATH_SPAN
 
 	[Fact]
-	public void Join_ReadOnlySpanPaths_Empty_ShouldReturnEmptyString()
+	public async Task Join_ReadOnlySpanPaths_Empty_ShouldReturnEmptyString()
 	{
 		ReadOnlySpan<string?> paths = Array.Empty<string?>();
 
 		string result = FileSystem.Path.Join(paths);
 
-		result.Should().Be(string.Empty);
+		await That(result).IsEqualTo(string.Empty);
 	}
 
 	[Theory]
 	[InlineAutoData((string?)null)]
 	[InlineAutoData("")]
-	public void Join_ReadOnlySpanPaths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
+	public async Task Join_ReadOnlySpanPaths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string path1, string path2, string path3, string path4)
 	{
 		string expectedPath =
@@ -370,11 +370,11 @@ public partial class JoinTests
 		string result5 =
 			FileSystem.Path.Join(path1, path2, path3, path4, missingPath);
 
-		result1.Should().Be(expectedPath);
-		result2.Should().Be(expectedPath);
-		result3.Should().Be(expectedPath);
-		result4.Should().Be(expectedPath);
-		result5.Should().Be(expectedPath);
+		await That(result1).IsEqualTo(expectedPath);
+		await That(result2).IsEqualTo(expectedPath);
+		await That(result3).IsEqualTo(expectedPath);
+		await That(result4).IsEqualTo(expectedPath);
+		await That(result5).IsEqualTo(expectedPath);
 	}
 
 	[Theory]
@@ -385,7 +385,7 @@ public partial class JoinTests
 	[InlineAutoData("foo", "/bar/", "baz/", "muh/", "maeh", "foo/bar/baz/muh/maeh")]
 	[InlineAutoData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
 	[InlineAutoData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
-	public void Join_ReadOnlySpanPaths_ShouldReturnExpectedResult(
+	public async Task Join_ReadOnlySpanPaths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string path4, string path5, string expectedResult)
 	{
 		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
@@ -397,23 +397,23 @@ public partial class JoinTests
 
 		string result = FileSystem.Path.Join(path1, path2, path3, path4, path5);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Join_ReadOnlySpanPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
+	public async Task Join_ReadOnlySpanPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4, string path5)
 	{
 		string expectedResult = path1
-		                        + FileSystem.Path.DirectorySeparatorChar + path2
-		                        + FileSystem.Path.DirectorySeparatorChar + path3
-		                        + FileSystem.Path.DirectorySeparatorChar + path4
-		                        + FileSystem.Path.DirectorySeparatorChar + path5;
+								+ FileSystem.Path.DirectorySeparatorChar + path2
+								+ FileSystem.Path.DirectorySeparatorChar + path3
+								+ FileSystem.Path.DirectorySeparatorChar + path4
+								+ FileSystem.Path.DirectorySeparatorChar + path5;
 
 		string result = FileSystem.Path.Join(path1, path2, path3, path4, path5);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 #endif
 }

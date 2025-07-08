@@ -22,7 +22,7 @@ public partial class DeleteTests
 
 	[Theory]
 	[AutoData]
-	public void Delete_MissingFile_ShouldDoNothing(
+	public async Task Delete_MissingFile_ShouldDoNothing(
 		string fileName)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -30,26 +30,26 @@ public partial class DeleteTests
 			FileSystem.FileInfo.New(fileName).Delete();
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_ShouldRefreshExistsCache_ExceptOnNetFramework(string path)
+	public async Task Delete_ShouldRefreshExistsCache_ExceptOnNetFramework(string path)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
 		IFileInfo sut = FileSystem.FileInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 
 		sut.Delete();
 
 		if (Test.IsNetFramework)
 		{
-			sut.Exists.Should().BeTrue();
+			await That(sut.Exists).IsTrue();
 		}
 		else
 		{
-			sut.Exists.Should().BeFalse();
+			await That(sut.Exists).IsFalse();
 		}
 
 		FileSystem.File.Exists(path).Should().BeFalse();
@@ -57,7 +57,7 @@ public partial class DeleteTests
 
 	[Theory]
 	[AutoData]
-	public void Delete_WithOpenFile_ShouldThrowIOException_OnWindows(string filename)
+	public async Task Delete_WithOpenFile_ShouldThrowIOException_OnWindows(string filename)
 	{
 		FileSystem.Initialize();
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filename);
@@ -80,7 +80,7 @@ public partial class DeleteTests
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 			FileSystem.File.Exists(filename).Should().BeFalse();
 		}
 	}

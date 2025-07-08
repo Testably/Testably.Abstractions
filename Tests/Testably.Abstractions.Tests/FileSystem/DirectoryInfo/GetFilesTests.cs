@@ -10,8 +10,7 @@ public partial class GetFilesTests
 {
 	[Theory]
 	[AutoData]
-	public void
-		GetFiles_SearchOptionAllFiles_ShouldReturnAllFiles(
+	public async Task GetFiles_SearchOptionAllFiles_ShouldReturnAllFiles(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -28,10 +27,10 @@ public partial class GetFilesTests
 		IFileInfo[] result = baseDirectory
 			.GetFiles("*", SearchOption.AllDirectories);
 
-		result.Length.Should().Be(3);
-		result.Should().Contain(d => d.Name == initialized[2].Name);
-		result.Should().Contain(d => d.Name == initialized[3].Name);
-		result.Should().Contain(d => d.Name == initialized[5].Name);
+		await That(result.Length).IsEqualTo(3);
+		await That(result).Contains(d => d.Name == initialized[2].Name);
+		await That(result).Contains(d => d.Name == initialized[3].Name);
+		await That(result).Contains(d => d.Name == initialized[5].Name);
 	}
 
 	[Theory]
@@ -48,7 +47,7 @@ public partial class GetFilesTests
 	[InlineData(true, "abc?", "abc")]
 	[InlineData(false, "ab?c", "abc")]
 	[InlineData(false, "ac", "abc")]
-	public void GetFiles_SearchPattern_ShouldReturnExpectedValue(
+	public async Task GetFiles_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
 		IDirectoryInfo baseDirectory =
@@ -61,20 +60,17 @@ public partial class GetFilesTests
 
 		if (expectToBeFound)
 		{
-			result.Should().ContainSingle(d => d.Name == fileName,
-				$"it should match '{searchPattern}'");
+			await That(result).HasSingle().Matching(d => d.Name == fileName).Because($"it should match '{searchPattern}'");
 		}
 		else
 		{
-			result.Should()
-				.BeEmpty($"{fileName} should not match '{searchPattern}'");
+			await That(result).IsEmpty().Because($"{fileName} should not match '{searchPattern}'");
 		}
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Fact]
-	public void
-		GetFiles_WithEnumerationOptions_ShouldConsiderSetOptions()
+	public async Task GetFiles_WithEnumerationOptions_ShouldConsiderSetOptions()
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()
@@ -93,10 +89,10 @@ public partial class GetFilesTests
 					AttributesToSkip = FileAttributes.System,
 				});
 
-		result.Length.Should().Be(1);
-		result.Should().NotContain(d => d.Name == "foo");
-		result.Should().Contain(d => d.Name == "xyz");
-		result.Should().NotContain(d => d.Name == "bar");
+		await That(result.Length).IsEqualTo(1);
+		await That(result).DoesNotContain(d => d.Name == "foo");
+		await That(result).Contains(d => d.Name == "xyz");
+		await That(result).DoesNotContain(d => d.Name == "bar");
 	}
 #endif
 
@@ -118,8 +114,7 @@ public partial class GetFilesTests
 	}
 
 	[Fact]
-	public void
-		GetFiles_WithoutSearchString_ShouldReturnAllDirectFiles()
+	public async Task GetFiles_WithoutSearchString_ShouldReturnAllDirectFiles()
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()
@@ -132,14 +127,14 @@ public partial class GetFilesTests
 		IFileInfo[] result = baseDirectory
 			.GetFiles();
 
-		result.Length.Should().Be(2);
-		result.Should().Contain(d => d.Name == "foo");
-		result.Should().NotContain(d => d.Name == "xyz");
-		result.Should().Contain(d => d.Name == "bar");
+		await That(result.Length).IsEqualTo(2);
+		await That(result).Contains(d => d.Name == "foo");
+		await That(result).DoesNotContain(d => d.Name == "xyz");
+		await That(result).Contains(d => d.Name == "bar");
 	}
 
 	[Fact]
-	public void GetFiles_WithSearchPattern_ShouldReturnMatchingFiles()
+	public async Task GetFiles_WithSearchPattern_ShouldReturnMatchingFiles()
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()
@@ -150,7 +145,7 @@ public partial class GetFilesTests
 		IEnumerable<IFileInfo> result = baseDirectory
 			.GetFiles("foo");
 
-		result.Should().ContainSingle(d => d.Name == "foo");
+		await That(result).HasSingle().Matching(d => d.Name == "foo");
 		result.Count().Should().Be(1);
 	}
 
@@ -171,6 +166,6 @@ public partial class GetFilesTests
 		IEnumerable<IFileInfo> result = baseDirectory
 			.GetFiles("xyz", SearchOption.AllDirectories);
 
-		result.Count().Should().Be(2);
+		await That(result).HasCount(2);
 	}
 }

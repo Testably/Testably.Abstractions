@@ -8,48 +8,48 @@ public partial class Tests
 {
 	[Theory]
 	[AutoData]
-	public void Extensibility_ShouldWrapFileSystemInfoOnRealFileSystem(
+	public async Task Extensibility_ShouldWrapFileSystemInfoOnRealFileSystem(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 		IFileSystemExtensibility extensibility = fileInfo as IFileSystemExtensibility
-		                                         ?? throw new NotSupportedException(
-			                                         $"{fileInfo.GetType()} does not implement IFileSystemExtensibility");
+												 ?? throw new NotSupportedException(
+													 $"{fileInfo.GetType()} does not implement IFileSystemExtensibility");
 
 		bool result = extensibility
 			.TryGetWrappedInstance(out System.IO.FileSystemInfo? fileSystemInfo);
 
 		if (FileSystem is RealFileSystem)
 		{
-			result.Should().BeTrue();
-			fileSystemInfo!.Name.Should().Be(fileInfo.Name);
+			await That(result).IsTrue();
+			await That(fileSystemInfo!.Name).IsEqualTo(fileInfo.Name);
 		}
 		else
 		{
-			result.Should().BeFalse();
+			await That(result).IsFalse();
 		}
 	}
 
 #if FEATURE_FILESYSTEM_LINK
 	[Theory]
 	[AutoData]
-	public void LinkTarget_ShouldBeSetByCreateAsSymbolicLink(
+	public async Task LinkTarget_ShouldBeSetByCreateAsSymbolicLink(
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
 		IFileInfo sut = FileSystem.FileInfo.New(path);
-		sut.LinkTarget.Should().BeNull();
+		await That(sut.LinkTarget).IsNull();
 
 		sut.CreateAsSymbolicLink(pathToTarget);
 
-		sut.LinkTarget.Should().Be(pathToTarget);
+		await That(sut.LinkTarget).IsEqualTo(pathToTarget);
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void SetAttributes_Hidden_OnFileStartingWithDot_ShouldBeSet(string path)
+	public async Task SetAttributes_Hidden_OnFileStartingWithDot_ShouldBeSet(string path)
 	{
 		Skip.IfNot(Test.RunsOnLinux);
 
@@ -60,13 +60,13 @@ public partial class Tests
 		FileSystem.File.SetAttributes(path, FileAttributes.Normal);
 		FileAttributes result2 = FileSystem.File.GetAttributes(path);
 
-		result1.Should().Be(FileAttributes.Hidden);
-		result2.Should().Be(FileAttributes.Hidden);
+		await That(result1).IsEqualTo(FileAttributes.Hidden);
+		await That(result2).IsEqualTo(FileAttributes.Hidden);
 	}
 
 	[Theory]
 	[AutoData]
-	public void SetAttributes_Hidden_OnNormalFile_ShouldBeIgnored(string path)
+	public async Task SetAttributes_Hidden_OnNormalFile_ShouldBeIgnored(string path)
 	{
 		Skip.IfNot(Test.RunsOnLinux);
 
@@ -76,8 +76,8 @@ public partial class Tests
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 		FileAttributes result2 = FileSystem.File.GetAttributes(path);
 
-		result1.Should().Be(FileAttributes.Normal);
-		result2.Should().Be(FileAttributes.Normal);
+		await That(result1).IsEqualTo(FileAttributes.Normal);
+		await That(result2).IsEqualTo(FileAttributes.Normal);
 	}
 
 	[Theory]
@@ -87,7 +87,7 @@ public partial class Tests
 	[InlineAutoData(FileAttributes.IntegrityStream)]
 	[InlineAutoData(FileAttributes.SparseFile)]
 	[InlineAutoData(FileAttributes.ReparsePoint)]
-	public void SetAttributes_ShouldBeIgnoredOnAllPlatforms(FileAttributes attributes,
+	public async Task SetAttributes_ShouldBeIgnoredOnAllPlatforms(FileAttributes attributes,
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -95,12 +95,12 @@ public partial class Tests
 
 		FileAttributes result = FileSystem.File.GetAttributes(path);
 
-		result.Should().Be(FileAttributes.Normal);
+		await That(result).IsEqualTo(FileAttributes.Normal);
 	}
 
 	[Theory]
 	[InlineAutoData(FileAttributes.Hidden)]
-	public void SetAttributes_ShouldBeIgnoredOnLinux(FileAttributes attributes,
+	public async Task SetAttributes_ShouldBeIgnoredOnLinux(FileAttributes attributes,
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -110,17 +110,17 @@ public partial class Tests
 
 		if (Test.RunsOnLinux)
 		{
-			result.Should().Be(FileAttributes.Normal);
+			await That(result).IsEqualTo(FileAttributes.Normal);
 		}
 		else
 		{
-			result.Should().Be(attributes);
+			await That(result).IsEqualTo(attributes);
 		}
 	}
 
 	[Theory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
-	public void SetAttributes_ShouldBeSupportedOnAllPlatforms(
+	public async Task SetAttributes_ShouldBeSupportedOnAllPlatforms(
 		FileAttributes attributes,
 		string path)
 	{
@@ -129,7 +129,7 @@ public partial class Tests
 
 		FileAttributes result = FileSystem.File.GetAttributes(path);
 
-		result.Should().Be(attributes);
+		await That(result).IsEqualTo(attributes);
 	}
 
 	[Theory]
@@ -139,7 +139,7 @@ public partial class Tests
 	[InlineAutoData(FileAttributes.Offline)]
 	[InlineAutoData(FileAttributes.System)]
 	[InlineAutoData(FileAttributes.Temporary)]
-	public void SetAttributes_ShouldOnlyWork_OnWindows(FileAttributes attributes,
+	public async Task SetAttributes_ShouldOnlyWork_OnWindows(FileAttributes attributes,
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -149,11 +149,11 @@ public partial class Tests
 
 		if (Test.RunsOnWindows)
 		{
-			result.Should().Be(attributes);
+			await That(result).IsEqualTo(attributes);
 		}
 		else
 		{
-			result.Should().Be(FileAttributes.Normal);
+			await That(result).IsEqualTo(FileAttributes.Normal);
 		}
 	}
 }

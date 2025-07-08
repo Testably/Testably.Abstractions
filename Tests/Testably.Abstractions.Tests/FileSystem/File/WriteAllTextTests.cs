@@ -24,7 +24,7 @@ public partial class WriteAllTextTests
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_PreviousFile_ShouldOverwriteFileWithText(
+	public async Task WriteAllText_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
@@ -32,12 +32,12 @@ public partial class WriteAllTextTests
 		FileSystem.File.WriteAllText(path, contents);
 
 		string result = FileSystem.File.ReadAllText(path);
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_ShouldAdjustTimes(string path, string contents)
+	public async Task WriteAllText_ShouldAdjustTimes(string path, string contents)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -57,8 +57,7 @@ public partial class WriteAllTextTests
 		{
 			creationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -66,8 +65,7 @@ public partial class WriteAllTextTests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[Theory]
@@ -85,17 +83,17 @@ public partial class WriteAllTextTests
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_ShouldCreateFileWithText(string path, string contents)
+	public async Task WriteAllText_ShouldCreateFileWithText(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
 		string result = FileSystem.File.ReadAllText(path);
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_SpecialCharacters_ShouldReturnSameText(string path)
+	public async Task WriteAllText_SpecialCharacters_ShouldReturnSameText(string path)
 	{
 		char[] specialCharacters =
 		[
@@ -114,21 +112,20 @@ public partial class WriteAllTextTests
 
 			string result = FileSystem.File.ReadAllText(path);
 
-			result.Should().Be(contents,
-				$"{contents} should be encoded and decoded identical.");
+			await That(result).IsEqualTo(contents).Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_WhenContentIsNull_ShouldNotThrowException(string path)
+	public async Task WriteAllText_WhenContentIsNull_ShouldNotThrowException(string path)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.File.WriteAllText(path, null);
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]
@@ -187,7 +184,7 @@ public partial class WriteAllTextTests
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_Span_PreviousFile_ShouldOverwriteFileWithText(
+	public async Task WriteAllText_Span_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
@@ -195,12 +192,12 @@ public partial class WriteAllTextTests
 		FileSystem.File.WriteAllText(path, contents.AsSpan());
 
 		string result = FileSystem.File.ReadAllText(path);
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_Span_ShouldAdjustTimes(string path, string contents)
+	public async Task WriteAllText_Span_ShouldAdjustTimes(string path, string contents)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -220,8 +217,7 @@ public partial class WriteAllTextTests
 		{
 			creationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -229,8 +225,7 @@ public partial class WriteAllTextTests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[Theory]
@@ -248,17 +243,17 @@ public partial class WriteAllTextTests
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_Span_ShouldCreateFileWithText(string path, string contents)
+	public async Task WriteAllText_Span_ShouldCreateFileWithText(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents.AsSpan());
 
 		string result = FileSystem.File.ReadAllText(path);
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_Span_SpecialCharacters_ShouldReturnSameText(string path)
+	public async Task WriteAllText_Span_SpecialCharacters_ShouldReturnSameText(string path)
 	{
 		char[] specialCharacters =
 		[
@@ -277,8 +272,7 @@ public partial class WriteAllTextTests
 
 			string result = FileSystem.File.ReadAllText(path);
 
-			result.Should().Be(contents,
-				$"{contents} should be encoded and decoded identical.");
+			await That(result).IsEqualTo(contents).Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 

@@ -13,31 +13,31 @@ public partial class Tests
 {
 	[Theory]
 	[AutoData]
-	public void CanSeek_ShouldReturnTrue(
+	public async Task CanSeek_ShouldReturnTrue(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		stream.CanSeek.Should().BeTrue();
+		await That(stream.CanSeek).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void CanTimeout_ShouldReturnFalse(
+	public async Task CanTimeout_ShouldReturnFalse(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		stream.CanTimeout.Should().BeFalse();
+		await That(stream.CanTimeout).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Close_CalledMultipleTimes_ShouldNotThrow(
+	public async Task Close_CalledMultipleTimes_ShouldNotThrow(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -50,45 +50,45 @@ public partial class Tests
 			stream.Close();
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Extensibility_ShouldWrapFileStreamOnRealFileSystem(
+	public async Task Extensibility_ShouldWrapFileStreamOnRealFileSystem(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 		using FileSystemStream readStream = FileSystem.File.OpenRead(path);
 		IFileSystemExtensibility? extensibility = readStream as IFileSystemExtensibility;
 		bool result = extensibility?.TryGetWrappedInstance(out System.IO.FileStream? fileStream)
-		              ?? throw new NotSupportedException(
-			              $"{readStream.GetType()} does not implement IFileSystemExtensibility");
+					  ?? throw new NotSupportedException(
+						  $"{readStream.GetType()} does not implement IFileSystemExtensibility");
 
 		if (FileSystem is RealFileSystem)
 		{
-			result.Should().BeTrue();
-			fileStream!.Name.Should().Be(readStream.Name);
+			await That(result).IsTrue();
+			await That(fileStream!.Name).IsEqualTo(readStream.Name);
 		}
 		else
 		{
-			result.Should().BeFalse();
+			await That(result).IsFalse();
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void Flush_ShouldNotChangePosition(
+	public async Task Flush_ShouldNotChangePosition(
 		string path, byte[] bytes)
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
 		stream.Write(bytes, 0, bytes.Length);
 		stream.Seek(2, SeekOrigin.Begin);
-		stream.Position.Should().Be(2);
+		await That(stream.Position).IsEqualTo(2);
 
 		stream.Flush();
 
-		stream.Position.Should().Be(2);
+		await That(stream.Position).IsEqualTo(2);
 	}
 
 	[Theory]
@@ -122,17 +122,17 @@ public partial class Tests
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	public void Flush_WriteToDisk_ShouldNotChangePosition(
+	public async Task Flush_WriteToDisk_ShouldNotChangePosition(
 		bool flushToDisk, string path, byte[] bytes)
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
 		stream.Write(bytes, 0, bytes.Length);
 		stream.Seek(2, SeekOrigin.Begin);
-		stream.Position.Should().Be(2);
+		await That(stream.Position).IsEqualTo(2);
 
 		stream.Flush(flushToDisk);
 
-		stream.Position.Should().Be(2);
+		await That(stream.Position).IsEqualTo(2);
 	}
 
 	[Theory]
@@ -164,41 +164,41 @@ public partial class Tests
 		using FileSystemStream stream = FileSystem.File.Create(path);
 		stream.Write(bytes, 0, bytes.Length);
 		stream.Seek(2, SeekOrigin.Begin);
-		stream.Position.Should().Be(2);
+		await That(stream.Position).IsEqualTo(2);
 
 		await stream.FlushAsync(TestContext.Current.CancellationToken);
 
-		stream.Position.Should().Be(2);
+		await That(stream.Position).IsEqualTo(2);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Name_ShouldReturnFullPath(string path)
+	public async Task Name_ShouldReturnFullPath(string path)
 	{
 		string expectedName = FileSystem.Path.GetFullPath(path);
 		using FileSystemStream stream = FileSystem.File.Create(path);
 
-		stream.Name.Should().Be(expectedName);
+		await That(stream.Name).IsEqualTo(expectedName);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Position_ShouldChangeWhenReading(
+	public async Task Position_ShouldChangeWhenReading(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		stream.Position.Should().Be(0);
+		await That(stream.Position).IsEqualTo(0);
 		stream.ReadByte();
-		stream.Position.Should().Be(1);
+		await That(stream.Position).IsEqualTo(1);
 	}
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void Position_ShouldNotChangeSharedBufferStreamsWhenWriting(
+	public async Task Position_ShouldNotChangeSharedBufferStreamsWhenWriting(
 		string path, string contents, string changedContents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -215,69 +215,69 @@ public partial class Tests
 
 		fileStream1.Write(Encoding.UTF8.GetBytes(changedContents));
 
-		fileStream1.Position.Should().Be(initialPosition1 + changedContents.Length);
-		fileStream2.Position.Should().Be(initialPosition2);
+		await That(fileStream1.Position).IsEqualTo(initialPosition1 + changedContents.Length);
+		await That(fileStream2.Position).IsEqualTo(initialPosition2);
 
 		fileStream1.Flush();
 
-		fileStream1.Position.Should().Be(initialPosition1 + changedContents.Length);
-		fileStream2.Position.Should().Be(initialPosition2);
+		await That(fileStream1.Position).IsEqualTo(initialPosition1 + changedContents.Length);
+		await That(fileStream2.Position).IsEqualTo(initialPosition2);
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void Seek_Begin_ShouldSetAbsolutePositionFromBegin(
+	public async Task Seek_Begin_ShouldSetAbsolutePositionFromBegin(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		stream.Position.Should().Be(0);
+		await That(stream.Position).IsEqualTo(0);
 		stream.Seek(4, SeekOrigin.Begin);
-		stream.Position.Should().Be(4);
+		await That(stream.Position).IsEqualTo(4);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Seek_Current_ShouldSetRelativePosition(string path, string contents)
+	public async Task Seek_Current_ShouldSetRelativePosition(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		stream.Position.Should().Be(0);
+		await That(stream.Position).IsEqualTo(0);
 		stream.Seek(4, SeekOrigin.Current);
-		stream.Position.Should().Be(4);
+		await That(stream.Position).IsEqualTo(4);
 		stream.Seek(3, SeekOrigin.Current);
-		stream.Position.Should().Be(7);
+		await That(stream.Position).IsEqualTo(7);
 		stream.Seek(-1, SeekOrigin.Current);
-		stream.Position.Should().Be(6);
+		await That(stream.Position).IsEqualTo(6);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Seek_End_ShouldSetAbsolutePositionFromEnd(string path, string contents)
+	public async Task Seek_End_ShouldSetAbsolutePositionFromEnd(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		stream.Position.Should().Be(0);
+		await That(stream.Position).IsEqualTo(0);
 		stream.Seek(-4, SeekOrigin.End);
-		stream.Position.Should().Be(contents.Length - 4);
+		await That(stream.Position).IsEqualTo(contents.Length - 4);
 	}
 
 	[Theory]
 	[AutoData]
-	public void SetLength(string path, int length)
+	public async Task SetLength(string path, int length)
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
 
 		stream.SetLength(length);
 
-		stream.Length.Should().Be(length);
+		await That(stream.Length).IsEqualTo(length);
 	}
 
 	[Theory]

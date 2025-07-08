@@ -7,7 +7,7 @@ public class DirectoryDescriptionTests
 {
 	[Theory]
 	[AutoData]
-	public void Children_ShouldBeSortedAlphabetically(string[] childNames)
+	public async Task Children_ShouldBeSortedAlphabetically(string[] childNames)
 	{
 		DirectoryDescription sut = new("foo",
 			childNames
@@ -15,36 +15,35 @@ public class DirectoryDescriptionTests
 				.Cast<FileSystemInfoDescription>()
 				.ToArray());
 
-		sut.Children.Select(c => c.Name).Should().BeInAscendingOrder(StringComparer.Ordinal);
+		await That(sut.Children.Select(c => c.Name)).IsInAscendingOrder().Using(StringComparer.Ordinal);
 	}
 
 	[Fact]
-	public void Index_AccessToMissingChildShouldThrowTestingException()
+	public async Task Index_AccessToMissingChildShouldThrowTestingException()
 	{
 		DirectoryDescription sut = new("foo");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = sut["bar"];
-		});
+		}
 
-		exception.Should().BeOfType<TestingException>()
-			.Which.Message.Should().Contain("'bar'");
+		await That(Act).ThrowsExactly<TestingException>().WithMessage("*'bar'*").AsWildcard();
 	}
 
 	[Fact]
-	public void Index_ShouldGiveAccessToExistingChildDirectory()
+	public async Task Index_ShouldGiveAccessToExistingChildDirectory()
 	{
 		DirectoryDescription child = new("bar");
 		DirectoryDescription sut = new("foo", child);
 
 		FileSystemInfoDescription result = sut["bar"];
 
-		result.Should().BeSameAs(child);
+		await That(result).IsSameAs(child);
 	}
 
 	[Fact]
-	public void Index_ShouldGiveAccessToNestedChildren()
+	public async Task Index_ShouldGiveAccessToNestedChildren()
 	{
 		FileDescription child3 = new("child3", "some-content");
 		DirectoryDescription child2 = new("child2", child3);
@@ -53,6 +52,6 @@ public class DirectoryDescriptionTests
 
 		FileSystemInfoDescription result = sut["child1"]["child2"]["child3"];
 
-		result.Should().BeSameAs(child3);
+		await That(result).IsSameAs(child3);
 	}
 }

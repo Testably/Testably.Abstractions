@@ -8,7 +8,7 @@ public partial class GetAttributesTests
 	[Theory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
 	[InlineAutoData(FileAttributes.Normal)]
-	public void GetAttributes_ShouldReturnAttributes(
+	public async Task GetAttributes_ShouldReturnAttributes(
 		FileAttributes attributes, string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -16,6 +16,6 @@ public partial class GetAttributesTests
 
 		FileAttributes result = FileSystem.File.GetAttributes(path);
 
-		result.Should().Be(attributes);
+		await That(result).IsEqualTo(attributes);
 	}
 }

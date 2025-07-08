@@ -67,7 +67,7 @@ public partial class Tests
 	[InlineAutoData(FileMode.Create)]
 	[InlineAutoData(FileMode.CreateNew)]
 	[InlineAutoData(FileMode.Append)]
-	public void New_InvalidModeForReadAccess_ShouldThrowArgumentException(
+	public async Task New_InvalidModeForReadAccess_ShouldThrowArgumentException(
 		FileMode mode, string path)
 	{
 		FileAccess access = FileAccess.Read;
@@ -79,9 +79,7 @@ public partial class Tests
 		exception.Should().BeException<ArgumentException>(
 			hResult: -2147024809,
 			paramName: Test.IsNetFramework ? null : "access");
-		exception!.Message.Should()
-			.Contain(mode.ToString()).And
-			.Contain(access.ToString());
+		await That(exception!.Message).Contains(mode.ToString()).And.Contains(access.ToString());
 	}
 
 	[Theory]
@@ -119,8 +117,7 @@ public partial class Tests
 	[InlineAutoData(FileAccess.Read)]
 	[InlineAutoData(FileAccess.ReadWrite)]
 	[InlineAutoData(FileAccess.Write)]
-	public void
-		New_ReadOnlyFlag_ShouldThrowUnauthorizedAccessException_WhenAccessContainsWrite(
+	public async Task New_ReadOnlyFlag_ShouldThrowUnauthorizedAccessException_WhenAccessContainsWrite(
 			FileAccess access,
 			string path)
 	{
@@ -137,7 +134,7 @@ public partial class Tests
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 	}
 
@@ -169,12 +166,12 @@ public partial class Tests
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	public void New_WithUseAsyncSet_ShouldSetProperty(bool useAsync, string path)
+	public async Task New_WithUseAsyncSet_ShouldSetProperty(bool useAsync, string path)
 	{
 		using FileSystemStream stream = FileSystem.FileStream.New(
 			path, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 1,
 			useAsync);
 
-		stream.IsAsync.Should().Be(useAsync);
+		await That(stream.IsAsync).IsEqualTo(useAsync);
 	}
 }

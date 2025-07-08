@@ -90,7 +90,7 @@ public partial class ReadLinesAsyncTests
 			results.Add(line);
 		}
 
-		results.Should().BeEquivalentTo(lines, o => o.WithStrictOrdering());
+		await That(results).IsEqualTo(lines);
 	}
 
 	[Theory]
@@ -110,9 +110,8 @@ public partial class ReadLinesAsyncTests
 			results.Add(line);
 		}
 
-		results.Should().NotBeEquivalentTo(lines,
-			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
-		results[0].Should().Be(lines[0]);
+		await That(results).IsNotEqualTo(lines).InAnyOrder();
+		await That(results[0]).IsEqualTo(lines[0]);
 	}
 }
 #endif

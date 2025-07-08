@@ -6,105 +6,102 @@ public partial class FileSystemTests
 {
 	[Theory]
 	[AutoData]
-	public void
-		Extensibility_HasWrappedInstance_WithCorrectType_ShouldReturnTrueOnRealFileSystem(
+	public async Task Extensibility_HasWrappedInstance_WithCorrectType_ShouldReturnTrueOnRealFileSystem(
 			string name)
 	{
 		IFileInfo entity = FileSystem.FileInfo.New(name);
 		IFileSystemExtensibility? extensibility = entity as IFileSystemExtensibility;
 		bool result = extensibility?.TryGetWrappedInstance(out System.IO.FileInfo? fileInfo)
-		              ?? throw new NotSupportedException(
-			              $"{entity.GetType()} does not implement IFileSystemExtensibility");
+					  ?? throw new NotSupportedException(
+						  $"{entity.GetType()} does not implement IFileSystemExtensibility");
 
 		if (FileSystem is RealFileSystem)
 		{
-			result.Should().BeTrue();
-			fileInfo!.Name.Should().Be(name);
+			await That(result).IsTrue();
+			await That(fileInfo!.Name).IsEqualTo(name);
 		}
 		else
 		{
-			result.Should().BeFalse();
+			await That(result).IsFalse();
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		Extensibility_HasWrappedInstance_WithIncorrectType_ShouldReturnAlwaysFalse(
+	public async Task Extensibility_HasWrappedInstance_WithIncorrectType_ShouldReturnAlwaysFalse(
 			string name)
 	{
 		IFileInfo entity = FileSystem.FileInfo.New(name);
 		IFileSystemExtensibility? extensibility = entity as IFileSystemExtensibility;
 		bool result = extensibility?.TryGetWrappedInstance(
-			              out System.IO.DirectoryInfo? directoryInfo)
-		              ?? throw new NotSupportedException(
-			              $"{entity.GetType()} does not implement IFileSystemExtensibility");
+						  out System.IO.DirectoryInfo? directoryInfo)
+					  ?? throw new NotSupportedException(
+						  $"{entity.GetType()} does not implement IFileSystemExtensibility");
 
-		result.Should().BeFalse();
-		directoryInfo.Should().BeNull();
+		await That(result).IsFalse();
+		await That(directoryInfo).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		Extensibility_RetrieveMetadata_CorrectKeyAndType_ShouldReturnStoredValue(
+	public async Task Extensibility_RetrieveMetadata_CorrectKeyAndType_ShouldReturnStoredValue(
 			string name, DateTime time)
 	{
 		IFileInfo entity = FileSystem.FileInfo.New(name);
 		IFileSystemExtensibility sut = entity as IFileSystemExtensibility
-		                               ?? throw new NotSupportedException(
-			                               $"{entity.GetType()} does not implement IFileSystemExtensibility");
+									   ?? throw new NotSupportedException(
+										   $"{entity.GetType()} does not implement IFileSystemExtensibility");
 
 		sut.StoreMetadata("foo", time);
 		DateTime? result = sut.RetrieveMetadata<DateTime?>("foo");
 
-		result.Should().Be(time);
+		await That(result).IsEqualTo(time);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Extensibility_RetrieveMetadata_DifferentKey_ShouldReturnNull(
+	public async Task Extensibility_RetrieveMetadata_DifferentKey_ShouldReturnNull(
 		string name)
 	{
 		IFileInfo entity = FileSystem.FileInfo.New(name);
 		IFileSystemExtensibility sut = entity as IFileSystemExtensibility
-		                               ?? throw new NotSupportedException(
-			                               $"{entity.GetType()} does not implement IFileSystemExtensibility");
+									   ?? throw new NotSupportedException(
+										   $"{entity.GetType()} does not implement IFileSystemExtensibility");
 
 		sut.StoreMetadata("foo", DateTime.Now);
 		DateTime? result = sut.RetrieveMetadata<DateTime?>("bar");
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Extensibility_RetrieveMetadata_DifferentType_ShouldReturnNull(
+	public async Task Extensibility_RetrieveMetadata_DifferentType_ShouldReturnNull(
 		string name)
 	{
 		IFileInfo entity = FileSystem.FileInfo.New(name);
 		IFileSystemExtensibility sut = entity as IFileSystemExtensibility
-		                               ?? throw new NotSupportedException(
-			                               $"{entity.GetType()} does not implement IFileSystemExtensibility");
+									   ?? throw new NotSupportedException(
+										   $"{entity.GetType()} does not implement IFileSystemExtensibility");
 
 		sut.StoreMetadata("foo", DateTime.Now);
 		TimeSpan? result = sut.RetrieveMetadata<TimeSpan?>("foo");
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Extensibility_RetrieveMetadata_NotRegisteredKey_ShouldReturnNull(
+	public async Task Extensibility_RetrieveMetadata_NotRegisteredKey_ShouldReturnNull(
 		string name)
 	{
 		IFileInfo entity = FileSystem.FileInfo.New(name);
 		IFileSystemExtensibility extensibility = entity as IFileSystemExtensibility
-		                                         ?? throw new NotSupportedException(
-			                                         $"{entity.GetType()} does not implement IFileSystemExtensibility");
+												 ?? throw new NotSupportedException(
+													 $"{entity.GetType()} does not implement IFileSystemExtensibility");
 
 		object? result = extensibility.RetrieveMetadata<object?>("foo");
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 }

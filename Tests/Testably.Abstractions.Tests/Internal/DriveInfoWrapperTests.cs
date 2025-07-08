@@ -3,13 +3,13 @@
 public class DriveInfoWrapperTests
 {
 	[Fact]
-	public void FromDriveInfo_Null_ShouldReturnNull()
+	public async Task FromDriveInfo_Null_ShouldReturnNull()
 	{
 		RealFileSystem fileSystem = new();
 
 		DriveInfoWrapper? result = DriveInfoWrapper
 			.FromDriveInfo(null, fileSystem);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 }

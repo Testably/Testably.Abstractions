@@ -62,8 +62,7 @@ public partial class ReadAllTextAsyncTests
 
 		string result = await FileSystem.File.ReadAllTextAsync(path, readEncoding, TestContext.Current.CancellationToken);
 
-		result.Should().NotBe(contents,
-			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+		await That(result).IsNotEqualTo(contents).Because($"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
 	}
 }
 #endif

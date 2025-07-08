@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
@@ -7,7 +8,7 @@ public partial class ReplaceTests
 {
 	[Theory]
 	[AutoData]
-	public void Replace_BackupDirectoryMissing_ShouldThrowCorrectException(
+	public async Task Replace_BackupDirectoryMissing_ShouldThrowCorrectException(
 		string sourceName,
 		string destinationName,
 		string missingDirectory,
@@ -17,17 +18,17 @@ public partial class ReplaceTests
 		string backupPath = FileSystem.Path.Combine(missingDirectory, backupName);
 		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.Replace(destinationName, backupPath);
-		});
+		}
 
-		exception.Should().BeFileOrDirectoryNotFoundException();
+		await That(Act).ThrowsAFileOrDirectoryNotFoundException();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Replace_DestinationDirectoryMissing_ShouldThrowDirectoryNotFoundException(
+	public async Task Replace_DestinationDirectoryMissing_ShouldThrowDirectoryNotFoundException(
 		string sourceName,
 		string missingDirectory,
 		string destinationName,
@@ -38,12 +39,12 @@ public partial class ReplaceTests
 			FileSystem.Path.Combine(missingDirectory, destinationName);
 		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.Replace(destinationPath, backupName);
-		});
+		}
 
-		exception.Should().BeFileOrDirectoryNotFoundException();
+		await That(Act).ThrowsAFileOrDirectoryNotFoundException();
 	}
 
 	[Theory]
@@ -86,7 +87,7 @@ public partial class ReplaceTests
 
 	[Theory]
 	[AutoData]
-	public void Replace_ReadOnly_WithIgnoreMetadataError_ShouldReplaceFile(
+	public async Task Replace_ReadOnly_WithIgnoreMetadataError_ShouldReplaceFile(
 		string sourceName,
 		string destinationName,
 		string backupName,
@@ -100,9 +101,9 @@ public partial class ReplaceTests
 
 		IFileInfo result = sut.Replace(destinationName, backupName, true);
 
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
+		await That(result.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
 		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(sourceContents);
 		FileSystem.File.GetAttributes(destinationName).Should().HaveFlag(FileAttributes.ReadOnly);
@@ -112,8 +113,7 @@ public partial class ReplaceTests
 
 	[Theory]
 	[AutoData]
-	public void
-		Replace_ReadOnly_WithoutIgnoreMetadataError_ShouldThrowUnauthorizedAccessException_OnWindows(
+	public async Task Replace_ReadOnly_WithoutIgnoreMetadataError_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string sourceName,
 			string destinationName,
 			string backupName,
@@ -143,8 +143,8 @@ public partial class ReplaceTests
 		}
 		else
 		{
-			exception.Should().BeNull();
-			sut.Exists.Should().BeFalse();
+			await That(exception).IsNull();
+			await That(sut.Exists).IsFalse();
 			FileSystem.File.Exists(sourceName).Should().BeFalse();
 			FileSystem.File.Exists(destinationName).Should().BeTrue();
 			FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(sourceContents);
@@ -256,7 +256,7 @@ public partial class ReplaceTests
 
 	[Theory]
 	[AutoData]
-	public void Replace_ShouldReplaceFile(
+	public async Task Replace_ShouldReplaceFile(
 		string sourceName,
 		string destinationName,
 		string backupName,
@@ -269,9 +269,9 @@ public partial class ReplaceTests
 
 		IFileInfo result = sut.Replace(destinationName, backupName);
 
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
+		await That(result.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
 		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(sourceContents);
 		FileSystem.File.Exists(backupName).Should().BeTrue();
@@ -280,7 +280,7 @@ public partial class ReplaceTests
 
 	[Theory]
 	[AutoData]
-	public void Replace_SourceDirectoryMissing_ShouldThrowFileNotFoundException(
+	public async Task Replace_SourceDirectoryMissing_ShouldThrowFileNotFoundException(
 		string missingDirectory,
 		string sourceName,
 		string destinationName,
@@ -289,12 +289,12 @@ public partial class ReplaceTests
 		string sourcePath = FileSystem.Path.Combine(missingDirectory, sourceName);
 		IFileInfo sut = FileSystem.FileInfo.New(sourcePath);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.Replace(destinationName, backupName);
-		});
+		}
 
-		exception.Should().BeFileOrDirectoryNotFoundException();
+		await That(Act).ThrowsAFileOrDirectoryNotFoundException();
 	}
 
 	[Theory]
@@ -331,7 +331,7 @@ public partial class ReplaceTests
 	[InlineAutoData(FileAccess.Write, FileShare.Read)]
 	[InlineAutoData(FileAccess.Write, FileShare.ReadWrite)]
 	[InlineAutoData(FileAccess.Write, FileShare.Write)]
-	public void Replace_SourceLocked_ShouldThrowIOException_OnWindows(
+	public async Task Replace_SourceLocked_ShouldThrowIOException_OnWindows(
 		FileAccess fileAccess,
 		FileShare fileShare,
 		string sourceName,
@@ -357,7 +357,7 @@ public partial class ReplaceTests
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeException<IOException>(hResult: -2147024864);
-			sut.Exists.Should().BeTrue();
+			await That(sut.Exists).IsTrue();
 			FileSystem.File.Exists(sourceName).Should().BeTrue();
 			FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(sourceContents);
 			FileSystem.File.Exists(destinationName).Should().BeTrue();
@@ -369,7 +369,7 @@ public partial class ReplaceTests
 		else
 		{
 			// https://github.com/dotnet/runtime/issues/52700
-			sut.Exists.Should().BeFalse();
+			await That(sut.Exists).IsFalse();
 			FileSystem.File.Exists(sourceName).Should().BeFalse();
 			FileSystem.File.Exists(destinationName).Should().BeTrue();
 			FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(sourceContents);
@@ -429,7 +429,7 @@ public partial class ReplaceTests
 
 	[Theory]
 	[AutoData]
-	public void Replace_WithExistingBackupFile_ShouldIgnoreBackup(
+	public async Task Replace_WithExistingBackupFile_ShouldIgnoreBackup(
 		string sourceName,
 		string destinationName,
 		string backupName,
@@ -444,9 +444,9 @@ public partial class ReplaceTests
 
 		IFileInfo result = sut.Replace(destinationName, null);
 
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
+		await That(result.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
 		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(sourceContents);
 		FileSystem.File.Exists(backupName).Should().BeTrue();
@@ -455,7 +455,7 @@ public partial class ReplaceTests
 
 	[Theory]
 	[AutoData]
-	public void Replace_WithoutBackup_ShouldReplaceFile(
+	public async Task Replace_WithoutBackup_ShouldReplaceFile(
 		string sourceName,
 		string destinationName,
 		string sourceContents,
@@ -467,9 +467,9 @@ public partial class ReplaceTests
 
 		IFileInfo result = sut.Replace(destinationName, null);
 
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
+		await That(result.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
 		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(sourceContents);
 	}

@@ -5,25 +5,25 @@ public partial class ChangeExtensionTests
 {
 	[Theory]
 	[AutoData]
-	public void ChangeExtension_EmptyPath_ShouldReturnEmptyString(string extension)
+	public async Task ChangeExtension_EmptyPath_ShouldReturnEmptyString(string extension)
 	{
 		string result = FileSystem.Path.ChangeExtension(string.Empty, extension);
 
-		result.Should().BeEmpty();
+		await That(result).IsEmpty();
 	}
 
 	[Theory]
 	[AutoData]
-	public void ChangeExtension_NullPath_ShouldReturnNull(string extension)
+	public async Task ChangeExtension_NullPath_ShouldReturnNull(string extension)
 	{
 		string? result = FileSystem.Path.ChangeExtension(null, extension);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void ChangeExtension_WhenExtensionIsNull_ShouldRemovePreviousExtension(
+	public async Task ChangeExtension_WhenExtensionIsNull_ShouldRemovePreviousExtension(
 		string fileName)
 	{
 		string path = fileName + "..foo";
@@ -31,12 +31,12 @@ public partial class ChangeExtensionTests
 
 		string result = FileSystem.Path.ChangeExtension(path, null);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void ChangeExtension_WithDirectory_ShouldIncludeDirectory(
+	public async Task ChangeExtension_WithDirectory_ShouldIncludeDirectory(
 		string directory, string fileName, string extension)
 	{
 		string path = FileSystem.Path.Combine(directory, fileName + ".foo");
@@ -45,12 +45,12 @@ public partial class ChangeExtensionTests
 
 		string result = FileSystem.Path.ChangeExtension(path, extension);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void ChangeExtension_WithDotOnlyInDirectory_ShouldAppendExtensionToPath(
+	public async Task ChangeExtension_WithDotOnlyInDirectory_ShouldAppendExtensionToPath(
 		string directory, string fileName, string extension)
 	{
 		directory = directory + "." + "with-dot";
@@ -59,12 +59,12 @@ public partial class ChangeExtensionTests
 
 		string result = FileSystem.Path.ChangeExtension(path, extension);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void ChangeExtension_WithFileStartingWithDot_ShouldAppendExtensionToPath(
+	public async Task ChangeExtension_WithFileStartingWithDot_ShouldAppendExtensionToPath(
 		string fileName, string extension)
 	{
 		string path = $".{fileName}";
@@ -72,12 +72,12 @@ public partial class ChangeExtensionTests
 
 		string result = FileSystem.Path.ChangeExtension(path, extension);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void ChangeExtension_WithLeadingDotInExtension_ShouldNotIncludeTwoDots(
+	public async Task ChangeExtension_WithLeadingDotInExtension_ShouldNotIncludeTwoDots(
 		string fileName, string extension)
 	{
 		string path = fileName + ".foo";
@@ -85,6 +85,6 @@ public partial class ChangeExtensionTests
 
 		string result = FileSystem.Path.ChangeExtension(path, "." + extension);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 }

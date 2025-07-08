@@ -12,7 +12,7 @@ public partial class FilterTests
 {
 	[Theory]
 	[AutoData]
-	public void Filter_Matching_ShouldTriggerNotification(string path)
+	public async Task Filter_Matching_ShouldTriggerNotification(string path)
 	{
 		FileSystem.Initialize().WithSubdirectory(path);
 		using ManualResetEventSlim ms = new();
@@ -37,15 +37,15 @@ public partial class FilterTests
 		FileSystem.Directory.Delete(path);
 		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 
-		result.Should().NotBeNull();
-		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
-		result.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
-		result.Name.Should().Be(FileSystem.Path.GetFileName(path));
+		await That(result).IsNotNull();
+		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
+		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
+		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(path));
 	}
 
 	[Theory]
 	[AutoData]
-	public void Filter_NotMatching_ShouldNotTriggerNotification(
+	public async Task Filter_NotMatching_ShouldNotTriggerNotification(
 		string path, string filter)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -73,13 +73,13 @@ public partial class FilterTests
 		FileSystem.Directory.Delete(path);
 		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 	[Theory]
 	[AutoData]
-	public void Filters_ShouldMatchAnyOfTheSpecifiedFilters(
+	public async Task Filters_ShouldMatchAnyOfTheSpecifiedFilters(
 		string[] filteredPaths, string[] otherPaths)
 	{
 		foreach (string path in otherPaths.Concat(filteredPaths))
@@ -111,14 +111,12 @@ public partial class FilterTests
 
 		foreach (string path in otherPaths)
 		{
-			results.Should()
-				.NotContain(f => f.FullPath == FileSystem.Path.GetFullPath(path));
+			await That(results).DoesNotContain(f => f.FullPath == FileSystem.Path.GetFullPath(path));
 		}
 
 		foreach (string path in filteredPaths)
 		{
-			results.Should()
-				.Contain(f => f.FullPath == FileSystem.Path.GetFullPath(path));
+			await That(results).Contains(f => f.FullPath == FileSystem.Path.GetFullPath(path));
 		}
 	}
 #endif

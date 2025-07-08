@@ -78,7 +78,7 @@ public partial class WriteTests
 
 	[Theory]
 	[AutoData]
-	public void EndWrite_ShouldAdjustTimes(string path, byte[] bytes)
+	public async Task EndWrite_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		using ManualResetEventSlim ms = new();
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
@@ -116,8 +116,7 @@ public partial class WriteTests
 		{
 			creationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -125,8 +124,7 @@ public partial class WriteTests
 				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 #if FEATURE_SPAN
@@ -251,7 +249,7 @@ public partial class WriteTests
 
 	[Theory]
 	[AutoData]
-	public void WriteByte_HiddenFile_ShouldNotThrow(
+	public async Task WriteByte_HiddenFile_ShouldNotThrow(
 		string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
@@ -267,12 +265,12 @@ public partial class WriteTests
 			});
 		}
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteByte_ShouldWriteSingleByteAndAdvancePosition(
+	public async Task WriteByte_ShouldWriteSingleByteAndAdvancePosition(
 		string path, byte byte1, byte byte2)
 	{
 		using (FileSystemStream stream = FileSystem.File.Create(path))
@@ -280,7 +278,7 @@ public partial class WriteTests
 			stream.WriteByte(byte1);
 			stream.WriteByte(byte2);
 
-			stream.Position.Should().Be(2);
+			await That(stream.Position).IsEqualTo(2);
 		}
 
 		FileSystem.File.Exists(path).Should().BeTrue();

@@ -6,85 +6,85 @@ public partial class Tests
 {
 	[Theory]
 	[AutoData]
-	public void GetCreationTime_PathNotFound_ShouldReturnNullTime(string path)
+	public async Task GetCreationTime_PathNotFound_ShouldReturnNullTime(string path)
 	{
 		DateTime expectedTime = FileTestHelper.NullTime.ToLocalTime();
 
 		DateTime result = FileSystem.Directory.GetCreationTime(path);
 
-		result.Should().Be(expectedTime);
+		await That(result).IsEqualTo(expectedTime);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetCreationTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
+	public async Task GetCreationTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
 	{
 		DateTime expectedTime = FileTestHelper.NullTime.ToUniversalTime();
 
 		DateTime result = FileSystem.Directory.GetCreationTimeUtc(path);
 
-		result.Should().Be(expectedTime);
+		await That(result).IsEqualTo(expectedTime);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetLastAccessTime_PathNotFound_ShouldReturnNullTime(string path)
+	public async Task GetLastAccessTime_PathNotFound_ShouldReturnNullTime(string path)
 	{
 		DateTime expectedTime = FileTestHelper.NullTime.ToLocalTime();
 
 		DateTime result = FileSystem.Directory.GetLastAccessTime(path);
 
-		result.Should().Be(expectedTime);
+		await That(result).IsEqualTo(expectedTime);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetLastAccessTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
+	public async Task GetLastAccessTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
 	{
 		DateTime expectedTime = FileTestHelper.NullTime.ToUniversalTime();
 
 		DateTime result = FileSystem.Directory.GetLastAccessTimeUtc(path);
 
-		result.Should().Be(expectedTime);
+		await That(result).IsEqualTo(expectedTime);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetLastWriteTime_PathNotFound_ShouldReturnNullTime(string path)
+	public async Task GetLastWriteTime_PathNotFound_ShouldReturnNullTime(string path)
 	{
 		DateTime expectedTime = FileTestHelper.NullTime.ToLocalTime();
 
 		DateTime result = FileSystem.Directory.GetLastWriteTime(path);
 
-		result.Should().Be(expectedTime);
+		await That(result).IsEqualTo(expectedTime);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetLastWriteTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
+	public async Task GetLastWriteTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
 	{
 		DateTime expectedTime = FileTestHelper.NullTime.ToUniversalTime();
 
 		DateTime result = FileSystem.Directory.GetLastWriteTimeUtc(path);
 
-		result.Should().Be(expectedTime);
+		await That(result).IsEqualTo(expectedTime);
 	}
 
 	[Theory]
 	[AutoData]
-	public void LastAccessTime_CreateSubDirectory_ShouldUpdateLastAccessAndLastWriteTime(
+	public async Task LastAccessTime_CreateSubDirectory_ShouldUpdateLastAccessAndLastWriteTime(
 		string path, string subPath)
 	{
 		SkipIfBrittleTestsShouldBeSkipped();
-		
+
 		DateTime start = TimeSystem.DateTime.Now;
 		IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
 		TimeSystem.Thread.Sleep(100);
 		DateTime sleepTime = TimeSystem.DateTime.Now;
 		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subPath));
 
-		result.CreationTime.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-		result.CreationTime.Should().BeBefore(sleepTime);
+		await That(result.CreationTime).IsOnOrAfter(start.ApplySystemClockTolerance());
+		await That(result.CreationTime).IsBefore(sleepTime);
 		// Last Access Time is only updated on Windows
 		if (Test.RunsOnWindows)
 		{
@@ -103,7 +103,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void LastAccessTime_ShouldBeSet(string path)
+	public async Task LastAccessTime_ShouldBeSet(string path)
 	{
 		DateTime start = TimeSystem.DateTime.Now;
 
@@ -111,12 +111,12 @@ public partial class Tests
 
 		DateTime result = FileSystem.Directory.GetLastAccessTime(path);
 		result.Should().BeBetween(start, TimeSystem.DateTime.Now);
-		result.Kind.Should().Be(DateTimeKind.Local);
+		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 	}
 
 	[Theory]
 	[AutoData]
-	public void LastAccessTimeUtc_ShouldBeSet(string path)
+	public async Task LastAccessTimeUtc_ShouldBeSet(string path)
 	{
 		DateTime start = TimeSystem.DateTime.UtcNow;
 
@@ -124,12 +124,12 @@ public partial class Tests
 
 		DateTime result = FileSystem.Directory.GetLastAccessTimeUtc(path);
 		result.Should().BeBetween(start, TimeSystem.DateTime.UtcNow);
-		result.Kind.Should().Be(DateTimeKind.Utc);
+		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
 	}
 
 	[Theory]
 	[AutoData]
-	public void LastWriteTime_ShouldBeSet(string path)
+	public async Task LastWriteTime_ShouldBeSet(string path)
 	{
 		DateTime start = TimeSystem.DateTime.Now;
 
@@ -137,12 +137,12 @@ public partial class Tests
 
 		DateTime result = FileSystem.Directory.GetLastWriteTime(path);
 		result.Should().BeBetween(start, TimeSystem.DateTime.Now);
-		result.Kind.Should().Be(DateTimeKind.Local);
+		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 	}
 
 	[Theory]
 	[AutoData]
-	public void LastWriteTimeUtc_ShouldBeSet(string path)
+	public async Task LastWriteTimeUtc_ShouldBeSet(string path)
 	{
 		DateTime start = TimeSystem.DateTime.UtcNow;
 
@@ -150,7 +150,7 @@ public partial class Tests
 
 		DateTime result = FileSystem.Directory.GetLastWriteTimeUtc(path);
 		result.Should().BeBetween(start, TimeSystem.DateTime.UtcNow);
-		result.Kind.Should().Be(DateTimeKind.Utc);
+		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
 	}
 
 	[Theory]

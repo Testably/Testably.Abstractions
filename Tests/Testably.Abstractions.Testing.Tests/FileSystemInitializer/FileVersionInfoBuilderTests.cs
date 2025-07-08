@@ -4,7 +4,7 @@ public class FileVersionInfoBuilderTests
 {
 	[Theory]
 	[AutoData]
-	public void WithComments_ShouldSetComments(string comments)
+	public async Task WithComments_ShouldSetComments(string comments)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -12,12 +12,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.Comments.Should().Be(comments);
+		await That(result.Comments).IsEqualTo(comments);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithCompanyName_ShouldSetCompanyName(string? companyName)
+	public async Task WithCompanyName_ShouldSetCompanyName(string? companyName)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -25,12 +25,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.CompanyName.Should().Be(companyName);
+		await That(result.CompanyName).IsEqualTo(companyName);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithFileDescription_ShouldSetFileDescription(string? fileDescription)
+	public async Task WithFileDescription_ShouldSetFileDescription(string? fileDescription)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -38,7 +38,7 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.FileDescription.Should().Be(fileDescription);
+		await That(result.FileDescription).IsEqualTo(fileDescription);
 	}
 
 	[Theory]
@@ -47,7 +47,7 @@ public class FileVersionInfoBuilderTests
 	[InlineData("1.2", 1, 2)]
 	[InlineData("1.2.3", 1, 2, 3)]
 	[InlineData("1.2.3.4", 1, 2, 3, 4)]
-	public void WithFileVersion_ShouldSetFileVersion(
+	public async Task WithFileVersion_ShouldSetFileVersion(
 		string? fileVersion,
 		int fileMajorPart, int fileMinorPart, int fileBuildPart = 0, int filePrivatePart = 0)
 	{
@@ -56,11 +56,11 @@ public class FileVersionInfoBuilderTests
 		fileSystem.WithFileVersionInfo("*", b => b.SetFileVersion("9.8.7.6").SetFileVersion(fileVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
-		result.FileVersion.Should().Be(fileVersion);
-		result.FileMajorPart.Should().Be(fileMajorPart);
-		result.FileMinorPart.Should().Be(fileMinorPart);
-		result.FileBuildPart.Should().Be(fileBuildPart);
-		result.FilePrivatePart.Should().Be(filePrivatePart);
+		await That(result.FileVersion).IsEqualTo(fileVersion);
+		await That(result.FileMajorPart).IsEqualTo(fileMajorPart);
+		await That(result.FileMinorPart).IsEqualTo(fileMinorPart);
+		await That(result.FileBuildPart).IsEqualTo(fileBuildPart);
+		await That(result.FilePrivatePart).IsEqualTo(filePrivatePart);
 	}
 
 	[Theory]
@@ -79,7 +79,7 @@ public class FileVersionInfoBuilderTests
 	[InlineData("1.2.3.4-foo", 1, 2, 3, 4)]
 	[InlineData("1.2.3.4+bar", 1, 2, 3, 4)]
 	[InlineData("1.2.3.4some-text", 1, 2, 3, 4)]
-	public void WithFileVersion_WhenContainsPreReleaseInfo_ShouldIgnorePreReleaseInfo(
+	public async Task WithFileVersion_WhenContainsPreReleaseInfo_ShouldIgnorePreReleaseInfo(
 		string? fileVersion,
 		int fileMajorPart, int fileMinorPart, int fileBuildPart = 0, int filePrivatePart = 0)
 	{
@@ -88,11 +88,11 @@ public class FileVersionInfoBuilderTests
 		fileSystem.WithFileVersionInfo("*", b => b.SetFileVersion(fileVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
-		result.FileVersion.Should().Be(fileVersion);
-		result.FileMajorPart.Should().Be(fileMajorPart);
-		result.FileMinorPart.Should().Be(fileMinorPart);
-		result.FileBuildPart.Should().Be(fileBuildPart);
-		result.FilePrivatePart.Should().Be(filePrivatePart);
+		await That(result.FileVersion).IsEqualTo(fileVersion);
+		await That(result.FileMajorPart).IsEqualTo(fileMajorPart);
+		await That(result.FileMinorPart).IsEqualTo(fileMinorPart);
+		await That(result.FileBuildPart).IsEqualTo(fileBuildPart);
+		await That(result.FilePrivatePart).IsEqualTo(filePrivatePart);
 	}
 
 	[Theory]
@@ -100,7 +100,7 @@ public class FileVersionInfoBuilderTests
 	[InlineData("-1")]
 	[InlineData("+1.2.3-bar")]
 	[InlineData("abc")]
-	public void WithFileVersion_WhenStringIsInvalid_ShouldNotSetFileVersionParts(
+	public async Task WithFileVersion_WhenStringIsInvalid_ShouldNotSetFileVersionParts(
 		string? fileVersion)
 	{
 		MockFileSystem fileSystem = new();
@@ -109,16 +109,16 @@ public class FileVersionInfoBuilderTests
 			.SetFileVersion(fileVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
-		result.FileVersion.Should().Be(fileVersion);
-		result.FileMajorPart.Should().Be(0);
-		result.FileMinorPart.Should().Be(0);
-		result.FileBuildPart.Should().Be(0);
-		result.FilePrivatePart.Should().Be(0);
+		await That(result.FileVersion).IsEqualTo(fileVersion);
+		await That(result.FileMajorPart).IsEqualTo(0);
+		await That(result.FileMinorPart).IsEqualTo(0);
+		await That(result.FileBuildPart).IsEqualTo(0);
+		await That(result.FilePrivatePart).IsEqualTo(0);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithInternalName_ShouldSetInternalName(string? internalName)
+	public async Task WithInternalName_ShouldSetInternalName(string? internalName)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -126,12 +126,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.InternalName.Should().Be(internalName);
+		await That(result.InternalName).IsEqualTo(internalName);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithIsDebug_ShouldSetIsDebug(bool isDebug)
+	public async Task WithIsDebug_ShouldSetIsDebug(bool isDebug)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -139,12 +139,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.IsDebug.Should().Be(isDebug);
+		await That(result.IsDebug).IsEqualTo(isDebug);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithIsPatched_ShouldSetIsPatched(bool isPatched)
+	public async Task WithIsPatched_ShouldSetIsPatched(bool isPatched)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -152,12 +152,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.IsPatched.Should().Be(isPatched);
+		await That(result.IsPatched).IsEqualTo(isPatched);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithIsPreRelease_ShouldSetIsPreRelease(bool isPreRelease)
+	public async Task WithIsPreRelease_ShouldSetIsPreRelease(bool isPreRelease)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -165,12 +165,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.IsPreRelease.Should().Be(isPreRelease);
+		await That(result.IsPreRelease).IsEqualTo(isPreRelease);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithIsPrivateBuild_ShouldSetIsPrivateBuild(bool isPrivateBuild)
+	public async Task WithIsPrivateBuild_ShouldSetIsPrivateBuild(bool isPrivateBuild)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -178,12 +178,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.IsPrivateBuild.Should().Be(isPrivateBuild);
+		await That(result.IsPrivateBuild).IsEqualTo(isPrivateBuild);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithIsSpecialBuild_ShouldSetIsSpecialBuild(bool isSpecialBuild)
+	public async Task WithIsSpecialBuild_ShouldSetIsSpecialBuild(bool isSpecialBuild)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -191,12 +191,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.IsSpecialBuild.Should().Be(isSpecialBuild);
+		await That(result.IsSpecialBuild).IsEqualTo(isSpecialBuild);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithLanguage_ShouldSetLanguage(string? language)
+	public async Task WithLanguage_ShouldSetLanguage(string? language)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -204,12 +204,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.Language.Should().Be(language);
+		await That(result.Language).IsEqualTo(language);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithLegalCopyright_ShouldSetLegalCopyright(string? legalCopyright)
+	public async Task WithLegalCopyright_ShouldSetLegalCopyright(string? legalCopyright)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -217,12 +217,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.LegalCopyright.Should().Be(legalCopyright);
+		await That(result.LegalCopyright).IsEqualTo(legalCopyright);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithLegalTrademarks_ShouldSetLegalTrademarks(string? legalTrademarks)
+	public async Task WithLegalTrademarks_ShouldSetLegalTrademarks(string? legalTrademarks)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -230,12 +230,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.LegalTrademarks.Should().Be(legalTrademarks);
+		await That(result.LegalTrademarks).IsEqualTo(legalTrademarks);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithOriginalFilename_ShouldSetOriginalFilename(string? originalFilename)
+	public async Task WithOriginalFilename_ShouldSetOriginalFilename(string? originalFilename)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -243,12 +243,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.OriginalFilename.Should().Be(originalFilename);
+		await That(result.OriginalFilename).IsEqualTo(originalFilename);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithPrivateBuild_ShouldSetPrivateBuild(string? privateBuild)
+	public async Task WithPrivateBuild_ShouldSetPrivateBuild(string? privateBuild)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -256,12 +256,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.PrivateBuild.Should().Be(privateBuild);
+		await That(result.PrivateBuild).IsEqualTo(privateBuild);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithProductName_ShouldSetProductName(string? productName)
+	public async Task WithProductName_ShouldSetProductName(string? productName)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -269,7 +269,7 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.ProductName.Should().Be(productName);
+		await That(result.ProductName).IsEqualTo(productName);
 	}
 
 	[Theory]
@@ -278,7 +278,7 @@ public class FileVersionInfoBuilderTests
 	[InlineData("1.2", 1, 2)]
 	[InlineData("1.2.3", 1, 2, 3)]
 	[InlineData("1.2.3.4", 1, 2, 3, 4)]
-	public void WithProductVersion_ShouldSetProductVersion(
+	public async Task WithProductVersion_ShouldSetProductVersion(
 		string? productVersion,
 		int fileMajorPart, int fileMinorPart, int fileBuildPart = 0, int filePrivatePart = 0)
 	{
@@ -287,11 +287,11 @@ public class FileVersionInfoBuilderTests
 		fileSystem.WithFileVersionInfo("*", b => b.SetProductVersion("9.8.7.6").SetProductVersion(productVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
-		result.ProductVersion.Should().Be(productVersion);
-		result.ProductMajorPart.Should().Be(fileMajorPart);
-		result.ProductMinorPart.Should().Be(fileMinorPart);
-		result.ProductBuildPart.Should().Be(fileBuildPart);
-		result.ProductPrivatePart.Should().Be(filePrivatePart);
+		await That(result.ProductVersion).IsEqualTo(productVersion);
+		await That(result.ProductMajorPart).IsEqualTo(fileMajorPart);
+		await That(result.ProductMinorPart).IsEqualTo(fileMinorPart);
+		await That(result.ProductBuildPart).IsEqualTo(fileBuildPart);
+		await That(result.ProductPrivatePart).IsEqualTo(filePrivatePart);
 	}
 
 	[Theory]
@@ -310,7 +310,7 @@ public class FileVersionInfoBuilderTests
 	[InlineData("1.2.3.4-foo", 1, 2, 3, 4)]
 	[InlineData("1.2.3.4+bar", 1, 2, 3, 4)]
 	[InlineData("1.2.3.4some-text", 1, 2, 3, 4)]
-	public void WithProductVersion_WhenContainsPreReleaseInfo_ShouldIgnorePreReleaseInfo(
+	public async Task WithProductVersion_WhenContainsPreReleaseInfo_ShouldIgnorePreReleaseInfo(
 		string? productVersion,
 		int fileMajorPart, int fileMinorPart, int fileBuildPart = 0, int filePrivatePart = 0)
 	{
@@ -319,11 +319,11 @@ public class FileVersionInfoBuilderTests
 		fileSystem.WithFileVersionInfo("*", b => b.SetProductVersion(productVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
-		result.ProductVersion.Should().Be(productVersion);
-		result.ProductMajorPart.Should().Be(fileMajorPart);
-		result.ProductMinorPart.Should().Be(fileMinorPart);
-		result.ProductBuildPart.Should().Be(fileBuildPart);
-		result.ProductPrivatePart.Should().Be(filePrivatePart);
+		await That(result.ProductVersion).IsEqualTo(productVersion);
+		await That(result.ProductMajorPart).IsEqualTo(fileMajorPart);
+		await That(result.ProductMinorPart).IsEqualTo(fileMinorPart);
+		await That(result.ProductBuildPart).IsEqualTo(fileBuildPart);
+		await That(result.ProductPrivatePart).IsEqualTo(filePrivatePart);
 	}
 
 	[Theory]
@@ -331,7 +331,7 @@ public class FileVersionInfoBuilderTests
 	[InlineData("-1")]
 	[InlineData("+1.2.3-bar")]
 	[InlineData("abc")]
-	public void WithProductVersion_WhenStringIsInvalid_ShouldNotSetProductVersionParts(
+	public async Task WithProductVersion_WhenStringIsInvalid_ShouldNotSetProductVersionParts(
 		string? productVersion)
 	{
 		MockFileSystem fileSystem = new();
@@ -340,16 +340,16 @@ public class FileVersionInfoBuilderTests
 			.SetProductVersion(productVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
-		result.ProductVersion.Should().Be(productVersion);
-		result.ProductMajorPart.Should().Be(0);
-		result.ProductMinorPart.Should().Be(0);
-		result.ProductBuildPart.Should().Be(0);
-		result.ProductPrivatePart.Should().Be(0);
+		await That(result.ProductVersion).IsEqualTo(productVersion);
+		await That(result.ProductMajorPart).IsEqualTo(0);
+		await That(result.ProductMinorPart).IsEqualTo(0);
+		await That(result.ProductBuildPart).IsEqualTo(0);
+		await That(result.ProductPrivatePart).IsEqualTo(0);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithSpecialBuild_ShouldSetSpecialBuild(string? specialBuild)
+	public async Task WithSpecialBuild_ShouldSetSpecialBuild(string? specialBuild)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
@@ -357,12 +357,12 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.SpecialBuild.Should().Be(specialBuild);
+		await That(result.SpecialBuild).IsEqualTo(specialBuild);
 	}
-	
+
 	[Theory]
 	[AutoData]
-	public void ShouldBePossibleToChainMethods(
+	public async Task ShouldBePossibleToChainMethods(
 		string comments,
 		string companyName,
 		string fileDescription,
@@ -407,22 +407,22 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		result.Comments.Should().Be(comments);
-		result.CompanyName.Should().Be(companyName);
-		result.FileDescription.Should().Be(fileDescription);
-		result.FileVersion.Should().Be(fileVersion);
-		result.InternalName.Should().Be(internalName);
-		result.IsDebug.Should().Be(isDebug);
-		result.IsPatched.Should().Be(isPatched);
-		result.IsPreRelease.Should().Be(isPreRelease);
-		result.IsSpecialBuild.Should().Be(isSpecialBuild);
-		result.Language.Should().Be(language);
-		result.LegalCopyright.Should().Be(legalCopyright);
-		result.LegalTrademarks.Should().Be(legalTrademarks);
-		result.OriginalFilename.Should().Be(originalFilename);
-		result.PrivateBuild.Should().Be(privateBuild);
-		result.ProductName.Should().Be(productName);
-		result.ProductVersion.Should().Be(productVersion);
-		result.SpecialBuild.Should().Be(specialBuild);
+		await That(result.Comments).IsEqualTo(comments);
+		await That(result.CompanyName).IsEqualTo(companyName);
+		await That(result.FileDescription).IsEqualTo(fileDescription);
+		await That(result.FileVersion).IsEqualTo(fileVersion);
+		await That(result.InternalName).IsEqualTo(internalName);
+		await That(result.IsDebug).IsEqualTo(isDebug);
+		await That(result.IsPatched).IsEqualTo(isPatched);
+		await That(result.IsPreRelease).IsEqualTo(isPreRelease);
+		await That(result.IsSpecialBuild).IsEqualTo(isSpecialBuild);
+		await That(result.Language).IsEqualTo(language);
+		await That(result.LegalCopyright).IsEqualTo(legalCopyright);
+		await That(result.LegalTrademarks).IsEqualTo(legalTrademarks);
+		await That(result.OriginalFilename).IsEqualTo(originalFilename);
+		await That(result.PrivateBuild).IsEqualTo(privateBuild);
+		await That(result.ProductName).IsEqualTo(productName);
+		await That(result.ProductVersion).IsEqualTo(productVersion);
+		await That(result.SpecialBuild).IsEqualTo(specialBuild);
 	}
 }

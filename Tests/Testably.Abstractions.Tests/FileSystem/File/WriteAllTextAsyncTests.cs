@@ -49,7 +49,7 @@ public partial class WriteAllTextAsyncTests
 		string result =
 			await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -63,7 +63,7 @@ public partial class WriteAllTextAsyncTests
 		string result =
 			await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -90,8 +90,7 @@ public partial class WriteAllTextAsyncTests
 			string result =
 				await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-			result.Should().Be(contents,
-				$"{contents} should be encoded and decoded identical.");
+			await That(result).IsEqualTo(contents).Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 
@@ -106,7 +105,7 @@ public partial class WriteAllTextAsyncTests
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]
@@ -195,7 +194,7 @@ public partial class WriteAllTextAsyncTests
 		string result =
 			await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -209,7 +208,7 @@ public partial class WriteAllTextAsyncTests
 		string result =
 			await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -236,8 +235,7 @@ public partial class WriteAllTextAsyncTests
 			string result =
 				await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-			result.Should().Be(contents,
-				$"{contents} should be encoded and decoded identical.");
+			await That(result).IsEqualTo(contents).Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 

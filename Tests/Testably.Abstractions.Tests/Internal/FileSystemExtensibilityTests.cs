@@ -7,7 +7,7 @@ public class FileSystemExtensibilityTests
 {
 	[Theory]
 	[AutoData]
-	public void RetrieveMetadata_IncorrectType_ShouldReturnNull(string path, string key)
+	public async Task RetrieveMetadata_IncorrectType_ShouldReturnNull(string path, string key)
 	{
 		FileInfo value = new(path);
 		RealFileSystem fileSystem = new();
@@ -17,12 +17,12 @@ public class FileSystemExtensibilityTests
 
 		DirectoryInfo? result = extensibility.RetrieveMetadata<DirectoryInfo>(key);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void RetrieveMetadata_WithoutStoringBefore_ShouldReturnDefault(string path, string key)
+	public async Task RetrieveMetadata_WithoutStoringBefore_ShouldReturnDefault(string path, string key)
 	{
 		RealFileSystem fileSystem = new();
 		IFileInfo sut = fileSystem.FileInfo.New(path);
@@ -30,12 +30,12 @@ public class FileSystemExtensibilityTests
 
 		object? result = extensibility!.RetrieveMetadata<object?>(key);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void StoreMetadata_ShouldMakeValueRetrievable(string path, string key, object value)
+	public async Task StoreMetadata_ShouldMakeValueRetrievable(string path, string key, object value)
 	{
 		RealFileSystem fileSystem = new();
 		IFileInfo sut = fileSystem.FileInfo.New(path);
@@ -44,12 +44,12 @@ public class FileSystemExtensibilityTests
 		extensibility!.StoreMetadata(key, value);
 
 		object? result = extensibility.RetrieveMetadata<object>(key);
-		result.Should().Be(value);
+		await That(result).IsEqualTo(value);
 	}
 
 	[Theory]
 	[AutoData]
-	public void TryGetWrappedInstance_IncorrectType_ShouldReturnNull(string path)
+	public async Task TryGetWrappedInstance_IncorrectType_ShouldReturnNull(string path)
 	{
 		RealFileSystem fileSystem = new();
 		IFileInfo sut = fileSystem.FileInfo.New(path);
@@ -57,13 +57,13 @@ public class FileSystemExtensibilityTests
 
 		bool result = extensibility!.TryGetWrappedInstance(out DirectoryInfo? fileInfo);
 
-		result.Should().BeFalse();
-		fileInfo.Should().BeNull();
+		await That(result).IsFalse();
+		await That(fileInfo).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void TryGetWrappedInstance_ShouldReturnWrappedInstance(string path)
+	public async Task TryGetWrappedInstance_ShouldReturnWrappedInstance(string path)
 	{
 		RealFileSystem fileSystem = new();
 		IFileInfo sut = fileSystem.FileInfo.New(path);
@@ -71,7 +71,7 @@ public class FileSystemExtensibilityTests
 
 		bool result = extensibility!.TryGetWrappedInstance(out FileInfo? fileInfo);
 
-		result.Should().BeTrue();
-		fileInfo.Should().NotBeNull();
+		await That(result).IsTrue();
+		await That(fileInfo).IsNotNull();
 	}
 }

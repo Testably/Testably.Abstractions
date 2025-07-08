@@ -7,7 +7,7 @@ public partial class Tests
 {
 	[Theory]
 	[AutoData]
-	public void GetVersionInfo_ArbitraryFile_ShouldHaveFileNameSet(string fileName)
+	public async Task GetVersionInfo_ArbitraryFile_ShouldHaveFileNameSet(string fileName)
 	{
 		string filePath = FileSystem.Path.GetFullPath(fileName);
 		FileSystem.File.WriteAllText(fileName, "foo");
@@ -19,7 +19,7 @@ public partial class Tests
 
 		IFileVersionInfo result = FileSystem.FileVersionInfo.GetVersionInfo(fileName);
 
-		result.FileName.Should().Be(filePath);
+		await That(result.FileName).IsEqualTo(filePath);
 	}
 
 	[Theory]

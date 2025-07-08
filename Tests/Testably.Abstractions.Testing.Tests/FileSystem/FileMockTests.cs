@@ -12,7 +12,7 @@ public class FileMockTests
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
-	public void GetAttributes_SafeFileHandle_WithMissingFile_ShouldThrowFileNotFoundException(
+	public async Task GetAttributes_SafeFileHandle_WithMissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
 		SafeFileHandle fileHandle = new();
@@ -25,13 +25,13 @@ public class FileMockTests
 			_ = fileSystem.File.GetAttributes(fileHandle);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>();
+		await That(exception).IsExactly<FileNotFoundException>();
 	}
 #endif
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
-	public void GetUnixFileMode_SafeFileHandle_ShouldThrowPlatformNotSupportedExceptionOnWindows(
+	public async Task GetUnixFileMode_SafeFileHandle_ShouldThrowPlatformNotSupportedExceptionOnWindows(
 		string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -44,19 +44,19 @@ public class FileMockTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			#pragma warning disable CA1416
+#pragma warning disable CA1416
 			fileSystem.File.GetUnixFileMode(fileHandle);
-			#pragma warning restore CA1416
+#pragma warning restore CA1416
 		});
 
-		exception.Should().BeOfType<PlatformNotSupportedException>();
+		await That(exception).IsExactly<PlatformNotSupportedException>();
 	}
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
-	public void SetAttributes_SafeFileHandle_ShouldUpdateValue(
+	public async Task SetAttributes_SafeFileHandle_ShouldUpdateValue(
 		string path, FileAttributes attributes)
 	{
 		SafeFileHandle fileHandle = new();
@@ -71,26 +71,26 @@ public class FileMockTests
 		fileSystem.File.SetAttributes(fileHandle, attributes);
 
 		FileAttributes result = fileSystem.File.GetAttributes(fileHandle);
-		result.Should().Be(expectedAttributes);
+		await That(result).IsEqualTo(expectedAttributes);
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void SetCreationTime(string path, DateTime creationTime)
+	public async Task SetCreationTime(string path, DateTime creationTime)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText(path, "some content");
 
 		fileSystem.File.SetCreationTime(path, creationTime);
 
-		fileSystem.File.GetCreationTime(path).Should().Be(creationTime);
+		await That(fileSystem.File.GetCreationTime(path)).IsEqualTo(creationTime);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
-	public void SetCreationTime_SafeFileHandle_ShouldUpdateValue(
+	public async Task SetCreationTime_SafeFileHandle_ShouldUpdateValue(
 		string path, DateTime creationTime)
 	{
 		SafeFileHandle fileHandle = new();
@@ -103,26 +103,26 @@ public class FileMockTests
 
 		DateTime result = fileSystem.File.GetCreationTime(fileHandle);
 
-		result.Should().Be(creationTime);
+		await That(result).IsEqualTo(creationTime);
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void SetCreationTimeUtc(string path, DateTime creationTime)
+	public async Task SetCreationTimeUtc(string path, DateTime creationTime)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText(path, "some content");
 
 		fileSystem.File.SetCreationTimeUtc(path, creationTime);
 
-		fileSystem.File.GetCreationTimeUtc(path).Should().Be(creationTime);
+		await That(fileSystem.File.GetCreationTimeUtc(path)).IsEqualTo(creationTime);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
-	public void SetCreationTimeUtc_SafeFileHandle_ShouldUpdateValue(
+	public async Task SetCreationTimeUtc_SafeFileHandle_ShouldUpdateValue(
 		string path, DateTime creationTimeUtc)
 	{
 		SafeFileHandle fileHandle = new();
@@ -135,14 +135,14 @@ public class FileMockTests
 
 		DateTime result = fileSystem.File.GetCreationTimeUtc(fileHandle);
 
-		result.Should().Be(creationTimeUtc);
+		await That(result).IsEqualTo(creationTimeUtc);
 	}
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
-	public void SetLastAccessTime_SafeFileHandle_ShouldUpdateValue(
+	public async Task SetLastAccessTime_SafeFileHandle_ShouldUpdateValue(
 		string path, DateTime lastAccessTime)
 	{
 		SafeFileHandle fileHandle = new();
@@ -155,14 +155,14 @@ public class FileMockTests
 
 		DateTime result = fileSystem.File.GetLastAccessTime(fileHandle);
 
-		result.Should().Be(lastAccessTime);
+		await That(result).IsEqualTo(lastAccessTime);
 	}
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
-	public void SetLastAccessTimeUtc_SafeFileHandle_ShouldUpdateValue(
+	public async Task SetLastAccessTimeUtc_SafeFileHandle_ShouldUpdateValue(
 		string path, DateTime lastAccessTimeUtc)
 	{
 		SafeFileHandle fileHandle = new();
@@ -175,14 +175,14 @@ public class FileMockTests
 
 		DateTime result = fileSystem.File.GetLastAccessTimeUtc(fileHandle);
 
-		result.Should().Be(lastAccessTimeUtc);
+		await That(result).IsEqualTo(lastAccessTimeUtc);
 	}
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
-	public void SetLastWriteTime_SafeFileHandle_ShouldUpdateValue(
+	public async Task SetLastWriteTime_SafeFileHandle_ShouldUpdateValue(
 		string path, DateTime lastWriteTime)
 	{
 		SafeFileHandle fileHandle = new();
@@ -195,14 +195,14 @@ public class FileMockTests
 
 		DateTime result = fileSystem.File.GetLastWriteTime(fileHandle);
 
-		result.Should().Be(lastWriteTime);
+		await That(result).IsEqualTo(lastWriteTime);
 	}
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
-	public void SetLastWriteTimeUtc_SafeFileHandle_ShouldUpdateValue(
+	public async Task SetLastWriteTimeUtc_SafeFileHandle_ShouldUpdateValue(
 		string path, DateTime lastWriteTimeUtc)
 	{
 		SafeFileHandle fileHandle = new();
@@ -215,14 +215,14 @@ public class FileMockTests
 
 		DateTime result = fileSystem.File.GetLastWriteTimeUtc(fileHandle);
 
-		result.Should().Be(lastWriteTimeUtc);
+		await That(result).IsEqualTo(lastWriteTimeUtc);
 	}
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
-	public void SetUnixFileMode_SafeFileHandle_ShouldUpdateValue(
+	public async Task SetUnixFileMode_SafeFileHandle_ShouldUpdateValue(
 		string path, UnixFileMode mode)
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -233,13 +233,13 @@ public class FileMockTests
 		fileSystem.WithSafeFileHandleStrategy(
 			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		fileSystem.File.SetUnixFileMode(fileHandle, mode);
 
 		UnixFileMode result = fileSystem.File.GetUnixFileMode(fileHandle);
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		result.Should().Be(mode);
+		await That(result).IsEqualTo(mode);
 	}
 #endif
 }

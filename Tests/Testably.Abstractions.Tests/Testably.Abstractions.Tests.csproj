@@ -10,6 +10,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="aweXpect.Migration" />
 	</ItemGroup>
 
 	<PropertyGroup>

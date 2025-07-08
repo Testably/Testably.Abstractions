@@ -45,7 +45,7 @@ public partial class CreateSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public void CreateSymbolicLink_TargetDirectoryMissing_ShouldNotThrowException(
+	public async Task CreateSymbolicLink_TargetDirectoryMissing_ShouldNotThrowException(
 		string path, string pathToTarget)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -53,7 +53,7 @@ public partial class CreateSymbolicLinkTests
 			FileSystem.Directory.CreateSymbolicLink(path, pathToTarget);
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 
 	[Theory]
@@ -75,7 +75,7 @@ public partial class CreateSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public void CreateSymbolicLink_WithIllegalPath_ShouldThrowArgumentException_OnWindows(
+	public async Task CreateSymbolicLink_WithIllegalPath_ShouldThrowArgumentException_OnWindows(
 		string pathToTarget)
 	{
 		FileSystem.Directory.CreateDirectory(pathToTarget);
@@ -91,20 +91,20 @@ public partial class CreateSymbolicLinkTests
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateSymbolicLink_WithIllegalTarget_ShouldNotThrowException(string path)
+	public async Task CreateSymbolicLink_WithIllegalTarget_ShouldNotThrowException(string path)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Directory.CreateSymbolicLink(path, " ");
 		});
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 }
 #endif
