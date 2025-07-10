@@ -87,7 +87,7 @@ public partial class ResolveLinkTargetTests
 
 	[Theory]
 	[AutoData]
-	public void ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
+	public async Task ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
 		string path, string pathToFinalTarget)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();

@@ -8,21 +8,20 @@ public partial class CreateAsSymbolicLinkTests
 {
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_ShouldCreateSymbolicLink(
+	public async Task CreateAsSymbolicLink_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
 
 		FileSystem.FileInfo.New(path).CreateAsSymbolicLink(pathToTarget);
 
-		FileSystem.File.GetAttributes(path)
-			.HasFlag(FileAttributes.ReparsePoint)
-			.Should().BeTrue();
+		await That(FileSystem.File.GetAttributes(path))
+			.HasFlag(FileAttributes.ReparsePoint);
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
+	public async Task CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
@@ -52,7 +51,7 @@ public partial class CreateAsSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_WithEmptyPath_ShouldThrowArgumentException(
+	public async Task CreateAsSymbolicLink_WithEmptyPath_ShouldThrowArgumentException(
 		string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, "some content");
@@ -67,7 +66,7 @@ public partial class CreateAsSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_WithEmptyTarget_ShouldThrowArgumentException(
+	public async Task CreateAsSymbolicLink_WithEmptyTarget_ShouldThrowArgumentException(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
@@ -82,7 +81,7 @@ public partial class CreateAsSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_WithIllegalCharactersInPath_ShouldThrowIOException(
+	public async Task CreateAsSymbolicLink_WithIllegalCharactersInPath_ShouldThrowIOException(
 		string pathToTarget)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -99,7 +98,7 @@ public partial class CreateAsSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_WithIllegalCharactersInTarget_ShouldThrowIOException(
+	public async Task CreateAsSymbolicLink_WithIllegalCharactersInTarget_ShouldThrowIOException(
 		string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -151,7 +150,7 @@ public partial class CreateAsSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_WithNullPath_ShouldThrowArgumentNullException(
+	public async Task CreateAsSymbolicLink_WithNullPath_ShouldThrowArgumentNullException(
 		string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, "some content");
@@ -166,7 +165,7 @@ public partial class CreateAsSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_WithNullTarget_ShouldThrowArgumentNullException(
+	public async Task CreateAsSymbolicLink_WithNullTarget_ShouldThrowArgumentNullException(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, "some content");

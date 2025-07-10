@@ -98,7 +98,7 @@ public partial class GetFilesTests
 
 	[Theory]
 	[AutoData]
-	public void GetFiles_WithNewline_ShouldThrowArgumentException(
+	public async Task GetFiles_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
 		IDirectoryInfo baseDirectory =
@@ -146,11 +146,11 @@ public partial class GetFilesTests
 			.GetFiles("foo");
 
 		await That(result).HasSingle().Matching(d => d.Name == "foo");
-		result.Count().Should().Be(1);
+		await That(result.Count()).IsEqualTo(1);
 	}
 
 	[Fact]
-	public void
+	public async Task
 		GetFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFiles()
 	{
 		IDirectoryInfo baseDirectory =

@@ -93,7 +93,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void Flush_ShouldNotUpdateFileContentWhenAlreadyFlushed(
+	public async Task Flush_ShouldNotUpdateFileContentWhenAlreadyFlushed(
 		string path, byte[] bytes1, byte[] bytes2)
 	{
 		using (FileSystemStream stream1 = FileSystem.File.Open(
@@ -115,7 +115,7 @@ public partial class Tests
 			stream1.Flush();
 		}
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes2);
 	}
 
@@ -282,7 +282,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void SetLength_ReadOnlyStream_ShouldThrowNotSupportedException(
+	public async Task SetLength_ReadOnlyStream_ShouldThrowNotSupportedException(
 		string path, int length)
 	{
 		FileSystem.File.WriteAllText(path, null);

@@ -9,53 +9,53 @@ public partial class AppendAllTextTests
 {
 	[Theory]
 	[AutoData]
-	public void AppendAllText_ExistingFile_ShouldAppendLinesToFile(
+	public async Task AppendAllText_ExistingFile_ShouldAppendLinesToFile(
 		string path, string previousContents, string contents)
 	{
 		FileSystem.File.AppendAllText(path, previousContents);
 
 		FileSystem.File.AppendAllText(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(previousContents + contents);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(previousContents + contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllText_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+	public async Task AppendAllText_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingPath, string fileName, string contents)
 	{
 		string filePath = FileSystem.Path.Combine(missingPath, fileName);
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllText(filePath, contents);
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllText_MissingFile_ShouldCreateFile(
+	public async Task AppendAllText_MissingFile_ShouldCreateFile(
 		string path, string contents)
 	{
 		FileSystem.File.AppendAllText(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllText_MissingFile_ShouldCreateFileWithByteOrderMark(
+	public async Task AppendAllText_MissingFile_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
 		byte[] expectedBytes = [255, 254, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0];
 
 		FileSystem.File.AppendAllText(path, "AA", Encoding.UTF32);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(expectedBytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(expectedBytes);
 	}
 
 	[Theory]
@@ -78,14 +78,12 @@ public partial class AppendAllTextTests
 
 		if (Test.RunsOnWindows)
 		{
-			creationTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
 		}
 
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
@@ -93,33 +91,33 @@ public partial class AppendAllTextTests
 
 	[Theory]
 	[AutoData]
-	public void AppendAllText_ShouldNotEndWithNewline(string path)
+	public async Task AppendAllText_ShouldNotEndWithNewline(string path)
 	{
 		string contents = "foo";
 
 		FileSystem.File.AppendAllText(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		AppendAllText_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllText(path, null);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
@@ -154,53 +152,53 @@ public partial class AppendAllTextTests
 #if FEATURE_FILE_SPAN
 	[Theory]
 	[AutoData]
-	public void AppendAllText_Span_ExistingFile_ShouldAppendLinesToFile(
+	public async Task AppendAllText_Span_ExistingFile_ShouldAppendLinesToFile(
 		string path, string previousContents, string contents)
 	{
 		FileSystem.File.AppendAllText(path, previousContents);
 
 		FileSystem.File.AppendAllText(path, contents.AsSpan());
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(previousContents + contents);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(previousContents + contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllText_Span_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+	public async Task AppendAllText_Span_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingPath, string fileName, string contents)
 	{
 		string filePath = FileSystem.Path.Combine(missingPath, fileName);
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllText(filePath, contents.AsSpan());
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllText_Span_MissingFile_ShouldCreateFile(
+	public async Task AppendAllText_Span_MissingFile_ShouldCreateFile(
 		string path, string contents)
 	{
 		FileSystem.File.AppendAllText(path, contents.AsSpan());
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllText_Span_MissingFile_ShouldCreateFileWithByteOrderMark(
+	public async Task AppendAllText_Span_MissingFile_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
 		byte[] expectedBytes = [255, 254, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0];
 
 		FileSystem.File.AppendAllText(path, "AA".AsSpan(), Encoding.UTF32);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(expectedBytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(expectedBytes);
 	}
 
 	[Theory]
@@ -223,14 +221,12 @@ public partial class AppendAllTextTests
 
 		if (Test.RunsOnWindows)
 		{
-			creationTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
 		}
 
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
@@ -238,33 +234,32 @@ public partial class AppendAllTextTests
 
 	[Theory]
 	[AutoData]
-	public void AppendAllText_Span_ShouldNotEndWithNewline(string path)
+	public async Task AppendAllText_Span_ShouldNotEndWithNewline(string path)
 	{
 		string contents = "foo";
 
 		FileSystem.File.AppendAllText(path, contents.AsSpan());
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		AppendAllText_Span_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllText(path, "".AsSpan());
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]

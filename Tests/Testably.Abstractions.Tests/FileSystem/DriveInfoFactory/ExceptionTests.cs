@@ -11,7 +11,7 @@ public partial class ExceptionTests
 	[InlineData("?invalid-drive-name")]
 	[InlineData("invalid")]
 	[InlineData(" ")]
-	public void New_WhenDriveNameIsInvalid_ShouldThrowArgumentException(
+	public async Task New_WhenDriveNameIsInvalid_ShouldThrowArgumentException(
 		string driveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -26,7 +26,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), "")]
-	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -44,7 +44,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), (string?)null)]
-	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
+	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{

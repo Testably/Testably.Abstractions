@@ -136,8 +136,8 @@ public partial class WriteAllLinesAsyncTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]

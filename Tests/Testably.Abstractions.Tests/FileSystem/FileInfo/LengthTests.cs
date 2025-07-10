@@ -7,7 +7,7 @@ public partial class LengthTests
 {
 	[Theory]
 	[AutoData]
-	public void Length_MissingDirectory_ShouldThrowFileNotFoundException(
+	public async Task Length_MissingDirectory_ShouldThrowFileNotFoundException(
 		string missingDirectory, string fileName)
 	{
 		string path = FileSystem.Path.Combine(missingDirectory, fileName);
@@ -27,7 +27,7 @@ public partial class LengthTests
 
 	[Theory]
 	[AutoData]
-	public void Length_MissingFile_ShouldThrowFileNotFoundException(string path)
+	public async Task Length_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
 
@@ -45,7 +45,7 @@ public partial class LengthTests
 
 	[Theory]
 	[AutoData]
-	public void Length_PathIsDirectory_ShouldThrowFileNotFoundException(string path)
+	public async Task Length_PathIsDirectory_ShouldThrowFileNotFoundException(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IFileInfo sut = FileSystem.FileInfo.New(path);
@@ -109,7 +109,7 @@ public partial class LengthTests
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		Length_WhenFileIsCreatedAfterLengthAccessed_ShouldThrowFileNotFoundExceptionAgain(
 			string path, byte[] bytes)
 	{

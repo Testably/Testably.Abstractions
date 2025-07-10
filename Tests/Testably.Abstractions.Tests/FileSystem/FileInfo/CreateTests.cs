@@ -7,14 +7,14 @@ public partial class CreateTests
 {
 	[Theory]
 	[AutoData]
-	public void Create_MissingFile_ShouldCreateFile(string path)
+	public async Task Create_MissingFile_ShouldCreateFile(string path)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 
 		using FileSystemStream stream = sut.Create();
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
 	[Theory]
@@ -43,19 +43,19 @@ public partial class CreateTests
 			await That(sut3.Exists).IsTrue();
 		}
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Create_ShouldUseReadWriteAccessAndNoneShare(string path)
+	public async Task Create_ShouldUseReadWriteAccessAndNoneShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		using FileSystemStream stream = sut.Create();
 
-		FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.ReadWrite);
-		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
+		await That(FileTestHelper.CheckFileAccess(stream)).IsEqualTo(FileAccess.ReadWrite);
+		await That(FileTestHelper.CheckFileShare(FileSystem, path)).IsEqualTo(FileShare.None);
 	}
 }

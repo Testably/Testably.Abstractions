@@ -94,7 +94,7 @@ public partial class GetDirectoriesTests
 
 	[Theory]
 	[AutoData]
-	public void GetDirectories_WithNewline_ShouldThrowArgumentException(
+	public async Task GetDirectories_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
 		IDirectoryInfo baseDirectory =
@@ -146,7 +146,7 @@ public partial class GetDirectoriesTests
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		GetDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(
 			string path)
 	{

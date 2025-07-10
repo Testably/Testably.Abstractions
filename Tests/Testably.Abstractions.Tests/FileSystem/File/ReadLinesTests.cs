@@ -21,7 +21,7 @@ public partial class ReadLinesTests
 
 	[Theory]
 	[AutoData]
-	public void ReadLines_MissingFile_ShouldThrowFileNotFoundException(string path)
+	public async Task ReadLines_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		Exception? exception = Record.Exception(() =>
 		{

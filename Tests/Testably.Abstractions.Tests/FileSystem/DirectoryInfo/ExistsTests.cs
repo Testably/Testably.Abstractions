@@ -10,7 +10,7 @@ public partial class ExistsTests
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
 		await That(sut.Exists).IsFalse();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(sut.FullName)).IsFalse();
 	}
 
 	[Theory]
@@ -23,7 +23,7 @@ public partial class ExistsTests
 		FileSystem.Directory.Delete(path);
 
 		await That(sut.Exists).IsTrue();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(sut.FullName)).IsFalse();
 	}
 
 	[Theory]
@@ -55,7 +55,7 @@ public partial class ExistsTests
 		FileSystem.Directory.CreateDirectory(path);
 
 		await That(sut.Exists).IsFalse();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();
 	}
 
 	[Theory]

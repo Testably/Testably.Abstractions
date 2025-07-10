@@ -36,7 +36,7 @@ public partial class ResolveLinkTargetTests
 		if (!Test.RunsOnLinux)
 		{
 			await That(target.Exists).IsTrue();
-			FileSystem.File.ReadAllText(target.FullName).Should().Be(contents);
+			await That(FileSystem.File.ReadAllText(target.FullName)).IsEqualTo(contents);
 		}
 		else
 		{
@@ -70,7 +70,7 @@ public partial class ResolveLinkTargetTests
 
 	[Theory]
 	[AutoData]
-	public void ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
+	public async Task ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
 		string path, string pathToFinalTarget)
 	{
 		int maxLinks = MaxResolveLinks + 1;

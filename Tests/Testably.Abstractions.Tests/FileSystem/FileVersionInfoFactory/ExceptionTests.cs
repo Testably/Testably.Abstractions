@@ -9,7 +9,7 @@ public partial class ExceptionTests
 {
 	[Theory]
 	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), "")]
-	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -27,7 +27,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), (string?)null)]
-	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
+	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -44,7 +44,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), "  ")]
-	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{

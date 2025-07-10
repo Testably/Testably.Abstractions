@@ -69,17 +69,17 @@ public partial class EventTests
 		}
 		finally
 		{
-			ms2.Wait(ExpectSuccess, token).Should().BeTrue();
+			await That(ms2.Wait(ExpectSuccess, token)).IsTrue();
 			fileSystemWatcher.Changed -= FileSystemWatcherOnChanged;
 			ms1.Reset();
-			ms1.Wait(ExpectSuccess, token).Should().BeTrue();
+			await That(ms1.Wait(ExpectSuccess, token)).IsTrue();
 		}
 
 		await That(callCount).IsGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
 		ms1.Reset();
-		ms1.Wait(ExpectSuccess, token).Should().BeTrue();
+		await That(ms1.Wait(ExpectSuccess, token)).IsTrue();
 		await That(callCount).IsEqualTo(previousCallCount);
 		cts.Cancel();
 	}
@@ -137,17 +137,17 @@ public partial class EventTests
 		}
 		finally
 		{
-			ms2.Wait(ExpectSuccess, token).Should().BeTrue();
+			await That(ms2.Wait(ExpectSuccess, token)).IsTrue();
 			fileSystemWatcher.Created -= FileSystemWatcherOnCreated;
 			ms1.Reset();
-			ms1.Wait(ExpectSuccess, token).Should().BeTrue();
+			await That(ms1.Wait(ExpectSuccess, token)).IsTrue();
 		}
 
 		await That(callCount).IsGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
 		ms1.Reset();
-		ms1.Wait(ExpectSuccess, token).Should().BeTrue();
+		await That(ms1.Wait(ExpectSuccess, token)).IsTrue();
 		FileSystem.Directory.CreateDirectory("other" + path);
 		FileSystem.Directory.Delete("other" + path);
 		await That(callCount).IsEqualTo(previousCallCount);
@@ -207,17 +207,17 @@ public partial class EventTests
 		}
 		finally
 		{
-			ms2.Wait(ExpectSuccess, token).Should().BeTrue();
+			await That(ms2.Wait(ExpectSuccess, token)).IsTrue();
 			fileSystemWatcher.Deleted -= FileSystemWatcherOnDeleted;
 			ms1.Reset();
-			ms1.Wait(ExpectSuccess, token).Should().BeTrue();
+			await That(ms1.Wait(ExpectSuccess, token)).IsTrue();
 		}
 
 		await That(callCount).IsGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
 		ms1.Reset();
-		ms1.Wait(ExpectSuccess, token).Should().BeTrue();
+		await That(ms1.Wait(ExpectSuccess, token)).IsTrue();
 		FileSystem.Directory.CreateDirectory("other" + path);
 		FileSystem.Directory.Delete("other" + path);
 		await That(callCount).IsEqualTo(previousCallCount);
@@ -279,17 +279,17 @@ public partial class EventTests
 		}
 		finally
 		{
-			ms2.Wait(ExpectSuccess, token).Should().BeTrue();
+			await That(ms2.Wait(ExpectSuccess, token)).IsTrue();
 			fileSystemWatcher.Renamed -= FileSystemWatcherOnRenamed;
 			ms1.Reset();
-			ms1.Wait(ExpectSuccess, token).Should().BeTrue();
+			await That(ms1.Wait(ExpectSuccess, token)).IsTrue();
 		}
 
 		await That(callCount).IsGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
 		ms1.Reset();
-		ms1.Wait(ExpectSuccess, token).Should().BeTrue();
+		await That(ms1.Wait(ExpectSuccess, token)).IsTrue();
 		FileSystem.File.Move(path, "other-path");
 		await That(callCount).IsEqualTo(previousCallCount);
 		cts.Cancel();

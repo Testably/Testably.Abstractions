@@ -10,7 +10,7 @@ public partial class DisposeTests
 {
 	[Theory]
 	[AutoData]
-	public void Dispose_CalledTwiceShouldDoNothing(
+	public async Task Dispose_CalledTwiceShouldDoNothing(
 		string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
@@ -20,13 +20,13 @@ public partial class DisposeTests
 
 		// ReSharper disable once DisposeOnUsingVariable
 		stream.Dispose();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 		FileSystem.File.WriteAllText(path, "foo");
 
 		// ReSharper disable once DisposeOnUsingVariable
 		stream.Dispose();
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
 	[Theory]

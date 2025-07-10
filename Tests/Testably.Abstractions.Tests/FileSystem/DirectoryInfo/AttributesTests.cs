@@ -14,8 +14,8 @@ public partial class AttributesTests
 
 		sut.Attributes = 0;
 
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 		await That(sut.Attributes).HasFlag(FileAttributes.Directory);
 	}
 
@@ -36,7 +36,7 @@ public partial class AttributesTests
 	}
 
 	[Fact]
-	public void Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException()
+	public async Task Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException()
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("missing file");
 

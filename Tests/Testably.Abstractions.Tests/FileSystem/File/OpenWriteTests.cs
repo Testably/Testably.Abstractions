@@ -7,11 +7,11 @@ public partial class OpenWriteTests
 {
 	[Theory]
 	[AutoData]
-	public void OpenWrite_MissingFile_ShouldCreateFile(string path)
+	public async Task OpenWrite_MissingFile_ShouldCreateFile(string path)
 	{
 		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
 	[Theory]
@@ -40,8 +40,8 @@ public partial class OpenWriteTests
 
 		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
-		FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.Write);
-		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
+		await That(FileTestHelper.CheckFileAccess(stream)).IsEqualTo(FileAccess.Write);
+		await That(FileTestHelper.CheckFileShare(FileSystem, path)).IsEqualTo(FileShare.None);
 		await That(stream.CanRead).IsFalse();
 		await That(stream.CanWrite).IsTrue();
 		await That(stream.CanSeek).IsTrue();

@@ -8,7 +8,7 @@ public partial class MoveTests
 {
 	[Theory]
 	[AutoData]
-	public void Move_CaseOnlyChange_ShouldMoveDirectoryWithContent(string path)
+	public async Task Move_CaseOnlyChange_ShouldMoveDirectoryWithContent(string path)
 	{
 		Skip.If(Test.IsNetFramework);
 
@@ -24,25 +24,18 @@ public partial class MoveTests
 
 		FileSystem.Directory.Move(source, destination);
 
-		FileSystem.Directory.Exists(source).Should().Be(!Test.RunsOnLinux);
-		FileSystem.Directory.Exists(destination).Should().BeTrue();
-		FileSystem.Directory.GetDirectories(".").Should()
-			.ContainSingle(d => d.Contains(destination, StringComparison.Ordinal));
-		FileSystem.Directory.GetFiles(destination, initialized[1].Name)
-			.Should().ContainSingle();
-		FileSystem.Directory.GetDirectories(destination, initialized[2].Name)
-			.Should().ContainSingle();
-		FileSystem.Directory.GetFiles(destination, initialized[3].Name,
-				SearchOption.AllDirectories)
-			.Should().ContainSingle();
-		FileSystem.Directory.GetDirectories(destination, initialized[4].Name,
-				SearchOption.AllDirectories)
-			.Should().ContainSingle();
+		await That(FileSystem.Directory.Exists(source)).IsEqualTo(!Test.RunsOnLinux);
+		await That(FileSystem.Directory.Exists(destination)).IsTrue();
+		await That(FileSystem.Directory.GetDirectories(".")).HasSingle().Matching(d => d.Contains(destination, StringComparison.Ordinal));
+		await That(FileSystem.Directory.GetFiles(destination, initialized[1].Name)).HasSingle();
+		await That(FileSystem.Directory.GetDirectories(destination, initialized[2].Name)).HasSingle();
+		await That(FileSystem.Directory.GetFiles(destination, initialized[3].Name,	SearchOption.AllDirectories)).HasSingle();
+		await That(FileSystem.Directory.GetDirectories(destination, initialized[4].Name, SearchOption.AllDirectories)).HasSingle();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_CaseOnlyChange_ShouldThrowIOException_OnNetFramework(string path)
+	public async Task Move_CaseOnlyChange_ShouldThrowIOException_OnNetFramework(string path)
 	{
 		Skip.IfNot(Test.IsNetFramework);
 
@@ -51,34 +44,34 @@ public partial class MoveTests
 		FileSystem.Initialize()
 			.WithSubdirectory(source);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory.Move(source, destination);
-		});
+		}
 
-		exception.Should().BeException<IOException>(hResult: -2146232800);
+		await That(Act).Throws<IOException>().WithHResult(-2146232800);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_DestinationDoesNotExist_ShouldThrowDirectoryNotFoundException(
+	public async Task Move_DestinationDoesNotExist_ShouldThrowDirectoryNotFoundException(
 		string source)
 	{
 		FileSystem.InitializeIn(source)
 			.WithAFile();
 		string destination = FileTestHelper.RootDrive(Test, "not-existing/path");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory.Move(source, destination);
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_ShouldMoveAttributes(string source, string destination)
+	public async Task Move_ShouldMoveAttributes(string source, string destination)
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory(source);
@@ -88,13 +81,12 @@ public partial class MoveTests
 
 		FileSystem.Directory.Move(source, destination);
 
-		FileSystem.DirectoryInfo.New(destination).Attributes
-			.Should().Be(expectedAttributes);
+		await That(FileSystem.DirectoryInfo.New(destination).Attributes).IsEqualTo(expectedAttributes);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_ShouldMoveDirectoryWithContent(string source, string destination)
+	public async Task Move_ShouldMoveDirectoryWithContent(string source, string destination)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
@@ -106,23 +98,17 @@ public partial class MoveTests
 
 		FileSystem.Directory.Move(source, destination);
 
-		FileSystem.Directory.Exists(source).Should().BeFalse();
-		FileSystem.Directory.Exists(destination).Should().BeTrue();
-		FileSystem.Directory.GetFiles(destination, initialized[1].Name)
-			.Should().ContainSingle();
-		FileSystem.Directory.GetDirectories(destination, initialized[2].Name)
-			.Should().ContainSingle();
-		FileSystem.Directory.GetFiles(destination, initialized[3].Name,
-				SearchOption.AllDirectories)
-			.Should().ContainSingle();
-		FileSystem.Directory.GetDirectories(destination, initialized[4].Name,
-				SearchOption.AllDirectories)
-			.Should().ContainSingle();
+		await That(FileSystem.Directory.Exists(source)).IsFalse();
+		await That(FileSystem.Directory.Exists(destination)).IsTrue();
+		await That(FileSystem.Directory.GetFiles(destination, initialized[1].Name)).HasSingle();
+		await That(FileSystem.Directory.GetDirectories(destination, initialized[2].Name)).HasSingle();
+		await That(FileSystem.Directory.GetFiles(destination, initialized[3].Name, SearchOption.AllDirectories)).HasSingle();
+		await That(FileSystem.Directory.GetDirectories(destination, initialized[4].Name, SearchOption.AllDirectories)).HasSingle();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_ShouldNotAdjustTimes(string source, string destination)
+	public async Task Move_ShouldNotAdjustTimes(string source, string destination)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -144,29 +130,26 @@ public partial class MoveTests
 
 		if (Test.RunsOnWindows)
 		{
-			creationTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
 		}
 
-		lastAccessTime.Should()
-			.BeBetween(creationTimeStart, creationTimeEnd);
-		lastWriteTime.Should()
-			.BeBetween(creationTimeStart, creationTimeEnd);
+		await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_SourceAndDestinationIdentical_ShouldThrowIOException(string path)
+	public async Task Move_SourceAndDestinationIdentical_ShouldThrowIOException(string path)
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory.Move(path, path);
-		});
+		}
 
-		exception.Should().BeException<IOException>(hResult: -2146232800);
+		await That(Act).Throws<IOException>().WithHResult(-2146232800);
 	}
 
 	[Theory]
@@ -194,25 +177,19 @@ public partial class MoveTests
 		});
 
 		await That(exception).IsNull();
-		FileSystem.Directory.Exists(source).Should().BeFalse();
-		FileSystem.Directory.Exists(destination).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(source)).IsFalse();
+		await That(FileSystem.Directory.Exists(destination)).IsTrue();
 		IDirectoryInfo destinationDirectory =
 			FileSystem.DirectoryInfo.New(destination);
-		destinationDirectory.GetFiles(initialized[1].Name)
-			.Should().ContainSingle();
-		destinationDirectory.GetDirectories(initialized[2].Name)
-			.Should().ContainSingle();
-		destinationDirectory
-			.GetFiles(initialized[3].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle();
-		destinationDirectory
-			.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle();
+		await That(destinationDirectory.GetFiles(initialized[1].Name)).HasSingle();
+		await That(destinationDirectory.GetDirectories(initialized[2].Name)).HasSingle();
+		await That(destinationDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)).HasSingle();
+		await That(destinationDirectory.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)).HasSingle();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_WithLockedFile_ShouldThrowIOException_AndNotMoveDirectoryAtAll_OnWindows(
+	public async Task Move_WithLockedFile_ShouldThrowIOException_AndNotMoveDirectoryAtAll_OnWindows(
 		string source, string destination)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -229,30 +206,25 @@ public partial class MoveTests
 			FileAccess.Read,
 			FileShare.Read);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory.Move(source, destination);
-		});
+		}
 
-		exception.Should().BeException<IOException>(hResult: -2147024891);
-		FileSystem.Directory.Exists(source).Should().BeTrue();
-		FileSystem.Directory.Exists(destination).Should().BeFalse();
+		await That(Act).Throws<IOException>().WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(source)).IsTrue();
+		await That(FileSystem.Directory.Exists(destination)).IsFalse();
 		IDirectoryInfo sourceDirectory =
 			FileSystem.DirectoryInfo.New(source);
-		sourceDirectory.GetFiles(initialized[1].Name)
-			.Should().ContainSingle();
-		sourceDirectory.GetDirectories(initialized[2].Name)
-			.Should().ContainSingle();
-		sourceDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle();
-		sourceDirectory
-			.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle();
+		await That(sourceDirectory.GetFiles(initialized[1].Name)).HasSingle();
+		await That(sourceDirectory.GetDirectories(initialized[2].Name)).HasSingle();
+		await That(sourceDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)).HasSingle();
+		await That(sourceDirectory.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)).HasSingle();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
+	public async Task Move_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
 		string source, string destination)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -266,19 +238,13 @@ public partial class MoveTests
 
 		FileSystem.Directory.Move(source, destination);
 
-		FileSystem.Directory.Exists(source).Should().BeFalse();
-		FileSystem.Directory.Exists(destination).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(source)).IsFalse();
+		await That(FileSystem.Directory.Exists(destination)).IsTrue();
 		IDirectoryInfo destinationDirectory =
 			FileSystem.DirectoryInfo.New(destination);
-		destinationDirectory.GetFiles(initialized[1].Name)
-			.Should().ContainSingle();
-		destinationDirectory.GetDirectories(initialized[2].Name)
-			.Should().ContainSingle();
-		destinationDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle().Which.Attributes.Should()
-			.HaveFlag(FileAttributes.ReadOnly);
-		destinationDirectory
-			.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle();
+		await That(destinationDirectory.GetFiles(initialized[1].Name)).HasSingle();
+		await That(destinationDirectory.GetDirectories(initialized[2].Name)).HasSingle();
+		await That(destinationDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)).HasSingle().Which.For(x => x.Attributes, a => a.HasFlag(FileAttributes.ReadOnly));
+		await That(destinationDirectory.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)).HasSingle();
 	}
 }

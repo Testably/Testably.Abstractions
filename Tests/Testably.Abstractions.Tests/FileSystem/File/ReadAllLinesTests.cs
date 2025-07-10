@@ -20,7 +20,7 @@ public partial class ReadAllLinesTests
 
 	[Theory]
 	[AutoData]
-	public void ReadAllLines_MissingFile_ShouldThrowFileNotFoundException(string path)
+	public async Task ReadAllLines_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		Exception? exception = Record.Exception(() =>
 		{

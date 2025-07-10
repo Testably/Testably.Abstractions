@@ -11,7 +11,7 @@ public partial class SafeFileHandleTests
 {
 	[Theory]
 	[AutoData]
-	public void New_SafeFileHandle_InvalidHandle_ShouldThrowArgumentException(
+	public async Task New_SafeFileHandle_InvalidHandle_ShouldThrowArgumentException(
 		string filename)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
@@ -29,7 +29,7 @@ public partial class SafeFileHandleTests
 
 	[Theory]
 	[AutoData]
-	public void New_SafeFileHandle_InvalidHandle_WithBufferSize_ShouldThrowArgumentException(
+	public async Task New_SafeFileHandle_InvalidHandle_WithBufferSize_ShouldThrowArgumentException(
 		string filename)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
@@ -47,7 +47,7 @@ public partial class SafeFileHandleTests
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		New_SafeFileHandle_InvalidHandle_WithBufferSizeAndAsync_ShouldThrowArgumentException(
 			string filename)
 	{
@@ -66,7 +66,7 @@ public partial class SafeFileHandleTests
 
 	[Theory]
 	[AutoData]
-	public void New_SafeFileHandle_Valid_ShouldCreateWritableStream(
+	public async Task New_SafeFileHandle_Valid_ShouldCreateWritableStream(
 		string filename, string contents)
 	{
 		IDisposable? cleanup = null;
@@ -100,7 +100,7 @@ public partial class SafeFileHandleTests
 
 	[Theory]
 	[AutoData]
-	public void New_SafeFileHandle_Valid_WithBufferSize_ShouldCreateWritableStream(
+	public async Task New_SafeFileHandle_Valid_WithBufferSize_ShouldCreateWritableStream(
 		string filename, string contents)
 	{
 		IDisposable? cleanup = null;
@@ -135,7 +135,7 @@ public partial class SafeFileHandleTests
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		New_SafeFileHandle_Valid_WithBufferSizeAndAsync_ShouldCreateWritableStream(
 			string filename, string contents)
 	{

@@ -24,7 +24,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void GetVersionInfo_MissingFile_ShouldThrowFileNotFoundException(
+	public async Task GetVersionInfo_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
 		if (Test.IsNetFramework)

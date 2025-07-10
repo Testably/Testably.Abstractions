@@ -122,7 +122,7 @@ public partial class EnumerateFileSystemInfosTests
 
 	[Theory]
 	[AutoData]
-	public void EnumerateFileSystemInfos_WithNewline_ShouldThrowArgumentException(
+	public async Task EnumerateFileSystemInfos_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
 		IDirectoryInfo baseDirectory =
@@ -171,11 +171,11 @@ public partial class EnumerateFileSystemInfosTests
 			.EnumerateFileSystemInfos("foo").ToArray();
 
 		await That(result).HasSingle().Matching(d => d.Name == "foo");
-		result.Count().Should().Be(1);
+		await That(result.Count()).IsEqualTo(1);
 	}
 
 	[Fact]
-	public void
+	public async Task
 		EnumerateFileSystemInfos_WithSearchPatternInSubdirectory_ShouldReturnMatchingFiles()
 	{
 		IDirectoryInfo baseDirectory =
@@ -191,6 +191,6 @@ public partial class EnumerateFileSystemInfosTests
 		IEnumerable<IFileSystemInfo> result = baseDirectory
 			.EnumerateFileSystemInfos("xyz", SearchOption.AllDirectories);
 
-		result.Count().Should().Be(3);
+		await That(result.Count()).IsEqualTo(3);
 	}
 }

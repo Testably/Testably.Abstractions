@@ -7,7 +7,7 @@ public partial class CreateTests
 {
 	[Theory]
 	[AutoData]
-	public void Create_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)
+	public async Task Create_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)
 	{
 		FileSystem.File.WriteAllText(name, "");
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(name);
@@ -19,7 +19,7 @@ public partial class CreateTests
 
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
-		FileSystem.Directory.Exists(name).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(name)).IsFalse();
 	}
 
 	[Theory]
@@ -33,11 +33,11 @@ public partial class CreateTests
 
 #if NETFRAMEWORK
 		// The DirectoryInfo is not updated in .NET Framework!
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 #else
 		await That(sut.Exists).IsTrue();
 #endif
-		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();
 	}
 
 	[Fact]
@@ -47,7 +47,7 @@ public partial class CreateTests
 
 		result.Create();
 
-		FileSystem.Directory.Exists("foo").Should().BeTrue();
+		await That(FileSystem.Directory.Exists("foo")).IsTrue();
 		await That(result.FullName).StartsWith(BasePath);
 	}
 
@@ -69,7 +69,7 @@ public partial class CreateTests
 		await That(result.Exists).IsTrue();
 		await That(result.Parent.Exists).IsTrue();
 		await That(result.Parent.Parent.Exists).IsTrue();
-		result.ToString().Should().Be(path);
+		await That(result.ToString()).IsEqualTo(path);
 	}
 
 	[Theory]
@@ -98,7 +98,7 @@ public partial class CreateTests
 			await That(sut3.Exists).IsTrue();
 		}
 
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 
 	[Theory]
@@ -125,13 +125,13 @@ public partial class CreateTests
 			FileSystem.DirectoryInfo.New(nameWithSuffix);
 		result.Create();
 
-		result.ToString().Should().Be(nameWithSuffix);
+		await That(result.ToString()).IsEqualTo(nameWithSuffix);
 		await That(result.Name).IsEqualTo(expectedName.TrimEnd(
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
 		await That(result.FullName).IsEqualTo(FileSystem.Path.Combine(BasePath, expectedName
 			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
-		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(nameWithSuffix)).IsTrue();
 	}
 }

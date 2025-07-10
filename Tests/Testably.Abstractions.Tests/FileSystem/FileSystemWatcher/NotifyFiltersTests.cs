@@ -50,7 +50,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.AppendAllText(fileName, "foo");
 
-		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
@@ -106,7 +106,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.AppendAllText(fileName, "foo");
 
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(fileName));
 		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Changed);
@@ -148,7 +148,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.CreateDirectory(path);
 
-		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
@@ -182,7 +182,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.CreateDirectory(path);
 
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
 		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
@@ -224,7 +224,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(path, "foo");
 
-		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
@@ -258,7 +258,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(path, "foo");
 
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
 		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
@@ -300,7 +300,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.Delete(path);
 
-		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
@@ -334,7 +334,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.Delete(path);
 
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
 		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
@@ -376,7 +376,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Delete(path);
 
-		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
@@ -410,7 +410,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Delete(path);
 
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
 		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
@@ -455,7 +455,7 @@ public partial class NotifyFiltersTests
 			FileSystem.Path.Combine(sourcePath, sourceName),
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
 		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
@@ -502,7 +502,7 @@ public partial class NotifyFiltersTests
 			FileSystem.Path.Combine(sourcePath, sourceName),
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
-		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
@@ -544,7 +544,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
@@ -581,7 +581,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
 		await That(result.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
@@ -635,7 +635,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(fileName, "foo");
 
-		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
@@ -691,7 +691,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(fileName, "foo");
 
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(fileName));
 		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Changed);

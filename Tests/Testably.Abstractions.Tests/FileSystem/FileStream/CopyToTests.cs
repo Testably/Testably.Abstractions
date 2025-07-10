@@ -10,7 +10,7 @@ public partial class CopyToTests
 {
 	[Theory]
 	[AutoData]
-	public void CopyTo_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
+	public async Task CopyTo_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
 		string path, byte[] bytes)
 	{
 		byte[] buffer = new byte[bytes.Length];

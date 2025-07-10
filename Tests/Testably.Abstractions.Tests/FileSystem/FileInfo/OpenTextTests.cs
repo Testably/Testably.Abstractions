@@ -7,7 +7,7 @@ public partial class OpenTextTests
 {
 	[Theory]
 	[AutoData]
-	public void OpenText_MissingFile_ShouldThrowFileNotFoundException(
+	public async Task OpenText_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);

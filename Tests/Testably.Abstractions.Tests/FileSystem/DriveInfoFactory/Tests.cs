@@ -16,7 +16,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void MissingDrive_CreateDirectoryInfo_ShouldOnlyThrowWhenAccessingData(
+	public async Task MissingDrive_CreateDirectoryInfo_ShouldOnlyThrowWhenAccessingData(
 		string path, string subPath)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -39,7 +39,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void MissingDrive_WriteAllBytes_ShouldThrowDirectoryNotFoundException(
+	public async Task MissingDrive_WriteAllBytes_ShouldThrowDirectoryNotFoundException(
 		string path, byte[] bytes)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -75,7 +75,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void New_InvalidDriveName_ShouldThrowArgumentException(
+	public async Task New_InvalidDriveName_ShouldThrowArgumentException(
 		string invalidDriveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");

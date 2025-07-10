@@ -4,14 +4,14 @@ namespace Testably.Abstractions.Tests.FileSystem.DriveInfo;
 public partial class Tests
 {
 	[Fact]
-	public void ToString_ShouldReturnDriveName()
+	public async Task ToString_ShouldReturnDriveName()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		IDriveInfo result =
 			FileSystem.DriveInfo.New(FileTestHelper.RootDrive(Test));
 
-		result.ToString().Should().Be("C:\\");
+		await That(result.ToString()).IsEqualTo("C:\\");
 	}
 
 	[Fact]

@@ -35,7 +35,7 @@ public partial class PathTests
 
 	[Theory]
 	[AutoData]
-	public void Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
+	public async Task Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
 	{
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
@@ -52,7 +52,7 @@ public partial class PathTests
 	}
 
 	[Fact]
-	public void Path_Whitespace_ShouldThrowArgumentException()
+	public async Task Path_Whitespace_ShouldThrowArgumentException()
 	{
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();

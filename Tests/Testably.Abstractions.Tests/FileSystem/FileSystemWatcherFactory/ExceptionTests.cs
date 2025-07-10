@@ -37,7 +37,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), "")]
-	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -55,7 +55,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), (string?)null)]
-	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
+	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -72,7 +72,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), "  ")]
-	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{

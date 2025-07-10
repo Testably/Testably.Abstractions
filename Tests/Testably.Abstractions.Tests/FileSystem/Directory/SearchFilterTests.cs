@@ -120,7 +120,7 @@ public partial class SearchFilterTests
 	}
 
 	[Fact]
-	public void
+	public async Task
 		SearchPattern_ContainingTooManyInstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldThrowUnauthorizedAccessException()
 	{
 		Skip.If(Test.IsNetFramework);
@@ -143,13 +143,13 @@ public partial class SearchFilterTests
 		sb.Append("a*");
 		string searchPattern = sb.ToString();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory
 				.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
 	[Theory]
@@ -178,7 +178,7 @@ public partial class SearchFilterTests
 	[InlineAutoData("../*")]
 	[InlineAutoData("../a*")]
 	[InlineAutoData("*t..")]
-	public void
+	public async Task
 		SearchPattern_ContainingTwoDotsAndDirectorySeparator_ShouldThrowArgumentException_OnNetFramework(
 			string searchPattern, string path)
 	{
@@ -186,13 +186,13 @@ public partial class SearchFilterTests
 
 		FileSystem.InitializeIn(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory
 				.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
+		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
 	[Fact]
@@ -252,17 +252,17 @@ public partial class SearchFilterTests
 	}
 
 	[Fact]
-	public void SearchPattern_Null_ShouldThrowArgumentNullException()
+	public async Task SearchPattern_Null_ShouldThrowArgumentNullException()
 	{
 		FileSystem.Initialize();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory
 				.GetFileSystemEntries(".", null!, SearchOption.AllDirectories);
-		});
+		}
 
-		exception.Should().BeException<ArgumentNullException>(paramName: "searchPattern");
+		await That(Act).Throws<ArgumentNullException>().WithParamName("searchPattern");
 	}
 
 	[Fact]

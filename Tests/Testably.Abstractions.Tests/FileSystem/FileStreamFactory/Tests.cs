@@ -7,7 +7,7 @@ public partial class Tests
 {
 	[Theory]
 	[AutoData]
-	public void New_AppendAccessWithReadWriteMode_ShouldThrowArgumentException(
+	public async Task New_AppendAccessWithReadWriteMode_ShouldThrowArgumentException(
 		string path)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -23,7 +23,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void New_ExistingFileWithCreateMode_ShouldIgnoreContent(
+	public async Task New_ExistingFileWithCreateMode_ShouldIgnoreContent(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
@@ -35,7 +35,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void New_ExistingFileWithCreateNewMode_ShouldThrowIOException(
+	public async Task New_ExistingFileWithCreateNewMode_ShouldThrowIOException(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
@@ -51,7 +51,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void New_ExistingFileWithTruncateMode_ShouldIgnoreContent(
+	public async Task New_ExistingFileWithTruncateMode_ShouldIgnoreContent(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
@@ -85,7 +85,7 @@ public partial class Tests
 	[Theory]
 	[InlineAutoData(FileMode.Open)]
 	[InlineAutoData(FileMode.Truncate)]
-	public void New_MissingFileWithIncorrectMode_ShouldThrowFileNotFoundException(
+	public async Task New_MissingFileWithIncorrectMode_ShouldThrowFileNotFoundException(
 		FileMode mode, string path)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -100,7 +100,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void New_MissingFileWithTruncateMode_ShouldThrowFileNotFoundException(
+	public async Task New_MissingFileWithTruncateMode_ShouldThrowFileNotFoundException(
 		string path)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -140,7 +140,7 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void New_SamePathAsExistingDirectory_ShouldThrowCorrectException(
+	public async Task New_SamePathAsExistingDirectory_ShouldThrowCorrectException(
 		string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);

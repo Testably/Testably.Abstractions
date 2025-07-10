@@ -7,7 +7,7 @@ public partial class DeleteTests
 {
 	[Theory]
 	[AutoData]
-	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+	public async Task Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingDirectory, string fileName)
 	{
 		string filePath = FileSystem.Path.Combine(missingDirectory, fileName);
@@ -52,7 +52,7 @@ public partial class DeleteTests
 			await That(sut.Exists).IsFalse();
 		}
 
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
@@ -76,12 +76,12 @@ public partial class DeleteTests
 			exception.Should().BeException<IOException>(
 				messageContains: $"{filename}'",
 				hResult: -2147024864);
-			FileSystem.File.Exists(filename).Should().BeTrue();
+			await That(FileSystem.File.Exists(filename)).IsTrue();
 		}
 		else
 		{
 			await That(exception).IsNull();
-			FileSystem.File.Exists(filename).Should().BeFalse();
+			await That(FileSystem.File.Exists(filename)).IsFalse();
 		}
 	}
 }

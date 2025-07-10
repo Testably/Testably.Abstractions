@@ -42,7 +42,7 @@ public partial class EncryptDecryptTests
 	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
-	public void Encrypt_Decrypt_ShouldChangeEncryptedFileAttribute(
+	public async Task Encrypt_Decrypt_ShouldChangeEncryptedFileAttribute(
 		string path, string contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows && FileSystem is MockFileSystem,
@@ -51,10 +51,10 @@ public partial class EncryptDecryptTests
 		FileSystem.File.WriteAllText(path, contents);
 
 		FileSystem.File.Encrypt(path);
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
 		FileSystem.File.Decrypt(path);
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 		FileSystem.File.GetAttributes(path).Should().NotHaveFlag(FileAttributes.Encrypted);
 	}
 

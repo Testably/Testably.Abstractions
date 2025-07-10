@@ -33,7 +33,7 @@ public partial class AppendAllBytesAsyncTests
 		await FileSystem.File.AppendAllBytesAsync(path, bytes,
 			TestContext.Current.CancellationToken);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo([..previousBytes, ..bytes]);
 	}
 
@@ -63,7 +63,7 @@ public partial class AppendAllBytesAsyncTests
 		await FileSystem.File.AppendAllBytesAsync(path, bytes,
 			TestContext.Current.CancellationToken);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 
@@ -92,7 +92,7 @@ public partial class AppendAllBytesAsyncTests
 		await FileSystem.File.AppendAllBytesAsync(path, bytes.AsMemory(),
 			TestContext.Current.CancellationToken);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo([..previousBytes, ..bytes]);
 	}
 
@@ -123,7 +123,7 @@ public partial class AppendAllBytesAsyncTests
 		await FileSystem.File.AppendAllBytesAsync(path, bytes.AsMemory(),
 			TestContext.Current.CancellationToken);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 
@@ -145,8 +145,8 @@ public partial class AppendAllBytesAsyncTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
@@ -167,8 +167,8 @@ public partial class AppendAllBytesAsyncTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 }
 #endif

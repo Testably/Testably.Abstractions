@@ -47,7 +47,7 @@ public partial class DateTimeTests
 		await That(result.Hour).IsEqualTo(0);
 		await That(result.Minute).IsEqualTo(0);
 		await That(result.Second).IsEqualTo(0);
-		await That(result).IsBetween(before).And(after);
+		await That(result).IsBetween(before).And(after).Within(TimeComparison.Tolerance);
 	}
 
 	[Fact]

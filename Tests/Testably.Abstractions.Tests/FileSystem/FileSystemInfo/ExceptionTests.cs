@@ -10,7 +10,7 @@ public partial class ExceptionTests
 {
 	[Theory]
 	[MemberData(nameof(GetFileSystemInfoCallbacks), "")]
-	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileSystemInfo>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -28,7 +28,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetFileSystemInfoCallbacks), (string?)null)]
-	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
+	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileSystemInfo>> callback, string paramName,
 		bool ignoreParamCheck)
 	{

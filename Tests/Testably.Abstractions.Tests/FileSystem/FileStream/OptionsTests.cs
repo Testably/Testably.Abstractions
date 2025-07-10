@@ -8,23 +8,23 @@ public partial class OptionsTests
 {
 	[Theory]
 	[AutoData]
-	public void Options_DeleteOnClose_ShouldDeleteFileOnClose(
+	public async Task Options_DeleteOnClose_ShouldDeleteFileOnClose(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
 		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
 			FileAccess.ReadWrite, FileShare.None, 10, FileOptions.DeleteOnClose);
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 
 		stream.Close();
 
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Options_DeleteOnClose_ShouldDeleteFileOnDispose(
+	public async Task Options_DeleteOnClose_ShouldDeleteFileOnDispose(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -35,13 +35,13 @@ public partial class OptionsTests
 			// Delete on close
 		}
 
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
-	public void Options_Encrypt_ShouldKeepEncryptionFlag(
+	public async Task Options_Encrypt_ShouldKeepEncryptionFlag(
 		string path, string contents1, string contents2)
 	{
 		Skip.IfNot(Test.RunsOnWindows && FileSystem is MockFileSystem,
@@ -58,14 +58,14 @@ public partial class OptionsTests
 			stream.SetLength(bytes.Length);
 		}
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents2);
 		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Options_Encrypt_Unencrypted_ShouldBeIgnored(
+	public async Task Options_Encrypt_Unencrypted_ShouldBeIgnored(
 		string path, string contents1, string contents2)
 	{
 		FileSystem.File.WriteAllText(path, contents1);
@@ -79,13 +79,13 @@ public partial class OptionsTests
 
 		FileSystem.File.GetAttributes(path).Should()
 			.NotHaveFlag(FileAttributes.Encrypted);
-		FileSystem.File.ReadAllText(path).Should().Be(contents2);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents2);
 	}
 
 	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
-	public void Options_EncryptedWithoutEncryptionOption_ShouldKeepEncryptionFlag(
+	public async Task Options_EncryptedWithoutEncryptionOption_ShouldKeepEncryptionFlag(
 		string path, string contents1, string contents2)
 	{
 		Skip.IfNot(Test.RunsOnWindows && FileSystem is MockFileSystem,
@@ -102,7 +102,7 @@ public partial class OptionsTests
 			stream.SetLength(bytes.Length);
 		}
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents2);
 		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
 	}

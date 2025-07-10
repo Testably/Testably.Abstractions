@@ -34,7 +34,7 @@ public partial class Tests
 	{
 		IFileInfo result = FileSystem.FileInfo.New(path);
 
-		result.ToString().Should().Be(path);
+		await That(result.ToString()).IsEqualTo(path);
 		await That(result.Exists).IsFalse();
 	}
 

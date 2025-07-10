@@ -19,7 +19,7 @@ public partial class UnixFileModeTests
 
 	[Theory]
 	[AutoData]
-	public void UnixFileMode_SetterShouldThrowPlatformNotSupportedException_OnWindows(
+	public async Task UnixFileMode_SetterShouldThrowPlatformNotSupportedException_OnWindows(
 		string path, UnixFileMode unixFileMode)
 	{
 		Skip.IfNot(Test.RunsOnWindows);

@@ -8,7 +8,7 @@ public partial class Tests
 {
 	[Theory]
 	[AutoData]
-	public void Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException(
+	public async Task Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException(
 		string path)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);

@@ -53,7 +53,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetFileCallbacks), "")]
-	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck,
 		Func<Test, bool> skipTest)
 	{
@@ -73,7 +73,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetFileCallbacks), (string?)null)]
-	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
+	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck,
 		Func<Test, bool> skipTest)
 	{
@@ -92,7 +92,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetFileCallbacks), "  ")]
-	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck,
 		Func<Test, bool> skipTest)
 	{

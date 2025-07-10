@@ -7,7 +7,7 @@ public partial class CreateSubdirectoryTests
 {
 	[Theory]
 	[AutoData]
-	public void CreateSubdirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(
+	public async Task CreateSubdirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(
 		string name)
 	{
 		FileSystem.File.WriteAllText(name, "");
@@ -20,7 +20,7 @@ public partial class CreateSubdirectoryTests
 
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
-		FileSystem.Directory.Exists(name).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(name)).IsFalse();
 	}
 
 	[Theory]
@@ -33,9 +33,9 @@ public partial class CreateSubdirectoryTests
 		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
 		await That(sut.Exists).IsFalse();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();
 		await That(result.Exists).IsTrue();
-		FileSystem.Directory.Exists(result.FullName).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(result.FullName)).IsTrue();
 	}
 
 	[Theory]
@@ -47,8 +47,8 @@ public partial class CreateSubdirectoryTests
 		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
 		await That(sut.Exists).IsTrue();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();
 		await That(result.Exists).IsTrue();
-		FileSystem.Directory.Exists(result.FullName).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(result.FullName)).IsTrue();
 	}
 }

@@ -98,7 +98,7 @@ public partial class EnumerateFilesTests
 
 	[Theory]
 	[AutoData]
-	public void EnumerateFiles_WithNewline_ShouldThrowArgumentException(
+	public async Task EnumerateFiles_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
 		IDirectoryInfo baseDirectory =
@@ -146,11 +146,11 @@ public partial class EnumerateFilesTests
 			.EnumerateFiles("foo").ToArray();
 
 		await That(result).HasSingle().Matching(d => d.Name == "foo");
-		result.Count().Should().Be(1);
+		await That(result.Count()).IsEqualTo(1);
 	}
 
 	[Fact]
-	public void
+	public async Task
 		EnumerateFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFiles()
 	{
 		IDirectoryInfo baseDirectory =
@@ -185,9 +185,9 @@ public partial class EnumerateFilesTests
 		if (Test.RunsOnWindows)
 		{
 			await That(result1.Count).IsEqualTo(1);
-			FileSystem.File.ReadAllText(result1.Single().FullName).Should().Be("inner");
+			await That(FileSystem.File.ReadAllText(result1.Single().FullName)).IsEqualTo("inner");
 			await That(result2.Count).IsEqualTo(1);
-			FileSystem.File.ReadAllText(result2.Single().FullName).Should().Be("outer");
+			await That(FileSystem.File.ReadAllText(result2.Single().FullName)).IsEqualTo("outer");
 		}
 		else
 		{

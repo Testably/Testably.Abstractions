@@ -7,7 +7,7 @@ public partial class DeleteTests
 {
 	[Theory]
 	[AutoData]
-	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+	public async Task Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingDirectory, string fileName)
 	{
 		string filePath = FileSystem.Path.Combine(missingDirectory, fileName);
@@ -35,7 +35,7 @@ public partial class DeleteTests
 
 	[Theory]
 	[AutoData]
-	public void Delete_WhenDirectory_ShouldThrowUnauthorizedAccessException(
+	public async Task Delete_WhenDirectory_ShouldThrowUnauthorizedAccessException(
 		string fileName)
 	{
 		FileSystem.Directory.CreateDirectory(fileName);
@@ -68,12 +68,12 @@ public partial class DeleteTests
 		{
 			exception.Should().BeException<IOException>($"{filename}'",
 				hResult: -2147024864);
-			FileSystem.File.Exists(filename).Should().BeTrue();
+			await That(FileSystem.File.Exists(filename)).IsTrue();
 		}
 		else
 		{
 			await That(exception).IsNull();
-			FileSystem.File.Exists(filename).Should().BeFalse();
+			await That(FileSystem.File.Exists(filename)).IsFalse();
 		}
 	}
 }

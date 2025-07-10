@@ -13,7 +13,7 @@ public partial class Tests
 
 		await That(result.Path).IsEqualTo("");
 #if NETFRAMEWORK
-		result.Filter.Should().Be("*.*");
+		await That(result.Filter).IsEqualTo("*.*");
 #else
 		await That(result.Filter).IsEqualTo("*");
 #endif
@@ -35,7 +35,7 @@ public partial class Tests
 
 		await That(result.Path).IsEqualTo(path);
 #if NETFRAMEWORK
-		result.Filter.Should().Be("*.*");
+		await That(result.Filter).IsEqualTo("*.*");
 #else
 		await That(result.Filter).IsEqualTo("*");
 #endif

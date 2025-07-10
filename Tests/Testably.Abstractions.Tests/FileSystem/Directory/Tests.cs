@@ -82,21 +82,20 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		SetCurrentDirectory_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
 	{
 		string previousCurrentDirectory = FileSystem.Directory.GetCurrentDirectory();
 		try
 		{
-			Exception? exception = Record.Exception(() =>
+			void Act()
 			{
 				FileSystem.Directory.SetCurrentDirectory(path);
-			});
+			}
 
-			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
-			FileSystem.Directory.GetCurrentDirectory().Should()
-				.Be(previousCurrentDirectory);
+			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
+			await That(FileSystem.Directory.GetCurrentDirectory()).IsEqualTo(previousCurrentDirectory);
 		}
 		finally
 		{

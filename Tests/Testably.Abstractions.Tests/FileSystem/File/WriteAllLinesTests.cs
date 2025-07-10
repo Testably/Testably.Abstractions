@@ -67,7 +67,7 @@ public partial class WriteAllLinesTests
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		WriteAllLines_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path, string[] contents)
 	{
@@ -80,13 +80,13 @@ public partial class WriteAllLinesTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllLines_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+	public async Task WriteAllLines_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 		string path, string[] contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows);

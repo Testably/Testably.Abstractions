@@ -34,7 +34,7 @@ public partial class IncludeSubdirectoriesTests
 		fileSystemWatcher.IncludeSubdirectories = false;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(FileSystem.Path.Combine(baseDirectory, path));
-		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
 		await That(result).IsNull();
 	}
@@ -68,7 +68,7 @@ public partial class IncludeSubdirectoriesTests
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(otherDirectory);
-		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
 		await That(result).IsNull();
 	}
@@ -103,7 +103,7 @@ public partial class IncludeSubdirectoriesTests
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(subdirectoryPath);
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(subdirectoryPath));

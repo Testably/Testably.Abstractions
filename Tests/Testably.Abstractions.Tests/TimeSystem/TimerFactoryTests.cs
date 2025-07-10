@@ -10,16 +10,16 @@ public partial class TimeFactoryTests
 {
 #if FEATURE_TIMER_COUNT
 	[Fact]
-	public void ActiveCount_ShouldBeIncrementedWhenCreatingANewTimer()
+	public async Task ActiveCount_ShouldBeIncrementedWhenCreatingANewTimer()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ => { });
-		TimeSystem.Timer.ActiveCount.Should().BeGreaterThan(0);
+		await That(TimeSystem.Timer.ActiveCount).IsGreaterThan(0);
 	}
 #endif
 
 #if FEATURE_TIMER_COUNT
 	[Fact]
-	public void ActiveCount_ShouldBeResetWhenDisposingATimer()
+	public async Task ActiveCount_ShouldBeResetWhenDisposingATimer()
 	{
 		const int timersPerThread = 64;
 		int processorCount = Environment.ProcessorCount;
@@ -41,7 +41,7 @@ public partial class TimeFactoryTests
 				lock (timers)
 				{
 					timers.Add(TimeSystem.Timer.New(TimerCallback, null, ExpectSuccess, ExpectSuccess));
-					Assert.True(TimeSystem.Timer.ActiveCount >= timers.Count);
+					await That(TimeSystem.Timer.ActiveCount).IsGreaterThanOrEqualTo(timers.Count);
 				}
 			}
 		}
@@ -74,7 +74,7 @@ public partial class TimeFactoryTests
 
 			if (endIndex >= 0)
 			{
-				Assert.True(TimeSystem.Timer.ActiveCount < timerCountBeforeRemove);
+				await That(TimeSystem.Timer.ActiveCount).IsLessThan(timerCountBeforeRemove);
 			}
 		}
 	}

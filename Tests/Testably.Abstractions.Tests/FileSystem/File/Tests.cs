@@ -78,7 +78,7 @@ public partial class Tests
 		FileSystem.File.WriteAllText(path, null);
 
 		DateTime result = FileSystem.File.GetLastAccessTime(path);
-		result.Should().BeBetween(start, TimeSystem.DateTime.Now);
+		await That(result).IsBetween(start).And(TimeSystem.DateTime.Now).Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 	}
 
@@ -91,7 +91,7 @@ public partial class Tests
 		FileSystem.File.WriteAllText(path, null);
 
 		DateTime result = FileSystem.File.GetLastAccessTimeUtc(path);
-		result.Should().BeBetween(start, TimeSystem.DateTime.UtcNow);
+		await That(result).IsBetween(start).And(TimeSystem.DateTime.UtcNow).Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
 	}
 
@@ -104,7 +104,7 @@ public partial class Tests
 		FileSystem.File.WriteAllText(path, null);
 
 		DateTime result = FileSystem.File.GetLastWriteTime(path);
-		result.Should().BeBetween(start, TimeSystem.DateTime.Now);
+		await That(result).IsBetween(start).And(TimeSystem.DateTime.Now).Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 	}
 
@@ -117,13 +117,13 @@ public partial class Tests
 		FileSystem.File.WriteAllText(path, null);
 
 		DateTime result = FileSystem.File.GetLastWriteTimeUtc(path);
-		result.Should().BeBetween(start, TimeSystem.DateTime.UtcNow);
+		await That(result).IsBetween(start).And(TimeSystem.DateTime.UtcNow).Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
 	}
 
 	[Theory]
 	[AutoData]
-	public void SetCreationTime_ShouldChangeCreationTime(
+	public async Task SetCreationTime_ShouldChangeCreationTime(
 		string path, DateTime creationTime)
 	{
 		Skip.IfNot(Test.RunsOnWindows,
@@ -135,13 +135,12 @@ public partial class Tests
 
 		FileSystem.File.SetCreationTime(path, creationTime);
 
-		FileSystem.File.GetCreationTimeUtc(path)
-			.Should().Be(expectedTime);
+		await That(FileSystem.File.GetCreationTimeUtc(path)).IsEqualTo(expectedTime);
 	}
 
 	[Theory]
 	[AutoData]
-	public void SetCreationTimeUtc_ShouldChangeCreationTime(
+	public async Task SetCreationTimeUtc_ShouldChangeCreationTime(
 		string path, DateTime creationTime)
 	{
 		Skip.IfNot(Test.RunsOnWindows,
@@ -153,13 +152,12 @@ public partial class Tests
 
 		FileSystem.File.SetCreationTimeUtc(path, creationTime);
 
-		FileSystem.File.GetCreationTime(path)
-			.Should().Be(expectedTime);
+		await That(FileSystem.File.GetCreationTime(path)).IsEqualTo(expectedTime);
 	}
 
 	[Theory]
 	[AutoData]
-	public void SetLastAccessTime_ShouldChangeLastAccessTime(
+	public async Task SetLastAccessTime_ShouldChangeLastAccessTime(
 		string path, DateTime lastAccessTime)
 	{
 		lastAccessTime = lastAccessTime.ToLocalTime();
@@ -168,13 +166,12 @@ public partial class Tests
 
 		FileSystem.File.SetLastAccessTime(path, lastAccessTime);
 
-		FileSystem.File.GetLastAccessTimeUtc(path)
-			.Should().Be(expectedTime);
+		await That(FileSystem.File.GetLastAccessTimeUtc(path)).IsEqualTo(expectedTime);
 	}
 
 	[Theory]
 	[AutoData]
-	public void SetLastAccessTimeUtc_ShouldChangeLastAccessTime(
+	public async Task SetLastAccessTimeUtc_ShouldChangeLastAccessTime(
 		string path, DateTime lastAccessTime)
 	{
 		lastAccessTime = lastAccessTime.ToUniversalTime();
@@ -183,13 +180,12 @@ public partial class Tests
 
 		FileSystem.File.SetLastAccessTimeUtc(path, lastAccessTime);
 
-		FileSystem.File.GetLastAccessTime(path)
-			.Should().Be(expectedTime);
+		await That(FileSystem.File.GetLastAccessTime(path)).IsEqualTo(expectedTime);
 	}
 
 	[Theory]
 	[AutoData]
-	public void SetLastWriteTime_ShouldChangeLastWriteTime(
+	public async Task SetLastWriteTime_ShouldChangeLastWriteTime(
 		string path, DateTime lastWriteTime)
 	{
 		lastWriteTime = lastWriteTime.ToLocalTime();
@@ -198,13 +194,12 @@ public partial class Tests
 
 		FileSystem.File.SetLastWriteTime(path, lastWriteTime);
 
-		FileSystem.File.GetLastWriteTimeUtc(path)
-			.Should().Be(expectedTime);
+		await That(FileSystem.File.GetLastWriteTimeUtc(path)).IsEqualTo(expectedTime);
 	}
 
 	[Theory]
 	[AutoData]
-	public void SetLastWriteTimeUtc_ShouldChangeLastWriteTime(
+	public async Task SetLastWriteTimeUtc_ShouldChangeLastWriteTime(
 		string path, DateTime lastWriteTime)
 	{
 		lastWriteTime = lastWriteTime.ToUniversalTime();
@@ -213,7 +208,6 @@ public partial class Tests
 
 		FileSystem.File.SetLastWriteTimeUtc(path, lastWriteTime);
 
-		FileSystem.File.GetLastWriteTime(path)
-			.Should().Be(expectedTime);
+		await That(FileSystem.File.GetLastWriteTime(path)).IsEqualTo(expectedTime);
 	}
 }

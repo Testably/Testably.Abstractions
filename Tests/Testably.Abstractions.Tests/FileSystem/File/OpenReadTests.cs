@@ -8,7 +8,7 @@ public partial class OpenReadTests
 {
 	[Theory]
 	[AutoData]
-	public void OpenRead_MissingFile_ShouldThrowFileNotFoundException(string path)
+	public async Task OpenRead_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
@@ -22,7 +22,7 @@ public partial class OpenReadTests
 
 	[Theory]
 	[AutoData]
-	public void OpenRead_SetLength_ShouldThrowNotSupportedException(string path)
+	public async Task OpenRead_SetLength_ShouldThrowNotSupportedException(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
@@ -43,8 +43,8 @@ public partial class OpenReadTests
 
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.Read);
-		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(
+		await That(FileTestHelper.CheckFileAccess(stream)).IsEqualTo(FileAccess.Read);
+		await That(FileTestHelper.CheckFileShare(FileSystem, path)).IsEqualTo(
 			Test.RunsOnWindows ? FileShare.Read : FileShare.ReadWrite);
 		await That(stream.CanRead).IsTrue();
 		await That(stream.CanWrite).IsFalse();
@@ -54,7 +54,7 @@ public partial class OpenReadTests
 
 	[Theory]
 	[AutoData]
-	public void OpenRead_Write_ShouldThrowNotSupportedException(string path, byte[] bytes)
+	public async Task OpenRead_Write_ShouldThrowNotSupportedException(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
@@ -110,7 +110,7 @@ public partial class OpenReadTests
 
 	[Theory]
 	[AutoData]
-	public void OpenRead_WriteByte_ShouldThrowNotSupportedException(string path)
+	public async Task OpenRead_WriteByte_ShouldThrowNotSupportedException(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
@@ -126,7 +126,7 @@ public partial class OpenReadTests
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void OpenRead_WriteWithSpan_ShouldThrowNotSupportedException(string path, byte[] bytes)
+	public async Task OpenRead_WriteWithSpan_ShouldThrowNotSupportedException(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllText(path, null);
 

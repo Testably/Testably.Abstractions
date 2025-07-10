@@ -8,21 +8,20 @@ public partial class CreateAsSymbolicLinkTests
 {
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_ShouldCreateAsSymbolicLink(
+	public async Task CreateAsSymbolicLink_ShouldCreateAsSymbolicLink(
 		string path, string pathToTarget)
 	{
 		FileSystem.Directory.CreateDirectory(pathToTarget);
 
 		FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink(pathToTarget);
 
-		FileSystem.DirectoryInfo.New(path).Attributes
-			.HasFlag(FileAttributes.ReparsePoint)
-			.Should().BeTrue();
+		await That(FileSystem.DirectoryInfo.New(path).Attributes)
+			.HasFlag(FileAttributes.ReparsePoint);
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_SourceDirectoryAlreadyExists_ShouldThrowIOException(
+	public async Task CreateAsSymbolicLink_SourceDirectoryAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
 	{
 		FileSystem.Directory.CreateDirectory(pathToTarget);
@@ -52,7 +51,7 @@ public partial class CreateAsSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_WithIllegalCharactersInTarget_ShouldThrowIOException(
+	public async Task CreateAsSymbolicLink_WithIllegalCharactersInTarget_ShouldThrowIOException(
 		string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);

@@ -47,7 +47,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetDirectoryInfoCallbacks), "")]
-	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDirectoryInfo>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -65,7 +65,7 @@ public partial class ExceptionTests
 
 	[Theory]
 	[MemberData(nameof(GetDirectoryInfoCallbacks), (string?)null)]
-	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
+	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDirectoryInfo>> callback, string paramName,
 		bool ignoreParamCheck)
 	{

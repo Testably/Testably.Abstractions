@@ -7,7 +7,7 @@ public partial class CreateTests
 {
 	[Theory]
 	[AutoData]
-	public void Create_ExistingFile_ShouldBeOverwritten(
+	public async Task Create_ExistingFile_ShouldBeOverwritten(
 		string path, string originalContent, string newContent)
 	{
 		FileSystem.File.WriteAllText(path, originalContent);
@@ -18,13 +18,13 @@ public partial class CreateTests
 			streamWriter.Write(newContent);
 		}
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(newContent);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Create_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+	public async Task Create_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingDirectory, string fileName)
 	{
 		string filePath = FileSystem.Path.Combine(missingDirectory, fileName);
@@ -39,16 +39,16 @@ public partial class CreateTests
 
 	[Theory]
 	[AutoData]
-	public void Create_MissingFile_ShouldCreateFile(string path)
+	public async Task Create_MissingFile_ShouldCreateFile(string path)
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Create_ReadOnlyFile_ShouldThrowUnauthorizedAccessException(
+	public async Task Create_ReadOnlyFile_ShouldThrowUnauthorizedAccessException(
 		string path, string content)
 	{
 		FileSystem.File.WriteAllText(path, content);
@@ -68,8 +68,8 @@ public partial class CreateTests
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
 
-		FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.ReadWrite);
-		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
+		await That(FileTestHelper.CheckFileAccess(stream)).IsEqualTo(FileAccess.ReadWrite);
+		await That(FileTestHelper.CheckFileShare(FileSystem, path)).IsEqualTo(FileShare.None);
 		await That(stream.CanRead).IsTrue();
 		await That(stream.CanWrite).IsTrue();
 		await That(stream.CanSeek).IsTrue();
@@ -86,8 +86,8 @@ public partial class CreateTests
 		using FileSystemStream stream = FileSystem.File.Create(path, bufferSize);
 
 		await That(stream.IsAsync).IsFalse();
-		FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.ReadWrite);
-		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
+		await That(FileTestHelper.CheckFileAccess(stream)).IsEqualTo(FileAccess.ReadWrite);
+		await That(FileTestHelper.CheckFileShare(FileSystem, path)).IsEqualTo(FileShare.None);
 	}
 
 	[Theory]
@@ -101,7 +101,7 @@ public partial class CreateTests
 			FileSystem.File.Create(path, bufferSize, FileOptions.Asynchronous);
 
 		await That(stream.IsAsync).IsTrue();
-		FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.ReadWrite);
-		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
+		await That(FileTestHelper.CheckFileAccess(stream)).IsEqualTo(FileAccess.ReadWrite);
+		await That(FileTestHelper.CheckFileShare(FileSystem, path)).IsEqualTo(FileShare.None);
 	}
 }

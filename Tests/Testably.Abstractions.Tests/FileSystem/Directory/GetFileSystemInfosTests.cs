@@ -1,3 +1,4 @@
+using NSubstitute.ExceptionExtensions;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,18 +14,18 @@ public partial class GetFileSystemInfosTests
 {
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		GetFileSystemEntries_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
-		Exception? exception =
-			Record.Exception(()
-				=> FileSystem.Directory.GetFileSystemEntries(path).ToList());
+		void Act()
+				=> FileSystem.Directory.GetFileSystemEntries(path).ToList();
 
-		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'.",
-			hResult: -2147024893);
-		FileSystem.Directory.Exists(path).Should().BeFalse();
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{expectedPath}'.").And
+			.WithHResult(-2147024893);
+		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
 	[Theory]
@@ -135,20 +136,22 @@ public partial class GetFileSystemInfosTests
 
 	[Theory]
 	[AutoData]
-	public void GetFileSystemEntries_WithNewline_ShouldThrowArgumentException(
+	public async Task GetFileSystemEntries_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
 		string searchPattern = "foo\0bar";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.Directory.GetFileSystemEntries(path, searchPattern)
 				.FirstOrDefault();
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809,
-			// The searchPattern is not included in .NET Framework
-			messageContains: Test.IsNetFramework ? null : $"'{searchPattern}'");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithMessageContaining(
+				// The searchPattern is not included in .NET Framework
+				Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
 	[Theory]

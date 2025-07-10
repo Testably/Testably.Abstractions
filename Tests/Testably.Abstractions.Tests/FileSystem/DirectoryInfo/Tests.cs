@@ -288,18 +288,18 @@ public partial class Tests
 
 		FileSystem.Initialize();
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.ToString().Should().Be(path);
+		await That(sut.ToString()).IsEqualTo(path);
 
 		IDirectoryInfo? parent = sut.Parent;
 
 		await That(parent).IsNotNull();
 		if (Test.IsNetFramework)
 		{
-			parent!.ToString().Should().Be(expectedParent);
+			await That(parent!.ToString()).IsEqualTo(expectedParent);
 		}
 		else
 		{
-			parent!.ToString().Should().Be(FileSystem.Path.GetFullPath(expectedParent));
+			await That(parent!.ToString()).IsEqualTo(FileSystem.Path.GetFullPath(expectedParent));
 		}
 	}
 
@@ -313,18 +313,18 @@ public partial class Tests
 
 		FileSystem.InitializeIn(directory);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.ToString().Should().Be(path);
+		await That(sut.ToString()).IsEqualTo(path);
 
 		IDirectoryInfo? parent = sut.Parent;
 
 		await That(parent).IsNotNull();
 		if (Test.IsNetFramework)
 		{
-			parent!.ToString().Should().Be(expectedParent);
+			await That(parent!.ToString()).IsEqualTo(expectedParent);
 		}
 		else
 		{
-			parent!.ToString().Should().Be(FileSystem.Path.GetFullPath(expectedParent));
+			await That(parent!.ToString()).IsEqualTo(FileSystem.Path.GetFullPath(expectedParent));
 		}
 	}
 

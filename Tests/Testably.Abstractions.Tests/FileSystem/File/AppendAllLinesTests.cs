@@ -10,7 +10,7 @@ public partial class AppendAllLinesTests
 {
 	[Theory]
 	[AutoData]
-	public void AppendAllLines_ExistingFile_ShouldAppendLinesToFile(
+	public async Task AppendAllLines_ExistingFile_ShouldAppendLinesToFile(
 		string path, List<string> previousContents, List<string> contents)
 	{
 		string expectedContent = string.Join(Environment.NewLine, previousContents.Concat(contents))
@@ -19,26 +19,26 @@ public partial class AppendAllLinesTests
 
 		FileSystem.File.AppendAllLines(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedContent);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllLines_MissingFile_ShouldCreateFile(
+	public async Task AppendAllLines_MissingFile_ShouldCreateFile(
 		string path, List<string> contents)
 	{
 		string expectedContent = string.Join(Environment.NewLine, contents)
 		                         + Environment.NewLine;
 		FileSystem.File.AppendAllLines(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedContent);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllLines_NullContent_ShouldThrowArgumentNullException(
+	public async Task AppendAllLines_NullContent_ShouldThrowArgumentNullException(
 		string path)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -53,7 +53,7 @@ public partial class AppendAllLinesTests
 
 	[Theory]
 	[AutoData]
-	public void AppendAllLines_NullEncoding_ShouldThrowArgumentNullException(
+	public async Task AppendAllLines_NullEncoding_ShouldThrowArgumentNullException(
 		string path)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -68,20 +68,20 @@ public partial class AppendAllLinesTests
 
 	[Theory]
 	[AutoData]
-	public void AppendAllLines_ShouldEndWithNewline(string path)
+	public async Task AppendAllLines_ShouldEndWithNewline(string path)
 	{
 		string[] contents = ["foo", "bar"];
 		string expectedResult = "foo" + Environment.NewLine + "bar" + Environment.NewLine;
 
 		FileSystem.File.AppendAllLines(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		AppendAllLines_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path, string[] contents)
 	{
@@ -94,8 +94,8 @@ public partial class AppendAllLinesTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]

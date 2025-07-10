@@ -44,12 +44,12 @@ public partial class DeleteTests
 		{
 			exception.Should().BeException<IOException>($"{filename}'",
 				hResult: -2147024864);
-			FileSystem.File.Exists(filePath).Should().BeTrue();
+			await That(FileSystem.File.Exists(filePath)).IsTrue();
 		}
 		else
 		{
 			await That(exception).IsNull();
-			FileSystem.File.Exists(filePath).Should().BeFalse();
+			await That(FileSystem.File.Exists(filePath)).IsFalse();
 		}
 	}
 
@@ -67,12 +67,12 @@ public partial class DeleteTests
 
 #if NETFRAMEWORK
 		// The DirectoryInfo is not updated in .NET Framework!
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 #else
 		await That(sut.Exists).IsFalse();
 #endif
-		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
-		FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(sut.FullName)).IsFalse();
+		await That(FileSystem.Directory.Exists(subdirectoryPath)).IsFalse();
 	}
 
 	[Theory]
@@ -87,11 +87,11 @@ public partial class DeleteTests
 
 #if NETFRAMEWORK
 		// The DirectoryInfo is not updated in .NET Framework!
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 #else
 		await That(sut.Exists).IsFalse();
 #endif
-		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(sut.FullName)).IsFalse();
 	}
 
 	[Theory]
@@ -116,6 +116,6 @@ public partial class DeleteTests
 				: $"'{sut.FullName}'");
 
 		await That(sut.Exists).IsTrue();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();
 	}
 }

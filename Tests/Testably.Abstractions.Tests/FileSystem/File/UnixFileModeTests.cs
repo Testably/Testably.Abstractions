@@ -28,7 +28,7 @@ public partial class UnixFileModeTests
 
 	[Theory]
 	[AutoData]
-	public void GetUnixFileMode_ShouldThrowPlatformNotSupportedException_OnWindows(
+	public async Task GetUnixFileMode_ShouldThrowPlatformNotSupportedException_OnWindows(
 		string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -45,7 +45,7 @@ public partial class UnixFileModeTests
 
 	[Theory]
 	[AutoData]
-	public void SetUnixFileMode_MissingFile_ShouldThrowFileNotFoundException(
+	public async Task SetUnixFileMode_MissingFile_ShouldThrowFileNotFoundException(
 		string path, UnixFileMode unixFileMode)
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -79,7 +79,7 @@ public partial class UnixFileModeTests
 
 	[Theory]
 	[AutoData]
-	public void SetUnixFileMode_ShouldThrowPlatformNotSupportedException_OnWindows(
+	public async Task SetUnixFileMode_ShouldThrowPlatformNotSupportedException_OnWindows(
 		string path, UnixFileMode mode)
 	{
 		Skip.IfNot(Test.RunsOnWindows);

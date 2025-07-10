@@ -13,18 +13,18 @@ public partial class GetFilesTests
 {
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		GetFiles_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
-		Exception? exception =
-			Record.Exception(()
-				=> FileSystem.Directory.GetFiles(path).ToList());
+		void Act()
+				=> FileSystem.Directory.GetFiles(path).ToList();
 
-		exception.Should().BeException<DirectoryNotFoundException>(expectedPath,
-			hResult: -2147024893);
-		FileSystem.Directory.Exists(path).Should().BeFalse();
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining(expectedPath).And
+			.WithHResult(-2147024893);
+		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
 	[Theory]
@@ -161,9 +161,9 @@ public partial class GetFilesTests
 		if (Test.RunsOnWindows)
 		{
 			await That(result1.Length).IsEqualTo(1);
-			FileSystem.File.ReadAllText(result1[0]).Should().Be("inner");
+			await That(FileSystem.File.ReadAllText(result1[0])).IsEqualTo("inner");
 			await That(result2.Length).IsEqualTo(1);
-			FileSystem.File.ReadAllText(result2[0]).Should().Be("outer");
+			await That(FileSystem.File.ReadAllText(result2[0])).IsEqualTo("outer");
 		}
 		else
 		{
@@ -214,20 +214,22 @@ public partial class GetFilesTests
 
 	[Theory]
 	[AutoData]
-	public void GetFiles_WithNewline_ShouldThrowArgumentException(
+	public async Task GetFiles_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
 		string searchPattern = "foo\0bar";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.Directory.GetFiles(path, searchPattern)
 				.FirstOrDefault();
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809,
-			// The searchPattern is not included in .NET Framework
-			messageContains: Test.IsNetFramework ? null : $"'{searchPattern}'");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithMessageContaining(
+				// The searchPattern is not included in .NET Framework
+				Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
 	[Theory]

@@ -8,21 +8,20 @@ public partial class CreateSymbolicLinkTests
 {
 	[Theory]
 	[AutoData]
-	public void CreateSymbolicLink_ShouldCreateSymbolicLink(
+	public async Task CreateSymbolicLink_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
 
 		FileSystem.File.CreateSymbolicLink(path, pathToTarget);
 
-		FileSystem.File.GetAttributes(path)
-			.HasFlag(FileAttributes.ReparsePoint)
-			.Should().BeTrue();
+		await That(FileSystem.File.GetAttributes(path))
+			.HasFlag(FileAttributes.ReparsePoint);
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
+	public async Task CreateSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);

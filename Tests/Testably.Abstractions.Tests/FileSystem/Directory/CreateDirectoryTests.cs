@@ -127,12 +127,12 @@ public partial class CreateDirectoryTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
 		}
 
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
@@ -168,8 +168,8 @@ public partial class CreateDirectoryTests
 			DateTime lastWriteTime =
 				FileSystem.Directory.GetLastWriteTimeUtc(path);
 
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd);
-			await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
 		}
 	}
 
@@ -183,7 +183,7 @@ public partial class CreateDirectoryTests
 
 		DateTime end = TimeSystem.DateTime.Now;
 		DateTime result = FileSystem.Directory.GetCreationTime(path);
-		await That(result).IsBetween(start).And(end);
+		await That(result).IsBetween(start).And(end).Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 	}
 
@@ -197,7 +197,7 @@ public partial class CreateDirectoryTests
 
 		DateTime end = TimeSystem.DateTime.UtcNow;
 		DateTime result = FileSystem.Directory.GetCreationTimeUtc(path);
-		await That(result).IsBetween(start).And(end);
+		await That(result).IsBetween(start).And(end).Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
 	}
 

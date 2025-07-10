@@ -35,7 +35,7 @@ public partial class FilterTests
 		fileSystemWatcher.Filter = path;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(path);
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
@@ -71,7 +71,7 @@ public partial class FilterTests
 		fileSystemWatcher.Filter = filter;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(path);
-		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
 		await That(result).IsNull();
 	}
@@ -107,7 +107,7 @@ public partial class FilterTests
 			FileSystem.Directory.Delete(path);
 		}
 
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 
 		foreach (string path in otherPaths)
 		{
