@@ -73,13 +73,12 @@ public partial class WriteAllLinesTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllLines(path, contents);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
@@ -94,12 +93,12 @@ public partial class WriteAllLinesTests
 		FileSystem.File.WriteAllText(path, null);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllLines(path, contents);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
 	[Theory]

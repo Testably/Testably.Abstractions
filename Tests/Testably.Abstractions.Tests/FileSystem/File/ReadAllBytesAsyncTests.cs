@@ -1,4 +1,5 @@
 #if FEATURE_FILESYSTEM_ASYNC
+using NSubstitute.ExceptionExtensions;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,10 +17,10 @@ public partial class ReadAllBytesAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.ReadAllBytesAsync(path, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.ReadAllBytesAsync(path, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -27,12 +28,12 @@ public partial class ReadAllBytesAsyncTests
 	public async Task ReadAllBytesAsync_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken));
+		async Task Act() =>
+			await FileSystem.File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken);
 
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithHResult(-2147024894);
 	}
 
 	[Theory]

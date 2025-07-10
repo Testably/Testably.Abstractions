@@ -28,13 +28,14 @@ public partial class Tests
 			FileSystem.DirectoryInfo.New(FileSystem.Path.Combine(path, subPath));
 		IDirectoryInfo? parent = directoryInfo.Parent;
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = parent!.EnumerateDirectories().ToArray();
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>($"'{path}'",
-			hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{path}'").And
+			.WithHResult(-2147024893);
 	}
 
 	[Theory]
@@ -48,13 +49,14 @@ public partial class Tests
 
 		path = $"{driveInfo.Name}{path}";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllBytes(path, bytes);
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>($"'{path}'",
-			hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{path}'").And
+			.WithHResult(-2147024893);
 	}
 
 	[Fact]
@@ -80,12 +82,12 @@ public partial class Tests
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.DriveInfo.New(invalidDriveName);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
+		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
 	[Theory]
@@ -148,12 +150,12 @@ public partial class Tests
 
 		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives()[0];
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.DriveInfo.Wrap(driveInfo);
-		});
+		}
 
-		await That(exception).IsExactly<NotSupportedException>().Whose(x => x.Message, it => it.Contains("Wrapping a DriveInfo in a simulated file system is not supported"));
+		await That(Act).ThrowsExactly<NotSupportedException>().Whose(x => x.Message, it => it.Contains("Wrapping a DriveInfo in a simulated file system is not supported"));
 	}
 
 	#region Helpers

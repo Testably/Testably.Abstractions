@@ -83,11 +83,11 @@ public partial class Tests
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.Attributes).IsEqualTo((FileAttributes)(-1));
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.Attributes = fileAttributes;
-		});
-		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+		}
+		await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		await That(sut.Attributes).IsEqualTo((FileAttributes)(-1));
 	}
 
@@ -98,18 +98,18 @@ public partial class Tests
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.CreationTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.CreationTime = creationTime;
-		});
+		}
 
 		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
-			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+			await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 		}
 
 		await That(sut.CreationTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
@@ -122,18 +122,18 @@ public partial class Tests
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.CreationTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.CreationTimeUtc = creationTimeUtc;
-		});
+		}
 
 		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
-			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+			await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 		}
 
 		await That(sut.CreationTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
@@ -146,18 +146,18 @@ public partial class Tests
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.LastAccessTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.LastAccessTime = lastAccessTime;
-		});
+		}
 
 		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
-			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+			await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 		}
 
 		await That(sut.LastAccessTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
@@ -170,18 +170,18 @@ public partial class Tests
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.LastAccessTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.LastAccessTimeUtc = lastAccessTimeUtc;
-		});
+		}
 
 		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
-			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+			await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 		}
 
 		await That(sut.LastAccessTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
@@ -194,18 +194,18 @@ public partial class Tests
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.LastWriteTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.LastWriteTime = lastWriteTime;
-		});
+		}
 
 		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
-			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+			await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 		}
 
 		await That(sut.LastWriteTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
@@ -218,18 +218,18 @@ public partial class Tests
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.LastWriteTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.LastWriteTimeUtc = lastWriteTimeUtc;
-		});
+		}
 
 		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
-			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+			await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 		}
 
 		await That(sut.LastWriteTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());

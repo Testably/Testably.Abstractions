@@ -1,5 +1,3 @@
-using FluentAssertions.Primitives;
-
 namespace Testably.Abstractions.Tests.TestHelpers;
 
 public static class TimeComparison

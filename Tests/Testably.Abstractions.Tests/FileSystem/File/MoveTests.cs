@@ -149,12 +149,12 @@ public partial class MoveTests
 		FileSystem.Initialize()
 			.WithFile(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Move(path, path);
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]

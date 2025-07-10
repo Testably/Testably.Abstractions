@@ -118,12 +118,12 @@ public partial class WriteAllTextTests
 	[AutoData]
 	public async Task WriteAllText_WhenContentIsNull_ShouldNotThrowException(string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllText(path, null);
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]

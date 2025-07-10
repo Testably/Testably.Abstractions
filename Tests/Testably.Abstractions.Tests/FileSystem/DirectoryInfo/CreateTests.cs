@@ -12,13 +12,12 @@ public partial class CreateTests
 		FileSystem.File.WriteAllText(name, "");
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(name);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.Create();
-		});
+		}
 
-		exception.Should().BeException<IOException>(
-			hResult: Test.RunsOnWindows ? -2147024713 : 17);
+		await That(Act).Throws<IOException>().WithHResult(Test.RunsOnWindows ? -2147024713 : 17);
 		await That(FileSystem.Directory.Exists(name)).IsFalse();
 	}
 

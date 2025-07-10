@@ -244,18 +244,17 @@ public partial class WriteTests
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
-		Exception? exception;
-
-		using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
+		
+		void Act()
 		{
-			exception = Record.Exception(() =>
+			using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				stream.WriteByte(0);
-			});
+			}
 		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]

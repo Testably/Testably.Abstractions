@@ -52,10 +52,10 @@ public partial class EncryptDecryptTests
 
 		FileSystem.File.Encrypt(path);
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
+		await That(FileSystem.File.GetAttributes(path)).HasFlag(FileAttributes.Encrypted);
 		FileSystem.File.Decrypt(path);
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.GetAttributes(path).Should().NotHaveFlag(FileAttributes.Encrypted);
+		await That(FileSystem.File.GetAttributes(path)).DoesNotHaveFlag(FileAttributes.Encrypted);
 	}
 
 	[Theory]

@@ -13,12 +13,12 @@ public partial class Tests
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.Attributes = FileAttributes.ReadOnly;
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 	}
 
 	[Theory]
@@ -53,7 +53,7 @@ public partial class Tests
 					.WithAFile());
 		IFileInfo? file = initialized[1] as IFileInfo;
 
-		file?.Should().NotBeNull();
+		await That(file).IsNotNull();
 		await That(file!.DirectoryName).IsEqualTo(initialized[0].FullName);
 	}
 

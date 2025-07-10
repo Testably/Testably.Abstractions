@@ -129,17 +129,17 @@ public partial class ReadAllTextTests
 
 	[Theory]
 	[AutoData]
-	public async Task ReadAllText_WithStarCharacter_ShouldThrowFileNotFoundException(
+	public async Task ReadAllText_WithStarCharacter_ShouldThrowException(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.ReadAllText(path.Substring(0, 3) + "*" + path.Substring(8));
-		});
+		}
 
-		await That(exception).IsNotNull();
+		await That(Act).ThrowsException();
 	}
 
 	#region Helpers

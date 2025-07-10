@@ -57,12 +57,12 @@ public partial class GetFullPathTests
 	[Fact]
 	public async Task GetFullPath_Relative_NullBasePath_ShouldThrowArgumentNullException()
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Path.GetFullPath("foo", null!);
-		});
+		}
 
-		await That(exception).IsExactly<ArgumentNullException>().Whose(x => x.ParamName, it => it.IsEqualTo("basePath"));
+		await That(Act).ThrowsExactly<ArgumentNullException>().Whose(x => x.ParamName, it => it.IsEqualTo("basePath"));
 	}
 #endif
 

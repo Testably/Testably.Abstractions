@@ -19,7 +19,7 @@ public partial class CreateTests
 		}
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(newContent);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(newContent);
 	}
 
 	[Theory]
@@ -29,12 +29,12 @@ public partial class CreateTests
 	{
 		string filePath = FileSystem.Path.Combine(missingDirectory, fileName);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Create(filePath);
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
@@ -54,12 +54,12 @@ public partial class CreateTests
 		FileSystem.File.WriteAllText(path, content);
 		FileSystem.File.SetAttributes(path, FileAttributes.ReadOnly);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Create(path);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
 	[Theory]

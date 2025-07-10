@@ -9,13 +9,13 @@ public partial class PathTests
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			fileSystemWatcher.Path = "";
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Fact]
@@ -24,13 +24,13 @@ public partial class PathTests
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			fileSystemWatcher.Path = null!;
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
@@ -40,15 +40,15 @@ public partial class PathTests
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			fileSystemWatcher.Path = path;
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			messageContains: path);
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithMessageContaining(path);
 	}
 
 	[Fact]
@@ -57,14 +57,14 @@ public partial class PathTests
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			fileSystemWatcher.Path = "  ";
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: Test.IsNetFramework ? null : "Path");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName(Test.IsNetFramework ? null : "Path");
 	}
 }

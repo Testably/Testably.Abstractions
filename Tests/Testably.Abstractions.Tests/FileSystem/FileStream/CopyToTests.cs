@@ -16,15 +16,14 @@ public partial class CopyToTests
 		byte[] buffer = new byte[bytes.Length];
 		FileSystem.File.WriteAllBytes(path, bytes);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			using MemoryStream destination = new(buffer);
 			stream.CopyTo(destination, 0);
-		});
+		}
 
-		exception.Should().BeException<ArgumentOutOfRangeException>(
-			paramName: "bufferSize");
+		await That(Act).Throws<ArgumentOutOfRangeException>().WithParamName("bufferSize");
 	}
 
 	[Theory]
@@ -58,11 +57,8 @@ public partial class CopyToTests
 			using MemoryStream destination = new(buffer);
 			await stream.CopyToAsync(destination, 0, TestContext.Current.CancellationToken);
 		}
-		
-		Exception? exception = await Record.ExceptionAsync(Act);
 
-		exception.Should().BeException<ArgumentOutOfRangeException>(
-			paramName: "bufferSize");
+		await That(Act).Throws<ArgumentOutOfRangeException>().WithParamName("bufferSize");
 	}
 #endif
 
@@ -101,9 +97,7 @@ public partial class CopyToTests
 			await source.CopyToAsync(destination, bufferSize, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		await That(exception).IsExactly<ArgumentOutOfRangeException>();
+		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>();
 	}
 #endif
 

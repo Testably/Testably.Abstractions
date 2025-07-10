@@ -11,12 +11,12 @@ public partial class CreateDirectoryTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory.CreateDirectory(path);
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 
@@ -79,12 +79,12 @@ public partial class CreateDirectoryTests
 		string path = FileTestHelper.RootDrive(Test);
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory.CreateDirectory(path);
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 

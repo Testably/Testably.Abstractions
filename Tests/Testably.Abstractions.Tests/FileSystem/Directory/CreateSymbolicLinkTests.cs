@@ -84,18 +84,18 @@ public partial class CreateSymbolicLinkTests
 	{
 		FileSystem.Directory.CreateDirectory(pathToTarget);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory.CreateSymbolicLink(" ", pathToTarget);
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<ArgumentException>(paramName: "path");
+			await That(Act).Throws<ArgumentException>().WithParamName("path");
 		}
 		else
 		{
-			await That(exception).IsNull();
+			await That(Act).DoesNotThrow();
 		}
 	}
 
@@ -103,12 +103,12 @@ public partial class CreateSymbolicLinkTests
 	[AutoData]
 	public async Task CreateSymbolicLink_WithIllegalTarget_ShouldNotThrowException(string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory.CreateSymbolicLink(path, " ");
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 }
 #endif

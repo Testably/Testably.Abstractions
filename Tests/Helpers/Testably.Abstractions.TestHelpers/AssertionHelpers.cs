@@ -3,9 +3,6 @@ using aweXpect.Core.Constraints;
 using aweXpect.Core.Sources;
 using aweXpect.Delegates;
 using aweXpect.Formatting;
-using FluentAssertions;
-using FluentAssertions.Execution;
-using FluentAssertions.Primitives;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -214,118 +211,6 @@ public static class AssertionHelpers
 				}
 
 				return $"a {value}";
-			}
-		}
-	}
-
-	public static AndWhichConstraint<ObjectAssertions, TException>
-		BeException<TException>(this ObjectAssertions objectAssertions,
-			string? messageContains = null,
-			int? hResult = null,
-			string? paramName = null,
-			string because = "", params object[] becauseArgs)
-		where TException : Exception
-	{
-		bool success = Execute.Assertion
-			.ForCondition(objectAssertions.Subject is not null)
-			.BecauseOf(because, becauseArgs)
-			.WithDefaultIdentifier("type")
-			.FailWith("Expected {context} to be {0}{reason}, but found <null>.",
-				"FileNotFoundException or DirectoryNotFoundException");
-		TException? typedSubject = null;
-		if (success)
-		{
-			if (objectAssertions.Subject is TException exception)
-			{
-				typedSubject = exception;
-
-				AssertExceptionMessage(exception, messageContains, because, becauseArgs);
-				AssertExceptionHResult(exception, hResult, because, becauseArgs);
-				AssertExceptionParamName(exception, paramName, because, becauseArgs);
-			}
-			else
-			{
-				Execute.Assertion
-					.BecauseOf(because, becauseArgs)
-					.WithDefaultIdentifier("type")
-					.FailWith("Expected {context} to be {0}{reason}, but found {1}.",
-						typeof(TException),
-						objectAssertions.Subject!.GetType());
-			}
-		}
-
-		return new AndWhichConstraint<ObjectAssertions, TException>(objectAssertions,
-			typedSubject!);
-	}
-
-
-	private static void AssertExceptionHResult<TException>(TException exception,
-		int? hResult,
-		string because, object[] becauseArgs) where TException : Exception
-	{
-		if (hResult != null)
-		{
-			Execute.Assertion
-				.ForCondition(exception.HResult == hResult)
-				.BecauseOf(because, becauseArgs)
-				.WithDefaultIdentifier("type")
-				.FailWith(
-					"Expected {context} to have HResult set to {0}{reason}, but found {1}.",
-					hResult,
-					exception.HResult);
-		}
-	}
-
-	private static void AssertExceptionMessage<TException>(TException exception,
-		string? messageContains,
-		string because, object[] becauseArgs) where TException : Exception
-	{
-		if (messageContains != null)
-		{
-			#pragma warning disable MA0074 // Avoid implicit culture-sensitive methods
-			#pragma warning disable MA0001 // Use an overload of 'Contains' that has a StringComparison parameter
-			Execute.Assertion
-				.ForCondition(exception.Message.Contains(messageContains))
-				.BecauseOf(because, becauseArgs)
-				.WithDefaultIdentifier("type")
-				.FailWith(
-					"Expected {context} to have a message containing {0}{reason}, but found {1}.",
-					messageContains,
-					exception.Message);
-			#pragma warning restore MA0001
-			#pragma warning restore MA0074
-		}
-	}
-
-	private static void AssertExceptionParamName<TException>(TException exception,
-		string? paramName,
-		string because, object[] becauseArgs) where TException : Exception
-	{
-		if (paramName != null)
-		{
-			if (exception is ArgumentException argumentException)
-			{
-				Execute.Assertion
-					.ForCondition(string.Equals(
-						argumentException.ParamName,
-						paramName,
-						StringComparison.Ordinal))
-					.BecauseOf(because, becauseArgs)
-					.WithDefaultIdentifier("type")
-					.FailWith(
-						"Expected {context} to have ParamName set to {0}{reason}, but found {1}.",
-						paramName,
-						argumentException.ParamName);
-			}
-			else
-			{
-				Execute.Assertion
-					.BecauseOf(because, becauseArgs)
-					.WithDefaultIdentifier("type")
-					.FailWith(
-						"Expected {context} to be {0} with ParamName set to {0}{reason}, but it is no ArgumentException.",
-						typeof(TException),
-						paramName);
 			}
 		}
 	}

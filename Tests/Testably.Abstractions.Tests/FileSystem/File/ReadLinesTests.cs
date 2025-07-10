@@ -1,4 +1,5 @@
 using AutoFixture;
+using NSubstitute.ExceptionExtensions;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,14 +24,14 @@ public partial class ReadLinesTests
 	[AutoData]
 	public async Task ReadLines_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.File.ReadLines(path).FirstOrDefault();
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithHResult(-2147024894);
 	}
 
 	[Theory]

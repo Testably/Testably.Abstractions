@@ -103,13 +103,14 @@ public partial class ResolveLinkTargetTests
 			previousPath = newPath;
 		}
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.Directory.ResolveLinkTarget(previousPath, true);
-		});
+		}
 
-		exception.Should().BeException<IOException>($"'{previousPath}'",
-			hResult: Test.RunsOnWindows ? -2147022975 : -2146232800);
+		await That(Act).Throws<IOException>()
+			.WithMessageContaining($"'{previousPath}'").And
+			.WithHResult(Test.RunsOnWindows ? -2147022975 : -2146232800);
 	}
 
 	[Theory]

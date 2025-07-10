@@ -27,13 +27,14 @@ public partial class CreateAsSymbolicLinkTests
 		FileSystem.Directory.CreateDirectory(pathToTarget);
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink(pathToTarget);
-		});
+		}
 
-		exception.Should().BeException<IOException>($"'{path}'",
-			hResult: Test.RunsOnWindows ? -2147024713 : 17);
+		await That(Act).Throws<IOException>()
+			.WithMessageContaining($"'{path}'").And
+			.WithHResult(Test.RunsOnWindows ? -2147024713 : 17);
 	}
 
 	[Theory]
@@ -41,12 +42,12 @@ public partial class CreateAsSymbolicLinkTests
 	public async Task CreateAsSymbolicLink_TargetDirectoryMissing_ShouldNotThrowException(
 		string path, string pathToTarget)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink(pathToTarget);
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
@@ -58,24 +59,24 @@ public partial class CreateAsSymbolicLinkTests
 
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink("bar_?_");
-		});
+		}
 
-		exception.Should().BeException<IOException>(hResult: -2147024713);
+		await That(Act).Throws<IOException>().WithHResult(-2147024713);
 	}
 
 	[Theory]
 	[AutoData]
 	public async Task CreateAsSymbolicLink_WithIllegalTarget_ShouldNotThrowException(string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink(" ");
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 }
 #endif

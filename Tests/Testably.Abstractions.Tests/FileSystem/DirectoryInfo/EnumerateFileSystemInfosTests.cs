@@ -129,12 +129,12 @@ public partial class EnumerateFileSystemInfosTests
 			FileSystem.DirectoryInfo.New(path);
 		string searchPattern = "foo\0bar";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = baseDirectory.EnumerateFileSystemInfos(searchPattern).FirstOrDefault();
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
+		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
 	[Fact]

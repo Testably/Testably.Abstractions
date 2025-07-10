@@ -1,3 +1,4 @@
+using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
@@ -17,18 +18,17 @@ public partial class CopyToTests
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
 		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.CopyTo(destinationName);
-		});
+		}
 
-		exception.Should().BeException<IOException>(
-			hResult: Test.RunsOnWindows ? -2147024816 : 17);
+		await That(Act).Throws<IOException>().WithHResult(Test.RunsOnWindows ? -2147024816 : 17);
 		await That(sut.Exists).IsTrue();
 		await That(FileSystem.File.Exists(sourceName)).IsTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(sourceContents);
+		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(sourceContents);
 		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(destinationContents);
+		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(destinationContents);
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
@@ -51,9 +51,9 @@ public partial class CopyToTests
 		await That(result.Exists).IsTrue();
 		await That(result.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
 		await That(FileSystem.File.Exists(sourceName)).IsTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(sourceContents);
+		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(sourceContents);
 		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(sourceContents);
+		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(sourceContents);
 	}
 #endif
 
@@ -70,8 +70,8 @@ public partial class CopyToTests
 
 		await That(FileSystem.File.Exists(sourceName)).IsTrue();
 		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(contents);
-		FileSystem.File.GetAttributes(destinationName).Should().HaveFlag(FileAttributes.ReadOnly);
+		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
+		await That(FileSystem.File.GetAttributes(destinationName)).HasFlag(FileAttributes.ReadOnly);
 	}
 
 	[Theory]
@@ -118,9 +118,9 @@ public partial class CopyToTests
 		await That(result.Exists).IsTrue();
 		await That(result.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
 		await That(FileSystem.File.Exists(sourceName)).IsTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(contents);
+		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(contents);
 		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(contents);
+		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -144,26 +144,22 @@ public partial class CopyToTests
 
 		if (Test.RunsOnWindows)
 		{
-			FileSystem.File.GetCreationTime(destinationName)
-				.Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
+			await That(FileSystem.File.GetCreationTime(destinationName)).IsOnOrAfter(updatedTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			FileSystem.File.GetCreationTime(destinationName)
-				.Should().BeOnOrAfter(sourceCreationTime.ApplySystemClockTolerance())
-				.And.BeBefore(updatedTime);
+			await That(FileSystem.File.GetCreationTime(destinationName))
+				.IsOnOrAfter(sourceCreationTime.ApplySystemClockTolerance()).And.IsBefore(updatedTime);
 		}
 
 		if (Test.RunsOnMac)
 		{
-			FileSystem.File.GetLastAccessTime(destinationName)
-				.Should().BeOnOrAfter(sourceCreationTime.ApplySystemClockTolerance())
-				.And.BeBefore(updatedTime);
+			await That(FileSystem.File.GetLastAccessTime(destinationName))
+				.IsOnOrAfter(sourceCreationTime.ApplySystemClockTolerance()).And.IsBefore(updatedTime);
 		}
 		else
 		{
-			FileSystem.File.GetLastAccessTime(destinationName)
-				.Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
+			await That(FileSystem.File.GetLastAccessTime(destinationName)).IsOnOrAfter(updatedTime.ApplySystemClockTolerance());
 		}
 
 		await That(FileSystem.File.GetLastWriteTime(destinationName)).IsEqualTo(sourceLastWriteTime);
@@ -230,14 +226,14 @@ public partial class CopyToTests
 		FileSystem.Directory.CreateDirectory(sourceName);
 		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.CopyTo(destinationName);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(
-			$"'{FileSystem.Path.GetFullPath(sourceName)}'",
-			hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(sourceName)}'").And
+			.WithHResult(-2147024891);
 		await That(FileSystem.Directory.Exists(sourceName)).IsTrue();
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
@@ -258,14 +254,14 @@ public partial class CopyToTests
 			FileAccess.Read, fileShare);
 		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.CopyTo(destinationName);
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<IOException>(hResult: -2147024864);
+			await That(Act).Throws<IOException>().WithHResult(-2147024864);
 			await That(FileSystem.File.Exists(destinationName)).IsFalse();
 		}
 		else
@@ -283,14 +279,14 @@ public partial class CopyToTests
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.CopyTo(destinationName);
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(
-			hResult: -2147024894,
-			messageContains: Test.IsNetFramework
+		await That(Act).Throws<FileNotFoundException>()
+			.WithHResult(-2147024894).And
+			.WithMessageContaining(Test.IsNetFramework
 				? null
 				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();

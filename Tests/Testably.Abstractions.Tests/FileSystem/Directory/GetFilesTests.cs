@@ -52,13 +52,13 @@ public partial class GetFilesTests
 			.WithSubdirectory(path.ToUpperInvariant()).Initialized(s => s
 				.WithAFile());
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
-		});
+		}
 		string[] result2 = FileSystem.Directory.GetFiles(path.ToUpperInvariant());
 
-		await That(exception).IsExactly<DirectoryNotFoundException>();
+		await That(Act).ThrowsExactly<DirectoryNotFoundException>();
 		await That(result2.Length).IsEqualTo(1);
 	}
 

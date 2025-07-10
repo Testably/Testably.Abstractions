@@ -1,3 +1,4 @@
+using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
@@ -10,14 +11,14 @@ public partial class OpenTextTests
 	public async Task OpenText_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			using StreamReader stream = FileSystem.File.OpenText(path);
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithHResult(-2147024894);
 	}
 
 	[Theory]

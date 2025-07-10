@@ -44,13 +44,13 @@ public partial class Tests
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 		stream.Close();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			stream.Close();
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
@@ -116,7 +116,7 @@ public partial class Tests
 		}
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes2);
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes2);
 	}
 
 	[Theory]
@@ -150,9 +150,7 @@ public partial class Tests
 			await stream.FlushAsync(cts.Token);
 		}
 		
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -287,12 +285,12 @@ public partial class Tests
 	{
 		FileSystem.File.WriteAllText(path, null);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			stream.SetLength(length);
-		});
+		}
 
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 }

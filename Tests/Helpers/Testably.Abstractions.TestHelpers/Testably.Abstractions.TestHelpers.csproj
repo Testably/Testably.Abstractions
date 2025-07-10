@@ -12,7 +12,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FluentAssertions" />
 		<PackageReference Include="AutoFixture.AutoNSubstitute" />
 		<PackageReference Remove="Microsoft.NET.Test.Sdk" />
 		<PackageReference Remove="xunit.v3" />

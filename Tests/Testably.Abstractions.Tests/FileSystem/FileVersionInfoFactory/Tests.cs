@@ -1,3 +1,4 @@
+using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileVersionInfoFactory;
@@ -32,11 +33,11 @@ public partial class Tests
 			path = FileSystem.Path.GetFullPath(path);
 		}
 		
-		Exception? exception = Record.Exception(() =>
-			FileSystem.FileVersionInfo.GetVersionInfo(path));
+		void Act() =>
+			FileSystem.FileVersionInfo.GetVersionInfo(path);
 
-		exception.Should().BeException<FileNotFoundException>(
-			FileSystem.Path.GetFullPath(path),
-			hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining(FileSystem.Path.GetFullPath(path)).And
+			.WithHResult(-2147024894);
 	}
 }

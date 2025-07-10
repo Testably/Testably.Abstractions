@@ -170,12 +170,12 @@ public partial class AppendAllBytesTests
 		FileSystem.File.WriteAllText(path, "some content");
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllBytes(path, bytes.AsSpan());
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
@@ -204,12 +204,12 @@ public partial class AppendAllBytesTests
 		FileSystem.File.WriteAllText(path, "some content");
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllBytes(path, bytes);
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 }
 #endif

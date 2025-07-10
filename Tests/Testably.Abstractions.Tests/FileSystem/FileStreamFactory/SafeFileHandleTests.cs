@@ -17,14 +17,14 @@ public partial class SafeFileHandleTests
 		string path = FileSystem.Path.GetFullPath(filename);
 		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileStream.New(handle, FileAccess.ReadWrite);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: "handle");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName("handle");
 	}
 
 	[Theory]
@@ -35,14 +35,14 @@ public partial class SafeFileHandleTests
 		string path = FileSystem.Path.GetFullPath(filename);
 		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileStream.New(handle, FileAccess.ReadWrite, 1024);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: "handle");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName("handle");
 	}
 
 	[Theory]
@@ -54,14 +54,14 @@ public partial class SafeFileHandleTests
 		string path = FileSystem.Path.GetFullPath(filename);
 		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileStream.New(handle, FileAccess.ReadWrite, 1024, true);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: "handle");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName("handle");
 	}
 
 	[Theory]

@@ -25,13 +25,13 @@ public partial class TimerTests
 		// ReSharper disable once DisposeOnUsingVariable
 		timer.Dispose();
 		bool result = true;
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			result = timer.Change(100, 200);
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 		await That(result).IsFalse();
 	}
 #endif
@@ -45,13 +45,13 @@ public partial class TimerTests
 		}, null, 0, 200);
 		// ReSharper disable once DisposeOnUsingVariable
 		timer.Dispose();
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			_ = timer.Change(100, 200);
-		});
+		}
 
-		await That(exception).IsExactly<ObjectDisposedException>();
+		await That(Act).ThrowsExactly<ObjectDisposedException>();
 	}
 #endif
 
@@ -62,13 +62,13 @@ public partial class TimerTests
 		{
 		}, null, 100, 200);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(Timeout.Infinite, 0);
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Fact]
@@ -78,13 +78,13 @@ public partial class TimerTests
 		{
 		}, null, 100, 200);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, Timeout.Infinite);
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
@@ -385,16 +385,16 @@ public partial class TimerTests
 
 		await That(waitHandle.WaitOne(1000)).IsTrue();
 		await That(result).IsTrue();
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, 0);
-		});
+		}
 
 #if NET8_0_OR_GREATER
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 #else
-		await That(exception).IsExactly<ObjectDisposedException>();
+		await That(Act).ThrowsExactly<ObjectDisposedException>();
 #endif
 	}
 
@@ -409,16 +409,16 @@ public partial class TimerTests
 
 		await That(waitHandle.WaitOne(1000)).IsTrue();
 		await That(result).IsTrue();
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, 0);
-		});
+		}
 
 #if NET8_0_OR_GREATER
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 #else
-		await That(exception).IsExactly<ObjectDisposedException>();
+		await That(Act).ThrowsExactly<ObjectDisposedException>();
 #endif
 	}
 
@@ -433,16 +433,16 @@ public partial class TimerTests
 
 		await That(waitHandle.WaitOne(1000)).IsTrue();
 		await That(result).IsTrue();
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, 0);
-		});
+		}
 
 #if NET8_0_OR_GREATER
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 #else
-		await That(exception).IsExactly<ObjectDisposedException>();
+		await That(Act).ThrowsExactly<ObjectDisposedException>();
 #endif
 	}
 
@@ -470,16 +470,16 @@ public partial class TimerTests
 		// ReSharper disable once DisposeOnUsingVariable
 		await timer.DisposeAsync();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, 0);
-		});
+		}
 
 #if NET8_0_OR_GREATER
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 #else
-		await That(exception).IsExactly<ObjectDisposedException>();
+		await That(Act).ThrowsExactly<ObjectDisposedException>();
 #endif
 	}
 #endif

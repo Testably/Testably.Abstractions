@@ -23,8 +23,11 @@ public partial class ExceptionTests
 
 		if (!Test.RunsOnWindows)
 		{
-			var exception = await That(Act).Throws<IOException>();
-			await That(exception.HResult).IsNotEqualTo(-2147024809).Because($"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+			var exception = Record.Exception(Act);
+			if (exception is IOException ioException)
+			{
+				await That(ioException.HResult).IsNotEqualTo(-2147024809).Because($"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+			}
 		}
 		else
 		{

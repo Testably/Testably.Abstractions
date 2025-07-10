@@ -1,3 +1,4 @@
+using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;
@@ -10,15 +11,15 @@ public partial class Tests
 	public async Task New_AppendAccessWithReadWriteMode_ShouldThrowArgumentException(
 		string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileStream.New(path, FileMode.Append, FileAccess.ReadWrite);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			messageContains: nameof(FileMode.Append),
-			hResult: -2147024809,
-			paramName: Test.IsNetFramework ? null : "access");
+		await That(Act).Throws<ArgumentException>()
+			.WithMessageContaining(nameof(FileMode.Append)).And
+			.WithHResult(-2147024809).And
+			.WithParamName(Test.IsNetFramework ? null : "access");
 	}
 
 	[Theory]
@@ -30,7 +31,7 @@ public partial class Tests
 		FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Create);
 		stream.Dispose();
 
-		FileSystem.File.ReadAllText(path).Should().BeEmpty();
+		await That(FileSystem.File.ReadAllText(path)).IsEmpty();
 	}
 
 	[Theory]
@@ -39,14 +40,14 @@ public partial class Tests
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileStream.New(path, FileMode.CreateNew);
-		});
+		}
 
-		exception.Should().BeException<IOException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult: Test.RunsOnWindows ? -2147024816 : 17);
+		await That(Act).Throws<IOException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithHResult(Test.RunsOnWindows ? -2147024816 : 17);
 	}
 
 	[Theory]
@@ -58,7 +59,7 @@ public partial class Tests
 		FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Truncate);
 		stream.Dispose();
 
-		FileSystem.File.ReadAllText(path).Should().BeEmpty();
+		await That(FileSystem.File.ReadAllText(path)).IsEmpty();
 	}
 
 	[Theory]
@@ -71,15 +72,15 @@ public partial class Tests
 		FileMode mode, string path)
 	{
 		FileAccess access = FileAccess.Read;
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileStream.New(path, mode, access);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: Test.IsNetFramework ? null : "access");
-		await That(exception!.Message).Contains(mode.ToString()).And.Contains(access.ToString());
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName(Test.IsNetFramework ? null : "access").And
+			.Which.For(x => x.Message, it => it.Contains(mode.ToString()).And.Contains(access.ToString()));
 	}
 
 	[Theory]
@@ -88,14 +89,14 @@ public partial class Tests
 	public async Task New_MissingFileWithIncorrectMode_ShouldThrowFileNotFoundException(
 		FileMode mode, string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileStream.New(path, mode);
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithHResult(-2147024894);
 	}
 
 	[Theory]
@@ -103,14 +104,14 @@ public partial class Tests
 	public async Task New_MissingFileWithTruncateMode_ShouldThrowFileNotFoundException(
 		string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileStream.New(path, FileMode.Truncate);
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithHResult(-2147024894);
 	}
 
 	[Theory]
@@ -123,18 +124,18 @@ public partial class Tests
 	{
 		FileSystem.File.WriteAllText(path, "some content");
 		FileSystem.File.SetAttributes(path, FileAttributes.ReadOnly);
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileStream.New(path, FileMode.Open, access);
-		});
+		}
 
 		if (access.HasFlag(FileAccess.Write))
 		{
-			exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+			await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 		}
 		else
 		{
-			await That(exception).IsNull();
+			await That(Act).DoesNotThrow();
 		}
 	}
 
@@ -144,22 +145,22 @@ public partial class Tests
 		string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileStream.New(path, FileMode.CreateNew);
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<UnauthorizedAccessException>(
-				$"'{FileSystem.Path.GetFullPath(path)}'",
-				hResult: -2147024891);
+			await That(Act).Throws<UnauthorizedAccessException>()
+				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithHResult(-2147024891);
 		}
 		else
 		{
-			exception.Should().BeException<IOException>(
-				$"'{FileSystem.Path.GetFullPath(path)}'",
-				hResult: 17);
+			await That(Act).Throws<IOException>()
+				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithHResult(17);
 		}
 	}
 

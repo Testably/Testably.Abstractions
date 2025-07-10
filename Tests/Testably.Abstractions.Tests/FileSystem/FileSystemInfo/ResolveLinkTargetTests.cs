@@ -86,14 +86,14 @@ public partial class ResolveLinkTargetTests
 
 		IFileInfo fileInfo = FileSystem.FileInfo.New(previousPath);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = fileInfo.ResolveLinkTarget(true);
-		});
+		}
 
-		exception.Should().BeException<IOException>(
-			hResult: Test.RunsOnWindows ? -2147022975 : -2146232800,
-			messageContains: $"'{fileInfo.FullName}'");
+		await That(Act).Throws<IOException>()
+			.WithHResult(Test.RunsOnWindows ? -2147022975 : -2146232800).And
+			.WithMessageContaining($"'{fileInfo.FullName}'");
 	}
 
 	[Theory]

@@ -18,7 +18,7 @@ public partial class CreateTextTests
 		}
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(appendText);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(appendText);
 	}
 
 #if NET8_0_OR_GREATER
@@ -71,6 +71,6 @@ public partial class CreateTextTests
 		}
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(appendText);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(appendText);
 	}
 }

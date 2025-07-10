@@ -20,7 +20,7 @@ public partial class AppendAllLinesTests
 		FileSystem.File.AppendAllLines(path, contents);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedContent);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
 	}
 
 	[Theory]
@@ -33,7 +33,7 @@ public partial class AppendAllLinesTests
 		FileSystem.File.AppendAllLines(path, contents);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedContent);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
 	}
 
 	[Theory]
@@ -41,14 +41,14 @@ public partial class AppendAllLinesTests
 	public async Task AppendAllLines_NullContent_ShouldThrowArgumentNullException(
 		string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllLines(path, null!);
-		});
+		}
 
-		exception.Should().BeException<ArgumentNullException>(
-			hResult: -2147467261,
-			paramName: "contents");
+		await That(Act).Throws<ArgumentNullException>()
+			.WithHResult(-2147467261).And
+			.WithParamName("contents");
 	}
 
 	[Theory]
@@ -56,14 +56,14 @@ public partial class AppendAllLinesTests
 	public async Task AppendAllLines_NullEncoding_ShouldThrowArgumentNullException(
 		string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllLines(path, new List<string>(), null!);
-		});
+		}
 
-		exception.Should().BeException<ArgumentNullException>(
-			hResult: -2147467261,
-			paramName: "encoding");
+		await That(Act).Throws<ArgumentNullException>()
+			.WithHResult(-2147467261).And
+			.WithParamName("encoding");
 	}
 
 	[Theory]
@@ -76,7 +76,7 @@ public partial class AppendAllLinesTests
 		FileSystem.File.AppendAllLines(path, contents);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedResult);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
@@ -87,13 +87,12 @@ public partial class AppendAllLinesTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllLines(path, contents);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}

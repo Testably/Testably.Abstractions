@@ -1,5 +1,6 @@
 #if FEATURE_FILESYSTEM_ASYNC
 using AutoFixture;
+using NSubstitute.ExceptionExtensions;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -18,10 +19,10 @@ public partial class ReadAllLinesAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.ReadAllLinesAsync(path, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.ReadAllLinesAsync(path, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -33,10 +34,10 @@ public partial class ReadAllLinesAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.ReadAllLinesAsync(path, Encoding.UTF8, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.ReadAllLinesAsync(path, Encoding.UTF8, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -44,12 +45,12 @@ public partial class ReadAllLinesAsyncTests
 	public async Task ReadAllLinesAsync_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken));
+		async Task Act() =>
+			await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithHResult(-2147024894);
 	}
 
 	[Theory]

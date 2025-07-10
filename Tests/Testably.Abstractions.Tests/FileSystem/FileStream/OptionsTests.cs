@@ -59,8 +59,8 @@ public partial class OptionsTests
 		}
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents2);
-		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents2);
+		await That(FileSystem.File.GetAttributes(path)).HasFlag(FileAttributes.Encrypted);
 	}
 
 	[Theory]
@@ -77,8 +77,7 @@ public partial class OptionsTests
 			stream.Write(bytes, 0, bytes.Length);
 		}
 
-		FileSystem.File.GetAttributes(path).Should()
-			.NotHaveFlag(FileAttributes.Encrypted);
+		await That(FileSystem.File.GetAttributes(path)).DoesNotHaveFlag(FileAttributes.Encrypted);
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents2);
 	}
 
@@ -103,7 +102,7 @@ public partial class OptionsTests
 		}
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents2);
-		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents2);
+		await That(FileSystem.File.GetAttributes(path)).HasFlag(FileAttributes.Encrypted);
 	}
 }

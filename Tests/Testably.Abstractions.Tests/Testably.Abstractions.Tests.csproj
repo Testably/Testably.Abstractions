@@ -8,11 +8,6 @@
 		<ProjectReference Include="..\Helpers\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj" OutputItemType="Analyzer" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="FluentAssertions" />
-		<PackageReference Include="aweXpect.Migration" />
-	</ItemGroup>
-
 	<PropertyGroup>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 		<GeneratedFolder>Generated</GeneratedFolder>

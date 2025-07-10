@@ -1,6 +1,4 @@
-﻿using FluentAssertions.Common;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading;
 using Testably.Abstractions.Testing.TimeSystem;
 using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 

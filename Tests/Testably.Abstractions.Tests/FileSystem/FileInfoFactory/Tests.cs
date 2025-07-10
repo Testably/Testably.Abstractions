@@ -13,18 +13,18 @@ public partial class Tests
 	{
 		string rootDrive = FileTestHelper.RootDrive(Test);
 		string path = new('a', maxLength - rootDrive.Length);
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.FileInfo.New(rootDrive + path);
-		});
+		}
 
 		if (Test.IsNetFramework)
 		{
-			exception.Should().BeException<PathTooLongException>(hResult: -2147024690);
+			await That(Act).Throws<PathTooLongException>().WithHResult(-2147024690);
 		}
 		else
 		{
-			await That(exception).IsNull();
+			await That(Act).DoesNotThrow();
 		}
 	}
 
@@ -81,36 +81,36 @@ public partial class Tests
 	[Fact]
 	public async Task New_WithUnicodeWhitespace_ShouldNotThrow()
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New("\u00A0"); // Unicode char that's treated as whitespace
-		});
+		}
 
 		if (Test.IsNetFramework)
 		{
-			await That(exception).IsExactly<ArgumentException>();
+			await That(Act).ThrowsExactly<ArgumentException>();
 		}
 		else
 		{
-			await That(exception).IsNull();
+			await That(Act).DoesNotThrow();
 		}
 	}
 
 	[Fact]
 	public async Task New_WithWhitespace_ShouldThrowOnlyOnWindows()
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New("   ");
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			await That(exception).IsExactly<ArgumentException>();
+			await That(Act).ThrowsExactly<ArgumentException>();
 		}
 		else
 		{
-			await That(exception).IsNull();
+			await That(Act).DoesNotThrow();
 		}
 	}
 

@@ -12,13 +12,14 @@ public partial class DeleteTests
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		await That(sut.Exists).IsFalse();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.Delete();
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>($"'{sut.FullName}'",
-			hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{sut.FullName}'").And
+			.WithHResult(-2147024893);
 	}
 
 	[Theory]
@@ -33,22 +34,23 @@ public partial class DeleteTests
 		openFile.Write([0], 0, 1);
 		openFile.Flush();
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.Delete(true);
 			openFile.Write([0], 0, 1);
 			openFile.Flush();
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<IOException>($"{filename}'",
-				hResult: -2147024864);
+			await That(Act).Throws<IOException>()
+				.WithMessageContaining($"{filename}'").And
+				.WithHResult(-2147024864);
 			await That(FileSystem.File.Exists(filePath)).IsTrue();
 		}
 		else
 		{
-			await That(exception).IsNull();
+			await That(Act).DoesNotThrow();
 			await That(FileSystem.File.Exists(filePath)).IsFalse();
 		}
 	}
@@ -103,17 +105,18 @@ public partial class DeleteTests
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		await That(sut.Exists).IsTrue();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.Delete();
-		});
+		}
 
-		exception.Should().BeException<IOException>(
-			hResult: Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39),
-			// Path information only included in exception message on Windows and not in .NET Framework
-			messageContains: !Test.RunsOnWindows || Test.IsNetFramework
-				? null
-				: $"'{sut.FullName}'");
+		await That(Act).Throws<IOException>()
+			.WithHResult(Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39)).And
+			.WithMessageContaining(
+				// Path information only included in exception message on Windows and not in .NET Framework
+				!Test.RunsOnWindows || Test.IsNetFramework
+					? null
+					: $"'{sut.FullName}'");
 
 		await That(sut.Exists).IsTrue();
 		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();

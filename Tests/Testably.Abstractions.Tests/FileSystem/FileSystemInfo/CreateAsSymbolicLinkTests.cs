@@ -29,13 +29,14 @@ public partial class CreateAsSymbolicLinkTests
 		FileSystem.File.WriteAllText(path, "foo");
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			fileInfo.CreateAsSymbolicLink(pathToTarget);
-		});
+		}
 
-		exception.Should().BeException<IOException>($"'{path}'",
-			hResult: Test.RunsOnWindows ? -2147024713 : 17);
+		await That(Act).Throws<IOException>()
+			.WithMessageContaining($"'{path}'").And
+			.WithHResult(Test.RunsOnWindows ? -2147024713 : 17);
 	}
 }
 #endif

@@ -171,12 +171,12 @@ public partial class MoveTests
 			FileAccess.Read,
 			FileShare.Read);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory.Move(source, destination);
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 		await That(FileSystem.Directory.Exists(source)).IsFalse();
 		await That(FileSystem.Directory.Exists(destination)).IsTrue();
 		IDirectoryInfo destinationDirectory =

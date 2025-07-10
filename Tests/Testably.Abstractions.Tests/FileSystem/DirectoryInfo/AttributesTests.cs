@@ -40,12 +40,12 @@ public partial class AttributesTests
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("missing file");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.Attributes = FileAttributes.Normal;
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 	}
 
 	[Fact]

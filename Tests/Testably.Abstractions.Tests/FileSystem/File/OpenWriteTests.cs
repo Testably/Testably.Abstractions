@@ -56,12 +56,12 @@ public partial class OpenWriteTests
 
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			_ = stream.ReadByte();
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 }

@@ -26,14 +26,14 @@ public partial class UnixFileModeTests
 
 		IFileInfo fileSystemInfo = FileSystem.FileInfo.New(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			#pragma warning disable CA1416
 			fileSystemInfo.UnixFileMode = unixFileMode;
 			#pragma warning restore CA1416
-		});
+		}
 
-		exception.Should().BeException<PlatformNotSupportedException>(hResult: -2146233031);
+		await That(Act).Throws<PlatformNotSupportedException>().WithHResult(-2146233031);
 	}
 
 	[Theory]

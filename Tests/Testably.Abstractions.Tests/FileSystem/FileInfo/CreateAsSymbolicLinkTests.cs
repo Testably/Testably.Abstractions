@@ -27,13 +27,14 @@ public partial class CreateAsSymbolicLinkTests
 		FileSystem.File.WriteAllText(pathToTarget, null);
 		FileSystem.File.WriteAllText(path, "foo");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(pathToTarget);
-		});
+		}
 
-		exception.Should().BeException<IOException>($"'{path}'",
-			hResult: Test.RunsOnWindows ? -2147024713 : 17);
+		await That(Act).Throws<IOException>()
+			.WithMessageContaining($"'{path}'").And
+			.WithHResult(Test.RunsOnWindows ? -2147024713 : 17);
 	}
 
 	[Theory]
@@ -41,12 +42,12 @@ public partial class CreateAsSymbolicLinkTests
 	public async Task CreateAsSymbolicLink_TargetFileMissing_ShouldNotThrowException(
 		string path, string pathToTarget)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(pathToTarget);
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
@@ -56,12 +57,12 @@ public partial class CreateAsSymbolicLinkTests
 	{
 		FileSystem.File.WriteAllText(pathToTarget, "some content");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New(string.Empty).CreateAsSymbolicLink(pathToTarget);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(paramName: "path");
+		await That(Act).Throws<ArgumentException>().WithParamName("path");
 	}
 
 	[Theory]
@@ -71,12 +72,12 @@ public partial class CreateAsSymbolicLinkTests
 	{
 		FileSystem.File.WriteAllText(path, "some content");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(string.Empty);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(paramName: "pathToTarget");
+		await That(Act).Throws<ArgumentException>().WithParamName("pathToTarget");
 	}
 
 	[Theory]
@@ -88,12 +89,12 @@ public partial class CreateAsSymbolicLinkTests
 
 		FileSystem.File.WriteAllText(pathToTarget, "some content");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New("bar_?_").CreateAsSymbolicLink(pathToTarget);
-		});
+		}
 
-		exception.Should().BeException<IOException>(hResult: -2147024773);
+		await That(Act).Throws<IOException>().WithHResult(-2147024773);
 	}
 
 	[Theory]
@@ -105,12 +106,12 @@ public partial class CreateAsSymbolicLinkTests
 
 		FileSystem.File.WriteAllText(path, "some content");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New(path).CreateAsSymbolicLink("bar_?_");
-		});
+		}
 
-		exception.Should().BeException<IOException>(hResult: -2147024713);
+		await That(Act).Throws<IOException>().WithHResult(-2147024713);
 	}
 
 	[Theory]
@@ -120,18 +121,18 @@ public partial class CreateAsSymbolicLinkTests
 	{
 		FileSystem.File.WriteAllText(pathToTarget, "some content");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New(" ").CreateAsSymbolicLink(pathToTarget);
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<ArgumentException>(paramName: "path");
+			await That(Act).Throws<ArgumentException>().WithParamName("path");
 		}
 		else
 		{
-			await That(exception).IsNull();
+			await That(Act).DoesNotThrow();
 		}
 	}
 
@@ -140,12 +141,12 @@ public partial class CreateAsSymbolicLinkTests
 	public async Task CreateAsSymbolicLink_WithIllegalTarget_ShouldNotThrowException(
 		string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(" ");
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
@@ -155,12 +156,12 @@ public partial class CreateAsSymbolicLinkTests
 	{
 		FileSystem.File.WriteAllText(pathToTarget, "some content");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New(null!).CreateAsSymbolicLink(pathToTarget);
-		});
+		}
 
-		exception.Should().BeException<ArgumentNullException>(paramName: "fileName");
+		await That(Act).Throws<ArgumentNullException>().WithParamName("fileName");
 	}
 
 	[Theory]
@@ -170,12 +171,12 @@ public partial class CreateAsSymbolicLinkTests
 	{
 		FileSystem.File.WriteAllText(path, "some content");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(null!);
-		});
+		}
 
-		exception.Should().BeException<ArgumentNullException>(paramName: "pathToTarget");
+		await That(Act).Throws<ArgumentNullException>().WithParamName("pathToTarget");
 	}
 }
 #endif

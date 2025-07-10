@@ -16,7 +16,7 @@ public partial class WriteAllBytesTests
 		FileSystem.File.WriteAllBytes(path, bytes);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 	[Theory]
@@ -26,19 +26,19 @@ public partial class WriteAllBytesTests
 		FileSystem.File.WriteAllBytes(path, bytes);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 	[Theory]
 	[AutoData]
 	public async Task WriteAllBytes_WhenBytesAreNull_ShouldThrowArgumentNullException(string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllBytes(path, null!);
-		});
+		}
 
-		exception.Should().BeException<ArgumentNullException>(paramName: "bytes");
+		await That(Act).Throws<ArgumentNullException>().WithParamName("bytes");
 	}
 
 	[Theory]
@@ -49,13 +49,12 @@ public partial class WriteAllBytesTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllBytes(path, bytes);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
@@ -70,12 +69,12 @@ public partial class WriteAllBytesTests
 		FileSystem.File.WriteAllBytes(path, Array.Empty<byte>());
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllBytes(path, bytes);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 	
 #if FEATURE_FILE_SPAN
@@ -89,7 +88,7 @@ public partial class WriteAllBytesTests
 		FileSystem.File.WriteAllBytes(path, bytes.AsSpan());
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 	[Theory]
@@ -99,7 +98,7 @@ public partial class WriteAllBytesTests
 		FileSystem.File.WriteAllBytes(path, bytes.AsSpan());
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 	[Theory]
@@ -110,13 +109,12 @@ public partial class WriteAllBytesTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllBytes(path, bytes.AsSpan());
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
@@ -131,12 +129,12 @@ public partial class WriteAllBytesTests
 		FileSystem.File.WriteAllBytes(path, Array.Empty<byte>());
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllBytes(path, bytes.AsSpan());
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 #endif
 }

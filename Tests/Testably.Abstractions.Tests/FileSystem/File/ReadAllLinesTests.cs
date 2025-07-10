@@ -1,4 +1,5 @@
 using AutoFixture;
+using NSubstitute.ExceptionExtensions;
 using System.IO;
 using System.Text;
 
@@ -22,14 +23,14 @@ public partial class ReadAllLinesTests
 	[AutoData]
 	public async Task ReadAllLines_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.File.ReadAllLines(path);
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithHResult(-2147024894);
 	}
 
 	[Theory]
@@ -53,8 +54,7 @@ public partial class ReadAllLinesTests
 		string[] result = FileSystem.File.ReadAllLines(path, Encoding.UTF32);
 
 		//Ensure that the file contains the BOM-Bytes
-		FileSystem.File.ReadAllBytes(path).Length
-			.Should().BeGreaterThan(content.Length);
+		await That(FileSystem.File.ReadAllBytes(path).Length).IsGreaterThan(content.Length);
 		await That(result.Length).IsEqualTo(1);
 		await That(result[0]).IsEqualTo(content);
 	}

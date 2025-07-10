@@ -23,7 +23,6 @@
 
 	<ItemGroup>
 		<PackageReference Remove="AutoFixture.Xunit3" />
-		<PackageReference Remove="FluentAssertions" />
 		<PackageReference Remove="Microsoft.NET.Test.Sdk" />
 		<PackageReference Remove="xunit.v3" />
 		<PackageReference Remove="xunit.runner.visualstudio" />

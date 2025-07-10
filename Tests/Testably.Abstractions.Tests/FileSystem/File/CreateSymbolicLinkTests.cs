@@ -27,13 +27,14 @@ public partial class CreateSymbolicLinkTests
 		FileSystem.File.WriteAllText(pathToTarget, null);
 		FileSystem.File.WriteAllText(path, "foo");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.CreateSymbolicLink(path, pathToTarget);
-		});
+		}
 
-		exception.Should().BeException<IOException>($"'{path}'",
-			hResult: Test.RunsOnWindows ? -2147024713 : 17);
+		await That(Act).Throws<IOException>()
+			.WithMessageContaining($"'{path}'").And
+			.WithHResult(Test.RunsOnWindows ? -2147024713 : 17);
 	}
 
 	[Theory]
@@ -41,12 +42,12 @@ public partial class CreateSymbolicLinkTests
 	public async Task CreateSymbolicLink_TargetFileMissing_ShouldNotThrowException(
 		string path, string pathToTarget)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.CreateSymbolicLink(path, pathToTarget);
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 }
 #endif

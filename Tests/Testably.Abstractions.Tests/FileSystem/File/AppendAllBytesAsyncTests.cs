@@ -16,10 +16,10 @@ public partial class AppendAllBytesAsyncTests
 		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.AppendAllBytesAsync(path, bytes, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.AppendAllBytesAsync(path, bytes, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -34,7 +34,7 @@ public partial class AppendAllBytesAsyncTests
 			TestContext.Current.CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo([..previousBytes, ..bytes]);
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([..previousBytes, ..bytes]);
 	}
 
 	[Theory]
@@ -50,9 +50,7 @@ public partial class AppendAllBytesAsyncTests
 				TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
@@ -64,7 +62,7 @@ public partial class AppendAllBytesAsyncTests
 			TestContext.Current.CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 	[Theory]
@@ -75,10 +73,10 @@ public partial class AppendAllBytesAsyncTests
 		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.AppendAllBytesAsync(path, bytes.AsMemory(), cts.Token));
+		async Task Act() =>
+			await FileSystem.File.AppendAllBytesAsync(path, bytes.AsMemory(), cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -93,7 +91,7 @@ public partial class AppendAllBytesAsyncTests
 			TestContext.Current.CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo([..previousBytes, ..bytes]);
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([..previousBytes, ..bytes]);
 	}
 
 	[Theory]
@@ -110,9 +108,7 @@ public partial class AppendAllBytesAsyncTests
 				TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
@@ -124,7 +120,7 @@ public partial class AppendAllBytesAsyncTests
 			TestContext.Current.CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 	[Theory]
@@ -141,10 +137,7 @@ public partial class AppendAllBytesAsyncTests
 				TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
@@ -163,10 +156,7 @@ public partial class AppendAllBytesAsyncTests
 				TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}

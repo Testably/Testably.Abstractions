@@ -56,15 +56,15 @@ public partial class DisposeTests
 		Expression<Action<FileSystemStream>> callback)
 	{
 		FileSystem.File.WriteAllText("foo", "some content");
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystemStream stream =
 				FileSystem.FileStream.New("foo", FileMode.Open, FileAccess.ReadWrite);
 			stream.Dispose();
 			callback.Compile().Invoke(stream);
-		});
+		}
 
-		await That(exception).IsExactly<ObjectDisposedException>().Because($"\n{callback}\n executed after Dispose() was called.");
+		await That(Act).ThrowsExactly<ObjectDisposedException>().Because($"\n{callback}\n executed after Dispose() was called.");
 	}
 
 	#region Helpers

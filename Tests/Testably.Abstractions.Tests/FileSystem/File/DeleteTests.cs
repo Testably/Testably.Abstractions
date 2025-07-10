@@ -12,12 +12,12 @@ public partial class DeleteTests
 	{
 		string filePath = FileSystem.Path.Combine(missingDirectory, fileName);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Delete(filePath);
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
@@ -25,12 +25,12 @@ public partial class DeleteTests
 	public async Task Delete_MissingFile_ShouldDoNothing(
 		string fileName)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Delete(fileName);
-		});
+		}
 
-		await That(exception).IsNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
@@ -40,13 +40,14 @@ public partial class DeleteTests
 	{
 		FileSystem.Directory.CreateDirectory(fileName);
 		string expectedPath = FileSystem.Path.Combine(BasePath, fileName);
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Delete(fileName);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>($"'{expectedPath}'",
-			hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.WithMessageContaining($"'{expectedPath}'").And
+			.WithHResult(-2147024891);
 	}
 
 	[Theory]
@@ -57,22 +58,23 @@ public partial class DeleteTests
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filename);
 		openFile.Write([0], 0, 1);
 		openFile.Flush();
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Delete(filename);
 			openFile.Write([0], 0, 1);
 			openFile.Flush();
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<IOException>($"{filename}'",
-				hResult: -2147024864);
+			await That(Act).Throws<IOException>()
+				.WithMessageContaining($"{filename}'").And
+				.WithHResult(-2147024864);
 			await That(FileSystem.File.Exists(filename)).IsTrue();
 		}
 		else
 		{
-			await That(exception).IsNull();
+			await That(Act).DoesNotThrow();
 			await That(FileSystem.File.Exists(filename)).IsFalse();
 		}
 	}

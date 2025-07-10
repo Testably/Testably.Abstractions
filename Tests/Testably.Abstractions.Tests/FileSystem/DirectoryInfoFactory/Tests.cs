@@ -1,3 +1,5 @@
+using NSubstitute.ExceptionExtensions;
+
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfoFactory;
 
 [FileSystemTests]
@@ -13,16 +15,17 @@ public partial class Tests
 #else
 		string expectedMessage = "Illegal characters in path.";
 #endif
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.DirectoryInfo.New(path);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(expectedMessage,
+		await That(Act).Throws<ArgumentException>()
+			.WithMessageContaining(expectedMessage).And
 #if !NETFRAMEWORK
-			paramName: nameof(path),
+			.WithParamName(nameof(path)).And
 #endif
-			hResult: -2147024809);
+			.WithHResult(-2147024809);
 	}
 
 	[Theory]
@@ -80,11 +83,11 @@ public partial class Tests
 
 		System.IO.DirectoryInfo directoryInfo = new(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.DirectoryInfo.Wrap(directoryInfo);
-		});
+		}
 
-		await That(exception).IsExactly<NotSupportedException>().Whose(x => x.Message, it => it.Contains("Wrapping a DirectoryInfo in a simulated file system is not supported"));
+		await That(Act).Throws<NotSupportedException>().Whose(x => x.Message, it => it.Contains("Wrapping a DirectoryInfo in a simulated file system is not supported"));
 	}
 }

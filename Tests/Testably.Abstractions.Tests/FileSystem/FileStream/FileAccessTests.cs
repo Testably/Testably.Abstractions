@@ -1,3 +1,4 @@
+using NSubstitute.ExceptionExtensions;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
@@ -28,25 +29,24 @@ public partial class FileAccessTests
 
 		FileSystem.File.WriteAllText(path, contents);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.FileStream.New(path, FileMode.Open,
 				access1, share1);
 			_ = FileSystem.FileStream.New(path, FileMode.Open,
 				access2, share2);
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<IOException>(
-				$"'{FileSystem.Path.GetFullPath(path)}'",
-				hResult: -2147024864,
-				because:
-				$"Access {access1}, Share {share1} of file 1 is incompatible with Access {access2}, Share {share2} of file 2");
+			await That(Act).Throws<IOException>()
+				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithHResult(-2147024864)
+				.Because($"Access {access1}, Share {share1} of file 1 is incompatible with Access {access2}, Share {share2} of file 2");
 		}
 		else
 		{
-			await That(exception).IsNull();
+			await That(Act).DoesNotThrow();
 		}
 	}
 
@@ -167,20 +167,20 @@ public partial class FileAccessTests
 		byte[] bytes = Encoding.UTF8.GetBytes(contents);
 		stream.Write(bytes, 0, bytes.Length);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.ReadAllText(path);
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<IOException>(
-				$"'{FileSystem.Path.GetFullPath(path)}'",
-				hResult: -2147024864);
+			await That(Act).Throws<IOException>()
+				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithHResult(-2147024864);
 		}
 		else
 		{
-			await That(exception).IsNull();
+			await That(Act).DoesNotThrow();
 		}
 	}
 

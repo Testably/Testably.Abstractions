@@ -64,12 +64,12 @@ public partial class RandomTests
 	{
 		int[] choices = null!;
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			RandomSystem.Random.Shared.GetItems(choices, -1);
-		});
+		}
 
-		await That(exception).IsExactly<ArgumentNullException>();
+		await That(Act).ThrowsExactly<ArgumentNullException>();
 	}
 #endif
 

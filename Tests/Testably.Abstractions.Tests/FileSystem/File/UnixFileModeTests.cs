@@ -33,14 +33,14 @@ public partial class UnixFileModeTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			#pragma warning disable CA1416
 			FileSystem.File.GetUnixFileMode(path);
 			#pragma warning restore CA1416
-		});
+		}
 
-		exception.Should().BeException<PlatformNotSupportedException>(hResult: -2146233031);
+		await That(Act).Throws<PlatformNotSupportedException>().WithHResult(-2146233031);
 	}
 
 	[Theory]
@@ -50,14 +50,14 @@ public partial class UnixFileModeTests
 	{
 		Skip.If(Test.RunsOnWindows);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			#pragma warning disable CA1416
 			FileSystem.File.SetUnixFileMode(path, unixFileMode);
 			#pragma warning restore CA1416
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 	}
 
 	[Theory]
@@ -84,14 +84,14 @@ public partial class UnixFileModeTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			#pragma warning disable CA1416
 			FileSystem.File.SetUnixFileMode(path, mode);
 			#pragma warning restore CA1416
-		});
+		}
 
-		exception.Should().BeException<PlatformNotSupportedException>(hResult: -2146233031);
+		await That(Act).Throws<PlatformNotSupportedException>().WithHResult(-2146233031);
 	}
 }
 #endif
