@@ -5,12 +5,13 @@ public partial class GetFileNameWithoutExtensionTests
 {
 	[Theory]
 	[AutoData]
-	public async Task GetFileNameWithoutExtension_MultipleDots_ShouldReturnOnlyRemoveTheLastExtension(
-		string directory, string filename1, string filename2, string extension)
+	public async Task
+		GetFileNameWithoutExtension_MultipleDots_ShouldReturnOnlyRemoveTheLastExtension(
+			string directory, string filename1, string filename2, string extension)
 	{
 		string filename = filename1 + "." + filename2;
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
-					  "." + extension;
+		              "." + extension;
 
 		string result = FileSystem.Path.GetFileNameWithoutExtension(path);
 
@@ -31,7 +32,7 @@ public partial class GetFileNameWithoutExtensionTests
 		string directory, string filename, string extension)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
-					  "." + extension;
+		              "." + extension;
 
 		string result = FileSystem.Path.GetFileNameWithoutExtension(path);
 
@@ -68,8 +69,9 @@ public partial class GetFileNameWithoutExtensionTests
 
 	[Theory]
 	[AutoData]
-	public async Task GetFileNameWithoutExtension_TrailingDot_ShouldReturnFilenameWithoutTrailingDot(
-		string directory, string filename)
+	public async Task
+		GetFileNameWithoutExtension_TrailingDot_ShouldReturnFilenameWithoutTrailingDot(
+			string directory, string filename)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename + ".";
 

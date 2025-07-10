@@ -78,7 +78,8 @@ public partial class Tests
 		FileSystem.File.WriteAllText(path, null);
 
 		DateTime result = FileSystem.File.GetLastAccessTime(path);
-		await That(result).IsBetween(start).And(TimeSystem.DateTime.Now).Within(TimeComparison.Tolerance);
+		await That(result).IsBetween(start).And(TimeSystem.DateTime.Now)
+			.Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 	}
 
@@ -91,7 +92,8 @@ public partial class Tests
 		FileSystem.File.WriteAllText(path, null);
 
 		DateTime result = FileSystem.File.GetLastAccessTimeUtc(path);
-		await That(result).IsBetween(start).And(TimeSystem.DateTime.UtcNow).Within(TimeComparison.Tolerance);
+		await That(result).IsBetween(start).And(TimeSystem.DateTime.UtcNow)
+			.Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
 	}
 
@@ -104,7 +106,8 @@ public partial class Tests
 		FileSystem.File.WriteAllText(path, null);
 
 		DateTime result = FileSystem.File.GetLastWriteTime(path);
-		await That(result).IsBetween(start).And(TimeSystem.DateTime.Now).Within(TimeComparison.Tolerance);
+		await That(result).IsBetween(start).And(TimeSystem.DateTime.Now)
+			.Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 	}
 
@@ -117,7 +120,8 @@ public partial class Tests
 		FileSystem.File.WriteAllText(path, null);
 
 		DateTime result = FileSystem.File.GetLastWriteTimeUtc(path);
-		await That(result).IsBetween(start).And(TimeSystem.DateTime.UtcNow).Within(TimeComparison.Tolerance);
+		await That(result).IsBetween(start).And(TimeSystem.DateTime.UtcNow)
+			.Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
 	}
 

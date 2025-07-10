@@ -34,6 +34,7 @@ public class FileDescriptionTests
 			_ = sut["bar"];
 		}
 
-		await That(Act).ThrowsExactly<TestingException>().WithMessage("Files cannot have children.");
+		await That(Act).ThrowsExactly<TestingException>()
+			.WithMessage("Files cannot have children.");
 	}
 }

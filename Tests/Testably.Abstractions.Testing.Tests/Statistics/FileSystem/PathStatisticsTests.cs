@@ -246,7 +246,8 @@ public class PathStatisticsTests
 		sut.Path.GetFileNameWithoutExtension(path);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Path).OnlyContainsMethodCall(nameof(IPath.GetFileNameWithoutExtension),
+		await That(sut.Statistics.Path).OnlyContainsMethodCall(
+			nameof(IPath.GetFileNameWithoutExtension),
 			path);
 	}
 
@@ -287,7 +288,8 @@ public class PathStatisticsTests
 		sut.Path.GetInvalidFileNameChars();
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Path).OnlyContainsMethodCall(nameof(IPath.GetInvalidFileNameChars));
+		await That(sut.Statistics.Path)
+			.OnlyContainsMethodCall(nameof(IPath.GetInvalidFileNameChars));
 	}
 
 	[Fact]
@@ -361,9 +363,9 @@ public class PathStatisticsTests
 	{
 		MockFileSystem sut = new();
 
-#pragma warning disable CS0618
+		#pragma warning disable CS0618
 		sut.Path.GetTempFileName();
-#pragma warning restore CS0618
+		#pragma warning restore CS0618
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
 		await That(sut.Statistics.Path).OnlyContainsMethodCall(nameof(IPath.GetTempFileName));
@@ -705,7 +707,8 @@ public class PathStatisticsTests
 		_ = sut.Path.VolumeSeparatorChar;
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Path).OnlyContainsPropertyGetAccess(nameof(IPath.VolumeSeparatorChar));
+		await That(sut.Statistics.Path)
+			.OnlyContainsPropertyGetAccess(nameof(IPath.VolumeSeparatorChar));
 	}
 
 	[Fact]

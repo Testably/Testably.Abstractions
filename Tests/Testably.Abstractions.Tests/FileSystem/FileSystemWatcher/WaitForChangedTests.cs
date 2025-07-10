@@ -1,6 +1,5 @@
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
@@ -100,7 +99,7 @@ public partial class WaitForChangedTests
 
 	#region Helpers
 
-#pragma warning disable MA0018
+	#pragma warning disable MA0018
 	public static TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>>
 		GetWaitForChangedTimeoutParameters()
 	{

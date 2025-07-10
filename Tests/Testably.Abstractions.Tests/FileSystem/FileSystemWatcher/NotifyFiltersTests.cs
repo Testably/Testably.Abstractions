@@ -31,7 +31,7 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName |
-										 NotifyFilters.FileName;
+		                                 NotifyFilters.FileName;
 		if (!Test.RunsOnMac)
 		{
 			fileSystemWatcher.NotifyFilter |= NotifyFilters.CreationTime;
@@ -138,12 +138,12 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
-										 NotifyFilters.CreationTime |
-										 NotifyFilters.FileName |
-										 NotifyFilters.LastAccess |
-										 NotifyFilters.LastWrite |
-										 NotifyFilters.Security |
-										 NotifyFilters.Size;
+		                                 NotifyFilters.CreationTime |
+		                                 NotifyFilters.FileName |
+		                                 NotifyFilters.LastAccess |
+		                                 NotifyFilters.LastWrite |
+		                                 NotifyFilters.Security |
+		                                 NotifyFilters.Size;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
 		FileSystem.Directory.CreateDirectory(path);
@@ -214,12 +214,12 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
-										 NotifyFilters.CreationTime |
-										 NotifyFilters.DirectoryName |
-										 NotifyFilters.LastAccess |
-										 NotifyFilters.LastWrite |
-										 NotifyFilters.Security |
-										 NotifyFilters.Size;
+		                                 NotifyFilters.CreationTime |
+		                                 NotifyFilters.DirectoryName |
+		                                 NotifyFilters.LastAccess |
+		                                 NotifyFilters.LastWrite |
+		                                 NotifyFilters.Security |
+		                                 NotifyFilters.Size;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
 		FileSystem.File.WriteAllText(path, "foo");
@@ -290,12 +290,12 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
-										 NotifyFilters.CreationTime |
-										 NotifyFilters.FileName |
-										 NotifyFilters.LastAccess |
-										 NotifyFilters.LastWrite |
-										 NotifyFilters.Security |
-										 NotifyFilters.Size;
+		                                 NotifyFilters.CreationTime |
+		                                 NotifyFilters.FileName |
+		                                 NotifyFilters.LastAccess |
+		                                 NotifyFilters.LastWrite |
+		                                 NotifyFilters.Security |
+		                                 NotifyFilters.Size;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
 		FileSystem.Directory.Delete(path);
@@ -366,12 +366,12 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
-										 NotifyFilters.CreationTime |
-										 NotifyFilters.DirectoryName |
-										 NotifyFilters.LastAccess |
-										 NotifyFilters.LastWrite |
-										 NotifyFilters.Security |
-										 NotifyFilters.Size;
+		                                 NotifyFilters.CreationTime |
+		                                 NotifyFilters.DirectoryName |
+		                                 NotifyFilters.LastAccess |
+		                                 NotifyFilters.LastWrite |
+		                                 NotifyFilters.Security |
+		                                 NotifyFilters.Size;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
 		FileSystem.File.Delete(path);
@@ -420,8 +420,8 @@ public partial class NotifyFiltersTests
 	[Theory]
 	[AutoData]
 	public async Task NotifyFilter_MoveFile_DifferentDirectories_ShouldNotifyOnLinuxOrMac(
-			string sourcePath, string sourceName,
-			string destinationPath, string destinationName)
+		string sourcePath, string sourceName,
+		string destinationPath, string destinationName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 		Skip.If(Test.RunsOnWindows);
@@ -458,17 +458,20 @@ public partial class NotifyFiltersTests
 		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
-		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
-		await That(result.Name).IsEqualTo(FileSystem.Path.Combine(destinationPath, destinationName));
-		await That(result.OldFullPath).IsEqualTo(FileSystem.Path.Combine(BasePath, sourcePath, sourceName));
+		await That(result.FullPath)
+			.IsEqualTo(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
+		await That(result.Name)
+			.IsEqualTo(FileSystem.Path.Combine(destinationPath, destinationName));
+		await That(result.OldFullPath)
+			.IsEqualTo(FileSystem.Path.Combine(BasePath, sourcePath, sourceName));
 		await That(result.OldName).IsEqualTo(FileSystem.Path.Combine(sourcePath, sourceName));
 	}
 
 	[Theory]
 	[AutoData]
 	public async Task NotifyFilter_MoveFile_DifferentDirectories_ShouldNotNotify_OnWindows(
-			string sourcePath, string sourceName,
-			string destinationPath, string destinationName)
+		string sourcePath, string sourceName,
+		string destinationPath, string destinationName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 		Skip.IfNot(Test.RunsOnWindows);
@@ -533,12 +536,12 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
-										 NotifyFilters.CreationTime |
-										 NotifyFilters.DirectoryName |
-										 NotifyFilters.LastAccess |
-										 NotifyFilters.LastWrite |
-										 NotifyFilters.Security |
-										 NotifyFilters.Size;
+		                                 NotifyFilters.CreationTime |
+		                                 NotifyFilters.DirectoryName |
+		                                 NotifyFilters.LastAccess |
+		                                 NotifyFilters.LastWrite |
+		                                 NotifyFilters.Security |
+		                                 NotifyFilters.Size;
 
 		fileSystemWatcher.EnableRaisingEvents = true;
 
@@ -616,7 +619,7 @@ public partial class NotifyFiltersTests
 			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName |
-										 NotifyFilters.FileName;
+		                                 NotifyFilters.FileName;
 		if (!Test.RunsOnMac)
 		{
 			fileSystemWatcher.NotifyFilter |= NotifyFilters.CreationTime;

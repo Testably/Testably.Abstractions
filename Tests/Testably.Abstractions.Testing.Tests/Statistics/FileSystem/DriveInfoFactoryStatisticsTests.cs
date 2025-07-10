@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
 using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
@@ -15,7 +14,8 @@ public sealed class DriveInfoFactoryStatisticsTests
 		sut.DriveInfo.GetDrives();
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.DriveInfo).OnlyContainsMethodCall(nameof(IDriveInfoFactory.GetDrives));
+		await That(sut.Statistics.DriveInfo)
+			.OnlyContainsMethodCall(nameof(IDriveInfoFactory.GetDrives));
 	}
 
 	[Fact]

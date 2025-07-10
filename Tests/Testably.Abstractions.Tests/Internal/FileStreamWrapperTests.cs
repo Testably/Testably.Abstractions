@@ -30,7 +30,8 @@ public sealed class FileStreamWrapperTests : IDisposable
 
 	[Theory]
 	[AutoData]
-	public async Task RetrieveMetadata_ShouldReturnStoredValue(string path, string key, object value)
+	public async Task RetrieveMetadata_ShouldReturnStoredValue(string path, string key,
+		object value)
 	{
 		using FileSystemStream sut = FileSystem.FileStream.New(path, FileMode.OpenOrCreate);
 

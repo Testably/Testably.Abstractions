@@ -1,5 +1,4 @@
 using AutoFixture;
-using NSubstitute.ExceptionExtensions;
 using System.IO;
 using System.Linq;
 using System.Text;

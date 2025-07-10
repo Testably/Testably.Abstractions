@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
@@ -136,7 +134,8 @@ public partial class GetFullPathTests
 	}
 
 	[Fact]
-	public async Task GetFullPath_RelativePathWithDrive_WhenCurrentDirectoryIsDifferent_ShouldReturnExpectedValue()
+	public async Task
+		GetFullPath_RelativePathWithDrive_WhenCurrentDirectoryIsDifferent_ShouldReturnExpectedValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 

@@ -11,7 +11,7 @@ public partial class EnumerateDirectoriesTests
 	[Theory]
 	[AutoData]
 	public async Task EnumerateDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
-			string path)
+		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
@@ -56,11 +56,13 @@ public partial class EnumerateDirectoriesTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Matching(d => d.Name == subdirectoryName).Because($"it should match '{searchPattern}'");
+			await That(result).HasSingle().Matching(d => d.Name == subdirectoryName)
+				.Because($"it should match '{searchPattern}'");
 		}
 		else
 		{
-			await That(result).IsEmpty().Because($"{subdirectoryName} should not match '{searchPattern}'");
+			await That(result).IsEmpty()
+				.Because($"{subdirectoryName} should not match '{searchPattern}'");
 		}
 	}
 
@@ -112,7 +114,7 @@ public partial class EnumerateDirectoriesTests
 	[Theory]
 	[AutoData]
 	public async Task EnumerateDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
-			string path)
+		string path)
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);

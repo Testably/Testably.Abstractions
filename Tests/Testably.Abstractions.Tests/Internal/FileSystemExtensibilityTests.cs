@@ -22,7 +22,8 @@ public class FileSystemExtensibilityTests
 
 	[Theory]
 	[AutoData]
-	public async Task RetrieveMetadata_WithoutStoringBefore_ShouldReturnDefault(string path, string key)
+	public async Task RetrieveMetadata_WithoutStoringBefore_ShouldReturnDefault(string path,
+		string key)
 	{
 		RealFileSystem fileSystem = new();
 		IFileInfo sut = fileSystem.FileInfo.New(path);
@@ -35,7 +36,8 @@ public class FileSystemExtensibilityTests
 
 	[Theory]
 	[AutoData]
-	public async Task StoreMetadata_ShouldMakeValueRetrievable(string path, string key, object value)
+	public async Task StoreMetadata_ShouldMakeValueRetrievable(string path, string key,
+		object value)
 	{
 		RealFileSystem fileSystem = new();
 		IFileInfo sut = fileSystem.FileInfo.New(path);

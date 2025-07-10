@@ -1,5 +1,4 @@
 ﻿using System.Threading;
-using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests;
@@ -11,7 +10,8 @@ public class MockTimeSystemTests
 	{
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
-			await Record.ExceptionAsync(() => timeSystem.Task.Delay(Timeout.Infinite, TestContext.Current.CancellationToken));
+			await Record.ExceptionAsync(()
+				=> timeSystem.Task.Delay(Timeout.Infinite, TestContext.Current.CancellationToken));
 
 		await That(exception).IsNull();
 	}
@@ -22,7 +22,8 @@ public class MockTimeSystemTests
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
 			await Record.ExceptionAsync(()
-				=> timeSystem.Task.Delay(Timeout.InfiniteTimeSpan, TestContext.Current.CancellationToken));
+				=> timeSystem.Task.Delay(Timeout.InfiniteTimeSpan,
+					TestContext.Current.CancellationToken));
 
 		await That(exception).IsNull();
 	}
@@ -31,18 +32,22 @@ public class MockTimeSystemTests
 	public async Task Delay_LessThanInfinite_ShouldNotThrowException()
 	{
 		MockTimeSystem timeSystem = new();
+
 		async Task Act()
 			=> await timeSystem.Task.Delay(-2, TestContext.Current.CancellationToken);
 
-		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>().WithParamName("millisecondsDelay");
+		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>()
+			.WithParamName("millisecondsDelay");
 	}
 
 	[Fact]
 	public async Task Delay_LessThanInfiniteTimeSpan_ShouldNotThrowException()
 	{
 		MockTimeSystem timeSystem = new();
+
 		async Task Act()
-			=> await timeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2), TestContext.Current.CancellationToken);
+			=> await timeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2),
+				TestContext.Current.CancellationToken);
 
 		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>().WithParamName("delay");
 	}

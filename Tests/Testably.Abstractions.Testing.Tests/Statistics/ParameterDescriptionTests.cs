@@ -139,7 +139,8 @@ public sealed class ParameterDescriptionTests
 
 	[Theory]
 	[AutoData]
-	public async Task ToString_WithStringValue_ShouldReturnValueEnclosedInQuotationMarks(string value)
+	public async Task ToString_WithStringValue_ShouldReturnValueEnclosedInQuotationMarks(
+		string value)
 	{
 		ParameterDescription sut = ParameterDescription.FromOutParameter(value);
 

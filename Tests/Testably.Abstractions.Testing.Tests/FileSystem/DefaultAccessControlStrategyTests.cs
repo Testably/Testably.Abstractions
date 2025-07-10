@@ -15,7 +15,7 @@ public class DefaultAccessControlStrategyTests
 	public async Task Constructor_NullCallback_ShouldThrowArgumentNullException()
 	{
 		void Act()
-		{ 
+		{
 			_ = new DefaultAccessControlStrategy(null!);
 		}
 

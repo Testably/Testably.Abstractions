@@ -21,7 +21,8 @@ public partial class ExceptionTests
 		await That(Act).Throws<ArgumentException>()
 			.WithHResult(-2147024809).And
 			.WithParamName(ignoreParamCheck || Test.IsNetFramework ? null : paramName)
-			.Because($"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+			.Because(
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
@@ -37,7 +38,8 @@ public partial class ExceptionTests
 
 		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName(ignoreParamCheck ? null : paramName)
-			.Because($"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+			.Because(
+				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
@@ -56,7 +58,8 @@ public partial class ExceptionTests
 		await That(Act).Throws<ArgumentException>()
 			.WithHResult(-2147024809).And
 			.WithParamName(ignoreParamCheck || Test.IsNetFramework ? null : paramName)
-			.Because($"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+			.Because(
+				$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	#region Helpers
@@ -86,8 +89,10 @@ public partial class ExceptionTests
 			Expression<Action<IFileVersionInfoFactory>> Callback)>
 		GetFileVersionInfoFactoryCallbackTestParameters(string value)
 	{
-		yield return (ExceptionTestHelper.TestTypes.IgnoreParamNameCheck | ExceptionTestHelper.TestTypes.All, "fileName", fileVersionInfoFactory
-			=> fileVersionInfoFactory.GetVersionInfo(value));
+		yield return (
+			ExceptionTestHelper.TestTypes.IgnoreParamNameCheck | ExceptionTestHelper.TestTypes.All,
+			"fileName", fileVersionInfoFactory
+				=> fileVersionInfoFactory.GetVersionInfo(value));
 	}
 
 	#endregion

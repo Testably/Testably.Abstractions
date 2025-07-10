@@ -1,4 +1,3 @@
-using NSubstitute.ExceptionExtensions;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -32,6 +31,7 @@ public partial class EnumerateDirectoriesTests
 			string path)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
+
 		void Act()
 			=> FileSystem.Directory.EnumerateDirectories(path).ToList();
 
@@ -57,7 +57,8 @@ public partial class EnumerateDirectoriesTests
 	}
 
 	[Fact]
-	public async Task EnumerateDirectories_RelativePathToParentDirectory_ShouldNotIncludeTrailingSlash()
+	public async Task
+		EnumerateDirectories_RelativePathToParentDirectory_ShouldNotIncludeTrailingSlash()
 	{
 		string path = "foo/..";
 		FileSystem.Directory.CreateDirectory("foo");
@@ -73,7 +74,8 @@ public partial class EnumerateDirectoriesTests
 
 	[Theory]
 	[AutoData]
-	public async Task EnumerateDirectories_SearchOptionAllDirectories_FullPath_ShouldReturnAllSubdirectoriesWithFullPath(
+	public async Task
+		EnumerateDirectories_SearchOptionAllDirectories_FullPath_ShouldReturnAllSubdirectoriesWithFullPath(
 			string path)
 	{
 		IDirectoryInfo baseDirectory =
@@ -94,7 +96,7 @@ public partial class EnumerateDirectoriesTests
 	[Theory]
 	[AutoData]
 	public async Task EnumerateDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
-			string path)
+		string path)
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
@@ -136,11 +138,14 @@ public partial class EnumerateDirectoriesTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Which.IsEqualTo(FileSystem.Path.Combine("foo", subdirectoryName)).Because($"it should match {searchPattern}");
+			await That(result).HasSingle().Which
+				.IsEqualTo(FileSystem.Path.Combine("foo", subdirectoryName))
+				.Because($"it should match {searchPattern}");
 		}
 		else
 		{
-			await That(result).IsEmpty().Because($"{subdirectoryName} should not match {searchPattern}");
+			await That(result).IsEmpty()
+				.Because($"{subdirectoryName} should not match {searchPattern}");
 		}
 	}
 
@@ -154,9 +159,10 @@ public partial class EnumerateDirectoriesTests
 #endif
 	[InlineAutoData(false, "foo.x", ".xls", "foo")]
 	[InlineAutoData(false, "?.xls", ".xlsx", "a")]
-	public async Task EnumerateDirectories_SearchPattern_WithFileExtension_ShouldReturnExpectedValue(
-		bool expectToBeFound, string searchPattern, string extension,
-		string fileNameWithoutExtension)
+	public async Task
+		EnumerateDirectories_SearchPattern_WithFileExtension_ShouldReturnExpectedValue(
+			bool expectToBeFound, string searchPattern, string extension,
+			string fileNameWithoutExtension)
 	{
 		string fileName = $"{fileNameWithoutExtension}{extension}";
 		FileSystem.Initialize().WithSubdirectory(fileName);
@@ -166,7 +172,8 @@ public partial class EnumerateDirectoriesTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Which.EndsWith(extension).Because($"it should match {searchPattern}");
+			await That(result).HasSingle().Which.EndsWith(extension)
+				.Because($"it should match {searchPattern}");
 		}
 		else
 		{
@@ -493,7 +500,7 @@ public partial class EnumerateDirectoriesTests
 	[Theory]
 	[AutoData]
 	public async Task EnumerateDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
-			string path)
+		string path)
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);

@@ -96,7 +96,8 @@ public class NullContainerTests
 
 	[Theory]
 	[AutoData]
-	public async Task RequestAccess_Dispose_Twice_ShouldDoNothing(FileAccess access, FileShare share)
+	public async Task RequestAccess_Dispose_Twice_ShouldDoNothing(FileAccess access,
+		FileShare share)
 	{
 		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);

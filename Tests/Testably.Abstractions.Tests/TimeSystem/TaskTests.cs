@@ -1,5 +1,4 @@
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
@@ -14,7 +13,7 @@ public partial class TaskTests
 
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
-		
+
 		async Task Act()
 			=> await TimeSystem.Task.Delay(millisecondsTimeout, cts.Token);
 
@@ -41,7 +40,8 @@ public partial class TaskTests
 		await TimeSystem.Task.Delay(millisecondsTimeout, TestContext.Current.CancellationToken);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
-		await That(after).IsOnOrAfter(before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
+		await That(after)
+			.IsOnOrAfter(before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
 	}
 
 	[Fact]
@@ -63,7 +63,8 @@ public partial class TaskTests
 		Delay_Timespan_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
 		async Task Act()
-			=> await TimeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2), TestContext.Current.CancellationToken);
+			=> await TimeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2),
+				TestContext.Current.CancellationToken);
 
 		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086);
 	}

@@ -60,7 +60,8 @@ public partial class ReadAllLinesAsyncTests
 		string contents = string.Join(Environment.NewLine, lines);
 		await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
-		string[] results = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
+		string[] results =
+ await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 
 		await That(results).IsEqualTo(lines);
 	}
@@ -76,7 +77,8 @@ public partial class ReadAllLinesAsyncTests
 		string contents = string.Join(Environment.NewLine, lines);
 		await FileSystem.File.WriteAllTextAsync(path, contents, writeEncoding, TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path, readEncoding, TestContext.Current.CancellationToken);
+		string[] result =
+ await FileSystem.File.ReadAllLinesAsync(path, readEncoding, TestContext.Current.CancellationToken);
 
 		await That(result).IsNotEqualTo(lines).InAnyOrder();
 		await That(result[0]).IsEqualTo(lines[0]);

@@ -18,6 +18,7 @@ public partial class WriteTests
 		using FileSystemStream stream = FileSystem.FileInfo.New(path).OpenRead();
 
 		byte[] buffer = new byte[bytes.Length];
+
 		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
@@ -112,12 +113,14 @@ public partial class WriteTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
@@ -244,7 +247,7 @@ public partial class WriteTests
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
-		
+
 		void Act()
 		{
 			using (FileSystemStream stream = FileSystem.File.OpenWrite(path))

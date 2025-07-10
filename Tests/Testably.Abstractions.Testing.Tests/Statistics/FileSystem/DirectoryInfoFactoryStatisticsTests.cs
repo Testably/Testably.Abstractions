@@ -15,7 +15,8 @@ public sealed class DirectoryInfoFactoryStatisticsTests
 		sut.DirectoryInfo.New(path);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.DirectoryInfo).OnlyContainsMethodCall(nameof(IDirectoryInfoFactory.New),
+		await That(sut.Statistics.DirectoryInfo).OnlyContainsMethodCall(
+			nameof(IDirectoryInfoFactory.New),
 			path);
 	}
 
@@ -28,7 +29,8 @@ public sealed class DirectoryInfoFactoryStatisticsTests
 		sut.DirectoryInfo.Wrap(directoryInfo);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.DirectoryInfo).OnlyContainsMethodCall(nameof(IDirectoryInfoFactory.Wrap),
+		await That(sut.Statistics.DirectoryInfo).OnlyContainsMethodCall(
+			nameof(IDirectoryInfoFactory.Wrap),
 			directoryInfo);
 	}
 

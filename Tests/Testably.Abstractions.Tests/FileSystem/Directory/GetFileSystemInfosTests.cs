@@ -1,4 +1,3 @@
-using NSubstitute.ExceptionExtensions;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,8 +18,9 @@ public partial class GetFileSystemInfosTests
 			string path)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
+
 		void Act()
-				=> FileSystem.Directory.GetFileSystemEntries(path).ToList();
+			=> FileSystem.Directory.GetFileSystemEntries(path).ToList();
 
 		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithMessageContaining($"'{expectedPath}'.").And
@@ -30,7 +30,8 @@ public partial class GetFileSystemInfosTests
 
 	[Theory]
 	[AutoData]
-	public async Task GetFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
+	public async Task
+		GetFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -54,7 +55,8 @@ public partial class GetFileSystemInfosTests
 
 	[Theory]
 	[AutoData]
-	public async Task GetFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
+	public async Task
+		GetFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -97,7 +99,8 @@ public partial class GetFileSystemInfosTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Which.EndsWith(fileName).Because($"it should match {searchPattern}");
+			await That(result).HasSingle().Which.EndsWith(fileName)
+				.Because($"it should match {searchPattern}");
 		}
 		else
 		{
@@ -156,7 +159,8 @@ public partial class GetFileSystemInfosTests
 
 	[Theory]
 	[AutoData]
-	public async Task GetFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
+	public async Task
+		GetFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -181,7 +185,7 @@ public partial class GetFileSystemInfosTests
 	[Theory]
 	[AutoData]
 	public async Task GetFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
-			string path)
+		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
@@ -201,7 +205,8 @@ public partial class GetFileSystemInfosTests
 	}
 
 	[Fact]
-	public async Task GetFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
+	public async Task
+		GetFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()

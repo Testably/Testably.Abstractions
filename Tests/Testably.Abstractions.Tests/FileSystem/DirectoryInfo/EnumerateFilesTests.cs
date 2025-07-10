@@ -11,7 +11,7 @@ public partial class EnumerateFilesTests
 	[Theory]
 	[AutoData]
 	public async Task EnumerateFiles_SearchOptionAllFiles_ShouldReturnAllFiles(
-			string path)
+		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
@@ -60,7 +60,8 @@ public partial class EnumerateFilesTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Matching(d => d.Name == fileName).Because($"it should match '{searchPattern}'");
+			await That(result).HasSingle().Matching(d => d.Name == fileName)
+				.Because($"it should match '{searchPattern}'");
 		}
 		else
 		{
@@ -170,7 +171,8 @@ public partial class EnumerateFilesTests
 	}
 
 	[Fact]
-	public async Task EnumerateFiles_WithSearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
+	public async Task
+		EnumerateFiles_WithSearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()

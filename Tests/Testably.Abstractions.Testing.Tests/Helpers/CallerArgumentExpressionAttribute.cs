@@ -15,6 +15,11 @@ namespace System.Runtime.CompilerServices
 	internal sealed class CallerArgumentExpressionAttribute : Attribute
 	{
 		/// <summary>
+		///     Gets the name of the parameter whose expression should be captured as a string.
+		/// </summary>
+		public string ParameterName { get; }
+
+		/// <summary>
 		///     Initializes a new instance of the <see cref="CallerArgumentExpressionAttribute" /> class.
 		/// </summary>
 		/// <param name="parameterName">The name of the parameter whose expression should be captured as a string.</param>
@@ -22,11 +27,6 @@ namespace System.Runtime.CompilerServices
 		{
 			ParameterName = parameterName;
 		}
-
-		/// <summary>
-		///     Gets the name of the parameter whose expression should be captured as a string.
-		/// </summary>
-		public string ParameterName { get; }
 	}
 }
 

@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
@@ -52,7 +51,7 @@ public class FileStreamStatisticsTests
 	{
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
-			
+
 		fileStream.Close();
 
 		await That(sut.Statistics.FileStream["foo"])
@@ -122,7 +121,7 @@ public class FileStreamStatisticsTests
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(3);
 		await That(sut.Statistics.FileStream["foo"].Methods.Length).IsEqualTo(2);
-		await That(sut.Statistics.FileStream["foo"].Methods).HasSingle().Matching(c => 
+		await That(sut.Statistics.FileStream["foo"].Methods).HasSingle().Matching(c =>
 			string.Equals(c.Name, nameof(FileSystemStream.EndWrite), StringComparison.Ordinal) &&
 			c.Parameters.Length == 1 &&
 			c.Parameters[0].Is(asyncResult));
@@ -215,9 +214,9 @@ public class FileStreamStatisticsTests
 		int count = 2;
 		CancellationToken cancellationToken = CancellationToken.None;
 
-#pragma warning disable CA1835 // Change the 'ReadAsync' method call to use the 'Stream.ReadAsync(Memory<byte>, CancellationToken)' overload
+		#pragma warning disable CA1835 // Change the 'ReadAsync' method call to use the 'Stream.ReadAsync(Memory<byte>, CancellationToken)' overload
 		_ = await fileStream.ReadAsync(buffer, offset, count, cancellationToken);
-#pragma warning restore CA1835
+		#pragma warning restore CA1835
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(2);
 		await That(sut.Statistics.FileStream["foo"])
@@ -344,9 +343,9 @@ public class FileStreamStatisticsTests
 		int count = 2;
 		CancellationToken cancellationToken = CancellationToken.None;
 
-#pragma warning disable CA1835 // Change the 'WriteAsync' method call to use the 'Stream.WriteAsync(ReadOnlyMemory<byte>, CancellationToken)' overload
+		#pragma warning disable CA1835 // Change the 'WriteAsync' method call to use the 'Stream.WriteAsync(ReadOnlyMemory<byte>, CancellationToken)' overload
 		await fileStream.WriteAsync(buffer, offset, count, cancellationToken);
-#pragma warning restore CA1835
+		#pragma warning restore CA1835
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(2);
 		await That(sut.Statistics.FileStream["foo"])

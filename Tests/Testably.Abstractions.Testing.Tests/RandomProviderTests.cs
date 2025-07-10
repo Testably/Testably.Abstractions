@@ -294,7 +294,7 @@ public partial class RandomProviderTests
 	[Theory]
 	[AutoData]
 	public async Task GenerateRandom_NextBytes_WithSmallerBuffer_ShouldReturnPartlyInitializedBytes(
-			int seed, byte[] value)
+		int seed, byte[] value)
 	{
 		List<byte[]> results = [];
 		IRandomProvider randomProvider =
@@ -307,7 +307,8 @@ public partial class RandomProviderTests
 			random.NextBytes(buffer);
 			results.Add(buffer);
 		}
-		var expected = value.Concat(new[]
+
+		byte[] expected = value.Concat(new[]
 		{
 			(byte)0,
 		}).ToArray();

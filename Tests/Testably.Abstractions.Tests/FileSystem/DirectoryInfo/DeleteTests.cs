@@ -34,6 +34,7 @@ public partial class DeleteTests
 		openFile.Write([0], 0, 1);
 		openFile.Flush();
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+
 		void Act()
 		{
 			sut.Delete(true);

@@ -1,8 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics;
@@ -131,10 +129,11 @@ public sealed partial class StatisticsTests
 
 		foreach (string directory in directories)
 		{
-			await That(sut.Statistics.Directory.Methods).HasSingle().Matching(
-				x => string.Equals(x.Name, nameof(Directory.CreateDirectory), StringComparison.Ordinal) &&
-				x.Parameters.Length == 1 &&
-				x.Parameters[0].Is(directory));
+			await That(sut.Statistics.Directory.Methods).HasSingle().Matching(x
+				=> string.Equals(x.Name, nameof(Directory.CreateDirectory),
+					   StringComparison.Ordinal) &&
+				   x.Parameters.Length == 1 &&
+				   x.Parameters[0].Is(directory));
 		}
 
 		await That(sut.Statistics.Directory.Methods.Select(x => x.Counter))
@@ -151,14 +150,19 @@ public sealed partial class StatisticsTests
 		using FileSystemStream stream = fileInfo.Open(FileMode.Open, FileAccess.Read);
 		_ = new StreamReader(stream).ReadToEnd();
 
-		await That(sut.Statistics.Directory.Methods[0]).Satisfies(m => string.Equals(m.Name, nameof(IDirectory.CreateDirectory), StringComparison.Ordinal) &&
-				m.Counter == 1);
-		await That(sut.Statistics.File.Methods[0]).Satisfies(m => string.Equals(m.Name, nameof(IFile.WriteAllText), StringComparison.Ordinal) &&
-				m.Counter == 2);
-		await That(sut.Statistics.FileInfo.Methods[0]).Satisfies(m => string.Equals(m.Name, nameof(IFileInfoFactory.New), StringComparison.Ordinal) &&
-				m.Counter == 3);
-		await That(sut.Statistics.FileInfo["bar.txt"].Methods[0]).Satisfies(m => string.Equals(m.Name, nameof(IFileInfo.Open), StringComparison.Ordinal) &&
-				// Note: Index 4 could be used internally for creating the full path of the file info.
-				m.Counter >= 4);
+		await That(sut.Statistics.Directory.Methods[0]).Satisfies(m
+			=> string.Equals(m.Name, nameof(IDirectory.CreateDirectory),
+				   StringComparison.Ordinal) &&
+			   m.Counter == 1);
+		await That(sut.Statistics.File.Methods[0]).Satisfies(m
+			=> string.Equals(m.Name, nameof(IFile.WriteAllText), StringComparison.Ordinal) &&
+			   m.Counter == 2);
+		await That(sut.Statistics.FileInfo.Methods[0]).Satisfies(m
+			=> string.Equals(m.Name, nameof(IFileInfoFactory.New), StringComparison.Ordinal) &&
+			   m.Counter == 3);
+		await That(sut.Statistics.FileInfo["bar.txt"].Methods[0]).Satisfies(m
+			=> string.Equals(m.Name, nameof(IFileInfo.Open), StringComparison.Ordinal) &&
+			   // Note: Index 4 could be used internally for creating the full path of the file info.
+			   m.Counter >= 4);
 	}
 }

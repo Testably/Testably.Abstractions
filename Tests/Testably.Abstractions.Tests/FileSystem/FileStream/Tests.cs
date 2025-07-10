@@ -1,6 +1,5 @@
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using Testably.Abstractions.Helpers;
 #if FEATURE_SPAN
 using System.Text;
@@ -62,8 +61,8 @@ public partial class Tests
 		using FileSystemStream readStream = FileSystem.File.OpenRead(path);
 		IFileSystemExtensibility? extensibility = readStream as IFileSystemExtensibility;
 		bool result = extensibility?.TryGetWrappedInstance(out System.IO.FileStream? fileStream)
-					  ?? throw new NotSupportedException(
-						  $"{readStream.GetType()} does not implement IFileSystemExtensibility");
+		              ?? throw new NotSupportedException(
+			              $"{readStream.GetType()} does not implement IFileSystemExtensibility");
 
 		if (FileSystem is RealFileSystem)
 		{
@@ -149,7 +148,7 @@ public partial class Tests
 			using FileSystemStream stream = FileSystem.File.Create(path);
 			await stream.FlushAsync(cts.Token);
 		}
-		
+
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 

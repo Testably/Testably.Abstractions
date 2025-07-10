@@ -15,7 +15,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.CreateDirectory(path);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.CreateDirectory),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.CreateDirectory),
 			path);
 	}
 
@@ -170,7 +171,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.EnumerateFiles(path);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.EnumerateFiles),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.EnumerateFiles),
 			path);
 	}
 
@@ -202,7 +204,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.EnumerateFiles(path, searchPattern, searchOption);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.EnumerateFiles),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.EnumerateFiles),
 			path, searchPattern, searchOption);
 	}
 
@@ -216,7 +219,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.EnumerateFiles(path, searchPattern);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.EnumerateFiles),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.EnumerateFiles),
 			path, searchPattern);
 	}
 
@@ -253,7 +257,8 @@ public sealed class DirectoryStatisticsTests
 #endif
 
 	[Fact]
-	public async Task Method_EnumerateFileSystemEntries_String_String_SearchOption_ShouldRegisterCall()
+	public async Task
+		Method_EnumerateFileSystemEntries_String_String_SearchOption_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -305,7 +310,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.GetCreationTime(path);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.GetCreationTime),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.GetCreationTime),
 			path);
 	}
 
@@ -318,7 +324,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.GetCreationTimeUtc(path);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.GetCreationTimeUtc),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.GetCreationTimeUtc),
 			path);
 	}
 
@@ -344,7 +351,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.GetDirectories(path);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.GetDirectories),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.GetDirectories),
 			path);
 	}
 
@@ -378,7 +386,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.GetDirectories(path, searchPattern, searchOption);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.GetDirectories),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.GetDirectories),
 			path, searchPattern, searchOption);
 	}
 
@@ -393,7 +402,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.GetDirectories(path, searchPattern);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.GetDirectories),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.GetDirectories),
 			path, searchPattern);
 	}
 
@@ -406,7 +416,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.GetDirectoryRoot(path);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.GetDirectoryRoot),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.GetDirectoryRoot),
 			path);
 	}
 
@@ -549,7 +560,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.GetLastAccessTime(path);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.GetLastAccessTime),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.GetLastAccessTime),
 			path);
 	}
 
@@ -576,7 +588,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.GetLastWriteTime(path);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.GetLastWriteTime),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.GetLastWriteTime),
 			path);
 	}
 
@@ -589,7 +602,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.GetLastWriteTimeUtc(path);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.GetLastWriteTimeUtc),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.GetLastWriteTimeUtc),
 			path);
 	}
 
@@ -601,7 +615,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.GetLogicalDrives();
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.GetLogicalDrives));
+		await That(sut.Statistics.Directory)
+			.OnlyContainsMethodCall(nameof(IDirectory.GetLogicalDrives));
 	}
 
 	[Fact]
@@ -659,7 +674,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.SetCreationTime(path, creationTime);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.SetCreationTime),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.SetCreationTime),
 			path, creationTime);
 	}
 
@@ -674,7 +690,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.SetCreationTimeUtc(path, creationTimeUtc);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.SetCreationTimeUtc),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.SetCreationTimeUtc),
 			path, creationTimeUtc);
 	}
 
@@ -688,7 +705,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.SetCurrentDirectory(path);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.SetCurrentDirectory),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.SetCurrentDirectory),
 			path);
 	}
 
@@ -703,7 +721,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.SetLastAccessTime(path, lastAccessTime);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.SetLastAccessTime),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.SetLastAccessTime),
 			path, lastAccessTime);
 	}
 
@@ -734,7 +753,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.SetLastWriteTime(path, lastWriteTime);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.SetLastWriteTime),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.SetLastWriteTime),
 			path, lastWriteTime);
 	}
 
@@ -749,7 +769,8 @@ public sealed class DirectoryStatisticsTests
 		sut.Directory.SetLastWriteTimeUtc(path, lastWriteTimeUtc);
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
-		await That(sut.Statistics.Directory).OnlyContainsMethodCall(nameof(IDirectory.SetLastWriteTimeUtc),
+		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
+			nameof(IDirectory.SetLastWriteTimeUtc),
 			path, lastWriteTimeUtc);
 	}
 

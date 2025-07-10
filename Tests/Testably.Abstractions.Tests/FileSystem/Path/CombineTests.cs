@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
@@ -23,11 +21,14 @@ public partial class CombineTests
 	{
 		void Act1() =>
 			FileSystem.Path.Combine(pathA, null!);
+
 		void Act2() =>
 			FileSystem.Path.Combine(null!, pathA);
 
-		await That(Act1).Throws<ArgumentNullException>().WithParamName("path2").And.WithHResult(-2147467261);
-		await That(Act2).Throws<ArgumentNullException>().WithParamName("path1").And.WithHResult(-2147467261);
+		await That(Act1).Throws<ArgumentNullException>().WithParamName("path2").And
+			.WithHResult(-2147467261);
+		await That(Act2).Throws<ArgumentNullException>().WithParamName("path1").And
+			.WithHResult(-2147467261);
 	}
 
 	[Theory]
@@ -71,7 +72,7 @@ public partial class CombineTests
 		string path1, string path2)
 	{
 		string expectedPath = path1
-							  + FileSystem.Path.DirectorySeparatorChar + path2;
+		                      + FileSystem.Path.DirectorySeparatorChar + path2;
 
 		string result = FileSystem.Path.Combine(path1, path2);
 
@@ -96,18 +97,24 @@ public partial class CombineTests
 
 	[Theory]
 	[AutoData]
-	public async Task Combine_3Paths_OneNull_ShouldThrowArgumentNullException(string pathA, string pathB)
+	public async Task Combine_3Paths_OneNull_ShouldThrowArgumentNullException(string pathA,
+		string pathB)
 	{
 		void Act1() =>
 			FileSystem.Path.Combine(pathA, pathB, null!);
+
 		void Act2() =>
 			FileSystem.Path.Combine(null!, pathA, pathB);
+
 		void Act3() =>
 			FileSystem.Path.Combine(pathA, null!, pathB);
 
-		await That(Act1).Throws<ArgumentNullException>().WithParamName("path3").And.WithHResult(-2147467261);
-		await That(Act2).Throws<ArgumentNullException>().WithParamName("path1").And.WithHResult(-2147467261);
-		await That(Act3).Throws<ArgumentNullException>().WithParamName("path2").And.WithHResult(-2147467261);
+		await That(Act1).Throws<ArgumentNullException>().WithParamName("path3").And
+			.WithHResult(-2147467261);
+		await That(Act2).Throws<ArgumentNullException>().WithParamName("path1").And
+			.WithHResult(-2147467261);
+		await That(Act3).Throws<ArgumentNullException>().WithParamName("path2").And
+			.WithHResult(-2147467261);
 	}
 
 	[Theory]
@@ -155,8 +162,8 @@ public partial class CombineTests
 		string path1, string path2, string path3)
 	{
 		string expectedPath = path1
-							  + FileSystem.Path.DirectorySeparatorChar + path2
-							  + FileSystem.Path.DirectorySeparatorChar + path3;
+		                      + FileSystem.Path.DirectorySeparatorChar + path2
+		                      + FileSystem.Path.DirectorySeparatorChar + path3;
 
 		string result = FileSystem.Path.Combine(path1, path2, path3);
 
@@ -183,22 +190,30 @@ public partial class CombineTests
 
 	[Theory]
 	[AutoData]
-	public async Task Combine_4Paths_OneNull_ShouldThrowArgumentNullException(string pathA, string pathB,
+	public async Task Combine_4Paths_OneNull_ShouldThrowArgumentNullException(string pathA,
+		string pathB,
 		string pathC)
 	{
 		void Act1() =>
 			FileSystem.Path.Combine(pathA, pathB, pathC, null!);
+
 		void Act2() =>
 			FileSystem.Path.Combine(null!, pathA, pathB, pathC);
+
 		void Act3() =>
 			FileSystem.Path.Combine(pathA, null!, pathB, pathC);
+
 		void Act4() =>
 			FileSystem.Path.Combine(pathA, pathB, null!, pathC);
 
-		await That(Act1).Throws<ArgumentNullException>().WithParamName("path4").And.WithHResult(-2147467261);
-		await That(Act2).Throws<ArgumentNullException>().WithParamName("path1").And.WithHResult(-2147467261);
-		await That(Act3).Throws<ArgumentNullException>().WithParamName("path2").And.WithHResult(-2147467261);
-		await That(Act4).Throws<ArgumentNullException>().WithParamName("path3").And.WithHResult(-2147467261);
+		await That(Act1).Throws<ArgumentNullException>().WithParamName("path4").And
+			.WithHResult(-2147467261);
+		await That(Act2).Throws<ArgumentNullException>().WithParamName("path1").And
+			.WithHResult(-2147467261);
+		await That(Act3).Throws<ArgumentNullException>().WithParamName("path2").And
+			.WithHResult(-2147467261);
+		await That(Act4).Throws<ArgumentNullException>().WithParamName("path3").And
+			.WithHResult(-2147467261);
 	}
 
 	[Theory]
@@ -249,9 +264,9 @@ public partial class CombineTests
 		string path1, string path2, string path3, string path4)
 	{
 		string expectedPath = path1
-							  + FileSystem.Path.DirectorySeparatorChar + path2
-							  + FileSystem.Path.DirectorySeparatorChar + path3
-							  + FileSystem.Path.DirectorySeparatorChar + path4;
+		                      + FileSystem.Path.DirectorySeparatorChar + path2
+		                      + FileSystem.Path.DirectorySeparatorChar + path3
+		                      + FileSystem.Path.DirectorySeparatorChar + path4;
 
 		string result = FileSystem.Path.Combine(path1, path2, path3, path4);
 
@@ -264,7 +279,8 @@ public partial class CombineTests
 		void Act() =>
 			FileSystem.Path.Combine(null!);
 
-		await That(Act).Throws<ArgumentNullException>().WithParamName("paths").And.WithHResult(-2147467261);
+		await That(Act).Throws<ArgumentNullException>().WithParamName("paths").And
+			.WithHResult(-2147467261);
 	}
 
 	[Theory]
@@ -275,50 +291,15 @@ public partial class CombineTests
 		string expectedPath = FileSystem.Path.Combine(path1, path2, path3, path4);
 
 		string result1 =
-			FileSystem.Path.Combine(new[]
-			{
-				string.Empty,
-				path1,
-				path2,
-				path3,
-				path4,
-			});
+			FileSystem.Path.Combine(string.Empty, path1, path2, path3, path4);
 		string result2 =
-			FileSystem.Path.Combine(new[]
-			{
-				path1,
-				string.Empty,
-				path2,
-				path3,
-				path4,
-			});
+			FileSystem.Path.Combine(path1, string.Empty, path2, path3, path4);
 		string result3 =
-			FileSystem.Path.Combine(new[]
-			{
-				path1,
-				path2,
-				string.Empty,
-				path3,
-				path4,
-			});
+			FileSystem.Path.Combine(path1, path2, string.Empty, path3, path4);
 		string result4 =
-			FileSystem.Path.Combine(new[]
-			{
-				path1,
-				path2,
-				path3,
-				string.Empty,
-				path4,
-			});
+			FileSystem.Path.Combine(path1, path2, path3, string.Empty, path4);
 		string result5 =
-			FileSystem.Path.Combine(new[]
-			{
-				path1,
-				path2,
-				path3,
-				path4,
-				string.Empty,
-			});
+			FileSystem.Path.Combine(path1, path2, path3, path4, string.Empty);
 
 		await That(result1).IsEqualTo(expectedPath);
 		await That(result2).IsEqualTo(expectedPath);
@@ -333,56 +314,30 @@ public partial class CombineTests
 		string pathA, string pathB, string pathC, string pathD)
 	{
 		void Act1() =>
-			FileSystem.Path.Combine(new[]
-			{
-				pathA,
-				pathB,
-				pathC,
-				pathD,
-				null!,
-			});
-		void Act2() =>
-			FileSystem.Path.Combine(new[]
-			{
-				null!,
-				pathA,
-				pathB,
-				pathC,
-				pathD,
-			});
-		void Act3() =>
-			FileSystem.Path.Combine(new[]
-			{
-				pathA,
-				null!,
-				pathB,
-				pathC,
-				pathD,
-			});
-		void Act4() =>
-			FileSystem.Path.Combine(new[]
-			{
-				pathA,
-				pathB,
-				null!,
-				pathC,
-				pathD,
-			});
-		void Act5() =>
-			FileSystem.Path.Combine(new[]
-			{
-				pathA,
-				pathB,
-				pathC,
-				null!,
-				pathD,
-			});
+			FileSystem.Path.Combine(pathA, pathB, pathC, pathD, null!);
 
-		await That(Act1).Throws<ArgumentNullException>().WithParamName("paths").And.WithHResult(-2147467261);
-		await That(Act2).Throws<ArgumentNullException>().WithParamName("paths").And.WithHResult(-2147467261);
-		await That(Act3).Throws<ArgumentNullException>().WithParamName("paths").And.WithHResult(-2147467261);
-		await That(Act4).Throws<ArgumentNullException>().WithParamName("paths").And.WithHResult(-2147467261);
-		await That(Act5).Throws<ArgumentNullException>().WithParamName("paths").And.WithHResult(-2147467261);
+		void Act2() =>
+			FileSystem.Path.Combine(null!, pathA, pathB, pathC, pathD);
+
+		void Act3() =>
+			FileSystem.Path.Combine(pathA, null!, pathB, pathC, pathD);
+
+		void Act4() =>
+			FileSystem.Path.Combine(pathA, pathB, null!, pathC, pathD);
+
+		void Act5() =>
+			FileSystem.Path.Combine(pathA, pathB, pathC, null!, pathD);
+
+		await That(Act1).Throws<ArgumentNullException>().WithParamName("paths").And
+			.WithHResult(-2147467261);
+		await That(Act2).Throws<ArgumentNullException>().WithParamName("paths").And
+			.WithHResult(-2147467261);
+		await That(Act3).Throws<ArgumentNullException>().WithParamName("paths").And
+			.WithHResult(-2147467261);
+		await That(Act4).Throws<ArgumentNullException>().WithParamName("paths").And
+			.WithHResult(-2147467261);
+		await That(Act5).Throws<ArgumentNullException>().WithParamName("paths").And
+			.WithHResult(-2147467261);
 	}
 
 	[Theory]
@@ -396,14 +351,7 @@ public partial class CombineTests
 		path4 = FileSystem.Path.DirectorySeparatorChar + path4;
 		path5 = FileSystem.Path.DirectorySeparatorChar + path5;
 
-		string result = FileSystem.Path.Combine(new[]
-		{
-			path1,
-			path2,
-			path3,
-			path4,
-			path5,
-		});
+		string result = FileSystem.Path.Combine(path1, path2, path3, path4, path5);
 
 		await That(result).IsEqualTo(path5);
 	}
@@ -427,14 +375,7 @@ public partial class CombineTests
 		path5 = path5.Replace('/', FileSystem.Path.DirectorySeparatorChar);
 		expectedResult = expectedResult.Replace('/', FileSystem.Path.DirectorySeparatorChar);
 
-		string result = FileSystem.Path.Combine(new[]
-		{
-			path1,
-			path2,
-			path3,
-			path4,
-			path5,
-		});
+		string result = FileSystem.Path.Combine(path1, path2, path3, path4, path5);
 
 		await That(result).IsEqualTo(expectedResult);
 	}
@@ -450,19 +391,12 @@ public partial class CombineTests
 		string path1, string path2, string path3, string path4, string path5)
 	{
 		string expectedPath = path1
-							  + FileSystem.Path.DirectorySeparatorChar + path2
-							  + FileSystem.Path.DirectorySeparatorChar + path3
-							  + FileSystem.Path.DirectorySeparatorChar + path4
-							  + FileSystem.Path.DirectorySeparatorChar + path5;
+		                      + FileSystem.Path.DirectorySeparatorChar + path2
+		                      + FileSystem.Path.DirectorySeparatorChar + path3
+		                      + FileSystem.Path.DirectorySeparatorChar + path4
+		                      + FileSystem.Path.DirectorySeparatorChar + path5;
 
-		string result = FileSystem.Path.Combine(new[]
-		{
-			path1,
-			path2,
-			path3,
-			path4,
-			path5,
-		});
+		string result = FileSystem.Path.Combine(path1, path2, path3, path4, path5);
 
 		await That(result).IsEqualTo(expectedPath);
 	}

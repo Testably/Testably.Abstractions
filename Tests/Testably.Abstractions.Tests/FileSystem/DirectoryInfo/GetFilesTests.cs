@@ -11,7 +11,7 @@ public partial class GetFilesTests
 	[Theory]
 	[AutoData]
 	public async Task GetFiles_SearchOptionAllFiles_ShouldReturnAllFiles(
-			string path)
+		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
@@ -60,7 +60,8 @@ public partial class GetFilesTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Matching(d => d.Name == fileName).Because($"it should match '{searchPattern}'");
+			await That(result).HasSingle().Matching(d => d.Name == fileName)
+				.Because($"it should match '{searchPattern}'");
 		}
 		else
 		{

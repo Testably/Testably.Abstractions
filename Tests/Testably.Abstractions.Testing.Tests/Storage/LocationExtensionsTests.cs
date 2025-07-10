@@ -6,7 +6,8 @@ namespace Testably.Abstractions.Testing.Tests.Storage;
 public sealed class LocationExtensionsTests
 {
 	[Fact]
-	public async Task ThrowExceptionIfNotFound_MissingDirectory_ShouldThrowDirectoryNotFoundException()
+	public async Task
+		ThrowExceptionIfNotFound_MissingDirectory_ShouldThrowDirectoryNotFoundException()
 	{
 		MockFileSystem fileSystem = new();
 		IStorageLocation location = fileSystem.Storage.GetLocation("foo/bar.txt");
@@ -21,7 +22,8 @@ public sealed class LocationExtensionsTests
 
 	[Theory]
 	[AutoData]
-	public async Task ThrowExceptionIfNotFound_MissingDirectory_WithCustomCallback_ShouldThrowExceptionFromCallback(
+	public async Task
+		ThrowExceptionIfNotFound_MissingDirectory_WithCustomCallback_ShouldThrowExceptionFromCallback(
 			Exception expectedException)
 	{
 		MockFileSystem fileSystem = new();
@@ -52,7 +54,8 @@ public sealed class LocationExtensionsTests
 
 	[Theory]
 	[AutoData]
-	public async Task ThrowExceptionIfNotFound_MissingFile_WithCustomCallback_ShouldThrowExceptionFromCallback(
+	public async Task
+		ThrowExceptionIfNotFound_MissingFile_WithCustomCallback_ShouldThrowExceptionFromCallback(
 			Exception expectedException)
 	{
 		MockFileSystem fileSystem = new();
@@ -101,7 +104,8 @@ public sealed class LocationExtensionsTests
 
 	[Theory]
 	[AutoData]
-	public async Task ThrowIfNotFound_Null_ShouldExecuteFileNotFoundAction(Exception expectedException)
+	public async Task ThrowIfNotFound_Null_ShouldExecuteFileNotFoundAction(
+		Exception expectedException)
 	{
 		MockFileSystem fileSystem = new();
 		IStorageLocation? location = null;

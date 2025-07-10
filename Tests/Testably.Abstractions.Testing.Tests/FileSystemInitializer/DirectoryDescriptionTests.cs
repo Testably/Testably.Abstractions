@@ -15,7 +15,8 @@ public class DirectoryDescriptionTests
 				.Cast<FileSystemInfoDescription>()
 				.ToArray());
 
-		await That(sut.Children.Select(c => c.Name)).IsInAscendingOrder().Using(StringComparer.Ordinal);
+		await That(sut.Children.Select(c => c.Name)).IsInAscendingOrder()
+			.Using(StringComparer.Ordinal);
 	}
 
 	[Fact]

@@ -94,7 +94,8 @@ public partial class MoveToTests
 
 	[Theory]
 	[AutoData]
-	public async Task MoveTo_MissingDestinationDirectory_ShouldThrowDirectoryNotFoundException_AndNotMoveFile(
+	public async Task
+		MoveTo_MissingDestinationDirectory_ShouldThrowDirectoryNotFoundException_AndNotMoveFile(
 			string sourceName,
 			string missingDirectory,
 			string destinationName,
@@ -179,8 +180,10 @@ public partial class MoveToTests
 		sut.MoveTo(destinationName);
 
 		await That(FileSystem.File.GetCreationTime(destinationName)).IsEqualTo(sourceCreationTime);
-		await That(FileSystem.File.GetLastAccessTime(destinationName)).IsEqualTo(sourceLastAccessTime);
-		await That(FileSystem.File.GetLastWriteTime(destinationName)).IsEqualTo(sourceLastWriteTime);
+		await That(FileSystem.File.GetLastAccessTime(destinationName))
+			.IsEqualTo(sourceLastAccessTime);
+		await That(FileSystem.File.GetLastWriteTime(destinationName))
+			.IsEqualTo(sourceLastWriteTime);
 	}
 
 	[Theory]

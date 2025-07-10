@@ -62,8 +62,8 @@ public partial class RandomProviderTests
 			int iterations = 30;
 			int startValue = 10;
 			int executionCount = 0;
-			RandomProvider.Generator<int> sut = RandomProvider.Generator.FromCallback(
-				() => startValue + executionCount++);
+			RandomProvider.Generator<int> sut =
+				RandomProvider.Generator.FromCallback(() => startValue + executionCount++);
 
 			int[] results = new int[iterations];
 			for (int i = 0; i < iterations; i++)

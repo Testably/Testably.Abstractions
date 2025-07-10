@@ -78,26 +78,31 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public async Task MissingFile_Attributes_ShouldAlwaysBeNegativeOne_AndSetterShouldThrowFileNotFoundException(
+	public async Task
+		MissingFile_Attributes_ShouldAlwaysBeNegativeOne_AndSetterShouldThrowFileNotFoundException(
 			FileAttributes fileAttributes)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.Attributes).IsEqualTo((FileAttributes)(-1));
+
 		void Act()
 		{
 			sut.Attributes = fileAttributes;
 		}
+
 		await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		await That(sut.Attributes).IsEqualTo((FileAttributes)(-1));
 	}
 
 	[Theory]
 	[AutoData]
-	public async Task MissingFile_CreationTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
+	public async Task
+		MissingFile_CreationTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime creationTime)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.CreationTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
+
 		void Act()
 		{
 			sut.CreationTime = creationTime;
@@ -117,11 +122,13 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public async Task MissingFile_CreationTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
+	public async Task
+		MissingFile_CreationTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime creationTimeUtc)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.CreationTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
+
 		void Act()
 		{
 			sut.CreationTimeUtc = creationTimeUtc;
@@ -141,11 +148,13 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public async Task MissingFile_LastAccessTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
+	public async Task
+		MissingFile_LastAccessTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime lastAccessTime)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.LastAccessTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
+
 		void Act()
 		{
 			sut.LastAccessTime = lastAccessTime;
@@ -165,11 +174,13 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public async Task MissingFile_LastAccessTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
+	public async Task
+		MissingFile_LastAccessTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime lastAccessTimeUtc)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.LastAccessTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
+
 		void Act()
 		{
 			sut.LastAccessTimeUtc = lastAccessTimeUtc;
@@ -189,11 +200,13 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public async Task MissingFile_LastWriteTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
+	public async Task
+		MissingFile_LastWriteTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime lastWriteTime)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.LastWriteTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
+
 		void Act()
 		{
 			sut.LastWriteTime = lastWriteTime;
@@ -213,11 +226,13 @@ public partial class Tests
 
 	[Theory]
 	[AutoData]
-	public async Task MissingFile_LastWriteTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
+	public async Task
+		MissingFile_LastWriteTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime lastWriteTimeUtc)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		await That(sut.LastWriteTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
+
 		void Act()
 		{
 			sut.LastWriteTimeUtc = lastWriteTimeUtc;

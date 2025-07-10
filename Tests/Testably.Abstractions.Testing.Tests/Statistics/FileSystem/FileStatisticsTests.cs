@@ -402,9 +402,9 @@ public sealed class FileStatisticsTests
 		sut.Initialize().WithFile("foo");
 		string path = "foo";
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.File.Decrypt(path);
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
 		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Decrypt),
@@ -434,9 +434,9 @@ public sealed class FileStatisticsTests
 		sut.Initialize().WithFile("foo");
 		string path = "foo";
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.File.Encrypt(path);
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
 		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Encrypt),

@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Testably.Abstractions.Testing.Initializer;
-using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests;
 
@@ -47,12 +46,13 @@ public class FileSystemInitializerExtensionsTests
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(fileName, null);
+
 		void Act()
 		{
 			sut.Initialize().WithFile(fileName);
 		}
 
-		await That(Act).ThrowsExactly<TestingException>().WithMessage($"*fileName*").AsWildcard();
+		await That(Act).ThrowsExactly<TestingException>().WithMessage("*fileName*").AsWildcard();
 	}
 
 	[Theory]
@@ -138,10 +138,12 @@ public class FileSystemInitializerExtensionsTests
 	{
 		MockFileSystem sut = new();
 		sut.Directory.CreateDirectory(directoryName);
+
 		void Act()
 			=> sut.Initialize().WithSubdirectory(directoryName);
 
-		await That(Act).ThrowsExactly<TestingException>().WithMessage($"*{directoryName}*").AsWildcard();
+		await That(Act).ThrowsExactly<TestingException>().WithMessage($"*{directoryName}*")
+			.AsWildcard();
 	}
 
 	[Theory]
@@ -171,7 +173,8 @@ public class FileSystemInitializerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	public async Task InitializeEmbeddedResourcesFromAssembly_ShouldCopyAllMatchingResourceFilesInDirectory(
+	public async Task
+		InitializeEmbeddedResourcesFromAssembly_ShouldCopyAllMatchingResourceFilesInDirectory(
 			string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -190,12 +193,14 @@ public class FileSystemInitializerExtensionsTests
 		await That(result).Contains(x => x.EndsWith("TestFile1.txt", StringComparison.Ordinal));
 		await That(result).Contains(x => x.EndsWith("TestFile2.txt", StringComparison.Ordinal));
 		await That(result2.Length).IsEqualTo(1);
-		await That(result2).Contains(x => x.EndsWith("SubResourceFile1.txt", StringComparison.Ordinal));
+		await That(result2)
+			.Contains(x => x.EndsWith("SubResourceFile1.txt", StringComparison.Ordinal));
 	}
 
 	[Theory]
 	[AutoData]
-	public async Task InitializeEmbeddedResourcesFromAssembly_WithoutRecurseSubdirectories_ShouldOnlyCopyTopmostFilesInRelativePath(
+	public async Task
+		InitializeEmbeddedResourcesFromAssembly_WithoutRecurseSubdirectories_ShouldOnlyCopyTopmostFilesInRelativePath(
 			string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -218,7 +223,8 @@ public class FileSystemInitializerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	public async Task InitializeEmbeddedResourcesFromAssembly_WithRelativePath_ShouldCopyAllResourceInMatchingPathInDirectory(
+	public async Task
+		InitializeEmbeddedResourcesFromAssembly_WithRelativePath_ShouldCopyAllResourceInMatchingPathInDirectory(
 			string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -233,7 +239,8 @@ public class FileSystemInitializerExtensionsTests
 		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
 		string[] result = fileSystem.Directory.GetFiles(path);
 		await That(result.Length).IsEqualTo(1);
-		await That(result).Contains(x => x.EndsWith("SubResourceFile1.txt", StringComparison.Ordinal));
+		await That(result)
+			.Contains(x => x.EndsWith("SubResourceFile1.txt", StringComparison.Ordinal));
 	}
 
 	[Theory]

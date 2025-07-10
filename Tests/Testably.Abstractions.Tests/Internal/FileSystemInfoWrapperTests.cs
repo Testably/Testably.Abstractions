@@ -17,7 +17,8 @@ public class FileSystemInfoWrapperTests
 
 	[Theory]
 	[AutoData]
-	public async Task FromFileSystemInfo_WithDirectoryInfo_ShouldReturnDirectoryInfoWrapper(string path)
+	public async Task FromFileSystemInfo_WithDirectoryInfo_ShouldReturnDirectoryInfoWrapper(
+		string path)
 	{
 		RealFileSystem fileSystem = new();
 

@@ -2,7 +2,6 @@
 using System.Linq;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
-using Testably.Abstractions.Testing.Tests.TestHelpers;
 #if NET6_0_OR_GREATER
 using Microsoft.Win32.SafeHandles;
 #endif
@@ -17,13 +16,13 @@ public class MockFileSystemTests
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.File.Encrypt(path);
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.File.Decrypt(path);
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		await That(sut.File.ReadAllText(path)).IsEqualTo(contents);
 	}
@@ -35,9 +34,9 @@ public class MockFileSystemTests
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.File.Encrypt(path);
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		await That(sut.File.ReadAllText(path)).IsNotEqualTo(contents);
 	}
@@ -48,13 +47,13 @@ public class MockFileSystemTests
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.FileInfo.New(path).Encrypt();
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.FileInfo.New(path).Decrypt();
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		await That(sut.File.ReadAllText(path)).IsEqualTo(contents);
 	}
@@ -66,9 +65,9 @@ public class MockFileSystemTests
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.FileInfo.New(path).Encrypt();
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		await That(sut.File.ReadAllText(path)).IsNotEqualTo(contents);
 	}
@@ -103,7 +102,8 @@ public class MockFileSystemTests
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 		await That(drives.Length).IsEqualTo(2);
 		await That(drives).Contains(d => string.Equals(d.Name, "C:\\", StringComparison.Ordinal));
-		await That(drives).Contains(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
+		await That(drives)
+			.Contains(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
 	}
 
 	[Fact]
@@ -181,7 +181,8 @@ public class MockFileSystemTests
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 
 		await That(drives.Length).IsGreaterThanOrEqualTo(1);
-		await That(drives).HasSingle().Matching(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
+		await That(drives).HasSingle()
+			.Matching(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
 	}
 
 	[Theory]
@@ -196,7 +197,8 @@ public class MockFileSystemTests
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 
 		await That(drives.Length).IsEqualTo(2);
-		await That(drives).HasSingle().Matching(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
+		await That(drives).HasSingle()
+			.Matching(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
 	}
 
 	[Theory]
@@ -213,7 +215,8 @@ public class MockFileSystemTests
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 
 		await That(drives.Length).IsLessThanOrEqualTo(2);
-		await That(drives).HasSingle().Matching(d => string.Equals(d.Name, expectedDriveName, StringComparison.Ordinal));
+		await That(drives).HasSingle().Matching(d
+			=> string.Equals(d.Name, expectedDriveName, StringComparison.Ordinal));
 	}
 
 	[Theory]

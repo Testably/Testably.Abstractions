@@ -74,15 +74,18 @@ public partial class ReadAllTextTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 		else
 		{
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 	}
 
 	[Theory]
@@ -110,7 +113,8 @@ public partial class ReadAllTextTests
 
 		string result = FileSystem.File.ReadAllText(path, readEncoding);
 
-		await That(result).IsNotEqualTo(contents).Because($"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+		await That(result).IsNotEqualTo(contents).Because(
+			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
 	}
 
 	[Theory]
@@ -124,7 +128,9 @@ public partial class ReadAllTextTests
 
 		string result = FileSystem.File.ReadAllText(path);
 
-		await That(result).IsEqualTo(contents).Because($"{contents} should not be different when no read encoding is used for write encoding: {writeEncoding}.");
+		await That(result).IsEqualTo(contents)
+			.Because(
+				$"{contents} should not be different when no read encoding is used for write encoding: {writeEncoding}.");
 	}
 
 	[Theory]
@@ -144,7 +150,7 @@ public partial class ReadAllTextTests
 
 	#region Helpers
 
-#pragma warning disable MA0018
+	#pragma warning disable MA0018
 	public static TheoryData<Encoding> GetEncodingsForReadAllText()
 		=> new()
 		{

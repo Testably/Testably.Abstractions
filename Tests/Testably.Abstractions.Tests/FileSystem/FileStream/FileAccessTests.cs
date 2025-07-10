@@ -1,8 +1,6 @@
-using NSubstitute.ExceptionExtensions;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
@@ -42,7 +40,8 @@ public partial class FileAccessTests
 			await That(Act).Throws<IOException>()
 				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024864)
-				.Because($"Access {access1}, Share {share1} of file 1 is incompatible with Access {access2}, Share {share2} of file 2");
+				.Because(
+					$"Access {access1}, Share {share1} of file 1 is incompatible with Access {access2}, Share {share2} of file 2");
 		}
 		else
 		{
@@ -80,9 +79,9 @@ public partial class FileAccessTests
 	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite, FileAccess.ReadWrite,
 		FileShare.ReadWrite)]
 	public async Task FileAccess_ConcurrentWriteAccessWithValidScenarios_ShouldNotThrowException(
-			FileAccess access1, FileShare share1,
-			FileAccess access2, FileShare share2,
-			string path, string contents1, string contents2)
+		FileAccess access1, FileShare share1,
+		FileAccess access2, FileShare share2,
+		string path, string contents1, string contents2)
 	{
 		FileSystem.File.WriteAllText(path, null);
 

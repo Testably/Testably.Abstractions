@@ -12,6 +12,7 @@ public partial class WriteAllTextTests
 		string directory, string path)
 	{
 		string fullPath = FileSystem.Path.Combine(directory, path);
+
 		void Act()
 		{
 			FileSystem.File.WriteAllText(fullPath, "foo");
@@ -55,12 +56,14 @@ public partial class WriteAllTextTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
@@ -110,7 +113,8 @@ public partial class WriteAllTextTests
 
 			string result = FileSystem.File.ReadAllText(path);
 
-			await That(result).IsEqualTo(contents).Because($"{contents} should be encoded and decoded identical.");
+			await That(result).IsEqualTo(contents)
+				.Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 
@@ -128,8 +132,9 @@ public partial class WriteAllTextTests
 
 	[Theory]
 	[AutoData]
-	public async Task WriteAllText_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
-		string path)
+	public async Task
+		WriteAllText_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
+			string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
@@ -145,8 +150,9 @@ public partial class WriteAllTextTests
 
 	[Theory]
 	[AutoData]
-	public async Task WriteAllText_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
-		string path, string contents)
+	public async Task
+		WriteAllText_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+			string path, string contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -162,7 +168,6 @@ public partial class WriteAllTextTests
 	}
 
 #if FEATURE_FILE_SPAN
-
 	[Theory]
 	[AutoData]
 	public async Task WriteAllText_Span_MissingDirectory_ShouldThrowDirectoryNotFoundException(

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading;
 using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
@@ -92,7 +90,8 @@ public partial class TimeFactoryTests
 			}, null, dueTime, 0);
 		}
 
-		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086).And.WithParamName(nameof(dueTime));
+		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086).And
+			.WithParamName(nameof(dueTime));
 	}
 
 	[Theory]
@@ -107,7 +106,8 @@ public partial class TimeFactoryTests
 			}, null, 0, period);
 		}
 
-		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086).And.WithParamName(nameof(period));
+		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086).And
+			.WithParamName(nameof(period));
 	}
 
 	[Fact]

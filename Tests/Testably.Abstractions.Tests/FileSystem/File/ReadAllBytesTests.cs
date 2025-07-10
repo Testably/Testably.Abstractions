@@ -42,15 +42,18 @@ public partial class ReadAllBytesTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 		else
 		{
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 	}
 
 	[Theory]

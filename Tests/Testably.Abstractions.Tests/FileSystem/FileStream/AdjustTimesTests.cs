@@ -35,15 +35,18 @@ public partial class AdjustTimesTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 		else
 		{
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 	}
 
 #if FEATURE_SPAN
@@ -107,15 +110,18 @@ public partial class AdjustTimesTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 		else
 		{
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 	}
 
 #if FEATURE_SPAN
@@ -218,15 +224,18 @@ public partial class AdjustTimesTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 		else
 		{
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 	}
 
 	[Theory]
@@ -251,11 +260,14 @@ public partial class AdjustTimesTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
-		await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
-		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+		await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
+		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 	}
 
 #if FEATURE_SPAN
@@ -321,12 +333,14 @@ public partial class AdjustTimesTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
@@ -436,12 +450,14 @@ public partial class AdjustTimesTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());

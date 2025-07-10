@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Initializer;
-using NSubstitute.ExceptionExtensions;
-
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 using System.Globalization;
 #endif
@@ -20,8 +18,9 @@ public partial class EnumerateFileSystemInfosTests
 			string path)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
+
 		void Act()
-				=> FileSystem.Directory.EnumerateFileSystemEntries(path).ToList();
+			=> FileSystem.Directory.EnumerateFileSystemEntries(path).ToList();
 
 		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithMessageContaining($"'{expectedPath}'").And
@@ -31,7 +30,8 @@ public partial class EnumerateFileSystemInfosTests
 
 	[Theory]
 	[AutoData]
-	public async Task EnumerateFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
+	public async Task
+		EnumerateFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -55,7 +55,8 @@ public partial class EnumerateFileSystemInfosTests
 
 	[Theory]
 	[AutoData]
-	public async Task EnumerateFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
+	public async Task
+		EnumerateFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -98,7 +99,8 @@ public partial class EnumerateFileSystemInfosTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Which.EndsWith(fileName).Because($"it should match {searchPattern}");
+			await That(result).HasSingle().Which.EndsWith(fileName)
+				.Because($"it should match {searchPattern}");
 		}
 		else
 		{
@@ -137,7 +139,8 @@ public partial class EnumerateFileSystemInfosTests
 
 	[Theory]
 	[AutoData]
-	public async Task EnumerateFileSystemEntries_WithFileNameStartingWithDirectoryName_ShouldNotBeIncluded(
+	public async Task
+		EnumerateFileSystemEntries_WithFileNameStartingWithDirectoryName_ShouldNotBeIncluded(
 			string path)
 	{
 		FileSystem.Initialize()
@@ -173,7 +176,8 @@ public partial class EnumerateFileSystemInfosTests
 
 	[Theory]
 	[AutoData]
-	public async Task EnumerateFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
+	public async Task
+		EnumerateFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -197,7 +201,8 @@ public partial class EnumerateFileSystemInfosTests
 
 	[Theory]
 	[AutoData]
-	public async Task EnumerateFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
+	public async Task
+		EnumerateFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -218,7 +223,8 @@ public partial class EnumerateFileSystemInfosTests
 	}
 
 	[Fact]
-	public async Task EnumerateFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
+	public async Task
+		EnumerateFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()

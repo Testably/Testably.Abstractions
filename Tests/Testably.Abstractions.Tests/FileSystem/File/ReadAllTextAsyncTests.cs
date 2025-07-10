@@ -60,7 +60,8 @@ public partial class ReadAllTextAsyncTests
 		string path = new Fixture().Create<string>();
 		await FileSystem.File.WriteAllTextAsync(path, contents, writeEncoding, TestContext.Current.CancellationToken);
 
-		string result = await FileSystem.File.ReadAllTextAsync(path, readEncoding, TestContext.Current.CancellationToken);
+		string result =
+ await FileSystem.File.ReadAllTextAsync(path, readEncoding, TestContext.Current.CancellationToken);
 
 		await That(result).IsNotEqualTo(contents).Because($"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
 	}

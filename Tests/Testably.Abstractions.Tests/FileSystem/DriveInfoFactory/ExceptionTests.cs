@@ -38,7 +38,8 @@ public partial class ExceptionTests
 		await That(Act).Throws<ArgumentException>()
 			.WithHResult(-2147024809).And
 			.WithParamName(ignoreParamCheck || Test.IsNetFramework ? null : paramName)
-			.Because($"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+			.Because(
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
@@ -54,7 +55,8 @@ public partial class ExceptionTests
 
 		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName(ignoreParamCheck ? null : paramName)
-			.Because($"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+			.Because(
+				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	#region Helpers

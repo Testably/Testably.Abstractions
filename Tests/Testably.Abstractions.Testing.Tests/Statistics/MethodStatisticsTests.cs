@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Testably.Abstractions.Testing.Statistics;
+﻿using Testably.Abstractions.Testing.Statistics;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics;
 
@@ -24,7 +23,8 @@ public sealed class MethodStatisticsTests
 
 		string result = sut.ToString();
 
-		await That(result).Contains(nameof(IDirectory.CreateDirectory)).And.Contains("\"foo\"").And.DoesNotContain(",");
+		await That(result).Contains(nameof(IDirectory.CreateDirectory)).And.Contains("\"foo\"").And
+			.DoesNotContain(",");
 	}
 
 	[Fact]

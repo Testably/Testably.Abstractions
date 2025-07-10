@@ -26,6 +26,7 @@ public partial class AppendAllTextTests
 		string missingPath, string fileName, string contents)
 	{
 		string filePath = FileSystem.Path.Combine(missingPath, fileName);
+
 		void Act()
 		{
 			FileSystem.File.AppendAllText(filePath, contents);
@@ -78,12 +79,14 @@ public partial class AppendAllTextTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());

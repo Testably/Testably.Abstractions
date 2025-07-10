@@ -14,8 +14,8 @@ public partial class Tests
 		FileSystem.File.WriteAllText(path, null);
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 		IFileSystemExtensibility extensibility = fileInfo as IFileSystemExtensibility
-												 ?? throw new NotSupportedException(
-													 $"{fileInfo.GetType()} does not implement IFileSystemExtensibility");
+		                                         ?? throw new NotSupportedException(
+			                                         $"{fileInfo.GetType()} does not implement IFileSystemExtensibility");
 
 		bool result = extensibility
 			.TryGetWrappedInstance(out System.IO.FileSystemInfo? fileSystemInfo);

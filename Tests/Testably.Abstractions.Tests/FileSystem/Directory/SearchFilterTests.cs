@@ -11,7 +11,8 @@ public partial class SearchFilterTests
 	[InlineAutoData("../", 4)]
 	[InlineAutoData("../*", 4)]
 	[InlineAutoData("../a*", 2)]
-	public async Task SearchPattern_Containing1InstanceOfTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
+	public async Task
+		SearchPattern_Containing1InstanceOfTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
 			string searchPattern, int expectedMatchingFiles)
 	{
 		Skip.If(Test.IsNetFramework);
@@ -33,7 +34,8 @@ public partial class SearchFilterTests
 	[InlineAutoData("../../", 5)]
 	[InlineAutoData("../../*", 5)]
 	[InlineAutoData("../../a*", 2)]
-	public async Task SearchPattern_Containing2InstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
+	public async Task
+		SearchPattern_Containing2InstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
 			string searchPattern, int expectedMatchingFiles)
 	{
 		Skip.If(Test.IsNetFramework);
@@ -61,7 +63,8 @@ public partial class SearchFilterTests
 	[InlineAutoData("../../../", 6)]
 	[InlineAutoData("../../../*", 6)]
 	[InlineAutoData("../../../a*", 2)]
-	public async Task SearchPattern_Containing3InstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
+	public async Task
+		SearchPattern_Containing3InstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
 			string searchPattern, int expectedMatchingFiles)
 	{
 		Skip.If(Test.IsNetFramework);
@@ -80,10 +83,12 @@ public partial class SearchFilterTests
 		{
 			await That(result).Contains(FileSystem.Path.Combine(".", "../../..", "foo"));
 			await That(result).Contains(FileSystem.Path.Combine(".", "../../..", "foo", "bar"));
-			await That(result).Contains(FileSystem.Path.Combine(".", "../../..", "foo", "bar", "xyz"));
+			await That(result)
+				.Contains(FileSystem.Path.Combine(".", "../../..", "foo", "bar", "xyz"));
 		}
 
-		await That(result).Contains(FileSystem.Path.Combine(".", "../../..", "foo", "bar", "xyz", "a.test"));
+		await That(result)
+			.Contains(FileSystem.Path.Combine(".", "../../..", "foo", "bar", "xyz", "a.test"));
 	}
 
 	[Fact]
@@ -131,7 +136,8 @@ public partial class SearchFilterTests
 		string currentDirectory = FileSystem.Directory.GetCurrentDirectory();
 		int directoryCount = currentDirectory.Length -
 		                     currentDirectory
-			                     .Replace($"{FileSystem.Path.DirectorySeparatorChar}", "", StringComparison.Ordinal)
+			                     .Replace($"{FileSystem.Path.DirectorySeparatorChar}", "",
+				                     StringComparison.Ordinal)
 			                     .Length;
 
 		StringBuilder sb = new();
@@ -157,7 +163,7 @@ public partial class SearchFilterTests
 	[InlineAutoData("../*", 4)]
 	[InlineAutoData("../a*", 2)]
 	public async Task SearchPattern_ContainingTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
-			string searchPattern, int expectedMatchingFiles, string path)
+		string searchPattern, int expectedMatchingFiles, string path)
 	{
 		Skip.If(Test.IsNetFramework);
 
@@ -307,7 +313,8 @@ public partial class SearchFilterTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Which.EndsWith(path).Because($"it should match {searchPattern}");
+			await That(result).HasSingle().Which.EndsWith(path)
+				.Because($"it should match {searchPattern}");
 		}
 		else
 		{

@@ -1,5 +1,3 @@
-using aweXpect;
-using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
@@ -10,11 +8,12 @@ public partial class DeleteTests
 	[Theory]
 	[AutoData]
 	public async Task Delete_CaseDifferentPath_ShouldThrowDirectoryNotFoundException_OnLinux(
-			string directoryName)
+		string directoryName)
 	{
 		directoryName = directoryName.ToLowerInvariant();
 		FileSystem.Directory.CreateDirectory(directoryName.ToUpperInvariant());
 		string expectedPath = FileSystem.Path.Combine(BasePath, directoryName);
+
 		void Act()
 		{
 			FileSystem.Directory.Delete(directoryName);
@@ -52,6 +51,7 @@ public partial class DeleteTests
 		string directoryName)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, directoryName);
+
 		void Act()
 		{
 			FileSystem.Directory.Delete(directoryName);
@@ -68,6 +68,7 @@ public partial class DeleteTests
 		string directoryName)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, directoryName);
+
 		void Act()
 		{
 			FileSystem.Directory.Delete(directoryName, true);
@@ -113,6 +114,7 @@ public partial class DeleteTests
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filePath);
 		openFile.Write([0], 0, 1);
 		openFile.Flush();
+
 		void Act()
 		{
 			FileSystem.Directory.Delete(path, true);
@@ -189,12 +191,14 @@ public partial class DeleteTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());

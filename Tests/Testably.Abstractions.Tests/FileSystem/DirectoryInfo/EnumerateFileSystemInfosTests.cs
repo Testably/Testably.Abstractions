@@ -11,7 +11,7 @@ public partial class EnumerateFileSystemInfosTests
 	[Theory]
 	[AutoData]
 	public async Task EnumerateFileSystemInfos_SearchOptionAllFiles_ShouldReturnAllFiles(
-			string path)
+		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
@@ -62,7 +62,8 @@ public partial class EnumerateFileSystemInfosTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Matching(d => d.Name == fileName).Because($"it should match '{searchPattern}'");
+			await That(result).HasSingle().Matching(d => d.Name == fileName)
+				.Because($"it should match '{searchPattern}'");
 		}
 		else
 		{
@@ -138,7 +139,8 @@ public partial class EnumerateFileSystemInfosTests
 	}
 
 	[Fact]
-	public async Task EnumerateFileSystemInfos_WithoutSearchString_ShouldReturnAllDirectFilesAndDirectories()
+	public async Task
+		EnumerateFileSystemInfos_WithoutSearchString_ShouldReturnAllDirectFilesAndDirectories()
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()

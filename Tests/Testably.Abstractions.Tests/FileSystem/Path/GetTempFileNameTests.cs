@@ -8,9 +8,9 @@ public partial class GetTempFileNameTests
 	{
 		string tempPath = FileSystem.Path.GetTempPath();
 
-#pragma warning disable CS0618 // Type or member is obsolete
+		#pragma warning disable CS0618 // Type or member is obsolete
 		string result = FileSystem.Path.GetTempFileName();
-#pragma warning restore CS0618 // Type or member is obsolete
+		#pragma warning restore CS0618 // Type or member is obsolete
 
 		await That(result).StartsWith(tempPath);
 	}

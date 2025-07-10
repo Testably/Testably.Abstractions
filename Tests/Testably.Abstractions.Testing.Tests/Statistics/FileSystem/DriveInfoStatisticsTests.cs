@@ -71,7 +71,8 @@ public sealed class DriveInfoStatisticsTests
 		_ = sut.DriveInfo.New("F:").Name;
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(2);
-		await That(sut.Statistics.DriveInfo["F:"]).OnlyContainsPropertyGetAccess(nameof(IDriveInfo.Name));
+		await That(sut.Statistics.DriveInfo["F:"])
+			.OnlyContainsPropertyGetAccess(nameof(IDriveInfo.Name));
 	}
 
 	[Fact]
@@ -138,9 +139,9 @@ public sealed class DriveInfoStatisticsTests
 		MockFileSystem sut = new();
 		string value = "F:";
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.DriveInfo.New("F:").VolumeLabel = value;
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(2);
 		await That(sut.Statistics.DriveInfo["F:"])

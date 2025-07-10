@@ -8,16 +8,17 @@ public class TestDataGetEncodingDifference : IEnumerable<TheoryDataRow<string, E
 {
 	private const string SpecialCharactersContent = "_€_Ä_Ö_Ü";
 
-	#region IEnumerable<TheoryDataRow<string, Encoding, Encoding>> Members
+	#region IEnumerable<TheoryDataRow<string,Encoding,Encoding>> Members
 
 	public IEnumerator<TheoryDataRow<string, Encoding, Encoding>> GetEnumerator()
 	{
-		yield return new(SpecialCharactersContent, Encoding.ASCII, Encoding.UTF8);
+		yield return new TheoryDataRow<string, Encoding, Encoding>(SpecialCharactersContent,
+			Encoding.ASCII, Encoding.UTF8);
 	}
-
-	#endregion
 
 	/// <inheritdoc />
 	IEnumerator IEnumerable.GetEnumerator()
 		=> GetEnumerator();
+
+	#endregion
 }

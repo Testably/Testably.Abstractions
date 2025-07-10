@@ -85,8 +85,9 @@ public partial class WriteAllLinesTests
 
 	[Theory]
 	[AutoData]
-	public async Task WriteAllLines_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
-		string path, string[] contents)
+	public async Task
+		WriteAllLines_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+			string path, string[] contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 

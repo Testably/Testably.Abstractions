@@ -20,8 +20,8 @@ public partial class Tests
 		await That(result.IncludeSubdirectories).IsFalse();
 		await That(result.InternalBufferSize).IsEqualTo(8192);
 		await That(result.NotifyFilter).IsEqualTo(NotifyFilters.FileName |
-										NotifyFilters.DirectoryName |
-										NotifyFilters.LastWrite);
+		                                          NotifyFilters.DirectoryName |
+		                                          NotifyFilters.LastWrite);
 		await That(result.EnableRaisingEvents).IsFalse();
 	}
 
@@ -42,8 +42,8 @@ public partial class Tests
 		await That(result.IncludeSubdirectories).IsFalse();
 		await That(result.InternalBufferSize).IsEqualTo(8192);
 		await That(result.NotifyFilter).IsEqualTo(NotifyFilters.FileName |
-										NotifyFilters.DirectoryName |
-										NotifyFilters.LastWrite);
+		                                          NotifyFilters.DirectoryName |
+		                                          NotifyFilters.LastWrite);
 		await That(result.EnableRaisingEvents).IsFalse();
 	}
 
@@ -61,8 +61,8 @@ public partial class Tests
 		await That(result.IncludeSubdirectories).IsFalse();
 		await That(result.InternalBufferSize).IsEqualTo(8192);
 		await That(result.NotifyFilter).IsEqualTo(NotifyFilters.FileName |
-										NotifyFilters.DirectoryName |
-										NotifyFilters.LastWrite);
+		                                          NotifyFilters.DirectoryName |
+		                                          NotifyFilters.LastWrite);
 		await That(result.EnableRaisingEvents).IsFalse();
 	}
 

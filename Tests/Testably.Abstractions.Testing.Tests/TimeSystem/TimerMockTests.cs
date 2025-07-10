@@ -67,7 +67,10 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		await That(Act).DoesNotThrow();
 #else
 		await That(Act).Throws<ObjectDisposedException>()
-			.Whose(x => x.Message, it => it.Satisfies(m => m!.Contains("Cannot access a disposed object.") && m.Contains(nameof(ITimer.Change))));
+			.Whose(x => x.Message,
+				it => it.Satisfies(m
+					=> m!.Contains("Cannot access a disposed object.") &&
+					   m.Contains(nameof(ITimer.Change))));
 #endif
 	}
 
@@ -88,7 +91,8 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 				.Dispose(waitHandle);
 		}
 
-		await That(Act).ThrowsExactly<NotSupportedException>().WithMessage($"*{typeof(DummyWaitHandle)}*").AsWildcard();
+		await That(Act).ThrowsExactly<NotSupportedException>()
+			.WithMessage($"*{typeof(DummyWaitHandle)}*").AsWildcard();
 	}
 
 #if FEATURE_ASYNC_DISPOSABLE
@@ -246,7 +250,8 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 			timerHandler[0].Wait(0);
 		}
 
-		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>().WithParamName("executionCount").And
+		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>().WithParamName("executionCount")
+			.And
 			.WithMessage("Execution count must be greater than zero.").AsPrefix();
 	}
 

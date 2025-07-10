@@ -20,7 +20,8 @@ public partial class ThreadTests
 		TimeSystem.Thread.Sleep(millisecondsTimeout);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
-		await That(after).IsOnOrAfter(before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
+		await That(after)
+			.IsOnOrAfter(before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
 	}
 
 	[Fact]

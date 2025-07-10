@@ -1,4 +1,3 @@
-using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;

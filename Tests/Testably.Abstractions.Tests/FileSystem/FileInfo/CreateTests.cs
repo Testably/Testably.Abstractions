@@ -19,7 +19,8 @@ public partial class CreateTests
 
 	[Theory]
 	[AutoData]
-	public async Task Create_ShouldRefreshExistsCacheForCurrentItem_ExceptOnNetFramework(string path)
+	public async Task Create_ShouldRefreshExistsCacheForCurrentItem_ExceptOnNetFramework(
+		string path)
 	{
 		IFileInfo sut1 = FileSystem.FileInfo.New(path);
 		IFileInfo sut2 = FileSystem.FileInfo.New(path);

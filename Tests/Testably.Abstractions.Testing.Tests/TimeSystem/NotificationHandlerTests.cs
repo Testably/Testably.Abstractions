@@ -140,7 +140,8 @@ public class NotificationHandlerTests
 	}
 
 	[Fact]
-	public async Task OnTaskDelay_WithMillisecondsAndWithCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
+	public async Task
+		OnTaskDelay_WithMillisecondsAndWithCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		int millisecondsDelay = new Random().Next();
 		MockTimeSystem timeSystem = new();
@@ -155,7 +156,8 @@ public class NotificationHandlerTests
 	}
 
 	[Fact]
-	public async Task OnTaskDelay_WithMillisecondsAndWithoutCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
+	public async Task
+		OnTaskDelay_WithMillisecondsAndWithoutCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		int millisecondsDelay = new Random().Next();
 		MockTimeSystem timeSystem = new();
@@ -170,7 +172,8 @@ public class NotificationHandlerTests
 	}
 
 	[Fact]
-	public async Task OnTaskDelay_WithTimeSpanAndWithCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
+	public async Task
+		OnTaskDelay_WithTimeSpanAndWithCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
 		MockTimeSystem timeSystem = new();
@@ -185,7 +188,8 @@ public class NotificationHandlerTests
 	}
 
 	[Fact]
-	public async Task OnTaskDelay_WithTimeSpanAndWithoutCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
+	public async Task
+		OnTaskDelay_WithTimeSpanAndWithoutCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
 		MockTimeSystem timeSystem = new();

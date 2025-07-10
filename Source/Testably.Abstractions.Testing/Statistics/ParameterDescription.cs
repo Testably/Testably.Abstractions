@@ -23,7 +23,8 @@ public abstract class ParameterDescription
 	}
 
 	/// <summary>
-	///     Creates a <see cref="ParameterDescription" /> from the <paramref name="value" /> used as an <see langword="out" /> parameter.
+	///     Creates a <see cref="ParameterDescription" /> from the <paramref name="value" /> used as an <see langword="out" />
+	///     parameter.
 	/// </summary>
 	public static ParameterDescription FromOutParameter<T>(T value)
 	{
@@ -149,22 +150,22 @@ public abstract class ParameterDescription
 
 #if FEATURE_SPAN
 	/// <summary>
-	/// A parameter description for span values.
+	///     A parameter description for span values.
 	/// </summary>
 	public sealed class SpanParameterDescription<T> : ParameterDescription
 	{
 		/// <summary>
-		/// Flag indicating if the span is read-only.
+		///     Flag indicating if the span is read-only.
 		/// </summary>
 		public bool IsReadOnly { get; }
-		
+
 		/// <summary>
-		/// The values of the span parameter.
+		///     The values of the span parameter.
 		/// </summary>
 		public T[] Value { get; }
 
 		/// <summary>
-		/// A parameter description for <see cref="Span{T}"/> values.
+		///     A parameter description for <see cref="Span{T}" /> values.
 		/// </summary>
 		public SpanParameterDescription(Span<T> value) : base(false)
 		{
@@ -173,7 +174,7 @@ public abstract class ParameterDescription
 		}
 
 		/// <summary>
-		/// A parameter description for <see cref="ReadOnlySpan{T}"/> values.
+		///     A parameter description for <see cref="ReadOnlySpan{T}" /> values.
 		/// </summary>
 		public SpanParameterDescription(ReadOnlySpan<T> value) : base(false)
 		{

@@ -1,4 +1,3 @@
-using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
@@ -19,7 +18,7 @@ public partial class OpenReadTests
 
 		await That(Act).Throws<FileNotFoundException>()
 			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
-			.WithHResult( -2147024894);
+			.WithHResult(-2147024894);
 	}
 
 	[Theory]

@@ -4,6 +4,72 @@ public class FileVersionInfoBuilderTests
 {
 	[Theory]
 	[AutoData]
+	public async Task ShouldBePossibleToChainMethods(
+		string comments,
+		string companyName,
+		string fileDescription,
+		string internalName,
+		bool isDebug,
+		bool isPatched,
+		bool isPreRelease,
+		bool isPrivateBuild,
+		bool isSpecialBuild,
+		string language,
+		string legalCopyright,
+		string legalTrademarks,
+		string originalFilename,
+		string privateBuild,
+		string productName,
+		string specialBuild)
+	{
+		string fileVersion = "1.2.3.4-foo";
+		string productVersion = "255.255.255.65432+bar";
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
+		fileSystem.WithFileVersionInfo("*", b => b
+			.SetComments(comments)
+			.SetCompanyName(companyName)
+			.SetFileDescription(fileDescription)
+			.SetFileVersion(fileVersion)
+			.SetInternalName(internalName)
+			.SetIsDebug(isDebug)
+			.SetIsPatched(isPatched)
+			.SetIsPreRelease(isPreRelease)
+			.SetIsPrivateBuild(isPrivateBuild)
+			.SetIsSpecialBuild(isSpecialBuild)
+			.SetLanguage(language)
+			.SetLegalCopyright(legalCopyright)
+			.SetLegalTrademarks(legalTrademarks)
+			.SetOriginalFilename(originalFilename)
+			.SetPrivateBuild(privateBuild)
+			.SetProductName(productName)
+			.SetProductVersion(productVersion)
+			.SetSpecialBuild(specialBuild)
+			.SetComments(comments));
+
+		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
+
+		await That(result.Comments).IsEqualTo(comments);
+		await That(result.CompanyName).IsEqualTo(companyName);
+		await That(result.FileDescription).IsEqualTo(fileDescription);
+		await That(result.FileVersion).IsEqualTo(fileVersion);
+		await That(result.InternalName).IsEqualTo(internalName);
+		await That(result.IsDebug).IsEqualTo(isDebug);
+		await That(result.IsPatched).IsEqualTo(isPatched);
+		await That(result.IsPreRelease).IsEqualTo(isPreRelease);
+		await That(result.IsSpecialBuild).IsEqualTo(isSpecialBuild);
+		await That(result.Language).IsEqualTo(language);
+		await That(result.LegalCopyright).IsEqualTo(legalCopyright);
+		await That(result.LegalTrademarks).IsEqualTo(legalTrademarks);
+		await That(result.OriginalFilename).IsEqualTo(originalFilename);
+		await That(result.PrivateBuild).IsEqualTo(privateBuild);
+		await That(result.ProductName).IsEqualTo(productName);
+		await That(result.ProductVersion).IsEqualTo(productVersion);
+		await That(result.SpecialBuild).IsEqualTo(specialBuild);
+	}
+
+	[Theory]
+	[AutoData]
 	public async Task WithComments_ShouldSetComments(string comments)
 	{
 		MockFileSystem fileSystem = new();
@@ -53,7 +119,8 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersionInfo("*", b => b.SetFileVersion("9.8.7.6").SetFileVersion(fileVersion));
+		fileSystem.WithFileVersionInfo("*",
+			b => b.SetFileVersion("9.8.7.6").SetFileVersion(fileVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 		await That(result.FileVersion).IsEqualTo(fileVersion);
@@ -284,7 +351,8 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersionInfo("*", b => b.SetProductVersion("9.8.7.6").SetProductVersion(productVersion));
+		fileSystem.WithFileVersionInfo("*",
+			b => b.SetProductVersion("9.8.7.6").SetProductVersion(productVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 		await That(result.ProductVersion).IsEqualTo(productVersion);
@@ -357,72 +425,6 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		await That(result.SpecialBuild).IsEqualTo(specialBuild);
-	}
-
-	[Theory]
-	[AutoData]
-	public async Task ShouldBePossibleToChainMethods(
-		string comments,
-		string companyName,
-		string fileDescription,
-		string internalName,
-		bool isDebug,
-		bool isPatched,
-		bool isPreRelease,
-		bool isPrivateBuild,
-		bool isSpecialBuild,
-		string language,
-		string legalCopyright,
-		string legalTrademarks,
-		string originalFilename,
-		string privateBuild,
-		string productName,
-		string specialBuild)
-	{
-		string fileVersion = "1.2.3.4-foo";
-		string productVersion = "255.255.255.65432+bar";
-		MockFileSystem fileSystem = new();
-		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersionInfo("*", b => b
-			.SetComments(comments)
-			.SetCompanyName(companyName)
-			.SetFileDescription(fileDescription)
-			.SetFileVersion(fileVersion)
-			.SetInternalName(internalName)
-			.SetIsDebug(isDebug)
-			.SetIsPatched(isPatched)
-			.SetIsPreRelease(isPreRelease)
-			.SetIsPrivateBuild(isPrivateBuild)
-			.SetIsSpecialBuild(isSpecialBuild)
-			.SetLanguage(language)
-			.SetLegalCopyright(legalCopyright)
-			.SetLegalTrademarks(legalTrademarks)
-			.SetOriginalFilename(originalFilename)
-			.SetPrivateBuild(privateBuild)
-			.SetProductName(productName)
-			.SetProductVersion(productVersion)
-			.SetSpecialBuild(specialBuild)
-			.SetComments(comments));
-
-		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
-
-		await That(result.Comments).IsEqualTo(comments);
-		await That(result.CompanyName).IsEqualTo(companyName);
-		await That(result.FileDescription).IsEqualTo(fileDescription);
-		await That(result.FileVersion).IsEqualTo(fileVersion);
-		await That(result.InternalName).IsEqualTo(internalName);
-		await That(result.IsDebug).IsEqualTo(isDebug);
-		await That(result.IsPatched).IsEqualTo(isPatched);
-		await That(result.IsPreRelease).IsEqualTo(isPreRelease);
-		await That(result.IsSpecialBuild).IsEqualTo(isSpecialBuild);
-		await That(result.Language).IsEqualTo(language);
-		await That(result.LegalCopyright).IsEqualTo(legalCopyright);
-		await That(result.LegalTrademarks).IsEqualTo(legalTrademarks);
-		await That(result.OriginalFilename).IsEqualTo(originalFilename);
-		await That(result.PrivateBuild).IsEqualTo(privateBuild);
-		await That(result.ProductName).IsEqualTo(productName);
-		await That(result.ProductVersion).IsEqualTo(productVersion);
 		await That(result.SpecialBuild).IsEqualTo(specialBuild);
 	}
 }

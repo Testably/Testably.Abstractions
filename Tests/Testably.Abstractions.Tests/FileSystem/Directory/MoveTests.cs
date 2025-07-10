@@ -26,11 +26,15 @@ public partial class MoveTests
 
 		await That(FileSystem.Directory.Exists(source)).IsEqualTo(!Test.RunsOnLinux);
 		await That(FileSystem.Directory.Exists(destination)).IsTrue();
-		await That(FileSystem.Directory.GetDirectories(".")).HasSingle().Matching(d => d.Contains(destination, StringComparison.Ordinal));
+		await That(FileSystem.Directory.GetDirectories(".")).HasSingle()
+			.Matching(d => d.Contains(destination, StringComparison.Ordinal));
 		await That(FileSystem.Directory.GetFiles(destination, initialized[1].Name)).HasSingle();
-		await That(FileSystem.Directory.GetDirectories(destination, initialized[2].Name)).HasSingle();
-		await That(FileSystem.Directory.GetFiles(destination, initialized[3].Name,	SearchOption.AllDirectories)).HasSingle();
-		await That(FileSystem.Directory.GetDirectories(destination, initialized[4].Name, SearchOption.AllDirectories)).HasSingle();
+		await That(FileSystem.Directory.GetDirectories(destination, initialized[2].Name))
+			.HasSingle();
+		await That(FileSystem.Directory.GetFiles(destination, initialized[3].Name,
+			SearchOption.AllDirectories)).HasSingle();
+		await That(FileSystem.Directory.GetDirectories(destination, initialized[4].Name,
+			SearchOption.AllDirectories)).HasSingle();
 	}
 
 	[Theory]
@@ -81,7 +85,8 @@ public partial class MoveTests
 
 		FileSystem.Directory.Move(source, destination);
 
-		await That(FileSystem.DirectoryInfo.New(destination).Attributes).IsEqualTo(expectedAttributes);
+		await That(FileSystem.DirectoryInfo.New(destination).Attributes)
+			.IsEqualTo(expectedAttributes);
 	}
 
 	[Theory]
@@ -101,9 +106,12 @@ public partial class MoveTests
 		await That(FileSystem.Directory.Exists(source)).IsFalse();
 		await That(FileSystem.Directory.Exists(destination)).IsTrue();
 		await That(FileSystem.Directory.GetFiles(destination, initialized[1].Name)).HasSingle();
-		await That(FileSystem.Directory.GetDirectories(destination, initialized[2].Name)).HasSingle();
-		await That(FileSystem.Directory.GetFiles(destination, initialized[3].Name, SearchOption.AllDirectories)).HasSingle();
-		await That(FileSystem.Directory.GetDirectories(destination, initialized[4].Name, SearchOption.AllDirectories)).HasSingle();
+		await That(FileSystem.Directory.GetDirectories(destination, initialized[2].Name))
+			.HasSingle();
+		await That(FileSystem.Directory.GetFiles(destination, initialized[3].Name,
+			SearchOption.AllDirectories)).HasSingle();
+		await That(FileSystem.Directory.GetDirectories(destination, initialized[4].Name,
+			SearchOption.AllDirectories)).HasSingle();
 	}
 
 	[Theory]
@@ -130,11 +138,14 @@ public partial class MoveTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
-		await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
-		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+		await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
+		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 	}
 
 	[Theory]
@@ -183,8 +194,12 @@ public partial class MoveTests
 			FileSystem.DirectoryInfo.New(destination);
 		await That(destinationDirectory.GetFiles(initialized[1].Name)).HasSingle();
 		await That(destinationDirectory.GetDirectories(initialized[2].Name)).HasSingle();
-		await That(destinationDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)).HasSingle();
-		await That(destinationDirectory.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)).HasSingle();
+		await That(destinationDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories))
+			.HasSingle();
+		await That(
+				destinationDirectory.GetDirectories(initialized[4].Name,
+					SearchOption.AllDirectories))
+			.HasSingle();
 	}
 
 	[Theory]
@@ -218,8 +233,10 @@ public partial class MoveTests
 			FileSystem.DirectoryInfo.New(source);
 		await That(sourceDirectory.GetFiles(initialized[1].Name)).HasSingle();
 		await That(sourceDirectory.GetDirectories(initialized[2].Name)).HasSingle();
-		await That(sourceDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)).HasSingle();
-		await That(sourceDirectory.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)).HasSingle();
+		await That(sourceDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories))
+			.HasSingle();
+		await That(sourceDirectory.GetDirectories(initialized[4].Name, SearchOption.AllDirectories))
+			.HasSingle();
 	}
 
 	[Theory]
@@ -244,7 +261,11 @@ public partial class MoveTests
 			FileSystem.DirectoryInfo.New(destination);
 		await That(destinationDirectory.GetFiles(initialized[1].Name)).HasSingle();
 		await That(destinationDirectory.GetDirectories(initialized[2].Name)).HasSingle();
-		await That(destinationDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)).HasSingle().Which.For(x => x.Attributes, a => a.HasFlag(FileAttributes.ReadOnly));
-		await That(destinationDirectory.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)).HasSingle();
+		await That(destinationDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories))
+			.HasSingle().Which.For(x => x.Attributes, a => a.HasFlag(FileAttributes.ReadOnly));
+		await That(
+				destinationDirectory.GetDirectories(initialized[4].Name,
+					SearchOption.AllDirectories))
+			.HasSingle();
 	}
 }

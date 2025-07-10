@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Storage;
-using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Storage;
 
@@ -211,7 +210,8 @@ public class InMemoryContainerTests
 
 	[Theory]
 	[AutoData]
-	public async Task RequestAccess_ToString_ShouldContainAccessAndShare(string path, FileAccess access,
+	public async Task RequestAccess_ToString_ShouldContainAccessAndShare(string path,
+		FileAccess access,
 		FileShare share)
 	{
 		MockFileSystem fileSystem = new();
@@ -287,9 +287,9 @@ public class InMemoryContainerTests
 		MockFileSystem fileSystem = new();
 		string expectedPath = fileSystem.Path.GetFullPath("foo");
 		fileSystem.Directory.CreateDirectory(expectedPath);
-#pragma warning disable CA1826
+		#pragma warning disable CA1826
 		IStorageContainer sut = fileSystem.StorageContainers.Last();
-#pragma warning restore CA1826
+		#pragma warning restore CA1826
 
 		string? result = sut.ToString();
 

@@ -9,7 +9,8 @@ public partial class ExceptionTests
 {
 	[Theory]
 	[MemberData(nameof(GetFileInfoFactoryCallbacks), "Illegal\tCharacter?InPath")]
-	public async Task Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowArgumentException_OnNetFramework(
+	public async Task
+		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowArgumentException_OnNetFramework(
 			Expression<Action<IFileInfoFactory>> callback, string paramName,
 			bool ignoreParamCheck)
 	{
@@ -22,11 +23,14 @@ public partial class ExceptionTests
 		{
 			await That(Act).Throws<ArgumentException>()
 				.WithHResult(-2147024809)
-				.Because($"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+				.Because(
+					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 		else
 		{
-			await That(Act).DoesNotThrow().Because($"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+			await That(Act).DoesNotThrow()
+				.Because(
+					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 	}
 
@@ -44,7 +48,8 @@ public partial class ExceptionTests
 		await That(Act).Throws<ArgumentException>()
 			.WithHResult(-2147024809).And
 			.WithParamName(ignoreParamCheck || Test.IsNetFramework ? null : paramName)
-			.Because($"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+			.Because(
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
@@ -60,7 +65,8 @@ public partial class ExceptionTests
 
 		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName(ignoreParamCheck ? null : paramName)
-			.Because($"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+			.Because(
+				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
@@ -79,7 +85,8 @@ public partial class ExceptionTests
 		await That(Act).Throws<ArgumentException>()
 			.WithHResult(-2147024809).And
 			.WithParamName(ignoreParamCheck || Test.IsNetFramework ? null : paramName)
-			.Because($"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+			.Because(
+				$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	#region Helpers

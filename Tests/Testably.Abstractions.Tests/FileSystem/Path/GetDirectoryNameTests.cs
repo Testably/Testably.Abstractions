@@ -72,7 +72,7 @@ public partial class GetDirectoryNameTests
 		string directory, string filename, string extension)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
-					  "." + extension;
+		              "." + extension;
 
 		string? result = FileSystem.Path.GetDirectoryName(path);
 
@@ -85,7 +85,7 @@ public partial class GetDirectoryNameTests
 		string parentDirectory, string directory, string filename)
 	{
 		string path = parentDirectory + FileSystem.Path.AltDirectorySeparatorChar + directory +
-					  FileSystem.Path.AltDirectorySeparatorChar + filename;
+		              FileSystem.Path.AltDirectorySeparatorChar + filename;
 		string expected = parentDirectory + FileSystem.Path.DirectorySeparatorChar + directory;
 
 		string? result = FileSystem.Path.GetDirectoryName(path);

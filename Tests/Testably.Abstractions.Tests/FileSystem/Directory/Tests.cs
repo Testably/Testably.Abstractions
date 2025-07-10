@@ -95,7 +95,8 @@ public partial class Tests
 			}
 
 			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
-			await That(FileSystem.Directory.GetCurrentDirectory()).IsEqualTo(previousCurrentDirectory);
+			await That(FileSystem.Directory.GetCurrentDirectory())
+				.IsEqualTo(previousCurrentDirectory);
 		}
 		finally
 		{

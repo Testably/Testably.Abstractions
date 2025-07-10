@@ -22,7 +22,8 @@ public partial class CreateDirectoryTests
 
 	[Theory]
 	[AutoData]
-	public async Task CreateDirectory_ReadOnlyParent_ShouldStillCreateDirectoryUnderWindows(string parent,
+	public async Task CreateDirectory_ReadOnlyParent_ShouldStillCreateDirectoryUnderWindows(
+		string parent,
 		string subdirectory)
 	{
 		string subdirectoryPath = FileSystem.Path.Combine(parent, subdirectory);
@@ -38,7 +39,8 @@ public partial class CreateDirectoryTests
 		{
 			await That(Act).DoesNotThrow();
 			await That(FileSystem.Directory.Exists(subdirectoryPath)).IsTrue();
-			await That(FileSystem.DirectoryInfo.New(parent).Attributes).HasFlag(FileAttributes.ReadOnly);
+			await That(FileSystem.DirectoryInfo.New(parent).Attributes)
+				.HasFlag(FileAttributes.ReadOnly);
 		}
 		else
 		{
@@ -59,7 +61,8 @@ public partial class CreateDirectoryTests
 
 	[Theory]
 	[AutoData]
-	public async Task CreateDirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)
+	public async Task CreateDirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(
+		string name)
 	{
 		FileSystem.File.WriteAllText(name, "");
 
@@ -127,12 +130,14 @@ public partial class CreateDirectoryTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
@@ -168,8 +173,10 @@ public partial class CreateDirectoryTests
 			DateTime lastWriteTime =
 				FileSystem.Directory.GetLastWriteTimeUtc(path);
 
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
-			await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
+			await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 	}
 

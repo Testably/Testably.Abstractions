@@ -122,7 +122,7 @@ public partial class Tests
 	public async Task Wrap_Null_ShouldReturnNull()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
-				mockFileSystem.SimulationMode != SimulationMode.Native);
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		IDriveInfo? result = FileSystem.DriveInfo.Wrap(null);
 
@@ -133,7 +133,7 @@ public partial class Tests
 	public async Task Wrap_ShouldReturnDriveInfoWithSameName()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
-				mockFileSystem.SimulationMode != SimulationMode.Native);
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives()[0];
 
@@ -146,7 +146,7 @@ public partial class Tests
 	public async Task Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException()
 	{
 		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&
-				   mockFileSystem.SimulationMode != SimulationMode.Native);
+		           mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives()[0];
 
@@ -155,7 +155,8 @@ public partial class Tests
 			_ = FileSystem.DriveInfo.Wrap(driveInfo);
 		}
 
-		await That(Act).ThrowsExactly<NotSupportedException>().Whose(x => x.Message, it => it.Contains("Wrapping a DriveInfo in a simulated file system is not supported"));
+		await That(Act).ThrowsExactly<NotSupportedException>().Whose(x => x.Message,
+			it => it.Contains("Wrapping a DriveInfo in a simulated file system is not supported"));
 	}
 
 	#region Helpers

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Testably.Abstractions.Testing.Statistics;
+﻿using Testably.Abstractions.Testing.Statistics;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics;
 

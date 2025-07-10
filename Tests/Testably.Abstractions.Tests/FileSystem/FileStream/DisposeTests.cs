@@ -56,6 +56,7 @@ public partial class DisposeTests
 		Expression<Action<FileSystemStream>> callback)
 	{
 		FileSystem.File.WriteAllText("foo", "some content");
+
 		void Act()
 		{
 			FileSystemStream stream =
@@ -64,12 +65,13 @@ public partial class DisposeTests
 			callback.Compile().Invoke(stream);
 		}
 
-		await That(Act).ThrowsExactly<ObjectDisposedException>().Because($"\n{callback}\n executed after Dispose() was called.");
+		await That(Act).ThrowsExactly<ObjectDisposedException>()
+			.Because($"\n{callback}\n executed after Dispose() was called.");
 	}
 
 	#region Helpers
 
-#pragma warning disable MA0018
+	#pragma warning disable MA0018
 	public static TheoryData<Expression<Action<FileSystemStream>>> GetFileStreamCallbacks()
 		=> new(GetFileStreamCallbackTestParameters());
 	#pragma warning restore MA0018
@@ -92,13 +94,15 @@ public partial class DisposeTests
 		yield return fileStream => fileStream.Read(Array.Empty<byte>(), 0, 0);
 		#pragma warning restore CA2022
 		#pragma warning restore MA0060
-		yield return fileStream => fileStream.ReadAsync(Array.Empty<byte>(), 0, 0, TestContext.Current.CancellationToken)
+		yield return fileStream => fileStream
+			.ReadAsync(Array.Empty<byte>(), 0, 0, TestContext.Current.CancellationToken)
 			.GetAwaiter().GetResult();
 		yield return fileStream => fileStream.ReadByte();
 		yield return fileStream => fileStream.Seek(0, SeekOrigin.Begin);
 		yield return fileStream => fileStream.SetLength(0);
 		yield return fileStream => fileStream.Write(Array.Empty<byte>(), 0, 0);
-		yield return fileStream => fileStream.WriteAsync(Array.Empty<byte>(), 0, 0, TestContext.Current.CancellationToken)
+		yield return fileStream => fileStream
+			.WriteAsync(Array.Empty<byte>(), 0, 0, TestContext.Current.CancellationToken)
 			.GetAwaiter().GetResult();
 		yield return fileStream => fileStream.WriteByte(0x42);
 	}

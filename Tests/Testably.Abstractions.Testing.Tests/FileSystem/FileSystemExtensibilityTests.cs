@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public class FileSystemExtensibilityTests

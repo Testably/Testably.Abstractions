@@ -1,5 +1,3 @@
-using NSubstitute.ExceptionExtensions;
-
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfoFactory;
 
 [FileSystemTests]
@@ -52,7 +50,7 @@ public partial class Tests
 	public async Task Wrap_Null_ShouldReturnNull()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
-				mockFileSystem.SimulationMode != SimulationMode.Native);
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		IDirectoryInfo? result = FileSystem.DirectoryInfo.Wrap(null);
 
@@ -64,7 +62,7 @@ public partial class Tests
 	public async Task Wrap_ShouldWrapFromDirectoryInfo(string path)
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
-				mockFileSystem.SimulationMode != SimulationMode.Native);
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		System.IO.DirectoryInfo directoryInfo = new(path);
 
@@ -79,7 +77,7 @@ public partial class Tests
 	public async Task Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException(string path)
 	{
 		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&
-				   mockFileSystem.SimulationMode != SimulationMode.Native);
+		           mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		System.IO.DirectoryInfo directoryInfo = new(path);
 
@@ -88,6 +86,8 @@ public partial class Tests
 			_ = FileSystem.DirectoryInfo.Wrap(directoryInfo);
 		}
 
-		await That(Act).Throws<NotSupportedException>().Whose(x => x.Message, it => it.Contains("Wrapping a DirectoryInfo in a simulated file system is not supported"));
+		await That(Act).Throws<NotSupportedException>().Whose(x => x.Message,
+			it => it.Contains(
+				"Wrapping a DirectoryInfo in a simulated file system is not supported"));
 	}
 }

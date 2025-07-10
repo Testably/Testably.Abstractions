@@ -44,7 +44,8 @@ public class FileSystemInitializerTests
 
 	[Theory]
 	[AutoData]
-	public async Task With_FileDescription_WithBytes_ShouldCreateFileContent(string name, byte[] bytes)
+	public async Task With_FileDescription_WithBytes_ShouldCreateFileContent(string name,
+		byte[] bytes)
 	{
 		FileDescription description = new(name, bytes);
 		MockFileSystem fileSystem = new();
@@ -110,7 +111,8 @@ public class FileSystemInitializerTests
 
 	[Theory]
 	[AutoData]
-	public async Task With_FilesAndDirectories_ShouldBothBeCreated(string fileName, string directoryName)
+	public async Task With_FilesAndDirectories_ShouldBothBeCreated(string fileName,
+		string directoryName)
 	{
 		FileDescription fileDescription = new(fileName);
 		DirectoryDescription directoryDescription = new(directoryName);
@@ -147,7 +149,6 @@ public class FileSystemInitializerTests
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
 		fileSystem.File.WriteAllText(path, "");
-
 
 		void Act()
 			=> sut.WithFile(path);

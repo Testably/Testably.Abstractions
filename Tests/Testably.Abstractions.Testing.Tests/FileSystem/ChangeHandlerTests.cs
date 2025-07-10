@@ -48,7 +48,8 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 
 	[Theory]
 	[AutoData]
-	public async Task CreateDirectory_WithParentDirectories_ShouldTriggerNotificationForEachDirectory(
+	public async Task
+		CreateDirectory_WithParentDirectories_ShouldTriggerNotificationForEachDirectory(
 			string path1, string path2, string path3)
 	{
 		FileSystem.Initialize();
@@ -87,7 +88,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		FileSystem.Notify
 			.OnEvent(c => receivedPath = c.Path,
 				c => c.ChangeType == expectedChangeType &&
-					 c.FileSystemType == expectedFileSystemType)
+				     c.FileSystemType == expectedFileSystemType)
 			.ExecuteWhileWaiting(() =>
 			{
 				callback.Invoke(FileSystem, path);

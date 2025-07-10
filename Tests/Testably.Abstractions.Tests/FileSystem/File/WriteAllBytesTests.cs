@@ -61,8 +61,9 @@ public partial class WriteAllBytesTests
 
 	[Theory]
 	[AutoData]
-	public async Task WriteAllBytes_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
-		string path, byte[] bytes)
+	public async Task
+		WriteAllBytes_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+			string path, byte[] bytes)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -76,7 +77,7 @@ public partial class WriteAllBytesTests
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
-	
+
 #if FEATURE_FILE_SPAN
 	[Theory]
 	[AutoData]

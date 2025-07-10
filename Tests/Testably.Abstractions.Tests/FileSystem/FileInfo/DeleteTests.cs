@@ -64,6 +64,7 @@ public partial class DeleteTests
 		openFile.Write([0], 0, 1);
 		openFile.Flush();
 		IFileInfo sut = FileSystem.FileInfo.New(filename);
+
 		void Act()
 		{
 			sut.Delete();

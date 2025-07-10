@@ -42,7 +42,7 @@ public partial class IncludeSubdirectoriesTests
 	[Theory]
 	[AutoData]
 	public async Task IncludeSubdirectories_SetToTrue_ShouldOnlyTriggerNotificationOnSubdirectories(
-			string baseDirectory, string subdirectoryName, string otherDirectory)
+		string baseDirectory, string subdirectoryName, string otherDirectory)
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory(baseDirectory).Initialized(s => s

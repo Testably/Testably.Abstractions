@@ -1,4 +1,3 @@
-using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
@@ -144,25 +143,30 @@ public partial class CopyToTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(FileSystem.File.GetCreationTime(destinationName)).IsOnOrAfter(updatedTime.ApplySystemClockTolerance());
+			await That(FileSystem.File.GetCreationTime(destinationName))
+				.IsOnOrAfter(updatedTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			await That(FileSystem.File.GetCreationTime(destinationName))
-				.IsOnOrAfter(sourceCreationTime.ApplySystemClockTolerance()).And.IsBefore(updatedTime);
+				.IsOnOrAfter(sourceCreationTime.ApplySystemClockTolerance()).And
+				.IsBefore(updatedTime);
 		}
 
 		if (Test.RunsOnMac)
 		{
 			await That(FileSystem.File.GetLastAccessTime(destinationName))
-				.IsOnOrAfter(sourceCreationTime.ApplySystemClockTolerance()).And.IsBefore(updatedTime);
+				.IsOnOrAfter(sourceCreationTime.ApplySystemClockTolerance()).And
+				.IsBefore(updatedTime);
 		}
 		else
 		{
-			await That(FileSystem.File.GetLastAccessTime(destinationName)).IsOnOrAfter(updatedTime.ApplySystemClockTolerance());
+			await That(FileSystem.File.GetLastAccessTime(destinationName))
+				.IsOnOrAfter(updatedTime.ApplySystemClockTolerance());
 		}
 
-		await That(FileSystem.File.GetLastWriteTime(destinationName)).IsEqualTo(sourceLastWriteTime);
+		await That(FileSystem.File.GetLastWriteTime(destinationName))
+			.IsEqualTo(sourceLastWriteTime);
 	}
 
 	[Theory]
@@ -219,9 +223,10 @@ public partial class CopyToTests
 
 	[Theory]
 	[AutoData]
-	public async Task CopyTo_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
-		string sourceName,
-		string destinationName)
+	public async Task
+		CopyTo_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
+			string sourceName,
+			string destinationName)
 	{
 		FileSystem.Directory.CreateDirectory(sourceName);
 		IFileInfo sut = FileSystem.FileInfo.New(sourceName);

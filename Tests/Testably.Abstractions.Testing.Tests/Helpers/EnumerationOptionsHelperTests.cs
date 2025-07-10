@@ -18,6 +18,7 @@ public class EnumerationOptionsHelperTests
 		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>().WithParamName("searchOption");
 	}
 
+#if NET6_0_OR_GREATER
 	[Fact]
 	public async Task MatchesPattern_InvalidMatchType_ShouldThrowArgumentOutOfRangeException()
 	{
@@ -33,6 +34,8 @@ public class EnumerationOptionsHelperTests
 				"foo", "*");
 		}
 
-		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>().WithParamName("enumerationOptions");
+		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>()
+			.WithParamName("enumerationOptions");
 	}
+#endif
 }

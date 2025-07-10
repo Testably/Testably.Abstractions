@@ -73,7 +73,8 @@ public partial class CreateTests
 
 	[Theory]
 	[AutoData]
-	public async Task Create_ShouldRefreshExistsCacheForCurrentItem_ExceptOnNetFramework(string path)
+	public async Task Create_ShouldRefreshExistsCacheForCurrentItem_ExceptOnNetFramework(
+		string path)
 	{
 		IDirectoryInfo sut1 = FileSystem.DirectoryInfo.New(path);
 		IDirectoryInfo sut2 = FileSystem.DirectoryInfo.New(path);
@@ -116,7 +117,7 @@ public partial class CreateTests
 		else
 		{
 			Skip.If(string.Equals(suffix, "\\", StringComparison.Ordinal) ||
-					string.Equals(suffix, " ", StringComparison.Ordinal),
+			        string.Equals(suffix, " ", StringComparison.Ordinal),
 				$"The case with '{suffix}' as suffix is only supported on Windows.");
 		}
 

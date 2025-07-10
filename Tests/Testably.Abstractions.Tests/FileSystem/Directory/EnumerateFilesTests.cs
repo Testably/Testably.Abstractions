@@ -1,4 +1,3 @@
-using NSubstitute.ExceptionExtensions;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,8 +15,9 @@ public partial class EnumerateFilesTests
 			string path)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
+
 		void Act()
-				=> FileSystem.Directory.EnumerateFiles(path).ToList();
+			=> FileSystem.Directory.EnumerateFiles(path).ToList();
 
 		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithMessageContaining($"'{expectedPath}'").And
@@ -27,7 +27,8 @@ public partial class EnumerateFilesTests
 
 	[Theory]
 	[AutoData]
-	public async Task EnumerateFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
+	public async Task
+		EnumerateFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -90,7 +91,8 @@ public partial class EnumerateFilesTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Which.EndsWith(fileName).Because($"it should match {searchPattern}");
+			await That(result).HasSingle().Which.EndsWith(fileName)
+				.Because($"it should match {searchPattern}");
 		}
 		else
 		{
@@ -120,7 +122,8 @@ public partial class EnumerateFilesTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Which.EndsWith(extension).Because($"it should match {searchPattern}");
+			await That(result).HasSingle().Which.EndsWith(extension)
+				.Because($"it should match {searchPattern}");
 		}
 		else
 		{
@@ -345,7 +348,7 @@ public partial class EnumerateFilesTests
 	[Theory]
 	[AutoData]
 	public async Task EnumerateFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
-			string path)
+		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
@@ -387,7 +390,8 @@ public partial class EnumerateFilesTests
 	}
 
 	[Fact]
-	public async Task EnumerateFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
+	public async Task
+		EnumerateFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()

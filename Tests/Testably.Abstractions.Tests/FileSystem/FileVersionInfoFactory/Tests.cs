@@ -1,4 +1,3 @@
-using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileVersionInfoFactory;
@@ -32,7 +31,7 @@ public partial class Tests
 		{
 			path = FileSystem.Path.GetFullPath(path);
 		}
-		
+
 		void Act() =>
 			FileSystem.FileVersionInfo.GetVersionInfo(path);
 

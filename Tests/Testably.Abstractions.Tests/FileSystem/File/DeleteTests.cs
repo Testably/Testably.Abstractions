@@ -40,6 +40,7 @@ public partial class DeleteTests
 	{
 		FileSystem.Directory.CreateDirectory(fileName);
 		string expectedPath = FileSystem.Path.Combine(BasePath, fileName);
+
 		void Act()
 		{
 			FileSystem.File.Delete(fileName);
@@ -58,6 +59,7 @@ public partial class DeleteTests
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filename);
 		openFile.Write([0], 0, 1);
 		openFile.Flush();
+
 		void Act()
 		{
 			FileSystem.File.Delete(filename);

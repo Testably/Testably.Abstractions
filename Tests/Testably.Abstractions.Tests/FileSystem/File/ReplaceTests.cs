@@ -20,7 +20,6 @@ public partial class ReplaceTests
 			FileSystem.File.Replace(sourceName, destinationName, null);
 		}
 
-
 		if (Test.RunsOnLinux)
 		{
 			await That(Act).DoesNotThrow();
@@ -31,7 +30,9 @@ public partial class ReplaceTests
 		{
 			await That(Act).Throws<IOException>()
 				.WithHResult(-2146232800).And
-				.WithMessage($"The source '{FileSystem.Path.GetFullPath(sourceName)}' and destination '{FileSystem.Path.GetFullPath(destinationName)}' are the same file").AsPrefix();
+				.WithMessage(
+					$"The source '{FileSystem.Path.GetFullPath(sourceName)}' and destination '{FileSystem.Path.GetFullPath(destinationName)}' are the same file")
+				.AsPrefix();
 		}
 		else
 		{
@@ -44,7 +45,7 @@ public partial class ReplaceTests
 	[Theory]
 	[AutoData]
 	public async Task Replace_DestinationDirectoryDoesNotExist_ShouldThrowCorrectException(
-			string source)
+		string source)
 	{
 		FileSystem.Initialize()
 			.WithFile(source);
@@ -126,7 +127,8 @@ public partial class ReplaceTests
 
 	[Theory]
 	[AutoData]
-	public async Task Replace_ReadOnly_WithoutIgnoreMetadataError_ShouldThrowUnauthorizedAccessException_OnWindows(
+	public async Task
+		Replace_ReadOnly_WithoutIgnoreMetadataError_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string sourceName,
 			string destinationName,
 			string backupName,
@@ -148,8 +150,10 @@ public partial class ReplaceTests
 			await That(FileSystem.File.Exists(sourceName)).IsTrue();
 			await That(FileSystem.File.ReadAllText(sourceName)).IsEquivalentTo(sourceContents);
 			await That(FileSystem.File.Exists(destinationName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(destinationName)).IsEquivalentTo(destinationContents);
-			await That(FileSystem.File.GetAttributes(destinationName)).DoesNotHaveFlag(FileAttributes.ReadOnly);
+			await That(FileSystem.File.ReadAllText(destinationName))
+				.IsEquivalentTo(destinationContents);
+			await That(FileSystem.File.GetAttributes(destinationName))
+				.DoesNotHaveFlag(FileAttributes.ReadOnly);
 			await That(FileSystem.File.Exists(backupName)).IsFalse();
 		}
 		else
@@ -244,8 +248,10 @@ public partial class ReplaceTests
 			await That(FileSystem.File.Exists(sourceName)).IsTrue();
 			await That(FileSystem.File.ReadAllText(sourceName)).IsEquivalentTo(sourceContents);
 			await That(FileSystem.File.Exists(destinationName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(destinationName)).IsEquivalentTo(destinationContents);
-			await That(FileSystem.File.GetAttributes(destinationName)).DoesNotHaveFlag(FileAttributes.ReadOnly);
+			await That(FileSystem.File.ReadAllText(destinationName))
+				.IsEquivalentTo(destinationContents);
+			await That(FileSystem.File.GetAttributes(destinationName))
+				.DoesNotHaveFlag(FileAttributes.ReadOnly);
 			await That(FileSystem.File.Exists(backupName)).IsFalse();
 		}
 		else

@@ -30,7 +30,7 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 	[Theory]
 	[AutoData]
 	public async Task Wrap_ShouldThrowNotSupportedException(
-			string path, string contents)
+		string path, string contents)
 	{
 		path = RealFileSystem.Path.GetFullPath(path);
 		RealFileSystem.File.WriteAllText(path, contents);

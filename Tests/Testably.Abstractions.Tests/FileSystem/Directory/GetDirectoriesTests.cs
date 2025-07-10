@@ -1,4 +1,3 @@
-using NSubstitute.ExceptionExtensions;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,8 +14,9 @@ public partial class GetDirectoriesTests
 			string path)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
+
 		void Act()
-				=> FileSystem.Directory.GetDirectories(path).ToList();
+			=> FileSystem.Directory.GetDirectories(path).ToList();
 
 		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithMessageContaining($"'{expectedPath}'").And
@@ -26,7 +26,8 @@ public partial class GetDirectoriesTests
 
 	[Theory]
 	[AutoData]
-	public async Task GetDirectories_SearchOptionAllDirectories_FullPath_ShouldReturnAllSubdirectoriesWithFullPath(
+	public async Task
+		GetDirectories_SearchOptionAllDirectories_FullPath_ShouldReturnAllSubdirectoriesWithFullPath(
 			string path)
 	{
 		IDirectoryInfo baseDirectory =
@@ -47,7 +48,7 @@ public partial class GetDirectoriesTests
 	[Theory]
 	[AutoData]
 	public async Task GetDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
-			string path)
+		string path)
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
@@ -89,11 +90,14 @@ public partial class GetDirectoriesTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Which.IsEqualTo(FileSystem.Path.Combine("foo", subdirectoryName)).Because($"it should match {searchPattern}");
+			await That(result).HasSingle().Which
+				.IsEqualTo(FileSystem.Path.Combine("foo", subdirectoryName))
+				.Because($"it should match {searchPattern}");
 		}
 		else
 		{
-			await That(result).IsEmpty().Because($"{subdirectoryName} should not match {searchPattern}");
+			await That(result).IsEmpty()
+				.Because($"{subdirectoryName} should not match {searchPattern}");
 		}
 	}
 
@@ -144,7 +148,7 @@ public partial class GetDirectoriesTests
 	[Theory]
 	[AutoData]
 	public async Task GetDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
-			string path)
+		string path)
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);

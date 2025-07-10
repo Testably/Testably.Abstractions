@@ -9,7 +9,7 @@ public class InMemoryLocationTests
 	[Theory]
 	[AutoData]
 	public async Task Equals_AsObject_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
-			string path1, string path2)
+		string path1, string path2)
 	{
 		MockFileSystem fileSystem = new();
 		object location1 = InMemoryLocation.New(fileSystem, null, Path.GetFullPath(path1));

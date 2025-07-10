@@ -11,6 +11,7 @@ public class FileSystemExtensionsTests
 		string location, string source, string destination)
 	{
 		MockFileSystem sut = new();
+
 		void Act()
 		{
 			sut.GetMoveLocation(

@@ -1,4 +1,3 @@
-using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
@@ -89,14 +88,17 @@ public partial class Tests
 		// Last Access Time is only updated on Windows
 		if (Test.RunsOnWindows)
 		{
-			await That(result.LastAccessTime).IsBetween(sleepTime).And(TimeSystem.DateTime.Now).Within(TimeComparison.Tolerance);
+			await That(result.LastAccessTime).IsBetween(sleepTime).And(TimeSystem.DateTime.Now)
+				.Within(TimeComparison.Tolerance);
 		}
 		else
 		{
-			await That(result.LastAccessTime).IsBetween(start).And(sleepTime).Within(TimeComparison.Tolerance);
+			await That(result.LastAccessTime).IsBetween(start).And(sleepTime)
+				.Within(TimeComparison.Tolerance);
 		}
 
-		await That(result.LastWriteTime).IsBetween(sleepTime).And(TimeSystem.DateTime.Now).Within(TimeComparison.Tolerance);
+		await That(result.LastWriteTime).IsBetween(sleepTime).And(TimeSystem.DateTime.Now)
+			.Within(TimeComparison.Tolerance);
 	}
 
 	[Theory]
@@ -108,7 +110,8 @@ public partial class Tests
 		FileSystem.Directory.CreateDirectory(path);
 
 		DateTime result = FileSystem.Directory.GetLastAccessTime(path);
-		await That(result).IsBetween(start).And(TimeSystem.DateTime.Now).Within(TimeComparison.Tolerance);
+		await That(result).IsBetween(start).And(TimeSystem.DateTime.Now)
+			.Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 	}
 
@@ -121,7 +124,8 @@ public partial class Tests
 		FileSystem.Directory.CreateDirectory(path);
 
 		DateTime result = FileSystem.Directory.GetLastAccessTimeUtc(path);
-		await That(result).IsBetween(start).And(TimeSystem.DateTime.UtcNow).Within(TimeComparison.Tolerance);
+		await That(result).IsBetween(start).And(TimeSystem.DateTime.UtcNow)
+			.Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
 	}
 
@@ -134,7 +138,8 @@ public partial class Tests
 		FileSystem.Directory.CreateDirectory(path);
 
 		DateTime result = FileSystem.Directory.GetLastWriteTime(path);
-		await That(result).IsBetween(start).And(TimeSystem.DateTime.Now).Within(TimeComparison.Tolerance);
+		await That(result).IsBetween(start).And(TimeSystem.DateTime.Now)
+			.Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 	}
 
@@ -147,7 +152,8 @@ public partial class Tests
 		FileSystem.Directory.CreateDirectory(path);
 
 		DateTime result = FileSystem.Directory.GetLastWriteTimeUtc(path);
-		await That(result).IsBetween(start).And(TimeSystem.DateTime.UtcNow).Within(TimeComparison.Tolerance);
+		await That(result).IsBetween(start).And(TimeSystem.DateTime.UtcNow)
+			.Within(TimeComparison.Tolerance);
 		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
 	}
 
@@ -205,9 +211,11 @@ public partial class Tests
 
 		FileSystem.Directory.SetCreationTime(path, creationTime);
 
-		await That(FileSystem.Directory.GetCreationTimeUtc(path)).IsEqualTo(creationTime.ToUniversalTime());
+		await That(FileSystem.Directory.GetCreationTimeUtc(path))
+			.IsEqualTo(creationTime.ToUniversalTime());
 		await That(FileSystem.Directory.GetCreationTime(path)).IsEqualTo(creationTime);
-		await That(FileSystem.Directory.GetCreationTime(path).Kind).IsNotEqualTo(DateTimeKind.Unspecified);
+		await That(FileSystem.Directory.GetCreationTime(path).Kind)
+			.IsNotEqualTo(DateTimeKind.Unspecified);
 	}
 
 	[Theory]
@@ -265,8 +273,10 @@ public partial class Tests
 		FileSystem.Directory.SetCreationTimeUtc(path, creationTime);
 
 		await That(FileSystem.Directory.GetCreationTimeUtc(path)).IsEqualTo(creationTime);
-		await That(FileSystem.Directory.GetCreationTime(path)).IsEqualTo(creationTime.ToLocalTime());
-		await That(FileSystem.Directory.GetCreationTime(path).Kind).IsNotEqualTo(DateTimeKind.Unspecified);
+		await That(FileSystem.Directory.GetCreationTime(path))
+			.IsEqualTo(creationTime.ToLocalTime());
+		await That(FileSystem.Directory.GetCreationTime(path).Kind)
+			.IsNotEqualTo(DateTimeKind.Unspecified);
 	}
 
 	[Theory]
@@ -317,9 +327,11 @@ public partial class Tests
 
 		FileSystem.Directory.SetLastAccessTime(path, lastAccessTime);
 
-		await That(FileSystem.Directory.GetLastAccessTimeUtc(path)).IsEqualTo(lastAccessTime.ToUniversalTime());
+		await That(FileSystem.Directory.GetLastAccessTimeUtc(path))
+			.IsEqualTo(lastAccessTime.ToUniversalTime());
 		await That(FileSystem.Directory.GetLastAccessTime(path)).IsEqualTo(lastAccessTime);
-		await That(FileSystem.Directory.GetLastAccessTime(path).Kind).IsNotEqualTo(DateTimeKind.Unspecified);
+		await That(FileSystem.Directory.GetLastAccessTime(path).Kind)
+			.IsNotEqualTo(DateTimeKind.Unspecified);
 	}
 
 	[Theory]
@@ -371,8 +383,10 @@ public partial class Tests
 		FileSystem.Directory.SetLastAccessTimeUtc(path, lastAccessTime);
 
 		await That(FileSystem.Directory.GetLastAccessTimeUtc(path)).IsEqualTo(lastAccessTime);
-		await That(FileSystem.Directory.GetLastAccessTime(path)).IsEqualTo(lastAccessTime.ToLocalTime());
-		await That(FileSystem.Directory.GetLastAccessTime(path).Kind).IsNotEqualTo(DateTimeKind.Unspecified);
+		await That(FileSystem.Directory.GetLastAccessTime(path))
+			.IsEqualTo(lastAccessTime.ToLocalTime());
+		await That(FileSystem.Directory.GetLastAccessTime(path).Kind)
+			.IsNotEqualTo(DateTimeKind.Unspecified);
 	}
 
 	[Theory]
@@ -423,9 +437,11 @@ public partial class Tests
 
 		FileSystem.Directory.SetLastWriteTime(path, lastWriteTime);
 
-		await That(FileSystem.Directory.GetLastWriteTimeUtc(path)).IsEqualTo(lastWriteTime.ToUniversalTime());
+		await That(FileSystem.Directory.GetLastWriteTimeUtc(path))
+			.IsEqualTo(lastWriteTime.ToUniversalTime());
 		await That(FileSystem.Directory.GetLastWriteTime(path)).IsEqualTo(lastWriteTime);
-		await That(FileSystem.Directory.GetLastWriteTime(path).Kind).IsNotEqualTo(DateTimeKind.Unspecified);
+		await That(FileSystem.Directory.GetLastWriteTime(path).Kind)
+			.IsNotEqualTo(DateTimeKind.Unspecified);
 	}
 
 	[Theory]
@@ -477,7 +493,9 @@ public partial class Tests
 		FileSystem.Directory.SetLastWriteTimeUtc(path, lastWriteTime);
 
 		await That(FileSystem.Directory.GetLastWriteTimeUtc(path)).IsEqualTo(lastWriteTime);
-		await That(FileSystem.Directory.GetLastWriteTime(path)).IsEqualTo(lastWriteTime.ToLocalTime());
-		await That(FileSystem.Directory.GetLastWriteTime(path).Kind).IsNotEqualTo(DateTimeKind.Unspecified);
+		await That(FileSystem.Directory.GetLastWriteTime(path))
+			.IsEqualTo(lastWriteTime.ToLocalTime());
+		await That(FileSystem.Directory.GetLastWriteTime(path).Kind)
+			.IsNotEqualTo(DateTimeKind.Unspecified);
 	}
 }

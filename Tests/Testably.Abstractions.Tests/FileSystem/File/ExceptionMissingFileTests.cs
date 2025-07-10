@@ -35,7 +35,8 @@ public partial class ExceptionMissingFileTests
 		}
 		else
 		{
-			await That(Act).ThrowsAFileOrDirectoryNotFoundException().Because($"\n{callback}\n was called with a missing directory");
+			await That(Act).ThrowsAFileOrDirectoryNotFoundException()
+				.Because($"\n{callback}\n was called with a missing directory");
 		}
 	}
 

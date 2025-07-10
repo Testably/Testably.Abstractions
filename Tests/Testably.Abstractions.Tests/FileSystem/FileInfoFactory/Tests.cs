@@ -13,6 +13,7 @@ public partial class Tests
 	{
 		string rootDrive = FileTestHelper.RootDrive(Test);
 		string path = new('a', maxLength - rootDrive.Length);
+
 		void Act()
 		{
 			_ = FileSystem.FileInfo.New(rootDrive + path);
@@ -118,7 +119,7 @@ public partial class Tests
 	public async Task Wrap_Null_ShouldReturnNull()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
-				mockFileSystem.SimulationMode != SimulationMode.Native);
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		IFileInfo? result = FileSystem.FileInfo.Wrap(null);
 
@@ -130,7 +131,7 @@ public partial class Tests
 	public async Task Wrap_ShouldWrapFromFileInfo(string path)
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
-				mockFileSystem.SimulationMode != SimulationMode.Native);
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		System.IO.FileInfo fileInfo = new(path);
 
@@ -145,7 +146,7 @@ public partial class Tests
 	public async Task Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException(string path)
 	{
 		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&
-				   mockFileSystem.SimulationMode != SimulationMode.Native);
+		           mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		System.IO.FileInfo fileInfo = new(path);
 
@@ -155,6 +156,7 @@ public partial class Tests
 		}
 
 		await That(Act).ThrowsExactly<NotSupportedException>()
-			.WithMessage($"Wrapping a FileInfo in a simulated file system is not supported").AsPrefix();
+			.WithMessage("Wrapping a FileInfo in a simulated file system is not supported")
+			.AsPrefix();
 	}
 }

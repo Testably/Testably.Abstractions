@@ -89,7 +89,8 @@ public class FileStreamFactoryStatisticsTests
 	}
 
 	[Fact]
-	public async Task Method_New_String_FileMode_FileAccess_FileShare_Int_FileOptions_ShouldRegisterCall()
+	public async Task
+		Method_New_String_FileMode_FileAccess_FileShare_Int_FileOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -205,7 +206,8 @@ public class FileStreamFactoryStatisticsTests
 			}
 
 			await That(sut.Statistics.TotalCount).IsEqualTo(1);
-			await That(sut.Statistics.FileStream).OnlyContainsMethodCall(nameof(IFileStreamFactory.Wrap),
+			await That(sut.Statistics.FileStream).OnlyContainsMethodCall(
+				nameof(IFileStreamFactory.Wrap),
 				fileStream);
 		}
 		finally

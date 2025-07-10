@@ -25,7 +25,7 @@ public partial class GetExtensionTests
 		string directory, string filename, string extension)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
-					  "." + extension;
+		              "." + extension;
 
 		string result = FileSystem.Path.GetExtension(path);
 

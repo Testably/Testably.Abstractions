@@ -96,9 +96,9 @@ public class FileInfoStatisticsTests
 
 		MockFileSystem sut = new();
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.FileInfo.New("foo").Decrypt();
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(2);
 		await That(sut.Statistics.FileInfo["foo"])
@@ -125,9 +125,9 @@ public class FileInfoStatisticsTests
 
 		MockFileSystem sut = new();
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.FileInfo.New("foo").Encrypt();
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(2);
 		await That(sut.Statistics.FileInfo["foo"])
@@ -446,7 +446,8 @@ public class FileInfoStatisticsTests
 		_ = sut.FileInfo.New("foo").Exists;
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(2);
-		await That(sut.Statistics.FileInfo["foo"]).OnlyContainsPropertyGetAccess(nameof(IFileInfo.Exists));
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.Exists));
 	}
 
 	[Fact]
@@ -619,7 +620,8 @@ public class FileInfoStatisticsTests
 		_ = sut.FileInfo.New("foo").Length;
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(2);
-		await That(sut.Statistics.FileInfo["foo"]).OnlyContainsPropertyGetAccess(nameof(IFileInfo.Length));
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.Length));
 	}
 
 #if FEATURE_FILESYSTEM_LINK
@@ -646,7 +648,8 @@ public class FileInfoStatisticsTests
 		_ = sut.FileInfo.New("foo").Name;
 
 		await That(sut.Statistics.TotalCount).IsEqualTo(2);
-		await That(sut.Statistics.FileInfo["foo"]).OnlyContainsPropertyGetAccess(nameof(IFileInfo.Name));
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.Name));
 	}
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE

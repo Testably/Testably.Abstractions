@@ -1,6 +1,4 @@
-using NSubstitute.ExceptionExtensions;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
@@ -80,11 +78,11 @@ public partial class OpenReadTests
 		{
 			// ReSharper disable once UseAwaitUsing
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
-#pragma warning disable CA1835 // Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'
+			#pragma warning disable CA1835 // Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'
 			await stream.WriteAsync(bytes, 0, bytes.Length, TestContext.Current.CancellationToken);
-#pragma warning restore CA1835
+			#pragma warning restore CA1835
 		}
-		
+
 		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 

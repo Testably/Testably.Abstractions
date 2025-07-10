@@ -1,13 +1,13 @@
 ﻿using System.IO;
 using Testably.Abstractions.Testing.Helpers;
-using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public class PathHelperTests
 {
 	[Fact]
-	public async Task EnsureValidFormat_WithWhiteSpaceAndIncludeIsEmptyCheck_ShouldThrowArgumentException()
+	public async Task
+		EnsureValidFormat_WithWhiteSpaceAndIncludeIsEmptyCheck_ShouldThrowArgumentException()
 	{
 		string whiteSpace = " ";
 		MockFileSystem fileSystem = new();
@@ -105,7 +105,8 @@ public class PathHelperTests
 	}
 
 	[Fact]
-	public async Task ThrowCommonExceptionsIfPathIsInvalid_StartWithNull_ShouldThrowArgumentException()
+	public async Task
+		ThrowCommonExceptionsIfPathIsInvalid_StartWithNull_ShouldThrowArgumentException()
 	{
 		string path = "\0foo";
 
@@ -139,7 +140,8 @@ public class PathHelperTests
 #endif
 
 	[Fact]
-	public async Task ThrowCommonExceptionsIfPathToTargetIsInvalid_NullCharacter_ShouldThrowArgumentException()
+	public async Task
+		ThrowCommonExceptionsIfPathToTargetIsInvalid_NullCharacter_ShouldThrowArgumentException()
 	{
 		MockFileSystem fileSystem = new();
 		string path = "path-with\0 invalid character";

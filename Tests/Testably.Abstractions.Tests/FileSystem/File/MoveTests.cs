@@ -1,4 +1,3 @@
-using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
@@ -25,7 +24,8 @@ public partial class MoveTests
 
 		await That(FileSystem.File.Exists(destinationName)).IsTrue();
 		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
-		await That(FileSystem.Directory.GetFiles(".")).HasSingle().Matching(d => d.Contains(destinationName, StringComparison.Ordinal));
+		await That(FileSystem.Directory.GetFiles(".")).HasSingle()
+			.Matching(d => d.Contains(destinationName, StringComparison.Ordinal));
 	}
 
 	[Theory]
@@ -137,9 +137,12 @@ public partial class MoveTests
 		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(destination);
 		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(destination);
 
-		await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
-		await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
-		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+		await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
+		await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
+		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 	}
 
 	[Theory]
@@ -165,6 +168,7 @@ public partial class MoveTests
 		string destinationName)
 	{
 		string sourcePath = FileSystem.Path.Combine(missingDirectory, sourceName);
+
 		void Act()
 		{
 			FileSystem.File.Move(sourcePath, destinationName);

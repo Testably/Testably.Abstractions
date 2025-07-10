@@ -18,8 +18,9 @@ public partial class GetFilesTests
 			string path)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
+
 		void Act()
-				=> FileSystem.Directory.GetFiles(path).ToList();
+			=> FileSystem.Directory.GetFiles(path).ToList();
 
 		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithMessageContaining(expectedPath).And
@@ -56,6 +57,7 @@ public partial class GetFilesTests
 		{
 			_ = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
 		}
+
 		string[] result2 = FileSystem.Directory.GetFiles(path.ToUpperInvariant());
 
 		await That(Act).ThrowsExactly<DirectoryNotFoundException>();
@@ -65,7 +67,7 @@ public partial class GetFilesTests
 	[Theory]
 	[AutoData]
 	public async Task GetFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
-			string path)
+		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
@@ -127,7 +129,8 @@ public partial class GetFilesTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Which.EndsWith(fileName).Because($"it should match {searchPattern}");
+			await That(result).HasSingle().Which.EndsWith(fileName)
+				.Because($"it should match {searchPattern}");
 		}
 		else
 		{
@@ -148,7 +151,8 @@ public partial class GetFilesTests
 	}
 
 	[Fact]
-	public async Task GetFiles_SearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
+	public async Task
+		GetFiles_SearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo").Initialized(d => d
@@ -235,7 +239,7 @@ public partial class GetFilesTests
 	[Theory]
 	[AutoData]
 	public async Task GetFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
-			string path)
+		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
@@ -299,7 +303,8 @@ public partial class GetFilesTests
 	}
 
 	[Fact]
-	public async Task GetFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
+	public async Task
+		GetFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests;
 
@@ -74,7 +73,8 @@ public class MockFileSystemInitializationTests
 	}
 
 	[Fact]
-	public async Task MockFileSystem_WithoutCurrentDirectory_ShouldUseDefaultDriveAsCurrentDirectory()
+	public async Task
+		MockFileSystem_WithoutCurrentDirectory_ShouldUseDefaultDriveAsCurrentDirectory()
 	{
 		string expected = Test.RunsOnWindows ? "C:\\" : "/";
 		MockFileSystem sut = new();

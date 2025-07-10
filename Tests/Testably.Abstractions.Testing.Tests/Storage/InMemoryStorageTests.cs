@@ -41,7 +41,8 @@ public class InMemoryStorageTests
 		fileSystem.File.Copy("foo", "bar", true);
 
 		long availableFreeSpaceAfter = mainDrive.AvailableFreeSpace;
-		await That(availableFreeSpaceAfter).IsEqualTo(availableFreeSpaceBefore + file2Size - file1Size);
+		await That(availableFreeSpaceAfter)
+			.IsEqualTo(availableFreeSpaceBefore + file2Size - file1Size);
 	}
 
 	[Fact]

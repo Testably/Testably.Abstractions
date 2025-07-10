@@ -1,4 +1,3 @@
-using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
@@ -28,7 +27,8 @@ public partial class CopyTests
 		}
 		else
 		{
-			await That(Act).Throws<IOException>().WithHResult(Test.RunsOnWindows ? -2147024816 : 17);
+			await That(Act).Throws<IOException>()
+				.WithHResult(Test.RunsOnWindows ? -2147024816 : 17);
 		}
 	}
 
@@ -133,7 +133,8 @@ public partial class CopyTests
 		else
 		{
 			await That(Act).Throws<IOException>()
-				.WithMessageContaining("The filename, directory name, or volume label syntax is incorrect").And
+				.WithMessageContaining(
+					"The filename, directory name, or volume label syntax is incorrect").And
 				.WithHResult(-2147024773);
 		}
 	}
@@ -180,7 +181,8 @@ public partial class CopyTests
 		DateTime destinationLastWriteTime =
 			FileSystem.File.GetLastWriteTimeUtc(destination);
 
-		await That(sourceCreationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+		await That(sourceCreationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 		if (Test.RunsOnMac)
 		{
 #if NET8_0_OR_GREATER
@@ -191,29 +193,34 @@ public partial class CopyTests
 		}
 		else if (Test.RunsOnWindows)
 		{
-			await That(sourceLastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(sourceLastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 		else
 		{
 			await That(sourceLastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		await That(sourceLastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+		await That(sourceLastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 		if (Test.RunsOnWindows)
 		{
 			await That(destinationCreationTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			await That(destinationCreationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(destinationCreationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
 		if (!Test.RunsOnMac)
 		{
-			await That(destinationLastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(destinationLastAccessTime)
+				.IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		await That(destinationLastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+		await That(destinationLastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 	}
 
 	[Theory]
@@ -236,7 +243,8 @@ public partial class CopyTests
 
 		await That(FileSystem.File.Exists(destination)).IsTrue();
 		await That(FileSystem.File.ReadAllBytes(destination)).IsEqualTo(original);
-		await That(FileSystem.File.ReadAllBytes(destination)).IsNotEqualTo(FileSystem.File.ReadAllBytes(source));
+		await That(FileSystem.File.ReadAllBytes(destination))
+			.IsNotEqualTo(FileSystem.File.ReadAllBytes(source));
 	}
 
 	[Theory]
@@ -257,7 +265,8 @@ public partial class CopyTests
 			binaryWriter.Write("Some text");
 		}
 
-		await That(FileSystem.File.ReadAllText(source)).IsNotEqualTo(FileSystem.File.ReadAllText(destination));
+		await That(FileSystem.File.ReadAllText(source))
+			.IsNotEqualTo(FileSystem.File.ReadAllText(destination));
 	}
 
 	[Theory]
@@ -336,6 +345,7 @@ public partial class CopyTests
 		string destinationName)
 	{
 		string source = FileSystem.Path.Combine(missingDirectory, sourceName);
+
 		void Act()
 		{
 			FileSystem.File.Copy(source, destinationName);

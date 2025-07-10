@@ -1,5 +1,4 @@
 using System.IO;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
@@ -113,7 +112,8 @@ public partial class ReplaceTests
 
 	[Theory]
 	[AutoData]
-	public async Task Replace_ReadOnly_WithoutIgnoreMetadataError_ShouldThrowUnauthorizedAccessException_OnWindows(
+	public async Task
+		Replace_ReadOnly_WithoutIgnoreMetadataError_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string sourceName,
 			string destinationName,
 			string backupName,
@@ -137,7 +137,8 @@ public partial class ReplaceTests
 			await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(sourceContents);
 			await That(FileSystem.File.Exists(destinationName)).IsTrue();
 			await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(destinationContents);
-			await That(FileSystem.File.GetAttributes(destinationName)).DoesNotHaveFlag(FileAttributes.ReadOnly);
+			await That(FileSystem.File.GetAttributes(destinationName))
+				.DoesNotHaveFlag(FileAttributes.ReadOnly);
 			await That(FileSystem.File.Exists(backupName)).IsFalse();
 		}
 		else
@@ -188,14 +189,17 @@ public partial class ReplaceTests
 
 		if (Test.RunsOnMac)
 		{
-			await That(FileSystem.File.GetAttributes(destinationName)).IsEqualTo(expectedSourceAttributes);
+			await That(FileSystem.File.GetAttributes(destinationName))
+				.IsEqualTo(expectedSourceAttributes);
 		}
 		else
 		{
-			await That(FileSystem.File.GetAttributes(destinationName)).IsEqualTo(expectedDestinationAttributes);
+			await That(FileSystem.File.GetAttributes(destinationName))
+				.IsEqualTo(expectedDestinationAttributes);
 		}
 
-		await That(FileSystem.File.GetAttributes(backupName)).IsEqualTo(expectedDestinationAttributes);
+		await That(FileSystem.File.GetAttributes(backupName))
+			.IsEqualTo(expectedDestinationAttributes);
 	}
 
 	[Theory]
@@ -229,18 +233,24 @@ public partial class ReplaceTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(FileSystem.File.GetCreationTime(destinationName)).IsEqualTo(destinationCreationTime);
+			await That(FileSystem.File.GetCreationTime(destinationName))
+				.IsEqualTo(destinationCreationTime);
 		}
 		else
 		{
-			await That(FileSystem.File.GetCreationTime(destinationName)).IsEqualTo(sourceCreationTime);
+			await That(FileSystem.File.GetCreationTime(destinationName))
+				.IsEqualTo(sourceCreationTime);
 		}
 
-		await That(FileSystem.File.GetLastAccessTime(destinationName)).IsEqualTo(sourceLastAccessTime);
-		await That(FileSystem.File.GetLastWriteTime(destinationName)).IsEqualTo(sourceLastWriteTime);
+		await That(FileSystem.File.GetLastAccessTime(destinationName))
+			.IsEqualTo(sourceLastAccessTime);
+		await That(FileSystem.File.GetLastWriteTime(destinationName))
+			.IsEqualTo(sourceLastWriteTime);
 		await That(FileSystem.File.GetCreationTime(backupName)).IsEqualTo(destinationCreationTime);
-		await That(FileSystem.File.GetLastAccessTime(backupName)).IsEqualTo(destinationLastAccessTime);
-		await That(FileSystem.File.GetLastWriteTime(backupName)).IsEqualTo(destinationLastWriteTime);
+		await That(FileSystem.File.GetLastAccessTime(backupName))
+			.IsEqualTo(destinationLastAccessTime);
+		await That(FileSystem.File.GetLastWriteTime(backupName))
+			.IsEqualTo(destinationLastWriteTime);
 	}
 
 	[Theory]
@@ -348,7 +358,8 @@ public partial class ReplaceTests
 			await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(sourceContents);
 			await That(FileSystem.File.Exists(destinationName)).IsTrue();
 			await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(destinationContents);
-			await That(FileSystem.File.GetAttributes(destinationName)).DoesNotHaveFlag(FileAttributes.ReadOnly);
+			await That(FileSystem.File.GetAttributes(destinationName))
+				.DoesNotHaveFlag(FileAttributes.ReadOnly);
 			await That(FileSystem.File.Exists(backupName)).IsFalse();
 		}
 		else

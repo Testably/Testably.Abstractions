@@ -1,4 +1,3 @@
-using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;
@@ -40,6 +39,7 @@ public partial class Tests
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
+
 		void Act()
 		{
 			FileSystem.FileStream.New(path, FileMode.CreateNew);
@@ -72,6 +72,7 @@ public partial class Tests
 		FileMode mode, string path)
 	{
 		FileAccess access = FileAccess.Read;
+
 		void Act()
 		{
 			FileSystem.FileStream.New(path, mode, access);
@@ -80,7 +81,8 @@ public partial class Tests
 		await That(Act).Throws<ArgumentException>()
 			.WithHResult(-2147024809).And
 			.WithParamName(Test.IsNetFramework ? null : "access").And
-			.Which.For(x => x.Message, it => it.Contains(mode.ToString()).And.Contains(access.ToString()));
+			.Which.For(x => x.Message,
+				it => it.Contains(mode.ToString()).And.Contains(access.ToString()));
 	}
 
 	[Theory]
@@ -118,12 +120,14 @@ public partial class Tests
 	[InlineAutoData(FileAccess.Read)]
 	[InlineAutoData(FileAccess.ReadWrite)]
 	[InlineAutoData(FileAccess.Write)]
-	public async Task New_ReadOnlyFlag_ShouldThrowUnauthorizedAccessException_WhenAccessContainsWrite(
+	public async Task
+		New_ReadOnlyFlag_ShouldThrowUnauthorizedAccessException_WhenAccessContainsWrite(
 			FileAccess access,
 			string path)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
 		FileSystem.File.SetAttributes(path, FileAttributes.ReadOnly);
+
 		void Act()
 		{
 			FileSystem.FileStream.New(path, FileMode.Open, access);
@@ -145,6 +149,7 @@ public partial class Tests
 		string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
+
 		void Act()
 		{
 			FileSystem.FileStream.New(path, FileMode.CreateNew);
