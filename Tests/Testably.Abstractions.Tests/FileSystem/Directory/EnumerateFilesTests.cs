@@ -16,8 +16,8 @@ public partial class EnumerateFilesTests
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
 
-		void Act()
-			=> FileSystem.Directory.EnumerateFiles(path).ToList();
+		void Act() =>
+			_ = FileSystem.Directory.EnumerateFiles(path).ToList();
 
 		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithMessageContaining($"'{expectedPath}'").And

@@ -110,12 +110,9 @@ public static class AssertionHelpers
 			{
 				FurtherProcessingStrategy = FurtherProcessingStrategy.IgnoreResult;
 			}
-			else if (value is FileNotFoundException fileNotFoundException && fileNotFoundException.HResult == -2147024894)
-			{
-				Outcome = Outcome.Success;
-				return this;
-			}
-			else if (value is DirectoryNotFoundException directoryNotFoundException && directoryNotFoundException.HResult == -2147024893)
+
+			if (value is FileNotFoundException fileNotFoundException && fileNotFoundException.HResult == -2147024894 ||
+				value is DirectoryNotFoundException directoryNotFoundException && directoryNotFoundException.HResult == -2147024893)
 			{
 				Outcome = Outcome.Success;
 				return this;

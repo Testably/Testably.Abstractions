@@ -47,12 +47,12 @@ public class DirectoryCleanerTests
 			.Range(1, 10)
 			.Select(i => $"Retry again {i} times"))
 		{
-			await That(receivedLogs).Contains(m => m.Contains(retryMessage));
+			await That(receivedLogs).Contains(m => m.Contains(retryMessage, StringComparison.Ordinal));
 		}
 
 		await That(receivedLogs).Contains(m =>
-			m.Contains(exception.Message) &&
-			m.Contains($"'{parentOfCurrentDirectory}'"));
+			m.Contains(exception.Message, StringComparison.Ordinal) &&
+			m.Contains($"'{parentOfCurrentDirectory}'", StringComparison.Ordinal));
 		await That(receivedLogs).DoesNotContain("Cleanup was successful :-)");
 	}
 
@@ -115,6 +115,6 @@ public class DirectoryCleanerTests
 		await That(sut.Statistics.TotalCount).IsEqualTo(0);
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		await That(sut.Directory.Exists(currentDirectory)).IsTrue();
-		await That(receivedLogs).Contains(m => m.Contains($"'{currentDirectory}'"));
+		await That(receivedLogs).Contains(m => m.Contains($"'{currentDirectory}'", StringComparison.Ordinal));
 	}
 }

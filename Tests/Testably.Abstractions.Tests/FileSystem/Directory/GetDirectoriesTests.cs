@@ -16,7 +16,7 @@ public partial class GetDirectoriesTests
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
 
 		void Act()
-			=> FileSystem.Directory.GetDirectories(path).ToList();
+			=> FileSystem.Directory.GetDirectories(path);
 
 		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithMessageContaining($"'{expectedPath}'").And

@@ -20,7 +20,7 @@ public partial class GetFileSystemInfosTests
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
 
 		void Act()
-			=> FileSystem.Directory.GetFileSystemEntries(path).ToList();
+			=> FileSystem.Directory.GetFileSystemEntries(path);
 
 		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithMessageContaining($"'{expectedPath}'.").And

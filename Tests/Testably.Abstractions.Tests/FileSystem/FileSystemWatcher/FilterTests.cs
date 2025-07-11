@@ -111,12 +111,18 @@ public partial class FilterTests
 
 		foreach (string path in otherPaths)
 		{
-			await That(results).DoesNotContain(f => f.FullPath == FileSystem.Path.GetFullPath(path));
+			await That(results).DoesNotContain(f => string.Equals(
+				f.FullPath,
+				FileSystem.Path.GetFullPath(path),
+				StringComparison.Ordinal));
 		}
 
 		foreach (string path in filteredPaths)
 		{
-			await That(results).Contains(f => f.FullPath == FileSystem.Path.GetFullPath(path));
+			await That(results).Contains(f => string.Equals(
+				f.FullPath,
+				FileSystem.Path.GetFullPath(path),
+				StringComparison.Ordinal));
 		}
 	}
 #endif

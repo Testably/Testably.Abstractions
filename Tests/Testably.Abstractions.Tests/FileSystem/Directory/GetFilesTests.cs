@@ -20,7 +20,7 @@ public partial class GetFilesTests
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
 
 		void Act()
-			=> FileSystem.Directory.GetFiles(path).ToList();
+			=> FileSystem.Directory.GetFiles(path);
 
 		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithMessageContaining(expectedPath).And

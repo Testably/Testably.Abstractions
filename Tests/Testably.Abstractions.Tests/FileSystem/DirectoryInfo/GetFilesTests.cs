@@ -28,9 +28,12 @@ public partial class GetFilesTests
 			.GetFiles("*", SearchOption.AllDirectories);
 
 		await That(result.Length).IsEqualTo(3);
-		await That(result).Contains(d => d.Name == initialized[2].Name);
-		await That(result).Contains(d => d.Name == initialized[3].Name);
-		await That(result).Contains(d => d.Name == initialized[5].Name);
+		await That(result).Contains(d
+			=> string.Equals(d.Name, initialized[2].Name, StringComparison.Ordinal));
+		await That(result).Contains(d
+			=> string.Equals(d.Name, initialized[3].Name, StringComparison.Ordinal));
+		await That(result).Contains(d
+			=> string.Equals(d.Name, initialized[5].Name, StringComparison.Ordinal));
 	}
 
 	[Theory]
@@ -60,7 +63,8 @@ public partial class GetFilesTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Matching(d => d.Name == fileName)
+			await That(result).HasSingle()
+				.Matching(d => string.Equals(d.Name, fileName, StringComparison.Ordinal))
 				.Because($"it should match '{searchPattern}'");
 		}
 		else
@@ -129,9 +133,10 @@ public partial class GetFilesTests
 			.GetFiles();
 
 		await That(result.Length).IsEqualTo(2);
-		await That(result).Contains(d => d.Name == "foo");
-		await That(result).DoesNotContain(d => d.Name == "xyz");
-		await That(result).Contains(d => d.Name == "bar");
+		await That(result).Contains(d => string.Equals(d.Name, "foo", StringComparison.Ordinal));
+		await That(result)
+			.DoesNotContain(d => string.Equals(d.Name, "xyz", StringComparison.Ordinal));
+		await That(result).Contains(d => string.Equals(d.Name, "bar", StringComparison.Ordinal));
 	}
 
 	[Fact]
@@ -146,7 +151,8 @@ public partial class GetFilesTests
 		IEnumerable<IFileInfo> result = baseDirectory
 			.GetFiles("foo");
 
-		await That(result).HasSingle().Matching(d => d.Name == "foo");
+		await That(result).HasSingle()
+			.Matching(d => string.Equals(d.Name, "foo", StringComparison.Ordinal));
 		await That(result.Count()).IsEqualTo(1);
 	}
 

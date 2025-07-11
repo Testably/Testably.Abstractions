@@ -25,9 +25,9 @@ public partial class GetDirectoriesTests
 			.GetDirectories("*", SearchOption.AllDirectories);
 
 		await That(result.Length).IsEqualTo(3);
-		await That(result).Contains(d => d.Name == "foo");
-		await That(result).Contains(d => d.Name == "bar");
-		await That(result).Contains(d => d.Name == "xyz");
+		await That(result).Contains(d => string.Equals(d.Name, "foo", StringComparison.Ordinal));
+		await That(result).Contains(d => string.Equals(d.Name, "bar", StringComparison.Ordinal));
+		await That(result).Contains(d => string.Equals(d.Name, "xyz", StringComparison.Ordinal));
 	}
 
 	[Theory]
@@ -56,7 +56,8 @@ public partial class GetDirectoriesTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Matching(d => d.Name == subdirectoryName)
+			await That(result).HasSingle().Matching(d
+					=> string.Equals(d.Name, subdirectoryName, StringComparison.Ordinal))
 				.Because($"it should match '{searchPattern}'");
 		}
 		else
@@ -125,9 +126,10 @@ public partial class GetDirectoriesTests
 			.GetDirectories();
 
 		await That(result.Length).IsEqualTo(2);
-		await That(result).Contains(d => d.Name == "foo");
-		await That(result).DoesNotContain(d => d.Name == "xyz");
-		await That(result).Contains(d => d.Name == "bar");
+		await That(result).Contains(d => string.Equals(d.Name, "foo", StringComparison.Ordinal));
+		await That(result)
+			.DoesNotContain(d => string.Equals(d.Name, "xyz", StringComparison.Ordinal));
+		await That(result).Contains(d => string.Equals(d.Name, "bar", StringComparison.Ordinal));
 	}
 
 	[Theory]
@@ -143,7 +145,8 @@ public partial class GetDirectoriesTests
 		IEnumerable<IDirectoryInfo> result = baseDirectory
 			.GetDirectories("foo");
 
-		await That(result).HasSingle().Matching(d => d.Name == "foo");
+		await That(result).HasSingle()
+			.Matching(d => string.Equals(d.Name, "foo", StringComparison.Ordinal));
 	}
 
 	[Theory]

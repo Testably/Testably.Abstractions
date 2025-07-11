@@ -29,6 +29,22 @@ internal static class StringExtensionMethods
 	}
 
 	/// <summary>
+	///     Returns a value indicating whether a specified character occurs within this string, using the specified comparison
+	///     rules.
+	/// </summary>
+	/// <returns>
+	///     <see langword="true" /> if the <paramref name="value" /> parameter occurs withing this string,
+	///     or if value is the empty string (""); otherwise, <see langword="false" />.
+	/// </returns>
+	internal static bool Contains(
+		this string @this,
+		string value,
+		StringComparison comparisonType)
+	{
+		return @this.Contains(value);
+	}
+
+	/// <summary>
 	///     Determines whether the end of this string instance matches the specified character.
 	/// </summary>
 	internal static bool EndsWith(

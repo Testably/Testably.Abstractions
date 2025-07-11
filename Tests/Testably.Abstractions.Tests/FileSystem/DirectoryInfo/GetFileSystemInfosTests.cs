@@ -28,11 +28,16 @@ public partial class GetFileSystemInfosTests
 			.GetFileSystemInfos("*", SearchOption.AllDirectories);
 
 		await That(result.Length).IsEqualTo(5);
-		await That(result).Contains(d => d.Name == initialized[1].Name);
-		await That(result).Contains(d => d.Name == initialized[2].Name);
-		await That(result).Contains(d => d.Name == initialized[3].Name);
-		await That(result).Contains(d => d.Name == initialized[4].Name);
-		await That(result).Contains(d => d.Name == initialized[5].Name);
+		await That(result).Contains(d
+			=> string.Equals(d.Name, initialized[1].Name, StringComparison.Ordinal));
+		await That(result).Contains(d
+			=> string.Equals(d.Name, initialized[2].Name, StringComparison.Ordinal));
+		await That(result).Contains(d
+			=> string.Equals(d.Name, initialized[3].Name, StringComparison.Ordinal));
+		await That(result).Contains(d
+			=> string.Equals(d.Name, initialized[4].Name, StringComparison.Ordinal));
+		await That(result).Contains(d
+			=> string.Equals(d.Name, initialized[5].Name, StringComparison.Ordinal));
 	}
 
 	[Theory]
@@ -62,7 +67,8 @@ public partial class GetFileSystemInfosTests
 
 		if (expectToBeFound)
 		{
-			await That(result).HasSingle().Matching(d => d.Name == fileName)
+			await That(result).HasSingle()
+				.Matching(d => string.Equals(d.Name, fileName, StringComparison.Ordinal))
 				.Because($"it should match '{searchPattern}'");
 		}
 		else
@@ -88,9 +94,11 @@ public partial class GetFileSystemInfosTests
 
 		await That(result.Length).IsEqualTo(2);
 		await That(result).Contains(d
-			=> d.Name == initialized[1].Name && d is IDirectoryInfo);
+			=> string.Equals(d.Name, initialized[1].Name, StringComparison.Ordinal) &&
+			   d is IDirectoryInfo);
 		await That(result).Contains(d
-			=> d.Name == initialized[2].Name && d is IFileInfo);
+			=> string.Equals(d.Name, initialized[2].Name, StringComparison.Ordinal) &&
+			   d is IFileInfo);
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
@@ -154,10 +162,11 @@ public partial class GetFileSystemInfosTests
 			.GetFileSystemInfos();
 
 		await That(result.Length).IsEqualTo(3);
-		await That(result).Contains(d => d.Name == "foo");
-		await That(result).Contains(d => d.Name == "muh");
-		await That(result).DoesNotContain(d => d.Name == "xyz");
-		await That(result).Contains(d => d.Name == "bar");
+		await That(result).Contains(d => string.Equals(d.Name, "foo", StringComparison.Ordinal));
+		await That(result).Contains(d => string.Equals(d.Name, "muh", StringComparison.Ordinal));
+		await That(result)
+			.DoesNotContain(d => string.Equals(d.Name, "xyz", StringComparison.Ordinal));
+		await That(result).Contains(d => string.Equals(d.Name, "bar", StringComparison.Ordinal));
 	}
 
 	[Fact]
@@ -172,7 +181,8 @@ public partial class GetFileSystemInfosTests
 		IEnumerable<IFileSystemInfo> result = baseDirectory
 			.GetFileSystemInfos("foo");
 
-		await That(result).HasSingle().Matching(d => d.Name == "foo");
+		await That(result).HasSingle()
+			.Matching(d => string.Equals(d.Name, "foo", StringComparison.Ordinal));
 		await That(result.Count()).IsEqualTo(1);
 	}
 

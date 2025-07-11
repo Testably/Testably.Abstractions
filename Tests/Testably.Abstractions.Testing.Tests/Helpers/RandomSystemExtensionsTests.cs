@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Testably.Abstractions.Testing.Helpers;
 
@@ -60,7 +61,7 @@ public class RandomSystemExtensionsTests
 		}
 
 		// Check edge cases for directories
-		await That(fileNames).Contains(d => d.Contains(' '));
+		await That(fileNames).Contains(d => d.Contains(' ', StringComparison.Ordinal));
 		await That(fileNames).Contains(d => d.Length == 1);
 		await That(fileNames).Contains(d => d.StartsWith('.'));
 	}
