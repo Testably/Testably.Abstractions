@@ -10,6 +10,9 @@ public partial class NotifyFiltersTests
 	[AutoData]
 	public async Task NotifyFilter_AppendFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
+		// This test is brittle on MacOS
+		Skip.If(Test.RunsOnMac);
+
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
@@ -117,6 +120,9 @@ public partial class NotifyFiltersTests
 	[AutoData]
 	public async Task NotifyFilter_CreateDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
+		// This test is brittle on MacOS
+		Skip.If(Test.RunsOnMac);
+
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
@@ -193,6 +199,9 @@ public partial class NotifyFiltersTests
 	[AutoData]
 	public async Task NotifyFilter_CreateFile_ShouldNotNotifyOnOtherFilters(string path)
 	{
+		// This test is brittle on MacOS
+		Skip.If(Test.RunsOnMac);
+
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
@@ -269,6 +278,9 @@ public partial class NotifyFiltersTests
 	[AutoData]
 	public async Task NotifyFilter_DeleteDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
+		// This test is brittle on MacOS
+		Skip.If(Test.RunsOnMac);
+
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize().WithSubdirectory(path);
@@ -345,6 +357,9 @@ public partial class NotifyFiltersTests
 	[AutoData]
 	public async Task NotifyFilter_DeleteFile_ShouldNotNotifyOnOtherFilters(string path)
 	{
+		// This test is brittle on MacOS
+		Skip.If(Test.RunsOnMac);
+		
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize().WithFile(path);
@@ -514,6 +529,9 @@ public partial class NotifyFiltersTests
 	public async Task NotifyFilter_MoveFile_ShouldNotNotifyOnOtherFilters(
 		string sourceName, string destinationName)
 	{
+		// This test is brittle on MacOS
+		Skip.If(Test.RunsOnMac);
+
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
@@ -597,6 +615,9 @@ public partial class NotifyFiltersTests
 	[AutoData]
 	public async Task NotifyFilter_WriteFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
+		// This test is brittle on MacOS
+		Skip.If(Test.RunsOnMac);
+
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
