@@ -7,52 +7,51 @@ public partial class CreateTests
 {
 	[Theory]
 	[AutoData]
-	public void Create_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)
+	public async Task Create_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)
 	{
 		FileSystem.File.WriteAllText(name, "");
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(name);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.Create();
-		});
+		}
 
-		exception.Should().BeException<IOException>(
-			hResult: Test.RunsOnWindows ? -2147024713 : 17);
-		FileSystem.Directory.Exists(name).Should().BeFalse();
+		await That(Act).Throws<IOException>().WithHResult(Test.RunsOnWindows ? -2147024713 : 17);
+		await That(FileSystem.Directory.Exists(name)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Create_ShouldCreateDirectory(string path)
+	public async Task Create_ShouldCreateDirectory(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 
 		sut.Create();
 
 #if NETFRAMEWORK
 		// The DirectoryInfo is not updated in .NET Framework!
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 #else
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 #endif
-		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();
 	}
 
 	[Fact]
-	public void Create_ShouldCreateInBasePath()
+	public async Task Create_ShouldCreateInBasePath()
 	{
 		IDirectoryInfo result = FileSystem.DirectoryInfo.New("foo");
 
 		result.Create();
 
-		FileSystem.Directory.Exists("foo").Should().BeTrue();
-		result.FullName.Should().StartWith(BasePath);
+		await That(FileSystem.Directory.Exists("foo")).IsTrue();
+		await That(result.FullName).StartsWith(BasePath);
 	}
 
 	[Fact]
-	public void Create_ShouldCreateParentDirectories()
+	public async Task Create_ShouldCreateParentDirectories()
 	{
 		string directoryLevel1 = "lvl1";
 		string directoryLevel2 = "lvl2";
@@ -63,49 +62,50 @@ public partial class CreateTests
 		IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
 		result.Create();
 
-		result.Name.Should().Be(directoryLevel3);
-		result.Parent!.Name.Should().Be(directoryLevel2);
-		result.Parent.Parent!.Name.Should().Be(directoryLevel1);
-		result.Exists.Should().BeTrue();
-		result.Parent.Exists.Should().BeTrue();
-		result.Parent.Parent.Exists.Should().BeTrue();
-		result.ToString().Should().Be(path);
+		await That(result.Name).IsEqualTo(directoryLevel3);
+		await That(result.Parent!.Name).IsEqualTo(directoryLevel2);
+		await That(result.Parent.Parent!.Name).IsEqualTo(directoryLevel1);
+		await That(result.Exists).IsTrue();
+		await That(result.Parent.Exists).IsTrue();
+		await That(result.Parent.Parent.Exists).IsTrue();
+		await That(result.ToString()).IsEqualTo(path);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Create_ShouldRefreshExistsCacheForCurrentItem_ExceptOnNetFramework(string path)
+	public async Task Create_ShouldRefreshExistsCacheForCurrentItem_ExceptOnNetFramework(
+		string path)
 	{
 		IDirectoryInfo sut1 = FileSystem.DirectoryInfo.New(path);
 		IDirectoryInfo sut2 = FileSystem.DirectoryInfo.New(path);
 		IDirectoryInfo sut3 = FileSystem.DirectoryInfo.New(path);
-		sut1.Exists.Should().BeFalse();
-		sut2.Exists.Should().BeFalse();
+		await That(sut1.Exists).IsFalse();
+		await That(sut2.Exists).IsFalse();
 		// Do not call Exists for `sut3`
 
 		sut1.Create();
 
 		if (Test.IsNetFramework)
 		{
-			sut1.Exists.Should().BeFalse();
-			sut2.Exists.Should().BeFalse();
-			sut3.Exists.Should().BeTrue();
+			await That(sut1.Exists).IsFalse();
+			await That(sut2.Exists).IsFalse();
+			await That(sut3.Exists).IsTrue();
 		}
 		else
 		{
-			sut1.Exists.Should().BeTrue();
-			sut2.Exists.Should().BeFalse();
-			sut3.Exists.Should().BeTrue();
+			await That(sut1.Exists).IsTrue();
+			await That(sut2.Exists).IsFalse();
+			await That(sut3.Exists).IsTrue();
 		}
 
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 
 	[Theory]
 	[InlineData("")]
 	[InlineData("/")]
 	[InlineData("\\")]
-	public void Create_TrailingDirectorySeparator_ShouldNotBeTrimmed(
+	public async Task Create_TrailingDirectorySeparator_ShouldNotBeTrimmed(
 		string suffix)
 	{
 		string nameWithSuffix = "foobar" + suffix;
@@ -125,13 +125,13 @@ public partial class CreateTests
 			FileSystem.DirectoryInfo.New(nameWithSuffix);
 		result.Create();
 
-		result.ToString().Should().Be(nameWithSuffix);
-		result.Name.Should().Be(expectedName.TrimEnd(
+		await That(result.ToString()).IsEqualTo(nameWithSuffix);
+		await That(result.Name).IsEqualTo(expectedName.TrimEnd(
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
-		result.FullName.Should().Be(FileSystem.Path.Combine(BasePath, expectedName
+		await That(result.FullName).IsEqualTo(FileSystem.Path.Combine(BasePath, expectedName
 			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
-		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(nameWithSuffix)).IsTrue();
 	}
 }

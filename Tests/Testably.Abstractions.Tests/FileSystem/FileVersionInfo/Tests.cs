@@ -5,7 +5,7 @@ public partial class Tests
 {
 	[Theory]
 	[AutoData]
-	public void ToString_ShouldReturnProvidedPath(string fileName)
+	public async Task ToString_ShouldReturnProvidedPath(string fileName)
 	{
 		FileSystem.File.WriteAllText(fileName, "");
 		string fullPath = FileSystem.Path.GetFullPath(fileName);
@@ -13,6 +13,6 @@ public partial class Tests
 
 		string? result = fileInfo.ToString();
 
-		result.Should().Contain(fullPath);
+		await That(result).Contains(fullPath);
 	}
 }

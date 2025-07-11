@@ -10,7 +10,7 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	public void OnChanged_File_OtherEvent_ShouldNotTrigger(string path)
+	public async Task OnChanged_File_OtherEvent_ShouldNotTrigger(string path)
 	{
 		bool isNotified = false;
 
@@ -25,13 +25,13 @@ public class NotificationHandlerExtensionsTests
 				.Wait(timeout: 50);
 		});
 
-		exception.Should().BeOfType<TimeoutException>();
-		isNotified.Should().BeFalse();
+		await That(exception).IsExactly<TimeoutException>();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnChanged_File_ShouldConsiderBasePath(string path1, string path2)
+	public async Task OnChanged_File_ShouldConsiderBasePath(string path1, string path2)
 	{
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path1, null);
@@ -48,8 +48,8 @@ public class NotificationHandlerExtensionsTests
 				.Wait(timeout: 50);
 		});
 
-		exception.Should().BeOfType<TimeoutException>();
-		isNotified.Should().BeFalse();
+		await That(exception).IsExactly<TimeoutException>();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
@@ -59,7 +59,7 @@ public class NotificationHandlerExtensionsTests
 	[InlineData("bar", "foo", "baz/f*o", false)]
 	[InlineData("bar", "foo", "/f*o", false)]
 	[InlineData("bar", "foo", "**/f*o", true)]
-	public void OnChanged_File_ShouldConsiderGlobPattern(
+	public async Task OnChanged_File_ShouldConsiderGlobPattern(
 		string directoryPath, string fileName, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
@@ -80,19 +80,19 @@ public class NotificationHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 		else
 		{
-			exception.Should().BeOfType<TimeoutException>();
+			await That(exception).IsExactly<TimeoutException>();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnChanged_File_ShouldNotifyWhenFileIsChanged(string path)
+	public async Task OnChanged_File_ShouldNotifyWhenFileIsChanged(string path)
 	{
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);
@@ -105,13 +105,13 @@ public class NotificationHandlerExtensionsTests
 			})
 			.Wait();
 
-		isNotified.Should().BeTrue();
+		await That(isNotified).IsTrue();
 	}
 
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	public void OnChanged_File_ShouldUsePredicate(bool expectedResult, string path)
+	public async Task OnChanged_File_ShouldUsePredicate(bool expectedResult, string path)
 	{
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);
@@ -130,19 +130,19 @@ public class NotificationHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 		else
 		{
-			exception.Should().BeOfType<TimeoutException>();
+			await That(exception).IsExactly<TimeoutException>();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnCreated_Directory_OtherEvent_ShouldNotTrigger(string path)
+	public async Task OnCreated_Directory_OtherEvent_ShouldNotTrigger(string path)
 	{
 		bool isNotified = false;
 		FileSystem.Directory.CreateDirectory(path);
@@ -158,13 +158,13 @@ public class NotificationHandlerExtensionsTests
 				.Wait(timeout: 50);
 		});
 
-		exception.Should().BeOfType<TimeoutException>();
-		isNotified.Should().BeFalse();
+		await That(exception).IsExactly<TimeoutException>();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnCreated_Directory_ShouldConsiderBasePath(string path1, string path2)
+	public async Task OnCreated_Directory_ShouldConsiderBasePath(string path1, string path2)
 	{
 		bool isNotified = false;
 
@@ -179,8 +179,8 @@ public class NotificationHandlerExtensionsTests
 				.Wait(timeout: 50);
 		});
 
-		exception.Should().BeOfType<TimeoutException>();
-		isNotified.Should().BeFalse();
+		await That(exception).IsExactly<TimeoutException>();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
@@ -190,7 +190,7 @@ public class NotificationHandlerExtensionsTests
 	[InlineData("bar", "foo", "baz/f*o", false)]
 	[InlineData("bar", "foo", "/f*o", false)]
 	[InlineData("bar", "foo", "**/f*o", true)]
-	public void OnCreated_Directory_ShouldConsiderGlobPattern(
+	public async Task OnCreated_Directory_ShouldConsiderGlobPattern(
 		string directoryPath, string fileName, string globPattern, bool expectedResult)
 	{
 		string filePath = FileSystem.Path.Combine(directoryPath, fileName);
@@ -211,19 +211,19 @@ public class NotificationHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 		else
 		{
-			exception.Should().BeOfType<TimeoutException>();
+			await That(exception).IsExactly<TimeoutException>();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnCreated_Directory_ShouldNotifyWhenDirectoryIsCreated(string path)
+	public async Task OnCreated_Directory_ShouldNotifyWhenDirectoryIsCreated(string path)
 	{
 		bool isNotified = false;
 
@@ -235,13 +235,13 @@ public class NotificationHandlerExtensionsTests
 			})
 			.Wait();
 
-		isNotified.Should().BeTrue();
+		await That(isNotified).IsTrue();
 	}
 
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	public void OnCreated_Directory_ShouldUsePredicate(bool expectedResult, string path)
+	public async Task OnCreated_Directory_ShouldUsePredicate(bool expectedResult, string path)
 	{
 		bool isNotified = false;
 
@@ -259,19 +259,19 @@ public class NotificationHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 		else
 		{
-			exception.Should().BeOfType<TimeoutException>();
+			await That(exception).IsExactly<TimeoutException>();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnCreated_File_OtherEvent_ShouldNotTrigger(string path)
+	public async Task OnCreated_File_OtherEvent_ShouldNotTrigger(string path)
 	{
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);
@@ -287,13 +287,13 @@ public class NotificationHandlerExtensionsTests
 				.Wait(timeout: 50);
 		});
 
-		exception.Should().BeOfType<TimeoutException>();
-		isNotified.Should().BeFalse();
+		await That(exception).IsExactly<TimeoutException>();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnCreated_File_ShouldConsiderBasePath(string path1, string path2)
+	public async Task OnCreated_File_ShouldConsiderBasePath(string path1, string path2)
 	{
 		bool isNotified = false;
 
@@ -308,8 +308,8 @@ public class NotificationHandlerExtensionsTests
 				.Wait(timeout: 50);
 		});
 
-		exception.Should().BeOfType<TimeoutException>();
-		isNotified.Should().BeFalse();
+		await That(exception).IsExactly<TimeoutException>();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
@@ -319,7 +319,7 @@ public class NotificationHandlerExtensionsTests
 	[InlineData("bar", "foo", "baz/f*o", false)]
 	[InlineData("bar", "foo", "/f*o", false)]
 	[InlineData("bar", "foo", "**/f*o", true)]
-	public void OnCreated_File_ShouldConsiderGlobPattern(
+	public async Task OnCreated_File_ShouldConsiderGlobPattern(
 		string directoryPath, string fileName, string globPattern, bool expectedResult)
 	{
 		string filePath = FileSystem.Path.Combine(directoryPath, fileName);
@@ -340,19 +340,19 @@ public class NotificationHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 		else
 		{
-			exception.Should().BeOfType<TimeoutException>();
+			await That(exception).IsExactly<TimeoutException>();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnCreated_File_ShouldNotifyWhenFileIsCreated(string path)
+	public async Task OnCreated_File_ShouldNotifyWhenFileIsCreated(string path)
 	{
 		bool isNotified = false;
 
@@ -364,13 +364,13 @@ public class NotificationHandlerExtensionsTests
 			})
 			.Wait();
 
-		isNotified.Should().BeTrue();
+		await That(isNotified).IsTrue();
 	}
 
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	public void OnCreated_File_ShouldUsePredicate(bool expectedResult, string path)
+	public async Task OnCreated_File_ShouldUsePredicate(bool expectedResult, string path)
 	{
 		bool isNotified = false;
 
@@ -388,19 +388,19 @@ public class NotificationHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 		else
 		{
-			exception.Should().BeOfType<TimeoutException>();
+			await That(exception).IsExactly<TimeoutException>();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnDeleted_Directory_OtherEvent_ShouldNotTrigger(string path)
+	public async Task OnDeleted_Directory_OtherEvent_ShouldNotTrigger(string path)
 	{
 		bool isNotified = false;
 
@@ -415,13 +415,13 @@ public class NotificationHandlerExtensionsTests
 				.Wait(timeout: 50);
 		});
 
-		exception.Should().BeOfType<TimeoutException>();
-		isNotified.Should().BeFalse();
+		await That(exception).IsExactly<TimeoutException>();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnDeleted_Directory_ShouldConsiderBasePath(string path1, string path2)
+	public async Task OnDeleted_Directory_ShouldConsiderBasePath(string path1, string path2)
 	{
 		bool isNotified = false;
 		FileSystem.Directory.CreateDirectory(path1);
@@ -438,8 +438,8 @@ public class NotificationHandlerExtensionsTests
 				.Wait(timeout: 50);
 		});
 
-		exception.Should().BeOfType<TimeoutException>();
-		isNotified.Should().BeFalse();
+		await That(exception).IsExactly<TimeoutException>();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
@@ -449,7 +449,7 @@ public class NotificationHandlerExtensionsTests
 	[InlineData("bar", "foo", "baz/f*o", false)]
 	[InlineData("bar", "foo", "/f*o", false)]
 	[InlineData("bar", "foo", "**/f*o", true)]
-	public void OnDeleted_Directory_ShouldConsiderGlobPattern(
+	public async Task OnDeleted_Directory_ShouldConsiderGlobPattern(
 		string basePath, string directoryName, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
@@ -471,19 +471,19 @@ public class NotificationHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 		else
 		{
-			exception.Should().BeOfType<TimeoutException>();
+			await That(exception).IsExactly<TimeoutException>();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnDeleted_Directory_ShouldNotifyWhenDirectoryIsDeleted(string path)
+	public async Task OnDeleted_Directory_ShouldNotifyWhenDirectoryIsDeleted(string path)
 	{
 		bool isNotified = false;
 		FileSystem.Directory.CreateDirectory(path);
@@ -496,13 +496,13 @@ public class NotificationHandlerExtensionsTests
 			})
 			.Wait();
 
-		isNotified.Should().BeTrue();
+		await That(isNotified).IsTrue();
 	}
 
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	public void OnDeleted_Directory_ShouldUsePredicate(bool expectedResult, string path)
+	public async Task OnDeleted_Directory_ShouldUsePredicate(bool expectedResult, string path)
 	{
 		bool isNotified = false;
 		FileSystem.Directory.CreateDirectory(path);
@@ -521,19 +521,19 @@ public class NotificationHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 		else
 		{
-			exception.Should().BeOfType<TimeoutException>();
+			await That(exception).IsExactly<TimeoutException>();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnDeleted_File_OtherEvent_ShouldNotTrigger(string path)
+	public async Task OnDeleted_File_OtherEvent_ShouldNotTrigger(string path)
 	{
 		bool isNotified = false;
 
@@ -548,13 +548,13 @@ public class NotificationHandlerExtensionsTests
 				.Wait(timeout: 50);
 		});
 
-		exception.Should().BeOfType<TimeoutException>();
-		isNotified.Should().BeFalse();
+		await That(exception).IsExactly<TimeoutException>();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnDeleted_File_ShouldConsiderBasePath(string path1, string path2)
+	public async Task OnDeleted_File_ShouldConsiderBasePath(string path1, string path2)
 	{
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path1, null);
@@ -571,8 +571,8 @@ public class NotificationHandlerExtensionsTests
 				.Wait(timeout: 50);
 		});
 
-		exception.Should().BeOfType<TimeoutException>();
-		isNotified.Should().BeFalse();
+		await That(exception).IsExactly<TimeoutException>();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
@@ -582,7 +582,7 @@ public class NotificationHandlerExtensionsTests
 	[InlineData("bar", "foo", "baz/f*o", false)]
 	[InlineData("bar", "foo", "/f*o", false)]
 	[InlineData("bar", "foo", "**/f*o", true)]
-	public void OnDeleted_File_ShouldConsiderGlobPattern(
+	public async Task OnDeleted_File_ShouldConsiderGlobPattern(
 		string directoryPath, string fileName, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
@@ -604,19 +604,19 @@ public class NotificationHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 		else
 		{
-			exception.Should().BeOfType<TimeoutException>();
+			await That(exception).IsExactly<TimeoutException>();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void OnDeleted_File_ShouldNotifyWhenFileIsDeleted(string path)
+	public async Task OnDeleted_File_ShouldNotifyWhenFileIsDeleted(string path)
 	{
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);
@@ -629,13 +629,13 @@ public class NotificationHandlerExtensionsTests
 			})
 			.Wait();
 
-		isNotified.Should().BeTrue();
+		await That(isNotified).IsTrue();
 	}
 
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	public void OnDeleted_File_ShouldUsePredicate(bool expectedResult, string path)
+	public async Task OnDeleted_File_ShouldUsePredicate(bool expectedResult, string path)
 	{
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);
@@ -654,13 +654,13 @@ public class NotificationHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 		else
 		{
-			exception.Should().BeOfType<TimeoutException>();
+			await That(exception).IsExactly<TimeoutException>();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 }

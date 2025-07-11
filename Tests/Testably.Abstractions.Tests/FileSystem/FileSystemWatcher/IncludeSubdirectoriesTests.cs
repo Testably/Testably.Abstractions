@@ -8,7 +8,7 @@ public partial class IncludeSubdirectoriesTests
 {
 	[Theory]
 	[AutoData]
-	public void IncludeSubdirectories_SetToFalse_ShouldNotTriggerNotification(
+	public async Task IncludeSubdirectories_SetToFalse_ShouldNotTriggerNotification(
 		string baseDirectory, string path)
 	{
 		FileSystem.Initialize()
@@ -34,16 +34,15 @@ public partial class IncludeSubdirectoriesTests
 		fileSystemWatcher.IncludeSubdirectories = false;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(FileSystem.Path.Combine(baseDirectory, path));
-		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		IncludeSubdirectories_SetToTrue_ShouldOnlyTriggerNotificationOnSubdirectories(
-			string baseDirectory, string subdirectoryName, string otherDirectory)
+	public async Task IncludeSubdirectories_SetToTrue_ShouldOnlyTriggerNotificationOnSubdirectories(
+		string baseDirectory, string subdirectoryName, string otherDirectory)
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory(baseDirectory).Initialized(s => s
@@ -69,14 +68,14 @@ public partial class IncludeSubdirectoriesTests
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(otherDirectory);
-		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void IncludeSubdirectories_SetToTrue_ShouldTriggerNotificationOnSubdirectories(
+	public async Task IncludeSubdirectories_SetToTrue_ShouldTriggerNotificationOnSubdirectories(
 		string baseDirectory, string subdirectoryName)
 	{
 		FileSystem.Initialize()
@@ -104,11 +103,11 @@ public partial class IncludeSubdirectoriesTests
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(subdirectoryPath);
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 
-		result.Should().NotBeNull();
-		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(subdirectoryPath));
-		result.Name.Should().Be(subdirectoryPath);
-		result!.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
+		await That(result).IsNotNull();
+		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(subdirectoryPath));
+		await That(result.Name).IsEqualTo(subdirectoryPath);
+		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
 	}
 }

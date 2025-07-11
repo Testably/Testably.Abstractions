@@ -8,45 +8,45 @@ public partial class AppendAllBytesTests
 {
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_ExistingFile_ShouldAppendLinesToFile(
+	public async Task AppendAllBytes_ExistingFile_ShouldAppendLinesToFile(
 		string path, byte[] previousBytes, byte[] bytes)
 	{
 		FileSystem.File.AppendAllBytes(path, previousBytes);
 
 		FileSystem.File.AppendAllBytes(path, bytes);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo([..previousBytes, ..bytes]);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([..previousBytes, ..bytes]);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+	public async Task AppendAllBytes_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingPath, string fileName, byte[] bytes)
 	{
 		string filePath = FileSystem.Path.Combine(missingPath, fileName);
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllBytes(filePath, bytes);
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_MissingFile_ShouldCreateFile(
+	public async Task AppendAllBytes_MissingFile_ShouldCreateFile(
 		string path, byte[] bytes)
 	{
 		FileSystem.File.AppendAllBytes(path, bytes);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_ShouldAdjustTimes(string path, byte[] bytes)
+	public async Task AppendAllBytes_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -64,62 +64,58 @@ public partial class AppendAllBytesTests
 
 		if (Test.RunsOnWindows)
 		{
-			creationTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_Span_ExistingFile_ShouldAppendLinesToFile(
+	public async Task AppendAllBytes_Span_ExistingFile_ShouldAppendLinesToFile(
 		string path, byte[] previousBytes, byte[] bytes)
 	{
 		FileSystem.File.AppendAllBytes(path, previousBytes);
 
 		FileSystem.File.AppendAllBytes(path, bytes.AsSpan());
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo([..previousBytes, ..bytes]);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([..previousBytes, ..bytes]);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_Span_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+	public async Task AppendAllBytes_Span_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingPath, string fileName, byte[] bytes)
 	{
 		string filePath = FileSystem.Path.Combine(missingPath, fileName);
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllBytes(filePath, bytes.AsSpan());
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_Span_MissingFile_ShouldCreateFile(
+	public async Task AppendAllBytes_Span_MissingFile_ShouldCreateFile(
 		string path, byte[] bytes)
 	{
 		FileSystem.File.AppendAllBytes(path, bytes.AsSpan());
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_Span_ShouldAdjustTimes(string path, byte[] bytes)
+	public async Task AppendAllBytes_Span_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -137,89 +133,83 @@ public partial class AppendAllBytesTests
 
 		if (Test.RunsOnWindows)
 		{
-			creationTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		AppendAllBytes_Span_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllBytes(path, Array.Empty<byte>().AsSpan());
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_Span_WhenFileIsHidden_ShouldNotThrowException(
+	public async Task AppendAllBytes_Span_WhenFileIsHidden_ShouldNotThrowException(
 		string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllBytes(path, bytes.AsSpan());
-		});
+		}
 
-		exception.Should().BeNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		AppendAllBytes_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllBytes(path, Array.Empty<byte>());
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllBytes_WhenFileIsHidden_ShouldNotThrowException(
+	public async Task AppendAllBytes_WhenFileIsHidden_ShouldNotThrowException(
 		string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllBytes(path, bytes);
-		});
+		}
 
-		exception.Should().BeNull();
+		await That(Act).DoesNotThrow();
 	}
 }
 #endif

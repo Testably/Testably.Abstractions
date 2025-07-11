@@ -1,22 +1,21 @@
-﻿using System.Linq;
-using Testably.Abstractions.Testing.Statistics;
+﻿using Testably.Abstractions.Testing.Statistics;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics;
 
 public sealed class MethodStatisticsTests
 {
 	[Fact]
-	public void Counter_ShouldBeInitializedWithOne()
+	public async Task Counter_ShouldBeInitializedWithOne()
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "bar");
 		MethodStatistic sut = fileSystem.Statistics.File.Methods[0];
 
-		sut.Counter.Should().Be(1);
+		await That(sut.Counter).IsEqualTo(1);
 	}
 
 	[Fact]
-	public void ToString_ShouldContainName()
+	public async Task ToString_ShouldContainName()
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.Directory.CreateDirectory("foo");
@@ -24,14 +23,12 @@ public sealed class MethodStatisticsTests
 
 		string result = sut.ToString();
 
-		result.Should()
-			.Contain(nameof(IDirectory.CreateDirectory)).And
-			.Contain("\"foo\"").And
-			.NotContain(",");
+		await That(result).Contains(nameof(IDirectory.CreateDirectory)).And.Contains("\"foo\"").And
+			.DoesNotContain(",");
 	}
 
 	[Fact]
-	public void ToString_ShouldContainParameters()
+	public async Task ToString_ShouldContainParameters()
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "bar");
@@ -39,8 +36,6 @@ public sealed class MethodStatisticsTests
 
 		string result = sut.ToString();
 
-		result.Should()
-			.Contain(nameof(IFile.WriteAllText)).And
-			.Contain("\"foo\",\"bar\"");
+		await That(result).Contains(nameof(IFile.WriteAllText)).And.Contains("\"foo\",\"bar\"");
 	}
 }

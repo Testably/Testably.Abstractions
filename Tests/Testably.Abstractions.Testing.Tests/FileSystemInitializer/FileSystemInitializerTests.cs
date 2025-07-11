@@ -8,7 +8,7 @@ public class FileSystemInitializerTests
 {
 	[Theory]
 	[AutoData]
-	public void With_DirectoryDescriptions_ShouldCreateDirectories(
+	public async Task With_DirectoryDescriptions_ShouldCreateDirectories(
 		DirectoryDescription[] directories)
 	{
 		MockFileSystem fileSystem = new();
@@ -16,16 +16,16 @@ public class FileSystemInitializerTests
 
 		sut.With(directories);
 
-		fileSystem.Statistics.TotalCount.Should().Be(0);
+		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
 		foreach (DirectoryDescription directory in directories)
 		{
-			fileSystem.Directory.Exists(directory.Name).Should().BeTrue();
+			await That(fileSystem.Directory.Exists(directory.Name)).IsTrue();
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void With_DirectoryDescriptions_WithSubdirectories_ShouldCreateDirectories(
+	public async Task With_DirectoryDescriptions_WithSubdirectories_ShouldCreateDirectories(
 		string parent, DirectoryDescription[] directories)
 	{
 		DirectoryDescription directoryDescription = new(parent,
@@ -35,16 +35,17 @@ public class FileSystemInitializerTests
 
 		sut.With(directoryDescription);
 
-		fileSystem.Statistics.TotalCount.Should().Be(0);
+		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
 		foreach (DirectoryDescription directory in directories)
 		{
-			fileSystem.Directory.Exists(Path.Combine(parent, directory.Name)).Should().BeTrue();
+			await That(fileSystem.Directory.Exists(Path.Combine(parent, directory.Name))).IsTrue();
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void With_FileDescription_WithBytes_ShouldCreateFileContent(string name, byte[] bytes)
+	public async Task With_FileDescription_WithBytes_ShouldCreateFileContent(string name,
+		byte[] bytes)
 	{
 		FileDescription description = new(name, bytes);
 		MockFileSystem fileSystem = new();
@@ -52,14 +53,14 @@ public class FileSystemInitializerTests
 
 		sut.With(description);
 
-		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.File.Exists(name).Should().BeTrue();
-		fileSystem.File.ReadAllBytes(name).Should().BeEquivalentTo(bytes);
+		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
+		await That(fileSystem.File.Exists(name)).IsTrue();
+		await That(fileSystem.File.ReadAllBytes(name)).IsEqualTo(bytes);
 	}
 
 	[Theory]
 	[AutoData]
-	public void With_FileDescription_WithContent_ShouldCreateFileContent(string name,
+	public async Task With_FileDescription_WithContent_ShouldCreateFileContent(string name,
 		string content)
 	{
 		FileDescription description = new(name, content);
@@ -68,31 +69,31 @@ public class FileSystemInitializerTests
 
 		sut.With(description);
 
-		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.File.Exists(name).Should().BeTrue();
-		fileSystem.File.ReadAllText(name).Should().BeEquivalentTo(content);
+		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
+		await That(fileSystem.File.Exists(name)).IsTrue();
+		await That(fileSystem.File.ReadAllText(name)).IsEqualTo(content);
 	}
 
 	[Theory]
 	[AutoData]
-	public void With_FileDescriptions_ShouldCreateFiles(FileDescription[] files)
+	public async Task With_FileDescriptions_ShouldCreateFiles(FileDescription[] files)
 	{
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
 
 		sut.With(files);
 
-		fileSystem.Statistics.TotalCount.Should().Be(0);
+		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
 		foreach (FileDescription file in files)
 		{
-			fileSystem.File.Exists(file.Name).Should().BeTrue();
+			await That(fileSystem.File.Exists(file.Name)).IsTrue();
 		}
 	}
 
 	[Theory]
 	[InlineAutoData(true)]
 	[InlineAutoData(false)]
-	public void With_FileDescriptions_ShouldSetIsReadOnlyFlag(bool isReadOnly, string name)
+	public async Task With_FileDescriptions_ShouldSetIsReadOnlyFlag(bool isReadOnly, string name)
 	{
 		FileDescription description = new(name)
 		{
@@ -103,14 +104,15 @@ public class FileSystemInitializerTests
 
 		sut.With(description);
 
-		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.File.Exists(name).Should().BeTrue();
-		fileSystem.FileInfo.New(name).IsReadOnly.Should().Be(isReadOnly);
+		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
+		await That(fileSystem.File.Exists(name)).IsTrue();
+		await That(fileSystem.FileInfo.New(name).IsReadOnly).IsEqualTo(isReadOnly);
 	}
 
 	[Theory]
 	[AutoData]
-	public void With_FilesAndDirectories_ShouldBothBeCreated(string fileName, string directoryName)
+	public async Task With_FilesAndDirectories_ShouldBothBeCreated(string fileName,
+		string directoryName)
 	{
 		FileDescription fileDescription = new(fileName);
 		DirectoryDescription directoryDescription = new(directoryName);
@@ -119,60 +121,58 @@ public class FileSystemInitializerTests
 
 		sut.With(fileDescription, directoryDescription);
 
-		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.File.Exists(fileName).Should().BeTrue();
-		fileSystem.Directory.Exists(directoryName).Should().BeTrue();
+		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
+		await That(fileSystem.File.Exists(fileName)).IsTrue();
+		await That(fileSystem.Directory.Exists(directoryName)).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithFile_ExistingDirectory_ShouldThrowTestingException(string path)
+	public async Task WithFile_ExistingDirectory_ShouldThrowTestingException(string path)
 	{
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
 		fileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.WithFile(path);
-		});
+		}
 
-		exception.Should().BeOfType<TestingException>()
-			.Which.Message.Should().Contain(path);
+		await That(Act).ThrowsExactly<TestingException>().WithMessage($"*{path}*").AsWildcard();
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithFile_ExistingFile_ShouldThrowTestingException(string path)
+	public async Task WithFile_ExistingFile_ShouldThrowTestingException(string path)
 	{
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
 		fileSystem.File.WriteAllText(path, "");
 
-		Exception? exception = Record.Exception(() =>
-			sut.WithFile(path));
+		void Act()
+			=> sut.WithFile(path);
 
-		exception.Should().BeOfType<TestingException>()
-			.Which.Message.Should().Contain(path);
+		await That(Act).ThrowsExactly<TestingException>().WithMessage($"*{path}*").AsWildcard();
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithFile_HasStringContent_ShouldWriteFileContent(string path)
+	public async Task WithFile_HasStringContent_ShouldWriteFileContent(string path)
 	{
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
 
 		sut.WithFile(path).Which(f => f.HasStringContent("foo"));
 
-		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.File.Exists(path).Should().BeTrue();
-		fileSystem.File.ReadAllText(path).Should().BeEquivalentTo("foo");
+		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
+		await That(fileSystem.File.Exists(path)).IsTrue();
+		await That(fileSystem.File.ReadAllText(path)).IsEqualTo("foo");
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithFile_MissingDirectory_ShouldCreateDirectory(string directoryPath,
+	public async Task WithFile_MissingDirectory_ShouldCreateDirectory(string directoryPath,
 		string fileName)
 	{
 		string path = Path.Combine(directoryPath, fileName);
@@ -181,14 +181,14 @@ public class FileSystemInitializerTests
 
 		sut.WithFile(path);
 
-		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.File.Exists(path).Should().BeTrue();
-		fileSystem.Directory.Exists(directoryPath).Should().BeTrue();
+		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
+		await That(fileSystem.File.Exists(path)).IsTrue();
+		await That(fileSystem.Directory.Exists(directoryPath)).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithSubdirectories_ShouldCreateAllDirectories(string[] paths)
+	public async Task WithSubdirectories_ShouldCreateAllDirectories(string[] paths)
 	{
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
@@ -196,48 +196,46 @@ public class FileSystemInitializerTests
 		IFileSystemInitializer<MockFileSystem> result = sut
 			.WithSubdirectories(paths);
 
-		fileSystem.Statistics.TotalCount.Should().Be(0);
+		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
 		foreach (string path in paths)
 		{
-			fileSystem.Directory.Exists(path).Should().BeTrue();
+			await That(fileSystem.Directory.Exists(path)).IsTrue();
 		}
 
-		result.Should().Be(sut);
+		await That(result).IsEqualTo(sut);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithSubdirectory_ExistingDirectory_ShouldThrowTestingException(string path)
+	public async Task WithSubdirectory_ExistingDirectory_ShouldThrowTestingException(string path)
 	{
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
 		fileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
-			sut.WithSubdirectory(path));
+		void Act()
+			=> sut.WithSubdirectory(path);
 
-		exception.Should().BeOfType<TestingException>()
-			.Which.Message.Should().Contain(path);
+		await That(Act).ThrowsExactly<TestingException>().WithMessage($"*{path}*").AsWildcard();
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithSubdirectory_ExistingFile_ShouldThrowTestingException(string path)
+	public async Task WithSubdirectory_ExistingFile_ShouldThrowTestingException(string path)
 	{
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
 		fileSystem.File.WriteAllBytes(path, Array.Empty<byte>());
 
-		Exception? exception = Record.Exception(() =>
-			sut.WithSubdirectory(path));
+		void Act()
+			=> sut.WithSubdirectory(path);
 
-		exception.Should().BeOfType<TestingException>()
-			.Which.Message.Should().Contain(path);
+		await That(Act).ThrowsExactly<TestingException>().WithMessage($"*{path}*").AsWildcard();
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithSubdirectory_MultipleDirectoryLevels(string level1, string level2)
+	public async Task WithSubdirectory_MultipleDirectoryLevels(string level1, string level2)
 	{
 		string path = Path.Combine(level1, level2);
 		MockFileSystem fileSystem = new();
@@ -246,8 +244,8 @@ public class FileSystemInitializerTests
 		IFileSystemDirectoryInitializer<MockFileSystem> result = sut
 			.WithSubdirectory(path);
 
-		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.Directory.Exists(path).Should().BeTrue();
-		result.FileSystem.Should().BeSameAs(fileSystem);
+		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
+		await That(fileSystem.Directory.Exists(path)).IsTrue();
+		await That(result.FileSystem).IsSameAs(fileSystem);
 	}
 }

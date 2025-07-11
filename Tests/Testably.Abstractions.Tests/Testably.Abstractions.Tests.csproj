@@ -1,15 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<PackageReference Include="Testably.Abstractions.Interface" />
-		<ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
-		<ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
-		<ProjectReference Include="..\Helpers\Testably.Abstractions.TestHelpers\Testably.Abstractions.TestHelpers.csproj" />
-		<ProjectReference Include="..\Helpers\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj" OutputItemType="Analyzer" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="Testably.Abstractions.Interface"/>
+		<ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj"/>
+		<ProjectReference Include="..\Helpers\Testably.Abstractions.TestHelpers\Testably.Abstractions.TestHelpers.csproj"/>
+		<ProjectReference Include="..\Helpers\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj" OutputItemType="Analyzer"/>
 	</ItemGroup>
 
 	<PropertyGroup>
@@ -19,9 +15,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Remove="$(GeneratedFolder)/**/*.cs" />
-		<Content Include="$(CompilerGeneratedFilesOutputPath)/**" />
-		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+		<Compile Remove="$(GeneratedFolder)/**/*.cs"/>
+		<Content Include="$(CompilerGeneratedFilesOutputPath)/**"/>
+		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
 	</ItemGroup>
 
 </Project>

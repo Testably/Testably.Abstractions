@@ -13,23 +13,24 @@ public partial class GetFileSystemInfosTests
 {
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		GetFileSystemEntries_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
-		Exception? exception =
-			Record.Exception(()
-				=> FileSystem.Directory.GetFileSystemEntries(path).ToList());
 
-		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'.",
-			hResult: -2147024893);
-		FileSystem.Directory.Exists(path).Should().BeFalse();
+		void Act()
+			=> FileSystem.Directory.GetFileSystemEntries(path);
+
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{expectedPath}'.").And
+			.WithHResult(-2147024893);
+		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		GetFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
 			string path)
 	{
@@ -46,15 +47,15 @@ public partial class GetFileSystemInfosTests
 				SearchOption.AllDirectories)
 			.ToList();
 
-		result.Count.Should().Be(3);
-		result.Should().Contain(initialized[0].FullName);
-		result.Should().Contain(initialized[1].FullName);
-		result.Should().Contain(initialized[2].FullName);
+		await That(result.Count).IsEqualTo(3);
+		await That(result).Contains(initialized[0].FullName);
+		await That(result).Contains(initialized[1].FullName);
+		await That(result).Contains(initialized[2].FullName);
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		GetFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
 			string path)
 	{
@@ -68,10 +69,10 @@ public partial class GetFileSystemInfosTests
 			.GetFileSystemEntries(".", "*", SearchOption.AllDirectories)
 			.ToList();
 
-		result.Count.Should().Be(3);
-		result.Should().Contain(initialized[0].ToString());
-		result.Should().Contain(initialized[1].ToString());
-		result.Should().Contain(initialized[2].ToString());
+		await That(result.Count).IsEqualTo(3);
+		await That(result).Contains(initialized[0].ToString());
+		await That(result).Contains(initialized[1].ToString());
+		await That(result).Contains(initialized[2].ToString());
 	}
 
 	[Theory]
@@ -88,7 +89,7 @@ public partial class GetFileSystemInfosTests
 	[InlineData(true, "abc?", "abc")]
 	[InlineData(false, "ab?c", "abc")]
 	[InlineData(false, "ac", "abc")]
-	public void GetFileSystemEntries_SearchPattern_ShouldReturnExpectedValue(
+	public async Task GetFileSystemEntries_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
 		FileSystem.Initialize().WithFile(fileName);
@@ -98,22 +99,19 @@ public partial class GetFileSystemInfosTests
 
 		if (expectToBeFound)
 		{
-			result.Should().ContainSingle(
-				fileName,
-				$"it should match {searchPattern}");
+			await That(result).HasSingle().Which.EndsWith(fileName)
+				.Because($"it should match {searchPattern}");
 		}
 		else
 		{
-			result.Should()
-				.BeEmpty($"{fileName} should not match {searchPattern}");
+			await That(result).IsEmpty().Because($"{fileName} should not match {searchPattern}");
 		}
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Theory]
 	[AutoData]
-	public void
-		GetFileSystemEntries_WithEnumerationOptions_ShouldConsiderSetOptions(
+	public async Task GetFileSystemEntries_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -133,33 +131,35 @@ public partial class GetFileSystemInfosTests
 					AttributesToSkip = FileAttributes.System,
 				}).ToList();
 
-		result.Count.Should().Be(1, $"{initialized[2]} should be found.");
-		result.Should().NotContain(initialized[0].ToString());
-		result.Should().Contain(initialized[2].ToString());
+		await That(result.Count).IsEqualTo(1).Because($"{initialized[2]} should be found.");
+		await That(result).DoesNotContain(initialized[0].ToString());
+		await That(result).Contains(initialized[2].ToString());
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void GetFileSystemEntries_WithNewline_ShouldThrowArgumentException(
+	public async Task GetFileSystemEntries_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
 		string searchPattern = "foo\0bar";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.Directory.GetFileSystemEntries(path, searchPattern)
 				.FirstOrDefault();
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809,
-			// The searchPattern is not included in .NET Framework
-			messageContains: Test.IsNetFramework ? null : $"'{searchPattern}'");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithMessageContaining(
+				// The searchPattern is not included in .NET Framework
+				Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		GetFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
 			string path)
 	{
@@ -175,18 +175,17 @@ public partial class GetFileSystemInfosTests
 				.GetFileSystemEntries(".")
 				.ToList();
 
-		result.Count.Should().Be(3);
-		result.Should().Contain(initialized[0].ToString());
-		result.Should().Contain(initialized[1].ToString());
-		result.Should().Contain(initialized[2].ToString());
-		result.Should().NotContain(initialized[3].ToString());
+		await That(result.Count).IsEqualTo(3);
+		await That(result).Contains(initialized[0].ToString());
+		await That(result).Contains(initialized[1].ToString());
+		await That(result).Contains(initialized[2].ToString());
+		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		GetFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
-			string path)
+	public async Task GetFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
+		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
@@ -199,14 +198,14 @@ public partial class GetFileSystemInfosTests
 			.GetFileSystemEntries(".", initialized[0].Name)
 			.ToList();
 
-		result.Count.Should().Be(1);
-		result.Should().Contain(initialized[0].ToString());
-		result.Should().NotContain(initialized[1].ToString());
-		result.Should().NotContain(initialized[3].ToString());
+		await That(result.Count).IsEqualTo(1);
+		await That(result).Contains(initialized[0].ToString());
+		await That(result).DoesNotContain(initialized[1].ToString());
+		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
 	[Fact]
-	public void
+	public async Task
 		GetFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -222,8 +221,8 @@ public partial class GetFileSystemInfosTests
 			.GetFileSystemEntries(".", "*.foobar", SearchOption.AllDirectories)
 			.ToArray();
 
-		result.Count().Should().Be(2);
-		result.Should().Contain(initialized[1].ToString());
-		result.Should().Contain(initialized[3].ToString());
+		await That(result).HasCount(2);
+		await That(result).Contains(initialized[1].ToString());
+		await That(result).Contains(initialized[3].ToString());
 	}
 }

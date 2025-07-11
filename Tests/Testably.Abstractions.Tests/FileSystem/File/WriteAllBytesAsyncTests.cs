@@ -18,10 +18,10 @@ public partial class WriteAllBytesAsyncTests
 		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -33,8 +33,8 @@ public partial class WriteAllBytesAsyncTests
 
 		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 	[Theory]
@@ -44,8 +44,8 @@ public partial class WriteAllBytesAsyncTests
 	{
 		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 	[Theory]
@@ -58,9 +58,7 @@ public partial class WriteAllBytesAsyncTests
 			await FileSystem.File.WriteAllBytesAsync(path, null!, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<ArgumentNullException>(paramName: "bytes");
+		await That(Act).Throws<ArgumentNullException>().WithParamName("bytes");
 	}
 
 	[Theory]
@@ -76,12 +74,9 @@ public partial class WriteAllBytesAsyncTests
 			await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
@@ -100,9 +95,7 @@ public partial class WriteAllBytesAsyncTests
 			await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 	
 #if FEATURE_FILE_SPAN
@@ -114,10 +107,10 @@ public partial class WriteAllBytesAsyncTests
 		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), cts.Token));
+		async Task Act() =>
+			await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -129,8 +122,8 @@ public partial class WriteAllBytesAsyncTests
 
 		await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 	[Theory]
@@ -140,8 +133,8 @@ public partial class WriteAllBytesAsyncTests
 	{
 		await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 	[Theory]
@@ -157,12 +150,9 @@ public partial class WriteAllBytesAsyncTests
 			await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
@@ -181,9 +171,7 @@ public partial class WriteAllBytesAsyncTests
 			await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 #endif
 }

@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
@@ -10,7 +9,7 @@ public partial class Tests
 {
 	[Theory]
 	[AutoData]
-	public void BeginInit_ShouldStopListening(string path)
+	public async Task BeginInit_ShouldStopListening(string path)
 	{
 		FileSystem.Initialize();
 		using ManualResetEventSlim ms = new();
@@ -22,7 +21,7 @@ public partial class Tests
 
 		fileSystemWatcher.InternalBufferSize = 5000;
 
-		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
+		await That(fileSystemWatcher.EnableRaisingEvents).IsTrue();
 		try
 		{
 			_ = Task.Run(async () =>
@@ -45,11 +44,11 @@ public partial class Tests
 			IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 250);
 
-			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
-			result.TimedOut.Should().BeTrue();
-			result.ChangeType.Should().Be(0);
-			result.Name.Should().BeNull();
-			result.OldName.Should().BeNull();
+			await That(fileSystemWatcher.EnableRaisingEvents).IsTrue();
+			await That(result.TimedOut).IsTrue();
+			await That(result.ChangeType).IsEqualTo(0);
+			await That(result.Name).IsNull();
+			await That(result.OldName).IsNull();
 		}
 		finally
 		{
@@ -58,18 +57,18 @@ public partial class Tests
 	}
 
 	[Fact]
-	public void Container_ShouldBeInitializedWithNull()
+	public async Task Container_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
-		fileSystemWatcher.Container.Should().BeNull();
+		await That(fileSystemWatcher.Container).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void EndInit_ShouldRestartListening(string path)
+	public async Task EndInit_ShouldRestartListening(string path)
 	{
 		FileSystem.Initialize();
 		using ManualResetEventSlim ms = new();
@@ -80,7 +79,7 @@ public partial class Tests
 
 		fileSystemWatcher.EndInit();
 
-		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
+		await That(fileSystemWatcher.EnableRaisingEvents).IsTrue();
 		try
 		{
 			_ = Task.Run(async () =>
@@ -103,8 +102,8 @@ public partial class Tests
 			IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, ExpectSuccess);
 
-			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
-			result.TimedOut.Should().BeFalse();
+			await That(fileSystemWatcher.EnableRaisingEvents).IsTrue();
+			await That(result.TimedOut).IsFalse();
 		}
 		finally
 		{
@@ -116,7 +115,7 @@ public partial class Tests
 	[InlineData(-1, 4096)]
 	[InlineData(4095, 4096)]
 	[InlineData(4097, 4097)]
-	public void InternalBufferSize_ShouldAtLeastHave4096Bytes(
+	public async Task InternalBufferSize_ShouldAtLeastHave4096Bytes(
 		int bytes, int expectedBytes)
 	{
 		FileSystem.Initialize();
@@ -125,21 +124,21 @@ public partial class Tests
 
 		fileSystemWatcher.InternalBufferSize = bytes;
 
-		fileSystemWatcher.InternalBufferSize.Should().Be(expectedBytes);
+		await That(fileSystemWatcher.InternalBufferSize).IsEqualTo(expectedBytes);
 	}
 
 	[Fact]
-	public void Site_ShouldBeInitializedWithNull()
+	public async Task Site_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
-		fileSystemWatcher.Site.Should().BeNull();
+		await That(fileSystemWatcher.Site).IsNull();
 	}
 
 	[Fact]
-	public void Site_ShouldBeWritable()
+	public async Task Site_ShouldBeWritable()
 	{
 		ISite site = new MockSite();
 		FileSystem.Initialize();
@@ -148,21 +147,21 @@ public partial class Tests
 
 		fileSystemWatcher.Site = site;
 
-		fileSystemWatcher.Site.Should().Be(site);
+		await That(fileSystemWatcher.Site).IsEqualTo(site);
 	}
 
 	[Fact]
-	public void SynchronizingObject_ShouldBeInitializedWithNull()
+	public async Task SynchronizingObject_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
-		fileSystemWatcher.SynchronizingObject.Should().BeNull();
+		await That(fileSystemWatcher.SynchronizingObject).IsNull();
 	}
 
 	[Fact]
-	public void SynchronizingObject_ShouldBeWritable()
+	public async Task SynchronizingObject_ShouldBeWritable()
 	{
 		ISynchronizeInvoke synchronizingObject = new MockSynchronizeInvoke();
 		FileSystem.Initialize();
@@ -171,7 +170,7 @@ public partial class Tests
 
 		fileSystemWatcher.SynchronizingObject = synchronizingObject;
 
-		fileSystemWatcher.SynchronizingObject.Should().Be(synchronizingObject);
+		await That(fileSystemWatcher.SynchronizingObject).IsEqualTo(synchronizingObject);
 	}
 
 	private sealed class MockSite : ISite

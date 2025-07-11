@@ -7,19 +7,19 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 public class FileInfoStatisticsTests
 {
 	[Fact]
-	public void Method_AppendText_ShouldRegisterCall()
+	public async Task Method_AppendText_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 
 		sut.FileInfo.New("foo").AppendText();
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.AppendText));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.AppendText));
 	}
 
 	[Fact]
-	public void Method_CopyTo_String_Bool_ShouldRegisterCall()
+	public async Task Method_CopyTo_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -28,14 +28,14 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CopyTo(destFileName, overwrite);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.CopyTo),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.CopyTo),
 				destFileName, overwrite);
 	}
 
 	[Fact]
-	public void Method_CopyTo_String_ShouldRegisterCall()
+	public async Task Method_CopyTo_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -43,54 +43,54 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CopyTo(destFileName);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.CopyTo),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.CopyTo),
 				destFileName);
 	}
 
 	[Fact]
-	public void Method_Create_ShouldRegisterCall()
+	public async Task Method_Create_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 
 		sut.FileInfo.New("foo").Create();
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Create));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.Create));
 	}
 
 #if FEATURE_FILESYSTEM_LINK
 	[Fact]
-	public void Method_CreateAsSymbolicLink_String_ShouldRegisterCall()
+	public async Task Method_CreateAsSymbolicLink_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string pathToTarget = "foo";
 
 		sut.FileInfo.New("foo").CreateAsSymbolicLink(pathToTarget);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.CreateAsSymbolicLink),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.CreateAsSymbolicLink),
 				pathToTarget);
 	}
 #endif
 
 	[Fact]
-	public void Method_CreateText_ShouldRegisterCall()
+	public async Task Method_CreateText_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 
 		sut.FileInfo.New("foo").CreateText();
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.CreateText));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.CreateText));
 	}
 
 	[Fact]
-	public void Method_Decrypt_ShouldRegisterCall()
+	public async Task Method_Decrypt_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnWindows);
 
@@ -100,26 +100,26 @@ public class FileInfoStatisticsTests
 		sut.FileInfo.New("foo").Decrypt();
 		#pragma warning restore CA1416
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Decrypt));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.Decrypt));
 	}
 
 	[Fact]
-	public void Method_Delete_ShouldRegisterCall()
+	public async Task Method_Delete_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		sut.FileInfo.New("foo").Delete();
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Delete));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.Delete));
 	}
 
 	[Fact]
-	public void Method_Encrypt_ShouldRegisterCall()
+	public async Task Method_Encrypt_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnWindows);
 
@@ -129,14 +129,14 @@ public class FileInfoStatisticsTests
 		sut.FileInfo.New("foo").Encrypt();
 		#pragma warning restore CA1416
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Encrypt));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.Encrypt));
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	[Fact]
-	public void Method_MoveTo_String_Bool_ShouldRegisterCall()
+	public async Task Method_MoveTo_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -145,15 +145,15 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").MoveTo(destFileName, overwrite);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.MoveTo),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.MoveTo),
 				destFileName, overwrite);
 	}
 #endif
 
 	[Fact]
-	public void Method_MoveTo_String_ShouldRegisterCall()
+	public async Task Method_MoveTo_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -161,14 +161,14 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").MoveTo(destFileName);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.MoveTo),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.MoveTo),
 				destFileName);
 	}
 
 	[Fact]
-	public void Method_Open_FileMode_FileAccess_FileShare_ShouldRegisterCall()
+	public async Task Method_Open_FileMode_FileAccess_FileShare_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		FileMode mode = new();
@@ -177,14 +177,14 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Open(mode, access, share);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.Open),
 				mode, access, share);
 	}
 
 	[Fact]
-	public void Method_Open_FileMode_FileAccess_ShouldRegisterCall()
+	public async Task Method_Open_FileMode_FileAccess_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		FileMode mode = new();
@@ -192,29 +192,29 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Open(mode, access);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.Open),
 				mode, access);
 	}
 
 	[Fact]
-	public void Method_Open_FileMode_ShouldRegisterCall()
+	public async Task Method_Open_FileMode_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		FileMode mode = new();
 
 		sut.FileInfo.New("foo").Open(mode);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.Open),
 				mode);
 	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 	[Fact]
-	public void Method_Open_FileStreamOptions_ShouldRegisterCall()
+	public async Task Method_Open_FileStreamOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -222,65 +222,65 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Open(options);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.Open),
 				options);
 	}
 #endif
 
 	[Fact]
-	public void Method_OpenRead_ShouldRegisterCall()
+	public async Task Method_OpenRead_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		sut.FileInfo.New("foo").OpenRead();
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.OpenRead));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.OpenRead));
 	}
 
 	[Fact]
-	public void Method_OpenText_ShouldRegisterCall()
+	public async Task Method_OpenText_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		sut.FileInfo.New("foo").OpenText();
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.OpenText));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.OpenText));
 	}
 
 	[Fact]
-	public void Method_OpenWrite_ShouldRegisterCall()
+	public async Task Method_OpenWrite_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 
 		sut.FileInfo.New("foo").OpenWrite();
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.OpenWrite));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.OpenWrite));
 	}
 
 	[Fact]
-	public void Method_Refresh_ShouldRegisterCall()
+	public async Task Method_Refresh_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 
 		sut.FileInfo.New("foo").Refresh();
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Refresh));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.Refresh));
 	}
 
 	[Fact]
-	public void Method_Replace_String_String_Bool_ShouldRegisterCall()
+	public async Task Method_Replace_String_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo").WithFile("bar");
@@ -291,14 +291,14 @@ public class FileInfoStatisticsTests
 		sut.FileInfo.New("foo").Replace(destinationFileName, destinationBackupFileName,
 			ignoreMetadataErrors);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Replace),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.Replace),
 				destinationFileName, destinationBackupFileName, ignoreMetadataErrors);
 	}
 
 	[Fact]
-	public void Method_Replace_String_String_ShouldRegisterCall()
+	public async Task Method_Replace_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo").WithFile("bar");
@@ -307,44 +307,44 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Replace(destinationFileName, destinationBackupFileName);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Replace),
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.Replace),
 				destinationFileName, destinationBackupFileName);
 	}
 
 #if FEATURE_FILESYSTEM_LINK
 	[Fact]
-	public void Method_ResolveLinkTarget_Bool_ShouldRegisterCall()
+	public async Task Method_ResolveLinkTarget_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		bool returnFinalTarget = true;
 
 		sut.FileInfo.New("foo").ResolveLinkTarget(returnFinalTarget);
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainMethodCall(
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(
 				nameof(IFileInfo.ResolveLinkTarget),
 				returnFinalTarget);
 	}
 #endif
 
 	[Fact]
-	public void Property_Attributes_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_Attributes_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").Attributes;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.Attributes));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.Attributes));
 	}
 
 	[Fact]
-	public void Property_Attributes_Set_ShouldRegisterPropertyAccess()
+	public async Task Property_Attributes_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -352,26 +352,26 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Attributes = value;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.Attributes));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertySetAccess(nameof(IFileInfo.Attributes));
 	}
 
 	[Fact]
-	public void Property_CreationTime_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_CreationTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").CreationTime;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.CreationTime));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.CreationTime));
 	}
 
 	[Fact]
-	public void Property_CreationTime_Set_ShouldRegisterPropertyAccess()
+	public async Task Property_CreationTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -379,26 +379,26 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CreationTime = value;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.CreationTime));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertySetAccess(nameof(IFileInfo.CreationTime));
 	}
 
 	[Fact]
-	public void Property_CreationTimeUtc_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_CreationTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").CreationTimeUtc;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.CreationTimeUtc));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.CreationTimeUtc));
 	}
 
 	[Fact]
-	public void Property_CreationTimeUtc_Set_ShouldRegisterPropertyAccess()
+	public async Task Property_CreationTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -406,90 +406,91 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CreationTimeUtc = value;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.CreationTimeUtc));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertySetAccess(nameof(IFileInfo.CreationTimeUtc));
 	}
 
 	[Fact]
-	public void Property_Directory_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_Directory_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").Directory;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.Directory));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.Directory));
 	}
 
 	[Fact]
-	public void Property_DirectoryName_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_DirectoryName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").DirectoryName;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.DirectoryName));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.DirectoryName));
 	}
 
 	[Fact]
-	public void Property_Exists_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_Exists_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").Exists;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.Exists));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.Exists));
 	}
 
 	[Fact]
-	public void Property_Extension_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_Extension_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").Extension;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.Extension));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.Extension));
 	}
 
 	[Fact]
-	public void Property_FullName_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_FullName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").FullName;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.FullName));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.FullName));
 	}
 
 	[Fact]
-	public void Property_IsReadOnly_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_IsReadOnly_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").IsReadOnly;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.IsReadOnly));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.IsReadOnly));
 	}
 
 	[Fact]
-	public void Property_IsReadOnly_Set_ShouldRegisterPropertyAccess()
+	public async Task Property_IsReadOnly_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -497,26 +498,26 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").IsReadOnly = value;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.IsReadOnly));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertySetAccess(nameof(IFileInfo.IsReadOnly));
 	}
 
 	[Fact]
-	public void Property_LastAccessTime_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_LastAccessTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").LastAccessTime;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.LastAccessTime));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.LastAccessTime));
 	}
 
 	[Fact]
-	public void Property_LastAccessTime_Set_ShouldRegisterPropertyAccess()
+	public async Task Property_LastAccessTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -524,26 +525,26 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").LastAccessTime = value;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.LastAccessTime));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertySetAccess(nameof(IFileInfo.LastAccessTime));
 	}
 
 	[Fact]
-	public void Property_LastAccessTimeUtc_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_LastAccessTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").LastAccessTimeUtc;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.LastAccessTimeUtc));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.LastAccessTimeUtc));
 	}
 
 	[Fact]
-	public void Property_LastAccessTimeUtc_Set_ShouldRegisterPropertyAccess()
+	public async Task Property_LastAccessTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -551,26 +552,26 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").LastAccessTimeUtc = value;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.LastAccessTimeUtc));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertySetAccess(nameof(IFileInfo.LastAccessTimeUtc));
 	}
 
 	[Fact]
-	public void Property_LastWriteTime_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_LastWriteTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").LastWriteTime;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.LastWriteTime));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.LastWriteTime));
 	}
 
 	[Fact]
-	public void Property_LastWriteTime_Set_ShouldRegisterPropertyAccess()
+	public async Task Property_LastWriteTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -578,26 +579,26 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").LastWriteTime = value;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.LastWriteTime));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertySetAccess(nameof(IFileInfo.LastWriteTime));
 	}
 
 	[Fact]
-	public void Property_LastWriteTimeUtc_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_LastWriteTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").LastWriteTimeUtc;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.LastWriteTimeUtc));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.LastWriteTimeUtc));
 	}
 
 	[Fact]
-	public void Property_LastWriteTimeUtc_Set_ShouldRegisterPropertyAccess()
+	public async Task Property_LastWriteTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -605,68 +606,70 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").LastWriteTimeUtc = value;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.LastWriteTimeUtc));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertySetAccess(nameof(IFileInfo.LastWriteTimeUtc));
 	}
 
 	[Fact]
-	public void Property_Length_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_Length_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").Length;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.Length));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.Length));
 	}
 
 #if FEATURE_FILESYSTEM_LINK
 	[Fact]
-	public void Property_LinkTarget_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_LinkTarget_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").LinkTarget;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.LinkTarget));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.LinkTarget));
 	}
 #endif
 
 	[Fact]
-	public void Property_Name_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_Name_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").Name;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.Name));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.Name));
 	}
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	[Fact]
-	public void Property_UnixFileMode_Get_ShouldRegisterPropertyAccess()
+	public async Task Property_UnixFileMode_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").UnixFileMode;
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.UnixFileMode));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.UnixFileMode));
 	}
 #endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	[Fact]
-	public void Property_UnixFileMode_Set_ShouldRegisterPropertyAccess()
+	public async Task Property_UnixFileMode_Set_ShouldRegisterPropertyAccess()
 	{
 		Skip.If(Test.RunsOnWindows);
 
@@ -674,23 +677,23 @@ public class FileInfoStatisticsTests
 		sut.Initialize().WithFile("foo");
 		UnixFileMode value = new();
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		sut.FileInfo.New("foo").UnixFileMode = value;
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		sut.Statistics.TotalCount.Should().Be(2);
-		sut.Statistics.FileInfo["foo"]
-			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.UnixFileMode));
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsPropertySetAccess(nameof(IFileInfo.UnixFileMode));
 	}
 #endif
 
 	[Fact]
-	public void ToString_ShouldBeFileInfoWithPath()
+	public async Task ToString_ShouldBeFileInfoWithPath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.FileInfo[@"\\some\path"];
 
 		string? result = sut.ToString();
 
-		result.Should().Be(@"FileInfo[\\some\path]");
+		await That(result).IsEqualTo(@"FileInfo[\\some\path]");
 	}
 }

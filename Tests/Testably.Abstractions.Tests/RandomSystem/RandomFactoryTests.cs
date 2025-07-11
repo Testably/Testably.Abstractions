@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Testably.Abstractions.RandomSystem;
 
 namespace Testably.Abstractions.Tests.RandomSystem;
@@ -8,7 +7,7 @@ namespace Testably.Abstractions.Tests.RandomSystem;
 public partial class RandomFactoryTests
 {
 	[Fact]
-	public void New_Next_ShouldReturnDifferentValues()
+	public async Task New_Next_ShouldReturnDifferentValues()
 	{
 		List<int> results = [];
 
@@ -17,12 +16,12 @@ public partial class RandomFactoryTests
 			results.Add(RandomSystem.Random.New().Next());
 		}
 
-		results.Should().OnlyHaveUniqueItems();
+		await That(results).AreAllUnique();
 	}
 
 	[Theory]
 	[AutoData]
-	public void New_Next_WithSeed_ShouldReturnSameValue(int seed)
+	public async Task New_Next_WithSeed_ShouldReturnSameValue(int seed)
 	{
 		List<int> results = [];
 
@@ -31,11 +30,11 @@ public partial class RandomFactoryTests
 			results.Add(RandomSystem.Random.New(seed).Next());
 		}
 
-		results.Should().AllBeEquivalentTo(results[0]);
+		await That(results).All().AreEqualTo(results[0]);
 	}
 
 	[Fact]
-	public void New_Shared_ShouldReturnDifferentValues()
+	public async Task New_Shared_ShouldReturnDifferentValues()
 	{
 		List<int> results = [];
 
@@ -44,15 +43,15 @@ public partial class RandomFactoryTests
 			results.Add(RandomSystem.Random.Shared.Next());
 		}
 
-		results.Should().OnlyHaveUniqueItems();
+		await That(results).AreAllUnique();
 	}
 
 	[Fact]
-	public void Shared_ShouldReturnSameReference()
+	public async Task Shared_ShouldReturnSameReference()
 	{
 		IRandom shared1 = RandomSystem.Random.Shared;
 		IRandom shared2 = RandomSystem.Random.Shared;
 
-		shared1.Should().Be(shared2);
+		await That(shared1).IsEqualTo(shared2);
 	}
 }

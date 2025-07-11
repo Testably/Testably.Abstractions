@@ -6,7 +6,8 @@ namespace Testably.Abstractions.Testing.Tests.Storage;
 public sealed class LocationExtensionsTests
 {
 	[Fact]
-	public void ThrowExceptionIfNotFound_MissingDirectory_ShouldThrowDirectoryNotFoundException()
+	public async Task
+		ThrowExceptionIfNotFound_MissingDirectory_ShouldThrowDirectoryNotFoundException()
 	{
 		MockFileSystem fileSystem = new();
 		IStorageLocation location = fileSystem.Storage.GetLocation("foo/bar.txt");
@@ -16,12 +17,12 @@ public sealed class LocationExtensionsTests
 			location.ThrowExceptionIfNotFound(fileSystem);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>();
+		await That(exception).IsExactly<DirectoryNotFoundException>();
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		ThrowExceptionIfNotFound_MissingDirectory_WithCustomCallback_ShouldThrowExceptionFromCallback(
 			Exception expectedException)
 	{
@@ -34,11 +35,11 @@ public sealed class LocationExtensionsTests
 				onDirectoryNotFound: _ => expectedException);
 		});
 
-		exception.Should().BeSameAs(expectedException);
+		await That(exception).IsSameAs(expectedException);
 	}
 
 	[Fact]
-	public void ThrowExceptionIfNotFound_MissingFile_ShouldThrowFileNotFoundException()
+	public async Task ThrowExceptionIfNotFound_MissingFile_ShouldThrowFileNotFoundException()
 	{
 		MockFileSystem fileSystem = new();
 		IStorageLocation location = fileSystem.Storage.GetLocation("foo.txt");
@@ -48,12 +49,12 @@ public sealed class LocationExtensionsTests
 			location.ThrowExceptionIfNotFound(fileSystem);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>();
+		await That(exception).IsExactly<FileNotFoundException>();
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		ThrowExceptionIfNotFound_MissingFile_WithCustomCallback_ShouldThrowExceptionFromCallback(
 			Exception expectedException)
 	{
@@ -65,12 +66,12 @@ public sealed class LocationExtensionsTests
 			location.ThrowExceptionIfNotFound(fileSystem, onFileNotFound: _ => expectedException);
 		});
 
-		exception.Should().BeSameAs(expectedException);
+		await That(exception).IsSameAs(expectedException);
 	}
 
 	[Theory]
 	[AutoData]
-	public void ThrowIfNotFound_MissingDirectory_ShouldExecuteFileNotFoundAction(
+	public async Task ThrowIfNotFound_MissingDirectory_ShouldExecuteFileNotFoundAction(
 		Exception expectedException)
 	{
 		MockFileSystem fileSystem = new();
@@ -82,12 +83,12 @@ public sealed class LocationExtensionsTests
 				directoryNotFoundException: () => throw expectedException);
 		});
 
-		exception.Should().BeSameAs(expectedException);
+		await That(exception).IsSameAs(expectedException);
 	}
 
 	[Theory]
 	[AutoData]
-	public void ThrowIfNotFound_MissingFile_ShouldExecuteFileNotFoundAction(
+	public async Task ThrowIfNotFound_MissingFile_ShouldExecuteFileNotFoundAction(
 		Exception expectedException)
 	{
 		MockFileSystem fileSystem = new();
@@ -98,12 +99,13 @@ public sealed class LocationExtensionsTests
 			location.ThrowIfNotFound(fileSystem, () => throw expectedException);
 		});
 
-		exception.Should().BeSameAs(expectedException);
+		await That(exception).IsSameAs(expectedException);
 	}
 
 	[Theory]
 	[AutoData]
-	public void ThrowIfNotFound_Null_ShouldExecuteFileNotFoundAction(Exception expectedException)
+	public async Task ThrowIfNotFound_Null_ShouldExecuteFileNotFoundAction(
+		Exception expectedException)
 	{
 		MockFileSystem fileSystem = new();
 		IStorageLocation? location = null;
@@ -113,6 +115,6 @@ public sealed class LocationExtensionsTests
 			location.ThrowIfNotFound(fileSystem, () => throw expectedException);
 		});
 
-		exception.Should().BeSameAs(expectedException);
+		await That(exception).IsSameAs(expectedException);
 	}
 }

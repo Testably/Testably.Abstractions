@@ -7,22 +7,22 @@ public partial class AttributesTests
 {
 	[Theory]
 	[AutoData]
-	public void Attributes_ClearAllAttributes_ShouldRemainDirectory(string path)
+	public async Task Attributes_ClearAllAttributes_ShouldRemainDirectory(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
 		sut.Attributes = 0;
 
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
-		sut.Attributes.Should().HaveFlag(FileAttributes.Directory);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
+		await That(sut.Attributes).HasFlag(FileAttributes.Directory);
 	}
 
 	[Theory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
 	[InlineAutoData(FileAttributes.Normal)]
-	public void Attributes_WhenFileIsExisting_SetterShouldChangeAttributesOnFileSystem(
+	public async Task Attributes_WhenFileIsExisting_SetterShouldChangeAttributesOnFileSystem(
 		FileAttributes attributes, string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -32,28 +32,28 @@ public partial class AttributesTests
 		sut1.Attributes = attributes;
 		FileAttributes expectedAttributes = sut1.Attributes;
 
-		sut2.Attributes.Should().Be(expectedAttributes);
+		await That(sut2.Attributes).IsEqualTo(expectedAttributes);
 	}
 
 	[Fact]
-	public void Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException()
+	public async Task Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException()
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("missing file");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.Attributes = FileAttributes.Normal;
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 	}
 
 	[Fact]
-	public void Attributes_WhenFileIsMissing_ShouldReturnMinusOne()
+	public async Task Attributes_WhenFileIsMissing_ShouldReturnMinusOne()
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("missing file");
 		FileAttributes expected = (FileAttributes)(-1);
 
-		sut.Attributes.Should().Be(expected);
+		await That(sut.Attributes).IsEqualTo(expected);
 	}
 }

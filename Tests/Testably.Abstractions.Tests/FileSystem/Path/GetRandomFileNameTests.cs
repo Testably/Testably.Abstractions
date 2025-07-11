@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
@@ -7,30 +6,27 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 public partial class GetRandomFileNameTests
 {
 	[Fact]
-	public void GetRandomFileName_ShouldMatch8Dot3Pattern()
+	public async Task GetRandomFileName_ShouldMatch8Dot3Pattern()
 	{
 		string result = FileSystem.Path.GetRandomFileName();
 
-		result.Should().Match("????????.???");
+		await That(result).IsEqualTo("????????.???").AsWildcard();
 	}
 
 	[Fact]
-	public void GetRandomFileName_ShouldReturnRandomFileNameWithExtension()
+	public async Task GetRandomFileName_ShouldReturnRandomFileNameWithExtension()
 	{
 		string result = FileSystem.Path.GetRandomFileName();
 
 #if FEATURE_PATH_RELATIVE
-		FileSystem.Path.IsPathFullyQualified(result)
-			.Should().BeFalse();
+		await That(FileSystem.Path.IsPathFullyQualified(result)).IsFalse();
 #endif
-		FileSystem.Path.GetExtension(result)
-			.Should().NotBeEmpty();
-		FileSystem.Path.GetFileNameWithoutExtension(result)
-			.Should().NotBeEmpty();
+		await That(FileSystem.Path.GetExtension(result)).IsNotEmpty();
+		await That(FileSystem.Path.GetFileNameWithoutExtension(result)).IsNotEmpty();
 	}
 
 	[Fact]
-	public void GetRandomFileName_ShouldReturnRandomStrings()
+	public async Task GetRandomFileName_ShouldReturnRandomStrings()
 	{
 		ConcurrentBag<string> results = [];
 
@@ -39,6 +35,6 @@ public partial class GetRandomFileNameTests
 			results.Add(FileSystem.Path.GetRandomFileName());
 		});
 
-		results.Should().OnlyHaveUniqueItems();
+		await That(results).AreAllUnique();
 	}
 }

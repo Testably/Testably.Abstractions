@@ -9,7 +9,7 @@ public class TestingExceptionTests
 {
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		TestingException_SerializationAndDeserialization_ShouldKeepMessageAndInnerException(
 			string message, Exception innerException)
 	{
@@ -26,9 +26,9 @@ public class TestingExceptionTests
 			(TestingException)formatter.Deserialize(ms2);
 		#pragma warning restore SYSLIB0011
 
-		Assert.Equal(originalException.InnerException?.Message,
-			deserializedException.InnerException?.Message);
-		Assert.Equal(originalException.Message, deserializedException.Message);
+		await That(deserializedException.InnerException?.Message)
+			.IsEqualTo(originalException.InnerException?.Message);
+		await That(deserializedException.Message).IsEqualTo(originalException.Message);
 	}
 }
 #endif

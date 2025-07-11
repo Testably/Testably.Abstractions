@@ -1,5 +1,6 @@
 #if FEATURE_FILESYSTEM_ASYNC
 using AutoFixture;
+using NSubstitute.ExceptionExtensions;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -18,10 +19,10 @@ public partial class ReadAllLinesAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.ReadAllLinesAsync(path, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.ReadAllLinesAsync(path, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -33,10 +34,10 @@ public partial class ReadAllLinesAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.ReadAllLinesAsync(path, Encoding.UTF8, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.ReadAllLinesAsync(path, Encoding.UTF8, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -44,12 +45,12 @@ public partial class ReadAllLinesAsyncTests
 	public async Task ReadAllLinesAsync_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken));
+		async Task Act() =>
+			await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithHResult(-2147024894);
 	}
 
 	[Theory]
@@ -59,9 +60,10 @@ public partial class ReadAllLinesAsyncTests
 		string contents = string.Join(Environment.NewLine, lines);
 		await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
-		string[] results = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
+		string[] results =
+ await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 
-		results.Should().BeEquivalentTo(lines, o => o.WithStrictOrdering());
+		await That(results).IsEqualTo(lines);
 	}
 
 	[Theory]
@@ -75,11 +77,11 @@ public partial class ReadAllLinesAsyncTests
 		string contents = string.Join(Environment.NewLine, lines);
 		await FileSystem.File.WriteAllTextAsync(path, contents, writeEncoding, TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path, readEncoding, TestContext.Current.CancellationToken);
+		string[] result =
+ await FileSystem.File.ReadAllLinesAsync(path, readEncoding, TestContext.Current.CancellationToken);
 
-		result.Should().NotBeEquivalentTo(lines,
-			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
-		result[0].Should().Be(lines[0]);
+		await That(result).IsNotEqualTo(lines).InAnyOrder();
+		await That(result[0]).IsEqualTo(lines[0]);
 	}
 }
 #endif

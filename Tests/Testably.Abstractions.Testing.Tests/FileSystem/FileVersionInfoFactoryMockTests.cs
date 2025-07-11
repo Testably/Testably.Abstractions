@@ -10,7 +10,7 @@ public sealed class FileVersionInfoFactoryMockTests
 	[InlineData("bar", "foo", "baz/f*o", false)]
 	[InlineData("bar", "foo", "/f*o", false)]
 	[InlineData("bar", "foo", "**/f*o", true)]
-	public void ShouldSupportGlobPattern(
+	public async Task ShouldSupportGlobPattern(
 		string baseDirectory, string fileName, string globPattern, bool expectMatch)
 	{
 		MockFileSystem fileSystem = new();
@@ -22,12 +22,12 @@ public sealed class FileVersionInfoFactoryMockTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo(filePath);
 
-		result.Comments.Should().Be(expected);
+		await That(result.Comments).IsEqualTo(expected);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WhenRegistered_ShouldReturnFileVersionInfoWithRegisteredValues(
+	public async Task WhenRegistered_ShouldReturnFileVersionInfoWithRegisteredValues(
 		string comments)
 	{
 		MockFileSystem fileSystem = new();
@@ -36,12 +36,12 @@ public sealed class FileVersionInfoFactoryMockTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("abc.foo");
 
-		result.Comments.Should().Be(comments);
+		await That(result.Comments).IsEqualTo(comments);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WhenRegisteredUnderDifferentName_ShouldReturnDefaultValues(
+	public async Task WhenRegisteredUnderDifferentName_ShouldReturnDefaultValues(
 		string comments)
 	{
 		MockFileSystem fileSystem = new();
@@ -50,6 +50,6 @@ public sealed class FileVersionInfoFactoryMockTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("abc.bar");
 
-		result.Comments.Should().BeNull();
+		await That(result.Comments).IsNull();
 	}
 }

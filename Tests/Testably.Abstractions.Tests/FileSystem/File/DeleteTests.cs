@@ -7,73 +7,77 @@ public partial class DeleteTests
 {
 	[Theory]
 	[AutoData]
-	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+	public async Task Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingDirectory, string fileName)
 	{
 		string filePath = FileSystem.Path.Combine(missingDirectory, fileName);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Delete(filePath);
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_MissingFile_ShouldDoNothing(
+	public async Task Delete_MissingFile_ShouldDoNothing(
 		string fileName)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Delete(fileName);
-		});
+		}
 
-		exception.Should().BeNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_WhenDirectory_ShouldThrowUnauthorizedAccessException(
+	public async Task Delete_WhenDirectory_ShouldThrowUnauthorizedAccessException(
 		string fileName)
 	{
 		FileSystem.Directory.CreateDirectory(fileName);
 		string expectedPath = FileSystem.Path.Combine(BasePath, fileName);
-		Exception? exception = Record.Exception(() =>
+
+		void Act()
 		{
 			FileSystem.File.Delete(fileName);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>($"'{expectedPath}'",
-			hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.WithMessageContaining($"'{expectedPath}'").And
+			.WithHResult(-2147024891);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_WithOpenFile_ShouldThrowIOException_OnWindows(string filename)
+	public async Task Delete_WithOpenFile_ShouldThrowIOException_OnWindows(string filename)
 	{
 		FileSystem.Initialize();
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filename);
 		openFile.Write([0], 0, 1);
 		openFile.Flush();
-		Exception? exception = Record.Exception(() =>
+
+		void Act()
 		{
 			FileSystem.File.Delete(filename);
 			openFile.Write([0], 0, 1);
 			openFile.Flush();
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<IOException>($"{filename}'",
-				hResult: -2147024864);
-			FileSystem.File.Exists(filename).Should().BeTrue();
+			await That(Act).Throws<IOException>()
+				.WithMessageContaining($"{filename}'").And
+				.WithHResult(-2147024864);
+			await That(FileSystem.File.Exists(filename)).IsTrue();
 		}
 		else
 		{
-			exception.Should().BeNull();
-			FileSystem.File.Exists(filename).Should().BeFalse();
+			await That(Act).DoesNotThrow();
+			await That(FileSystem.File.Exists(filename)).IsFalse();
 		}
 	}
 }

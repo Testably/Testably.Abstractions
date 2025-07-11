@@ -9,57 +9,57 @@ public partial class ExceptionTests
 {
 	[Theory]
 	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), "")]
-	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			callback.Compile().Invoke(FileSystem.FileVersionInfo);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: ignoreParamCheck || Test.IsNetFramework ? null : paramName,
-			because:
-			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName(ignoreParamCheck || Test.IsNetFramework ? null : paramName)
+			.Because(
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), (string?)null)]
-	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
+	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			callback.Compile().Invoke(FileSystem.FileVersionInfo);
-		});
+		}
 
-		exception.Should().BeException<ArgumentNullException>(
-			paramName: ignoreParamCheck ? null : paramName,
-			because:
-			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		await That(Act).Throws<ArgumentNullException>()
+			.WithParamName(ignoreParamCheck ? null : paramName)
+			.Because(
+				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), "  ")]
-	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			callback.Compile().Invoke(FileSystem.FileVersionInfo);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: ignoreParamCheck || Test.IsNetFramework ? null : paramName,
-			because:
-			$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName(ignoreParamCheck || Test.IsNetFramework ? null : paramName)
+			.Because(
+				$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	#region Helpers
@@ -89,8 +89,10 @@ public partial class ExceptionTests
 			Expression<Action<IFileVersionInfoFactory>> Callback)>
 		GetFileVersionInfoFactoryCallbackTestParameters(string value)
 	{
-		yield return (ExceptionTestHelper.TestTypes.IgnoreParamNameCheck | ExceptionTestHelper.TestTypes.All, "fileName", fileVersionInfoFactory
-			=> fileVersionInfoFactory.GetVersionInfo(value));
+		yield return (
+			ExceptionTestHelper.TestTypes.IgnoreParamNameCheck | ExceptionTestHelper.TestTypes.All,
+			"fileName", fileVersionInfoFactory
+				=> fileVersionInfoFactory.GetVersionInfo(value));
 	}
 
 	#endregion

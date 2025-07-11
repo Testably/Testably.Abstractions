@@ -7,7 +7,7 @@ public partial class MoveTests
 {
 	[Theory]
 	[AutoData]
-	public void Move_CaseOnlyChange_ShouldMoveFileWithContent(
+	public async Task Move_CaseOnlyChange_ShouldMoveFileWithContent(
 		string name, string contents)
 	{
 		string sourceName = name.ToLowerInvariant();
@@ -19,18 +19,18 @@ public partial class MoveTests
 		if (Test.RunsOnLinux)
 		{
 			// sourceName and destinationName are considered different only on Linux
-			FileSystem.File.Exists(sourceName).Should().BeFalse();
+			await That(FileSystem.File.Exists(sourceName)).IsFalse();
 		}
 
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(contents);
-		FileSystem.Directory.GetFiles(".").Should()
-			.ContainSingle(d => d.Contains(destinationName, StringComparison.Ordinal));
+		await That(FileSystem.File.Exists(destinationName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
+		await That(FileSystem.Directory.GetFiles(".")).HasSingle()
+			.Matching(d => d.Contains(destinationName, StringComparison.Ordinal));
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		Move_DestinationDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException(
 			string source)
 	{
@@ -38,17 +38,17 @@ public partial class MoveTests
 			.WithFile(source);
 		string destination = FileTestHelper.RootDrive(Test, "not-existing/path");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Move(source, destination);
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_DestinationExists_ShouldThrowIOException_AndNotMoveFile(
+	public async Task Move_DestinationExists_ShouldThrowIOException_AndNotMoveFile(
 		string sourceName,
 		string destinationName,
 		string sourceContents,
@@ -57,24 +57,23 @@ public partial class MoveTests
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Move(sourceName, destinationName);
-		});
+		}
 
-		exception.Should().BeException<IOException>(
-			hResult: Test.RunsOnWindows ? -2147024713 : 17);
+		await That(Act).Throws<IOException>().WithHResult(Test.RunsOnWindows ? -2147024713 : 17);
 
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(sourceContents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(destinationContents);
+		await That(FileSystem.File.Exists(sourceName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(sourceContents);
+		await That(FileSystem.File.Exists(destinationName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(destinationContents);
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	[Theory]
 	[AutoData]
-	public void Move_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
+	public async Task Move_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
 		string destinationName,
 		string sourceContents,
@@ -85,15 +84,15 @@ public partial class MoveTests
 
 		FileSystem.File.Move(sourceName, destinationName, true);
 
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(sourceContents);
+		await That(FileSystem.File.Exists(sourceName)).IsFalse();
+		await That(FileSystem.File.Exists(destinationName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(sourceContents);
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void Move_ReadOnly_ShouldMoveFile(
+	public async Task Move_ReadOnly_ShouldMoveFile(
 		string sourceName, string destinationName, string contents)
 	{
 		FileSystem.File.WriteAllText(sourceName, contents);
@@ -101,29 +100,29 @@ public partial class MoveTests
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(contents);
-		FileSystem.File.GetAttributes(destinationName).Should().HaveFlag(FileAttributes.ReadOnly);
+		await That(FileSystem.File.Exists(sourceName)).IsFalse();
+		await That(FileSystem.File.Exists(destinationName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
+		await That(FileSystem.File.GetAttributes(destinationName)).HasFlag(FileAttributes.ReadOnly);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_ShouldMoveFileWithContent(
+	public async Task Move_ShouldMoveFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{
 		FileSystem.File.WriteAllText(sourceName, contents);
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(contents);
+		await That(FileSystem.File.Exists(sourceName)).IsFalse();
+		await That(FileSystem.File.Exists(destinationName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_ShouldNotAdjustTimes(string source, string destination)
+	public async Task Move_ShouldNotAdjustTimes(string source, string destination)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -138,46 +137,47 @@ public partial class MoveTests
 		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(destination);
 		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(destination);
 
-		creationTime.Should()
-			.BeBetween(creationTimeStart, creationTimeEnd);
-		lastAccessTime.Should()
-			.BeBetween(creationTimeStart, creationTimeEnd);
-		lastWriteTime.Should()
-			.BeBetween(creationTimeStart, creationTimeEnd);
+		await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
+		await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
+		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_SourceAndDestinationIdentical_ShouldNotThrowException(string path)
+	public async Task Move_SourceAndDestinationIdentical_ShouldNotThrowException(string path)
 	{
 		FileSystem.Initialize()
 			.WithFile(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Move(path, path);
-		});
+		}
 
-		exception.Should().BeNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_SourceDirectoryMissing_ShouldThrowFileNotFoundException(
+	public async Task Move_SourceDirectoryMissing_ShouldThrowFileNotFoundException(
 		string missingDirectory,
 		string sourceName,
 		string destinationName)
 	{
 		string sourcePath = FileSystem.Path.Combine(missingDirectory, sourceName);
-		Exception? exception = Record.Exception(() =>
+
+		void Act()
 		{
 			FileSystem.File.Move(sourcePath, destinationName);
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(sourcePath)}'",
-			hResult: -2147024894);
-		FileSystem.File.Exists(destinationName).Should().BeFalse();
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(sourcePath)}'").And
+			.WithHResult(-2147024894);
+		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 
 	[Theory]
@@ -193,7 +193,7 @@ public partial class MoveTests
 	[InlineAutoData(FileAccess.Write, FileShare.Read)]
 	[InlineAutoData(FileAccess.Write, FileShare.ReadWrite)]
 	[InlineAutoData(FileAccess.Write, FileShare.Write)]
-	public void Move_SourceLocked_ShouldThrowIOException_OnWindows(
+	public async Task Move_SourceLocked_ShouldThrowIOException_OnWindows(
 		FileAccess fileAccess,
 		FileShare fileShare,
 		string sourceName,
@@ -203,54 +203,55 @@ public partial class MoveTests
 		using FileSystemStream stream = FileSystem.File.Open(
 			sourceName, FileMode.Open, fileAccess, fileShare);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Move(sourceName, destinationName);
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<IOException>(hResult: -2147024864);
-			FileSystem.File.Exists(sourceName).Should().BeTrue();
-			FileSystem.File.Exists(destinationName).Should().BeFalse();
+			await That(Act).Throws<IOException>().WithHResult(-2147024864);
+			await That(FileSystem.File.Exists(sourceName)).IsTrue();
+			await That(FileSystem.File.Exists(destinationName)).IsFalse();
 		}
 		else
 		{
 			// https://github.com/dotnet/runtime/issues/52700
-			FileSystem.File.Exists(sourceName).Should().BeFalse();
-			FileSystem.File.Exists(destinationName).Should().BeTrue();
+			await That(Act).DoesNotThrow();
+			await That(FileSystem.File.Exists(sourceName)).IsFalse();
+			await That(FileSystem.File.Exists(destinationName)).IsTrue();
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_SourceMissing_CopyToItself_ShouldThrowFileNotFoundException(
+	public async Task Move_SourceMissing_CopyToItself_ShouldThrowFileNotFoundException(
 		string sourceName)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Move(sourceName, sourceName);
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(sourceName)}'",
-			hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(sourceName)}'").And
+			.WithHResult(-2147024894);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Move_SourceMissing_ShouldThrowFileNotFoundException(
+	public async Task Move_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
 		string destinationName)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Move(sourceName, destinationName);
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(sourceName)}'",
-			hResult: -2147024894);
-		FileSystem.File.Exists(destinationName).Should().BeFalse();
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(sourceName)}'").And
+			.WithHResult(-2147024894);
+		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 }

@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 public class FileVersionInfoFactoryStatisticsTests
 {
 	[Fact]
-	public void Method_GetVersionInfo_String_ShouldRegisterCall()
+	public async Task Method_GetVersionInfo_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string fileName = "foo";
@@ -13,7 +13,7 @@ public class FileVersionInfoFactoryStatisticsTests
 
 		sut.FileVersionInfo.GetVersionInfo(fileName);
 
-		sut.Statistics.FileVersionInfo.ShouldOnlyContainMethodCall(
+		await That(sut.Statistics.FileVersionInfo).OnlyContainsMethodCall(
 			nameof(IFileVersionInfoFactory.GetVersionInfo),
 			fileName);
 	}

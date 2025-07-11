@@ -7,7 +7,7 @@ public partial class CreateTextTests
 {
 	[Theory]
 	[AutoData]
-	public void CreateText_MissingFile_ShouldCreateFile(
+	public async Task CreateText_MissingFile_ShouldCreateFile(
 		string path, string appendText)
 	{
 		using (StreamWriter stream = FileSystem.File.CreateText(path))
@@ -15,13 +15,13 @@ public partial class CreateTextTests
 			stream.Write(appendText);
 		}
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(appendText);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(appendText);
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateText_ShouldReplaceTextInExistingFile(
+	public async Task CreateText_ShouldReplaceTextInExistingFile(
 		string path, string contents, string appendText)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -31,7 +31,7 @@ public partial class CreateTextTests
 			stream.Write(appendText);
 		}
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(appendText);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(appendText);
 	}
 }

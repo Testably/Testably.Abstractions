@@ -1,41 +1,37 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-	  <None Remove="TestResources\SubResource\SubResourceFile1.txt" />
-	  <None Remove="TestResources\TestFile1.txt" />
-	  <None Remove="TestResources\TestFile2.txt" />
+		<None Remove="TestResources\SubResource\SubResourceFile1.txt"/>
+		<None Remove="TestResources\TestFile1.txt"/>
+		<None Remove="TestResources\TestFile2.txt"/>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Include="TestResources\SubResource\SubResourceFile1.txt" />
-	  <EmbeddedResource Include="TestResources\TestFile1.txt" />
-	  <EmbeddedResource Include="TestResources\TestFile2.txt" />
+		<EmbeddedResource Include="TestResources\SubResource\SubResourceFile1.txt"/>
+		<EmbeddedResource Include="TestResources\TestFile1.txt"/>
+		<EmbeddedResource Include="TestResources\TestFile2.txt"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Testably.Abstractions.Interface" />
-		<ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
-		<ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
-		<ProjectReference Include="..\Helpers\Testably.Abstractions.TestHelpers\Testably.Abstractions.TestHelpers.csproj" />
+		<PackageReference Include="Testably.Abstractions.Interface"/>
+		<ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj"/>
+		<ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj"/>
+		<ProjectReference Include="..\Helpers\Testably.Abstractions.TestHelpers\Testably.Abstractions.TestHelpers.csproj"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FluentAssertions" />
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Properties\Resources.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Resources.resx</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Update="Properties\Resources.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
 	</ItemGroup>
 
 </Project>

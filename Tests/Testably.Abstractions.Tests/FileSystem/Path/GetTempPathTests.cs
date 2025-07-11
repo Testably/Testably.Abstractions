@@ -4,51 +4,51 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 public partial class GetTempPathTests
 {
 	[Fact]
-	public void GetTempPath_Linux_ShouldBeTmp()
+	public async Task GetTempPath_Linux_ShouldBeTmp()
 	{
 		Skip.IfNot(Test.RunsOnLinux);
 
 		string result = FileSystem.Path.GetTempPath();
 
-		result.Should().Be("/tmp/");
+		await That(result).IsEqualTo("/tmp/");
 	}
 
 	[Fact]
-	public void GetTempPath_MacOs_ShouldBeTmp()
+	public async Task GetTempPath_MacOs_ShouldBeTmp()
 	{
 		Skip.IfNot(Test.RunsOnMac);
 
 		string result = FileSystem.Path.GetTempPath();
 
-		result.Should().Match("/var/folders/??/*/T/");
+		await That(result).IsEqualTo("/var/folders/??/*/T/").AsWildcard();
 	}
 
 	[Fact]
-	public void GetTempPath_ShouldEndWithDirectorySeparator()
+	public async Task GetTempPath_ShouldEndWithDirectorySeparator()
 	{
 		string directorySeparator = FileSystem.Path.DirectorySeparatorChar.ToString();
 
 		string result = FileSystem.Path.GetTempPath();
 
-		result.Should().EndWith(directorySeparator);
+		await That(result).EndsWith(directorySeparator);
 	}
 
 	[Fact]
-	public void GetTempPath_ShouldRemainTheSame()
+	public async Task GetTempPath_ShouldRemainTheSame()
 	{
 		string result1 = FileSystem.Path.GetTempPath();
 		string result2 = FileSystem.Path.GetTempPath();
 
-		result1.Should().Be(result2);
+		await That(result1).IsEqualTo(result2);
 	}
 
 	[Fact]
-	public void GetTempPath_Windows_ShouldBeOnDriveC()
+	public async Task GetTempPath_Windows_ShouldBeOnDriveC()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		string result = FileSystem.Path.GetTempPath();
 
-		result.Should().StartWith(@"C:\").And.EndWith(@"\Temp\");
+		await That(result).StartsWith(@"C:\").And.EndsWith(@"\Temp\");
 	}
 }

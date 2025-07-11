@@ -10,7 +10,7 @@ public partial class DisposeTests
 {
 	[Theory]
 	[AutoData]
-	public void Dispose_CalledTwiceShouldDoNothing(
+	public async Task Dispose_CalledTwiceShouldDoNothing(
 		string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
@@ -20,18 +20,18 @@ public partial class DisposeTests
 
 		// ReSharper disable once DisposeOnUsingVariable
 		stream.Dispose();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 		FileSystem.File.WriteAllText(path, "foo");
 
 		// ReSharper disable once DisposeOnUsingVariable
 		stream.Dispose();
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Dispose_ShouldNotResurrectFile(string path, string contents)
+	public async Task Dispose_ShouldNotResurrectFile(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 		FileSystemStream stream = FileSystem.File.Open(path,
@@ -45,28 +45,28 @@ public partial class DisposeTests
 		stream.Dispose();
 		int fileCount3 = FileSystem.Directory.GetFiles(".", "*").Length;
 
-		fileCount1.Should().Be(1, "File should have existed");
-		fileCount2.Should().Be(0, "File should have been deleted");
-		fileCount3.Should().Be(0, "Dispose should not have resurrected the file");
+		await That(fileCount1).IsEqualTo(1).Because("File should have existed");
+		await That(fileCount2).IsEqualTo(0).Because("File should have been deleted");
+		await That(fileCount3).IsEqualTo(0).Because("Dispose should not have resurrected the file");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetFileStreamCallbacks))]
-	public void Operations_ShouldThrowAfterStreamIsDisposed(
+	public async Task Operations_ShouldThrowAfterStreamIsDisposed(
 		Expression<Action<FileSystemStream>> callback)
 	{
 		FileSystem.File.WriteAllText("foo", "some content");
-		Exception? exception = Record.Exception(() =>
+
+		void Act()
 		{
 			FileSystemStream stream =
 				FileSystem.FileStream.New("foo", FileMode.Open, FileAccess.ReadWrite);
 			stream.Dispose();
 			callback.Compile().Invoke(stream);
-		});
+		}
 
-		exception.Should()
-			.BeOfType<ObjectDisposedException>(
-				$"\n{callback}\n executed after Dispose() was called.");
+		await That(Act).ThrowsExactly<ObjectDisposedException>()
+			.Because($"\n{callback}\n executed after Dispose() was called.");
 	}
 
 	#region Helpers
@@ -94,13 +94,15 @@ public partial class DisposeTests
 		yield return fileStream => fileStream.Read(Array.Empty<byte>(), 0, 0);
 		#pragma warning restore CA2022
 		#pragma warning restore MA0060
-		yield return fileStream => fileStream.ReadAsync(Array.Empty<byte>(), 0, 0, TestContext.Current.CancellationToken)
+		yield return fileStream => fileStream
+			.ReadAsync(Array.Empty<byte>(), 0, 0, TestContext.Current.CancellationToken)
 			.GetAwaiter().GetResult();
 		yield return fileStream => fileStream.ReadByte();
 		yield return fileStream => fileStream.Seek(0, SeekOrigin.Begin);
 		yield return fileStream => fileStream.SetLength(0);
 		yield return fileStream => fileStream.Write(Array.Empty<byte>(), 0, 0);
-		yield return fileStream => fileStream.WriteAsync(Array.Empty<byte>(), 0, 0, TestContext.Current.CancellationToken)
+		yield return fileStream => fileStream
+			.WriteAsync(Array.Empty<byte>(), 0, 0, TestContext.Current.CancellationToken)
 			.GetAwaiter().GetResult();
 		yield return fileStream => fileStream.WriteByte(0x42);
 	}

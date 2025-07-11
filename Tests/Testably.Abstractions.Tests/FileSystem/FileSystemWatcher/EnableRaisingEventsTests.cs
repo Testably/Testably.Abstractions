@@ -7,7 +7,7 @@ public partial class EnableRaisingEventsTests
 {
 	[Theory]
 	[AutoData]
-	public void EnableRaisingEvents_SetToFalse_ShouldStop(string path1, string path2)
+	public async Task EnableRaisingEvents_SetToFalse_ShouldStop(string path1, string path2)
 	{
 		FileSystem.Initialize().WithSubdirectory(path1).WithSubdirectory(path2);
 		using ManualResetEventSlim ms = new();
@@ -27,18 +27,18 @@ public partial class EnableRaisingEventsTests
 		};
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(path1);
-		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		ms.Reset();
 
 		fileSystemWatcher.EnableRaisingEvents = false;
 
 		FileSystem.Directory.Delete(path2);
-		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void EnableRaisingEvents_ShouldBeInitializedAsFalse(string path)
+	public async Task EnableRaisingEvents_ShouldBeInitializedAsFalse(string path)
 	{
 		FileSystem.Initialize().WithSubdirectory(path);
 		using ManualResetEventSlim ms = new();
@@ -59,6 +59,6 @@ public partial class EnableRaisingEventsTests
 
 		FileSystem.Directory.Delete(path);
 
-		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
+		await That(ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 	}
 }

@@ -13,24 +13,24 @@ public partial class EnumerateFileSystemInfosTests
 {
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		EnumerateFileSystemEntries_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
-		Exception? exception =
-			Record.Exception(()
-				=> FileSystem.Directory.EnumerateFileSystemEntries(path).ToList());
 
-		exception.Should().BeException<DirectoryNotFoundException>(
-			$"'{expectedPath}'",
-			hResult: -2147024893);
-		FileSystem.Directory.Exists(path).Should().BeFalse();
+		void Act() =>
+			_ = FileSystem.Directory.EnumerateFileSystemEntries(path).ToList();
+
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{expectedPath}'").And
+			.WithHResult(-2147024893);
+		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		EnumerateFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
 			string path)
 	{
@@ -47,15 +47,15 @@ public partial class EnumerateFileSystemInfosTests
 				SearchOption.AllDirectories)
 			.ToList();
 
-		result.Count.Should().Be(3);
-		result.Should().Contain(initialized[0].FullName);
-		result.Should().Contain(initialized[1].FullName);
-		result.Should().Contain(initialized[2].FullName);
+		await That(result.Count).IsEqualTo(3);
+		await That(result).Contains(initialized[0].FullName);
+		await That(result).Contains(initialized[1].FullName);
+		await That(result).Contains(initialized[2].FullName);
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		EnumerateFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
 			string path)
 	{
@@ -69,10 +69,10 @@ public partial class EnumerateFileSystemInfosTests
 			.EnumerateFileSystemEntries(".", "*", SearchOption.AllDirectories)
 			.ToList();
 
-		result.Count.Should().Be(3);
-		result.Should().Contain(initialized[0].ToString());
-		result.Should().Contain(initialized[1].ToString());
-		result.Should().Contain(initialized[2].ToString());
+		await That(result.Count).IsEqualTo(3);
+		await That(result).Contains(initialized[0].ToString());
+		await That(result).Contains(initialized[1].ToString());
+		await That(result).Contains(initialized[2].ToString());
 	}
 
 	[Theory]
@@ -89,7 +89,7 @@ public partial class EnumerateFileSystemInfosTests
 	[InlineData(true, "abc?", "abc")]
 	[InlineData(false, "ab?c", "abc")]
 	[InlineData(false, "ac", "abc")]
-	public void EnumerateFileSystemEntries_SearchPattern_ShouldReturnExpectedValue(
+	public async Task EnumerateFileSystemEntries_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
 		FileSystem.Initialize().WithFile(fileName);
@@ -99,22 +99,19 @@ public partial class EnumerateFileSystemInfosTests
 
 		if (expectToBeFound)
 		{
-			result.Should().ContainSingle(
-				fileName,
-				$"it should match {searchPattern}");
+			await That(result).HasSingle().Which.EndsWith(fileName)
+				.Because($"it should match {searchPattern}");
 		}
 		else
 		{
-			result.Should()
-				.BeEmpty($"{fileName} should not match {searchPattern}");
+			await That(result).IsEmpty().Because($"{fileName} should not match {searchPattern}");
 		}
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Theory]
 	[AutoData]
-	public void
-		EnumerateFileSystemEntries_WithEnumerationOptions_ShouldConsiderSetOptions(
+	public async Task EnumerateFileSystemEntries_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -134,15 +131,15 @@ public partial class EnumerateFileSystemInfosTests
 					AttributesToSkip = FileAttributes.System,
 				}).ToList();
 
-		result.Count.Should().Be(1, $"{initialized[2]} should be found.");
-		result.Should().NotContain(initialized[0].ToString());
-		result.Should().Contain(initialized[2].ToString());
+		await That(result.Count).IsEqualTo(1).Because($"{initialized[2]} should be found.");
+		await That(result).DoesNotContain(initialized[0].ToString());
+		await That(result).Contains(initialized[2].ToString());
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		EnumerateFileSystemEntries_WithFileNameStartingWithDirectoryName_ShouldNotBeIncluded(
 			string path)
 	{
@@ -154,30 +151,32 @@ public partial class EnumerateFileSystemInfosTests
 			.EnumerateFileSystemEntries(path, "*", SearchOption.AllDirectories)
 			.ToList();
 
-		result.Should().BeEmpty();
+		await That(result).IsEmpty();
 	}
 
 	[Theory]
 	[AutoData]
-	public void EnumerateFileSystemEntries_WithNewline_ShouldThrowArgumentException(
+	public async Task EnumerateFileSystemEntries_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
 		string searchPattern = "foo\0bar";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.Directory.EnumerateFileSystemEntries(path, searchPattern)
 				.FirstOrDefault();
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809,
-			// The searchPattern is not included in .NET Framework
-			messageContains: Test.IsNetFramework ? null : $"'{searchPattern}'");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithMessageContaining(
+				// The searchPattern is not included in .NET Framework
+				Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		EnumerateFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
 			string path)
 	{
@@ -193,16 +192,16 @@ public partial class EnumerateFileSystemInfosTests
 				.EnumerateFileSystemEntries(".")
 				.ToList();
 
-		result.Count.Should().Be(3);
-		result.Should().Contain(initialized[0].ToString());
-		result.Should().Contain(initialized[1].ToString());
-		result.Should().Contain(initialized[2].ToString());
-		result.Should().NotContain(initialized[3].ToString());
+		await That(result.Count).IsEqualTo(3);
+		await That(result).Contains(initialized[0].ToString());
+		await That(result).Contains(initialized[1].ToString());
+		await That(result).Contains(initialized[2].ToString());
+		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		EnumerateFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
 			string path)
 	{
@@ -217,14 +216,14 @@ public partial class EnumerateFileSystemInfosTests
 			.EnumerateFileSystemEntries(".", initialized[0].Name)
 			.ToList();
 
-		result.Count.Should().Be(1);
-		result.Should().Contain(initialized[0].ToString());
-		result.Should().NotContain(initialized[1].ToString());
-		result.Should().NotContain(initialized[3].ToString());
+		await That(result.Count).IsEqualTo(1);
+		await That(result).Contains(initialized[0].ToString());
+		await That(result).DoesNotContain(initialized[1].ToString());
+		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
 	[Fact]
-	public void
+	public async Task
 		EnumerateFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -240,8 +239,8 @@ public partial class EnumerateFileSystemInfosTests
 			.EnumerateFileSystemEntries(".", "*.foobar", SearchOption.AllDirectories)
 			.ToArray();
 
-		result.Count().Should().Be(2);
-		result.Should().Contain(initialized[1].ToString());
-		result.Should().Contain(initialized[3].ToString());
+		await That(result).HasCount(2);
+		await That(result).Contains(initialized[1].ToString());
+		await That(result).Contains(initialized[3].ToString());
 	}
 }

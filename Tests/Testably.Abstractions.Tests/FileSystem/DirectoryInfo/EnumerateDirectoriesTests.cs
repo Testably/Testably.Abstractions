@@ -10,9 +10,8 @@ public partial class EnumerateDirectoriesTests
 {
 	[Theory]
 	[AutoData]
-	public void
-		EnumerateDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
-			string path)
+	public async Task EnumerateDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
+		string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
@@ -25,10 +24,10 @@ public partial class EnumerateDirectoriesTests
 		IDirectoryInfo[] result = baseDirectory
 			.EnumerateDirectories("*", SearchOption.AllDirectories).ToArray();
 
-		result.Length.Should().Be(3);
-		result.Should().Contain(d => d.Name == "foo");
-		result.Should().Contain(d => d.Name == "bar");
-		result.Should().Contain(d => d.Name == "xyz");
+		await That(result.Length).IsEqualTo(3);
+		await That(result).Contains(d => string.Equals(d.Name, "foo", StringComparison.Ordinal));
+		await That(result).Contains(d => string.Equals(d.Name, "bar", StringComparison.Ordinal));
+		await That(result).Contains(d => string.Equals(d.Name, "xyz", StringComparison.Ordinal));
 	}
 
 	[Theory]
@@ -45,7 +44,7 @@ public partial class EnumerateDirectoriesTests
 	[InlineData(true, "abc?", "abc")]
 	[InlineData(false, "ab?c", "abc")]
 	[InlineData(false, "ac", "abc")]
-	public void EnumerateDirectories_SearchPattern_ShouldReturnExpectedValue(
+	public async Task EnumerateDirectories_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string subdirectoryName)
 	{
 		IDirectoryInfo baseDirectory =
@@ -57,22 +56,22 @@ public partial class EnumerateDirectoriesTests
 
 		if (expectToBeFound)
 		{
-			result.Should().ContainSingle(d => d.Name == subdirectoryName,
-				$"it should match '{searchPattern}'");
+			await That(result).HasSingle().Matching(d
+					=> string.Equals(d.Name, subdirectoryName, StringComparison.Ordinal))
+				.Because($"it should match '{searchPattern}'");
 		}
 		else
 		{
-			result.Should()
-				.BeEmpty($"{subdirectoryName} should not match '{searchPattern}'");
+			await That(result).IsEmpty()
+				.Because($"{subdirectoryName} should not match '{searchPattern}'");
 		}
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Theory]
 	[AutoData]
-	public void
-		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
-			string path)
+	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
+		string path)
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
@@ -89,35 +88,36 @@ public partial class EnumerateDirectoriesTests
 					AttributesToSkip = FileAttributes.System,
 				}).ToArray();
 
-		result.Length.Should().Be(1);
-		result.Should().NotContain(d => d.Name == "foo");
-		result.Should().Contain(d => d.Name == "xyz");
-		result.Should().NotContain(d => d.Name == "bar");
+		await That(result.Length).IsEqualTo(1);
+		await That(result).DoesNotContain(d
+			=> string.Equals(d.Name, "foo", StringComparison.Ordinal));
+		await That(result).Contains(d => string.Equals(d.Name, "xyz", StringComparison.Ordinal));
+		await That(result).DoesNotContain(d
+			=> string.Equals(d.Name, "bar", StringComparison.Ordinal));
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void EnumerateDirectories_WithNewline_ShouldThrowArgumentException(
+	public async Task EnumerateDirectories_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.DirectoryInfo.New(path);
 		string searchPattern = "foo\0bar";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = baseDirectory.EnumerateDirectories(searchPattern).FirstOrDefault();
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
+		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		EnumerateDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
-			string path)
+	public async Task EnumerateDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
+		string path)
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
@@ -127,15 +127,16 @@ public partial class EnumerateDirectoriesTests
 		IDirectoryInfo[] result = baseDirectory
 			.EnumerateDirectories().ToArray();
 
-		result.Length.Should().Be(2);
-		result.Should().Contain(d => d.Name == "foo");
-		result.Should().NotContain(d => d.Name == "xyz");
-		result.Should().Contain(d => d.Name == "bar");
+		await That(result.Length).IsEqualTo(2);
+		await That(result).Contains(d => string.Equals(d.Name, "foo", StringComparison.Ordinal));
+		await That(result)
+			.DoesNotContain(d => string.Equals(d.Name, "xyz", StringComparison.Ordinal));
+		await That(result).Contains(d => string.Equals(d.Name, "bar", StringComparison.Ordinal));
 	}
 
 	[Theory]
 	[AutoData]
-	public void EnumerateDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
+	public async Task EnumerateDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
 		string path)
 	{
 		IDirectoryInfo baseDirectory =
@@ -146,12 +147,13 @@ public partial class EnumerateDirectoriesTests
 		IEnumerable<IDirectoryInfo> result = baseDirectory
 			.EnumerateDirectories("foo");
 
-		result.Should().ContainSingle(d => d.Name == "foo");
+		await That(result).HasSingle()
+			.Matching(d => string.Equals(d.Name, "foo", StringComparison.Ordinal));
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		EnumerateDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(
 			string path)
 	{
@@ -163,6 +165,6 @@ public partial class EnumerateDirectoriesTests
 		IEnumerable<IDirectoryInfo> result = baseDirectory
 			.EnumerateDirectories("xyz", SearchOption.AllDirectories);
 
-		result.Count().Should().Be(2);
+		await That(result).HasCount(2);
 	}
 }

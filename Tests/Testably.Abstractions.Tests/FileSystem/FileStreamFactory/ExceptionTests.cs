@@ -11,21 +11,22 @@ public partial class ExceptionTests
 	[Theory]
 	[MemberData(nameof(GetFileStreamFactoryCallbacks),
 		"Illegal\tCharacter?InPath")]
-	public void
+	public async Task
 		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IFileStreamFactory>> callback, string paramName,
 			bool ignoreParamCheck)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			callback.Compile().Invoke(FileSystem.FileStream);
-		});
+		}
 
 		if (!Test.RunsOnWindows)
 		{
+			Exception? exception = Record.Exception(Act);
 			if (exception is IOException ioException)
 			{
-				ioException.HResult.Should().NotBe(-2147024809,
+				await That(ioException.HResult).IsNotEqualTo(-2147024809).Because(
 					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 		}
@@ -33,74 +34,74 @@ public partial class ExceptionTests
 		{
 			if (Test.IsNetFramework)
 			{
-				exception.Should().BeException<ArgumentException>(
-					hResult: -2147024809,
-					because:
-					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+				await That(Act).Throws<ArgumentException>()
+					.WithHResult(-2147024809)
+					.Because(
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 			else
 			{
-				exception.Should().BeException<IOException>(
-					hResult: -2147024773,
-					because:
-					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+				await That(Act).Throws<IOException>()
+					.WithHResult(-2147024773)
+					.Because(
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 		}
 	}
 
 	[Theory]
 	[MemberData(nameof(GetFileStreamFactoryCallbacks), "")]
-	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileStreamFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			callback.Compile().Invoke(FileSystem.FileStream);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: ignoreParamCheck || Test.IsNetFramework ? null : paramName,
-			because:
-			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName(ignoreParamCheck || Test.IsNetFramework ? null : paramName)
+			.Because(
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetFileStreamFactoryCallbacks), (string?)null)]
-	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
+	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileStreamFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			callback.Compile().Invoke(FileSystem.FileStream);
-		});
+		}
 
-		exception.Should().BeException<ArgumentNullException>(
-			paramName: ignoreParamCheck ? null : paramName,
-			because:
-			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		await That(Act).Throws<ArgumentNullException>()
+			.WithParamName(ignoreParamCheck ? null : paramName)
+			.Because(
+				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetFileStreamFactoryCallbacks), "  ")]
-	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFileStreamFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			callback.Compile().Invoke(FileSystem.FileStream);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: ignoreParamCheck || Test.IsNetFramework ? null : paramName,
-			because:
-			$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName(ignoreParamCheck || Test.IsNetFramework ? null : paramName)
+			.Because(
+				$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	#region Helpers

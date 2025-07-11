@@ -8,54 +8,54 @@ public partial class UnixFileModeTests
 {
 	[Theory]
 	[AutoData]
-	public void UnixFileMode_MissingFile_ShouldBeInitializedToMinusOne(
+	public async Task UnixFileMode_MissingFile_ShouldBeInitializedToMinusOne(
 		string path)
 	{
 		UnixFileMode expected = (UnixFileMode)(-1);
 		IFileInfo fileSystemInfo = FileSystem.FileInfo.New(path);
 
-		fileSystemInfo.UnixFileMode.Should().Be(expected);
+		await That(fileSystemInfo.UnixFileMode).IsEqualTo(expected);
 	}
 
 	[Theory]
 	[AutoData]
-	public void UnixFileMode_SetterShouldThrowPlatformNotSupportedException_OnWindows(
+	public async Task UnixFileMode_SetterShouldThrowPlatformNotSupportedException_OnWindows(
 		string path, UnixFileMode unixFileMode)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		IFileInfo fileSystemInfo = FileSystem.FileInfo.New(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			#pragma warning disable CA1416
 			fileSystemInfo.UnixFileMode = unixFileMode;
 			#pragma warning restore CA1416
-		});
+		}
 
-		exception.Should().BeException<PlatformNotSupportedException>(hResult: -2146233031);
+		await That(Act).Throws<PlatformNotSupportedException>().WithHResult(-2146233031);
 	}
 
 	[Theory]
 	[AutoData]
-	public void UnixFileMode_ShouldBeInitializedCorrectly(
+	public async Task UnixFileMode_ShouldBeInitializedCorrectly(
 		string path)
 	{
 		Skip.If(Test.RunsOnWindows);
 
 		UnixFileMode expected = UnixFileMode.OtherRead |
-		                        UnixFileMode.GroupRead |
-		                        UnixFileMode.UserWrite |
-		                        UnixFileMode.UserRead;
+								UnixFileMode.GroupRead |
+								UnixFileMode.UserWrite |
+								UnixFileMode.UserRead;
 		FileSystem.File.WriteAllText(path, "some content");
 		IFileInfo fileSystemInfo = FileSystem.FileInfo.New(path);
 
-		fileSystemInfo.UnixFileMode.Should().Be(expected);
+		await That(fileSystemInfo.UnixFileMode).IsEqualTo(expected);
 	}
 
 	[Theory]
 	[AutoData]
-	public void UnixFileMode_ShouldBeSettableOnLinux(
+	public async Task UnixFileMode_ShouldBeSettableOnLinux(
 		string path, UnixFileMode unixFileMode)
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -63,11 +63,11 @@ public partial class UnixFileModeTests
 		FileSystem.File.WriteAllText(path, "some content");
 		IFileInfo fileSystemInfo = FileSystem.FileInfo.New(path);
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		fileSystemInfo.UnixFileMode = unixFileMode;
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		fileSystemInfo.UnixFileMode.Should().Be(unixFileMode);
+		await That(fileSystemInfo.UnixFileMode).IsEqualTo(unixFileMode);
 	}
 }
 #endif

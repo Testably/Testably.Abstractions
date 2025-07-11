@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests;
 
@@ -9,60 +8,60 @@ public class MockFileSystemInitializationTests
 {
 #if CAN_SIMULATE_OTHER_OS
 	[Fact]
-	public void MockFileSystem_WhenSimulatingLinux_ShouldBeLinux()
+	public async Task MockFileSystem_WhenSimulatingLinux_ShouldBeLinux()
 	{
 		MockFileSystem sut = new(o => o
 			.SimulatingOperatingSystem(SimulationMode.Linux));
 
-		sut.Execute.IsLinux.Should().BeTrue();
-		sut.Execute.IsMac.Should().BeFalse();
-		sut.Execute.IsWindows.Should().BeFalse();
-		sut.Execute.IsNetFramework.Should().BeFalse();
+		await That(sut.Execute.IsLinux).IsTrue();
+		await That(sut.Execute.IsMac).IsFalse();
+		await That(sut.Execute.IsWindows).IsFalse();
+		await That(sut.Execute.IsNetFramework).IsFalse();
 	}
 #endif
 
 #if CAN_SIMULATE_OTHER_OS
 	[Fact]
-	public void MockFileSystem_WhenSimulatingMacOS_ShouldBeMac()
+	public async Task MockFileSystem_WhenSimulatingMacOS_ShouldBeMac()
 	{
 		MockFileSystem sut = new(o => o
 			.SimulatingOperatingSystem(SimulationMode.MacOS));
 
-		sut.Execute.IsLinux.Should().BeFalse();
-		sut.Execute.IsMac.Should().BeTrue();
-		sut.Execute.IsWindows.Should().BeFalse();
-		sut.Execute.IsNetFramework.Should().BeFalse();
+		await That(sut.Execute.IsLinux).IsFalse();
+		await That(sut.Execute.IsMac).IsTrue();
+		await That(sut.Execute.IsWindows).IsFalse();
+		await That(sut.Execute.IsNetFramework).IsFalse();
 	}
 #endif
 
 #if CAN_SIMULATE_OTHER_OS
 	[Fact]
-	public void MockFileSystem_WhenSimulatingWindows_ShouldBeWindows()
+	public async Task MockFileSystem_WhenSimulatingWindows_ShouldBeWindows()
 	{
 		MockFileSystem sut = new(o => o
 			.SimulatingOperatingSystem(SimulationMode.Windows));
 
-		sut.Execute.IsLinux.Should().BeFalse();
-		sut.Execute.IsMac.Should().BeFalse();
-		sut.Execute.IsWindows.Should().BeTrue();
-		sut.Execute.IsNetFramework.Should().BeFalse();
+		await That(sut.Execute.IsLinux).IsFalse();
+		await That(sut.Execute.IsMac).IsFalse();
+		await That(sut.Execute.IsWindows).IsTrue();
+		await That(sut.Execute.IsNetFramework).IsFalse();
 	}
 #endif
 
 	[Fact]
-	public void MockFileSystem_WithCurrentDirectory_ShouldInitializeCurrentDirectory()
+	public async Task MockFileSystem_WithCurrentDirectory_ShouldInitializeCurrentDirectory()
 	{
 		string expected = Directory.GetCurrentDirectory();
 		MockFileSystem sut = new(o => o.UseCurrentDirectory());
 
 		string result = sut.Directory.GetCurrentDirectory();
 
-		result.Should().Be(expected);
+		await That(result).IsEqualTo(expected);
 	}
 
 	[Theory]
 	[AutoData]
-	public void MockFileSystem_WithExplicitCurrentDirectory_ShouldInitializeCurrentDirectory(
+	public async Task MockFileSystem_WithExplicitCurrentDirectory_ShouldInitializeCurrentDirectory(
 		string path)
 	{
 		string expected = Test.RunsOnWindows ? $"C:\\{path}" : $"/{path}";
@@ -70,62 +69,63 @@ public class MockFileSystemInitializationTests
 
 		string result = sut.Directory.GetCurrentDirectory();
 
-		result.Should().Be(expected);
+		await That(result).IsEqualTo(expected);
 	}
 
 	[Fact]
-	public void MockFileSystem_WithoutCurrentDirectory_ShouldUseDefaultDriveAsCurrentDirectory()
+	public async Task
+		MockFileSystem_WithoutCurrentDirectory_ShouldUseDefaultDriveAsCurrentDirectory()
 	{
 		string expected = Test.RunsOnWindows ? "C:\\" : "/";
 		MockFileSystem sut = new();
 
 		string result = sut.Directory.GetCurrentDirectory();
 
-		result.Should().Be(expected);
+		await That(result).IsEqualTo(expected);
 	}
 
 #if CAN_SIMULATE_OTHER_OS
 	[Theory]
 	[MemberData(nameof(ValidOperatingSystems))]
-	public void SimulatingOperatingSystem_ValidOSPlatform_ShouldSetOperatingSystem(
+	public async Task SimulatingOperatingSystem_ValidOSPlatform_ShouldSetOperatingSystem(
 		SimulationMode simulationMode)
 	{
 		MockFileSystem.MockFileSystemOptions sut = new();
 
 		MockFileSystem.MockFileSystemOptions result = sut.SimulatingOperatingSystem(simulationMode);
 
-		result.SimulationMode.Should().Be(simulationMode);
-		sut.SimulationMode.Should().Be(simulationMode);
+		await That(result.SimulationMode).IsEqualTo(simulationMode);
+		await That(sut.SimulationMode).IsEqualTo(simulationMode);
 	}
 #endif
 
 	[Fact]
-	public void UseCurrentDirectory_Empty_ShouldUseCurrentDirectory()
+	public async Task UseCurrentDirectory_Empty_ShouldUseCurrentDirectory()
 	{
 		string expected = Directory.GetCurrentDirectory();
 		MockFileSystem.MockFileSystemOptions sut = new();
 
 		MockFileSystem.MockFileSystemOptions result = sut.UseCurrentDirectory();
 
-		result.CurrentDirectory.Should().Be(expected);
-		sut.CurrentDirectory.Should().Be(expected);
+		await That(result.CurrentDirectory).IsEqualTo(expected);
+		await That(sut.CurrentDirectory).IsEqualTo(expected);
 	}
 
 	[Theory]
 	[AutoData]
-	public void UseCurrentDirectory_WithPath_ShouldUsePathCurrentDirectory(string path)
+	public async Task UseCurrentDirectory_WithPath_ShouldUsePathCurrentDirectory(string path)
 	{
 		MockFileSystem.MockFileSystemOptions sut = new();
 
 		MockFileSystem.MockFileSystemOptions result = sut.UseCurrentDirectory(path);
 
-		result.CurrentDirectory.Should().Be(path);
-		sut.CurrentDirectory.Should().Be(path);
+		await That(result.CurrentDirectory).IsEqualTo(path);
+		await That(sut.CurrentDirectory).IsEqualTo(path);
 	}
 
 	[Theory]
 	[AutoData]
-	public void UseRandomProvider_ShouldUseFixedRandomValue(int fixedRandomValue)
+	public async Task UseRandomProvider_ShouldUseFixedRandomValue(int fixedRandomValue)
 	{
 		MockFileSystem fileSystem = new(i => i
 			.UseRandomProvider(RandomProvider.Generate(
@@ -136,7 +136,7 @@ public class MockFileSystemInitializationTests
 			.ToList();
 		results.Add(fileSystem.RandomSystem.Random.Shared.Next());
 
-		results.Should().AllBeEquivalentTo(fixedRandomValue);
+		await That(results).All().AreEqualTo(fixedRandomValue);
 	}
 
 	#region Helpers

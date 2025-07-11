@@ -1,5 +1,6 @@
 #if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 using AutoFixture;
+using NSubstitute.ExceptionExtensions;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -28,9 +29,7 @@ public partial class ReadLinesAsyncTests
 			}
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -52,9 +51,7 @@ public partial class ReadLinesAsyncTests
 			}
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -70,11 +67,9 @@ public partial class ReadLinesAsyncTests
 			}
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithHResult(-2147024894);
 	}
 
 	[Theory]
@@ -90,7 +85,7 @@ public partial class ReadLinesAsyncTests
 			results.Add(line);
 		}
 
-		results.Should().BeEquivalentTo(lines, o => o.WithStrictOrdering());
+		await That(results).IsEqualTo(lines);
 	}
 
 	[Theory]
@@ -110,9 +105,8 @@ public partial class ReadLinesAsyncTests
 			results.Add(line);
 		}
 
-		results.Should().NotBeEquivalentTo(lines,
-			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
-		results[0].Should().Be(lines[0]);
+		await That(results).IsNotEqualTo(lines).InAnyOrder();
+		await That(results[0]).IsEqualTo(lines[0]);
 	}
 }
 #endif

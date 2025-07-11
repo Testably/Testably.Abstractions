@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Testably.Abstractions.Testing.Helpers;
 
@@ -7,7 +8,7 @@ namespace Testably.Abstractions.Testing.Tests.Helpers;
 public class RandomSystemExtensionsTests
 {
 	[Fact]
-	public void GenerateRandomFileExtension_ShouldNotStartWithDotOrReturnEmptyString()
+	public async Task GenerateRandomFileExtension_ShouldNotStartWithDotOrReturnEmptyString()
 	{
 		MockRandomSystem randomSystem = new(
 			RandomProvider.Generate(
@@ -26,16 +27,16 @@ public class RandomSystemExtensionsTests
 			fileExtensions.Add(fileExtension);
 		}
 
-		fileExtensions.Count.Should().BeGreaterThan(5);
+		await That(fileExtensions.Count).IsGreaterThan(5);
 		foreach (string fileExtension in fileExtensions)
 		{
-			fileExtension.Should().NotBeNullOrWhiteSpace();
-			fileExtension.Should().NotStartWith(".");
+			await That(fileExtension).IsNotNullOrWhiteSpace();
+			await That(fileExtension).DoesNotStartWith(".");
 		}
 	}
 
 	[Fact]
-	public void GenerateRandomFileName_ShouldGenerateEdgeCases()
+	public async Task GenerateRandomFileName_ShouldGenerateEdgeCases()
 	{
 		MockRandomSystem randomSystem = new(
 			RandomProvider.Generate(
@@ -56,12 +57,12 @@ public class RandomSystemExtensionsTests
 
 		foreach (string fileName in fileNames)
 		{
-			fileName.Should().NotBeNullOrWhiteSpace();
+			await That(fileName).IsNotNullOrWhiteSpace();
 		}
 
 		// Check edge cases for directories
-		fileNames.Should().Contain(d => d.Contains(' '));
-		fileNames.Should().Contain(d => d.Length == 1);
-		fileNames.Should().Contain(d => d.StartsWith('.'));
+		await That(fileNames).Contains(d => d.Contains(' ', StringComparison.Ordinal));
+		await That(fileNames).Contains(d => d.Length == 1);
+		await That(fileNames).Contains(d => d.StartsWith('.'));
 	}
 }

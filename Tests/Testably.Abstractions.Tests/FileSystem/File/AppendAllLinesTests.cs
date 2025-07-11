@@ -10,7 +10,7 @@ public partial class AppendAllLinesTests
 {
 	[Theory]
 	[AutoData]
-	public void AppendAllLines_ExistingFile_ShouldAppendLinesToFile(
+	public async Task AppendAllLines_ExistingFile_ShouldAppendLinesToFile(
 		string path, List<string> previousContents, List<string> contents)
 	{
 		string expectedContent = string.Join(Environment.NewLine, previousContents.Concat(contents))
@@ -19,88 +19,87 @@ public partial class AppendAllLinesTests
 
 		FileSystem.File.AppendAllLines(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedContent);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllLines_MissingFile_ShouldCreateFile(
+	public async Task AppendAllLines_MissingFile_ShouldCreateFile(
 		string path, List<string> contents)
 	{
 		string expectedContent = string.Join(Environment.NewLine, contents)
 		                         + Environment.NewLine;
 		FileSystem.File.AppendAllLines(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedContent);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllLines_NullContent_ShouldThrowArgumentNullException(
+	public async Task AppendAllLines_NullContent_ShouldThrowArgumentNullException(
 		string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllLines(path, null!);
-		});
+		}
 
-		exception.Should().BeException<ArgumentNullException>(
-			hResult: -2147467261,
-			paramName: "contents");
+		await That(Act).Throws<ArgumentNullException>()
+			.WithHResult(-2147467261).And
+			.WithParamName("contents");
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllLines_NullEncoding_ShouldThrowArgumentNullException(
+	public async Task AppendAllLines_NullEncoding_ShouldThrowArgumentNullException(
 		string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllLines(path, new List<string>(), null!);
-		});
+		}
 
-		exception.Should().BeException<ArgumentNullException>(
-			hResult: -2147467261,
-			paramName: "encoding");
+		await That(Act).Throws<ArgumentNullException>()
+			.WithHResult(-2147467261).And
+			.WithParamName("encoding");
 	}
 
 	[Theory]
 	[AutoData]
-	public void AppendAllLines_ShouldEndWithNewline(string path)
+	public async Task AppendAllLines_ShouldEndWithNewline(string path)
 	{
 		string[] contents = ["foo", "bar"];
 		string expectedResult = "foo" + Environment.NewLine + "bar" + Environment.NewLine;
 
 		FileSystem.File.AppendAllLines(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedResult);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		AppendAllLines_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path, string[] contents)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.AppendAllLines(path, contents);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
-	public void AppendAllLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
+	public async Task AppendAllLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding)
 	{
 		string path = new Fixture().Create<string>();
@@ -110,8 +109,7 @@ public partial class AppendAllLinesTests
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 
-		result.Should().NotBeEquivalentTo(lines,
-			$"{lines} should be different when encoding from {writeEncoding} to {readEncoding}.");
-		result[0].Should().Be(lines[0]);
+		await That(result).IsNotEqualTo(lines).InAnyOrder();
+		await That(result[0]).IsEqualTo(lines[0]);
 	}
 }

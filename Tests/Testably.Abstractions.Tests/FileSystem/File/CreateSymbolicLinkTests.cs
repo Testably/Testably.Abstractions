@@ -8,46 +8,46 @@ public partial class CreateSymbolicLinkTests
 {
 	[Theory]
 	[AutoData]
-	public void CreateSymbolicLink_ShouldCreateSymbolicLink(
+	public async Task CreateSymbolicLink_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
 
 		FileSystem.File.CreateSymbolicLink(path, pathToTarget);
 
-		FileSystem.File.GetAttributes(path)
-			.HasFlag(FileAttributes.ReparsePoint)
-			.Should().BeTrue();
+		await That(FileSystem.File.GetAttributes(path))
+			.HasFlag(FileAttributes.ReparsePoint);
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
+	public async Task CreateSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
 		FileSystem.File.WriteAllText(path, "foo");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.CreateSymbolicLink(path, pathToTarget);
-		});
+		}
 
-		exception.Should().BeException<IOException>($"'{path}'",
-			hResult: Test.RunsOnWindows ? -2147024713 : 17);
+		await That(Act).Throws<IOException>()
+			.WithMessageContaining($"'{path}'").And
+			.WithHResult(Test.RunsOnWindows ? -2147024713 : 17);
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateSymbolicLink_TargetFileMissing_ShouldNotThrowException(
+	public async Task CreateSymbolicLink_TargetFileMissing_ShouldNotThrowException(
 		string path, string pathToTarget)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.CreateSymbolicLink(path, pathToTarget);
-		});
+		}
 
-		exception.Should().BeNull();
+		await That(Act).DoesNotThrow();
 	}
 }
 #endif

@@ -1,5 +1,4 @@
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
@@ -14,13 +13,11 @@ public partial class TaskTests
 
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
-		
+
 		async Task Act()
 			=> await TimeSystem.Task.Delay(millisecondsTimeout, cts.Token);
-		
-		Exception? exception = await Record.ExceptionAsync(Act);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Fact]
@@ -29,10 +26,8 @@ public partial class TaskTests
 	{
 		async Task Act()
 			=> await TimeSystem.Task.Delay(-2, TestContext.Current.CancellationToken);
-		
-		Exception? exception = await Record.ExceptionAsync(Act);
 
-		exception.Should().BeException<ArgumentOutOfRangeException>(hResult: -2146233086);
+		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086);
 	}
 
 	[Fact]
@@ -45,8 +40,8 @@ public partial class TaskTests
 		await TimeSystem.Task.Delay(millisecondsTimeout, TestContext.Current.CancellationToken);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
-		after.Should().BeOnOrAfter(
-			before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
+		await That(after)
+			.IsOnOrAfter(before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
 	}
 
 	[Fact]
@@ -59,10 +54,8 @@ public partial class TaskTests
 
 		async Task Act()
 			=> await TimeSystem.Task.Delay(timeout, cts.Token);
-		
-		Exception? exception = await Record.ExceptionAsync(Act);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Fact]
@@ -70,11 +63,10 @@ public partial class TaskTests
 		Delay_Timespan_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
 		async Task Act()
-			=> await TimeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2), TestContext.Current.CancellationToken);
-		
-		Exception? exception = await Record.ExceptionAsync(Act);
+			=> await TimeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2),
+				TestContext.Current.CancellationToken);
 
-		exception.Should().BeException<ArgumentOutOfRangeException>(hResult: -2146233086);
+		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086);
 	}
 
 	[Fact]
@@ -87,6 +79,6 @@ public partial class TaskTests
 		await TimeSystem.Task.Delay(timeout, TestContext.Current.CancellationToken);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
-		after.Should().BeOnOrAfter(before.Add(timeout).ApplySystemClockTolerance());
+		await That(after).IsOnOrAfter(before.Add(timeout).ApplySystemClockTolerance());
 	}
 }

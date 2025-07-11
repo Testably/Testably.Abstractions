@@ -7,7 +7,7 @@ public partial class Tests
 {
 	[Theory]
 	[AutoData]
-	public void GetVersionInfo_ArbitraryFile_ShouldHaveFileNameSet(string fileName)
+	public async Task GetVersionInfo_ArbitraryFile_ShouldHaveFileNameSet(string fileName)
 	{
 		string filePath = FileSystem.Path.GetFullPath(fileName);
 		FileSystem.File.WriteAllText(fileName, "foo");
@@ -19,24 +19,24 @@ public partial class Tests
 
 		IFileVersionInfo result = FileSystem.FileVersionInfo.GetVersionInfo(fileName);
 
-		result.FileName.Should().Be(filePath);
+		await That(result.FileName).IsEqualTo(filePath);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetVersionInfo_MissingFile_ShouldThrowFileNotFoundException(
+	public async Task GetVersionInfo_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
 		if (Test.IsNetFramework)
 		{
 			path = FileSystem.Path.GetFullPath(path);
 		}
-		
-		Exception? exception = Record.Exception(() =>
-			FileSystem.FileVersionInfo.GetVersionInfo(path));
 
-		exception.Should().BeException<FileNotFoundException>(
-			FileSystem.Path.GetFullPath(path),
-			hResult: -2147024894);
+		void Act() =>
+			FileSystem.FileVersionInfo.GetVersionInfo(path);
+
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining(FileSystem.Path.GetFullPath(path)).And
+			.WithHResult(-2147024894);
 	}
 }

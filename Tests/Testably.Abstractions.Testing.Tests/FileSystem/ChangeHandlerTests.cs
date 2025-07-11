@@ -1,3 +1,4 @@
+using aweXpect.Synchronous;
 using System.IO;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
@@ -12,12 +13,12 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 
 	[Theory]
 	[AutoData]
-	public void CreateDirectory_CustomException_ShouldNotCreateDirectory(
+	public async Task CreateDirectory_CustomException_ShouldNotCreateDirectory(
 		string path, Exception exceptionToThrow)
 	{
 		FileSystem.Intercept.Event(_ =>
 		{
-			FileSystem.Directory.Exists(path).Should().BeFalse();
+			Synchronously.Verify(That(FileSystem.Directory.Exists(path)).IsFalse());
 			throw exceptionToThrow;
 		});
 		Exception? exception = Record.Exception(() =>
@@ -25,13 +26,13 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 			FileSystem.Directory.CreateDirectory(path);
 		});
 
-		FileSystem.Directory.Exists(path).Should().BeFalse();
-		exception.Should().Be(exceptionToThrow);
+		await That(FileSystem.Directory.Exists(path)).IsFalse();
+		await That(exception).IsEqualTo(exceptionToThrow);
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateDirectory_CustomException_ShouldOnlyTriggerChangeOccurring(
+	public async Task CreateDirectory_CustomException_ShouldOnlyTriggerChangeOccurring(
 		string path, Exception exceptionToThrow)
 	{
 		string? receivedPath = null;
@@ -41,13 +42,13 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 			FileSystem.Directory.CreateDirectory(path);
 		});
 
-		exception.Should().Be(exceptionToThrow);
-		receivedPath!.Should().BeNull();
+		await That(exception).IsEqualTo(exceptionToThrow);
+		await That(receivedPath!).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		CreateDirectory_WithParentDirectories_ShouldTriggerNotificationForEachDirectory(
 			string path1, string path2, string path3)
 	{
@@ -68,12 +69,12 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 			})
 			.Wait(count: 3);
 
-		eventCount.Should().Be(3);
+		await That(eventCount).IsEqualTo(3);
 	}
 
 	[Theory]
 	[MemberData(nameof(NotificationTriggeringMethods))]
-	public void ExecuteCallback_ShouldTriggerNotification(
+	public async Task ExecuteCallback_ShouldTriggerNotification(
 		Action<IFileSystem, string>? initialization,
 		Action<IFileSystem, string> callback,
 		WatcherChangeTypes expectedChangeType,
@@ -94,7 +95,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 			})
 			.Wait();
 
-		receivedPath.Should().Be(FileSystem.Path.GetFullPath(path));
+		await That(receivedPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
 	}
 
 	#region Helpers

@@ -21,10 +21,10 @@ public partial class AppendAllLinesAsyncTests
 		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.AppendAllLinesAsync(path, contents, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.AppendAllLinesAsync(path, contents, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -36,11 +36,11 @@ public partial class AppendAllLinesAsyncTests
 		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.AppendAllLinesAsync(path, contents, Encoding.UTF8,
-				cts.Token));
+		async Task Act() =>
+			await FileSystem.File.AppendAllLinesAsync(path, contents, Encoding.UTF8,
+				cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -54,8 +54,8 @@ public partial class AppendAllLinesAsyncTests
 
 		await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedContent);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
 	}
 
 	[Theory]
@@ -70,9 +70,7 @@ public partial class AppendAllLinesAsyncTests
 			await FileSystem.File.AppendAllLinesAsync(filePath, contents, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
@@ -85,8 +83,8 @@ public partial class AppendAllLinesAsyncTests
 
 		await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedContent);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
 	}
 
 	[Theory]
@@ -99,11 +97,9 @@ public partial class AppendAllLinesAsyncTests
 			await FileSystem.File.AppendAllLinesAsync(path, null!, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<ArgumentNullException>(
-			hResult: -2147467261,
-			paramName: "contents");
+		await That(Act).Throws<ArgumentNullException>()
+			.WithHResult(-2147467261).And
+			.WithParamName("contents");
 	}
 
 	[Theory]
@@ -113,14 +109,12 @@ public partial class AppendAllLinesAsyncTests
 	{
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllLinesAsync(path, new List<string>(), null!, TestContext.Current.CancellationToken);
+			await FileSystem.File.AppendAllLinesAsync(path, [], null!, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<ArgumentNullException>(
-			hResult: -2147467261,
-			paramName: "encoding");
+		await That(Act).Throws<ArgumentNullException>()
+			.WithHResult(-2147467261).And
+			.WithParamName("encoding");
 	}
 
 	[Theory]
@@ -132,8 +126,8 @@ public partial class AppendAllLinesAsyncTests
 
 		await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedResult);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
@@ -149,12 +143,9 @@ public partial class AppendAllLinesAsyncTests
 			await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
@@ -170,9 +161,8 @@ public partial class AppendAllLinesAsyncTests
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 
-		result.Should().NotBeEquivalentTo(lines,
-			$"{lines} should be different when encoding from {writeEncoding} to {readEncoding}.");
-		result[0].Should().Be(lines[0]);
+		await That(result).IsNotEqualTo(lines).InAnyOrder();
+		await That(result[0]).IsEqualTo(lines[0]);
 	}
 }
 #endif

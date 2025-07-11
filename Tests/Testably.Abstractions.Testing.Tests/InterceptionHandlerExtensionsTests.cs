@@ -10,7 +10,7 @@ public class InterceptionHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	public void Changing_File_OtherEvent_ShouldNotTrigger(
+	public async Task Changing_File_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -23,12 +23,12 @@ public class InterceptionHandlerExtensionsTests
 
 		FileSystem.File.Delete(path);
 
-		isNotified.Should().BeFalse();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Changing_File_ShouldConsiderBasePath(string path1, string path2,
+	public async Task Changing_File_ShouldConsiderBasePath(string path1, string path2,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -41,7 +41,7 @@ public class InterceptionHandlerExtensionsTests
 
 		FileSystem.File.Delete(path1);
 
-		isNotified.Should().BeFalse();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
@@ -51,7 +51,7 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData("bar", "foo", "baz/f*o", false)]
 	[InlineAutoData("bar", "foo", "/f*o", false)]
 	[InlineAutoData("bar", "foo", "**/f*o", true)]
-	public void Changing_File_ShouldConsiderGlobPattern(
+	public async Task Changing_File_ShouldConsiderGlobPattern(
 		string basePath, string fileName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
@@ -72,20 +72,20 @@ public class InterceptionHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().Be(exceptionToThrow);
+			await That(exception).IsEqualTo(exceptionToThrow);
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	public void Changing_File_ShouldUsePredicate(bool expectedResult, string path,
+	public async Task Changing_File_ShouldUsePredicate(bool expectedResult, string path,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -103,19 +103,19 @@ public class InterceptionHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().Be(exceptionToThrow);
+			await That(exception).IsEqualTo(exceptionToThrow);
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Creating_Directory_OtherEvent_ShouldNotTrigger(
+	public async Task Creating_Directory_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -128,12 +128,12 @@ public class InterceptionHandlerExtensionsTests
 
 		FileSystem.Directory.Delete(path);
 
-		isNotified.Should().BeFalse();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Creating_Directory_ShouldConsiderBasePath(
+	public async Task Creating_Directory_ShouldConsiderBasePath(
 		string path1, string path2, Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -145,7 +145,7 @@ public class InterceptionHandlerExtensionsTests
 
 		FileSystem.Directory.CreateDirectory(path1);
 
-		isNotified.Should().BeFalse();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
@@ -155,14 +155,14 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData("bar", "foo", "baz/f*o", false)]
 	[InlineAutoData("bar", "foo", "/f*o", false)]
 	[InlineAutoData("bar", "foo", "**/f*o", true)]
-	public void Creating_Directory_ShouldConsiderGlobPattern(
+	public async Task Creating_Directory_ShouldConsiderGlobPattern(
 		string basePath, string fileName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
 		string filePath = FileSystem.Path.Combine(basePath, fileName);
 		FileSystem.Directory.CreateDirectory(basePath);
-		
+
 		FileSystem.Intercept.Creating(FileSystemTypes.Directory, _ =>
 		{
 			isNotified = true;
@@ -176,20 +176,20 @@ public class InterceptionHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().Be(exceptionToThrow);
+			await That(exception).IsEqualTo(exceptionToThrow);
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	public void Creating_Directory_ShouldUsePredicate(bool expectedResult, string path,
+	public async Task Creating_Directory_ShouldUsePredicate(bool expectedResult, string path,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -206,19 +206,19 @@ public class InterceptionHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().Be(exceptionToThrow);
+			await That(exception).IsEqualTo(exceptionToThrow);
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Creating_File_OtherEvent_ShouldNotTrigger(
+	public async Task Creating_File_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -231,12 +231,12 @@ public class InterceptionHandlerExtensionsTests
 
 		FileSystem.File.Delete(path);
 
-		isNotified.Should().BeFalse();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Creating_File_ShouldConsiderBasePath(string path1, string path2,
+	public async Task Creating_File_ShouldConsiderBasePath(string path1, string path2,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -248,7 +248,7 @@ public class InterceptionHandlerExtensionsTests
 
 		FileSystem.File.WriteAllText(path1, null);
 
-		isNotified.Should().BeFalse();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
@@ -258,14 +258,14 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData("bar", "foo", "baz/f*o", false)]
 	[InlineAutoData("bar", "foo", "/f*o", false)]
 	[InlineAutoData("bar", "foo", "**/f*o", true)]
-	public void Creating_File_ShouldConsiderGlobPattern(
+	public async Task Creating_File_ShouldConsiderGlobPattern(
 		string basePath, string fileName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
 		string filePath = FileSystem.Path.Combine(basePath, fileName);
 		FileSystem.Directory.CreateDirectory(basePath);
-		
+
 		FileSystem.Intercept.Creating(FileSystemTypes.File, _ =>
 		{
 			isNotified = true;
@@ -279,20 +279,20 @@ public class InterceptionHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().Be(exceptionToThrow);
+			await That(exception).IsEqualTo(exceptionToThrow);
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	public void Creating_File_ShouldUsePredicate(bool expectedResult, string path,
+	public async Task Creating_File_ShouldUsePredicate(bool expectedResult, string path,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -309,19 +309,19 @@ public class InterceptionHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().Be(exceptionToThrow);
+			await That(exception).IsEqualTo(exceptionToThrow);
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Deleting_Directory_OtherEvent_ShouldNotTrigger(
+	public async Task Deleting_Directory_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -333,12 +333,12 @@ public class InterceptionHandlerExtensionsTests
 
 		FileSystem.Directory.CreateDirectory(path);
 
-		isNotified.Should().BeFalse();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Deleting_Directory_ShouldConsiderBasePath(
+	public async Task Deleting_Directory_ShouldConsiderBasePath(
 		string path1, string path2, Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -351,7 +351,7 @@ public class InterceptionHandlerExtensionsTests
 
 		FileSystem.Directory.Delete(path1);
 
-		isNotified.Should().BeFalse();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
@@ -361,7 +361,7 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData("bar", "foo", "baz/f*o", false)]
 	[InlineAutoData("bar", "foo", "/f*o", false)]
 	[InlineAutoData("bar", "foo", "**/f*o", true)]
-	public void Deleting_Directory_ShouldConsiderGlobPattern(
+	public async Task Deleting_Directory_ShouldConsiderGlobPattern(
 		string basePath, string directoryName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
@@ -382,20 +382,20 @@ public class InterceptionHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().Be(exceptionToThrow);
+			await That(exception).IsEqualTo(exceptionToThrow);
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	public void Deleting_Directory_ShouldUsePredicate(bool expectedResult, string path,
+	public async Task Deleting_Directory_ShouldUsePredicate(bool expectedResult, string path,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -413,19 +413,19 @@ public class InterceptionHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().Be(exceptionToThrow);
+			await That(exception).IsEqualTo(exceptionToThrow);
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Deleting_File_OtherEvent_ShouldNotTrigger(
+	public async Task Deleting_File_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -437,12 +437,12 @@ public class InterceptionHandlerExtensionsTests
 
 		FileSystem.File.WriteAllText(path, null);
 
-		isNotified.Should().BeFalse();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Deleting_File_ShouldConsiderBasePath(string path1, string path2,
+	public async Task Deleting_File_ShouldConsiderBasePath(string path1, string path2,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -455,7 +455,7 @@ public class InterceptionHandlerExtensionsTests
 
 		FileSystem.File.Delete(path1);
 
-		isNotified.Should().BeFalse();
+		await That(isNotified).IsFalse();
 	}
 
 	[Theory]
@@ -465,7 +465,7 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData("bar", "foo", "baz/f*o", false)]
 	[InlineAutoData("bar", "foo", "/f*o", false)]
 	[InlineAutoData("bar", "foo", "**/f*o", true)]
-	public void Deleting_File_ShouldConsiderGlobPattern(
+	public async Task Deleting_File_ShouldConsiderGlobPattern(
 		string basePath, string fileName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
@@ -486,20 +486,20 @@ public class InterceptionHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().Be(exceptionToThrow);
+			await That(exception).IsEqualTo(exceptionToThrow);
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	public void Deleting_File_ShouldUsePredicate(bool expectedResult, string path,
+	public async Task Deleting_File_ShouldUsePredicate(bool expectedResult, string path,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -517,13 +517,13 @@ public class InterceptionHandlerExtensionsTests
 
 		if (expectedResult)
 		{
-			exception.Should().Be(exceptionToThrow);
+			await That(exception).IsEqualTo(exceptionToThrow);
 		}
 		else
 		{
-			exception.Should().BeNull();
+			await That(exception).IsNull();
 		}
 
-		isNotified.Should().Be(expectedResult);
+		await That(isNotified).IsEqualTo(expectedResult);
 	}
 }

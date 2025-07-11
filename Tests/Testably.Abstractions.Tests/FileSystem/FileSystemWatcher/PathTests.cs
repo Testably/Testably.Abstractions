@@ -4,67 +4,67 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 public partial class PathTests
 {
 	[Fact]
-	public void Path_Empty_ShouldNotThrowException()
+	public async Task Path_Empty_ShouldNotThrowException()
 	{
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			fileSystemWatcher.Path = "";
-		});
+		}
 
-		exception.Should().BeNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Fact]
-	public void Path_Null_ShouldNotThrowException()
+	public async Task Path_Null_ShouldNotThrowException()
 	{
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			fileSystemWatcher.Path = null!;
-		});
+		}
 
-		exception.Should().BeNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
+	public async Task Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
 	{
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			fileSystemWatcher.Path = path;
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			messageContains: path);
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithMessageContaining(path);
 	}
 
 	[Fact]
-	public void Path_Whitespace_ShouldThrowArgumentException()
+	public async Task Path_Whitespace_ShouldThrowArgumentException()
 	{
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			fileSystemWatcher.Path = "  ";
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: Test.IsNetFramework ? null : "Path");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName(Test.IsNetFramework ? null : "Path");
 	}
 }

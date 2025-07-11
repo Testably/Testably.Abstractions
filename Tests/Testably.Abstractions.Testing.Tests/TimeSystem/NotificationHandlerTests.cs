@@ -6,8 +6,7 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 public class NotificationHandlerTests
 {
 	[Fact]
-	public void
-		OnDateTimeRead_DisposedCallback_ShouldNotBeCalled()
+	public async Task OnDateTimeRead_DisposedCallback_ShouldNotBeCalled()
 	{
 		DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
 		MockTimeSystem timeSystem = new(expectedTime);
@@ -17,12 +16,11 @@ public class NotificationHandlerTests
 		disposable.Dispose();
 		_ = timeSystem.DateTime.Now;
 
-		receivedTime.Should().BeNull();
+		await That(receivedTime).IsNull();
 	}
 
 	[Fact]
-	public void
-		OnDateTimeRead_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
+	public async Task OnDateTimeRead_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
 	{
 		DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
 		MockTimeSystem timeSystem = new(expectedTime);
@@ -35,13 +33,12 @@ public class NotificationHandlerTests
 			_ = timeSystem.DateTime.Now;
 		}
 
-		receivedTime1.Should().Be(expectedTime);
-		receivedTime2.Should().BeNull();
+		await That(receivedTime1).IsEqualTo(expectedTime);
+		await That(receivedTime2).IsNull();
 	}
 
 	[Fact]
-	public void
-		OnDateTimeRead_MultipleCallbacks_ShouldAllBeCalled()
+	public async Task OnDateTimeRead_MultipleCallbacks_ShouldAllBeCalled()
 	{
 		DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
 		MockTimeSystem timeSystem = new(expectedTime);
@@ -56,13 +53,12 @@ public class NotificationHandlerTests
 			}
 		}
 
-		receivedTime1.Should().Be(expectedTime);
-		receivedTime2.Should().Be(expectedTime);
+		await That(receivedTime1).IsEqualTo(expectedTime);
+		await That(receivedTime2).IsEqualTo(expectedTime);
 	}
 
 	[Fact]
-	public void
-		OnDateTimeRead_Today_ShouldExecuteCallbackWithCorrectParameter()
+	public async Task OnDateTimeRead_Today_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		DateTime expectedTime = TimeTestHelper.GetRandomTime().Date;
 		MockTimeSystem timeSystem = new(expectedTime);
@@ -73,12 +69,11 @@ public class NotificationHandlerTests
 			_ = timeSystem.DateTime.Today;
 		}
 
-		receivedTime.Should().Be(expectedTime);
+		await That(receivedTime).IsEqualTo(expectedTime);
 	}
 
 	[Fact]
-	public void
-		OnDateTimeRead_UtcNow_ShouldExecuteCallbackWithCorrectParameter()
+	public async Task OnDateTimeRead_UtcNow_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Utc);
 		MockTimeSystem timeSystem = new(expectedTime);
@@ -89,12 +84,11 @@ public class NotificationHandlerTests
 			_ = timeSystem.DateTime.UtcNow;
 		}
 
-		receivedTime.Should().Be(expectedTime);
+		await That(receivedTime).IsEqualTo(expectedTime);
 	}
 
 	[Fact]
-	public void
-		OnTaskDelay_DisposedCallback_ShouldNotBeCalled()
+	public async Task OnTaskDelay_DisposedCallback_ShouldNotBeCalled()
 	{
 		int millisecondsDelay = new Random().Next();
 		MockTimeSystem timeSystem = new();
@@ -104,12 +98,11 @@ public class NotificationHandlerTests
 		disposable.Dispose();
 		_ = timeSystem.Task.Delay(millisecondsDelay, TestContext.Current.CancellationToken);
 
-		receivedDelay.Should().BeNull();
+		await That(receivedDelay).IsNull();
 	}
 
 	[Fact]
-	public void
-		OnTaskDelay_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
+	public async Task OnTaskDelay_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
 	{
 		TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
 		MockTimeSystem timeSystem = new();
@@ -122,13 +115,12 @@ public class NotificationHandlerTests
 			_ = timeSystem.Task.Delay(expectedDelay, TestContext.Current.CancellationToken);
 		}
 
-		receivedDelay1.Should().Be(expectedDelay);
-		receivedDelay2.Should().BeNull();
+		await That(receivedDelay1).IsEqualTo(expectedDelay);
+		await That(receivedDelay2).IsNull();
 	}
 
 	[Fact]
-	public void
-		OnTaskDelay_MultipleCallbacks_ShouldAllBeCalled()
+	public async Task OnTaskDelay_MultipleCallbacks_ShouldAllBeCalled()
 	{
 		TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
 		MockTimeSystem timeSystem = new();
@@ -143,12 +135,12 @@ public class NotificationHandlerTests
 			}
 		}
 
-		receivedDelay1.Should().Be(expectedDelay);
-		receivedDelay2.Should().Be(expectedDelay);
+		await That(receivedDelay1).IsEqualTo(expectedDelay);
+		await That(receivedDelay2).IsEqualTo(expectedDelay);
 	}
 
 	[Fact]
-	public void
+	public async Task
 		OnTaskDelay_WithMillisecondsAndWithCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		int millisecondsDelay = new Random().Next();
@@ -160,11 +152,11 @@ public class NotificationHandlerTests
 			_ = timeSystem.Task.Delay(millisecondsDelay, CancellationToken.None);
 		}
 
-		receivedDelay.TotalMilliseconds.Should().Be(millisecondsDelay);
+		await That(receivedDelay.TotalMilliseconds).IsEqualTo(millisecondsDelay);
 	}
 
 	[Fact]
-	public void
+	public async Task
 		OnTaskDelay_WithMillisecondsAndWithoutCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		int millisecondsDelay = new Random().Next();
@@ -176,11 +168,11 @@ public class NotificationHandlerTests
 			_ = timeSystem.Task.Delay(millisecondsDelay, TestContext.Current.CancellationToken);
 		}
 
-		receivedDelay.TotalMilliseconds.Should().Be(millisecondsDelay);
+		await That(receivedDelay.TotalMilliseconds).IsEqualTo(millisecondsDelay);
 	}
 
 	[Fact]
-	public void
+	public async Task
 		OnTaskDelay_WithTimeSpanAndWithCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
@@ -192,11 +184,11 @@ public class NotificationHandlerTests
 			_ = timeSystem.Task.Delay(expectedDelay, CancellationToken.None);
 		}
 
-		receivedDelay.Should().Be(expectedDelay);
+		await That(receivedDelay).IsEqualTo(expectedDelay);
 	}
 
 	[Fact]
-	public void
+	public async Task
 		OnTaskDelay_WithTimeSpanAndWithoutCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
@@ -208,12 +200,11 @@ public class NotificationHandlerTests
 			_ = timeSystem.Task.Delay(expectedDelay, TestContext.Current.CancellationToken);
 		}
 
-		receivedDelay.Should().Be(expectedDelay);
+		await That(receivedDelay).IsEqualTo(expectedDelay);
 	}
 
 	[Fact]
-	public void
-		OnThreadSleep_DisposedCallback_ShouldNotBeCalled()
+	public async Task OnThreadSleep_DisposedCallback_ShouldNotBeCalled()
 	{
 		int millisecondsTimeout = new Random().Next();
 		MockTimeSystem timeSystem = new();
@@ -223,12 +214,11 @@ public class NotificationHandlerTests
 		disposable.Dispose();
 		timeSystem.Thread.Sleep(millisecondsTimeout);
 
-		receivedTimeout.Should().BeNull();
+		await That(receivedTimeout).IsNull();
 	}
 
 	[Fact]
-	public void
-		OnThreadSleep_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
+	public async Task OnThreadSleep_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
 	{
 		TimeSpan expectedTimeout = TimeTestHelper.GetRandomInterval();
 		MockTimeSystem timeSystem = new();
@@ -241,13 +231,12 @@ public class NotificationHandlerTests
 			timeSystem.Thread.Sleep(expectedTimeout);
 		}
 
-		receivedTimeout1.Should().Be(expectedTimeout);
-		receivedTimeout2.Should().BeNull();
+		await That(receivedTimeout1).IsEqualTo(expectedTimeout);
+		await That(receivedTimeout2).IsNull();
 	}
 
 	[Fact]
-	public void
-		OnThreadSleep_MultipleCallbacks_ShouldAllBeCalled()
+	public async Task OnThreadSleep_MultipleCallbacks_ShouldAllBeCalled()
 	{
 		TimeSpan expectedTimeout = TimeTestHelper.GetRandomInterval();
 		MockTimeSystem timeSystem = new();
@@ -262,13 +251,12 @@ public class NotificationHandlerTests
 			}
 		}
 
-		receivedTimeout1.Should().Be(expectedTimeout);
-		receivedTimeout2.Should().Be(expectedTimeout);
+		await That(receivedTimeout1).IsEqualTo(expectedTimeout);
+		await That(receivedTimeout2).IsEqualTo(expectedTimeout);
 	}
 
 	[Fact]
-	public void
-		OnThreadSleep_WithMilliseconds_ShouldExecuteCallbackWithCorrectParameter()
+	public async Task OnThreadSleep_WithMilliseconds_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		int millisecondsTimeout = new Random().Next();
 		MockTimeSystem timeSystem = new();
@@ -279,12 +267,11 @@ public class NotificationHandlerTests
 			timeSystem.Thread.Sleep(millisecondsTimeout);
 		}
 
-		receivedTimeout.TotalMilliseconds.Should().Be(millisecondsTimeout);
+		await That(receivedTimeout.TotalMilliseconds).IsEqualTo(millisecondsTimeout);
 	}
 
 	[Fact]
-	public void
-		OnThreadSleep_WithTimeSpan_ShouldExecuteCallbackWithCorrectParameter()
+	public async Task OnThreadSleep_WithTimeSpan_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		TimeSpan expectedTimeout = TimeTestHelper.GetRandomInterval();
 		MockTimeSystem timeSystem = new();
@@ -295,6 +282,6 @@ public class NotificationHandlerTests
 			timeSystem.Thread.Sleep(expectedTimeout);
 		}
 
-		receivedTimeout.Should().Be(expectedTimeout);
+		await That(receivedTimeout).IsEqualTo(expectedTimeout);
 	}
 }

@@ -19,7 +19,7 @@ public sealed class FileStatisticsTests
 {
 #if FEATURE_FILE_SPAN
 	[Fact]
-	public void Method_AppendAllBytes_String_ByteArray_ShouldRegisterCall()
+	public async Task Method_AppendAllBytes_String_ByteArray_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -27,14 +27,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.AppendAllBytes(path, bytes);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllBytes),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllBytes),
 			path, bytes);
 	}
 #endif
 
 #if FEATURE_FILE_SPAN
 	[Fact]
-	public void Method_AppendAllBytes_String_ReadOnlySpanByte_ShouldRegisterCall()
+	public async Task Method_AppendAllBytes_String_ReadOnlySpanByte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -42,7 +42,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.AppendAllBytes(path, bytes);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllBytes),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllBytes),
 			path, bytes);
 	}
 #endif
@@ -59,7 +59,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.AppendAllBytesAsync(path, bytes, cancellationToken);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllBytesAsync),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllBytesAsync),
 			path, bytes, cancellationToken);
 	}
 #endif
@@ -76,13 +76,13 @@ public sealed class FileStatisticsTests
 
 		await sut.File.AppendAllBytesAsync(path, bytes, cancellationToken);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllBytesAsync),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllBytesAsync),
 			path, bytes, cancellationToken);
 	}
 #endif
 
 	[Fact]
-	public void Method_AppendAllLines_String_IEnumerableString_Encoding_ShouldRegisterCall()
+	public async Task Method_AppendAllLines_String_IEnumerableString_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -91,13 +91,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.AppendAllLines(path, contents, encoding);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllLines),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllLines),
 			path, contents, encoding);
 	}
 
 	[Fact]
-	public void Method_AppendAllLines_String_IEnumerableString_ShouldRegisterCall()
+	public async Task Method_AppendAllLines_String_IEnumerableString_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -105,8 +105,8 @@ public sealed class FileStatisticsTests
 
 		sut.File.AppendAllLines(path, contents);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllLines),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllLines),
 			path, contents);
 	}
 
@@ -122,8 +122,8 @@ public sealed class FileStatisticsTests
 
 		await sut.File.AppendAllLinesAsync(path, contents, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllLinesAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllLinesAsync),
 			path, contents, cancellationToken);
 	}
 #endif
@@ -141,15 +141,15 @@ public sealed class FileStatisticsTests
 
 		await sut.File.AppendAllLinesAsync(path, contents, encoding, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllLinesAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllLinesAsync),
 			path, contents, encoding, cancellationToken);
 	}
 #endif
 
 #if FEATURE_FILE_SPAN
 	[Fact]
-	public void Method_AppendAllText_String_ReadOnlySpanChar_Encoding_ShouldRegisterCall()
+	public async Task Method_AppendAllText_String_ReadOnlySpanChar_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -158,14 +158,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.AppendAllText(path, contents, encoding);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllText),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllText),
 			path, contents, encoding);
 	}
 #endif
 
 #if FEATURE_FILE_SPAN
 	[Fact]
-	public void Method_AppendAllText_String_ReadOnlySpanChar_ShouldRegisterCall()
+	public async Task Method_AppendAllText_String_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -173,13 +173,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.AppendAllText(path, contents);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllText),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllText),
 			path, contents);
 	}
 #endif
 
 	[Fact]
-	public void Method_AppendAllText_String_String_Encoding_ShouldRegisterCall()
+	public async Task Method_AppendAllText_String_String_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -188,13 +188,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.AppendAllText(path, contents, encoding);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllText),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllText),
 			path, contents, encoding);
 	}
 
 	[Fact]
-	public void Method_AppendAllText_String_String_ShouldRegisterCall()
+	public async Task Method_AppendAllText_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -202,8 +202,8 @@ public sealed class FileStatisticsTests
 
 		sut.File.AppendAllText(path, contents);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllText),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllText),
 			path, contents);
 	}
 
@@ -219,7 +219,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.AppendAllTextAsync(path, contents, cancellationToken);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllTextAsync),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllTextAsync),
 			path, contents, cancellationToken);
 	}
 #endif
@@ -237,7 +237,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.AppendAllTextAsync(path, contents, encoding, cancellationToken);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllTextAsync),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllTextAsync),
 			path, contents, encoding, cancellationToken);
 	}
 #endif
@@ -253,8 +253,8 @@ public sealed class FileStatisticsTests
 
 		await sut.File.AppendAllTextAsync(path, contents, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllTextAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllTextAsync),
 			path, contents, cancellationToken);
 	}
 #endif
@@ -272,27 +272,27 @@ public sealed class FileStatisticsTests
 
 		await sut.File.AppendAllTextAsync(path, contents, encoding, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllTextAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendAllTextAsync),
 			path, contents, encoding, cancellationToken);
 	}
 #endif
 
 	[Fact]
-	public void Method_AppendText_String_ShouldRegisterCall()
+	public async Task Method_AppendText_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
 
 		sut.File.AppendText(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendText),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.AppendText),
 			path);
 	}
 
 	[Fact]
-	public void Method_Copy_String_String_Bool_ShouldRegisterCall()
+	public async Task Method_Copy_String_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -302,13 +302,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.Copy(sourceFileName, destFileName, overwrite);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Copy),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Copy),
 			sourceFileName, destFileName, overwrite);
 	}
 
 	[Fact]
-	public void Method_Copy_String_String_ShouldRegisterCall()
+	public async Task Method_Copy_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -317,13 +317,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.Copy(sourceFileName, destFileName);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Copy),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Copy),
 			sourceFileName, destFileName);
 	}
 
 	[Fact]
-	public void Method_Create_String_Int_FileOptions_ShouldRegisterCall()
+	public async Task Method_Create_String_Int_FileOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -332,13 +332,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.Create(path, bufferSize, options);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Create),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Create),
 			path, bufferSize, options);
 	}
 
 	[Fact]
-	public void Method_Create_String_Int_ShouldRegisterCall()
+	public async Task Method_Create_String_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -346,27 +346,27 @@ public sealed class FileStatisticsTests
 
 		sut.File.Create(path, bufferSize);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Create),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Create),
 			path, bufferSize);
 	}
 
 	[Fact]
-	public void Method_Create_String_ShouldRegisterCall()
+	public async Task Method_Create_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
 
 		sut.File.Create(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Create),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Create),
 			path);
 	}
 
 #if FEATURE_FILESYSTEM_LINK
 	[Fact]
-	public void Method_CreateSymbolicLink_String_String_ShouldRegisterCall()
+	public async Task Method_CreateSymbolicLink_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -374,27 +374,27 @@ public sealed class FileStatisticsTests
 
 		sut.File.CreateSymbolicLink(path, pathToTarget);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.CreateSymbolicLink),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.CreateSymbolicLink),
 			path, pathToTarget);
 	}
 #endif
 
 	[Fact]
-	public void Method_CreateText_String_ShouldRegisterCall()
+	public async Task Method_CreateText_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
 
 		sut.File.CreateText(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.CreateText),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.CreateText),
 			path);
 	}
 
 	[Fact]
-	public void Method_Decrypt_String_ShouldRegisterCall()
+	public async Task Method_Decrypt_String_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnWindows);
 
@@ -406,13 +406,13 @@ public sealed class FileStatisticsTests
 		sut.File.Decrypt(path);
 		#pragma warning restore CA1416
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Decrypt),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Decrypt),
 			path);
 	}
 
 	[Fact]
-	public void Method_Delete_String_ShouldRegisterCall()
+	public async Task Method_Delete_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -420,13 +420,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.Delete(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Delete),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Delete),
 			path);
 	}
 
 	[Fact]
-	public void Method_Encrypt_String_ShouldRegisterCall()
+	public async Task Method_Encrypt_String_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnWindows);
 
@@ -438,27 +438,27 @@ public sealed class FileStatisticsTests
 		sut.File.Encrypt(path);
 		#pragma warning restore CA1416
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Encrypt),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Encrypt),
 			path);
 	}
 
 	[Fact]
-	public void Method_Exists_String_ShouldRegisterCall()
+	public async Task Method_Exists_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
 
 		sut.File.Exists(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Exists),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Exists),
 			path);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_GetAttributes_SafeFileHandle_ShouldRegisterCall()
+	public async Task Method_GetAttributes_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -468,14 +468,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetAttributes(fileHandle);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetAttributes),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetAttributes),
 			fileHandle);
 	}
 #endif
 
 	[Fact]
-	public void Method_GetAttributes_String_ShouldRegisterCall()
+	public async Task Method_GetAttributes_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -483,14 +483,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetAttributes(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetAttributes),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetAttributes),
 			path);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_GetCreationTime_SafeFileHandle_ShouldRegisterCall()
+	public async Task Method_GetCreationTime_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -500,14 +500,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetCreationTime(fileHandle);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetCreationTime),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetCreationTime),
 			fileHandle);
 	}
 #endif
 
 	[Fact]
-	public void Method_GetCreationTime_String_ShouldRegisterCall()
+	public async Task Method_GetCreationTime_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -515,14 +515,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetCreationTime(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetCreationTime),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetCreationTime),
 			path);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_GetCreationTimeUtc_SafeFileHandle_ShouldRegisterCall()
+	public async Task Method_GetCreationTimeUtc_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -532,14 +532,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetCreationTimeUtc(fileHandle);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetCreationTimeUtc),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetCreationTimeUtc),
 			fileHandle);
 	}
 #endif
 
 	[Fact]
-	public void Method_GetCreationTimeUtc_String_ShouldRegisterCall()
+	public async Task Method_GetCreationTimeUtc_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -547,14 +547,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetCreationTimeUtc(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetCreationTimeUtc),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetCreationTimeUtc),
 			path);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_GetLastAccessTime_SafeFileHandle_ShouldRegisterCall()
+	public async Task Method_GetLastAccessTime_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -564,14 +564,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastAccessTime(fileHandle);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastAccessTime),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetLastAccessTime),
 			fileHandle);
 	}
 #endif
 
 	[Fact]
-	public void Method_GetLastAccessTime_String_ShouldRegisterCall()
+	public async Task Method_GetLastAccessTime_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -579,14 +579,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastAccessTime(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastAccessTime),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetLastAccessTime),
 			path);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_GetLastAccessTimeUtc_SafeFileHandle_ShouldRegisterCall()
+	public async Task Method_GetLastAccessTimeUtc_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -596,14 +596,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastAccessTimeUtc(fileHandle);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastAccessTimeUtc),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetLastAccessTimeUtc),
 			fileHandle);
 	}
 #endif
 
 	[Fact]
-	public void Method_GetLastAccessTimeUtc_String_ShouldRegisterCall()
+	public async Task Method_GetLastAccessTimeUtc_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -611,14 +611,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastAccessTimeUtc(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastAccessTimeUtc),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetLastAccessTimeUtc),
 			path);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_GetLastWriteTime_SafeFileHandle_ShouldRegisterCall()
+	public async Task Method_GetLastWriteTime_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -628,14 +628,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastWriteTime(fileHandle);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastWriteTime),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetLastWriteTime),
 			fileHandle);
 	}
 #endif
 
 	[Fact]
-	public void Method_GetLastWriteTime_String_ShouldRegisterCall()
+	public async Task Method_GetLastWriteTime_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -643,14 +643,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastWriteTime(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastWriteTime),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetLastWriteTime),
 			path);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_GetLastWriteTimeUtc_SafeFileHandle_ShouldRegisterCall()
+	public async Task Method_GetLastWriteTimeUtc_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -660,14 +660,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastWriteTimeUtc(fileHandle);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastWriteTimeUtc),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetLastWriteTimeUtc),
 			fileHandle);
 	}
 #endif
 
 	[Fact]
-	public void Method_GetLastWriteTimeUtc_String_ShouldRegisterCall()
+	public async Task Method_GetLastWriteTimeUtc_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -675,14 +675,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastWriteTimeUtc(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastWriteTimeUtc),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetLastWriteTimeUtc),
 			path);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_GetUnixFileMode_SafeFileHandle_ShouldRegisterCall()
+	public async Task Method_GetUnixFileMode_SafeFileHandle_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnLinux);
 
@@ -692,19 +692,19 @@ public sealed class FileStatisticsTests
 			.Initialize().WithFile("foo");
 		SafeFileHandle fileHandle = new();
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		sut.File.GetUnixFileMode(fileHandle);
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetUnixFileMode),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetUnixFileMode),
 			fileHandle);
 	}
 #endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	[Fact]
-	public void Method_GetUnixFileMode_String_ShouldRegisterCall()
+	public async Task Method_GetUnixFileMode_String_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnLinux);
 
@@ -712,19 +712,19 @@ public sealed class FileStatisticsTests
 		sut.Initialize().WithFile("foo");
 		string path = "foo";
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		sut.File.GetUnixFileMode(path);
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetUnixFileMode),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.GetUnixFileMode),
 			path);
 	}
 #endif
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	[Fact]
-	public void Method_Move_String_String_Bool_ShouldRegisterCall()
+	public async Task Method_Move_String_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -734,14 +734,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.Move(sourceFileName, destFileName, overwrite);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Move),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Move),
 			sourceFileName, destFileName, overwrite);
 	}
 #endif
 
 	[Fact]
-	public void Method_Move_String_String_ShouldRegisterCall()
+	public async Task Method_Move_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -750,13 +750,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.Move(sourceFileName, destFileName);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Move),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Move),
 			sourceFileName, destFileName);
 	}
 
 	[Fact]
-	public void Method_Open_String_FileMode_FileAccess_FileShare_ShouldRegisterCall()
+	public async Task Method_Open_String_FileMode_FileAccess_FileShare_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -766,13 +766,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.Open(path, mode, access, share);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Open),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Open),
 			path, mode, access, share);
 	}
 
 	[Fact]
-	public void Method_Open_String_FileMode_FileAccess_ShouldRegisterCall()
+	public async Task Method_Open_String_FileMode_FileAccess_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -781,13 +781,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.Open(path, mode, access);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Open),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Open),
 			path, mode, access);
 	}
 
 	[Fact]
-	public void Method_Open_String_FileMode_ShouldRegisterCall()
+	public async Task Method_Open_String_FileMode_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -795,14 +795,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.Open(path, mode);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Open),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Open),
 			path, mode);
 	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 	[Fact]
-	public void Method_Open_String_FileStreamOptions_ShouldRegisterCall()
+	public async Task Method_Open_String_FileStreamOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -811,14 +811,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.Open(path, options);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Open),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Open),
 			path, options);
 	}
 #endif
 
 	[Fact]
-	public void Method_OpenRead_String_ShouldRegisterCall()
+	public async Task Method_OpenRead_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -826,13 +826,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.OpenRead(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.OpenRead),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.OpenRead),
 			path);
 	}
 
 	[Fact]
-	public void Method_OpenText_String_ShouldRegisterCall()
+	public async Task Method_OpenText_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -840,26 +840,26 @@ public sealed class FileStatisticsTests
 
 		sut.File.OpenText(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.OpenText),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.OpenText),
 			path);
 	}
 
 	[Fact]
-	public void Method_OpenWrite_String_ShouldRegisterCall()
+	public async Task Method_OpenWrite_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
 
 		sut.File.OpenWrite(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.OpenWrite),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.OpenWrite),
 			path);
 	}
 
 	[Fact]
-	public void Method_ReadAllBytes_String_ShouldRegisterCall()
+	public async Task Method_ReadAllBytes_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -867,8 +867,8 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadAllBytes(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllBytes),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadAllBytes),
 			path);
 	}
 
@@ -883,14 +883,14 @@ public sealed class FileStatisticsTests
 
 		await sut.File.ReadAllBytesAsync(path, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllBytesAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadAllBytesAsync),
 			path, cancellationToken);
 	}
 #endif
 
 	[Fact]
-	public void Method_ReadAllLines_String_Encoding_ShouldRegisterCall()
+	public async Task Method_ReadAllLines_String_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -899,13 +899,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadAllLines(path, encoding);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllLines),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadAllLines),
 			path, encoding);
 	}
 
 	[Fact]
-	public void Method_ReadAllLines_String_ShouldRegisterCall()
+	public async Task Method_ReadAllLines_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -913,8 +913,8 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadAllLines(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllLines),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadAllLines),
 			path);
 	}
 
@@ -929,8 +929,8 @@ public sealed class FileStatisticsTests
 
 		await sut.File.ReadAllLinesAsync(path, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllLinesAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadAllLinesAsync),
 			path, cancellationToken);
 	}
 #endif
@@ -948,14 +948,14 @@ public sealed class FileStatisticsTests
 
 		await sut.File.ReadAllLinesAsync(path, encoding, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllLinesAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadAllLinesAsync),
 			path, encoding, cancellationToken);
 	}
 #endif
 
 	[Fact]
-	public void Method_ReadAllText_String_Encoding_ShouldRegisterCall()
+	public async Task Method_ReadAllText_String_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -964,13 +964,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadAllText(path, encoding);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllText),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadAllText),
 			path, encoding);
 	}
 
 	[Fact]
-	public void Method_ReadAllText_String_ShouldRegisterCall()
+	public async Task Method_ReadAllText_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -978,8 +978,8 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadAllText(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllText),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadAllText),
 			path);
 	}
 
@@ -994,8 +994,8 @@ public sealed class FileStatisticsTests
 
 		await sut.File.ReadAllTextAsync(path, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllTextAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadAllTextAsync),
 			path, cancellationToken);
 	}
 #endif
@@ -1012,14 +1012,14 @@ public sealed class FileStatisticsTests
 
 		await sut.File.ReadAllTextAsync(path, encoding, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllTextAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadAllTextAsync),
 			path, encoding, cancellationToken);
 	}
 #endif
 
 	[Fact]
-	public void Method_ReadLines_String_Encoding_ShouldRegisterCall()
+	public async Task Method_ReadLines_String_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -1028,13 +1028,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadLines(path, encoding);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadLines),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadLines),
 			path, encoding);
 	}
 
 	[Fact]
-	public void Method_ReadLines_String_ShouldRegisterCall()
+	public async Task Method_ReadLines_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -1042,14 +1042,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadLines(path);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadLines),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadLines),
 			path);
 	}
 
 #if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	[Fact]
-	public void Method_ReadLinesAsync_String_CancellationToken_ShouldRegisterCall()
+	public async Task Method_ReadLinesAsync_String_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -1058,15 +1058,15 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadLinesAsync(path, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadLinesAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadLinesAsync),
 			path, cancellationToken);
 	}
 #endif
 
 #if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	[Fact]
-	public void Method_ReadLinesAsync_String_Encoding_CancellationToken_ShouldRegisterCall()
+	public async Task Method_ReadLinesAsync_String_Encoding_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -1076,14 +1076,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadLinesAsync(path, encoding, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadLinesAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ReadLinesAsync),
 			path, encoding, cancellationToken);
 	}
 #endif
 
 	[Fact]
-	public void Method_Replace_String_String_String_Bool_ShouldRegisterCall()
+	public async Task Method_Replace_String_String_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo").WithFile("bar");
@@ -1095,13 +1095,13 @@ public sealed class FileStatisticsTests
 		sut.File.Replace(sourceFileName, destinationFileName, destinationBackupFileName,
 			ignoreMetadataErrors);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Replace),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Replace),
 			sourceFileName, destinationFileName, destinationBackupFileName, ignoreMetadataErrors);
 	}
 
 	[Fact]
-	public void Method_Replace_String_String_String_ShouldRegisterCall()
+	public async Task Method_Replace_String_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo").WithFile("bar");
@@ -1111,14 +1111,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.Replace(sourceFileName, destinationFileName, destinationBackupFileName);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Replace),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Replace),
 			sourceFileName, destinationFileName, destinationBackupFileName);
 	}
 
 #if FEATURE_FILESYSTEM_LINK
 	[Fact]
-	public void Method_ResolveLinkTarget_String_Bool_ShouldRegisterCall()
+	public async Task Method_ResolveLinkTarget_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -1127,15 +1127,15 @@ public sealed class FileStatisticsTests
 
 		sut.File.ResolveLinkTarget(linkPath, returnFinalTarget);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ResolveLinkTarget),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.ResolveLinkTarget),
 			linkPath, returnFinalTarget);
 	}
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_SetAttributes_SafeFileHandle_FileAttributes_ShouldRegisterCall()
+	public async Task Method_SetAttributes_SafeFileHandle_FileAttributes_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -1146,14 +1146,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetAttributes(fileHandle, fileAttributes);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetAttributes),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetAttributes),
 			fileHandle, fileAttributes);
 	}
 #endif
 
 	[Fact]
-	public void Method_SetAttributes_String_FileAttributes_ShouldRegisterCall()
+	public async Task Method_SetAttributes_String_FileAttributes_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -1162,14 +1162,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetAttributes(path, fileAttributes);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetAttributes),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetAttributes),
 			path, fileAttributes);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_SetCreationTime_SafeFileHandle_DateTime_ShouldRegisterCall()
+	public async Task Method_SetCreationTime_SafeFileHandle_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -1180,14 +1180,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetCreationTime(fileHandle, creationTime);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetCreationTime),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetCreationTime),
 			fileHandle, creationTime);
 	}
 #endif
 
 	[Fact]
-	public void Method_SetCreationTime_String_DateTime_ShouldRegisterCall()
+	public async Task Method_SetCreationTime_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -1196,14 +1196,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetCreationTime(path, creationTime);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetCreationTime),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetCreationTime),
 			path, creationTime);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_SetCreationTimeUtc_SafeFileHandle_DateTime_ShouldRegisterCall()
+	public async Task Method_SetCreationTimeUtc_SafeFileHandle_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -1214,14 +1214,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetCreationTimeUtc(fileHandle, creationTimeUtc);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetCreationTimeUtc),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetCreationTimeUtc),
 			fileHandle, creationTimeUtc);
 	}
 #endif
 
 	[Fact]
-	public void Method_SetCreationTimeUtc_String_DateTime_ShouldRegisterCall()
+	public async Task Method_SetCreationTimeUtc_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -1230,14 +1230,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetCreationTimeUtc(path, creationTimeUtc);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetCreationTimeUtc),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetCreationTimeUtc),
 			path, creationTimeUtc);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_SetLastAccessTime_SafeFileHandle_DateTime_ShouldRegisterCall()
+	public async Task Method_SetLastAccessTime_SafeFileHandle_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -1248,14 +1248,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastAccessTime(fileHandle, lastAccessTime);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastAccessTime),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetLastAccessTime),
 			fileHandle, lastAccessTime);
 	}
 #endif
 
 	[Fact]
-	public void Method_SetLastAccessTime_String_DateTime_ShouldRegisterCall()
+	public async Task Method_SetLastAccessTime_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -1264,14 +1264,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastAccessTime(path, lastAccessTime);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastAccessTime),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetLastAccessTime),
 			path, lastAccessTime);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_SetLastAccessTimeUtc_SafeFileHandle_DateTime_ShouldRegisterCall()
+	public async Task Method_SetLastAccessTimeUtc_SafeFileHandle_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -1282,14 +1282,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastAccessTimeUtc(fileHandle, lastAccessTimeUtc);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastAccessTimeUtc),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetLastAccessTimeUtc),
 			fileHandle, lastAccessTimeUtc);
 	}
 #endif
 
 	[Fact]
-	public void Method_SetLastAccessTimeUtc_String_DateTime_ShouldRegisterCall()
+	public async Task Method_SetLastAccessTimeUtc_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -1298,14 +1298,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastAccessTimeUtc(path, lastAccessTimeUtc);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastAccessTimeUtc),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetLastAccessTimeUtc),
 			path, lastAccessTimeUtc);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_SetLastWriteTime_SafeFileHandle_DateTime_ShouldRegisterCall()
+	public async Task Method_SetLastWriteTime_SafeFileHandle_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -1316,14 +1316,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastWriteTime(fileHandle, lastWriteTime);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastWriteTime),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetLastWriteTime),
 			fileHandle, lastWriteTime);
 	}
 #endif
 
 	[Fact]
-	public void Method_SetLastWriteTime_String_DateTime_ShouldRegisterCall()
+	public async Task Method_SetLastWriteTime_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -1332,14 +1332,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastWriteTime(path, lastWriteTime);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastWriteTime),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetLastWriteTime),
 			path, lastWriteTime);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_SetLastWriteTimeUtc_SafeFileHandle_DateTime_ShouldRegisterCall()
+	public async Task Method_SetLastWriteTimeUtc_SafeFileHandle_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -1350,14 +1350,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastWriteTimeUtc(fileHandle, lastWriteTimeUtc);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastWriteTimeUtc),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetLastWriteTimeUtc),
 			fileHandle, lastWriteTimeUtc);
 	}
 #endif
 
 	[Fact]
-	public void Method_SetLastWriteTimeUtc_String_DateTime_ShouldRegisterCall()
+	public async Task Method_SetLastWriteTimeUtc_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
@@ -1366,14 +1366,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastWriteTimeUtc(path, lastWriteTimeUtc);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastWriteTimeUtc),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetLastWriteTimeUtc),
 			path, lastWriteTimeUtc);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Fact]
-	public void Method_SetUnixFileMode_SafeFileHandle_UnixFileMode_ShouldRegisterCall()
+	public async Task Method_SetUnixFileMode_SafeFileHandle_UnixFileMode_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnLinux);
 
@@ -1384,19 +1384,19 @@ public sealed class FileStatisticsTests
 		SafeFileHandle fileHandle = new();
 		UnixFileMode mode = new();
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		sut.File.SetUnixFileMode(fileHandle, mode);
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetUnixFileMode),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetUnixFileMode),
 			fileHandle, mode);
 	}
 #endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	[Fact]
-	public void Method_SetUnixFileMode_String_UnixFileMode_ShouldRegisterCall()
+	public async Task Method_SetUnixFileMode_String_UnixFileMode_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnLinux);
 
@@ -1405,18 +1405,18 @@ public sealed class FileStatisticsTests
 		string path = "foo";
 		UnixFileMode mode = new();
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		sut.File.SetUnixFileMode(path, mode);
-		#pragma warning restore CA1416
+#pragma warning restore CA1416
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetUnixFileMode),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.SetUnixFileMode),
 			path, mode);
 	}
 #endif
 
 	[Fact]
-	public void Method_WriteAllBytes_String_ByteArray_ShouldRegisterCall()
+	public async Task Method_WriteAllBytes_String_ByteArray_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -1424,14 +1424,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllBytes(path, bytes);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllBytes),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllBytes),
 			path, bytes);
 	}
 
 #if FEATURE_FILE_SPAN
 	[Fact]
-	public void Method_WriteAllBytes_String_ReadOnlySpanByte_ShouldRegisterCall()
+	public async Task Method_WriteAllBytes_String_ReadOnlySpanByte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -1439,7 +1439,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllBytes(path, bytes);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllBytes),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllBytes),
 			path, bytes);
 	}
 #endif
@@ -1456,8 +1456,8 @@ public sealed class FileStatisticsTests
 
 		await sut.File.WriteAllBytesAsync(path, bytes, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllBytesAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllBytesAsync),
 			path, bytes, cancellationToken);
 	}
 #endif
@@ -1474,13 +1474,13 @@ public sealed class FileStatisticsTests
 
 		await sut.File.WriteAllBytesAsync(path, bytes, cancellationToken);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllBytesAsync),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllBytesAsync),
 			path, bytes, cancellationToken);
 	}
 #endif
 
 	[Fact]
-	public void Method_WriteAllLines_String_IEnumerableString_Encoding_ShouldRegisterCall()
+	public async Task Method_WriteAllLines_String_IEnumerableString_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -1489,13 +1489,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllLines(path, contents, encoding);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLines),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllLines),
 			path, contents, encoding);
 	}
 
 	[Fact]
-	public void Method_WriteAllLines_String_IEnumerableString_ShouldRegisterCall()
+	public async Task Method_WriteAllLines_String_IEnumerableString_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -1503,13 +1503,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllLines(path, contents);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLines),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllLines),
 			path, contents);
 	}
 
 	[Fact]
-	public void Method_WriteAllLines_String_StringArray_Encoding_ShouldRegisterCall()
+	public async Task Method_WriteAllLines_String_StringArray_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -1518,13 +1518,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllLines(path, contents, encoding);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLines),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllLines),
 			path, contents, encoding);
 	}
 
 	[Fact]
-	public void Method_WriteAllLines_String_StringArray_ShouldRegisterCall()
+	public async Task Method_WriteAllLines_String_StringArray_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -1532,8 +1532,8 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllLines(path, contents);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLines),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllLines),
 			path, contents);
 	}
 
@@ -1549,8 +1549,8 @@ public sealed class FileStatisticsTests
 
 		await sut.File.WriteAllLinesAsync(path, contents, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLinesAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllLinesAsync),
 			path, contents, cancellationToken);
 	}
 #endif
@@ -1568,15 +1568,15 @@ public sealed class FileStatisticsTests
 
 		await sut.File.WriteAllLinesAsync(path, contents, encoding, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLinesAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllLinesAsync),
 			path, contents, encoding, cancellationToken);
 	}
 #endif
 
 #if FEATURE_FILE_SPAN
 	[Fact]
-	public void Method_WriteAllText_String_ReadOnlySpanChar_Encoding_ShouldRegisterCall()
+	public async Task Method_WriteAllText_String_ReadOnlySpanChar_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -1585,14 +1585,14 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllText(path, contents, encoding);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllText),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllText),
 			path, contents, encoding);
 	}
 #endif
 
 #if FEATURE_FILE_SPAN
 	[Fact]
-	public void Method_WriteAllText_String_ReadOnlySpanChar_ShouldRegisterCall()
+	public async Task Method_WriteAllText_String_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -1600,13 +1600,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllText(path, contents);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllText),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllText),
 			path, contents);
 	}
 #endif
 
 	[Fact]
-	public void Method_WriteAllText_String_String_Encoding_ShouldRegisterCall()
+	public async Task Method_WriteAllText_String_String_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -1615,13 +1615,13 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllText(path, contents, encoding);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllText),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllText),
 			path, contents, encoding);
 	}
 
 	[Fact]
-	public void Method_WriteAllText_String_String_ShouldRegisterCall()
+	public async Task Method_WriteAllText_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -1629,8 +1629,8 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllText(path, contents);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllText),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllText),
 			path, contents);
 	}
 
@@ -1646,7 +1646,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.WriteAllTextAsync(path, contents, cancellationToken);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllTextAsync),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllTextAsync),
 			path, contents, cancellationToken);
 	}
 #endif
@@ -1664,7 +1664,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.WriteAllTextAsync(path, contents, encoding, cancellationToken);
 
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllTextAsync),
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllTextAsync),
 			path, contents, encoding, cancellationToken);
 	}
 #endif
@@ -1680,8 +1680,8 @@ public sealed class FileStatisticsTests
 
 		await sut.File.WriteAllTextAsync(path, contents, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllTextAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllTextAsync),
 			path, contents, cancellationToken);
 	}
 #endif
@@ -1699,19 +1699,19 @@ public sealed class FileStatisticsTests
 
 		await sut.File.WriteAllTextAsync(path, contents, encoding, cancellationToken);
 
-		sut.Statistics.TotalCount.Should().Be(1);
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllTextAsync),
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.WriteAllTextAsync),
 			path, contents, encoding, cancellationToken);
 	}
 #endif
 
 	[Fact]
-	public void ToString_ShouldBeFile()
+	public async Task ToString_ShouldBeFile()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.File;
 
 		string? result = sut.ToString();
 
-		result.Should().Be("File");
+		await That(result).IsEqualTo("File");
 	}
 }

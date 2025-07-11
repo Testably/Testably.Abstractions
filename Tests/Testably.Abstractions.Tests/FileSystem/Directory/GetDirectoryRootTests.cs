@@ -4,31 +4,31 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 public partial class GetDirectoryRootTests
 {
 	[Fact]
-	public void GetDirectoryRoot_Empty_ShouldThrowArgumentException()
+	public async Task GetDirectoryRoot_Empty_ShouldThrowArgumentException()
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory.GetDirectoryRoot("");
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
+		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
 	[Fact]
-	public void GetDirectoryRoot_ShouldReturnDefaultRoot()
+	public async Task GetDirectoryRoot_ShouldReturnDefaultRoot()
 	{
 		string expectedRoot = FileTestHelper.RootDrive(Test);
 
 		string result = FileSystem.Directory.GetDirectoryRoot("foo");
 
-		result.Should().Be(expectedRoot);
+		await That(result).IsEqualTo(expectedRoot);
 	}
 
 	[Theory]
 	[InlineData('A')]
 	[InlineData('C')]
 	[InlineData('X')]
-	public void GetDirectoryRoot_SpecificDrive_ShouldReturnRootWithCorrectDrive(
+	public async Task GetDirectoryRoot_SpecificDrive_ShouldReturnRootWithCorrectDrive(
 		char drive)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
@@ -37,6 +37,6 @@ public partial class GetDirectoryRootTests
 
 		string result = FileSystem.Directory.GetDirectoryRoot(path);
 
-		result.Should().Be(expectedRoot);
+		await That(result).IsEqualTo(expectedRoot);
 	}
 }

@@ -8,7 +8,7 @@ public class ChangeDescriptionTests
 {
 	[Theory]
 	[AutoData]
-	public void ToString_ShouldIncludeChangeType(
+	public async Task ToString_ShouldIncludeChangeType(
 		WatcherChangeTypes changeType,
 		FileSystemTypes fileSystemType,
 		NotifyFilters notifyFilters,
@@ -25,12 +25,12 @@ public class ChangeDescriptionTests
 
 		string result = sut.ToString();
 
-		result.Should().Contain(changeType.ToString());
+		await That(result).Contains(changeType.ToString());
 	}
 
 	[Theory]
 	[AutoData]
-	public void ToString_ShouldIncludeFileSystemType(
+	public async Task ToString_ShouldIncludeFileSystemType(
 		WatcherChangeTypes changeType,
 		FileSystemTypes fileSystemType,
 		NotifyFilters notifyFilters,
@@ -47,12 +47,12 @@ public class ChangeDescriptionTests
 
 		string result = sut.ToString();
 
-		result.Should().Contain(fileSystemType.ToString());
+		await That(result).Contains(fileSystemType.ToString());
 	}
 
 	[Theory]
 	[AutoData]
-	public void ToString_ShouldIncludeNotifyFilters(
+	public async Task ToString_ShouldIncludeNotifyFilters(
 		WatcherChangeTypes changeType,
 		FileSystemTypes fileSystemType,
 		NotifyFilters notifyFilters,
@@ -69,12 +69,12 @@ public class ChangeDescriptionTests
 
 		string result = sut.ToString();
 
-		result.Should().Contain(notifyFilters.ToString());
+		await That(result).Contains(notifyFilters.ToString());
 	}
 
 	[Theory]
 	[AutoData]
-	public void ToString_ShouldIncludePath(
+	public async Task ToString_ShouldIncludePath(
 		WatcherChangeTypes changeType,
 		FileSystemTypes fileSystemType,
 		NotifyFilters notifyFilters,
@@ -91,6 +91,6 @@ public class ChangeDescriptionTests
 
 		string result = sut.ToString();
 
-		result.Should().Contain(fullPath);
+		await That(result).Contains(fullPath);
 	}
 }

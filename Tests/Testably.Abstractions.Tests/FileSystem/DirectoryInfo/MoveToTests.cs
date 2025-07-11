@@ -8,7 +8,7 @@ public partial class MoveToTests
 {
 	[Theory]
 	[AutoData]
-	public void MoveTo_ShouldMoveDirectoryWithContent(string source, string destination)
+	public async Task MoveTo_ShouldMoveDirectoryWithContent(string source, string destination)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
@@ -21,23 +21,20 @@ public partial class MoveToTests
 
 		sut.MoveTo(destination);
 
-		FileSystem.Directory.Exists(source).Should().BeFalse();
-		FileSystem.Directory.Exists(destination).Should().BeTrue();
-		FileSystem.Directory.GetFiles(destination, initialized[1].Name)
-			.Should().ContainSingle();
-		FileSystem.Directory.GetDirectories(destination, initialized[2].Name)
-			.Should().ContainSingle();
-		FileSystem.Directory.GetFiles(destination, initialized[3].Name,
-				SearchOption.AllDirectories)
-			.Should().ContainSingle();
-		FileSystem.Directory.GetDirectories(destination, initialized[4].Name,
-				SearchOption.AllDirectories)
-			.Should().ContainSingle();
+		await That(FileSystem.Directory.Exists(source)).IsFalse();
+		await That(FileSystem.Directory.Exists(destination)).IsTrue();
+		await That(FileSystem.Directory.GetFiles(destination, initialized[1].Name)).HasSingle();
+		await That(FileSystem.Directory.GetDirectories(destination, initialized[2].Name))
+			.HasSingle();
+		await That(FileSystem.Directory.GetFiles(destination, initialized[3].Name,
+			SearchOption.AllDirectories)).HasSingle();
+		await That(FileSystem.Directory.GetDirectories(destination, initialized[4].Name,
+			SearchOption.AllDirectories)).HasSingle();
 	}
 
 	[Theory]
 	[AutoData]
-	public void MoveTo_ShouldUpdatePropertiesOfDirectoryInfo(
+	public async Task MoveTo_ShouldUpdatePropertiesOfDirectoryInfo(
 		string source, string destination)
 	{
 		FileSystem.Initialize()
@@ -50,13 +47,13 @@ public partial class MoveToTests
 
 		sut.MoveTo(destination);
 
-		sut.FullName.TrimEnd(FileSystem.Path.DirectorySeparatorChar)
-			.Should().Be(FileSystem.Path.GetFullPath(destination));
+		await That(sut.FullName.TrimEnd(FileSystem.Path.DirectorySeparatorChar))
+			.IsEqualTo(FileSystem.Path.GetFullPath(destination));
 	}
 
 	[Theory]
 	[AutoData]
-	public void MoveTo_WithLockedFile_ShouldMoveDirectory_NotOnWindows(
+	public async Task MoveTo_WithLockedFile_ShouldMoveDirectory_NotOnWindows(
 		string source, string destination)
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -74,31 +71,29 @@ public partial class MoveToTests
 			FileAccess.Read,
 			FileShare.Read);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.MoveTo(destination);
-		});
+		}
 
-		exception.Should().BeNull();
-		FileSystem.Directory.Exists(source).Should().BeFalse();
-		FileSystem.Directory.Exists(destination).Should().BeTrue();
+		await That(Act).DoesNotThrow();
+		await That(FileSystem.Directory.Exists(source)).IsFalse();
+		await That(FileSystem.Directory.Exists(destination)).IsTrue();
 		IDirectoryInfo destinationDirectory =
 			FileSystem.DirectoryInfo.New(destination);
-		destinationDirectory.GetFiles(initialized[1].Name)
-			.Should().ContainSingle();
-		destinationDirectory.GetDirectories(initialized[2].Name)
-			.Should().ContainSingle();
-		destinationDirectory
-			.GetFiles(initialized[3].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle();
-		destinationDirectory
-			.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle();
+		await That(destinationDirectory.GetFiles(initialized[1].Name)).HasSingle();
+		await That(destinationDirectory.GetDirectories(initialized[2].Name)).HasSingle();
+		await That(destinationDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories))
+			.HasSingle();
+		await That(
+				destinationDirectory.GetDirectories(initialized[4].Name,
+					SearchOption.AllDirectories))
+			.HasSingle();
 	}
 
 	[Theory]
 	[AutoData]
-	public void MoveTo_WithLockedFile_ShouldThrowIOException_AndNotMoveDirectory_OnWindows(
+	public async Task MoveTo_WithLockedFile_ShouldThrowIOException_AndNotMoveDirectory_OnWindows(
 		string source, string destination)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -116,40 +111,37 @@ public partial class MoveToTests
 			FileAccess.Read,
 			FileShare.Read);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.MoveTo(destination);
-		});
+		}
 
 		if (Test.IsNetFramework)
 		{
 			// On .NET Framework the HResult is "-2146232800", but only in `DirectoryInfo.MoveTo` (not in `Directory.Move`)
 			// This peculiar deviation is not supported by the FileSystemMock.
-			exception.Should().BeException<IOException>();
+			await That(Act).Throws<IOException>();
 		}
 		else
 		{
-			exception.Should().BeException<IOException>(hResult: -2147024891);
+			await That(Act).Throws<IOException>().WithHResult(-2147024891);
 		}
 
-		FileSystem.Directory.Exists(source).Should().BeTrue();
-		FileSystem.Directory.Exists(destination).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(source)).IsTrue();
+		await That(FileSystem.Directory.Exists(destination)).IsFalse();
 		IDirectoryInfo sourceDirectory =
 			FileSystem.DirectoryInfo.New(source);
-		sourceDirectory.GetFiles(initialized[1].Name)
-			.Should().ContainSingle();
-		sourceDirectory.GetDirectories(initialized[2].Name)
-			.Should().ContainSingle();
-		sourceDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle();
-		sourceDirectory
-			.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle();
+		await That(sourceDirectory.GetFiles(initialized[1].Name)).HasSingle();
+		await That(sourceDirectory.GetDirectories(initialized[2].Name)).HasSingle();
+		await That(sourceDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories))
+			.HasSingle();
+		await That(sourceDirectory.GetDirectories(initialized[4].Name, SearchOption.AllDirectories))
+			.HasSingle();
 	}
 
 	[Theory]
 	[AutoData]
-	public void MoveTo_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
+	public async Task MoveTo_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
 		string source, string destination)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -164,19 +156,17 @@ public partial class MoveToTests
 
 		sut.MoveTo(destination);
 
-		FileSystem.Directory.Exists(source).Should().BeFalse();
-		FileSystem.Directory.Exists(destination).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(source)).IsFalse();
+		await That(FileSystem.Directory.Exists(destination)).IsTrue();
 		IDirectoryInfo destinationDirectory =
 			FileSystem.DirectoryInfo.New(destination);
-		destinationDirectory.GetFiles(initialized[1].Name)
-			.Should().ContainSingle();
-		destinationDirectory.GetDirectories(initialized[2].Name)
-			.Should().ContainSingle();
-		destinationDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle().Which.Attributes.Should()
-			.HaveFlag(FileAttributes.ReadOnly);
-		destinationDirectory
-			.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle();
+		await That(destinationDirectory.GetFiles(initialized[1].Name)).HasSingle();
+		await That(destinationDirectory.GetDirectories(initialized[2].Name)).HasSingle();
+		await That(destinationDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories))
+			.HasSingle().Which.For(x => x.Attributes, it => it.HasFlag(FileAttributes.ReadOnly));
+		await That(
+				destinationDirectory.GetDirectories(initialized[4].Name,
+					SearchOption.AllDirectories))
+			.HasSingle();
 	}
 }

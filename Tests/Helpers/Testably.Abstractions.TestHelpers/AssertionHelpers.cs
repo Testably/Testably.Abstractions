@@ -1,173 +1,213 @@
-﻿using FluentAssertions;
-using FluentAssertions.Execution;
-using FluentAssertions.Primitives;
+﻿using aweXpect.Core;
+using aweXpect.Core.Constraints;
+using aweXpect.Core.Sources;
+using aweXpect.Delegates;
+using aweXpect.Formatting;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
+using System.Text;
+using static aweXpect.Delegates.ThatDelegate;
 
 namespace Testably.Abstractions.TestHelpers;
 
 public static class AssertionHelpers
 {
-	public static AndWhichConstraint<ObjectAssertions, TException>
-		BeException<TException>(this ObjectAssertions objectAssertions,
-			string? messageContains = null,
-			int? hResult = null,
-			string? paramName = null,
-			string because = "", params object[] becauseArgs)
-		where TException : Exception
+	/// <summary>
+	///     Verifies that the <paramref name="delegate"/> throws either a <see cref="FileNotFoundException"/> or
+	///     a <see cref="DirectoryNotFoundException"/> with their corresponding HResult values.
+	/// </summary>
+	public static ThatDelegateThrows<Exception> ThrowsAFileOrDirectoryNotFoundException(this ThatDelegate @delegate)
 	{
-		bool success = Execute.Assertion
-			.ForCondition(objectAssertions.Subject is not null)
-			.BecauseOf(because, becauseArgs)
-			.WithDefaultIdentifier("type")
-			.FailWith("Expected {context} to be {0}{reason}, but found <null>.",
-				"FileNotFoundException or DirectoryNotFoundException");
-		TException? typedSubject = null;
-		if (success)
-		{
-			if (objectAssertions.Subject is TException exception)
-			{
-				typedSubject = exception;
+		var throwOptions = new ThatDelegate.ThrowsOption();
+		return new ThatDelegateThrows<Exception>(
+			@delegate.ExpectationBuilder.AddConstraint((it, grammars) => new DelegateIsNotNullWithinTimeoutConstraint(it, grammars, throwOptions))
+				.ForWhich<DelegateValue, Exception?>(d => d.Exception)
+				.AddConstraint((it, grammars) => new ThrowsAFileOrDirectoryNotFoundExceptionConstraint(it, grammars, throwOptions))
+				.And(" "), throwOptions);
+	}
 
-				AssertExceptionMessage(exception, messageContains, because, becauseArgs);
-				AssertExceptionHResult(exception, hResult, because, becauseArgs);
-				AssertExceptionParamName(exception, paramName, because, becauseArgs);
+	private sealed class DelegateIsNotNullWithinTimeoutConstraint(
+		string it,
+		ExpectationGrammars grammars,
+		ThrowsOption options)
+		: ConstraintResult(grammars),
+			IValueConstraint<DelegateValue>
+	{
+		private DelegateValue? _actual;
+
+		public ConstraintResult IsMetBy(DelegateValue value)
+		{
+			_actual = value;
+			if (value.IsNull)
+			{
+				Outcome = Outcome.Failure;
+				return this;
+			}
+
+			if (options.ExecutionTimeOptions is not null &&
+				!options.ExecutionTimeOptions.IsWithinLimit(value.Duration))
+			{
+				Outcome = Outcome.Failure;
+				return this;
+			}
+
+			Outcome = Outcome.Success;
+			return this;
+		}
+
+		public override void AppendExpectation(StringBuilder stringBuilder, string? indentation = null)
+		{
+			// Do nothing
+		}
+
+		public override void AppendResult(StringBuilder stringBuilder, string? indentation = null)
+		{
+			if (_actual?.IsNull != false)
+			{
+				stringBuilder.Append(it).Append(" was <null>");
+			}
+			else if (options.ExecutionTimeOptions is not null)
+			{
+				stringBuilder.Append(it).Append(" took ");
+				options.ExecutionTimeOptions.AppendFailureResult(stringBuilder, _actual.Duration);
+			}
+		}
+
+		public override bool TryGetValue<TValue>([NotNullWhen(true)] out TValue? value) where TValue : default
+		{
+			value = default;
+			return false;
+		}
+
+		public override ConstraintResult Negate()
+			=> this;
+	}
+
+	private sealed class ThrowsAFileOrDirectoryNotFoundExceptionConstraint(
+		string it,
+		ExpectationGrammars grammars,
+		ThatDelegate.ThrowsOption throwOptions)
+		: ConstraintResult(grammars),
+			IValueConstraint<Exception?>
+	{
+		private Exception? _actual;
+
+		/// <inheritdoc />
+		public ConstraintResult IsMetBy(Exception? value)
+		{
+			_actual = value;
+
+			if (!throwOptions.DoCheckThrow)
+			{
+				FurtherProcessingStrategy = FurtherProcessingStrategy.IgnoreCompletely;
+				Outcome = value is null ? Outcome.Success : Outcome.Failure;
+				return this;
+			}
+
+			if (value is null)
+			{
+				FurtherProcessingStrategy = FurtherProcessingStrategy.IgnoreResult;
+			}
+
+			if (value is FileNotFoundException fileNotFoundException && fileNotFoundException.HResult == -2147024894 ||
+				value is DirectoryNotFoundException directoryNotFoundException && directoryNotFoundException.HResult == -2147024893)
+			{
+				Outcome = Outcome.Success;
+				return this;
+			}
+
+			Outcome = Outcome.Failure;
+			return this;
+		}
+
+		public override void AppendExpectation(StringBuilder stringBuilder, string? indentation = null)
+		{
+			if (!throwOptions.DoCheckThrow)
+			{
+				stringBuilder.Append("does not throw any exception");
 			}
 			else
 			{
-				Execute.Assertion
-					.BecauseOf(because, becauseArgs)
-					.WithDefaultIdentifier("type")
-					.FailWith("Expected {context} to be {0}{reason}, but found {1}.",
-						typeof(TException),
-						objectAssertions.Subject!.GetType());
+				stringBuilder.Append("throws a FileNotFoundException or a DirectoryNotFoundException with correct HResult");
+			}
+
+			if (throwOptions.ExecutionTimeOptions is not null)
+			{
+				stringBuilder.Append(' ');
+				throwOptions.ExecutionTimeOptions.AppendTo(stringBuilder, "in ");
 			}
 		}
 
-		return new AndWhichConstraint<ObjectAssertions, TException>(objectAssertions,
-			typedSubject!);
-	}
-
-	public static AndWhichConstraint<ObjectAssertions, IOException?>
-		BeFileOrDirectoryNotFoundException(this ObjectAssertions objectAssertions,
-			string because = "", params object[] becauseArgs)
-	{
-		bool success = Execute.Assertion
-			.ForCondition(objectAssertions.Subject is not null)
-			.BecauseOf(because, becauseArgs)
-			.WithDefaultIdentifier("type")
-			.FailWith("Expected {context} to be {0}{reason}, but found <null>.",
-				"FileNotFoundException or DirectoryNotFoundException");
-		IOException? typedSubject = null;
-		if (success)
+		public override void AppendResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			if (objectAssertions.Subject is FileNotFoundException fileNotFoundException)
+			if (throwOptions.DoCheckThrow && _actual is null)
 			{
-				typedSubject = fileNotFoundException;
-				Execute.Assertion
-					.ForCondition(fileNotFoundException.HResult == -2147024894)
-					.BecauseOf(because, becauseArgs)
-					.WithDefaultIdentifier("type")
-					.FailWith(
-						"Expected {context} to have HResult set to {0}{reason}, but found {1}.",
-						-2147024894,
-						fileNotFoundException.HResult);
+				stringBuilder.Append(it).Append(" did not throw any exception");
 			}
-			else if (objectAssertions.Subject is DirectoryNotFoundException
-				directoryNotFoundException)
+			else if (_actual is not null)
 			{
-				typedSubject = directoryNotFoundException;
-				Execute.Assertion
-					.ForCondition(directoryNotFoundException.HResult == -2147024893)
-					.BecauseOf(because, becauseArgs)
-					.WithDefaultIdentifier("type")
-					.FailWith(
-						"Expected {context} to have HResult set to {0}{reason}, but found {1}.",
-						-2147024893,
-						directoryNotFoundException.HResult);
-			}
-			else
-			{
-				Execute.Assertion
-					.BecauseOf(because, becauseArgs)
-					.WithDefaultIdentifier("type")
-					.FailWith("Expected {context} to be {0}{reason}, but found {1}.",
-						"FileNotFoundException or DirectoryNotFoundException",
-						objectAssertions.Subject!.GetType());
+				stringBuilder.Append(it).Append(" did throw ");
+				stringBuilder.Append(FormatForMessage(_actual));
 			}
 		}
 
-		return new AndWhichConstraint<ObjectAssertions, IOException?>(objectAssertions,
-			typedSubject);
-	}
-
-	private static void AssertExceptionHResult<TException>(TException exception,
-		int? hResult,
-		string because, object[] becauseArgs) where TException : Exception
-	{
-		if (hResult != null)
+		public override bool TryGetValue<TValue>([NotNullWhen(true)] out TValue? value) where TValue : default
 		{
-			Execute.Assertion
-				.ForCondition(exception.HResult == hResult)
-				.BecauseOf(because, becauseArgs)
-				.WithDefaultIdentifier("type")
-				.FailWith(
-					"Expected {context} to have HResult set to {0}{reason}, but found {1}.",
-					hResult,
-					exception.HResult);
-		}
-	}
-
-	private static void AssertExceptionMessage<TException>(TException exception,
-		string? messageContains,
-		string because, object[] becauseArgs) where TException : Exception
-	{
-		if (messageContains != null)
-		{
-			#pragma warning disable MA0074 // Avoid implicit culture-sensitive methods
-			#pragma warning disable MA0001 // Use an overload of 'Contains' that has a StringComparison parameter
-			Execute.Assertion
-				.ForCondition(exception.Message.Contains(messageContains))
-				.BecauseOf(because, becauseArgs)
-				.WithDefaultIdentifier("type")
-				.FailWith(
-					"Expected {context} to have a message containing {0}{reason}, but found {1}.",
-					messageContains,
-					exception.Message);
-			#pragma warning restore MA0001
-			#pragma warning restore MA0074
-		}
-	}
-
-	private static void AssertExceptionParamName<TException>(TException exception,
-		string? paramName,
-		string because, object[] becauseArgs) where TException : Exception
-	{
-		if (paramName != null)
-		{
-			if (exception is ArgumentException argumentException)
+			if (_actual is TValue typedValue)
 			{
-				Execute.Assertion
-					.ForCondition(string.Equals(
-						argumentException.ParamName,
-						paramName,
-						StringComparison.Ordinal))
-					.BecauseOf(because, becauseArgs)
-					.WithDefaultIdentifier("type")
-					.FailWith(
-						"Expected {context} to have ParamName set to {0}{reason}, but found {1}.",
-						paramName,
-						argumentException.ParamName);
+				value = typedValue;
+				return true;
 			}
-			else
+
+			value = default;
+			return typeof(TValue).IsAssignableFrom(typeof(DirectoryNotFoundException));
+		}
+
+		public override ConstraintResult Negate()
+		{
+			throwOptions.DoCheckThrow = !throwOptions.DoCheckThrow;
+			return this;
+		}
+
+		private static string FormatForMessage(Exception exception)
+		{
+			string message = PrependAOrAn(Format.Formatter.Format(exception.GetType()));
+			if (!string.IsNullOrEmpty(exception.Message))
 			{
-				Execute.Assertion
-					.BecauseOf(because, becauseArgs)
-					.WithDefaultIdentifier("type")
-					.FailWith(
-						"Expected {context} to be {0} with ParamName set to {0}{reason}, but it is no ArgumentException.",
-						typeof(TException),
-						paramName);
+				message += ":" + Environment.NewLine + Indent(exception.Message);
+			}
+
+			return message;
+
+			[return: NotNullIfNotNull(nameof(value))]
+			static string? Indent(string? value, string? indentation = "  ",
+				bool indentFirstLine = true)
+			{
+				if (value == null)
+				{
+					return null;
+				}
+
+				if (string.IsNullOrEmpty(indentation))
+				{
+					return value;
+				}
+
+				return (indentFirstLine ? indentation : "")
+					   + value.Replace("\n", $"\n{indentation}");
+			}
+
+			static string PrependAOrAn(string value)
+			{
+				char[] vocals = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U',];
+				if (value.Length > 0 && vocals.Contains(value[0]))
+				{
+					return $"an {value}";
+				}
+
+				return $"a {value}";
 			}
 		}
 	}

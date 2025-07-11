@@ -8,11 +8,11 @@ public partial class GetDirectoryNameTests
 #if !NETFRAMEWORK
 	[InlineData("")]
 #endif
-	public void GetDirectoryName_NullOrEmpty_ShouldReturnNull(string? path)
+	public async Task GetDirectoryName_NullOrEmpty_ShouldReturnNull(string? path)
 	{
 		string? result = FileSystem.Path.GetDirectoryName(path);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 #if NETFRAMEWORK
@@ -22,14 +22,14 @@ public partial class GetDirectoryNameTests
 	[InlineData("    ")]
 	[InlineData("\t")]
 	[InlineData("\n")]
-	public void GetDirectoryName_EmptyOrWhiteSpace_ShouldThrowArgumentException(string path)
+	public async Task GetDirectoryName_EmptyOrWhiteSpace_ShouldThrowArgumentException(string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.Path.GetDirectoryName(path);
-		});
+		}
 
-		exception.Should().BeOfType<ArgumentException>();
+		await That(Act).Throws<ArgumentException>();
 	}
 #endif
 
@@ -37,17 +37,17 @@ public partial class GetDirectoryNameTests
 	[Theory]
 	[InlineData(" ")]
 	[InlineData("    ")]
-	public void GetDirectoryName_Spaces_ShouldReturnNullOnWindowsOtherwiseEmpty(string? path)
+	public async Task GetDirectoryName_Spaces_ShouldReturnNullOnWindowsOtherwiseEmpty(string? path)
 	{
 		string? result = FileSystem.Path.GetDirectoryName(path);
 
 		if (Test.RunsOnWindows)
 		{
-			result.Should().BeNull();
+			await That(result).IsNull();
 		}
 		else
 		{
-			result.Should().Be("");
+			await That(result).IsEqualTo("");
 		}
 	}
 #endif
@@ -58,17 +58,17 @@ public partial class GetDirectoryNameTests
 	[InlineData("\n")]
 	[InlineData(" \t")]
 	[InlineData("\n  ")]
-	public void GetDirectoryName_TabOrNewline_ShouldReturnEmptyString(string? path)
+	public async Task GetDirectoryName_TabOrNewline_ShouldReturnEmptyString(string? path)
 	{
 		string? result = FileSystem.Path.GetDirectoryName(path);
 
-		result.Should().Be("");
+		await That(result).IsEqualTo("");
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void GetDirectoryName_ShouldReturnDirectory(
+	public async Task GetDirectoryName_ShouldReturnDirectory(
 		string directory, string filename, string extension)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
@@ -76,12 +76,12 @@ public partial class GetDirectoryNameTests
 
 		string? result = FileSystem.Path.GetDirectoryName(path);
 
-		result.Should().Be(directory);
+		await That(result).IsEqualTo(directory);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetDirectoryName_ShouldReplaceAltDirectorySeparator(
+	public async Task GetDirectoryName_ShouldReplaceAltDirectorySeparator(
 		string parentDirectory, string directory, string filename)
 	{
 		string path = parentDirectory + FileSystem.Path.AltDirectorySeparatorChar + directory +
@@ -90,7 +90,7 @@ public partial class GetDirectoryNameTests
 
 		string? result = FileSystem.Path.GetDirectoryName(path);
 
-		result.Should().Be(expected);
+		await That(result).IsEqualTo(expected);
 	}
 
 	[Theory]
@@ -99,7 +99,7 @@ public partial class GetDirectoryNameTests
 	[InlineData("//foo//bar/file", "/foo/bar", TestOS.Linux | TestOS.Mac)]
 	[InlineData(@"foo\\bar/file", "foo/bar", TestOS.Windows)]
 	[InlineData(@"foo\\\bar/file", "foo/bar", TestOS.Windows)]
-	public void GetDirectoryName_ShouldNormalizeDirectorySeparators(
+	public async Task GetDirectoryName_ShouldNormalizeDirectorySeparators(
 		string path, string expected, TestOS operatingSystem)
 	{
 		Skip.IfNot(Test.RunsOn(operatingSystem));
@@ -108,13 +108,13 @@ public partial class GetDirectoryNameTests
 
 		string? result = FileSystem.Path.GetDirectoryName(path);
 
-		result.Should().Be(expected);
+		await That(result).IsEqualTo(expected);
 	}
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void GetDirectoryName_Span_ShouldReturnDirectory(
+	public async Task GetDirectoryName_Span_ShouldReturnDirectory(
 		string directory, string filename, string extension)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
@@ -122,7 +122,7 @@ public partial class GetDirectoryNameTests
 
 		ReadOnlySpan<char> result = FileSystem.Path.GetDirectoryName(path.AsSpan());
 
-		result.ToString().Should().Be(directory);
+		await That(result.ToString()).IsEqualTo(directory);
 	}
 #endif
 
@@ -176,13 +176,13 @@ public partial class GetDirectoryNameTests
 	[InlineData(@"G:/f", @"G:\", TestOS.Windows)]
 	[InlineData(@"F:/g\h", @"F:\g", TestOS.Windows)]
 	[InlineData(@"G:/i/j", @"G:\i", TestOS.Windows)]
-	public void GetDirectoryName_SpecialCases_ShouldReturnExpectedValue(
+	public async Task GetDirectoryName_SpecialCases_ShouldReturnExpectedValue(
 		string path, string? expected, TestOS operatingSystem)
 	{
 		Skip.IfNot(Test.RunsOn(operatingSystem));
 
 		string? result = FileSystem.Path.GetDirectoryName(path);
 
-		result.Should().Be(expected);
+		await That(result).IsEqualTo(expected);
 	}
 }

@@ -1,5 +1,4 @@
 using System.IO;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
@@ -8,63 +7,63 @@ public partial class OpenReadTests
 {
 	[Theory]
 	[AutoData]
-	public void OpenRead_MissingFile_ShouldThrowFileNotFoundException(string path)
+	public async Task OpenRead_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.File.OpenRead(path);
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithHResult(-2147024894);
 	}
 
 	[Theory]
 	[AutoData]
-	public void OpenRead_SetLength_ShouldThrowNotSupportedException(string path)
+	public async Task OpenRead_SetLength_ShouldThrowNotSupportedException(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			stream.SetLength(3);
-		});
+		}
 
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
 	[Theory]
 	[AutoData]
-	public void OpenRead_ShouldUseReadAccessAndReadShare(string path)
+	public async Task OpenRead_ShouldUseReadAccessAndReadShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.Read);
-		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(
+		await That(FileTestHelper.CheckFileAccess(stream)).IsEqualTo(FileAccess.Read);
+		await That(FileTestHelper.CheckFileShare(FileSystem, path)).IsEqualTo(
 			Test.RunsOnWindows ? FileShare.Read : FileShare.ReadWrite);
-		stream.CanRead.Should().BeTrue();
-		stream.CanWrite.Should().BeFalse();
-		stream.CanSeek.Should().BeTrue();
-		stream.CanTimeout.Should().BeFalse();
+		await That(stream.CanRead).IsTrue();
+		await That(stream.CanWrite).IsFalse();
+		await That(stream.CanSeek).IsTrue();
+		await That(stream.CanTimeout).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void OpenRead_Write_ShouldThrowNotSupportedException(string path, byte[] bytes)
+	public async Task OpenRead_Write_ShouldThrowNotSupportedException(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			stream.Write(bytes, 0, bytes.Length);
-		});
+		}
 
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
 	[Theory]
@@ -79,13 +78,12 @@ public partial class OpenReadTests
 		{
 			// ReSharper disable once UseAwaitUsing
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
-			#pragma warning disable CA1835
+			#pragma warning disable CA1835 // Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'
 			await stream.WriteAsync(bytes, 0, bytes.Length, TestContext.Current.CancellationToken);
 			#pragma warning restore CA1835
 		}
-		
-		Exception? exception = await Record.ExceptionAsync(Act);
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+
+		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
 #if FEATURE_SPAN
@@ -102,41 +100,39 @@ public partial class OpenReadTests
 			await stream.WriteAsync(bytes.AsMemory(), TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void OpenRead_WriteByte_ShouldThrowNotSupportedException(string path)
+	public async Task OpenRead_WriteByte_ShouldThrowNotSupportedException(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			stream.WriteByte(0);
-		});
+		}
 
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void OpenRead_WriteWithSpan_ShouldThrowNotSupportedException(string path, byte[] bytes)
+	public async Task OpenRead_WriteWithSpan_ShouldThrowNotSupportedException(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			stream.Write(bytes.AsSpan());
-		});
+		}
 
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 #endif
 }

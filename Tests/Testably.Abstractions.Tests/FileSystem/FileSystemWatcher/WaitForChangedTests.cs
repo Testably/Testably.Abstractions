@@ -1,6 +1,5 @@
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
@@ -9,10 +8,10 @@ public partial class WaitForChangedTests
 {
 	[Theory]
 	[AutoData]
-	public void WaitForChanged_ShouldBlockUntilEventHappens(string path)
+	public async Task WaitForChanged_ShouldBlockUntilEventHappens(string path)
 	{
 		SkipIfBrittleTestsShouldBeSkipped();
-		
+
 		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
@@ -41,11 +40,11 @@ public partial class WaitForChangedTests
 				cts.Token.Register(() => throw new TimeoutException());
 				IWaitForChangedResult result =
 					fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created);
-				fileSystemWatcher.EnableRaisingEvents.Should().BeFalse();
-				result.TimedOut.Should().BeFalse();
-				result.ChangeType.Should().Be(WatcherChangeTypes.Created);
-				result.Name.Should().Be(path);
-				result.OldName.Should().BeNull();
+				await That(fileSystemWatcher.EnableRaisingEvents).IsFalse();
+				await That(result.TimedOut).IsFalse();
+				await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
+				await That(result.Name).IsEqualTo(path);
+				await That(result.OldName).IsNull();
 			}
 		}
 		finally
@@ -56,7 +55,7 @@ public partial class WaitForChangedTests
 
 	[Theory]
 	[MemberData(nameof(GetWaitForChangedTimeoutParameters))]
-	public void WaitForChanged_Timeout_ShouldReturnTimedOut(string path,
+	public async Task WaitForChanged_Timeout_ShouldReturnTimedOut(string path,
 		Func<IFileSystemWatcher, IWaitForChangedResult> callback)
 	{
 		using ManualResetEventSlim ms = new();
@@ -86,11 +85,11 @@ public partial class WaitForChangedTests
 			}, TestContext.Current.CancellationToken);
 			IWaitForChangedResult result = callback(fileSystemWatcher);
 
-			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
-			result.TimedOut.Should().BeTrue();
-			result.ChangeType.Should().Be(0);
-			result.Name.Should().BeNull();
-			result.OldName.Should().BeNull();
+			await That(fileSystemWatcher.EnableRaisingEvents).IsTrue();
+			await That(result.TimedOut).IsTrue();
+			await That(result.ChangeType).IsEqualTo(0);
+			await That(result.Name).IsNull();
+			await That(result.OldName).IsNull();
 		}
 		finally
 		{

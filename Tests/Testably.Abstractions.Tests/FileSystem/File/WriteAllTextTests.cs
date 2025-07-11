@@ -8,23 +8,24 @@ public partial class WriteAllTextTests
 {
 	[Theory]
 	[AutoData]
-	public void WriteAllText_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+	public async Task WriteAllText_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directory, string path)
 	{
 		string fullPath = FileSystem.Path.Combine(directory, path);
-		Exception? exception = Record.Exception(() =>
+
+		void Act()
 		{
 			FileSystem.File.WriteAllText(fullPath, "foo");
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(
-			hResult: -2147024893,
-			messageContains: $"'{FileSystem.Path.GetFullPath(fullPath)}'");
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithHResult(-2147024893).And
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(fullPath)}'");
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_PreviousFile_ShouldOverwriteFileWithText(
+	public async Task WriteAllText_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
@@ -32,12 +33,12 @@ public partial class WriteAllTextTests
 		FileSystem.File.WriteAllText(path, contents);
 
 		string result = FileSystem.File.ReadAllText(path);
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_ShouldAdjustTimes(string path, string contents)
+	public async Task WriteAllText_ShouldAdjustTimes(string path, string contents)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -55,47 +56,45 @@ public partial class WriteAllTextTests
 
 		if (Test.RunsOnWindows)
 		{
-			creationTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_ShouldCreateFileWithByteOrderMark(
+	public async Task WriteAllText_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
 		byte[] expectedBytes = [255, 254, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0];
 
 		FileSystem.File.WriteAllText(path, "AA", Encoding.UTF32);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(expectedBytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(expectedBytes);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_ShouldCreateFileWithText(string path, string contents)
+	public async Task WriteAllText_ShouldCreateFileWithText(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
 		string result = FileSystem.File.ReadAllText(path);
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_SpecialCharacters_ShouldReturnSameText(string path)
+	public async Task WriteAllText_SpecialCharacters_ShouldReturnSameText(string path)
 	{
 		char[] specialCharacters =
 		[
@@ -114,80 +113,80 @@ public partial class WriteAllTextTests
 
 			string result = FileSystem.File.ReadAllText(path);
 
-			result.Should().Be(contents,
-				$"{contents} should be encoded and decoded identical.");
+			await That(result).IsEqualTo(contents)
+				.Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_WhenContentIsNull_ShouldNotThrowException(string path)
+	public async Task WriteAllText_WhenContentIsNull_ShouldNotThrowException(string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllText(path, null);
-		});
+		}
 
-		exception.Should().BeNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
-		string path)
+	public async Task
+		WriteAllText_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
+			string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllText(path, null);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
-		string path, string contents)
+	public async Task
+		WriteAllText_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+			string path, string contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystem.File.WriteAllText(path, null);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllText(path, contents);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
 #if FEATURE_FILE_SPAN
-
 	[Theory]
 	[AutoData]
-	public void WriteAllText_Span_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+	public async Task WriteAllText_Span_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directory, string path)
 	{
 		string fullPath = FileSystem.Path.Combine(directory, path);
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllText(fullPath, "foo".AsSpan());
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(
-			hResult: -2147024893,
-			messageContains: $"'{FileSystem.Path.GetFullPath(fullPath)}'");
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithHResult(-2147024893).And
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(fullPath)}'");
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_Span_PreviousFile_ShouldOverwriteFileWithText(
+	public async Task WriteAllText_Span_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
@@ -195,12 +194,12 @@ public partial class WriteAllTextTests
 		FileSystem.File.WriteAllText(path, contents.AsSpan());
 
 		string result = FileSystem.File.ReadAllText(path);
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_Span_ShouldAdjustTimes(string path, string contents)
+	public async Task WriteAllText_Span_ShouldAdjustTimes(string path, string contents)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -218,47 +217,43 @@ public partial class WriteAllTextTests
 
 		if (Test.RunsOnWindows)
 		{
-			creationTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_Span_ShouldCreateFileWithByteOrderMark(
+	public async Task WriteAllText_Span_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
 		byte[] expectedBytes = [255, 254, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0];
 
 		FileSystem.File.WriteAllText(path, "AA".AsSpan(), Encoding.UTF32);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(expectedBytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(expectedBytes);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_Span_ShouldCreateFileWithText(string path, string contents)
+	public async Task WriteAllText_Span_ShouldCreateFileWithText(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents.AsSpan());
 
 		string result = FileSystem.File.ReadAllText(path);
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_Span_SpecialCharacters_ShouldReturnSameText(string path)
+	public async Task WriteAllText_Span_SpecialCharacters_ShouldReturnSameText(string path)
 	{
 		char[] specialCharacters =
 		[
@@ -277,32 +272,30 @@ public partial class WriteAllTextTests
 
 			string result = FileSystem.File.ReadAllText(path);
 
-			result.Should().Be(contents,
-				$"{contents} should be encoded and decoded identical.");
+			await That(result).IsEqualTo(contents).Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_Span_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
+	public async Task WriteAllText_Span_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 		string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllText(path, "".AsSpan());
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteAllText_Span_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+	public async Task WriteAllText_Span_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 		string path, string contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -310,12 +303,12 @@ public partial class WriteAllTextTests
 		FileSystem.File.WriteAllText(path, null);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllText(path, contents.AsSpan());
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 #endif
 }

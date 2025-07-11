@@ -7,81 +7,82 @@ public partial class DeleteTests
 {
 	[Theory]
 	[AutoData]
-	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+	public async Task Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingDirectory, string fileName)
 	{
 		string filePath = FileSystem.Path.Combine(missingDirectory, fileName);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New(filePath).Delete();
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_MissingFile_ShouldDoNothing(
+	public async Task Delete_MissingFile_ShouldDoNothing(
 		string fileName)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileInfo.New(fileName).Delete();
-		});
+		}
 
-		exception.Should().BeNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_ShouldRefreshExistsCache_ExceptOnNetFramework(string path)
+	public async Task Delete_ShouldRefreshExistsCache_ExceptOnNetFramework(string path)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
 		IFileInfo sut = FileSystem.FileInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		await That(sut.Exists).IsTrue();
 
 		sut.Delete();
 
 		if (Test.IsNetFramework)
 		{
-			sut.Exists.Should().BeTrue();
+			await That(sut.Exists).IsTrue();
 		}
 		else
 		{
-			sut.Exists.Should().BeFalse();
+			await That(sut.Exists).IsFalse();
 		}
 
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_WithOpenFile_ShouldThrowIOException_OnWindows(string filename)
+	public async Task Delete_WithOpenFile_ShouldThrowIOException_OnWindows(string filename)
 	{
 		FileSystem.Initialize();
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filename);
 		openFile.Write([0], 0, 1);
 		openFile.Flush();
 		IFileInfo sut = FileSystem.FileInfo.New(filename);
-		Exception? exception = Record.Exception(() =>
+
+		void Act()
 		{
 			sut.Delete();
 			openFile.Write([0], 0, 1);
 			openFile.Flush();
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<IOException>(
-				messageContains: $"{filename}'",
-				hResult: -2147024864);
-			FileSystem.File.Exists(filename).Should().BeTrue();
+			await That(Act).Throws<IOException>()
+				.WithMessageContaining($"{filename}'").And
+				.WithHResult(-2147024864);
+			await That(FileSystem.File.Exists(filename)).IsTrue();
 		}
 		else
 		{
-			exception.Should().BeNull();
-			FileSystem.File.Exists(filename).Should().BeFalse();
+			await That(Act).DoesNotThrow();
+			await That(FileSystem.File.Exists(filename)).IsFalse();
 		}
 	}
 }

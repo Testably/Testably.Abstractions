@@ -347,10 +347,19 @@ namespace Testably.Abstractions.Testing.Statistics
         public bool Is<T>(System.Span<T> value) { }
         public bool Is<T>(T value) { }
         public bool Is<T>(T[] value) { }
+        public bool Is<T>(Testably.Abstractions.Testing.Statistics.ParameterDescription.SpanParameterDescription<T> value) { }
         public static Testably.Abstractions.Testing.Statistics.ParameterDescription FromOutParameter<T>(T value) { }
         public static Testably.Abstractions.Testing.Statistics.ParameterDescription FromParameter<T>(System.ReadOnlySpan<T> value) { }
         public static Testably.Abstractions.Testing.Statistics.ParameterDescription FromParameter<T>(System.Span<T> value) { }
         public static Testably.Abstractions.Testing.Statistics.ParameterDescription FromParameter<T>(T value) { }
+        public sealed class SpanParameterDescription<T> : Testably.Abstractions.Testing.Statistics.ParameterDescription
+        {
+            public SpanParameterDescription(System.ReadOnlySpan<T> value) { }
+            public SpanParameterDescription(System.Span<T> value) { }
+            public bool IsReadOnly { get; }
+            public T[] Value { get; }
+            public override string ToString() { }
+        }
     }
     public enum PropertyAccess
     {

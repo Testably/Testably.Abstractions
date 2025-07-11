@@ -20,7 +20,7 @@ public partial class ResolveLinkTargetTests
 
 	[Theory]
 	[AutoData]
-	public void ResolveLinkTarget_FileWithDifferentCase_ShouldReturnPathToMissingFile(
+	public async Task ResolveLinkTarget_FileWithDifferentCase_ShouldReturnPathToMissingFile(
 		string path, string pathToTarget, string contents)
 	{
 		string targetFullPath = FileSystem.Path.GetFullPath(pathToTarget);
@@ -32,21 +32,21 @@ public partial class ResolveLinkTargetTests
 
 		IFileSystemInfo? target = fileInfo.ResolveLinkTarget(false);
 
-		target!.FullName.Should().Be(targetFullPath);
+		await That(target!.FullName).IsEqualTo(targetFullPath);
 		if (!Test.RunsOnLinux)
 		{
-			target.Exists.Should().BeTrue();
-			FileSystem.File.ReadAllText(target.FullName).Should().Be(contents);
+			await That(target.Exists).IsTrue();
+			await That(FileSystem.File.ReadAllText(target.FullName)).IsEqualTo(contents);
 		}
 		else
 		{
-			target.Exists.Should().BeFalse();
+			await That(target.Exists).IsFalse();
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void ResolveLinkTarget_FinalTarget_ShouldFollowSymbolicLinkToFinalTarget(
+	public async Task ResolveLinkTarget_FinalTarget_ShouldFollowSymbolicLinkToFinalTarget(
 		string path, string pathToFinalTarget)
 	{
 		int maxLinks = MaxResolveLinks;
@@ -65,12 +65,12 @@ public partial class ResolveLinkTargetTests
 
 		IFileSystemInfo? target = fileInfo.ResolveLinkTarget(true);
 
-		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
+		await That(target!.FullName).IsEqualTo(FileSystem.Path.GetFullPath(pathToFinalTarget));
 	}
 
 	[Theory]
 	[AutoData]
-	public void ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
+	public async Task ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
 		string path, string pathToFinalTarget)
 	{
 		int maxLinks = MaxResolveLinks + 1;
@@ -86,19 +86,19 @@ public partial class ResolveLinkTargetTests
 
 		IFileInfo fileInfo = FileSystem.FileInfo.New(previousPath);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = fileInfo.ResolveLinkTarget(true);
-		});
+		}
 
-		exception.Should().BeException<IOException>(
-			hResult: Test.RunsOnWindows ? -2147022975 : -2146232800,
-			messageContains: $"'{fileInfo.FullName}'");
+		await That(Act).Throws<IOException>()
+			.WithHResult(Test.RunsOnWindows ? -2147022975 : -2146232800).And
+			.WithMessageContaining($"'{fileInfo.FullName}'");
 	}
 
 	[Theory]
 	[AutoData]
-	public void ResolveLinkTarget_MissingFileInLinkChain_ShouldReturnPathToMissingFile(
+	public async Task ResolveLinkTarget_MissingFileInLinkChain_ShouldReturnPathToMissingFile(
 		string path, string pathToFinalTarget, string pathToMissingFile)
 	{
 		FileSystem.File.WriteAllText(pathToFinalTarget, null);
@@ -110,12 +110,12 @@ public partial class ResolveLinkTargetTests
 
 		IFileSystemInfo? target = linkFileInfo2.ResolveLinkTarget(true);
 
-		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToMissingFile));
+		await That(target!.FullName).IsEqualTo(FileSystem.Path.GetFullPath(pathToMissingFile));
 	}
 
 	[Theory]
 	[AutoData]
-	public void ResolveLinkTarget_NormalDirectory_ShouldReturnNull(
+	public async Task ResolveLinkTarget_NormalDirectory_ShouldReturnNull(
 		string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -123,12 +123,12 @@ public partial class ResolveLinkTargetTests
 
 		IFileSystemInfo? target = fileInfo.ResolveLinkTarget(false);
 
-		target.Should().BeNull();
+		await That(target).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void ResolveLinkTarget_NormalFile_ShouldReturnNull(
+	public async Task ResolveLinkTarget_NormalFile_ShouldReturnNull(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -136,12 +136,12 @@ public partial class ResolveLinkTargetTests
 
 		IFileSystemInfo? target = fileInfo.ResolveLinkTarget(false);
 
-		target.Should().BeNull();
+		await That(target).IsNull();
 	}
 
 	[Theory]
 	[AutoData]
-	public void ResolveLinkTarget_ShouldFollowSymbolicLink(
+	public async Task ResolveLinkTarget_ShouldFollowSymbolicLink(
 		string path, string pathToTarget)
 	{
 		string targetFullPath = FileSystem.Path.GetFullPath(pathToTarget);
@@ -151,13 +151,13 @@ public partial class ResolveLinkTargetTests
 
 		IFileSystemInfo? target = fileInfo.ResolveLinkTarget(false);
 
-		target!.FullName.Should().Be(targetFullPath);
-		target.Exists.Should().BeTrue();
+		await That(target!.FullName).IsEqualTo(targetFullPath);
+		await That(target.Exists).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void ResolveLinkTarget_TargetDeletedAfterLinkCreation_ShouldReturnNull(
+	public async Task ResolveLinkTarget_TargetDeletedAfterLinkCreation_ShouldReturnNull(
 		string path, string pathToTarget)
 	{
 		string targetFullPath = FileSystem.Path.GetFullPath(pathToTarget);
@@ -168,8 +168,8 @@ public partial class ResolveLinkTargetTests
 
 		IFileSystemInfo? target = fileInfo.ResolveLinkTarget(false);
 
-		target!.FullName.Should().Be(targetFullPath);
-		target.Exists.Should().BeFalse();
+		await That(target!.FullName).IsEqualTo(targetFullPath);
+		await That(target.Exists).IsFalse();
 	}
 }
 #endif

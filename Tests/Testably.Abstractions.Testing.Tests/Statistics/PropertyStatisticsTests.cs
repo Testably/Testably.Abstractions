@@ -1,22 +1,21 @@
-﻿using System.Linq;
-using Testably.Abstractions.Testing.Statistics;
+﻿using Testably.Abstractions.Testing.Statistics;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics;
 
 public sealed class PropertyStatisticsTests
 {
 	[Fact]
-	public void Counter_ShouldBeInitializedWithOne()
+	public async Task Counter_ShouldBeInitializedWithOne()
 	{
 		MockFileSystem fileSystem = new();
 		_ = fileSystem.Path.DirectorySeparatorChar;
 		PropertyStatistic sut = fileSystem.Statistics.Path.Properties[0];
 
-		sut.Counter.Should().Be(1);
+		await That(sut.Counter).IsEqualTo(1);
 	}
 
 	[Fact]
-	public void ToString_Get_ShouldContainNameAndGet()
+	public async Task ToString_Get_ShouldContainNameAndGet()
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.Initialize().WithFile("foo");
@@ -26,13 +25,11 @@ public sealed class PropertyStatisticsTests
 
 		string result = sut.ToString();
 
-		result.Should()
-			.Contain(nameof(IFileInfo.IsReadOnly)).And
-			.Contain("{get;}");
+		await That(result).Contains(nameof(IFileInfo.IsReadOnly)).And.Contains("{get;}");
 	}
 
 	[Fact]
-	public void ToString_Set_ShouldContainNameAndSet()
+	public async Task ToString_Set_ShouldContainNameAndSet()
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.Initialize().WithFile("foo");
@@ -42,8 +39,6 @@ public sealed class PropertyStatisticsTests
 
 		string result = sut.ToString();
 
-		result.Should()
-			.Contain(nameof(IFileInfo.IsReadOnly)).And
-			.Contain("{set;}");
+		await That(result).Contains(nameof(IFileInfo.IsReadOnly)).And.Contains("{set;}");
 	}
 }

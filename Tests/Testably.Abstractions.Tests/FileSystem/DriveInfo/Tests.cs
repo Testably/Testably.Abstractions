@@ -4,18 +4,18 @@ namespace Testably.Abstractions.Tests.FileSystem.DriveInfo;
 public partial class Tests
 {
 	[Fact]
-	public void ToString_ShouldReturnDriveName()
+	public async Task ToString_ShouldReturnDriveName()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		IDriveInfo result =
 			FileSystem.DriveInfo.New(FileTestHelper.RootDrive(Test));
 
-		result.ToString().Should().Be("C:\\");
+		await That(result.ToString()).IsEqualTo("C:\\");
 	}
 
 	[Fact]
-	public void VolumeLabel_ShouldBeWritable_OnWindows()
+	public async Task VolumeLabel_ShouldBeWritable_OnWindows()
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -25,21 +25,21 @@ public partial class Tests
 
 		try
 		{
-			Exception? exception = Record.Exception(() =>
+			void Act()
 			{
 				#pragma warning disable CA1416
 				result.VolumeLabel = "TEST";
 				#pragma warning restore CA1416
-			});
+			}
 
 			if (Test.RunsOnWindows)
 			{
-				exception.Should().BeNull();
-				result.VolumeLabel.Should().Be("TEST");
+				await That(Act).DoesNotThrow();
+				await That(result.VolumeLabel).IsEqualTo("TEST");
 			}
 			else
 			{
-				exception.Should().BeException<PlatformNotSupportedException>(hResult: -2146233031);
+				await That(Act).Throws<PlatformNotSupportedException>().WithHResult(-2146233031);
 			}
 		}
 		finally

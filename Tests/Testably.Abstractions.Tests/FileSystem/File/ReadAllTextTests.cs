@@ -9,7 +9,7 @@ public partial class ReadAllTextTests
 {
 	[Theory]
 	[AutoData]
-	public void ReadAllText_FilenameNotOnWindows_ShouldBeCaseSensitive(
+	public async Task ReadAllText_FilenameNotOnWindows_ShouldBeCaseSensitive(
 		string path, string contents1, string contents2)
 	{
 		Skip.If(Test.RunsOnWindows,
@@ -20,12 +20,12 @@ public partial class ReadAllTextTests
 
 		string result = FileSystem.File.ReadAllText(path.ToLowerInvariant());
 
-		result.Should().Be(contents2);
+		await That(result).IsEqualTo(contents2);
 	}
 
 	[Theory]
 	[AutoData]
-	public void ReadAllText_FilenameOnWindows_ShouldBeCaseInsensitive(
+	public async Task ReadAllText_FilenameOnWindows_ShouldBeCaseInsensitive(
 		string path, string contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows,
@@ -35,31 +35,26 @@ public partial class ReadAllTextTests
 
 		string result = FileSystem.File.ReadAllText(path.ToLowerInvariant());
 
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void ReadAllText_MissingFile_ShouldThrowFileNotFoundException(string path)
+	public async Task ReadAllText_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.ReadAllText(path);
-		});
+		}
 
-		exception.Should()
-			.BeOfType<FileNotFoundException>()
-			.Which.HResult.Should()
-			.Be(-2147024894);
-		exception.Should()
-			.BeOfType<FileNotFoundException>()
-			.Which.Message.Should()
-			.Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		await That(Act).ThrowsExactly<FileNotFoundException>()
+			.WithHResult(-2147024894).And
+			.WithMessage($"*'{FileSystem.Path.GetFullPath(path)}'*").AsWildcard();
 	}
 
 	[Theory]
 	[AutoData]
-	public void ReadAllText_ShouldAdjustTimes(string path, string contents)
+	public async Task ReadAllText_ShouldAdjustTimes(string path, string contents)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
 			"Works unreliable on .NET Framework");
@@ -79,24 +74,23 @@ public partial class ReadAllTextTests
 
 		if (Test.RunsOnWindows)
 		{
-			creationTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		lastWriteTime.Should()
-			.BeBetween(creationTimeStart, creationTimeEnd);
+		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 	}
 
 	[Theory]
 	[AutoData]
-	public void ReadAllText_ShouldTolerateAltDirectorySeparatorChar(
+	public async Task ReadAllText_ShouldTolerateAltDirectorySeparatorChar(
 		string contents, string directory, string fileName)
 	{
 		FileSystem.Directory.CreateDirectory(directory);
@@ -106,12 +100,12 @@ public partial class ReadAllTextTests
 
 		string result = FileSystem.File.ReadAllText(altFilePath);
 
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
-	public void ReadAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
+	public async Task ReadAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding)
 	{
 		string path = new Fixture().Create<string>();
@@ -119,14 +113,13 @@ public partial class ReadAllTextTests
 
 		string result = FileSystem.File.ReadAllText(path, readEncoding);
 
-		result.Should()
-			.NotBe(contents,
-				$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+		await That(result).IsNotEqualTo(contents).Because(
+			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetEncodingsForReadAllText))]
-	public void ReadAllText_WithoutReadEncoding_ShouldReturnWrittenText(
+	public async Task ReadAllText_WithoutReadEncoding_ShouldReturnWrittenText(
 		Encoding writeEncoding)
 	{
 		string contents = Guid.NewGuid().ToString();
@@ -135,23 +128,24 @@ public partial class ReadAllTextTests
 
 		string result = FileSystem.File.ReadAllText(path);
 
-		result.Should().Be(contents,
-			$"{contents} should not be different when no read encoding is used for write encoding: {writeEncoding}.");
+		await That(result).IsEqualTo(contents)
+			.Because(
+				$"{contents} should not be different when no read encoding is used for write encoding: {writeEncoding}.");
 	}
 
 	[Theory]
 	[AutoData]
-	public void ReadAllText_WithStarCharacter_ShouldThrowFileNotFoundException(
+	public async Task ReadAllText_WithStarCharacter_ShouldThrowException(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.ReadAllText(path.Substring(0, 3) + "*" + path.Substring(8));
-		});
+		}
 
-		exception.Should().NotBeNull();
+		await That(Act).ThrowsException();
 	}
 
 	#region Helpers

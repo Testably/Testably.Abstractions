@@ -7,20 +7,20 @@ public partial class SetAttributesTests
 {
 	[Theory]
 	[AutoData]
-	public void SetAttributes_Directory_ShouldRemainFile(string path)
+	public async Task SetAttributes_Directory_ShouldRemainFile(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
 		FileSystem.File.SetAttributes(path, FileAttributes.Directory);
 
-		FileSystem.Directory.Exists(path).Should().BeFalse();
-		FileSystem.File.Exists(path).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(path)).IsFalse();
+		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
 	[Theory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
 	[InlineAutoData(FileAttributes.Normal)]
-	public void SetAttributes_ShouldNotAdjustTimes(FileAttributes attributes, string path)
+	public async Task SetAttributes_ShouldNotAdjustTimes(FileAttributes attributes, string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -37,13 +37,13 @@ public partial class SetAttributesTests
 
 		if (Test.RunsOnWindows)
 		{
-			creationTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
-		lastAccessTime.Should()
-			.BeBetween(creationTimeStart, creationTimeEnd);
-		lastWriteTime.Should()
-			.BeBetween(creationTimeStart, creationTimeEnd);
+		await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
+		await That(lastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 	}
 }

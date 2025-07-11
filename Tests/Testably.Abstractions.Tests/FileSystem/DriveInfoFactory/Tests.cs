@@ -7,16 +7,16 @@ namespace Testably.Abstractions.Tests.FileSystem.DriveInfoFactory;
 public partial class Tests
 {
 	[Fact]
-	public void GetDrives_ShouldNotBeEmpty()
+	public async Task GetDrives_ShouldNotBeEmpty()
 	{
 		IDriveInfo[] result = FileSystem.DriveInfo.GetDrives();
 
-		result.Should().NotBeEmpty();
+		await That(result).IsNotEmpty();
 	}
 
 	[Theory]
 	[AutoData]
-	public void MissingDrive_CreateDirectoryInfo_ShouldOnlyThrowWhenAccessingData(
+	public async Task MissingDrive_CreateDirectoryInfo_ShouldOnlyThrowWhenAccessingData(
 		string path, string subPath)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -28,18 +28,19 @@ public partial class Tests
 			FileSystem.DirectoryInfo.New(FileSystem.Path.Combine(path, subPath));
 		IDirectoryInfo? parent = directoryInfo.Parent;
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = parent!.EnumerateDirectories().ToArray();
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>($"'{path}'",
-			hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{path}'").And
+			.WithHResult(-2147024893);
 	}
 
 	[Theory]
 	[AutoData]
-	public void MissingDrive_WriteAllBytes_ShouldThrowDirectoryNotFoundException(
+	public async Task MissingDrive_WriteAllBytes_ShouldThrowDirectoryNotFoundException(
 		string path, byte[] bytes)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -48,64 +49,65 @@ public partial class Tests
 
 		path = $"{driveInfo.Name}{path}";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.WriteAllBytes(path, bytes);
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>($"'{path}'",
-			hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{path}'").And
+			.WithHResult(-2147024893);
 	}
 
 	[Fact]
-	public void New_DefaultDrive_ShouldBeFixed()
+	public async Task New_DefaultDrive_ShouldBeFixed()
 	{
 		IDriveInfo result =
 			FileSystem.DriveInfo.New(FileTestHelper.RootDrive(Test));
 
-		result.AvailableFreeSpace.Should().BeGreaterThan(0);
-		result.DriveFormat.Should().NotBeNull();
-		result.DriveType.Should().Be(DriveType.Fixed);
-		result.IsReady.Should().BeTrue();
-		result.RootDirectory.FullName.Should().Be(FileTestHelper.RootDrive(Test));
-		result.TotalFreeSpace.Should().BeGreaterThan(0);
-		result.TotalSize.Should().BeGreaterThan(0);
-		result.VolumeLabel.Should().NotBeEmpty();
+		await That(result.AvailableFreeSpace).IsGreaterThan(0);
+		await That(result.DriveFormat).IsNotNull();
+		await That(result.DriveType).IsEqualTo(DriveType.Fixed);
+		await That(result.IsReady).IsTrue();
+		await That(result.RootDirectory.FullName).IsEqualTo(FileTestHelper.RootDrive(Test));
+		await That(result.TotalFreeSpace).IsGreaterThan(0);
+		await That(result.TotalSize).IsGreaterThan(0);
+		await That(result.VolumeLabel).IsNotEmpty();
 	}
 
 	[Theory]
 	[AutoData]
-	public void New_InvalidDriveName_ShouldThrowArgumentException(
+	public async Task New_InvalidDriveName_ShouldThrowArgumentException(
 		string invalidDriveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.DriveInfo.New(invalidDriveName);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
+		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
 	[Theory]
 	[InlineData('A')]
 	[InlineData('C')]
 	[InlineData('X')]
-	public void New_WithDriveLetter_ShouldReturnDriveInfo(char driveLetter)
+	public async Task New_WithDriveLetter_ShouldReturnDriveInfo(char driveLetter)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
 
 		IDriveInfo result = FileSystem.DriveInfo.New($"{driveLetter}");
 
-		result.Name.Should().Be($"{driveLetter}:\\");
+		await That(result.Name).IsEqualTo($"{driveLetter}:\\");
 	}
 
 	[Theory]
 	[InlineAutoData('A')]
 	[InlineAutoData('C')]
 	[InlineAutoData('Y')]
-	public void New_WithRootedPath_ShouldReturnDriveInfo(char driveLetter, string path)
+	public async Task New_WithRootedPath_ShouldReturnDriveInfo(char driveLetter, string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
 
@@ -113,22 +115,22 @@ public partial class Tests
 
 		IDriveInfo result = FileSystem.DriveInfo.New(rootedPath);
 
-		result.Name.Should().Be($"{driveLetter}:\\");
+		await That(result.Name).IsEqualTo($"{driveLetter}:\\");
 	}
 
 	[Fact]
-	public void Wrap_Null_ShouldReturnNull()
+	public async Task Wrap_Null_ShouldReturnNull()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
 		        mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		IDriveInfo? result = FileSystem.DriveInfo.Wrap(null);
 
-		result.Should().BeNull();
+		await That(result).IsNull();
 	}
 
 	[Fact]
-	public void Wrap_ShouldReturnDriveInfoWithSameName()
+	public async Task Wrap_ShouldReturnDriveInfoWithSameName()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
 		        mockFileSystem.SimulationMode != SimulationMode.Native);
@@ -137,25 +139,24 @@ public partial class Tests
 
 		IDriveInfo result = FileSystem.DriveInfo.Wrap(driveInfo);
 
-		result.Name.Should().Be(driveInfo.Name);
+		await That(result.Name).IsEqualTo(driveInfo.Name);
 	}
 
 	[Fact]
-	public void Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException()
+	public async Task Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException()
 	{
 		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&
 		           mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives()[0];
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.DriveInfo.Wrap(driveInfo);
-		});
+		}
 
-		exception.Should().BeOfType<NotSupportedException>().Which
-			.Message.Should()
-			.Contain("Wrapping a DriveInfo in a simulated file system is not supported");
+		await That(Act).ThrowsExactly<NotSupportedException>().Whose(x => x.Message,
+			it => it.Contains("Wrapping a DriveInfo in a simulated file system is not supported"));
 	}
 
 	#region Helpers

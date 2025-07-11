@@ -11,52 +11,52 @@ public partial class ExceptionTests
 	[InlineData("?invalid-drive-name")]
 	[InlineData("invalid")]
 	[InlineData(" ")]
-	public void New_WhenDriveNameIsInvalid_ShouldThrowArgumentException(
+	public async Task New_WhenDriveNameIsInvalid_ShouldThrowArgumentException(
 		string driveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.DriveInfo.New(driveName);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
+		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
 	[Theory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), "")]
-	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
+	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			callback.Compile().Invoke(FileSystem.DriveInfo);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: ignoreParamCheck || Test.IsNetFramework ? null : paramName,
-			because:
-			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName(ignoreParamCheck || Test.IsNetFramework ? null : paramName)
+			.Because(
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), (string?)null)]
-	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
+	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			callback.Compile().Invoke(FileSystem.DriveInfo);
-		});
+		}
 
-		exception.Should().BeException<ArgumentNullException>(
-			paramName: ignoreParamCheck ? null : paramName,
-			because:
-			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		await That(Act).Throws<ArgumentNullException>()
+			.WithParamName(ignoreParamCheck ? null : paramName)
+			.Because(
+				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	#region Helpers

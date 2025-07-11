@@ -6,53 +6,53 @@ public partial class ExistsTests
 {
 	[Theory]
 	[AutoData]
-	public void Exists_ExistingDirectory_ShouldReturnTrue(string path)
+	public async Task Exists_ExistingDirectory_ShouldReturnTrue(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
 		bool result = FileSystem.Path.Exists(path);
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Exists_ExistingFile_ShouldReturnTrue(string path)
+	public async Task Exists_ExistingFile_ShouldReturnTrue(string path)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
 
 		bool result = FileSystem.Path.Exists(path);
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Exists_ExistingFileOrDirectory_ShouldReturnTrue(string path)
+	public async Task Exists_ExistingFileOrDirectory_ShouldReturnTrue(string path)
 	{
 		bool result = FileSystem.Path.Exists(path);
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Fact]
-	public void Exists_Null_ShouldReturnFalse()
+	public async Task Exists_Null_ShouldReturnFalse()
 	{
 		bool result = FileSystem.Path.Exists(null);
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Exists_ShouldWorkWithAbsolutePaths(string path)
+	public async Task Exists_ShouldWorkWithAbsolutePaths(string path)
 	{
 		string absolutePath = FileSystem.Path.GetFullPath(path);
 		FileSystem.Directory.CreateDirectory(path);
 
 		bool result = FileSystem.Path.Exists(absolutePath);
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 }
 #endif

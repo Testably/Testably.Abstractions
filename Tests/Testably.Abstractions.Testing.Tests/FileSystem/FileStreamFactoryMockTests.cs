@@ -29,9 +29,8 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 
 	[Theory]
 	[AutoData]
-	public void
-		Wrap_ShouldThrowNotSupportedException(
-			string path, string contents)
+	public async Task Wrap_ShouldThrowNotSupportedException(
+		string path, string contents)
 	{
 		path = RealFileSystem.Path.GetFullPath(path);
 		RealFileSystem.File.WriteAllText(path, contents);
@@ -42,6 +41,6 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 			MockFileSystem.FileStream.Wrap(new FileStream(path, FileMode.Open));
 		});
 
-		exception.Should().BeOfType<NotSupportedException>();
+		await That(exception).IsExactly<NotSupportedException>();
 	}
 }

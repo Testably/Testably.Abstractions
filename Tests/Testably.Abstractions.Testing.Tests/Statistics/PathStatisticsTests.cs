@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics;
 public sealed class PathStatisticsTests
 {
 	[Fact]
-	public void Key_AbsoluteAndRelativePathsShouldMatch()
+	public async Task Key_AbsoluteAndRelativePathsShouldMatch()
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.InitializeIn("/foo");
@@ -14,11 +14,11 @@ public sealed class PathStatisticsTests
 		IStatistics absolutPath = sut["/foo"];
 		IStatistics relativePath = sut["."];
 
-		absolutPath.Should().Be(relativePath);
+		await That(absolutPath).IsEqualTo(relativePath);
 	}
 
 	[Fact]
-	public void Key_DifferentDrives_ShouldBeConsideredDifferent()
+	public async Task Key_DifferentDrives_ShouldBeConsideredDifferent()
 	{
 		MockFileSystem fileSystem = new();
 		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
@@ -26,11 +26,11 @@ public sealed class PathStatisticsTests
 		IStatistics result1 = sut[@"C:\"];
 		IStatistics result2 = sut[@"D:\"];
 
-		result1.Should().NotBe(result2);
+		await That(result1).IsNotEqualTo(result2);
 	}
 
 	[Fact]
-	public void Key_DifferentUncRootPaths_ShouldBeConsideredDifferent()
+	public async Task Key_DifferentUncRootPaths_ShouldBeConsideredDifferent()
 	{
 		MockFileSystem fileSystem = new();
 		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
@@ -38,11 +38,11 @@ public sealed class PathStatisticsTests
 		IStatistics result1 = sut[@"\\foo1"];
 		IStatistics result2 = sut[@"\\foo2"];
 
-		result1.Should().NotBe(result2);
+		await That(result1).IsNotEqualTo(result2);
 	}
 
 	[Fact]
-	public void Key_NullShouldBeSameAsEmptyKey()
+	public async Task Key_NullShouldBeSameAsEmptyKey()
 	{
 		MockFileSystem fileSystem = new();
 		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
@@ -50,11 +50,11 @@ public sealed class PathStatisticsTests
 		IStatistics nullKey = sut[null!];
 		IStatistics emptyKey = sut[""];
 
-		nullKey.Should().Be(emptyKey);
+		await That(nullKey).IsEqualTo(emptyKey);
 	}
 
 	[Fact]
-	public void Key_ShouldSimplifyRelativePaths()
+	public async Task Key_ShouldSimplifyRelativePaths()
 	{
 		MockFileSystem fileSystem = new(o => o.UseCurrentDirectory());
 		fileSystem.InitializeIn("/foo/bar");
@@ -63,13 +63,13 @@ public sealed class PathStatisticsTests
 		IStatistics absolutPath = sut["/foo"];
 		IStatistics relativePath = sut[".."];
 
-		absolutPath.Should().Be(relativePath);
+		await That(absolutPath).IsEqualTo(relativePath);
 	}
 
 	[Theory]
 	[InlineData("/")]
 	[InlineData("\\")]
-	public void Key_WithDrives_ShouldIgnoreTrailingSeparator(string separator)
+	public async Task Key_WithDrives_ShouldIgnoreTrailingSeparator(string separator)
 	{
 		const string key = @"C:";
 		MockFileSystem fileSystem = new();
@@ -78,13 +78,13 @@ public sealed class PathStatisticsTests
 		IStatistics result1 = sut[key];
 		IStatistics result2 = sut[key + separator];
 
-		result1.Should().Be(result2);
+		await That(result1).IsEqualTo(result2);
 	}
 
 	[Theory]
 	[InlineData("/")]
 	[InlineData("\\")]
-	public void Key_WithFolderInDrives_ShouldIgnoreTrailingSeparator(string separator)
+	public async Task Key_WithFolderInDrives_ShouldIgnoreTrailingSeparator(string separator)
 	{
 		const string key = @"C:\foo";
 		MockFileSystem fileSystem = new();
@@ -93,13 +93,13 @@ public sealed class PathStatisticsTests
 		IStatistics result1 = sut[key];
 		IStatistics result2 = sut[key + separator];
 
-		result1.Should().Be(result2);
+		await That(result1).IsEqualTo(result2);
 	}
 
 	[Theory]
 	[InlineData("/")]
 	[InlineData("\\")]
-	public void Key_WithFolderInUncRootPaths_ShouldIgnoreTrailingSeparator(string separator)
+	public async Task Key_WithFolderInUncRootPaths_ShouldIgnoreTrailingSeparator(string separator)
 	{
 		const string key = @"\\server1\foo";
 		MockFileSystem fileSystem = new();
@@ -108,17 +108,17 @@ public sealed class PathStatisticsTests
 		IStatistics result1 = sut[key];
 		IStatistics result2 = sut[key + separator];
 
-		result1.Should().Be(result2);
+		await That(result1).IsEqualTo(result2);
 	}
 
 	[Fact]
-	public void Key_WithNull_ShouldNotThrow()
+	public async Task Key_WithNull_ShouldNotThrow()
 	{
 		MockFileSystem fileSystem = new();
 		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
 
 		Exception? exception = Record.Exception(() => _ = sut[null!]);
 
-		exception.Should().BeNull();
+		await That(exception).IsNull();
 	}
 }

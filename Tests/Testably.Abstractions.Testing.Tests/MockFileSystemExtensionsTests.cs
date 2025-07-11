@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Tests;
 public class MockFileSystemExtensionsTests
 {
 	[Fact]
-	public void GetDefaultDrive_WithoutDrives_ShouldThrowInvalidOperationException()
+	public async Task GetDefaultDrive_WithoutDrives_ShouldThrowInvalidOperationException()
 	{
 		MockFileSystem fileSystem = new();
 		(fileSystem.Storage as InMemoryStorage)?.RemoveDrive(string.Empty.PrefixRoot(fileSystem));
@@ -16,6 +16,6 @@ public class MockFileSystemExtensionsTests
 			fileSystem.GetDefaultDrive();
 		});
 
-		exception.Should().BeOfType<InvalidOperationException>();
+		await That(exception).IsExactly<InvalidOperationException>();
 	}
 }

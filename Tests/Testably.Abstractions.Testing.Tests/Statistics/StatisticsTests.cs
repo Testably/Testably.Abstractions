@@ -1,8 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics;
@@ -10,7 +8,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics;
 public sealed partial class StatisticsTests
 {
 	[Fact]
-	public void FileSystem_Initialize_ShouldNotRegisterStatistics()
+	public async Task FileSystem_Initialize_ShouldNotRegisterStatistics()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize()
@@ -20,9 +18,9 @@ public sealed partial class StatisticsTests
 			.WithFile("f0").Which(f => f.HasBytesContent(Encoding.UTF8.GetBytes("bar")))
 			.WithAFile().Which(f => f.HasStringContent("foo"));
 
-		sut.Statistics.TotalCount.Should().Be(0);
-		sut.Statistics.Directory.Methods.Should().BeEmpty();
-		sut.Statistics.File.Methods.Should().BeEmpty();
+		await That(sut.Statistics.TotalCount).IsEqualTo(0);
+		await That(sut.Statistics.Directory.Methods).IsEmpty();
+		await That(sut.Statistics.File.Methods).IsEmpty();
 	}
 
 	[Theory]
@@ -56,17 +54,17 @@ public sealed partial class StatisticsTests
 		typeof(IFileVersionInfo), typeof(FileVersionInfoStatisticsTests))]
 	[InlineData(nameof(MockFileSystem.Path), false,
 		typeof(IPath), typeof(FileSystem.PathStatisticsTests))]
-	public void ShouldHaveTestedAllFileSystemMethods(string className, bool requireInstance,
+	public async Task ShouldHaveTestedAllFileSystemMethods(string className, bool requireInstance,
 		Type mockType, Type testType)
 	{
 		string result =
 			Helper.CheckPropertiesAndMethods(className, requireInstance, mockType, testType);
 
-		result.Should().BeEmpty();
+		await That(result).IsEmpty();
 	}
 
 	[Fact]
-	public void Statistics_ShouldIncrementCallOrder()
+	public async Task Statistics_ShouldIncrementCallOrder()
 	{
 		MockFileSystem sut = new();
 		string[] directories = Enumerable.Range(1, 20)
@@ -80,13 +78,13 @@ public sealed partial class StatisticsTests
 
 		for (int i = 0; i < directories.Length; i++)
 		{
-			sut.Statistics.Directory.Methods[i]
-				.Parameters[0].Is(directories[i]).Should().BeTrue();
+			await That(sut.Statistics.Directory.Methods[i]
+				.Parameters[0].Is(directories[i])).IsTrue();
 		}
 	}
 
 	[Fact]
-	public void Statistics_ShouldKeepCallOrder()
+	public async Task Statistics_ShouldKeepCallOrder()
 	{
 		MockFileSystem sut = new();
 		string[] directories = Enumerable.Range(1, 20)
@@ -100,11 +98,11 @@ public sealed partial class StatisticsTests
 
 		for (int i = 0; i < directories.Length; i++)
 		{
-			sut.Statistics.Directory.Methods
+			await That(sut.Statistics.Directory.Methods
 				.OrderBy(x => x.Counter)
 				.Skip(i)
 				.First()
-				.Parameters[0].Is(directories[i]).Should().BeTrue();
+				.Parameters[0].Is(directories[i])).IsTrue();
 		}
 	}
 
@@ -131,19 +129,19 @@ public sealed partial class StatisticsTests
 
 		foreach (string directory in directories)
 		{
-			sut.Statistics.Directory.Methods
-				.Should().ContainSingle(x =>
-					x.Name == nameof(Directory.CreateDirectory) &&
-					x.Parameters.Length == 1 &&
-					x.Parameters[0].Is(directory));
+			await That(sut.Statistics.Directory.Methods).HasSingle().Matching(x
+				=> string.Equals(x.Name, nameof(Directory.CreateDirectory),
+					   StringComparison.Ordinal) &&
+				   x.Parameters.Length == 1 &&
+				   x.Parameters[0].Is(directory));
 		}
 
-		sut.Statistics.Directory.Methods.Select(x => x.Counter).Should()
-			.BeEquivalentTo(Enumerable.Range(1, directories.Length));
+		await That(sut.Statistics.Directory.Methods.Select(x => x.Counter))
+			.IsEqualTo(Enumerable.Range(1, directories.Length)).InAnyOrder();
 	}
 
 	[Fact]
-	public void Statistics_ShouldUseGlobalIncrement()
+	public async Task Statistics_ShouldUseGlobalIncrement()
 	{
 		MockFileSystem sut = new();
 		sut.Directory.CreateDirectory("foo");
@@ -152,22 +150,19 @@ public sealed partial class StatisticsTests
 		using FileSystemStream stream = fileInfo.Open(FileMode.Open, FileAccess.Read);
 		_ = new StreamReader(stream).ReadToEnd();
 
-		sut.Statistics.Directory.Methods[0]
-			.Should().Match<MethodStatistic>(m =>
-				m.Name == nameof(IDirectory.CreateDirectory) &&
-				m.Counter == 1);
-		sut.Statistics.File.Methods[0]
-			.Should().Match<MethodStatistic>(m =>
-				m.Name == nameof(IFile.WriteAllText) &&
-				m.Counter == 2);
-		sut.Statistics.FileInfo.Methods[0]
-			.Should().Match<MethodStatistic>(m =>
-				m.Name == nameof(IFileInfoFactory.New) &&
-				m.Counter == 3);
-		sut.Statistics.FileInfo["bar.txt"].Methods[0]
-			.Should().Match<MethodStatistic>(m =>
-				m.Name == nameof(IFileInfo.Open) &&
-				// Note: Index 4 could be used internally for creating the full path of the file info.
-				m.Counter >= 4);
+		await That(sut.Statistics.Directory.Methods[0]).Satisfies(m
+			=> string.Equals(m.Name, nameof(IDirectory.CreateDirectory),
+				   StringComparison.Ordinal) &&
+			   m.Counter == 1);
+		await That(sut.Statistics.File.Methods[0]).Satisfies(m
+			=> string.Equals(m.Name, nameof(IFile.WriteAllText), StringComparison.Ordinal) &&
+			   m.Counter == 2);
+		await That(sut.Statistics.FileInfo.Methods[0]).Satisfies(m
+			=> string.Equals(m.Name, nameof(IFileInfoFactory.New), StringComparison.Ordinal) &&
+			   m.Counter == 3);
+		await That(sut.Statistics.FileInfo["bar.txt"].Methods[0]).Satisfies(m
+			=> string.Equals(m.Name, nameof(IFileInfo.Open), StringComparison.Ordinal) &&
+			   // Note: Index 4 could be used internally for creating the full path of the file info.
+			   m.Counter >= 4);
 	}
 }

@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Testing.Tests;
 public partial class RandomProviderTests
 {
 	[Fact]
-	public void Default_ShouldReturnRandomGuid()
+	public async Task Default_ShouldReturnRandomGuid()
 	{
 		List<Guid> results = [];
 		IRandomProvider
@@ -19,11 +19,11 @@ public partial class RandomProviderTests
 			results.Add(randomProvider.GetGuid());
 		}
 
-		results.Should().OnlyHaveUniqueItems();
+		await That(results).AreAllUnique();
 	}
 
 	[Fact]
-	public void Default_ShouldReturnRandomNumbers()
+	public async Task Default_ShouldReturnRandomNumbers()
 	{
 		List<int> results = [];
 		IRandomProvider
@@ -34,12 +34,12 @@ public partial class RandomProviderTests
 			results.Add(randomProvider.GetRandom(i).Next());
 		}
 
-		results.Should().OnlyHaveUniqueItems();
+		await That(results).AreAllUnique();
 	}
 
 	[Theory]
 	[AutoData]
-	public void GenerateGuid_ShouldReturnSpecifiedGuid(Guid guid)
+	public async Task GenerateGuid_ShouldReturnSpecifiedGuid(Guid guid)
 	{
 		List<Guid> results = [];
 		IRandomProvider randomProvider =
@@ -50,12 +50,12 @@ public partial class RandomProviderTests
 			results.Add(randomProvider.GetGuid());
 		}
 
-		results.Should().AllBeEquivalentTo(guid);
+		await That(results).All().AreEqualTo(guid);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GenerateGuid_ShouldReturnSpecifiedGuids(Guid[] guids)
+	public async Task GenerateGuid_ShouldReturnSpecifiedGuids(Guid[] guids)
 	{
 		List<Guid> results = [];
 		IRandomProvider randomProvider =
@@ -66,12 +66,12 @@ public partial class RandomProviderTests
 			results.Add(randomProvider.GetGuid());
 		}
 
-		results.Should().ContainInOrder(guids);
+		await That(results).Contains(guids).IgnoringInterspersedItems();
 	}
 
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_Next_ShouldReturnSpecifiedValue(int seed, int value)
+	public async Task GenerateRandom_Next_ShouldReturnSpecifiedValue(int seed, int value)
 	{
 		List<int> results = [];
 		IRandomProvider randomProvider =
@@ -83,12 +83,12 @@ public partial class RandomProviderTests
 			results.Add(random.Next());
 		}
 
-		results.Should().AllBeEquivalentTo(value);
+		await That(results).All().AreEqualTo(value);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_Next_ShouldReturnSpecifiedValues(int seed, int[] values)
+	public async Task GenerateRandom_Next_ShouldReturnSpecifiedValues(int seed, int[] values)
 	{
 		List<int> results = [];
 		IRandomProvider randomProvider =
@@ -100,12 +100,12 @@ public partial class RandomProviderTests
 			results.Add(random.Next());
 		}
 
-		results.Should().ContainInOrder(values);
+		await That(results).Contains(values).IgnoringInterspersedItems();
 	}
 
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_Next_WithMaxValue_ShouldReturnSpecifiedValue(
+	public async Task GenerateRandom_Next_WithMaxValue_ShouldReturnSpecifiedValue(
 		int seed, int value)
 	{
 		int maxValue = value - 1;
@@ -120,12 +120,12 @@ public partial class RandomProviderTests
 			results.Add(random.Next(maxValue));
 		}
 
-		results.Should().AllBeEquivalentTo(expectedValue);
+		await That(results).All().AreEqualTo(expectedValue);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_Next_WithMinAndMaxValue_Larger_ShouldReturnSpecifiedValue(
+	public async Task GenerateRandom_Next_WithMinAndMaxValue_Larger_ShouldReturnSpecifiedValue(
 		int seed, int value)
 	{
 		int minValue = value - 10;
@@ -141,12 +141,12 @@ public partial class RandomProviderTests
 			results.Add(random.Next(minValue, maxValue));
 		}
 
-		results.Should().AllBeEquivalentTo(expectedValue);
+		await That(results).All().AreEqualTo(expectedValue);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_Next_WithMinAndMaxValue_Smaller_ShouldReturnSpecifiedValue(
+	public async Task GenerateRandom_Next_WithMinAndMaxValue_Smaller_ShouldReturnSpecifiedValue(
 		int seed, int value)
 	{
 		int minValue = value + 1;
@@ -161,12 +161,12 @@ public partial class RandomProviderTests
 			results.Add(random.Next(minValue, maxValue));
 		}
 
-		results.Should().AllBeEquivalentTo(minValue);
+		await That(results).All().AreEqualTo(minValue);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_Next_WithoutGenerator_ShouldReturnRandomValues(int seed)
+	public async Task GenerateRandom_Next_WithoutGenerator_ShouldReturnRandomValues(int seed)
 	{
 		List<int> results = [];
 		IRandomProvider randomProvider =
@@ -178,12 +178,12 @@ public partial class RandomProviderTests
 			results.Add(random.Next());
 		}
 
-		results.Should().OnlyHaveUniqueItems();
+		await That(results).AreAllUnique();
 	}
 
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_NextBytes_ShouldReturnSpecifiedValue(
+	public async Task GenerateRandom_NextBytes_ShouldReturnSpecifiedValue(
 		int seed, byte[] value)
 	{
 		List<byte[]> results = [];
@@ -198,13 +198,13 @@ public partial class RandomProviderTests
 			results.Add(buffer);
 		}
 
-		results.Should().AllBeEquivalentTo(value);
+		await That(results).All().ComplyWith(v => v.IsEqualTo(value));
 	}
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_NextBytes_Span_ShouldReturnSpecifiedValue(
+	public async Task GenerateRandom_NextBytes_Span_ShouldReturnSpecifiedValue(
 		int seed, byte[] value)
 	{
 		List<byte[]> results = [];
@@ -219,14 +219,14 @@ public partial class RandomProviderTests
 			results.Add(buffer);
 		}
 
-		results.Should().AllBeEquivalentTo(value);
+		await That(results).All().ComplyWith(v => v.IsEqualTo(value));
 	}
 #endif
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_NextBytes_Span_WithoutGenerator_ShouldReturnRandomValues(
+	public async Task GenerateRandom_NextBytes_Span_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
 		List<byte[]> results = [];
@@ -241,15 +241,14 @@ public partial class RandomProviderTests
 			results.Add(buffer);
 		}
 
-		results.Should().OnlyHaveUniqueItems();
+		await That(results).AreAllUnique();
 	}
 #endif
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void
-		GenerateRandom_NextBytes_Span_WithSmallerBuffer_ShouldReturnPartlyInitializedBytes(
+	public async Task GenerateRandom_NextBytes_Span_WithSmallerBuffer_ShouldReturnPartlyInitializedBytes(
 			int seed, byte[] value)
 	{
 		List<byte[]> results = [];
@@ -263,17 +262,18 @@ public partial class RandomProviderTests
 			random.NextBytes(buffer.AsSpan());
 			results.Add(buffer);
 		}
-
-		results.Should().AllBeEquivalentTo(value.Concat(new[]
+		var expected = value.Concat(new[]
 		{
 			(byte)0,
-		}));
+		}).ToArray();
+
+		await That(results).All().ComplyWith(v => v.IsEqualTo(expected));
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_NextBytes_WithoutGenerator_ShouldReturnRandomValues(
+	public async Task GenerateRandom_NextBytes_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
 		List<byte[]> results = [];
@@ -288,14 +288,13 @@ public partial class RandomProviderTests
 			results.Add(buffer);
 		}
 
-		results.Should().OnlyHaveUniqueItems();
+		await That(results).AreAllUnique();
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		GenerateRandom_NextBytes_WithSmallerBuffer_ShouldReturnPartlyInitializedBytes(
-			int seed, byte[] value)
+	public async Task GenerateRandom_NextBytes_WithSmallerBuffer_ShouldReturnPartlyInitializedBytes(
+		int seed, byte[] value)
 	{
 		List<byte[]> results = [];
 		IRandomProvider randomProvider =
@@ -309,15 +308,17 @@ public partial class RandomProviderTests
 			results.Add(buffer);
 		}
 
-		results.Should().AllBeEquivalentTo(value.Concat(new[]
+		byte[] expected = value.Concat(new[]
 		{
 			(byte)0,
-		}));
+		}).ToArray();
+
+		await That(results).All().ComplyWith(v => v.IsEqualTo(expected));
 	}
 
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_NextDouble_ShouldReturnSpecifiedValue(
+	public async Task GenerateRandom_NextDouble_ShouldReturnSpecifiedValue(
 		int seed, double value)
 	{
 		List<double> results = [];
@@ -330,12 +331,12 @@ public partial class RandomProviderTests
 			results.Add(random.NextDouble());
 		}
 
-		results.Should().AllBeEquivalentTo(value);
+		await That(results).All().AreEqualTo(value);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_NextDouble_WithoutGenerator_ShouldReturnRandomValues(
+	public async Task GenerateRandom_NextDouble_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
 		List<double> results = [];
@@ -348,13 +349,13 @@ public partial class RandomProviderTests
 			results.Add(random.NextDouble());
 		}
 
-		results.Should().OnlyHaveUniqueItems();
+		await That(results).AreAllUnique();
 	}
 
 #if FEATURE_RANDOM_ADVANCED
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_NextInt64_ShouldReturnSpecifiedValue(int seed, long value)
+	public async Task GenerateRandom_NextInt64_ShouldReturnSpecifiedValue(int seed, long value)
 	{
 		List<long> results = [];
 		IRandomProvider randomProvider =
@@ -366,14 +367,14 @@ public partial class RandomProviderTests
 			results.Add(random.NextInt64());
 		}
 
-		results.Should().AllBeEquivalentTo(value);
+		await That(results).All().AreEqualTo(value);
 	}
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_NextInt64_WithMaxValue_ShouldReturnSpecifiedValue(
+	public async Task GenerateRandom_NextInt64_WithMaxValue_ShouldReturnSpecifiedValue(
 		int seed, long value)
 	{
 		long maxValue = value - 1;
@@ -388,15 +389,14 @@ public partial class RandomProviderTests
 			results.Add(random.NextInt64(maxValue));
 		}
 
-		results.Should().AllBeEquivalentTo(expectedValue);
+		await That(results).All().AreEqualTo(expectedValue);
 	}
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
 	[Theory]
 	[AutoData]
-	public void
-		GenerateRandom_NextInt64_WithMinAndMaxValue_Larger_ShouldReturnSpecifiedValue(
+	public async Task GenerateRandom_NextInt64_WithMinAndMaxValue_Larger_ShouldReturnSpecifiedValue(
 			int seed, long value)
 	{
 		long minValue = value - 10;
@@ -412,15 +412,14 @@ public partial class RandomProviderTests
 			results.Add(random.NextInt64(minValue, maxValue));
 		}
 
-		results.Should().AllBeEquivalentTo(expectedValue);
+		await That(results).All().AreEqualTo(expectedValue);
 	}
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
 	[Theory]
 	[AutoData]
-	public void
-		GenerateRandom_NextInt64_WithMinAndMaxValue_Smaller_ShouldReturnSpecifiedValue(
+	public async Task GenerateRandom_NextInt64_WithMinAndMaxValue_Smaller_ShouldReturnSpecifiedValue(
 			int seed, long value)
 	{
 		long minValue = value + 1;
@@ -436,14 +435,14 @@ public partial class RandomProviderTests
 			results.Add(random.NextInt64(minValue, maxValue));
 		}
 
-		results.Should().AllBeEquivalentTo(expectedValue);
+		await That(results).All().AreEqualTo(expectedValue);
 	}
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_NextInt64_WithoutGenerator_ShouldReturnRandomValues(
+	public async Task GenerateRandom_NextInt64_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
 		List<long> results = [];
@@ -456,14 +455,14 @@ public partial class RandomProviderTests
 			results.Add(random.NextInt64());
 		}
 
-		results.Should().OnlyHaveUniqueItems();
+		await That(results).AreAllUnique();
 	}
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_NextSingle_ShouldReturnSpecifiedValue(
+	public async Task GenerateRandom_NextSingle_ShouldReturnSpecifiedValue(
 		int seed, float value)
 	{
 		List<float> results = [];
@@ -476,14 +475,14 @@ public partial class RandomProviderTests
 			results.Add(random.NextSingle());
 		}
 
-		results.Should().AllBeEquivalentTo(value);
+		await That(results).All().AreEqualTo(value);
 	}
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
 	[Theory]
 	[AutoData]
-	public void GenerateRandom_NextSingle_WithoutGenerator_ShouldReturnRandomValues(
+	public async Task GenerateRandom_NextSingle_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
 		List<float> results = [];
@@ -496,12 +495,12 @@ public partial class RandomProviderTests
 			results.Add(random.NextSingle());
 		}
 
-		results.Should().OnlyHaveUniqueItems();
+		await That(results).AreAllUnique();
 	}
 #endif
 
 	[Fact]
-	public void GetRandom_DefaultValue_ShouldReturnSharedRandom()
+	public async Task GetRandom_DefaultValue_ShouldReturnSharedRandom()
 	{
 		RandomProviderMock randomProvider = new();
 		IRandom random1 = randomProvider.GetRandom();
@@ -514,12 +513,12 @@ public partial class RandomProviderTests
 			.Select(_ => random2.Next())
 			.ToArray();
 
-		result1.Should().NotBeEquivalentTo(result2);
+		await That(result1).IsNotEqualTo(result2).InAnyOrder();
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetRandom_FixedSeed_ShouldReturnSeparateRandomInstances(int seed)
+	public async Task GetRandom_FixedSeed_ShouldReturnSeparateRandomInstances(int seed)
 	{
 		RandomProviderMock randomProvider = new();
 		IRandom random1 = randomProvider.GetRandom(seed);
@@ -532,13 +531,13 @@ public partial class RandomProviderTests
 			.Select(_ => random2.Next())
 			.ToArray();
 
-		result1.Should().BeEquivalentTo(result2);
+		await That(result1).IsEqualTo(result2).InAnyOrder();
 	}
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void NextBytes_Span_WithoutByteGenerator_ShouldUseRealRandomValuesFromSeed(
+	public async Task NextBytes_Span_WithoutByteGenerator_ShouldUseRealRandomValuesFromSeed(
 		int seed)
 	{
 		Span<byte> result = new byte[100];
@@ -549,13 +548,13 @@ public partial class RandomProviderTests
 
 		sut.GetRandom().NextBytes(result);
 
-		result.ToArray().Should().BeEquivalentTo(expectedBytes);
+		await That(result.ToArray()).IsEqualTo(expectedBytes);
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void NextBytes_WithoutByteGenerator_ShouldUseRealRandomValuesFromSeed(
+	public async Task NextBytes_WithoutByteGenerator_ShouldUseRealRandomValuesFromSeed(
 		int seed)
 	{
 		byte[] result = new byte[100];
@@ -566,6 +565,6 @@ public partial class RandomProviderTests
 
 		sut.GetRandom().NextBytes(result);
 
-		result.Should().BeEquivalentTo(expectedBytes);
+		await That(result).IsEqualTo(expectedBytes).InAnyOrder();
 	}
 }

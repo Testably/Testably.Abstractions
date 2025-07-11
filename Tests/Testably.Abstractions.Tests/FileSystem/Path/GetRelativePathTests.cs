@@ -1,5 +1,6 @@
 #if FEATURE_PATH_RELATIVE
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
@@ -8,7 +9,7 @@ public partial class GetRelativePathTests
 {
 	[Theory]
 	[AutoData]
-	public void GetRelativePath_CommonParentDirectory_ShouldReturnRelativePath(
+	public async Task GetRelativePath_CommonParentDirectory_ShouldReturnRelativePath(
 		string baseDirectory, string directory1, string directory2)
 	{
 		string path1 = FileSystem.Path.Combine(baseDirectory, directory1);
@@ -16,12 +17,12 @@ public partial class GetRelativePathTests
 		string expectedRelativePath = FileSystem.Path.Combine("..", directory2);
 		string result = FileSystem.Path.GetRelativePath(path1, path2);
 
-		result.Should().Be(expectedRelativePath);
+		await That(result).IsEqualTo(expectedRelativePath);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetRelativePath_DifferentDrives_ShouldReturnAbsolutePath(
+	public async Task GetRelativePath_DifferentDrives_ShouldReturnAbsolutePath(
 		string path1, string path2)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Different drives are only supported on Windows");
@@ -30,7 +31,7 @@ public partial class GetRelativePathTests
 		path2 = FileTestHelper.RootDrive(Test, path2, 'B');
 		string result = FileSystem.Path.GetRelativePath(path1, path2);
 
-		result.Should().Be(path2);
+		await That(result).IsEqualTo(path2);
 	}
 
 	[Theory]
@@ -54,7 +55,7 @@ public partial class GetRelativePathTests
 	[InlineData("/Foo", "/Foo/Bar/", "Bar/", TestOS.Linux | TestOS.Mac)]
 	[InlineData("/Foo/Bar", "/Bar/Bar", "../../Bar/Bar", TestOS.Linux | TestOS.Mac)]
 	[InlineData("/Foo/Foo", "/Foo/Bar", "../Bar", TestOS.Linux | TestOS.Mac)]
-	public void GetRelativePath_EdgeCases_ShouldReturnExpectedValue(string relativeTo, string path,
+	public async Task GetRelativePath_EdgeCases_ShouldReturnExpectedValue(string relativeTo, string path,
 		string expected, TestOS operatingSystem)
 	{
 		Skip.IfNot(Test.RunsOn(operatingSystem));
@@ -65,11 +66,11 @@ public partial class GetRelativePathTests
 
 		string result = FileSystem.Path.GetRelativePath(relativeTo, path);
 
-		result.Should().Be(expected);
+		await That(result).IsEqualTo(expected);
 	}
 
 	[Fact]
-	public void GetRelativePath_FromAbsolutePathInCurrentDirectory_ShouldReturnRelativePath()
+	public async Task GetRelativePath_FromAbsolutePathInCurrentDirectory_ShouldReturnRelativePath()
 	{
 		string rootedPath = FileSystem.Path.Combine(BasePath, "input");
 		FileSystem.Directory.CreateDirectory(rootedPath);
@@ -77,12 +78,12 @@ public partial class GetRelativePathTests
 
 		string result = FileSystem.Path.GetRelativePath(rootedPath, "a.txt");
 
-		Assert.Equal("a.txt", result);
+		await That(result).IsEqualTo("a.txt");
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetRelativePath_RootedPath_ShouldReturnAbsolutePath(
+	public async Task GetRelativePath_RootedPath_ShouldReturnAbsolutePath(
 		string baseDirectory, string directory1, string directory2)
 	{
 		baseDirectory = FileTestHelper.RootDrive(Test, baseDirectory);
@@ -91,11 +92,11 @@ public partial class GetRelativePathTests
 		string expectedRelativePath = FileSystem.Path.Combine("..", directory2);
 		string result = FileSystem.Path.GetRelativePath(path1, path2);
 
-		result.Should().Be(expectedRelativePath);
+		await That(result).IsEqualTo(expectedRelativePath);
 	}
 
 	[Fact]
-	public void GetRelativePath_RootedPath_ShouldWorkOnAnyDrive()
+	public async Task GetRelativePath_RootedPath_ShouldWorkOnAnyDrive()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -105,18 +106,18 @@ public partial class GetRelativePathTests
 
 		string result = FileSystem.Path.GetRelativePath("/dir", directory);
 
-		result.Should().Be("subDirectory");
+		await That(result).IsEqualTo("subDirectory");
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetRelativePath_ToItself_ShouldReturnDot(string path)
+	public async Task GetRelativePath_ToItself_ShouldReturnDot(string path)
 	{
 		string expectedResult = ".";
 
 		string result = FileSystem.Path.GetRelativePath(path, path);
 
-		result.Should().Be(expectedResult);
+		await That(result).IsEqualTo(expectedResult);
 	}
 }
 #endif

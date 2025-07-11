@@ -8,7 +8,7 @@ public partial class CreateAsSymbolicLinkTests
 {
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_ShouldCreateSymbolicLink(
+	public async Task CreateAsSymbolicLink_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
@@ -16,27 +16,27 @@ public partial class CreateAsSymbolicLinkTests
 
 		fileInfo.CreateAsSymbolicLink(pathToTarget);
 
-		FileSystem.File.GetAttributes(path)
-			.HasFlag(FileAttributes.ReparsePoint)
-			.Should().BeTrue();
+		await That(FileSystem.File.GetAttributes(path))
+			.HasFlag(FileAttributes.ReparsePoint);
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
+	public async Task CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
 		FileSystem.File.WriteAllText(path, "foo");
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			fileInfo.CreateAsSymbolicLink(pathToTarget);
-		});
+		}
 
-		exception.Should().BeException<IOException>($"'{path}'",
-			hResult: Test.RunsOnWindows ? -2147024713 : 17);
+		await That(Act).Throws<IOException>()
+			.WithMessageContaining($"'{path}'").And
+			.WithHResult(Test.RunsOnWindows ? -2147024713 : 17);
 	}
 }
 #endif

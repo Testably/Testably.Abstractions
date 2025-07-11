@@ -8,7 +8,7 @@ public partial class EncryptDecryptTests
 	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
-	public void Decrypt_EncryptedData_ShouldReturnOriginalText(
+	public async Task Decrypt_EncryptedData_ShouldReturnOriginalText(
 		string path, string contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows && FileSystem is MockFileSystem,
@@ -20,13 +20,13 @@ public partial class EncryptDecryptTests
 		FileSystem.File.Decrypt(path);
 
 		string result = FileSystem.File.ReadAllText(path);
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
-	public void Decrypt_UnencryptedData_ShouldReturnOriginalText(
+	public async Task Decrypt_UnencryptedData_ShouldReturnOriginalText(
 		string path, string contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -36,13 +36,13 @@ public partial class EncryptDecryptTests
 		FileSystem.File.Decrypt(path);
 
 		string result = FileSystem.File.ReadAllText(path);
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
-	public void Encrypt_Decrypt_ShouldChangeEncryptedFileAttribute(
+	public async Task Encrypt_Decrypt_ShouldChangeEncryptedFileAttribute(
 		string path, string contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows && FileSystem is MockFileSystem,
@@ -51,17 +51,17 @@ public partial class EncryptDecryptTests
 		FileSystem.File.WriteAllText(path, contents);
 
 		FileSystem.File.Encrypt(path);
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.GetAttributes(path)).HasFlag(FileAttributes.Encrypted);
 		FileSystem.File.Decrypt(path);
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.GetAttributes(path).Should().NotHaveFlag(FileAttributes.Encrypted);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.GetAttributes(path)).DoesNotHaveFlag(FileAttributes.Encrypted);
 	}
 
 	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
-	public void Encrypt_ShouldChangeData(
+	public async Task Encrypt_ShouldChangeData(
 		string path, byte[] bytes)
 	{
 		Skip.IfNot(Test.RunsOnWindows && FileSystem is MockFileSystem,
@@ -72,13 +72,13 @@ public partial class EncryptDecryptTests
 		FileSystem.File.Encrypt(path);
 
 		byte[] result = FileSystem.File.ReadAllBytes(path);
-		result.Should().NotBeEquivalentTo(bytes);
+		await That(result).IsNotEqualTo(bytes).InAnyOrder();
 	}
 
 	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
-	public void Encrypt_Twice_ShouldIgnoreTheSecondTime(
+	public async Task Encrypt_Twice_ShouldIgnoreTheSecondTime(
 		string path, string contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows && FileSystem is MockFileSystem,
@@ -91,6 +91,6 @@ public partial class EncryptDecryptTests
 
 		FileSystem.File.Decrypt(path);
 		string result = FileSystem.File.ReadAllText(path);
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 }

@@ -9,23 +9,24 @@ public partial class GetDirectoriesTests
 {
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		GetDirectories_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, path);
-		Exception? exception =
-			Record.Exception(()
-				=> FileSystem.Directory.GetDirectories(path).ToList());
 
-		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'",
-			hResult: -2147024893);
-		FileSystem.Directory.Exists(path).Should().BeFalse();
+		void Act()
+			=> FileSystem.Directory.GetDirectories(path);
+
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{expectedPath}'").And
+			.WithHResult(-2147024893);
+		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		GetDirectories_SearchOptionAllDirectories_FullPath_ShouldReturnAllSubdirectoriesWithFullPath(
 			string path)
 	{
@@ -38,18 +39,16 @@ public partial class GetDirectoriesTests
 			.GetDirectories(baseDirectory.FullName, "*", SearchOption.AllDirectories)
 			.ToList();
 
-		result.Count.Should().Be(3);
-		result.Should().Contain(FileSystem.Path.Combine(baseDirectory.FullName, "foo"));
-		result.Should()
-			.Contain(FileSystem.Path.Combine(baseDirectory.FullName, "foo", "xyz"));
-		result.Should().Contain(FileSystem.Path.Combine(baseDirectory.FullName, "bar"));
+		await That(result.Count).IsEqualTo(3);
+		await That(result).Contains(FileSystem.Path.Combine(baseDirectory.FullName, "foo"));
+		await That(result).Contains(FileSystem.Path.Combine(baseDirectory.FullName, "foo", "xyz"));
+		await That(result).Contains(FileSystem.Path.Combine(baseDirectory.FullName, "bar"));
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		GetDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
-			string path)
+	public async Task GetDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
+		string path)
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
@@ -59,10 +58,10 @@ public partial class GetDirectoriesTests
 		List<string> result = FileSystem.Directory
 			.GetDirectories(path, "*", SearchOption.AllDirectories).ToList();
 
-		result.Count.Should().Be(3);
-		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
-		result.Should().Contain(FileSystem.Path.Combine(path, "foo", "xyz"));
-		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
+		await That(result.Count).IsEqualTo(3);
+		await That(result).Contains(FileSystem.Path.Combine(path, "foo"));
+		await That(result).Contains(FileSystem.Path.Combine(path, "foo", "xyz"));
+		await That(result).Contains(FileSystem.Path.Combine(path, "bar"));
 	}
 
 	[Theory]
@@ -79,7 +78,7 @@ public partial class GetDirectoriesTests
 	[InlineData(true, "abc?", "abc")]
 	[InlineData(false, "ab?c", "abc")]
 	[InlineData(false, "ac", "abc")]
-	public void GetDirectories_SearchPattern_ShouldReturnExpectedValue(
+	public async Task GetDirectories_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string subdirectoryName)
 	{
 		IDirectoryInfo baseDirectory =
@@ -91,22 +90,21 @@ public partial class GetDirectoriesTests
 
 		if (expectToBeFound)
 		{
-			result.Should().ContainSingle(
-				FileSystem.Path.Combine("foo", subdirectoryName),
-				$"it should match {searchPattern}");
+			await That(result).HasSingle().Which
+				.IsEqualTo(FileSystem.Path.Combine("foo", subdirectoryName))
+				.Because($"it should match {searchPattern}");
 		}
 		else
 		{
-			result.Should()
-				.BeEmpty($"{subdirectoryName} should not match {searchPattern}");
+			await That(result).IsEmpty()
+				.Because($"{subdirectoryName} should not match {searchPattern}");
 		}
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Theory]
 	[AutoData]
-	public void
-		GetDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
+	public async Task GetDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
 	{
 		IDirectoryInfo baseDirectory =
@@ -124,34 +122,33 @@ public partial class GetDirectoriesTests
 					AttributesToSkip = FileAttributes.System,
 				}).ToList();
 
-		result.Count.Should().Be(1);
-		result.Should().NotContain(FileSystem.Path.Combine(path, "foo"));
-		result.Should().Contain(FileSystem.Path.Combine(path, "foo", "xyz"));
-		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+		await That(result.Count).IsEqualTo(1);
+		await That(result).DoesNotContain(FileSystem.Path.Combine(path, "foo"));
+		await That(result).Contains(FileSystem.Path.Combine(path, "foo", "xyz"));
+		await That(result).DoesNotContain(FileSystem.Path.Combine(path, "bar"));
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void GetDirectories_WithNewline_ShouldThrowArgumentException(
+	public async Task GetDirectories_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
 		string searchPattern = "foo\0bar";
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.Directory.GetDirectories(path, searchPattern)
 				.FirstOrDefault();
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
+		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
 	[Theory]
 	[AutoData]
-	public void
-		GetDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
-			string path)
+	public async Task GetDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
+		string path)
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
@@ -160,26 +157,26 @@ public partial class GetDirectoriesTests
 
 		List<string> result = FileSystem.Directory.GetDirectories(path).ToList();
 
-		result.Count.Should().Be(2);
-		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
-		result.Should().NotContain(FileSystem.Path.Combine(path, "foo", "xyz"));
-		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
+		await That(result.Count).IsEqualTo(2);
+		await That(result).Contains(FileSystem.Path.Combine(path, "foo"));
+		await That(result).DoesNotContain(FileSystem.Path.Combine(path, "foo", "xyz"));
+		await That(result).Contains(FileSystem.Path.Combine(path, "bar"));
 	}
 
 	[Fact]
-	public void GetDirectories_WithRelativePath_ShouldReturnRelativePaths()
+	public async Task GetDirectories_WithRelativePath_ShouldReturnRelativePaths()
 	{
 		string path = $"foo{FileSystem.Path.DirectorySeparatorChar}bar";
 		FileSystem.Directory.CreateDirectory(path);
 
 		string[] result = FileSystem.Directory.GetDirectories("foo");
 
-		result.Should().BeEquivalentTo(path);
+		await That(result).IsEqualTo([path]);
 	}
 
 	[Theory]
 	[AutoData]
-	public void GetDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
+	public async Task GetDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
 		string path)
 	{
 		IDirectoryInfo baseDirectory =
@@ -190,12 +187,12 @@ public partial class GetDirectoriesTests
 		IEnumerable<string> result =
 			FileSystem.Directory.GetDirectories(path, "foo");
 
-		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+		await That(result).Contains(FileSystem.Path.Combine(path, "foo"));
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		GetDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(
 			string path)
 	{
@@ -207,6 +204,6 @@ public partial class GetDirectoriesTests
 		IEnumerable<string> result = FileSystem.Directory
 			.GetDirectories(path, "xyz", SearchOption.AllDirectories);
 
-		result.Count().Should().Be(2);
+		await That(result).HasCount(2);
 	}
 }

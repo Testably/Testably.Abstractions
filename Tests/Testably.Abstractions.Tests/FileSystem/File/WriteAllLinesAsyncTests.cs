@@ -18,10 +18,10 @@ public partial class WriteAllLinesAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.WriteAllLinesAsync(path, contents, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.WriteAllLinesAsync(path, contents, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -33,10 +33,10 @@ public partial class WriteAllLinesAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.WriteAllLinesAsync(path, contents, Encoding.UTF8, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.WriteAllLinesAsync(path, contents, Encoding.UTF8, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -48,10 +48,10 @@ public partial class WriteAllLinesAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), cts.Token));
+		async Task Act() =>
+			await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -63,11 +63,11 @@ public partial class WriteAllLinesAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(),
-				Encoding.UTF8, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(),
+				Encoding.UTF8, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -80,8 +80,9 @@ public partial class WriteAllLinesAsyncTests
 
 		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		string[] result =
+ await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -91,8 +92,9 @@ public partial class WriteAllLinesAsyncTests
 	{
 		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		string[] result =
+ await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -104,8 +106,9 @@ public partial class WriteAllLinesAsyncTests
 
 		await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		string[] result =
+ await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -115,8 +118,9 @@ public partial class WriteAllLinesAsyncTests
 	{
 		await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		string[] result =
+ await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -132,12 +136,9 @@ public partial class WriteAllLinesAsyncTests
 			await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
@@ -156,9 +157,7 @@ public partial class WriteAllLinesAsyncTests
 			await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 }
 #endif

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 using Testably.Abstractions.Testing.TimeSystem;
 
@@ -8,7 +7,7 @@ namespace Testably.Abstractions.Testing.Tests;
 public class TimeProviderTests
 {
 	[Fact]
-	public void Now_ShouldReturnCurrentDateTime()
+	public async Task Now_ShouldReturnCurrentDateTime()
 	{
 		DateTime begin = DateTime.UtcNow;
 		ITimeProvider timeProvider = TimeProvider.Now();
@@ -17,12 +16,12 @@ public class TimeProviderTests
 		DateTime result1 = timeProvider.Read();
 		DateTime result2 = timeProvider.Read();
 
-		result1.Should().BeOnOrAfter(begin).And.BeOnOrBefore(end);
-		result2.Should().BeOnOrAfter(begin).And.BeOnOrBefore(end);
+		await That(result1).IsOnOrAfter(begin).And.IsOnOrBefore(end);
+		await That(result2).IsOnOrAfter(begin).And.IsOnOrBefore(end);
 	}
 
 	[Fact]
-	public void Random_ShouldReturnRandomDateTime()
+	public async Task Random_ShouldReturnRandomDateTime()
 	{
 		ConcurrentBag<DateTime> results = [];
 
@@ -31,12 +30,12 @@ public class TimeProviderTests
 			results.Add(TimeProvider.Random().Read());
 		});
 
-		results.Should().OnlyHaveUniqueItems();
+		await That(results).AreAllUnique();
 	}
 
 	[Theory]
 	[AutoData]
-	public void SetTo_ShouldChangeTimeForRead(DateTime time1, DateTime time2)
+	public async Task SetTo_ShouldChangeTimeForRead(DateTime time1, DateTime time2)
 	{
 		ITimeProvider timeProvider = TimeProvider.Use(time1);
 
@@ -44,12 +43,12 @@ public class TimeProviderTests
 		timeProvider.SetTo(time2);
 		DateTime result2 = timeProvider.Read();
 
-		result1.Should().Be(time1);
-		result2.Should().Be(time2);
+		await That(result1).IsEqualTo(time1);
+		await That(result2).IsEqualTo(time2);
 	}
 
 	[Fact]
-	public void Use_ShouldReturnFixedDateTime()
+	public async Task Use_ShouldReturnFixedDateTime()
 	{
 		DateTime now = TimeTestHelper.GetRandomTime();
 		ITimeProvider timeProvider = TimeProvider.Use(now);
@@ -57,7 +56,7 @@ public class TimeProviderTests
 		DateTime result1 = timeProvider.Read();
 		DateTime result2 = timeProvider.Read();
 
-		result1.Should().Be(now);
-		result2.Should().Be(now);
+		await That(result1).IsEqualTo(now);
+		await That(result2).IsEqualTo(now);
 	}
 }

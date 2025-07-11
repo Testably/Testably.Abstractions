@@ -11,62 +11,62 @@ public partial class SafeFileHandleTests
 {
 	[Theory]
 	[AutoData]
-	public void New_SafeFileHandle_InvalidHandle_ShouldThrowArgumentException(
+	public async Task New_SafeFileHandle_InvalidHandle_ShouldThrowArgumentException(
 		string filename)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
 		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileStream.New(handle, FileAccess.ReadWrite);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: "handle");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName("handle");
 	}
 
 	[Theory]
 	[AutoData]
-	public void New_SafeFileHandle_InvalidHandle_WithBufferSize_ShouldThrowArgumentException(
+	public async Task New_SafeFileHandle_InvalidHandle_WithBufferSize_ShouldThrowArgumentException(
 		string filename)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
 		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileStream.New(handle, FileAccess.ReadWrite, 1024);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: "handle");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName("handle");
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		New_SafeFileHandle_InvalidHandle_WithBufferSizeAndAsync_ShouldThrowArgumentException(
 			string filename)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
 		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.FileStream.New(handle, FileAccess.ReadWrite, 1024, true);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: "handle");
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName("handle");
 	}
 
 	[Theory]
 	[AutoData]
-	public void New_SafeFileHandle_Valid_ShouldCreateWritableStream(
+	public async Task New_SafeFileHandle_Valid_ShouldCreateWritableStream(
 		string filename, string contents)
 	{
 		IDisposable? cleanup = null;
@@ -100,7 +100,7 @@ public partial class SafeFileHandleTests
 
 	[Theory]
 	[AutoData]
-	public void New_SafeFileHandle_Valid_WithBufferSize_ShouldCreateWritableStream(
+	public async Task New_SafeFileHandle_Valid_WithBufferSize_ShouldCreateWritableStream(
 		string filename, string contents)
 	{
 		IDisposable? cleanup = null;
@@ -135,7 +135,7 @@ public partial class SafeFileHandleTests
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		New_SafeFileHandle_Valid_WithBufferSizeAndAsync_ShouldCreateWritableStream(
 			string filename, string contents)
 	{

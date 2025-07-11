@@ -7,76 +7,81 @@ public partial class DeleteTests
 {
 	[Theory]
 	[AutoData]
-	public void
-		Delete_CaseDifferentPath_ShouldThrowDirectoryNotFoundException_OnLinux(
-			string directoryName)
+	public async Task Delete_CaseDifferentPath_ShouldThrowDirectoryNotFoundException_OnLinux(
+		string directoryName)
 	{
 		directoryName = directoryName.ToLowerInvariant();
 		FileSystem.Directory.CreateDirectory(directoryName.ToUpperInvariant());
 		string expectedPath = FileSystem.Path.Combine(BasePath, directoryName);
-		Exception? exception = Record.Exception(() =>
+
+		void Act()
 		{
 			FileSystem.Directory.Delete(directoryName);
-		});
+		}
 
 		if (Test.RunsOnLinux)
 		{
-			exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'",
-				hResult: -2147024893);
+			await That(Act).Throws<DirectoryNotFoundException>()
+				.WithMessageContaining($"'{expectedPath}'").And
+				.WithHResult(-2147024893);
 		}
 		else
 		{
-			exception.Should().BeNull();
-			FileSystem.Directory.Exists(directoryName.ToUpperInvariant()).Should().BeFalse();
+			await That(Act).DoesNotThrow();
+			await That(FileSystem.Directory.Exists(directoryName.ToUpperInvariant())).IsFalse();
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_FullPath_ShouldDeleteDirectory(string directoryName)
+	public async Task Delete_FullPath_ShouldDeleteDirectory(string directoryName)
 	{
 		IDirectoryInfo result =
 			FileSystem.Directory.CreateDirectory(directoryName);
 
 		FileSystem.Directory.Delete(result.FullName);
 
-		FileSystem.Directory.Exists(directoryName).Should().BeFalse();
-		result.Exists.Should().BeFalse();
+		await That(FileSystem.Directory.Exists(directoryName)).IsFalse();
+		await That(result.Exists).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+	public async Task Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directoryName)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, directoryName);
-		Exception? exception = Record.Exception(() =>
+
+		void Act()
 		{
 			FileSystem.Directory.Delete(directoryName);
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'",
-			hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{expectedPath}'").And
+			.WithHResult(-2147024893);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_Recursive_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+	public async Task Delete_Recursive_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directoryName)
 	{
 		string expectedPath = FileSystem.Path.Combine(BasePath, directoryName);
-		Exception? exception = Record.Exception(() =>
+
+		void Act()
 		{
 			FileSystem.Directory.Delete(directoryName, true);
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'",
-			hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{expectedPath}'").And
+			.WithHResult(-2147024893);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_Recursive_WithFileInSubdirectory_ShouldDeleteDirectoryWithContent(
+	public async Task Delete_Recursive_WithFileInSubdirectory_ShouldDeleteDirectoryWithContent(
 		string path, string subdirectory, string fileName, string fileContent)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -88,19 +93,19 @@ public partial class DeleteTests
 		string subdirectoryFilePath = FileSystem.Path.Combine(path, subdirectory, fileName);
 		FileSystem.File.WriteAllText(subdirectoryFilePath, fileContent);
 
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
 
 		FileSystem.Directory.Delete(path, true);
 
-		FileSystem.Directory.Exists(path).Should().BeFalse();
-		FileSystem.File.Exists(filePath).Should().BeFalse();
-		FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
-		FileSystem.File.Exists(subdirectoryFilePath).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(path)).IsFalse();
+		await That(FileSystem.File.Exists(filePath)).IsFalse();
+		await That(FileSystem.Directory.Exists(subdirectoryPath)).IsFalse();
+		await That(FileSystem.File.Exists(subdirectoryFilePath)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_Recursive_WithOpenFile_ShouldThrowIOException_OnWindows(
+	public async Task Delete_Recursive_WithOpenFile_ShouldThrowIOException_OnWindows(
 		string path, string filename)
 	{
 		FileSystem.Initialize()
@@ -109,29 +114,31 @@ public partial class DeleteTests
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filePath);
 		openFile.Write([0], 0, 1);
 		openFile.Flush();
-		Exception? exception = Record.Exception(() =>
+
+		void Act()
 		{
 			FileSystem.Directory.Delete(path, true);
 			openFile.Write([0], 0, 1);
 			openFile.Flush();
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<IOException>($"{filename}'",
-				hResult: -2147024864);
-			FileSystem.File.Exists(filePath).Should().BeTrue();
+			await That(Act).Throws<IOException>()
+				.WithMessageContaining($"{filename}'").And
+				.WithHResult(-2147024864);
+			await That(FileSystem.File.Exists(filePath)).IsTrue();
 		}
 		else
 		{
-			exception.Should().BeNull();
-			FileSystem.File.Exists(filePath).Should().BeFalse();
+			await That(Act).DoesNotThrow();
+			await That(FileSystem.File.Exists(filePath)).IsFalse();
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		Delete_Recursive_WithSimilarNamedFile_ShouldOnlyDeleteDirectoryAndItsContents(
 			string subdirectory)
 	{
@@ -144,28 +151,28 @@ public partial class DeleteTests
 
 		FileSystem.Directory.Delete(subdirectory, true);
 
-		FileSystem.Directory.Exists(subdirectory).Should().BeFalse();
-		FileSystem.File.Exists(fileName).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(subdirectory)).IsFalse();
+		await That(FileSystem.File.Exists(fileName)).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
+	public async Task Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
 		string path, string subdirectory)
 	{
 		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectory);
 		FileSystem.Directory.CreateDirectory(subdirectoryPath);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
 
 		FileSystem.Directory.Delete(path, true);
 
-		FileSystem.Directory.Exists(path).Should().BeFalse();
-		FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
+		await That(FileSystem.Directory.Exists(path)).IsFalse();
+		await That(FileSystem.Directory.Exists(subdirectoryPath)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_ShouldAdjustTimes(string path, string subdirectoryName)
+	public async Task Delete_ShouldAdjustTimes(string path, string subdirectoryName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
@@ -184,32 +191,30 @@ public partial class DeleteTests
 
 		if (Test.RunsOnWindows)
 		{
-			creationTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_ShouldDeleteDirectory(string directoryName)
+	public async Task Delete_ShouldDeleteDirectory(string directoryName)
 	{
 		IDirectoryInfo result =
 			FileSystem.Directory.CreateDirectory(directoryName);
 
 		FileSystem.Directory.Delete(directoryName);
 
-		FileSystem.Directory.Exists(directoryName).Should().BeFalse();
-		result.Exists.Should().BeFalse();
+		await That(FileSystem.Directory.Exists(directoryName)).IsFalse();
+		await That(result.Exists).IsFalse();
 	}
 
 	[Theory]
@@ -246,7 +251,7 @@ public partial class DeleteTests
 
 	[Theory]
 	[AutoData]
-	public void Delete_WithSimilarNamedFile_ShouldOnlyDeleteDirectory(
+	public async Task Delete_WithSimilarNamedFile_ShouldOnlyDeleteDirectory(
 		string subdirectory)
 	{
 		string fileName = $"{subdirectory}.txt";
@@ -256,29 +261,28 @@ public partial class DeleteTests
 
 		FileSystem.Directory.Delete(subdirectory);
 
-		FileSystem.Directory.Exists(subdirectory).Should().BeFalse();
-		FileSystem.File.Exists(fileName).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(subdirectory)).IsFalse();
+		await That(FileSystem.File.Exists(fileName)).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Delete_WithSubdirectory_ShouldThrowIOException_AndNotDeleteDirectory(
+	public async Task Delete_WithSubdirectory_ShouldThrowIOException_AndNotDeleteDirectory(
 		string path, string subdirectory)
 	{
 		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subdirectory));
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.Directory.Delete(path);
-		});
+		}
 
-		exception.Should().BeException<IOException>(
-			hResult: Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39),
-			// Path information only included in exception message on Windows and not in .NET Framework
-			messageContains: !Test.RunsOnWindows || Test.IsNetFramework
+		await That(Act).Throws<IOException>()
+			.WithHResult(Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39)).And
+			.WithMessageContaining(!Test.RunsOnWindows || Test.IsNetFramework
 				? null
 				: $"'{FileSystem.Path.Combine(BasePath, path)}'");
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 }

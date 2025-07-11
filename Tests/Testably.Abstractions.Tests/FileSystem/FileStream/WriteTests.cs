@@ -11,27 +11,26 @@ public partial class WriteTests
 {
 	[Theory]
 	[AutoData]
-	public void BeginWrite_CanWriteFalse_ShouldThrowNotSupportedException(
+	public async Task BeginWrite_CanWriteFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
-		FileSystemStream stream = FileSystem.FileInfo.New(path).OpenRead();
+		using FileSystemStream stream = FileSystem.FileInfo.New(path).OpenRead();
 
 		byte[] buffer = new byte[bytes.Length];
-		Exception? exception = Record.Exception(() =>
+
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			stream.BeginWrite(buffer, 0, buffer.Length, _ => { }, null);
-		});
+		}
 
-		stream.Dispose();
-
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
 	[Theory]
 	[AutoData]
-	public void BeginWrite_ShouldCopyContentsToFile(
+	public async Task BeginWrite_ShouldCopyContentsToFile(
 		string path, byte[] bytes)
 	{
 		using ManualResetEventSlim ms = new();
@@ -54,31 +53,31 @@ public partial class WriteTests
 				}
 			}, null);
 
-			ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+			await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		}
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 	[Theory]
 	[AutoData]
-	public void EndWrite_Null_ShouldThrowArgumentNullException(string path)
+	public async Task EndWrite_Null_ShouldThrowArgumentNullException(string path)
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			stream.EndWrite(null!);
-		});
+		}
 
-		exception.Should().BeException<ArgumentNullException>(hResult: -2147467261);
+		await That(Act).Throws<ArgumentNullException>().WithHResult(-2147467261);
 	}
 
 	[Theory]
 	[AutoData]
-	public void EndWrite_ShouldAdjustTimes(string path, byte[] bytes)
+	public async Task EndWrite_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		using ManualResetEventSlim ms = new();
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
@@ -105,7 +104,7 @@ public partial class WriteTests
 				}
 			}, null);
 
-			ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+			await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		}
 
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
@@ -114,91 +113,87 @@ public partial class WriteTests
 
 		if (Test.RunsOnWindows)
 		{
-			creationTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			lastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
-		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void Write_AsSpan_CanWriteFalse_ShouldThrowNotSupportedException(
+	public async Task Write_AsSpan_CanWriteFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
 		byte[] buffer = new byte[bytes.Length];
 		FileSystem.File.WriteAllBytes(path, bytes);
-		Exception? exception;
 
-		using (FileSystemStream stream = FileSystem.File.OpenRead(path))
+		void Act()
 		{
-			exception = Record.Exception(() =>
+			using (FileSystemStream stream = FileSystem.File.OpenRead(path))
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				stream.Write(buffer.AsSpan());
-			});
+			}
 		}
 
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 #endif
 
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void Write_AsSpan_ShouldFillBuffer(string path, byte[] bytes)
+	public async Task Write_AsSpan_ShouldFillBuffer(string path, byte[] bytes)
 	{
 		using (FileSystemStream stream = FileSystem.File.Create(path))
 		{
 			stream.Write(bytes.AsSpan());
 		}
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void Write_CanWriteFalse_ShouldThrowNotSupportedException(
+	public async Task Write_CanWriteFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
 		byte[] buffer = new byte[bytes.Length];
 		FileSystem.File.WriteAllBytes(path, bytes);
-		Exception? exception;
 
-		using (FileSystemStream stream = FileSystem.File.OpenRead(path))
+		void Act()
 		{
-			exception = Record.Exception(() =>
+			using (FileSystemStream stream = FileSystem.File.OpenRead(path))
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				stream.Write(buffer, 0, bytes.Length);
-			});
+			}
 		}
 
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Write_ShouldFillBuffer(string path, byte[] bytes)
+	public async Task Write_ShouldFillBuffer(string path, byte[] bytes)
 	{
 		using (FileSystemStream stream = FileSystem.File.Create(path))
 		{
 			stream.Write(bytes, 0, bytes.Length);
 		}
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
@@ -210,23 +205,19 @@ public partial class WriteTests
 		using CancellationTokenSource cts = new(ExpectSuccess);
 		byte[] buffer = new byte[bytes.Length];
 		await FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token);
-		Exception? exception;
 
-		await using (FileSystemStream stream = FileSystem.File.OpenRead(path))
+		async Task Act()
 		{
-			async Task Act()
+			await using (FileSystemStream stream = FileSystem.File.OpenRead(path))
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				#pragma warning disable CA1835
 				await stream.WriteAsync(buffer, 0, bytes.Length, cts.Token);
 				#pragma warning restore CA1835
 			}
-			
-			exception = await Record.ExceptionAsync(Act);
 		}
 
-		exception.Should().BeException<NotSupportedException>(
-			hResult: -2146233067);
+		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 #endif
 
@@ -244,35 +235,34 @@ public partial class WriteTests
 			#pragma warning restore CA1835
 		}
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 #endif
 
 	[Theory]
 	[AutoData]
-	public void WriteByte_HiddenFile_ShouldNotThrow(
+	public async Task WriteByte_HiddenFile_ShouldNotThrow(
 		string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
-		Exception? exception;
 
-		using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
+		void Act()
 		{
-			exception = Record.Exception(() =>
+			using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				stream.WriteByte(0);
-			});
+			}
 		}
 
-		exception.Should().BeNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteByte_ShouldWriteSingleByteAndAdvancePosition(
+	public async Task WriteByte_ShouldWriteSingleByteAndAdvancePosition(
 		string path, byte byte1, byte byte2)
 	{
 		using (FileSystemStream stream = FileSystem.File.Create(path))
@@ -280,27 +270,26 @@ public partial class WriteTests
 			stream.WriteByte(byte1);
 			stream.WriteByte(byte2);
 
-			stream.Position.Should().Be(2);
+			await That(stream.Position).IsEqualTo(2);
 		}
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo([byte1, byte2]);
+		await That(FileSystem.File.Exists(path)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([byte1, byte2]);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WriteTimeout_ShouldThrowInvalidOperationException(
+	public async Task WriteTimeout_ShouldThrowInvalidOperationException(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			_ = stream.WriteTimeout;
-		});
+		}
 
-		exception.Should().BeException<InvalidOperationException>(
-			hResult: -2146233079);
+		await That(Act).Throws<InvalidOperationException>().WithHResult(-2146233079);
 	}
 }

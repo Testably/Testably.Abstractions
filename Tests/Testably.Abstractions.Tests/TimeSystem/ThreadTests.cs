@@ -4,15 +4,15 @@ namespace Testably.Abstractions.Tests.TimeSystem;
 public partial class ThreadTests
 {
 	[Fact]
-	public void Sleep_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
+	public async Task Sleep_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
-		Exception? exception = Record.Exception(() => TimeSystem.Thread.Sleep(-2));
+		void Act() => TimeSystem.Thread.Sleep(-2);
 
-		exception.Should().BeException<ArgumentOutOfRangeException>(hResult: -2146233086);
+		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086);
 	}
 
 	[Fact]
-	public void Sleep_Milliseconds_ShouldSleepForSpecifiedMilliseconds()
+	public async Task Sleep_Milliseconds_ShouldSleepForSpecifiedMilliseconds()
 	{
 		int millisecondsTimeout = 100;
 
@@ -20,22 +20,21 @@ public partial class ThreadTests
 		TimeSystem.Thread.Sleep(millisecondsTimeout);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
-		after.Should().BeOnOrAfter(
-			before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
+		await That(after)
+			.IsOnOrAfter(before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
 	}
 
 	[Fact]
-	public void
-		Sleep_Timespan_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
+	public async Task Sleep_Timespan_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
-		Exception? exception = Record.Exception(() =>
-			TimeSystem.Thread.Sleep(TimeSpan.FromMilliseconds(-2)));
+		void Act() =>
+			TimeSystem.Thread.Sleep(TimeSpan.FromMilliseconds(-2));
 
-		exception.Should().BeException<ArgumentOutOfRangeException>(hResult: -2146233086);
+		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086);
 	}
 
 	[Fact]
-	public void Sleep_Timespan_ShouldSleepForSpecifiedMilliseconds()
+	public async Task Sleep_Timespan_ShouldSleepForSpecifiedMilliseconds()
 	{
 		TimeSpan timeout = TimeSpan.FromMilliseconds(100);
 
@@ -43,7 +42,6 @@ public partial class ThreadTests
 		TimeSystem.Thread.Sleep(timeout);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
-		after.Should().BeOnOrAfter(
-			before.Add(timeout).ApplySystemClockTolerance());
+		await That(after).IsOnOrAfter(before.Add(timeout).ApplySystemClockTolerance());
 	}
 }

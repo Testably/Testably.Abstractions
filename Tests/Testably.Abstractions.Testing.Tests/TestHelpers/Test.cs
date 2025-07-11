@@ -1,10 +1,8 @@
-using System.Runtime.InteropServices;
-
 namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 
 public static class Test
 {
-	private static Testably.Abstractions.TestHelpers.Test _test = new();
+	private static readonly Abstractions.TestHelpers.Test _test = new();
 
 	public static bool IsNetFramework
 		=> _test.IsNetFramework;

@@ -7,48 +7,47 @@ public partial class CreateSubdirectoryTests
 {
 	[Theory]
 	[AutoData]
-	public void CreateSubdirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(
+	public async Task CreateSubdirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(
 		string name)
 	{
 		FileSystem.File.WriteAllText(name, "");
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(".");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.CreateSubdirectory(name);
-		});
+		}
 
-		exception.Should().BeException<IOException>(
-			hResult: Test.RunsOnWindows ? -2147024713 : 17);
-		FileSystem.Directory.Exists(name).Should().BeFalse();
+		await That(Act).Throws<IOException>().WithHResult(Test.RunsOnWindows ? -2147024713 : 17);
+		await That(FileSystem.Directory.Exists(name)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateSubdirectory_MissingParent_ShouldCreateDirectory(
+	public async Task CreateSubdirectory_MissingParent_ShouldCreateDirectory(
 		string path, string subdirectory)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeFalse();
+		await That(sut.Exists).IsFalse();
 		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
-		sut.Exists.Should().BeFalse();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
-		result.Exists.Should().BeTrue();
-		FileSystem.Directory.Exists(result.FullName).Should().BeTrue();
+		await That(sut.Exists).IsFalse();
+		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();
+		await That(result.Exists).IsTrue();
+		await That(FileSystem.Directory.Exists(result.FullName)).IsTrue();
 	}
 
 	[Theory]
 	[AutoData]
-	public void CreateSubdirectory_ShouldCreateDirectory(string path, string subdirectory)
+	public async Task CreateSubdirectory_ShouldCreateDirectory(string path, string subdirectory)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		sut.Create();
 		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
-		sut.Exists.Should().BeTrue();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
-		result.Exists.Should().BeTrue();
-		FileSystem.Directory.Exists(result.FullName).Should().BeTrue();
+		await That(sut.Exists).IsTrue();
+		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();
+		await That(result.Exists).IsTrue();
+		await That(FileSystem.Directory.Exists(result.FullName)).IsTrue();
 	}
 }

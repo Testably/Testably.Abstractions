@@ -17,56 +17,56 @@ public class TimeSystemExtensibilityTests
 
 	[Theory]
 	[MemberData(nameof(GetTimeSystems))]
-	public void DateTime_ShouldSetExtensionPoint(ITimeSystem timeSystem)
+	public async Task DateTime_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
 		IDateTime sut = timeSystem.DateTime;
 
 		ITimeSystem result = sut.TimeSystem;
 
-		result.Should().Be(timeSystem);
+		await That(result).IsEqualTo(timeSystem);
 	}
 
 	[Theory]
 	[MemberData(nameof(GetTimeSystems))]
-	public void Task_ShouldSetExtensionPoint(ITimeSystem timeSystem)
+	public async Task Task_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
 		ITask sut = timeSystem.Task;
 
 		ITimeSystem result = sut.TimeSystem;
 
-		result.Should().Be(timeSystem);
+		await That(result).IsEqualTo(timeSystem);
 	}
 
 	[Theory]
 	[MemberData(nameof(GetTimeSystems))]
-	public void Thread_ShouldSetExtensionPoint(ITimeSystem timeSystem)
+	public async Task Thread_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
 		IThread sut = timeSystem.Thread;
 
 		ITimeSystem result = sut.TimeSystem;
 
-		result.Should().Be(timeSystem);
+		await That(result).IsEqualTo(timeSystem);
 	}
 
 	[Theory]
 	[MemberData(nameof(GetTimeSystems))]
-	public void Timer_ShouldSetExtensionPoint(ITimeSystem timeSystem)
+	public async Task Timer_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
 		using ITimer sut = timeSystem.Timer.New(_ => { });
 
 		ITimeSystem result = sut.TimeSystem;
 
-		result.Should().Be(timeSystem);
+		await That(result).IsEqualTo(timeSystem);
 	}
 
 	[Theory]
 	[MemberData(nameof(GetTimeSystems))]
-	public void TimerFactory_ShouldSetExtensionPoint(ITimeSystem timeSystem)
+	public async Task TimerFactory_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
 		ITimerFactory sut = timeSystem.Timer;
 
 		ITimeSystem result = sut.TimeSystem;
 
-		result.Should().Be(timeSystem);
+		await That(result).IsEqualTo(timeSystem);
 	}
 }

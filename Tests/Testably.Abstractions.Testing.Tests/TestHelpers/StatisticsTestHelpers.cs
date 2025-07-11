@@ -1,276 +1,374 @@
-using System.Linq;
+using aweXpect.Core;
+using aweXpect.Core.Constraints;
+using aweXpect.Formatting;
+using aweXpect.Results;
+using System.Runtime.CompilerServices;
+using System.Text;
 using Testably.Abstractions.Testing.Statistics;
 
 namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 
 public static class StatisticsTestHelpers
 {
-	public static void ShouldOnlyContainMethodCall(this IStatistics statistics, string name,
-		object?[] parameters, string because = "")
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall(
+		this IThat<IStatistics> statistics, string name)
 	{
-		statistics.Methods.Length.Should().Be(1, because);
-		statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.SequenceEqual(parameters),
-				because);
+		ExpectationBuilder expectationBuilder =
+			((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name, p => p.Length == 0)));
 	}
 
-	public static void ShouldOnlyContainMethodCall(this IStatistics statistics, string name)
-	{
-		statistics.Methods.Length.Should().Be(1);
-		statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 0);
-	}
-
-	public static void ShouldOnlyContainMethodCall<T1>(this IStatistics statistics, string name,
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1>(
+		this IThat<IStatistics> statistics, string name,
 		T1 parameter1)
 	{
-		statistics.Methods.Length.Should().Be(1);
-		statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 1 &&
-			                    c.Parameters[0].Is(parameter1));
-	}
-
-	public static void ShouldOnlyContainMethodCall<T1>(this IStatistics statistics, string name,
-		T1[] parameter1)
-	{
-		statistics.Methods.Length.Should().Be(1);
-		statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 1 &&
-			                    c.Parameters[0].Is(parameter1));
+		ExpectationBuilder expectationBuilder =
+			((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name,
+				p => p.Length == 1 && p[0].Is(parameter1))));
 	}
 
 #if FEATURE_SPAN
-	public static void ShouldOnlyContainMethodCall<T1>(this IStatistics statistics, string name,
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1>(this IThat<IStatistics> statistics, string name,
 		ReadOnlySpan<T1> parameter1)
 	{
-		statistics.Methods.Length.Should().Be(1);
-		ParameterDescription parameter = statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 1).Which.Parameters[0];
-		parameter.Is(parameter1).Should().BeTrue();
+		ParameterDescription.SpanParameterDescription<T1> parameter1Values = new(parameter1);
+		ExpectationBuilder expectationBuilder =
+ ((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name, p => p.Length == 1 && p[0].Is(parameter1Values))));
 	}
 #endif
 
 #if FEATURE_SPAN
-	public static void ShouldOnlyContainMethodCall<T1, T2>(this IStatistics statistics, string name,
-		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2)
-	{
-		statistics.Methods.Length.Should().Be(1);
-		MethodStatistic? statistic = statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 2).Which;
-		statistic.Parameters[0].Is(parameter1).Should().BeTrue();
-		statistic.Parameters[1].Is(parameter2).Should().BeTrue();
-	}
-#endif
-
-#if FEATURE_SPAN
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3>(this IStatistics statistics,
-		string name,
-		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3)
-	{
-		statistics.Methods.Length.Should().Be(1);
-		MethodStatistic? statistic = statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 3).Which;
-		statistic.Parameters[0].Is(parameter1).Should().BeTrue();
-		statistic.Parameters[1].Is(parameter2).Should().BeTrue();
-		statistic.Parameters[2].Is(parameter3).Should().BeTrue();
-	}
-#endif
-
-#if FEATURE_SPAN
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4>(this IStatistics statistics,
-		string name,
-		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3,
-		ReadOnlySpan<T4> parameter4)
-	{
-		statistics.Methods.Length.Should().Be(1);
-		MethodStatistic? statistic = statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 4).Which;
-		statistic.Parameters[0].Is(parameter1).Should().BeTrue();
-		statistic.Parameters[1].Is(parameter2).Should().BeTrue();
-		statistic.Parameters[2].Is(parameter3).Should().BeTrue();
-		statistic.Parameters[3].Is(parameter4).Should().BeTrue();
-	}
-#endif
-
-#if FEATURE_SPAN
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4>(this IStatistics statistics,
-		string name,
-		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, T3 parameter3, T4 parameter4)
-	{
-		statistics.Methods.Length.Should().Be(1);
-		MethodStatistic? statistic = statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 4).Which;
-		statistic.Parameters[0].Is(parameter1).Should().BeTrue();
-		statistic.Parameters[1].Is(parameter2).Should().BeTrue();
-		statistic.Parameters[2].Is(parameter3).Should().BeTrue();
-		statistic.Parameters[3].Is(parameter4).Should().BeTrue();
-	}
-#endif
-
-#if FEATURE_SPAN
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4>(this IStatistics statistics,
-		string name,
-		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, Span<T3> parameter3,
-		T4 parameter4)
-	{
-		statistics.Methods.Length.Should().Be(1);
-		MethodStatistic? statistic = statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 4).Which;
-		statistic.Parameters[0].Is(parameter1).Should().BeTrue();
-		statistic.Parameters[1].Is(parameter2).Should().BeTrue();
-		statistic.Parameters[2].Is(parameter3).Should().BeTrue();
-		statistic.Parameters[3].Is(parameter4).Should().BeTrue();
-	}
-#endif
-
-#if FEATURE_SPAN
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4, T5>(this IStatistics statistics,
-		string name,
-		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3,
-		Span<T4> parameter4, T5 parameter5)
-	{
-		statistics.Methods.Length.Should().Be(1);
-		MethodStatistic? statistic = statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 5).Which;
-		statistic.Parameters[0].Is(parameter1).Should().BeTrue();
-		statistic.Parameters[1].Is(parameter2).Should().BeTrue();
-		statistic.Parameters[2].Is(parameter3).Should().BeTrue();
-		statistic.Parameters[3].Is(parameter4).Should().BeTrue();
-		statistic.Parameters[4].Is(parameter5).Should().BeTrue();
-	}
-#endif
-
-#if FEATURE_FILE_SPAN
-	public static void ShouldOnlyContainMethodCall<T1, T2>(this IStatistics statistics,
-		string name,
-		T1 parameter1, ReadOnlySpan<T2> parameter2)
-	{
-		statistics.Methods.Length.Should().Be(1);
-		MethodStatistic? statistic = statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 2).Which;
-		statistic.Parameters[0].Is(parameter1).Should().BeTrue();
-		statistic.Parameters[1].Is(parameter2).Should().BeTrue();
-	}
-#endif
-
-#if FEATURE_FILE_SPAN
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3>(this IStatistics statistics,
-		string name,
-		T1 parameter1, ReadOnlySpan<T2> parameter2, T3 parameter3)
-	{
-		statistics.Methods.Length.Should().Be(1);
-		MethodStatistic? statistic = statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 3).Which;
-		statistic.Parameters[0].Is(parameter1).Should().BeTrue();
-		statistic.Parameters[1].Is(parameter2).Should().BeTrue();
-		statistic.Parameters[2].Is(parameter3).Should().BeTrue();
-	}
-#endif
-
-#if FEATURE_SPAN
-	public static void ShouldOnlyContainMethodCall<T1>(this IStatistics statistics, string name,
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1>(this IThat<IStatistics> statistics, string name,
 		Span<T1> parameter1)
 	{
-		statistics.Methods.Length.Should().Be(1);
-		ParameterDescription parameter = statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 1).Which.Parameters[0];
-		parameter.Is(parameter1).Should().BeTrue();
+		ParameterDescription.SpanParameterDescription<T1> parameter1Values = new(parameter1);
+		ExpectationBuilder expectationBuilder =
+ ((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name, p => p.Length == 1 && p[0].Is(parameter1Values))));
 	}
 #endif
 
-	public static void ShouldOnlyContainMethodCall<T1, T2>(this IStatistics statistics, string name,
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1>(
+		this IThat<IStatistics> statistics, string name,
+		T1[] parameter1)
+	{
+		ExpectationBuilder expectationBuilder =
+			((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name,
+				p => p.Length == 1 && p[0].Is(parameter1))));
+	}
+
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1, T2>(
+		this IThat<IStatistics> statistics, string name,
 		T1 parameter1, T2 parameter2)
 	{
-		statistics.Methods.Length.Should().Be(1);
-		statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 2 &&
-			                    c.Parameters[0].Is(parameter1) &&
-			                    c.Parameters[1].Is(parameter2));
+		ExpectationBuilder expectationBuilder =
+			((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name,
+				p => p.Length == 2 && p[0].Is(parameter1) && p[1].Is(parameter2))));
 	}
 
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3>(
-		this IStatistics statistics, string name,
+#if FEATURE_SPAN
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1, T2>(this IThat<IStatistics> statistics, string name,
+		T1 parameter1, ReadOnlySpan<T2> parameter2)
+	{
+		ParameterDescription.SpanParameterDescription<T2> parameter2Values = new(parameter2);
+		ExpectationBuilder expectationBuilder =
+ ((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name, p => p.Length == 2 && p[0].Is(parameter1) && p[1].Is(parameter2Values))));
+	}
+#endif
+
+#if FEATURE_SPAN
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1, T2>(this IThat<IStatistics> statistics, string name,
+		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2)
+	{
+		ParameterDescription.SpanParameterDescription<T1> parameter1Values = new(parameter1);
+		ParameterDescription.SpanParameterDescription<T2> parameter2Values = new(parameter2);
+		ExpectationBuilder expectationBuilder =
+ ((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name, p => p.Length == 2 && p[0].Is(parameter1Values) && p[1].Is(parameter2Values))));
+	}
+#endif
+
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1, T2, T3>(
+		this IThat<IStatistics> statistics, string name,
 		T1 parameter1, T2 parameter2, T3 parameter3)
 	{
-		statistics.Methods.Length.Should().Be(1);
-		statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 3 &&
-			                    c.Parameters[0].Is(parameter1) &&
-			                    c.Parameters[1].Is(parameter2) &&
-			                    c.Parameters[2].Is(parameter3));
+		ExpectationBuilder expectationBuilder =
+			((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name,
+				p => p.Length == 3 && p[0].Is(parameter1) && p[1].Is(parameter2) &&
+				     p[2].Is(parameter3))));
 	}
 
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4>(
-		this IStatistics statistics, string name,
+#if FEATURE_SPAN
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1, T2, T3>(this IThat<IStatistics> statistics, string name,
+		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3)
+	{
+		ParameterDescription.SpanParameterDescription<T1> parameter1Values = new(parameter1);
+		ParameterDescription.SpanParameterDescription<T2> parameter2Values = new(parameter2);
+		ParameterDescription.SpanParameterDescription<T3> parameter3Values = new(parameter3);
+		ExpectationBuilder expectationBuilder =
+ ((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name, p => p.Length == 3 && p[0].Is(parameter1Values) && p[1].Is(parameter2Values) && p[2].Is(parameter3Values))));
+	}
+#endif
+
+#if FEATURE_SPAN
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1, T2, T3>(this IThat<IStatistics> statistics, string name,
+		T1 parameter1, ReadOnlySpan<T2> parameter2, T3 parameter3)
+	{
+		ParameterDescription.SpanParameterDescription<T2> parameter2Values = new(parameter2);
+		ExpectationBuilder expectationBuilder =
+ ((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name, p => p.Length == 3 && p[0].Is(parameter1) && p[1].Is(parameter2Values) && p[2].Is(parameter3))));
+	}
+#endif
+
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1, T2, T3, T4>(
+		this IThat<IStatistics> statistics, string name,
 		T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
 	{
-		statistics.Methods.Length.Should().Be(1);
-		statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 4 &&
-			                    c.Parameters[0].Is(parameter1) &&
-			                    c.Parameters[1].Is(parameter2) &&
-			                    c.Parameters[2].Is(parameter3) &&
-			                    c.Parameters[3].Is(parameter4));
+		ExpectationBuilder expectationBuilder =
+			((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name,
+				p => p.Length == 4 && p[0].Is(parameter1) && p[1].Is(parameter2) &&
+				     p[2].Is(parameter3) && p[3].Is(parameter4))));
 	}
 
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4, T5>(this IStatistics statistics,
-		string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5)
+#if FEATURE_SPAN
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1, T2, T3, T4>(this IThat<IStatistics> statistics, string name,
+		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3, ReadOnlySpan<T4> parameter4)
 	{
-		statistics.Methods.Length.Should().Be(1);
-		statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 5 &&
-			                    c.Parameters[0].Is(parameter1) &&
-			                    c.Parameters[1].Is(parameter2) &&
-			                    c.Parameters[2].Is(parameter3) &&
-			                    c.Parameters[3].Is(parameter4) &&
-			                    c.Parameters[4].Is(parameter5));
+		ParameterDescription.SpanParameterDescription<T1> parameter1Values = new(parameter1);
+		ParameterDescription.SpanParameterDescription<T2> parameter2Values = new(parameter2);
+		ParameterDescription.SpanParameterDescription<T3> parameter3Values = new(parameter3);
+		ParameterDescription.SpanParameterDescription<T4> parameter4Values = new(parameter4);
+		ExpectationBuilder expectationBuilder =
+ ((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name, p => p.Length == 4 && p[0].Is(parameter1Values) && p[1].Is(parameter2Values) && p[2].Is(parameter3Values) && p[3].Is(parameter4Values))));
+	}
+#endif
+
+#if FEATURE_SPAN
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1, T2, T3, T4>(this IThat<IStatistics> statistics, string name,
+		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, Span<T3> parameter3, T4 parameter4)
+	{
+		ParameterDescription.SpanParameterDescription<T1> parameter1Values = new(parameter1);
+		ParameterDescription.SpanParameterDescription<T2> parameter2Values = new(parameter2);
+		ParameterDescription.SpanParameterDescription<T3> parameter3Values = new(parameter3);
+		ExpectationBuilder expectationBuilder =
+ ((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name, p => p.Length == 4 && p[0].Is(parameter1Values) && p[1].Is(parameter2Values) && p[2].Is(parameter3Values) && p[3].Is(parameter4))));
+	}
+#endif
+
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1, T2, T3, T4, T5>(
+		this IThat<IStatistics> statistics, string name,
+		T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5)
+	{
+		ExpectationBuilder expectationBuilder =
+			((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name,
+				p => p.Length == 5 && p[0].Is(parameter1) && p[1].Is(parameter2) &&
+				     p[2].Is(parameter3) && p[3].Is(parameter4) && p[4].Is(parameter5))));
 	}
 
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4, T5, T6>(
-		this IStatistics statistics, string name,
+#if FEATURE_SPAN
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1, T2, T3, T4, T5>(this IThat<IStatistics> statistics, string name,
+		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3, Span<T4> parameter4, T5 parameter5)
+	{
+		ParameterDescription.SpanParameterDescription<T1> parameter1Values = new(parameter1);
+		ParameterDescription.SpanParameterDescription<T2> parameter2Values = new(parameter2);
+		ParameterDescription.SpanParameterDescription<T3> parameter3Values = new(parameter3);
+		ParameterDescription.SpanParameterDescription<T4> parameter4Values = new(parameter4);
+		ExpectationBuilder expectationBuilder =
+ ((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name, p => p.Length == 5 && p[0].Is(parameter1Values) && p[1].Is(parameter2Values) && p[2].Is(parameter3Values) && p[3].Is(parameter4Values) && p[4].Is(parameter5))));
+	}
+#endif
+
+	public static ExpectationResult<IStatistics> OnlyContainsMethodCall<T1, T2, T3, T4, T5, T6>(
+		this IThat<IStatistics> statistics, string name,
 		T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5, T6 parameter6)
 	{
-		statistics.Methods.Length.Should().Be(1);
-		statistics.Methods.Should()
-			.ContainSingle(c => c.Name == name &&
-			                    c.Parameters.Length == 6 &&
-			                    c.Parameters[0].Is(parameter1) &&
-			                    c.Parameters[1].Is(parameter2) &&
-			                    c.Parameters[2].Is(parameter3) &&
-			                    c.Parameters[3].Is(parameter4) &&
-			                    c.Parameters[4].Is(parameter5) &&
-			                    c.Parameters[5].Is(parameter6));
+		ExpectationBuilder expectationBuilder =
+			((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsMethodCallConstraint(it, grammars, name,
+				p => p.Length == 6 && p[0].Is(parameter1) && p[1].Is(parameter2) &&
+				     p[2].Is(parameter3) && p[3].Is(parameter4) && p[4].Is(parameter5) &&
+				     p[5].Is(parameter6))));
 	}
 
-	public static void ShouldOnlyContainPropertyGetAccess(this IStatistics statistics, string name)
+	public static ExpectationResult<IStatistics> OnlyContainsPropertyGetAccess(
+		this IThat<IStatistics> statistics, string name)
 	{
-		statistics.Properties.Length.Should().Be(1);
-		statistics.Properties.Should()
-			.ContainSingle(c => c.Name == name && c.Access == PropertyAccess.Get);
+		ExpectationBuilder expectationBuilder =
+			((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsPropertyAccessConstraint(it, grammars, name, PropertyAccess.Get)));
 	}
 
-	public static void ShouldOnlyContainPropertySetAccess(this IStatistics statistics, string name)
+	public static ExpectationResult<IStatistics> OnlyContainsPropertySetAccess(
+		this IThat<IStatistics> statistics, string name)
 	{
-		statistics.Properties.Length.Should().Be(1);
-		statistics.Properties.Should()
-			.ContainSingle(c => c.Name == name && c.Access == PropertyAccess.Set);
+		ExpectationBuilder expectationBuilder =
+			((IExpectThat<IStatistics>)statistics).ExpectationBuilder;
+		return new ExpectationResult<IStatistics>(expectationBuilder.AddConstraint((it, grammars)
+			=> new OnlyContainsPropertyAccessConstraint(it, grammars, name, PropertyAccess.Set)));
+	}
+
+	private sealed class OnlyContainsPropertyAccessConstraint(
+		string it,
+		ExpectationGrammars grammars,
+		string name,
+		PropertyAccess propertyAccess)
+		: ConstraintResult.WithNotNullValue<IStatistics>(it, grammars),
+			IValueConstraint<IStatistics>
+	{
+		#region IValueConstraint<IStatistics> Members
+
+		public ConstraintResult IsMetBy(IStatistics actual)
+		{
+			Actual = actual;
+			Outcome = actual.Properties.Length == 1 &&
+			          string.Equals(actual.Properties[0].Name, name, StringComparison.Ordinal) &&
+			          actual.Properties[0].Access == propertyAccess
+				? Outcome.Success
+				: Outcome.Failure;
+			return this;
+		}
+
+		#endregion
+
+		protected override void AppendNegatedExpectation(StringBuilder stringBuilder,
+			string? indentation = null)
+		{
+			stringBuilder.Append("not only accesses ").Append(name).Append(" via ")
+				.Append(propertyAccess);
+		}
+
+		protected override void AppendNegatedResult(StringBuilder stringBuilder,
+			string? indentation = null)
+			=> stringBuilder.Append(It).Append(" did");
+
+		protected override void AppendNormalExpectation(StringBuilder stringBuilder,
+			string? indentation = null)
+		{
+			stringBuilder.Append("only accesses ").Append(name).Append(" via ")
+				.Append(propertyAccess);
+		}
+
+		protected override void AppendNormalResult(StringBuilder stringBuilder,
+			string? indentation = null)
+		{
+			if (Actual == null)
+			{
+				stringBuilder.Append(It).Append(" was <null>");
+			}
+			else if (Actual.Properties.Length == 0)
+			{
+				stringBuilder.Append(It).Append(" contained no property access");
+			}
+			else if (Actual.Properties.Length == 1)
+			{
+				stringBuilder.Append(It)
+					.Append(" did not contain the expected property access, but ");
+				Format.Formatter.Format(stringBuilder, Actual.Properties[0]);
+			}
+			else
+			{
+				stringBuilder.Append(It).Append(" contained more than one property access:");
+				Format.Formatter.Format(stringBuilder, Actual.Properties);
+			}
+		}
+	}
+
+	private sealed class OnlyContainsMethodCallConstraint(
+		string it,
+		ExpectationGrammars grammars,
+		string methodName,
+		Func<ParameterDescription[], bool> parameterVerification,
+		[CallerArgumentExpression("parameterVerification")]
+		string doNotPopulateThisValue = "")
+		: ConstraintResult.WithNotNullValue<IStatistics>(it, grammars),
+			IValueConstraint<IStatistics>
+	{
+		#region IValueConstraint<IStatistics> Members
+
+		public ConstraintResult IsMetBy(IStatistics actual)
+		{
+			Actual = actual;
+			Outcome = actual.Methods.Length == 1 &&
+			          string.Equals(actual.Methods[0].Name, methodName,
+				          StringComparison.Ordinal) &&
+			          parameterVerification(actual.Methods[0].Parameters)
+				? Outcome.Success
+				: Outcome.Failure;
+			return this;
+		}
+
+		#endregion
+
+		protected override void AppendNegatedExpectation(StringBuilder stringBuilder,
+			string? indentation = null)
+		{
+			stringBuilder.Append("does not only contain a single method ").Append(methodName)
+				.Append(" with ").Append(doNotPopulateThisValue);
+		}
+
+		protected override void AppendNegatedResult(StringBuilder stringBuilder,
+			string? indentation = null)
+			=> stringBuilder.Append(It).Append(" did");
+
+		protected override void AppendNormalExpectation(StringBuilder stringBuilder,
+			string? indentation = null)
+		{
+			stringBuilder.Append("only contains a single method ").Append(methodName)
+				.Append(" with ").Append(doNotPopulateThisValue);
+		}
+
+		protected override void AppendNormalResult(StringBuilder stringBuilder,
+			string? indentation = null)
+		{
+			if (Actual == null)
+			{
+				stringBuilder.Append(It).Append(" was <null>");
+			}
+			else if (Actual.Methods.Length == 0)
+			{
+				stringBuilder.Append(It).Append(" contained no method call");
+			}
+			else if (Actual.Methods.Length == 1)
+			{
+				stringBuilder.Append(It).Append(" did not contain the expected method call, but ");
+				Format.Formatter.Format(stringBuilder, Actual.Methods[0]);
+			}
+			else
+			{
+				stringBuilder.Append(It).Append(" contained more than one method call:");
+				Format.Formatter.Format(stringBuilder, Actual.Methods);
+			}
+		}
 	}
 }

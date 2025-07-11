@@ -7,34 +7,34 @@ public partial class CopyTests
 {
 	[Theory]
 	[AutoData]
-	public void Copy_CaseOnlyChange_ShouldThrowIOException_ExceptOnLinux(
+	public async Task Copy_CaseOnlyChange_ShouldThrowIOException_ExceptOnLinux(
 		string name, string contents)
 	{
 		string sourceName = name.ToLowerInvariant();
 		string destinationName = name.ToUpperInvariant();
 		FileSystem.File.WriteAllText(sourceName, contents);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Copy(sourceName, destinationName);
-		});
+		}
 
 		if (Test.RunsOnLinux)
 		{
-			exception.Should().BeNull();
-			FileSystem.File.Exists(sourceName).Should().BeTrue();
-			FileSystem.File.Exists(destinationName).Should().BeTrue();
+			await That(Act).DoesNotThrow();
+			await That(FileSystem.File.Exists(sourceName)).IsTrue();
+			await That(FileSystem.File.Exists(destinationName)).IsTrue();
 		}
 		else
 		{
-			exception.Should()
-				.BeException<IOException>(hResult: Test.RunsOnWindows ? -2147024816 : 17);
+			await That(Act).Throws<IOException>()
+				.WithHResult(Test.RunsOnWindows ? -2147024816 : 17);
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		Copy_DestinationDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException(
 			string source)
 	{
@@ -42,17 +42,17 @@ public partial class CopyTests
 			.WithFile(source);
 		string destination = FileTestHelper.RootDrive(Test, "not-existing/path/foo.txt");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Copy(source, destination);
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Copy_DestinationExists_ShouldThrowIOException_AndNotCopyFile(
+	public async Task Copy_DestinationExists_ShouldThrowIOException_AndNotCopyFile(
 		string sourceName,
 		string destinationName,
 		string sourceContents,
@@ -61,23 +61,23 @@ public partial class CopyTests
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Copy(sourceName, destinationName);
-		});
+		}
 
-		exception.Should().BeException<IOException>(hResult: Test.RunsOnWindows ? -2147024816 : 17);
+		await That(Act).Throws<IOException>().WithHResult(Test.RunsOnWindows ? -2147024816 : 17);
 
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(sourceContents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(destinationContents);
+		await That(FileSystem.File.Exists(sourceName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(sourceContents);
+		await That(FileSystem.File.Exists(destinationName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(destinationContents);
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	[Theory]
 	[AutoData]
-	public void Copy_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
+	public async Task Copy_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
 		string destinationName,
 		string sourceContents,
@@ -88,10 +88,10 @@ public partial class CopyTests
 
 		FileSystem.File.Copy(sourceName, destinationName, true);
 
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(sourceContents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(sourceContents);
+		await That(FileSystem.File.Exists(sourceName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(sourceContents);
+		await That(FileSystem.File.Exists(destinationName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(sourceContents);
 	}
 #endif
 
@@ -99,49 +99,49 @@ public partial class CopyTests
 	[InlineData(@"0:\something\demo.txt", @"C:\elsewhere\demo.txt")]
 	[InlineData(@"C:\something\demo.txt", @"^:\elsewhere\demo.txt")]
 	[InlineData(@"C:\something\demo.txt", @"C:\elsewhere:\demo.txt")]
-	public void
+	public async Task
 		Copy_InvalidDriveName_ShouldThrowNotSupportedException(
 			string source, string destination)
 	{
 		Skip.IfNot(Test.IsNetFramework);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Copy(source, destination);
-		});
+		}
 
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
 	[Theory]
 	[InlineData(@"C::\something\demo.txt", @"C:\elsewhere\demo.txt")]
-	public void
+	public async Task
 		Copy_InvalidPath_ShouldThrowCorrectException(
 			string source, string destination)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Copy(source, destination);
-		});
+		}
 
 		if (Test.IsNetFramework)
 		{
-			exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+			await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 		}
 		else
 		{
-			exception.Should().BeException<IOException>(
-				messageContains:
-				"The filename, directory name, or volume label syntax is incorrect",
-				hResult: -2147024773);
+			await That(Act).Throws<IOException>()
+				.WithMessageContaining(
+					"The filename, directory name, or volume label syntax is incorrect").And
+				.WithHResult(-2147024773);
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void Copy_ReadOnly_ShouldCopyFile(
+	public async Task Copy_ReadOnly_ShouldCopyFile(
 		string sourceName, string destinationName, string contents)
 	{
 		FileSystem.File.WriteAllText(sourceName, contents);
@@ -149,16 +149,16 @@ public partial class CopyTests
 
 		FileSystem.File.Copy(sourceName, destinationName);
 
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(contents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(contents);
-		FileSystem.File.GetAttributes(destinationName).Should().HaveFlag(FileAttributes.ReadOnly);
+		await That(FileSystem.File.Exists(sourceName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(contents);
+		await That(FileSystem.File.Exists(destinationName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
+		await That(FileSystem.File.GetAttributes(destinationName)).HasFlag(FileAttributes.ReadOnly);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Copy_ShouldAdjustTimes(
+	public async Task Copy_ShouldAdjustTimes(
 		string source, string destination)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -181,55 +181,51 @@ public partial class CopyTests
 		DateTime destinationLastWriteTime =
 			FileSystem.File.GetLastWriteTimeUtc(destination);
 
-		sourceCreationTime.Should()
-			.BeBetween(creationTimeStart, creationTimeEnd);
+		await That(sourceCreationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 		if (Test.RunsOnMac)
 		{
 #if NET8_0_OR_GREATER
-			sourceLastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(sourceLastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
 #else
-			sourceLastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(sourceLastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 #endif
 		}
 		else if (Test.RunsOnWindows)
 		{
-			sourceLastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(sourceLastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 		else
 		{
-			sourceLastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(sourceLastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		sourceLastWriteTime.Should()
-			.BeBetween(creationTimeStart, creationTimeEnd);
+		await That(sourceLastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 		if (Test.RunsOnWindows)
 		{
-			destinationCreationTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(destinationCreationTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			destinationCreationTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
+			await That(destinationCreationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
 		if (!Test.RunsOnMac)
 		{
-			destinationLastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			await That(destinationLastAccessTime)
+				.IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		destinationLastWriteTime.Should()
-			.BeBetween(creationTimeStart, creationTimeEnd);
+		await That(destinationLastWriteTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+			.Within(TimeComparison.Tolerance);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Copy_ShouldCloneBinaryContent(
+	public async Task Copy_ShouldCloneBinaryContent(
 		string source, string destination, byte[] original)
 	{
 		FileSystem.File.WriteAllBytes(source, original);
@@ -245,15 +241,15 @@ public partial class CopyTests
 			binaryWriter.Write("Some text");
 		}
 
-		FileSystem.File.Exists(destination).Should().BeTrue();
-		FileSystem.File.ReadAllBytes(destination).Should().BeEquivalentTo(original);
-		FileSystem.File.ReadAllBytes(destination).Should()
-			.NotBeEquivalentTo(FileSystem.File.ReadAllBytes(source));
+		await That(FileSystem.File.Exists(destination)).IsTrue();
+		await That(FileSystem.File.ReadAllBytes(destination)).IsEqualTo(original);
+		await That(FileSystem.File.ReadAllBytes(destination))
+			.IsNotEqualTo(FileSystem.File.ReadAllBytes(source));
 	}
 
 	[Theory]
 	[AutoData]
-	public void Copy_ShouldCloneTextContent(
+	public async Task Copy_ShouldCloneTextContent(
 		string source, string destination, string contents)
 	{
 		FileSystem.File.WriteAllText(source, contents);
@@ -269,13 +265,13 @@ public partial class CopyTests
 			binaryWriter.Write("Some text");
 		}
 
-		FileSystem.File.ReadAllText(source).Should()
-			.NotBe(FileSystem.File.ReadAllText(destination));
+		await That(FileSystem.File.ReadAllText(source))
+			.IsNotEqualTo(FileSystem.File.ReadAllText(destination));
 	}
 
 	[Theory]
 	[AutoData]
-	public void Copy_ShouldCopyFileWithContent(
+	public async Task Copy_ShouldCopyFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -285,10 +281,10 @@ public partial class CopyTests
 		TimeSystem.Thread.Sleep(EnsureTimeout);
 
 		FileSystem.File.Copy(sourceName, destinationName);
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(contents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(contents);
+		await That(FileSystem.File.Exists(sourceName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(contents);
+		await That(FileSystem.File.Exists(destinationName)).IsTrue();
+		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -298,7 +294,7 @@ public partial class CopyTests
 	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite)]
 	[InlineAutoData(FileAccess.Write, FileShare.Read)]
 	[InlineAutoData(FileAccess.Write, FileShare.ReadWrite)]
-	public void Copy_SourceAccessedWithReadShare_ShouldNotThrow(
+	public async Task Copy_SourceAccessedWithReadShare_ShouldNotThrow(
 		FileAccess fileAccess,
 		FileShare fileShare,
 		string sourcePath,
@@ -313,15 +309,15 @@ public partial class CopyTests
 			FileSystem.File.Copy(sourcePath, destinationPath);
 		}
 
-		FileSystem.File.Exists(destinationPath).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationPath).Should().Be(sourceContents);
+		await That(FileSystem.File.Exists(destinationPath)).IsTrue();
+		await That(FileSystem.File.ReadAllText(destinationPath)).IsEqualTo(sourceContents);
 	}
 
 	[Theory]
 	[InlineAutoData(FileAccess.Read)]
 	[InlineAutoData(FileAccess.ReadWrite)]
 	[InlineAutoData(FileAccess.Write)]
-	public void Copy_SourceAccessedWithWriteShare_ShouldNotThrowOnLinuxOrMac(
+	public async Task Copy_SourceAccessedWithWriteShare_ShouldNotThrowOnLinuxOrMac(
 		FileAccess fileAccess,
 		string sourcePath,
 		string destinationPath,
@@ -337,57 +333,58 @@ public partial class CopyTests
 			FileSystem.File.Copy(sourcePath, destinationPath);
 		}
 
-		FileSystem.File.Exists(destinationPath).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationPath).Should().Be(sourceContents);
+		await That(FileSystem.File.Exists(destinationPath)).IsTrue();
+		await That(FileSystem.File.ReadAllText(destinationPath)).IsEqualTo(sourceContents);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Copy_SourceDirectoryMissing_ShouldThrowDirectoryNotFoundException(
+	public async Task Copy_SourceDirectoryMissing_ShouldThrowDirectoryNotFoundException(
 		string missingDirectory,
 		string sourceName,
 		string destinationName)
 	{
 		string source = FileSystem.Path.Combine(missingDirectory, sourceName);
-		Exception? exception = Record.Exception(() =>
+
+		void Act()
 		{
 			FileSystem.File.Copy(source, destinationName);
-		});
+		}
 
-		exception.Should().BeException<DirectoryNotFoundException>(
-			messageContains: Test.IsNetFramework
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining(Test.IsNetFramework
 				? null
-				: $"'{FileSystem.Path.GetFullPath(source)}'",
-			hResult: -2147024893);
-		FileSystem.File.Exists(destinationName).Should().BeFalse();
+				: $"'{FileSystem.Path.GetFullPath(source)}'").And
+			.WithHResult(-2147024893);
+		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Copy_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
+	public async Task Copy_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
 		string sourceName,
 		string destinationName)
 	{
 		FileSystem.Directory.CreateDirectory(sourceName);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Copy(sourceName, destinationName);
-		});
+		}
 
-		exception.Should().BeException<UnauthorizedAccessException>(
-			messageContains: Test.IsNetFramework
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.WithMessageContaining(Test.IsNetFramework
 				? $"'{sourceName}'"
-				: $"'{FileSystem.Path.GetFullPath(sourceName)}'",
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.Exists(destinationName).Should().BeFalse();
+				: $"'{FileSystem.Path.GetFullPath(sourceName)}'").And
+			.WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(sourceName)).IsTrue();
+		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 
 	[Theory]
 	[InlineAutoData(FileShare.None)]
 	[InlineAutoData(FileShare.Write)]
-	public void Copy_SourceLocked_ShouldThrowIOException(
+	public async Task Copy_SourceLocked_ShouldThrowIOException(
 		FileShare fileShare,
 		string sourceName,
 		string destinationName)
@@ -399,39 +396,40 @@ public partial class CopyTests
 		using FileSystemStream stream = FileSystem.File.Open(
 			sourceName, FileMode.Open, FileAccess.Read, fileShare);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Copy(sourceName, destinationName);
-		});
+		}
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<IOException>(hResult: -2147024864);
-			FileSystem.File.Exists(destinationName).Should().BeFalse();
+			await That(Act).Throws<IOException>().WithHResult(-2147024864);
+			await That(FileSystem.File.Exists(destinationName)).IsFalse();
 		}
 		else
 		{
-			FileSystem.File.Exists(sourceName).Should().BeTrue();
-			FileSystem.File.Exists(destinationName).Should().BeFalse();
+			await That(Act).ThrowsException();
+			await That(FileSystem.File.Exists(sourceName)).IsTrue();
+			await That(FileSystem.File.Exists(destinationName)).IsFalse();
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void Copy_SourceMissing_ShouldThrowFileNotFoundException(
+	public async Task Copy_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
 		string destinationName)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.Copy(sourceName, destinationName);
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(
-			messageContains: Test.IsNetFramework
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining(Test.IsNetFramework
 				? null
-				: $"'{FileSystem.Path.GetFullPath(sourceName)}'",
-			hResult: -2147024894);
-		FileSystem.File.Exists(destinationName).Should().BeFalse();
+				: $"'{FileSystem.Path.GetFullPath(sourceName)}'").And
+			.WithHResult(-2147024894);
+		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 }

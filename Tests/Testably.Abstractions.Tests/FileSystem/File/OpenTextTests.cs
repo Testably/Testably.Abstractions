@@ -7,22 +7,22 @@ public partial class OpenTextTests
 {
 	[Theory]
 	[AutoData]
-	public void OpenText_MissingFile_ShouldThrowFileNotFoundException(
+	public async Task OpenText_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			using StreamReader stream = FileSystem.File.OpenText(path);
-		});
+		}
 
-		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult: -2147024894);
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithHResult(-2147024894);
 	}
 
 	[Theory]
 	[AutoData]
-	public void OpenText_ShouldReturnFileContent(
+	public async Task OpenText_ShouldReturnFileContent(
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -30,6 +30,6 @@ public partial class OpenTextTests
 		using StreamReader stream = FileSystem.File.OpenText(path);
 
 		string result = stream.ReadToEnd();
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 }

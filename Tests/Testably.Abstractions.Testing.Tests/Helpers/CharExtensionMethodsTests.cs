@@ -11,11 +11,11 @@ public sealed class CharExtensionMethodsTests
 	[InlineData('z')]
 	[InlineData('M')]
 	[InlineData('d')]
-	public void IsAsciiLetter_WithAsciiLetterChar_ShouldReturnTrue(char c)
+	public async Task IsAsciiLetter_WithAsciiLetterChar_ShouldReturnTrue(char c)
 	{
 		bool result = c.IsAsciiLetter();
 
-		result.Should().BeTrue();
+		await That(result).IsTrue();
 	}
 
 	[Theory]
@@ -26,10 +26,10 @@ public sealed class CharExtensionMethodsTests
 	[InlineData((char)55)]
 	[InlineData((char)0)]
 	[InlineData((char)127)]
-	public void IsAsciiLetter_WithNonAsciiLetterChar_ShouldReturnFalse(char c)
+	public async Task IsAsciiLetter_WithNonAsciiLetterChar_ShouldReturnFalse(char c)
 	{
 		bool result = c.IsAsciiLetter();
 
-		result.Should().BeFalse();
+		await That(result).IsFalse();
 	}
 }

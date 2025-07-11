@@ -16,10 +16,10 @@ public partial class WriteAllTextAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.WriteAllTextAsync(path, contents, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.WriteAllTextAsync(path, contents, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -31,10 +31,10 @@ public partial class WriteAllTextAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.WriteAllTextAsync(path, contents, Encoding.UTF8, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.WriteAllTextAsync(path, contents, Encoding.UTF8, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -49,7 +49,7 @@ public partial class WriteAllTextAsyncTests
 		string result =
 			await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -63,7 +63,7 @@ public partial class WriteAllTextAsyncTests
 		string result =
 			await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -90,8 +90,7 @@ public partial class WriteAllTextAsyncTests
 			string result =
 				await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-			result.Should().Be(contents,
-				$"{contents} should be encoded and decoded identical.");
+			await That(result).IsEqualTo(contents).Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 
@@ -105,8 +104,7 @@ public partial class WriteAllTextAsyncTests
 				TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-		exception.Should().BeNull();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Theory]
@@ -123,12 +121,9 @@ public partial class WriteAllTextAsyncTests
 				TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
@@ -148,9 +143,7 @@ public partial class WriteAllTextAsyncTests
 				TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
 #if FEATURE_FILE_SPAN
@@ -162,10 +155,10 @@ public partial class WriteAllTextAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.WriteAllTextAsync(path, contents.AsMemory(), cts.Token));
+		async Task Act() =>
+			await FileSystem.File.WriteAllTextAsync(path, contents.AsMemory(), cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -177,10 +170,10 @@ public partial class WriteAllTextAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.WriteAllTextAsync(path, contents.AsMemory(), Encoding.UTF8, cts.Token));
+		async Task Act() =>
+			await FileSystem.File.WriteAllTextAsync(path, contents.AsMemory(), Encoding.UTF8, cts.Token);
 
-		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
 	[Theory]
@@ -195,7 +188,7 @@ public partial class WriteAllTextAsyncTests
 		string result =
 			await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -209,7 +202,7 @@ public partial class WriteAllTextAsyncTests
 		string result =
 			await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-		result.Should().Be(contents);
+		await That(result).IsEqualTo(contents);
 	}
 
 	[Theory]
@@ -236,8 +229,7 @@ public partial class WriteAllTextAsyncTests
 			string result =
 				await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-			result.Should().Be(contents,
-				$"{contents} should be encoded and decoded identical.");
+			await That(result).IsEqualTo(contents).Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 
@@ -255,12 +247,9 @@ public partial class WriteAllTextAsyncTests
 				TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
+		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
 	[Theory]
@@ -280,9 +269,7 @@ public partial class WriteAllTextAsyncTests
 				TestContext.Current.CancellationToken);
 		}
 
-		Exception? exception = await Record.ExceptionAsync(Act);
-
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 #endif
 }

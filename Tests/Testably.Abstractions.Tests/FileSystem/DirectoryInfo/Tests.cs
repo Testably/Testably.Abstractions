@@ -8,37 +8,37 @@ public partial class Tests
 	[Theory]
 	[InlineData("foo")]
 	[InlineData("foo/")]
-	public void Extension_ShouldReturnEmptyString(string path)
+	public async Task Extension_ShouldReturnEmptyString(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
 		string result = sut.Extension;
 
-		result.Should().BeEmpty();
+		await That(result).IsEmpty();
 	}
 
 	[Theory]
 	[InlineData(@"/temp\\folder")]
 	[InlineData("/temp/folder")]
 	[InlineData(@"/temp/\\/folder")]
-	public void FullName_ShouldNotNormalizePathOnLinux(string path)
+	public async Task FullName_ShouldNotNormalizePathOnLinux(string path)
 	{
 		Skip.If(Test.RunsOnWindows);
 
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
-		sut.FullName.Should().Be(path);
+		await That(sut.FullName).IsEqualTo(path);
 	}
 
 	[Theory]
 	[InlineData("foo")]
 	[InlineData("foo/")]
-	public void FullName_ShouldReturnFullPath(string path)
+	public async Task FullName_ShouldReturnFullPath(string path)
 	{
 		string expectedPath = FileSystem.Path.GetFullPath(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
-		sut.FullName.Should().Be(expectedPath);
+		await That(sut.FullName).IsEqualTo(expectedPath);
 	}
 
 	[Theory]
@@ -47,19 +47,19 @@ public partial class Tests
 	[InlineData(@"c:\temp\\folder", @"c:\temp\folder")]
 	[InlineData(@"c:\temp//folder", @"c:\temp\folder")]
 	[InlineData(@"c:\temp//\\///folder", @"c:\temp\folder")]
-	public void FullName_ShouldReturnNormalizedPath_OnWindows(
+	public async Task FullName_ShouldReturnNormalizedPath_OnWindows(
 		string path, string expectedPath)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
-		sut.FullName.Should().Be(expectedPath);
+		await That(sut.FullName).IsEqualTo(expectedPath);
 	}
 
 	[Theory]
 	[AutoData]
-	public void FullName_ShouldTrimTrailingSpaces_OnWindows(string path)
+	public async Task FullName_ShouldTrimTrailingSpaces_OnWindows(string path)
 	{
 		path = FileSystem.Path.GetFullPath(path);
 		string pathWithSpaces = path + "  ";
@@ -68,183 +68,191 @@ public partial class Tests
 
 		if (Test.RunsOnWindows)
 		{
-			sut.FullName.Should().Be(path);
+			await That(sut.FullName).IsEqualTo(path);
 		}
 		else
 		{
-			sut.FullName.Should().Be(pathWithSpaces);
+			await That(sut.FullName).IsEqualTo(pathWithSpaces);
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		MissingFile_Attributes_ShouldAlwaysBeNegativeOne_AndSetterShouldThrowFileNotFoundException(
 			FileAttributes fileAttributes)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
-		sut.Attributes.Should().Be((FileAttributes)(-1));
-		Exception? exception = Record.Exception(() =>
+		await That(sut.Attributes).IsEqualTo((FileAttributes)(-1));
+
+		void Act()
 		{
 			sut.Attributes = fileAttributes;
-		});
-		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
-		sut.Attributes.Should().Be((FileAttributes)(-1));
+		}
+
+		await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
+		await That(sut.Attributes).IsEqualTo((FileAttributes)(-1));
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		MissingFile_CreationTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime creationTime)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
-		sut.CreationTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
-		Exception? exception = Record.Exception(() =>
+		await That(sut.CreationTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
+
+		void Act()
 		{
 			sut.CreationTime = creationTime;
-		});
+		}
 
 		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
-			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+			await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 		}
 
-		sut.CreationTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
+		await That(sut.CreationTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		MissingFile_CreationTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime creationTimeUtc)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
-		sut.CreationTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
-		Exception? exception = Record.Exception(() =>
+		await That(sut.CreationTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
+
+		void Act()
 		{
 			sut.CreationTimeUtc = creationTimeUtc;
-		});
+		}
 
 		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
-			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+			await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 		}
 
-		sut.CreationTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
+		await That(sut.CreationTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		MissingFile_LastAccessTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime lastAccessTime)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
-		sut.LastAccessTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
-		Exception? exception = Record.Exception(() =>
+		await That(sut.LastAccessTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
+
+		void Act()
 		{
 			sut.LastAccessTime = lastAccessTime;
-		});
+		}
 
 		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
-			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+			await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 		}
 
-		sut.LastAccessTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
+		await That(sut.LastAccessTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		MissingFile_LastAccessTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime lastAccessTimeUtc)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
-		sut.LastAccessTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
-		Exception? exception = Record.Exception(() =>
+		await That(sut.LastAccessTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
+
+		void Act()
 		{
 			sut.LastAccessTimeUtc = lastAccessTimeUtc;
-		});
+		}
 
 		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
-			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+			await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 		}
 
-		sut.LastAccessTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
+		await That(sut.LastAccessTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		MissingFile_LastWriteTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime lastWriteTime)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
-		sut.LastWriteTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
-		Exception? exception = Record.Exception(() =>
+		await That(sut.LastWriteTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
+
+		void Act()
 		{
 			sut.LastWriteTime = lastWriteTime;
-		});
+		}
 
 		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
-			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+			await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 		}
 
-		sut.LastWriteTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
+		await That(sut.LastWriteTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
 	}
 
 	[Theory]
 	[AutoData]
-	public void
+	public async Task
 		MissingFile_LastWriteTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime lastWriteTimeUtc)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
-		sut.LastWriteTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
-		Exception? exception = Record.Exception(() =>
+		await That(sut.LastWriteTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
+
+		void Act()
 		{
 			sut.LastWriteTimeUtc = lastWriteTimeUtc;
-		});
+		}
 
 		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
-			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+			await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
+			await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 		}
 
-		sut.LastWriteTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
+		await That(sut.LastWriteTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
 	}
 
 	[Theory]
 	[AutoData]
-	public void Name_ShouldTrimTrailingSpaces_OnWindows(string path)
+	public async Task Name_ShouldTrimTrailingSpaces_OnWindows(string path)
 	{
 		string pathWithSpaces = path + "  ";
 
@@ -252,17 +260,17 @@ public partial class Tests
 
 		if (Test.RunsOnWindows)
 		{
-			sut.Name.Should().Be(path);
+			await That(sut.Name).IsEqualTo(path);
 		}
 		else
 		{
-			sut.Name.Should().Be(pathWithSpaces);
+			await That(sut.Name).IsEqualTo(pathWithSpaces);
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public void Parent_ArbitraryPaths_ShouldNotBeNull(string path1,
+	public async Task Parent_ArbitraryPaths_ShouldNotBeNull(string path1,
 		string path2,
 		string path3)
 	{
@@ -270,103 +278,103 @@ public partial class Tests
 
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
-		sut.Parent.Should().NotBeNull();
-		sut.Parent?.Exists.Should().BeFalse();
-		sut.Parent?.Parent.Should().NotBeNull();
-		sut.Parent?.Parent?.Exists.Should().BeFalse();
+		await That(sut.Parent).IsNotNull();
+		await That(sut?.Exists).IsFalse();
+		await That(sut?.Parent).IsNotNull();
+		await That(sut?.Parent?.Exists).IsFalse();
 	}
 
 	[Fact]
-	public void Parent_Root_ShouldBeNull()
+	public async Task Parent_Root_ShouldBeNull()
 	{
 		IDirectoryInfo sut =
 			FileSystem.DirectoryInfo.New(FileTestHelper.RootDrive(Test));
 
-		sut.Parent.Should().BeNull();
+		await That(sut.Parent).IsNull();
 	}
 
 	[Theory]
 	[InlineAutoData("./foo/bar", "foo")]
 	[InlineAutoData("./foo", ".")]
-	public void Parent_ToString_ShouldBeAbsolutePathOnNetCore(
+	public async Task Parent_ToString_ShouldBeAbsolutePathOnNetCore(
 		string path, string expectedParent)
 	{
 		Skip.If(Test.IsNetFramework);
 
 		FileSystem.Initialize();
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.ToString().Should().Be(path);
+		await That(sut.ToString()).IsEqualTo(path);
 
 		IDirectoryInfo? parent = sut.Parent;
 
-		parent.Should().NotBeNull();
+		await That(parent).IsNotNull();
 		if (Test.IsNetFramework)
 		{
-			parent!.ToString().Should().Be(expectedParent);
+			await That(parent!.ToString()).IsEqualTo(expectedParent);
 		}
 		else
 		{
-			parent!.ToString().Should().Be(FileSystem.Path.GetFullPath(expectedParent));
+			await That(parent!.ToString()).IsEqualTo(FileSystem.Path.GetFullPath(expectedParent));
 		}
 	}
 
 	[Theory]
 	[InlineAutoData("./foo/bar", "foo")]
 	[InlineAutoData("./foo", "bar", "bar")]
-	public void Parent_ToString_ShouldBeDirectoryNameOnNetFramework(
+	public async Task Parent_ToString_ShouldBeDirectoryNameOnNetFramework(
 		string path, string expectedParent, string directory)
 	{
 		Skip.IfNot(Test.IsNetFramework);
 
 		FileSystem.InitializeIn(directory);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.ToString().Should().Be(path);
+		await That(sut.ToString()).IsEqualTo(path);
 
 		IDirectoryInfo? parent = sut.Parent;
 
-		parent.Should().NotBeNull();
+		await That(parent).IsNotNull();
 		if (Test.IsNetFramework)
 		{
-			parent!.ToString().Should().Be(expectedParent);
+			await That(parent!.ToString()).IsEqualTo(expectedParent);
 		}
 		else
 		{
-			parent!.ToString().Should().Be(FileSystem.Path.GetFullPath(expectedParent));
+			await That(parent!.ToString()).IsEqualTo(FileSystem.Path.GetFullPath(expectedParent));
 		}
 	}
 
 	[Fact]
-	public void Root_Name_ShouldBeCorrect()
+	public async Task Root_Name_ShouldBeCorrect()
 	{
 		string rootName = FileTestHelper.RootDrive(Test);
 		IDirectoryInfo sut =
 			FileSystem.DirectoryInfo.New(rootName);
 
-		sut.FullName.Should().Be(rootName);
-		sut.Name.Should().Be(rootName);
+		await That(sut.FullName).IsEqualTo(rootName);
+		await That(sut.Name).IsEqualTo(rootName);
 	}
 
 	[Theory]
 	[AutoData]
-	public void Root_ShouldExist(string path)
+	public async Task Root_ShouldExist(string path)
 	{
 		string expectedRoot = FileTestHelper.RootDrive(Test);
 		IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
 
-		result.Root.Exists.Should().BeTrue();
-		result.Root.FullName.Should().Be(expectedRoot);
+		await That(result.Root.Exists).IsTrue();
+		await That(result.Root.FullName).IsEqualTo(expectedRoot);
 	}
 
 	[Theory]
 	[InlineData("/foo")]
 	[InlineData("./foo")]
 	[InlineData("foo")]
-	public void ToString_ShouldReturnProvidedPath(string path)
+	public async Task ToString_ShouldReturnProvidedPath(string path)
 	{
 		IDirectoryInfo directoryInfo = FileSystem.DirectoryInfo.New(path);
 
 		string? result = directoryInfo.ToString();
 
-		result.Should().Be(path);
+		await That(result).IsEqualTo(path);
 	}
 }

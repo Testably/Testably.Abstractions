@@ -5,21 +5,21 @@ public partial class IsPathRootedTests
 {
 	[Theory]
 	[MemberData(nameof(TestData))]
-	public void IsPathRooted_ShouldReturnDefaultValue(string path, TestOS isRootedOn)
+	public async Task IsPathRooted_ShouldReturnDefaultValue(string path, TestOS isRootedOn)
 	{
 		bool result = FileSystem.Path.IsPathRooted(path);
 
-		result.Should().Be(Test.RunsOn(isRootedOn));
+		await That(result).IsEqualTo(Test.RunsOn(isRootedOn));
 	}
 
 #if FEATURE_SPAN
 	[Theory]
 	[MemberData(nameof(TestData))]
-	public void IsPathRooted_Span_ShouldReturnDefaultValue(string path, TestOS isRootedOn)
+	public async Task IsPathRooted_Span_ShouldReturnDefaultValue(string path, TestOS isRootedOn)
 	{
 		bool result = FileSystem.Path.IsPathRooted(path.AsSpan());
 
-		result.Should().Be(Test.RunsOn(isRootedOn));
+		await That(result).IsEqualTo(Test.RunsOn(isRootedOn));
 	}
 #endif
 
