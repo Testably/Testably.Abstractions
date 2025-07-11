@@ -345,6 +345,9 @@ public partial class NotifyFiltersTests
 	[AutoData]
 	public void NotifyFilter_DeleteFile_ShouldNotNotifyOnOtherFilters(string path)
 	{
+		// This test is brittle on MacOS
+		Skip.If(Test.RunsOnMac);
+		
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize().WithFile(path);
