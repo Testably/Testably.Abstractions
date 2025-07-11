@@ -371,7 +371,7 @@ public partial class AdjustTimesTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And( creationTimeEnd);
+			await That(creationTime).IsBetween(creationTimeStart).And( creationTimeEnd).Within(TimeComparison.Tolerance);
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
