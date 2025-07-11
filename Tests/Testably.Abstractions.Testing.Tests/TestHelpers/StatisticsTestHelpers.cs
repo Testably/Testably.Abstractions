@@ -314,22 +314,15 @@ public static class StatisticsTestHelpers
 		: ConstraintResult.WithNotNullValue<IStatistics>(it, grammars),
 			IValueConstraint<IStatistics>
 	{
-		private readonly string _methodName = methodName;
-
-		private readonly Func<ParameterDescription[], bool> _parameterVerification =
-			parameterVerification;
-
-		private readonly string ParameterDescription = doNotPopulateThisValue;
-
 		#region IValueConstraint<IStatistics> Members
 
 		public ConstraintResult IsMetBy(IStatistics actual)
 		{
 			Actual = actual;
 			Outcome = actual.Methods.Length == 1 &&
-			          string.Equals(actual.Methods[0].Name, _methodName,
+			          string.Equals(actual.Methods[0].Name, methodName,
 				          StringComparison.Ordinal) &&
-			          _parameterVerification(actual.Methods[0].Parameters)
+			          parameterVerification(actual.Methods[0].Parameters)
 				? Outcome.Success
 				: Outcome.Failure;
 			return this;
@@ -340,8 +333,8 @@ public static class StatisticsTestHelpers
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder,
 			string? indentation = null)
 		{
-			stringBuilder.Append("does not only contain a single method ").Append(_methodName)
-				.Append(" with ").Append(ParameterDescription);
+			stringBuilder.Append("does not only contain a single method ").Append(methodName)
+				.Append(" with ").Append(doNotPopulateThisValue);
 		}
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder,
@@ -351,8 +344,8 @@ public static class StatisticsTestHelpers
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder,
 			string? indentation = null)
 		{
-			stringBuilder.Append("only contains a single method ").Append(_methodName)
-				.Append(" with ").Append(ParameterDescription);
+			stringBuilder.Append("only contains a single method ").Append(methodName)
+				.Append(" with ").Append(doNotPopulateThisValue);
 		}
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder,

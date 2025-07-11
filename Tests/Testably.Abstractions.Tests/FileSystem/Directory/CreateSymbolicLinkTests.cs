@@ -1,5 +1,4 @@
 #if FEATURE_FILESYSTEM_LINK
-using NSubstitute.ExceptionExtensions;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
