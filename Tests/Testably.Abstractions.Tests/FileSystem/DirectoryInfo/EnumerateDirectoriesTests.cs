@@ -71,7 +71,7 @@ public partial class EnumerateDirectoriesTests
 	[Theory]
 	[AutoData]
 	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
-			string path)
+		string path)
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
@@ -89,9 +89,11 @@ public partial class EnumerateDirectoriesTests
 				}).ToArray();
 
 		await That(result.Length).IsEqualTo(1);
-		await That(result).DoesNotContain(d => d.Name == "foo");
-		await That(result).Contains(d => d.Name == "xyz");
-		await That(result).DoesNotContain(d => d.Name == "bar");
+		await That(result).DoesNotContain(d
+			=> string.Equals(d.Name, "foo", StringComparison.Ordinal));
+		await That(result).Contains(d => string.Equals(d.Name, "xyz", StringComparison.Ordinal));
+		await That(result).DoesNotContain(d
+			=> string.Equals(d.Name, "bar", StringComparison.Ordinal));
 	}
 #endif
 
