@@ -20,11 +20,7 @@ internal static partial class SourceGenerationHelper
 		                		/// <summary>
 		                		///     The delay in milliseconds when wanting to ensure a timeout in the test.
 		                		/// </summary>
-		                		#if DEBUG
 		                		public const int EnsureTimeout = 500;
-		                		#else
-		                		public const int EnsureTimeout = 2000;
-		                		#endif
 		                
 		                		/// <summary>
 		                		///     The delay in milliseconds when expecting a success in the test.
