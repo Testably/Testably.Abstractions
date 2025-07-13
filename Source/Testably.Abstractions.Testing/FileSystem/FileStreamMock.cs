@@ -177,6 +177,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	private bool _isContentChanged;
 	private bool _isDisposed;
 	private readonly IStorageLocation _location;
+	private long _maxWrite;
+	private long _minWrite = long.MaxValue;
 	private readonly FileMode _mode;
 	private readonly FileOptions _options;
 	private readonly MemoryStream _stream;
@@ -248,7 +250,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 
 			throw ExceptionFactory.FileAlreadyExists(
 				_fileSystem.Execute.Path.GetFullPath(base.Name), 17);
-		} else if (_mode.Equals(FileMode.CreateNew))
+		}
+		else if (_mode.Equals(FileMode.CreateNew))
 		{
 			throw ExceptionFactory.FileAlreadyExists(
 				_fileSystem.Execute.Path.GetFullPath(Name),
@@ -575,6 +578,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 
 		_isContentChanged = true;
+		_minWrite = Position;
+		_maxWrite = Position + count;
 		base.Write(buffer, offset, count);
 	}
 
@@ -592,6 +597,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 
 		_isContentChanged = true;
+		_minWrite = Position;
+		_maxWrite = Position + buffer.Length;
 		base.Write(buffer);
 	}
 #endif
@@ -610,6 +617,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 
 		_isContentChanged = true;
+		_minWrite = Position;
+		_maxWrite = Position + count;
 		await base.WriteAsync(buffer, offset, count, cancellationToken);
 	}
 
@@ -628,6 +637,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 
 		_isContentChanged = true;
+		_minWrite = Position;
+		_maxWrite = Position + buffer.Length;
 		await base.WriteAsync(buffer, cancellationToken);
 	}
 #endif
@@ -645,6 +656,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 
 		_isContentChanged = true;
+		_minWrite = Position;
+		_maxWrite = Position + 1L;
 		base.WriteByte(value);
 	}
 
@@ -679,12 +692,14 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		else
 		{
 			_isContentChanged = true;
+			_minWrite = Position;
+			_maxWrite = Position;
 		}
 	}
 
 	private void InternalFlush()
 	{
-		if (!_isContentChanged)
+		if (!_isContentChanged || Length == 0)
 		{
 			return;
 		}
@@ -696,12 +711,20 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		_ = _stream.Read(data, 0, (int)Length);
 		_stream.Seek(position, SeekOrigin.Begin);
 		_container.WriteBytes(data);
+		_minWrite = int.MaxValue;
+		_maxWrite = 0;
 	}
 
 	private void OnBytesChanged(object? sender, EventArgs e)
 	{
 		byte[] existingContents = _container.GetBytes();
 		long position = _stream.Position;
+		if (_minWrite < _maxWrite)
+		{
+			_stream.Position = _minWrite;
+			_ = _stream.Read(existingContents, (int)_minWrite, (int)(_maxWrite - _minWrite));
+		}
+
 		_stream.Position = 0;
 		_stream.Write(existingContents, 0, existingContents.Length);
 		_stream.Position = position;

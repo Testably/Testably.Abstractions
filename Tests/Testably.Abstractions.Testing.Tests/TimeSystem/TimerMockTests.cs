@@ -69,7 +69,8 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		await That(Act).Throws<ObjectDisposedException>()
 			.Whose(x => x.Message,
 				it => it.Satisfies(m
-					=> m!.Contains("Cannot access a disposed object.", StringComparison.Ordinal) &&
+					=> m != null &&
+					   m.Contains("Cannot access a disposed object.", StringComparison.Ordinal) &&
 					   m.Contains(nameof(ITimer.Change), StringComparison.Ordinal)));
 #endif
 	}
