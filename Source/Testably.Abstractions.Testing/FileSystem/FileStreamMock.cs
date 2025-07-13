@@ -701,7 +701,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 
 	private void InternalFlush()
 	{
-		if (!_isContentChanged || Length == 0)
+		if (!_isContentChanged)
 		{
 			return;
 		}
