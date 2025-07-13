@@ -324,6 +324,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
+		_minWrite = Position;
+		_maxWrite = Position + count;
 		return base.BeginWrite(buffer, offset, count, callback, state);
 	}
 
@@ -711,7 +713,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		_ = _stream.Read(data, 0, (int)Length);
 		_stream.Seek(position, SeekOrigin.Begin);
 		_container.WriteBytes(data);
-		_minWrite = int.MaxValue;
+		_minWrite = long.MaxValue;
 		_maxWrite = 0;
 	}
 
