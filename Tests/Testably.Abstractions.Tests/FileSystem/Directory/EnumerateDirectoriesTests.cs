@@ -182,6 +182,18 @@ public partial class EnumerateDirectoriesTests
 	}
 
 	[Fact]
+	public async Task EnumerateDirectories_ShouldIncludeEmptyDirectoriesWithTrailingSlash()
+	{
+		string rootDirectory = "RootDir";
+		string emptyDirectory = FileSystem.Path.Combine(rootDirectory, "EmptyDir") + FileSystem.Path.DirectorySeparatorChar;
+
+		FileSystem.Directory.CreateDirectory(emptyDirectory);
+
+		await That(FileSystem.Directory.Exists(emptyDirectory)).IsTrue();
+		await That(FileSystem.Directory.EnumerateDirectories(rootDirectory)).HasCount(1);
+	}
+
+	[Fact]
 	public async Task EnumerateDirectories_ShouldSupportExtendedLengthPaths1()
 	{
 		Skip.If(!Test.RunsOnWindows);
