@@ -185,7 +185,7 @@ public partial class EnumerateDirectoriesTests
 	public async Task EnumerateDirectories_ShouldIncludeEmptyDirectoriesWithTrailingSlash()
 	{
 		string rootDirectory = "RootDir";
-		string emptyDirectory = FileSystem.Path.Combine(rootDirectory, @"EmptyDir\");
+		string emptyDirectory = FileSystem.Path.Combine(rootDirectory, "EmptyDir") + FileSystem.Path.DirectorySeparatorChar;
 
 		FileSystem.Directory.CreateDirectory(emptyDirectory);
 
