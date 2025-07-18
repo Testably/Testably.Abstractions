@@ -252,7 +252,13 @@ internal sealed class InMemoryStorage : IStorage
 			if (type.HasFlag(item.Value.Type) &&
 			    IncludeItemInEnumeration(item, fullPathWithoutTrailingSlash, enumerationOptions))
 			{
-				string name = _fileSystem.Execute.Path.GetFileName(item.Key.FullPath);
+				string? itemPath = item.Key.FullPath;
+				if (itemPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
+				{
+					itemPath = itemPath.TrimEnd(_fileSystem.Path.DirectorySeparatorChar);
+				}
+
+				string name = _fileSystem.Execute.Path.GetFileName(itemPath);
 				if (EnumerationOptionsHelper.MatchesPattern(
 					    _fileSystem.Execute,
 					    enumerationOptions,
@@ -967,9 +973,8 @@ internal sealed class InMemoryStorage : IStorage
 						sourceContainer.Attributes |= FileAttributes.Archive;
 					}
 
-					rollbacks?.Add(new Rollback(
-						() => MoveInternal(destination, source, true, false,
-							sourceType)));
+					rollbacks?.Add(new Rollback(() => MoveInternal(destination, source, true, false,
+						sourceType)));
 					_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 					return destination;
 				}
