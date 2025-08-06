@@ -551,33 +551,26 @@ internal sealed class InMemoryStorage : IStorage
 	public IStorageLocation? ResolveLinkTarget(IStorageLocation location,
 		bool returnFinalTarget = false)
 	{
-		if (_containers.TryGetValue(location,
-			    out IStorageContainer? initialContainer) &&
-		    initialContainer.LinkTarget != null)
+		if (!_containers.TryGetValue(location, out IStorageContainer? initialContainer)
+		    || initialContainer.LinkTarget == null)
 		{
-			IStorageLocation? nextLocation =
-				_fileSystem.Storage.GetLocation(initialContainer.LinkTarget);
+			return null;
+		}
 
-			if(nextLocation?.LinkTarget == null)
-			{
-				return nextLocation;	
-			}
+		IStorageLocation? nextLocation =
+			_fileSystem.Storage.GetLocation(initialContainer.LinkTarget);
 
-			if (_containers.TryGetValue(nextLocation,
-				out IStorageContainer? container))
-			{
-				if (returnFinalTarget)
-				{
-					nextLocation = ResolveFinalLinkTarget(container, location);
-				}
-
-				return nextLocation;
-			}
-
+		if (!_containers.TryGetValue(nextLocation, out IStorageContainer? container) || container.LinkTarget == null)
+		{
 			return nextLocation;
 		}
 
-		return null;
+		if (returnFinalTarget)
+		{
+			nextLocation = ResolveFinalLinkTarget(container, location);
+		}
+
+		return nextLocation;
 	}
 #endif
 

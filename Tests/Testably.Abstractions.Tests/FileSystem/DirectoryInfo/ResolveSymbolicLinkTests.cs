@@ -1,0 +1,123 @@
+﻿using System.IO;
+#if FEATURE_FILESYSTEM_LINK
+namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
+
+[FileSystemTests]
+public partial class ResolveSymbolicLinkTests
+{
+	[Theory]
+	[AutoData]
+	public async Task ResolveSymbolicLink_ShouldThrow(string path)
+	{
+		IFileSystemInfo link = FileSystem.Directory.CreateSymbolicLink(path, path + "-start");
+
+		// UNIX allows 43 and Windows 63 nesting, so 70 is plenty to force the exception
+		for (int i = 0; i < 70; i++)
+		{
+			link = FileSystem.Directory.CreateSymbolicLink($"{path}{i}", link.Name);
+		}
+
+		await That(() => link.ResolveLinkTarget(true)).Throws<IOException>();
+	}
+	
+	[Theory]
+	[AutoData]
+	public async Task ResolveSymbolicLink_ShouldReturnNull(string path)
+	{
+		IDirectoryInfo targetDir = FileSystem.DirectoryInfo.New(path);
+		targetDir.Create();
+
+		IFileSystemInfo? resolvedTarget = targetDir.ResolveLinkTarget(false);
+
+		await That(resolvedTarget).IsNull();
+	}
+	
+	[Theory]
+	[AutoData]
+	public async Task ResolveSymbolicLink_WithChainedLink_ShouldReturnNull(
+		string path,
+		string pathToLink,
+		string pathToTarget
+	)
+	{
+		IFileSystemInfo innerLink = FileSystem.Directory.CreateSymbolicLink(pathToLink, pathToTarget);
+		IFileSystemInfo outerLink = FileSystem.Directory.CreateSymbolicLink(path, pathToLink);
+
+		IFileSystemInfo? resolvedTarget = outerLink.ResolveLinkTarget(true);
+
+		await That(resolvedTarget?.Name).IsEqualTo(innerLink.LinkTarget);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task ResolveSymbolicLink_ShouldReturnImmediateFile(
+		string path,
+		string pathToTarget
+	)
+	{
+		IDirectoryInfo targetDir = FileSystem.DirectoryInfo.New(pathToTarget);
+		targetDir.Create();
+
+		IFileSystemInfo symbolicLink
+			= FileSystem.Directory.CreateSymbolicLink(path, targetDir.FullName);
+
+		IFileSystemInfo? resolvedTarget = symbolicLink.ResolveLinkTarget(false);
+
+		await That(resolvedTarget?.FullName).IsEqualTo(targetDir.FullName);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task ResolveSymbolicLink_WithChainedLink_ShouldReturnImmediateLink(
+		string path,
+		string pathToLink,
+		string pathToTarget
+	)
+	{
+		FileSystem.DirectoryInfo.New(pathToTarget).Create();
+
+		IFileSystemInfo innerLink
+			= FileSystem.Directory.CreateSymbolicLink(pathToLink, pathToTarget);
+
+		IFileSystemInfo outerLink = FileSystem.Directory.CreateSymbolicLink(path, pathToLink);
+
+		IFileSystemInfo? resolvedTarget = outerLink.ResolveLinkTarget(false);
+
+		await That(resolvedTarget?.FullName).IsEqualTo(innerLink.FullName);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task ResolveSymbolicLink_ShouldReturnFinalFile(string path, string pathToTarget)
+	{
+		IDirectoryInfo targetDir = FileSystem.DirectoryInfo.New(pathToTarget);
+		targetDir.Create();
+
+		IFileSystemInfo symbolicLink
+			= FileSystem.Directory.CreateSymbolicLink(path, targetDir.FullName);
+
+		IFileSystemInfo? resolvedTarget = symbolicLink.ResolveLinkTarget(true);
+
+		await That(resolvedTarget?.FullName).IsEqualTo(targetDir.FullName);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task ResolveSymbolicLink_WithChainedLink_ShouldReturnFinalFile(
+		string path,
+		string pathToLink,
+		string pathToTarget
+	)
+	{
+		IDirectoryInfo targetDir = FileSystem.DirectoryInfo.New(pathToTarget);
+		targetDir.Create();
+
+		FileSystem.File.CreateSymbolicLink(pathToLink, targetDir.FullName);
+		IFileSystemInfo outerLink = FileSystem.Directory.CreateSymbolicLink(path, pathToLink);
+
+		IFileSystemInfo? resolvedTarget = outerLink.ResolveLinkTarget(true);
+
+		await That(resolvedTarget?.FullName).IsEqualTo(targetDir.FullName);
+	}
+}
+#endif
