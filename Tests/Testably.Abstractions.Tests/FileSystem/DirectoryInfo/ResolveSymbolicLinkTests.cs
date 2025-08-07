@@ -1,5 +1,6 @@
-﻿using System.IO;
-#if FEATURE_FILESYSTEM_LINK
+﻿#if FEATURE_FILESYSTEM_LINK
+using System.IO;
+
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 [FileSystemTests]
@@ -19,7 +20,7 @@ public partial class ResolveSymbolicLinkTests
 
 		await That(() => link.ResolveLinkTarget(true)).Throws<IOException>();
 	}
-	
+
 	[Theory]
 	[AutoData]
 	public async Task ResolveSymbolicLink_ShouldReturnNull(string path)
@@ -31,7 +32,7 @@ public partial class ResolveSymbolicLinkTests
 
 		await That(resolvedTarget).IsNull();
 	}
-	
+
 	[Theory]
 	[AutoData]
 	public async Task ResolveSymbolicLink_WithChainedLink_ShouldReturnNull(
@@ -40,7 +41,9 @@ public partial class ResolveSymbolicLinkTests
 		string pathToTarget
 	)
 	{
-		IFileSystemInfo innerLink = FileSystem.Directory.CreateSymbolicLink(pathToLink, pathToTarget);
+		IFileSystemInfo innerLink
+			= FileSystem.Directory.CreateSymbolicLink(pathToLink, pathToTarget);
+
 		IFileSystemInfo outerLink = FileSystem.Directory.CreateSymbolicLink(path, pathToLink);
 
 		IFileSystemInfo? resolvedTarget = outerLink.ResolveLinkTarget(true);
@@ -112,8 +115,11 @@ public partial class ResolveSymbolicLinkTests
 		IDirectoryInfo targetDir = FileSystem.DirectoryInfo.New(pathToTarget);
 		targetDir.Create();
 
-		FileSystem.File.CreateSymbolicLink(pathToLink, targetDir.FullName);
-		IFileSystemInfo outerLink = FileSystem.Directory.CreateSymbolicLink(path, pathToLink);
+		IFileSystemInfo innerLink
+			= FileSystem.Directory.CreateSymbolicLink(pathToLink, targetDir.FullName);
+
+		IFileSystemInfo outerLink
+			= FileSystem.Directory.CreateSymbolicLink(path, innerLink.FullName);
 
 		IFileSystemInfo? resolvedTarget = outerLink.ResolveLinkTarget(true);
 

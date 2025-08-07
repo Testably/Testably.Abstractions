@@ -1,6 +1,6 @@
-﻿using NSubstitute.ExceptionExtensions;
+﻿#if FEATURE_FILESYSTEM_LINK
 using System.IO;
-#if FEATURE_FILESYSTEM_LINK
+
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
