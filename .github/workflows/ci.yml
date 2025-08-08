@@ -66,59 +66,9 @@ jobs:
                         ./Artifacts/*
                         ./TestResults/*.trx
     
-    mutation-tests-linux:
-        name: "Mutation tests (Linux)"
-        if: false
-        runs-on: ubuntu-latest
-        env:
-            STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-            DOTNET_NOLOGO: true
-        permissions:
-            pull-requests: write
-        steps:
-            -   uses: actions/checkout@v4
-                with:
-                    fetch-depth: 0
-            -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@v4
-                with:
-                    dotnet-version: |
-                        6.0.x
-                        8.0.x
-                        9.0.x
-            -   name: Run mutation tests
-                run: ./build.sh MutationTestsLinux MutationComment
-                env:
-                    GithubToken: ${{ secrets.GITHUB_TOKEN }}
-    
-    mutation-tests-windows:
-        name: "Mutation tests (Windows)"
-        if: false
-        runs-on: windows-latest
-        env:
-            STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-            DOTNET_NOLOGO: true
-        permissions:
-            pull-requests: write
-        steps:
-            -   uses: actions/checkout@v4
-                with:
-                    fetch-depth: 0
-            -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@v4
-                with:
-                    dotnet-version: |
-                        6.0.x
-                        8.0.x
-                        9.0.x
-            -   name: Run mutation tests
-                run: ./build.ps1 MutationTestsWindows MutationComment
-                env:
-                    GithubToken: ${{ secrets.GITHUB_TOKEN }}
-    
     static-code-analysis:
         name: "Static code analysis"
-        if: ${{ github.actor != 'dependabot[bot]' }}
+        if: ${{ github.actor == 'vbreuss' }}
         runs-on: ubuntu-latest
         env:
             REPORTGENERATOR_LICENSE: ${{ secrets.REPORTGENERATOR_LICENSE }}
