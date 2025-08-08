@@ -1,4 +1,4 @@
-using FluentAssertions;
+using aweXpect;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -44,21 +44,20 @@ public class ThreadAwareTimeProviderTests
 							return l;
 						});
 				}
-			});
+			}, TestContext.Current.CancellationToken);
 		}
 
 		for (int i = 1; i <= parallelTasks; i++)
 		{
 			int delayPerTask = i * 1000;
-			delaysPerTask[i]
-				.Should()
-				.BeEquivalentTo(
-					Enumerable.Range(1, stepsPerTask).Select(x => x * delayPerTask));
+			await Expect.That(delaysPerTask[i])
+				.IsEqualTo(Enumerable.Range(1, stepsPerTask)
+					.Select(x => x * delayPerTask));
 		}
 	}
 
 	[Fact]
-	public void ParallelThreads_ShouldHaveDistinctTimes()
+	public async Task ParallelThreads_ShouldHaveDistinctTimes()
 	{
 		int parallelThreads = 10;
 		int stepsPerThread = 20;
@@ -95,14 +94,13 @@ public class ThreadAwareTimeProviderTests
 			}).Start();
 		}
 
-		ms.Wait(1000).Should().BeTrue();
+		await Expect.That(ms.Wait(1000, TestContext.Current.CancellationToken)).IsTrue();
 		for (int i = 1; i <= parallelThreads; i++)
 		{
 			int delayPerThread = i * 1000;
-			delaysPerThread[i]
-				.Should()
-				.BeEquivalentTo(
-					Enumerable.Range(1, stepsPerThread).Select(x => x * delayPerThread));
+			await Expect.That(delaysPerThread[i])
+				.IsEqualTo(Enumerable.Range(1, stepsPerThread)
+					.Select(x => x * delayPerThread));
 		}
 	}
 
@@ -115,7 +113,7 @@ public class ThreadAwareTimeProviderTests
 		ThreadAwareTimeProvider timeProvider = new();
 		MockTimeSystem timeSystem = new(timeProvider);
 		DateTime start = timeSystem.DateTime.UtcNow;
-		await timeSystem.Task.Delay(1000);
+		await timeSystem.Task.Delay(1000, TestContext.Current.CancellationToken);
 
 		ManualResetEventSlim ms = new();
 		await Task.Run(async () =>
@@ -127,13 +125,13 @@ public class ThreadAwareTimeProviderTests
 			}
 
 			ms.Set();
-		});
-		ms.Wait();
+		}, TestContext.Current.CancellationToken);
+		ms.Wait(TestContext.Current.CancellationToken);
 
 		timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromMilliseconds(1000));
 		int mainThreadAfterCompletedTaskDelay =
 			(int)(timeSystem.DateTime.UtcNow - start).TotalMilliseconds;
-		mainThreadAfterCompletedTaskDelay.Should().Be(expectedDelay);
+		await Expect.That(mainThreadAfterCompletedTaskDelay).IsEqualTo(expectedDelay);
 	}
 
 	[Theory]
@@ -145,7 +143,7 @@ public class ThreadAwareTimeProviderTests
 		ThreadAwareTimeProvider timeProvider = new();
 		MockTimeSystem timeSystem = new(timeProvider);
 		DateTime start = timeSystem.DateTime.UtcNow;
-		await timeSystem.Task.Delay(1000);
+		await timeSystem.Task.Delay(1000, TestContext.Current.CancellationToken);
 		int parallelTaskDelay = 0;
 
 		ManualResetEventSlim ms = new();
@@ -160,12 +158,12 @@ public class ThreadAwareTimeProviderTests
 			}
 
 			ms.Set();
-		});
-		ms.Wait();
+		}, TestContext.Current.CancellationToken);
+		ms.Wait(TestContext.Current.CancellationToken);
 
 		int mainThreadAfterCompletedTaskDelay =
 			(int)(timeSystem.DateTime.UtcNow - start).TotalMilliseconds;
-		parallelTaskDelay.Should().Be(2000);
-		mainThreadAfterCompletedTaskDelay.Should().Be(expectedDelay);
+		await Expect.That(parallelTaskDelay).IsEqualTo(2000);
+		await Expect.That(mainThreadAfterCompletedTaskDelay).IsEqualTo(expectedDelay);
 	}
 }
