@@ -49,6 +49,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{5E35
 	ProjectSection(SolutionItems) = preProject
 		.github\coverage-settings.xml = .github\coverage-settings.xml
 		.github\mergify.yml = .github\mergify.yml
+		.github\copilot-instructions.md = .github\copilot-instructions.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{8FD8E33B-2072-48CA-8164-DE2AA5DCB8FD}"
