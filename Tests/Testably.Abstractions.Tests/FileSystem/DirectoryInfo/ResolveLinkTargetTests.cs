@@ -4,11 +4,11 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 [FileSystemTests]
-public partial class ResolveSymbolicLinkTests
+public partial class ResolveLinkTargetTests
 {
 	[Theory]
 	[AutoData]
-	public async Task ResolveSymbolicLink_ShouldThrow(string path)
+	public async Task ResolveLinkTarget_ShouldThrow(string path)
 	{
 		IFileSystemInfo link = FileSystem.Directory.CreateSymbolicLink(path, path + "-start");
 
@@ -23,7 +23,7 @@ public partial class ResolveSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public async Task ResolveSymbolicLink_ShouldReturnNull(string path)
+	public async Task ResolveLinkTarget_ShouldReturnNull(string path)
 	{
 		IDirectoryInfo targetDir = FileSystem.DirectoryInfo.New(path);
 		targetDir.Create();
@@ -35,7 +35,7 @@ public partial class ResolveSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public async Task ResolveSymbolicLink_WithChainedLink_ShouldReturnNull(
+	public async Task ResolveLinkTarget_WithChainedLink_ShouldReturnNull(
 		string path,
 		string pathToLink,
 		string pathToTarget
@@ -53,7 +53,7 @@ public partial class ResolveSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public async Task ResolveSymbolicLink_ShouldReturnImmediateFile(
+	public async Task ResolveLinkTarget_ShouldReturnImmediateFile(
 		string path,
 		string pathToTarget
 	)
@@ -71,7 +71,7 @@ public partial class ResolveSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public async Task ResolveSymbolicLink_WithChainedLink_ShouldReturnImmediateLink(
+	public async Task ResolveLinkTarget_WithChainedLink_ShouldReturnImmediateLink(
 		string path,
 		string pathToLink,
 		string pathToTarget
@@ -91,7 +91,7 @@ public partial class ResolveSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public async Task ResolveSymbolicLink_ShouldReturnFinalFile(string path, string pathToTarget)
+	public async Task ResolveLinkTarget_ShouldReturnFinalFile(string path, string pathToTarget)
 	{
 		IDirectoryInfo targetDir = FileSystem.DirectoryInfo.New(pathToTarget);
 		targetDir.Create();
@@ -106,7 +106,7 @@ public partial class ResolveSymbolicLinkTests
 
 	[Theory]
 	[AutoData]
-	public async Task ResolveSymbolicLink_WithChainedLink_ShouldReturnFinalFile(
+	public async Task ResolveLinkTarget_WithChainedLink_ShouldReturnFinalFile(
 		string path,
 		string pathToLink,
 		string pathToTarget
