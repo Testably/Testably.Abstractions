@@ -41,4 +41,28 @@ public partial class ExistsTests
 
 		await That(sut.Exists).IsTrue();
 	}
+
+	[Theory]
+	[AutoData]
+	public async Task Exists_ShouldUpdateAfterFileRecreation(string path)
+	{
+		// Create initial file
+		FileSystem.File.WriteAllText(path, "initial content");
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+		await That(sut.Exists).IsTrue();
+
+		// Delete the file
+		FileSystem.File.Delete(path);
+		sut.Refresh();
+		await That(sut.Exists).IsFalse();
+
+		// Recreate the file
+		FileSystem.File.WriteAllText(path, "new content");
+		// Before refresh, should still show cached false value
+		await That(sut.Exists).IsFalse();
+
+		// After refresh, should detect the recreated file
+		sut.Refresh();
+		await That(sut.Exists).IsTrue();
+	}
 }

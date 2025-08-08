@@ -330,6 +330,9 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		using IDisposable registration = RegisterPathMethod(nameof(Refresh));
 
 		ResetCache(true);
+		// Force refresh the container from storage to get current state
+		Container = _fileSystem.Storage.GetContainer(Location);
+		_isInitialized = true;
 	}
 
 #if FEATURE_FILESYSTEM_LINK
