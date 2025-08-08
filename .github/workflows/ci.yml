@@ -118,7 +118,7 @@ jobs:
     
     static-code-analysis:
         name: "Static code analysis"
-        if: ${{ github.actor != 'dependabot[bot]' }}
+        if: ${{ (github.actor != 'dependabot[bot]') && (github.repository == 'Testably/Testably.Abstractions') }}
         runs-on: ubuntu-latest
         env:
             REPORTGENERATOR_LICENSE: ${{ secrets.REPORTGENERATOR_LICENSE }}
