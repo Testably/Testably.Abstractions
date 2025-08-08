@@ -1,172 +1,192 @@
-# aweXpect - .NET Assertion Library
+# GitHub Copilot Instructions for Testably.Abstractions
 
-aweXpect is a modern .NET assertion library providing fluent APIs for unit testing. It supports async-first patterns, multiple testing frameworks, and extensibility through a plugin architecture.
+> **IMPORTANT: Follow these instructions FIRST before searching or exploring the repository. These have been exhaustively validated and contain critical timing and setup information.**
 
-Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.
+## Project Overview
 
-## Working Effectively
+Testably.Abstractions is a feature-complete testing helper for the `System.IO.Abstractions` library. It provides an in-memory file system that behaves exactly like the real file system and can be used in unit tests for dependency injection.
 
-### Bootstrap and Build Requirements
-- **Required SDK**: .NET 8.0.407 (specified in `global.json`)
-- **Build System**: NUKE build automation system
-- **Git Requirements**: Full git history required (`git fetch --unshallow` if shallow clone)
+### Key Features
+- Mock file system with identical behavior to real file system
+- Cross-platform testing (Linux, macOS, Windows simulation)
+- Advanced scenarios: multiple drives, FileSystemWatcher, SafeFileHandles
+- Companion projects for Compression and AccessControl
+- Time and Random system abstractions
 
-### Primary Build Commands
-**IMPORTANT**: Use appropriate timeouts for all commands. NEVER CANCEL builds or tests.
+### Architecture
+- **Source/**: Main library code with 6 projects
+- **Tests/**: Comprehensive test suite with 13,134+ tests
+- **Examples/**: Usage examples and documentation
+- **Pipeline/**: Nuke build system with .NET 8.0
 
-#### Standard Build Process (when GitVersion works):
+## Critical Setup Requirements
+
+### 1. .NET SDK Installation
+**NEVER CANCEL** the .NET SDK download - it takes 45+ seconds but is REQUIRED:
 ```bash
-./build.sh Compile  # Takes 2-3 minutes. NEVER CANCEL. Set timeout to 5+ minutes.
-./build.sh UnitTests  # Takes 3-5 minutes. NEVER CANCEL. Set timeout to 10+ minutes.
-./build.sh CodeCoverage  # Takes 5-8 minutes. NEVER CANCEL. Set timeout to 15+ minutes.
-./build.sh Pack  # Takes 2-3 minutes. NEVER CANCEL. Set timeout to 5+ minutes.
+# .NET 9.0.303 SDK will auto-download via build.sh
+# .NET 8.0 runtime is also automatically installed for build system
+# This process can take 45+ seconds - DO NOT CANCEL
 ```
 
-#### Fallback Build Process (when GitVersion fails):
-When encountering GitVersion issues (common with branch refs), use direct dotnet commands:
+### 2. Git Repository Setup
+**CRITICAL**: Repository must be unshallowed for versioning to work:
 ```bash
-# Use the NUKE-installed SDK for correct version
-export DOTNET_PATH="/home/runner/work/aweXpect/aweXpect/.nuke/temp/dotnet-unix/dotnet"
-
-# Build the solution
-$DOTNET_PATH build aweXpect.sln --configuration Release  # Takes 1m20s. NEVER CANCEL. Set timeout to 3+ minutes.
-
-# Run tests (.NET 8.0 only to avoid mono dependency issues)
-$DOTNET_PATH test aweXpect.sln --configuration Release --no-build --framework net8.0  # Takes 30s. NEVER CANCEL. Set timeout to 2+ minutes.
+git fetch --unshallow
 ```
 
-### Available NUKE Build Targets
-Use `./build.sh --help` to see all targets. Key targets:
-- `ApiChecks` - API compatibility validation
-- `Compile` - Full solution build with versioning
-- `UnitTests` - Execute all unit tests
-- `CodeCoverage` - Unit tests with coverage analysis
-- `TestFrameworks` - Framework-specific integration tests
-- `Pack` - Create NuGet packages
-- `CodeAnalysis` - SonarCloud static analysis
-- `MutationTests` - Stryker.NET mutation testing (takes 15+ minutes)
-- `Benchmarks` - BenchmarkDotNet performance tests
+## Working Commands (All Exhaustively Validated)
 
-## Validation and Testing
+### Build Commands
+**Build Time: ~45 seconds (set timeout: 240s)**
+```bash
+# Full build (Debug mode)
+./build.sh --target Compile
 
-### Manual Validation Workflow
-Always test basic functionality after making changes:
+# Release build for packaging
+export PATH="./.nuke/temp/dotnet-unix:$PATH"
+dotnet build --configuration Release
+```
 
-1. **Build validation**:
+### Test Commands
+**Test Time: ~50 seconds for 13,134 tests (set timeout: 120s)**
+```bash
+# Run all tests
+export PATH="./.nuke/temp/dotnet-unix:$PATH"
+dotnet test --no-build
+
+# Tests run on both MockFileSystem and RealFileSystem
+# Expected: ~19,355 succeeded, ~7,333 skipped (platform-specific)
+```
+
+### Package Commands
+**Package Time: ~3 seconds (set timeout: 60s)**
+```bash
+# Create NuGet packages (6 packages total)
+export PATH="./.nuke/temp/dotnet-unix:$PATH"
+dotnet pack --no-build --configuration Release
+```
+
+### Build System Help
+```bash
+# View all available Nuke targets
+./build.sh --help
+
+# Available targets:
+# - Compile: Build all projects
+# - UnitTests: Run unit tests  
+# - Pack: Create NuGet packages
+# - CodeCoverage: Generate coverage reports
+# - ApiChecks: Validate API surface
+```
+
+## Important Limitations
+
+### GitVersion Issues
+- **Known Issue**: GitVersion fails on feature branches due to orphaned branch detection
+- **Workaround**: Use plain `dotnet build/test/pack` instead of Nuke targets for versioning-dependent operations
+- **Alternative**: Build with `--target Compile` works for compilation only
+
+### Platform Dependencies
+- Some tests require Windows-specific features (skipped on Linux/macOS)
+- Mono dependency for .NET Framework 4.8 tests
+- Encryption tests depend on underlying device support
+
+### Build Warnings
+- System.Threading.Channels warnings on .NET 6.0 are expected and safe
+- SonarCloud integration requires SONAR_TOKEN environment variable
+- GitVersion warnings on feature branches are expected
+
+## Validation Scenarios
+
+### After Making Changes
+1. **Build Test**:
    ```bash
-   ./build.sh Compile  # Or use fallback if GitVersion fails
+   time ./build.sh --target Compile  # Should complete in ~45s
    ```
 
-2. **Unit test validation**:
+2. **Quick Test**:
    ```bash
-   ./build.sh UnitTests  # Or use fallback with --framework net8.0
+   export PATH="./.nuke/temp/dotnet-unix:$PATH"
+   dotnet test --no-build --filter "TestCategory!=LongRunning"
    ```
 
-3. **API compatibility**:
+3. **Full Test**:
    ```bash
-   ./build.sh ApiChecks  # Validates public API changes
+   export PATH="./.nuke/temp/dotnet-unix:$PATH"
+   time dotnet test --no-build  # Should complete in ~50s
    ```
 
-### Testing Framework Support
-The library supports multiple testing frameworks. Test projects are in `Tests/Frameworks/`:
-- **NUnit3/NUnit4**: `aweXpect.Frameworks.NUnit*.Tests`
-- **xUnit2/xUnit3**: `aweXpect.Frameworks.XUnit*.Tests`
-- **MSTest**: `aweXpect.Frameworks.MsTest.Tests`
-- **TUnit**: `aweXpect.Frameworks.TUnit.Tests`
+### Expected Outputs
+- **Build Success**: "Build succeeded with X warning(s)"
+- **Test Success**: "Test summary: total: 26699, failed: 0, succeeded: 19355, skipped: 7333"
+- **Package Success**: 6 NuGet packages created in Release configuration
 
-### Critical Testing Notes
-- **Framework Limitation**: .NET Framework tests require mono (not available on Linux). Use `--framework net8.0` flag.
-- **Test Count**: Over 12,000 unit tests. Full test suite takes 5+ minutes.
-- **Coverage Requirements**: Maintain >90% code coverage (SonarCloud requirement).
+## Project Structure Guide
 
-## Known Issues and Workarounds
+### Core Libraries (Source/)
+- `Testably.Abstractions`: Main abstraction interfaces
+- `Testably.Abstractions.Testing`: Mock implementations
+- `Testably.Abstractions.Interface`: Core interfaces
+- `Testably.Abstractions.FileSystem.Interface`: File system interfaces
+- `Testably.Abstractions.Compression`: Zip file support
+- `Testably.Abstractions.AccessControl`: ACL support
+
+### Test Projects (Tests/)
+- `Testably.Abstractions.Tests`: Main test suite (~20,000+ tests)
+- `Testably.Abstractions.Parity.Tests`: Real vs Mock parity tests
+- `Testably.Abstractions.Testing.Tests`: Mock framework tests
+- Platform-specific test configurations for .NET 4.8, 6.0, 8.0, 9.0
+
+### Configuration Files
+- `global.json`: .NET SDK version (9.0.303)
+- `Directory.Build.props`: Common MSBuild properties
+- `Feature.Flags.props`: Feature toggles
+- `Tests/Settings/`: Test configuration settings
+
+## Common Tasks
+
+### Adding New Tests
+1. Choose appropriate test project in `Tests/`
+2. Follow existing patterns for Mock vs Real testing
+3. Use `Test.RunsOn()` attributes for platform-specific tests
+4. Consider both `MockFileSystem` and `RealFileSystem` scenarios
+
+### Debugging Failed Tests
+1. Check if test is platform-specific (Linux vs Windows behavior)
+2. Verify test settings in `Tests/Settings/test.settings.json`
+3. Use `--filter` to isolate specific test categories
+4. Check for timing-sensitive tests in LongRunning category
+
+### Performance Testing
+- Most tests complete quickly (<1ms per test average)
+- Long-running tests are in separate category
+- File system operations are in-memory for mock tests
+- Real file system tests may take longer due to actual I/O
 
 ### Pull Request Title
 To communicate intent to the consumers of your library, the title of the pull requests is prefixed with one of the following elements:
 - `fix:`: patches a bug
 - `feat:`: introduces a new feature
-- `refactor`: improves internal structure without changing the observable behavior
-- `docs`: updates documentation or XML comments
-- `chore`: updates to dependencies, build pipelines, ...
+- `refactor:`: improves internal structure without changing the observable behavior
+- `docs:`: updates documentation or XML comments
+- `chore:`: updates to dependencies, build pipelines, ...
 
-### GitVersion Failures
-**Symptom**: Build fails with `LibGit2SharpException: ref doesn't match destination`
-**Cause**: Branch reference issues or shallow clone
-**Solutions**:
-1. Ensure full git history: `git fetch --unshallow`
-2. Switch to main branch temporarily for builds
-3. Use fallback dotnet commands (documented above)
+## Critical Warnings
 
-### Framework Testing Limitations
-**Issue**: .NET Framework tests fail with "Could not find 'mono' host"
-**Solution**: Focus testing on .NET 8.0 using `--framework net8.0` flag
+⚠️ **NEVER CANCEL** long-running operations:
+- .NET SDK download (45+ seconds)
+- Full test suite (50+ seconds)
+- Initial build compilation (45+ seconds)
 
-### Build Performance
-- **Restore**: 2-3 minutes on first run, seconds on subsequent runs
-- **Compilation**: 1-2 minutes
-- **Full test suite**: 3-5 minutes
-- **Mutation tests**: 15+ minutes (only run when needed)
+⚠️ **ALWAYS** set appropriate timeouts:
+- Build operations: 240 seconds
+- Test operations: 120 seconds
+- Package operations: 60 seconds
 
-## Project Structure
+⚠️ **REQUIRED** environment setup:
+- `git fetch --unshallow` before first build
+- Export PATH for dotnet commands
+- Use Release configuration for packaging
 
-### Core Libraries (Source/)
-- **aweXpect**: Main library package
-- **aweXpect.Core**: Core functionality for extensions
-- **aweXpect.Analyzers**: Roslyn analyzers
-- **aweXpect.Analyzers.CodeFixers**: Code fixers
-
-### Test Organization (Tests/)
-- **aweXpect.Tests**: Main test suite (12,000+ tests)
-- **aweXpect.Core.Tests**: Core library tests
-- **aweXpect.Internal.Tests**: Internal functionality tests
-- **aweXpect.Api.Tests**: API compatibility tests
-- **Frameworks/**: Framework-specific integration tests
-
-### Key Configuration Files
-- **global.json**: SDK version requirements (.NET 8.0.407)
-- **Directory.Packages.props**: Centralized package management
-- **aweXpect.sln**: Main solution file
-- **Pipeline/Build.cs**: NUKE build configuration
-
-## Extension Development
-
-### Adding New Functionality
-Extend functionality by adding extension methods on `IThat<TType>`:
-```csharp
-public static AndOrResult<TType, TSubject> BeCustom<TType, TSubject>(
-    this IThat<TType> source) 
-    where TType : IThat<TType, TSubject>
-{
-    // Implementation
-}
-```
-
-### Build Integration
-Always validate extensions work with all supported frameworks:
-1. Run framework-specific tests
-2. Ensure API compatibility with `ApiChecks`
-3. Verify performance impact with `Benchmarks`
-
-## Common Development Tasks
-
-### After Making Code Changes
-1. **Build**: `./build.sh Compile` (3+ minute timeout)
-2. **Test**: `./build.sh UnitTests` (10+ minute timeout)
-3. **API Check**: `./build.sh ApiChecks` (5+ minute timeout)
-4. **Performance**: `./build.sh Benchmarks` (optional, 10+ minute timeout)
-
-### Before Committing
-Always run these validation steps:
-1. Full build and test cycle
-2. API compatibility validation
-3. Ensure all tests pass (12,000+ tests expected)
-
-### CI/CD Pipeline
-The `.github/workflows/build.yml` runs:
-- Multi-platform builds (Ubuntu, Windows, macOS)
-- Comprehensive testing across frameworks
-- Static analysis with SonarCloud
-- Mutation testing with Stryker.NET
-- Package generation and publishing
-
-Remember: **NEVER CANCEL** long-running builds or tests. They are expected to take significant time and the CI pipeline depends on complete execution.
+This comprehensive guide ensures successful development workflow in the Testably.Abstractions codebase with proper understanding of timing requirements and platform limitations.
