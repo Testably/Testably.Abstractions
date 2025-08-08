@@ -1,5 +1,6 @@
-using FluentAssertions;
+using aweXpect;
 using System.Threading;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -11,7 +12,7 @@ public class NotificationTests
 	///     Notifications allow reacting to an event after it occurred.
 	/// </summary>
 	[Fact]
-	public void Notify_ManualWait()
+	public async Task Notify_ManualWait()
 	{
 		ManualResetEventSlim ms = new();
 		bool isNotified = false;
@@ -26,16 +27,16 @@ public class NotificationTests
 		fileSystem.Directory.CreateDirectory("foo");
 		fileSystem.File.Create("foo/bar.txt");
 
-		ms.Wait();
-		fileSystem.File.Exists("foo/bar.txt").Should().BeTrue();
-		isNotified.Should().BeTrue();
+		ms.Wait(TestContext.Current.CancellationToken);
+		await Expect.That(fileSystem.File.Exists("foo/bar.txt")).IsTrue();
+		await Expect.That(isNotified).IsTrue();
 	}
 
 	/// <summary>
 	///     Notifications allow reacting to an event after it occurred.
 	/// </summary>
 	[Fact]
-	public void Notify_UseAwaitableCallback()
+	public async Task Notify_UseAwaitableCallback()
 	{
 		bool isNotified = false;
 		MockFileSystem fileSystem = new();
@@ -53,7 +54,7 @@ public class NotificationTests
 			// If a timeout is provided, this will throw a TimeoutException if no event was triggered within 1000ms
 			.Wait(timeout: 1000);
 
-		fileSystem.File.Exists("foo/bar.txt").Should().BeTrue();
-		isNotified.Should().BeTrue();
+		await Expect.That(fileSystem.File.Exists("foo/bar.txt")).IsTrue();
+		await Expect.That(isNotified).IsTrue();
 	}
 }

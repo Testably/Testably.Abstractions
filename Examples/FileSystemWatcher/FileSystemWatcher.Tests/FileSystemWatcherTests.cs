@@ -1,7 +1,8 @@
-﻿using FluentAssertions;
+﻿using aweXpect;
 using System.IO;
 using System.IO.Abstractions;
 using System.Threading;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -10,7 +11,7 @@ namespace Testably.Abstractions.Examples.FileSystemWatcher.Tests;
 public class FileSystemWatcherTests
 {
 	[Fact]
-	public void EnableRaisingEvents_ShouldTriggerWhenFileSystemChanges()
+	public async Task EnableRaisingEvents_ShouldTriggerWhenFileSystemChanges()
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.Initialize().WithSubdirectory("foo");
@@ -28,8 +29,8 @@ public class FileSystemWatcherTests
 
 		fileSystem.Directory.Delete("foo");
 
-		ms.Wait(1000).Should().BeTrue();
+		await Expect.That(ms.Wait(1000, TestContext.Current.CancellationToken)).IsTrue();
 
-		result.Should().NotBeNull();
+		await Expect.That(result).IsNotNull();
 	}
 }

@@ -1,8 +1,8 @@
-using AutoFixture.Xunit2;
-using FluentAssertions;
+using aweXpect;
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Compression;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing;
 using Testably.Abstractions.Testing.Initializer;
 using Xunit;
@@ -25,8 +25,8 @@ public class ZipFileHelperTests
 	#endregion
 
 	[Theory]
-	[AutoData]
-	public void CreateZipFromDirectory_ShouldIncludeAllFilesAndSubdirectories(
+	[InlineData("foo")]
+	public async Task CreateZipFromDirectory_ShouldIncludeAllFilesAndSubdirectories(
 		string directory)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized
@@ -47,21 +47,20 @@ public class ZipFileHelperTests
 		FileSystem.File.Exists("test.zip");
 		ZipArchive archive = new(
 			FileSystem.File.OpenRead("test.zip"));
-		archive.Entries.Count.Should().Be(4);
-		archive.Entries.Should()
-			.Contain(e => e.FullName == initialized[1].Name);
-		archive.Entries.Should()
-			.Contain(e => e.FullName == initialized[2].Name);
-		archive.Entries.Should()
-			.Contain(e => e.FullName == initialized[3].Name + "/");
-		archive.Entries.Should()
-			.Contain(
-				e => e.FullName == initialized[3].Name + "/" + initialized[4].Name);
+		await Expect.That(archive.Entries).HasCount(4);
+		await Expect.That(archive.Entries)
+			.Contains(e => e.FullName == initialized[1].Name);
+		await Expect.That(archive.Entries)
+			.Contains(e => e.FullName == initialized[2].Name);
+		await Expect.That(archive.Entries)
+			.Contains(e => e.FullName == initialized[3].Name + "/");
+		await Expect.That(archive.Entries)
+			.Contains(e => e.FullName == initialized[3].Name + "/" + initialized[4].Name);
 	}
 
 	[Theory]
-	[AutoData]
-	public void ExtractZipToDirectory_ShouldExtractAllFilesAndDirectories(
+	[InlineData("foo")]
+	public async Task ExtractZipToDirectory_ShouldExtractAllFilesAndDirectories(
 		string directory)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized
@@ -80,21 +79,18 @@ public class ZipFileHelperTests
 			zipStream.CopyTo(fileStream);
 		}
 
-		FileSystem.Directory
-			.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories)
-			.Should()
-			.BeEmpty();
+		await Expect.That(FileSystem.Directory
+				.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories))
+			.IsEmpty();
 
 		ZipFileHelper.ExtractZipToDirectory(FileSystem.File.OpenRead("test.zip"),
 			directory);
 
-		FileSystem.Directory
-			.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories)
-			.Should()
-			.HaveCount(4);
-		FileSystem
-			.File.ReadAllBytes(FileSystem.Path.Combine(directory, initialized[2].Name))
-			.Should()
-			.BeEquivalentTo(FileSystem.File.ReadAllBytes(initialized[2].FullName));
+		await Expect.That(FileSystem.Directory
+				.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories))
+			.HasCount(4);
+		await Expect.That(FileSystem
+				.File.ReadAllBytes(FileSystem.Path.Combine(directory, initialized[2].Name)))
+			.IsEqualTo(FileSystem.File.ReadAllBytes(initialized[2].FullName));
 	}
 }

@@ -1,10 +1,8 @@
-using AutoFixture.Xunit2;
-using FluentAssertions;
-using System;
+using aweXpect;
 using System.IO;
 using System.IO.Abstractions;
-using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Testably.Abstractions.RandomSystem;
 using Testably.Abstractions.Testing;
 using Xunit;
@@ -18,8 +16,8 @@ public class InitializationTests
 	///     - a randomly named directory
 	/// </summary>
 	[Theory]
-	[AutoData]
-	public void InitializeFileSystemInSpecifiedCurrentDirectory(string currentDirectory)
+	[InlineData("foo")]
+	public async Task InitializeFileSystemInSpecifiedCurrentDirectory(string currentDirectory)
 	{
 		MockFileSystem fileSystem = new();
 		string expectedDirectory = fileSystem.Path.GetFullPath(currentDirectory);
@@ -27,9 +25,7 @@ public class InitializationTests
 		fileSystem.InitializeIn(currentDirectory)
 			.WithASubdirectory();
 
-		fileSystem.Directory.GetCurrentDirectory()
-			.Should()
-			.Be(expectedDirectory);
+		await Expect.That(fileSystem.Directory.GetCurrentDirectory()).IsEqualTo(expectedDirectory);
 	}
 
 	/// <summary>
@@ -39,7 +35,7 @@ public class InitializationTests
 	///     - a file named "bar.txt"
 	/// </summary>
 	[Fact]
-	public void InitializeFileSystemInTheRootDirectory()
+	public async Task InitializeFileSystemInTheRootDirectory()
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.InitializeIn("base-directory")
@@ -49,9 +45,9 @@ public class InitializationTests
 				.WithAFile())
 			.WithFile("bar.txt");
 
-		fileSystem.File.Exists("bar.txt").Should().BeTrue();
-		fileSystem.Directory.Exists("foo").Should().BeTrue();
-		fileSystem.Directory.GetDirectories(".").Length.Should().Be(2);
+		await Expect.That(fileSystem.File.Exists("bar.txt")).IsTrue();
+		await Expect.That(fileSystem.Directory.Exists("foo")).IsTrue();
+		await Expect.That(fileSystem.Directory.GetDirectories(".")).HasCount(2);
 	}
 
 	/// <summary>
@@ -60,20 +56,20 @@ public class InitializationTests
 	///     UNC servers (or additional drives under windows) can be added if required.
 	/// </summary>
 	[Fact]
-	public void InitializeFileSystemWithUncDrive()
+	public async Task InitializeFileSystemWithUncDrive()
 	{
 		MockFileSystem fileSystem = new();
-		var initialDriveCount = fileSystem.DriveInfo.GetDrives().Length;
+		int initialDriveCount = fileSystem.DriveInfo.GetDrives().Length;
 
 		fileSystem.WithUncDrive(@"//unc-server");
 
-		fileSystem.DriveInfo.GetDrives().Should().HaveCount(initialDriveCount);
+		await Expect.That(fileSystem.DriveInfo.GetDrives()).HasCount(initialDriveCount);
 		IDriveInfo drive = fileSystem.DriveInfo.New(@"//unc-server");
-		drive.IsReady.Should().BeTrue();
+		await Expect.That(drive.IsReady).IsTrue();
 
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 		{
-			fileSystem.DriveInfo.GetDrives().Should().HaveCount(initialDriveCount);
+			await Expect.That(fileSystem.DriveInfo.GetDrives()).HasCount(initialDriveCount);
 		}
 	}
 
@@ -84,7 +80,7 @@ public class InitializationTests
 	///     <see cref="IOException" />, when the limit is breached.
 	/// </summary>
 	[Fact]
-	public void LimitAvailableSpaceOnDrives()
+	public async Task LimitAvailableSpaceOnDrives()
 	{
 		MockFileSystem fileSystem = new();
 		IRandom random = fileSystem.RandomSystem.Random.Shared;
@@ -96,16 +92,16 @@ public class InitializationTests
 		// Limit the main drive to 200 bytes
 		fileSystem.WithDrive(drive => drive.SetTotalSize(200));
 		IDriveInfo mainDrive = fileSystem.GetDefaultDrive();
-		mainDrive.AvailableFreeSpace.Should().Be(200);
+		await Expect.That(mainDrive.AvailableFreeSpace).IsEqualTo(200);
 
 		fileSystem.File.WriteAllBytes("foo", firstFileContent);
-		mainDrive.AvailableFreeSpace.Should().Be(1);
+		await Expect.That(mainDrive.AvailableFreeSpace).IsEqualTo(1);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			fileSystem.File.WriteAllBytes("bar", secondFileContent);
-		});
+		}
 
-		exception.Should().BeOfType<IOException>();
+		await Expect.That(Act).Throws<IOException>();
 	}
 }

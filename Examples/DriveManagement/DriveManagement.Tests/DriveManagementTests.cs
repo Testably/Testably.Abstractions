@@ -1,7 +1,8 @@
-using FluentAssertions;
+using aweXpect;
 using System;
 using System.IO;
 using System.IO.Abstractions;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -10,20 +11,7 @@ namespace Testably.Abstractions.Examples.DriveManagement.Tests;
 public class DriveManagementTests
 {
 	[Fact]
-	public void DefineAdditionalDrive()
-	{
-		MockFileSystem fileSystem = new MockFileSystem()
-			.WithDrive("T:\\");
-
-		fileSystem.File.WriteAllText("T:\\foo.txt", "bar");
-
-		fileSystem.DriveInfo.GetDrives()
-			.Should().Contain(d => d.Name == "T:\\");
-		fileSystem.File.Exists("T:\\foo.txt").Should().BeTrue();
-	}
-
-	[Fact]
-	public void ChangeDefaultDrive()
+	public async Task ChangeDefaultDrive()
 	{
 		MockFileSystem fileSystem = new MockFileSystem()
 			.InitializeIn("U:\\sub\\directory")
@@ -31,14 +19,24 @@ public class DriveManagementTests
 
 		fileSystem.File.WriteAllText("foo.txt", "bar");
 
-		fileSystem.DriveInfo.GetDrives()
-			.Should().Contain(d => d.Name == "U:\\");
-		fileSystem.File.Exists("U:\\sub\\directory\\foo.txt")
-			.Should().BeTrue();
+		await Expect.That(fileSystem.DriveInfo.GetDrives()).Contains(d => d.Name == "U:\\");
+		await Expect.That(fileSystem.File.Exists("U:\\sub\\directory\\foo.txt")).IsTrue();
 	}
 
 	[Fact]
-	public void LimitAvailableDriveSize()
+	public async Task DefineAdditionalDrive()
+	{
+		MockFileSystem fileSystem = new MockFileSystem()
+			.WithDrive("T:\\");
+
+		fileSystem.File.WriteAllText("T:\\foo.txt", "bar");
+
+		await Expect.That(fileSystem.DriveInfo.GetDrives()).Contains(d => d.Name == "T:\\");
+		await Expect.That(fileSystem.File.Exists("T:\\foo.txt")).IsTrue();
+	}
+
+	[Fact]
+	public async Task LimitAvailableDriveSize()
 	{
 		MockFileSystem fileSystem = new MockFileSystem()
 			.WithDrive("C:\\", d => d.SetTotalSize(100));
@@ -46,22 +44,23 @@ public class DriveManagementTests
 		byte[] largeFileContent = new byte[90];
 		Random.Shared.NextBytes(largeFileContent);
 
-		drive.AvailableFreeSpace.Should().Be(100);
+		await Expect.That(drive.AvailableFreeSpace).IsEqualTo(100);
 		fileSystem.File.WriteAllText("foo.txt", "This is a text with 29 bytes.");
-		drive.AvailableFreeSpace.Should().Be(71);
+		await Expect.That(drive.AvailableFreeSpace).IsEqualTo(71);
 		fileSystem.File.AppendAllText("foo.txt", "Another 17 bytes.");
-		drive.AvailableFreeSpace.Should().Be(54);
+		await Expect.That(drive.AvailableFreeSpace).IsEqualTo(54);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			fileSystem.File.WriteAllBytes("bar.bin", largeFileContent);
-		});
-		exception.Should().BeOfType<IOException>();
+		}
 
-		drive.AvailableFreeSpace.Should().Be(54);
+		await Expect.That(Act).Throws<IOException>();
+
+		await Expect.That(drive.AvailableFreeSpace).IsEqualTo(54);
 		fileSystem.File.Delete("foo.txt");
-		drive.AvailableFreeSpace.Should().Be(100);
+		await Expect.That(drive.AvailableFreeSpace).IsEqualTo(100);
 		fileSystem.File.WriteAllBytes("bar.bin", largeFileContent);
-		drive.AvailableFreeSpace.Should().Be(10);
+		await Expect.That(drive.AvailableFreeSpace).IsEqualTo(10);
 	}
 }
