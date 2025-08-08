@@ -1,10 +1,10 @@
 name: "CI"
 
 on:
-  workflow_dispatch: 
-  pull_request:
-    branches: [main]
-    
+    workflow_dispatch:
+    pull_request:
+        branches: [main]
+
 jobs:
     unit-tests:
         name: "Unit tests"
@@ -118,7 +118,7 @@ jobs:
     
     static-code-analysis:
         name: "Static code analysis"
-        if: ${{ (github.actor != 'dependabot[bot]') && (github.repository == 'Testably/Testably.Abstractions') }}
+        if: ${{ github.actor == 'vbreuss' }}
         runs-on: ubuntu-latest
         env:
             REPORTGENERATOR_LICENSE: ${{ secrets.REPORTGENERATOR_LICENSE }}
