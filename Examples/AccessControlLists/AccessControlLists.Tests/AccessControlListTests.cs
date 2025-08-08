@@ -1,7 +1,6 @@
-using AutoFixture.Xunit2;
-using FluentAssertions;
-using System;
+using aweXpect;
 using System.IO;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -9,31 +8,37 @@ namespace Testably.Abstractions.Examples.AccessControlLists.Tests;
 
 public class AccessControlListTests
 {
+	#region Test Setup
+
+	public MockFileSystem FileSystem { get; }
+
 	public AccessControlListTests()
 	{
 		FileSystem = new MockFileSystem();
 	}
 
-	public MockFileSystem FileSystem { get; }
+	#endregion
 
 	[Theory]
-	[AutoData]
-	public void ReadAllText_DeniedPath_ShouldThrowIOException(string grantedPath, string deniedPath)
+	[InlineData("granted", "denied")]
+	public async Task ReadAllText_DeniedPath_ShouldThrowIOException(string grantedPath,
+		string deniedPath)
 	{
 		FileSystem.File.WriteAllText(grantedPath, "foo");
 		FileSystem.File.WriteAllText(deniedPath, "bar");
-		FileSystem.WithAccessControlStrategy(new CustomAccessControlStrategy(
-			path => path.Contains(grantedPath)));
+		FileSystem.WithAccessControlStrategy(
+			new CustomAccessControlStrategy(path => path.Contains(grantedPath)));
 
 		string result = FileSystem.File.ReadAllText(grantedPath);
-		result.Should().Be("foo");
+		await Expect.That(result).IsEqualTo("foo");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.File.ReadAllText(deniedPath);
-		});
-		exception.Should().BeOfType<IOException>()
-			.Which.Message.Should()
-			.Be($"Access to the path '{FileSystem.Path.GetFullPath(deniedPath)}' is denied.");
+		}
+
+		await Expect.That(Act).Throws<IOException>()
+			.WithMessage(
+				$"Access to the path '{FileSystem.Path.GetFullPath(deniedPath)}' is denied.");
 	}
 }

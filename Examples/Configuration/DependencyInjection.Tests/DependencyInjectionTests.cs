@@ -1,6 +1,7 @@
-﻿using FluentAssertions;
+﻿using aweXpect;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO.Abstractions;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Testably.Abstractions.Examples.Configuration.DependencyInjection.Tests;
@@ -8,7 +9,7 @@ namespace Testably.Abstractions.Examples.Configuration.DependencyInjection.Tests
 public class DependencyInjectionTests
 {
 	[Fact]
-	public void
+	public async Task
 		DependencyInjection_Microsoft_ShouldAllowRegistrationAndCreationOfInstances()
 	{
 		ServiceProvider services = new ServiceCollection()
@@ -17,8 +18,8 @@ public class DependencyInjectionTests
 			.AddSingleton<ITimeSystem, RealTimeSystem>()
 			.BuildServiceProvider();
 
-		services.GetService<IFileSystem>().Should().BeOfType<RealFileSystem>();
-		services.GetService<IRandomSystem>().Should().BeOfType<RealRandomSystem>();
-		services.GetService<ITimeSystem>().Should().BeOfType<RealTimeSystem>();
+		await Expect.That(services.GetService<IFileSystem>()).Is<RealFileSystem>();
+		await Expect.That(services.GetService<IRandomSystem>()).Is<RealRandomSystem>();
+		await Expect.That(services.GetService<ITimeSystem>()).Is<RealTimeSystem>();
 	}
 }
