@@ -21,5 +21,8 @@ This is an overview of the provided examples for "Testably.Abstractions".
   In a scenario with multiple threads running in parallel, these would each influence each other differently in the mocked instance than "in the real world".  
   This example illustrates how to implement a thread-aware time provider for such a scenario.
 
+- **[Unix file mode](UnixFileMode/README.md)**  
+  This example highlights how to simulate working with the [`UnixFileMode`](https://learn.microsoft.com/en-us/dotnet/api/system.io.unixfilemode) in the `MockFileSystem`.
+
 - **[Zip-File](ZipFile/README.md)**  
   This example highlights how to use the `IFileSystem` to compress and uncompress directories using `System.IO.Compression`.

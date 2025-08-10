@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Testably.Abstractions.Examples.UnixFileMode.Tests</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\UnixFileMode\UnixFileMode.csproj" />
+	</ItemGroup>
+
+</Project>
