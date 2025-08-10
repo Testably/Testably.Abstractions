@@ -15,7 +15,7 @@ internal static class ExceptionFactory
 			HResult = -2147024891,
 #endif
 		};
-	
+
 	internal static IOException AclAccessToPathDenied(string path)
 		=> new($"Access to the path '{path}' is denied.");
 

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Testably.Abstractions.Testing.Helpers;
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+using System.Runtime.InteropServices;
+#endif
 
 namespace Testably.Abstractions.Testing.Initializer;
 

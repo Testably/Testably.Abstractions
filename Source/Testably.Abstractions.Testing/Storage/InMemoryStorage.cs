@@ -926,17 +926,6 @@ internal sealed class InMemoryStorage : IStorage
 			return false;
 		}
 
-		if (!_fileSystem.AccessControlStrategy
-			.IsAccessGranted(item.Key.FullPath, item.Value.Extensibility))
-		{
-			if (!enumerationOptions.IgnoreInaccessible)
-			{
-				throw ExceptionFactory.AccessToPathDenied(item.Key.FullPath);
-			}
-
-			return false;
-		}
-
 		return true;
 	}
 
