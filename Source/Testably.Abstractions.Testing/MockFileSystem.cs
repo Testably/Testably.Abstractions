@@ -128,7 +128,7 @@ public sealed class MockFileSystem : IFileSystem
 		using IDisposable release = FileSystemRegistration.Ignore();
 		RandomSystem =
 			new MockRandomSystem(initialization.RandomProvider ?? RandomProvider.Default());
-		TimeSystem = new MockTimeSystem(TimeProvider.Now());
+		TimeSystem = initialization.TimeSystem ?? new MockTimeSystem(TimeProvider.Now());
 		_pathMock = new PathMock(this);
 		_storage = new InMemoryStorage(this);
 		ChangeHandler = new ChangeHandler(this);
@@ -276,6 +276,11 @@ public sealed class MockFileSystem : IFileSystem
 		internal IRandomProvider? RandomProvider { get; private set; }
 
 		/// <summary>
+		///     The <see cref="ITimeSystem" /> to use within the <see cref="MockFileSystem" />.
+		/// </summary>
+		internal ITimeSystem? TimeSystem { get; private set; }
+
+		/// <summary>
 		///     The simulated operating system.
 		/// </summary>
 		internal SimulationMode SimulationMode { get; private set; } = SimulationMode.Native;
@@ -315,6 +320,15 @@ public sealed class MockFileSystem : IFileSystem
 		public MockFileSystemOptions UseRandomProvider(IRandomProvider randomProvider)
 		{
 			RandomProvider = randomProvider;
+			return this;
+		}
+
+		/// <summary>
+		///     Use the given <paramref name="timeSystem" /> within the <see cref="MockFileSystem" />.
+		/// </summary>
+		public MockFileSystemOptions UseTimeSystem(ITimeSystem timeSystem)
+		{
+			TimeSystem = timeSystem;
 			return this;
 		}
 	}
