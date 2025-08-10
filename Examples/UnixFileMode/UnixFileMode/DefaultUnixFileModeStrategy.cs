@@ -21,7 +21,8 @@ public class DefaultUnixFileModeStrategy : IUnixFileModeStrategy
 		System.IO.UnixFileMode mode, FileAccess requestedAccess)
 	{
 		UserGroup fileUserGroup = extensibility
-			.RetrieveMetadata<UserGroup>(nameof(DefaultUnixFileModeStrategy))
+			                          .RetrieveMetadata<UserGroup>(
+				                          nameof(DefaultUnixFileModeStrategy))
 		                          ?? new UserGroup(_user, _group);
 		switch (requestedAccess)
 		{
@@ -40,7 +41,7 @@ public class DefaultUnixFileModeStrategy : IUnixFileModeStrategy
 		}
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IUnixFileModeStrategy.OnSetUnixFileMode(string, IFileSystemExtensibility, UnixFileMode)" />
 	public void OnSetUnixFileMode(string fullPath, IFileSystemExtensibility extensibility,
 		System.IO.UnixFileMode mode)
 	{
@@ -51,7 +52,7 @@ public class DefaultUnixFileModeStrategy : IUnixFileModeStrategy
 	#endregion
 
 	/// <summary>
-	///     Simulates that the process runs under the given <paramref name="group" />.
+	///     Simulate running under the given <paramref name="group" />.
 	/// </summary>
 	public DefaultUnixFileModeStrategy SimulateGroup(string group)
 	{
@@ -60,7 +61,7 @@ public class DefaultUnixFileModeStrategy : IUnixFileModeStrategy
 	}
 
 	/// <summary>
-	///     Simulates that the process runs under the given <paramref name="user" />.
+	///     Simulate running under the given <paramref name="user" />.
 	/// </summary>
 	public DefaultUnixFileModeStrategy SimulateUser(string user)
 	{
