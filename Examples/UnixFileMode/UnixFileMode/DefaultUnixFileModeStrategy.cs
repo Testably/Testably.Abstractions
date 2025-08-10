@@ -24,20 +24,27 @@ public class DefaultUnixFileModeStrategy : IUnixFileModeStrategy
 			                          .RetrieveMetadata<UserGroup>(
 				                          nameof(DefaultUnixFileModeStrategy))
 		                          ?? new UserGroup(_user, _group);
+
+		bool hasReadAccess = mode.HasFlag(System.IO.UnixFileMode.OtherRead) ||
+		                     (mode.HasFlag(System.IO.UnixFileMode.GroupRead) &&
+		                      string.Equals(fileUserGroup.Group, _group,
+			                      StringComparison.Ordinal)) ||
+		                     (mode.HasFlag(System.IO.UnixFileMode.UserRead) &&
+		                      string.Equals(fileUserGroup.User, _user, StringComparison.Ordinal));
+		bool hasWriteAccess = mode.HasFlag(System.IO.UnixFileMode.OtherWrite) ||
+		                      (mode.HasFlag(System.IO.UnixFileMode.GroupWrite) &&
+		                       string.Equals(fileUserGroup.Group, _group,
+			                       StringComparison.Ordinal)) ||
+		                      (mode.HasFlag(System.IO.UnixFileMode.UserWrite) &&
+		                       string.Equals(fileUserGroup.User, _user, StringComparison.Ordinal));
 		switch (requestedAccess)
 		{
 			case FileAccess.Read:
-				return mode.HasFlag(System.IO.UnixFileMode.OtherRead) ||
-				       (mode.HasFlag(System.IO.UnixFileMode.GroupRead) &&
-				        string.Equals(fileUserGroup.Group, _group, StringComparison.Ordinal)) ||
-				       (mode.HasFlag(System.IO.UnixFileMode.UserRead) &&
-				        string.Equals(fileUserGroup.User, _user, StringComparison.Ordinal));
+				return hasReadAccess;
+			case FileAccess.Write:
+				return hasWriteAccess;
 			default:
-				return mode.HasFlag(System.IO.UnixFileMode.OtherWrite) ||
-				       (mode.HasFlag(System.IO.UnixFileMode.GroupWrite) &&
-				        string.Equals(fileUserGroup.Group, _group, StringComparison.Ordinal)) ||
-				       (mode.HasFlag(System.IO.UnixFileMode.UserWrite) &&
-				        string.Equals(fileUserGroup.User, _user, StringComparison.Ordinal));
+				return hasReadAccess && hasWriteAccess;
 		}
 	}
 
