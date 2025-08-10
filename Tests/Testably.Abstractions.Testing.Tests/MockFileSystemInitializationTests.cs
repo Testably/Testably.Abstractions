@@ -127,7 +127,7 @@ public class MockFileSystemInitializationTests
 	[AutoData]
 	public async Task UseRandomProvider_ShouldUseFixedRandomValue(int fixedRandomValue)
 	{
-		MockFileSystem fileSystem = new(i => i
+		MockFileSystem fileSystem = new(options => options
 			.UseRandomProvider(RandomProvider.Generate(
 				intGenerator: new RandomProvider.Generator<int>(() => fixedRandomValue))));
 
@@ -137,6 +137,21 @@ public class MockFileSystemInitializationTests
 		results.Add(fileSystem.RandomSystem.Random.Shared.Next());
 
 		await That(results).All().AreEqualTo(fixedRandomValue);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task UseTimeSystem_ShouldUseProvidedTimeSystem(int offsetSeconds)
+	{
+		DateTime simulatedNow = DateTime.Now.AddSeconds(offsetSeconds);
+		MockTimeSystem timeSystem = new(TimeProvider.Use(simulatedNow));
+		MockFileSystem fileSystem = new(options => options
+			.UseTimeSystem(timeSystem));
+
+		fileSystem.File.WriteAllText("foo", "some text");
+		DateTime result = fileSystem.File.GetCreationTime("foo");
+
+		await That(result).IsEqualTo(simulatedNow);
 	}
 
 	#region Helpers
