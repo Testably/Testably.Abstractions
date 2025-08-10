@@ -136,12 +136,16 @@ jobs:
     push_core:
         name: "Push core"
         if: ${{ startsWith(github.ref, 'refs/tags/core/v') }}
-        runs-on: macos-latest
+        runs-on: ubuntu-latest
         environment: production
         needs: [ pack ]
         permissions:
             contents: write
         steps:
+            -   name: Install NuGet.exe
+                uses: nuget/setup-nuget@v2
+                with:
+                    nuget-version: 'latest'
             -   name: Download packages
                 uses: actions/download-artifact@v4
                 with:
@@ -163,12 +167,16 @@ jobs:
     push:
         name: "Push"
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
-        runs-on: macos-latest
+        runs-on: ubuntu-latest
         environment: production
         needs: [ pack ]
         permissions:
             contents: write
         steps:
+            -   name: Install NuGet.exe
+                uses: nuget/setup-nuget@v2
+                with:
+                    nuget-version: 'latest'
             -   name: Download packages
                 uses: actions/download-artifact@v4
                 with:
