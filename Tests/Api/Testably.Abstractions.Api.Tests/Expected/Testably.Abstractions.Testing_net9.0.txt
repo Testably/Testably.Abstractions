@@ -125,6 +125,7 @@ namespace Testably.Abstractions.Testing
             public Testably.Abstractions.Testing.MockFileSystem.MockFileSystemOptions UseCurrentDirectory() { }
             public Testably.Abstractions.Testing.MockFileSystem.MockFileSystemOptions UseCurrentDirectory(string path) { }
             public Testably.Abstractions.Testing.MockFileSystem.MockFileSystemOptions UseRandomProvider(Testably.Abstractions.Testing.RandomSystem.IRandomProvider randomProvider) { }
+            public Testably.Abstractions.Testing.MockFileSystem.MockFileSystemOptions UseTimeSystem(Testably.Abstractions.ITimeSystem timeSystem) { }
         }
     }
     public static class MockFileSystemExtensions
