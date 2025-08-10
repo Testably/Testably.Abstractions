@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using Testably.Abstractions.Helpers;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 #if NET6_0_OR_GREATER
@@ -122,6 +123,8 @@ public class MockFileSystemTests
 	public async Task WithAccessControl_Denied_CreateDirectoryShouldThrowIOException(
 		string path)
 	{
+		Skip.If(!Test.RunsOnWindows);
+
 		MockFileSystem sut = new();
 		sut.Initialize();
 		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((_, _) => false));
@@ -139,10 +142,12 @@ public class MockFileSystemTests
 	public async Task WithAccessControl_ShouldConsiderPath(
 		string allowedPath, string deniedPath)
 	{
+		Skip.If(!Test.RunsOnWindows);
+
 		MockFileSystem sut = new();
 		sut.Initialize();
 		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((p, _)
-			=> string.Equals(p, sut.Path.GetFullPath(allowedPath), StringComparison.Ordinal)));
+			=> !string.Equals(p, sut.Path.GetFullPath(deniedPath), StringComparison.Ordinal)));
 
 		sut.Directory.CreateDirectory(allowedPath);
 		Exception? exception = Record.Exception(() =>
@@ -151,6 +156,23 @@ public class MockFileSystemTests
 		});
 
 		await That(exception).IsExactly<IOException>();
+	}
+
+	[Fact]
+	public async Task
+		WithAccessControlStrategy_OutsideWindows_ShouldThrowPlatformNotSupportedException()
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		MockFileSystem sut = new();
+
+		void Act()
+		{
+			sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((_, _) => true));
+		}
+
+		await That(Act).Throws<PlatformNotSupportedException>()
+			.WithMessage("Access control lists are only supported on Windows.");
 	}
 
 	[Theory]
@@ -237,7 +259,7 @@ public class MockFileSystemTests
 	[Theory]
 	[AutoData]
 	public async Task WithSafeFileHandleStrategy_DefaultStrategy_ShouldUseMappedSafeFileHandleMock(
-			string path, string contents)
+		string path, string contents)
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
@@ -317,6 +339,48 @@ public class MockFileSystemTests
 		await That(drive.AvailableFreeSpace).IsEqualTo(previousFreeSpace - bytes.Length);
 	}
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	[Fact]
+	public async Task
+		WithUnixFileModeStrategy_OnWindows_ShouldThrowPlatformNotSupportedException()
+	{
+		Skip.If(!Test.RunsOnWindows);
+
+		MockFileSystem sut = new();
+
+		void Act()
+		{
+			sut.WithUnixFileModeStrategy(new DummyUnixFileModeStrategy());
+		}
+
+		await That(Act).Throws<PlatformNotSupportedException>()
+			.WithMessage("Unix file modes are not supported on this platform.");
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	[Theory]
+	[AutoData]
+	public async Task WithUnixFileModeStrategy_ShouldConsiderPath(
+		string allowedPath, string deniedPath)
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		MockFileSystem sut = new();
+		sut.Initialize();
+		sut.WithUnixFileModeStrategy(new DummyUnixFileModeStrategy(p =>
+			!p.EndsWith(deniedPath, StringComparison.Ordinal)));
+
+		sut.Directory.CreateDirectory(allowedPath);
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.Directory.CreateDirectory(deniedPath);
+		});
+
+		await That(exception).IsExactly<UnauthorizedAccessException>();
+	}
+#endif
+
 	[Theory]
 	[AutoData]
 	public async Task WriteAllText_OnUncPath_ShouldThrowDirectoryNotFoundException(
@@ -331,4 +395,27 @@ public class MockFileSystemTests
 
 		await That(exception).IsExactly<DirectoryNotFoundException>();
 	}
+
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	private sealed class DummyUnixFileModeStrategy(Func<string, bool>? pathPredicate = null)
+		: IUnixFileModeStrategy
+	{
+		#region IUnixFileModeStrategy Members
+
+		/// <inheritdoc />
+		public bool IsAccessGranted(string fullPath, IFileSystemExtensibility extensibility,
+			UnixFileMode mode,
+			FileAccess requestedAccess)
+			=> pathPredicate?.Invoke(fullPath) ?? false;
+
+		/// <inheritdoc />
+		public void OnSetUnixFileMode(string fullPath, IFileSystemExtensibility extensibility,
+			UnixFileMode mode)
+		{
+			// Do nothing
+		}
+
+		#endregion
+	}
+#endif
 }

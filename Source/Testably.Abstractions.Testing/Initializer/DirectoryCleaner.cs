@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Testably.Abstractions.Testing.Helpers;
 
@@ -106,6 +107,14 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 			SearchOption.TopDirectoryOnly))
 		{
 			info.Attributes = FileAttributes.Normal;
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				info.UnixFileMode = UnixFileMode.UserRead | UnixFileMode.UserWrite |
+					UnixFileMode.GroupRead | UnixFileMode.GroupWrite |
+					UnixFileMode.OtherRead | UnixFileMode.OtherWrite;
+			}
+#endif
 			info.Delete();
 		}
 

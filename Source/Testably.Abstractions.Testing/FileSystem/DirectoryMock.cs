@@ -109,9 +109,16 @@ internal sealed class DirectoryMock : IDirectory
 			.Directory.RegisterMethod(nameof(Delete),
 				path);
 
-		_fileSystem.DirectoryInfo
-			.New(path.EnsureValidFormat(_fileSystem))
-			.Delete();
+		try
+		{
+			_fileSystem.DirectoryInfo
+				.New(path.EnsureValidFormat(_fileSystem))
+				.Delete();
+		}
+		catch (UnauthorizedAccessException ex)
+		{
+			throw new IOException(ex.Message);
+		}
 	}
 
 	/// <inheritdoc cref="IDirectory.Delete(string, bool)" />
@@ -701,6 +708,7 @@ internal sealed class DirectoryMock : IDirectory
 		return _fileSystem.Storage.EnumerateLocations(
 				adjustedLocation.Location,
 				fileSystemTypes,
+				true,
 				adjustedLocation.SearchPattern,
 				enumerationOptions)
 			.Select(x => _fileSystem

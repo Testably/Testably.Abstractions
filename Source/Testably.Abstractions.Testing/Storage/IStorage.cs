@@ -55,6 +55,7 @@ internal interface IStorage
 	/// </summary>
 	/// <param name="location">The parent location in which the files or directories are searched for.</param>
 	/// <param name="type">The type of the container (file, directory or both).</param>
+	/// <param name="requestParentAccess">If set to <see langword="true" /> requests <see cref="FileAccess.Read"/> to the parent container.</param>
 	/// <param name="searchPattern">
 	///     (optional) The expression to filter the name of the locations.
 	///     <para />
@@ -74,6 +75,7 @@ internal interface IStorage
 	IEnumerable<IStorageLocation> EnumerateLocations(
 		IStorageLocation location,
 		FileSystemTypes type,
+		bool requestParentAccess,
 		string searchPattern = EnumerationOptionsHelper.DefaultSearchPattern,
 		EnumerationOptions? enumerationOptions = null);
 
