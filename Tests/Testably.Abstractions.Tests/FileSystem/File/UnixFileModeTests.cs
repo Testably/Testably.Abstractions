@@ -15,13 +15,13 @@ public partial class UnixFileModeTests
 
 		FileSystem.File.WriteAllText(path, "");
 		UnixFileMode expected = UnixFileMode.OtherRead |
-								UnixFileMode.GroupRead |
-								UnixFileMode.UserWrite |
-								UnixFileMode.UserRead;
+		                        UnixFileMode.GroupRead |
+		                        UnixFileMode.UserWrite |
+		                        UnixFileMode.UserRead;
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		UnixFileMode result = FileSystem.File.GetUnixFileMode(path);
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		await That(result).IsEqualTo(expected);
 	}
@@ -41,6 +41,29 @@ public partial class UnixFileModeTests
 		}
 
 		await That(Act).Throws<PlatformNotSupportedException>().WithHResult(-2146233031);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task ReadAllText_WhenUnixFileModeIsNone_ShouldThrowUnauthorizedAccessException(
+		string path)
+	{
+		Skip.If(Test.RunsOnWindows, "UnixFileMode is not supported on Windows");
+
+		FileSystem.File.WriteAllText(path, "foo");
+		#pragma warning disable CA1416
+		FileSystem.File.SetUnixFileMode(path, UnixFileMode.None);
+		#pragma warning restore CA1416
+
+
+		void Act()
+		{
+			FileSystem.File.ReadAllText(path);
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.WithHResult(-2147024891).And
+			.WithMessage($"Access to the path '*/{path}' is denied.").AsWildcard();
 	}
 
 	[Theory]
@@ -69,11 +92,11 @@ public partial class UnixFileModeTests
 
 		FileSystem.File.WriteAllText(path, "some content");
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		FileSystem.File.SetUnixFileMode(path, unixFileMode);
 
 		UnixFileMode result = FileSystem.File.GetUnixFileMode(path);
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 		await That(result).IsEqualTo(unixFileMode);
 	}
 
@@ -92,6 +115,35 @@ public partial class UnixFileModeTests
 		}
 
 		await That(Act).Throws<PlatformNotSupportedException>().WithHResult(-2146233031);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task WriteAllText_WhenUnixFileModeIsNone_ShouldThrowUnauthorizedAccessException(
+		string path)
+	{
+		Skip.If(Test.RunsOnWindows, "UnixFileMode is not supported on Windows");
+
+		FileSystem.File.WriteAllText(path, "foo");
+		#pragma warning disable CA1416
+		FileSystem.File.SetUnixFileMode(path, UnixFileMode.None);
+
+
+		void Act()
+		{
+			FileSystem.File.WriteAllText(path, "bar");
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.WithHResult(-2147024891).And
+			.WithMessage($"Access to the path '*/{path}' is denied.").AsWildcard();
+
+		FileSystem.File.SetUnixFileMode(path,
+			UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.OtherRead |
+			UnixFileMode.OtherWrite);
+		#pragma warning restore CA1416
+		string result = FileSystem.File.ReadAllText(path);
+		await That(result).IsEqualTo("foo");
 	}
 }
 #endif

@@ -110,12 +110,7 @@ internal sealed class DirectoryInfoMock
 			.DirectoryInfo.RegisterPathMethod(Location.FullPath, nameof(Delete),
 				recursive);
 
-		if (!_fileSystem.Storage.DeleteContainer(
-			_fileSystem.Storage.GetLocation(FullName), FileSystemTypes.Directory, recursive))
-		{
-			throw ExceptionFactory.DirectoryNotFound(FullName);
-		}
-
+		DeleteInternal(recursive);
 		ResetCache(!_fileSystem.Execute.IsNetFramework);
 	}
 
@@ -125,11 +120,7 @@ internal sealed class DirectoryInfoMock
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.DirectoryInfo.RegisterPathMethod(Location.FullPath, nameof(Delete));
 
-		if (!_fileSystem.Storage.DeleteContainer(Location, FileSystemTypes.Directory))
-		{
-			throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
-		}
-
+		DeleteInternal(false);
 		ResetCache(!_fileSystem.Execute.IsNetFramework);
 	}
 
@@ -469,6 +460,7 @@ internal sealed class DirectoryInfoMock
 		return _fileSystem.Storage.EnumerateLocations(
 			adjustedLocation.Location,
 			fileSystemTypes,
+			true,
 			adjustedLocation.SearchPattern,
 			enumerationOptions);
 	}
@@ -485,4 +477,19 @@ internal sealed class DirectoryInfoMock
 	protected override IDisposable RegisterPathProperty(string name, PropertyAccess access)
 		=> _fileSystem.StatisticsRegistration.DirectoryInfo.RegisterPathProperty(Location.FullPath,
 			name, access);
+
+	private void DeleteInternal(bool recursive)
+	{
+		try
+		{
+			if (!_fileSystem.Storage.DeleteContainer(Location, FileSystemTypes.Directory, recursive))
+			{
+				throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
+			}
+		}
+		catch (UnauthorizedAccessException ex)
+		{
+			throw new IOException(ex.Message);
+		}
+	}
 }

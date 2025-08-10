@@ -19,6 +19,13 @@ internal sealed class InMemoryContainer : IStorageContainer
 	private bool _isEncrypted;
 	private readonly IStorageLocation _location;
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	private UnixFileMode _unixFileMode = UnixFileMode.OtherRead |
+	                                     UnixFileMode.GroupRead |
+	                                     UnixFileMode.UserWrite |
+	                                     UnixFileMode.UserRead;
+#endif
+
 	public InMemoryContainer(FileSystemTypes type,
 		IStorageLocation location,
 		MockFileSystem fileSystem)
@@ -92,10 +99,18 @@ internal sealed class InMemoryContainer : IStorageContainer
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	/// <inheritdoc cref="IStorageContainer.UnixFileMode" />
-	public UnixFileMode UnixFileMode { get; set; } = UnixFileMode.OtherRead |
-	                                                 UnixFileMode.GroupRead |
-	                                                 UnixFileMode.UserWrite |
-	                                                 UnixFileMode.UserRead;
+	public UnixFileMode UnixFileMode
+	{
+		get => _unixFileMode;
+		set
+		{
+			_unixFileMode = value;
+			_fileSystem.UnixFileModeStrategy.OnSetUnixFileMode(
+				_location.FullPath,
+				_extensibility,
+				_unixFileMode);
+		}
+	}
 #endif
 
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
@@ -176,6 +191,13 @@ internal sealed class InMemoryContainer : IStorageContainer
 		{
 			throw ExceptionFactory.AccessToPathDenied();
 		}
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+		if (!deleteAccess && !_fileSystem.UnixFileModeStrategy
+			.IsAccessGranted(_location.FullPath, _extensibility, UnixFileMode, access))
+		{
+			throw ExceptionFactory.UnixFileModeAccessDenied(_location.FullPath);
+		}
+#endif
 
 		if (!_fileSystem.AccessControlStrategy
 			.IsAccessGranted(_location.FullPath, Extensibility))

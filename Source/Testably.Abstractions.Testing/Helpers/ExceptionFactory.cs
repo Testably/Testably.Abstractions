@@ -292,6 +292,16 @@ internal static class ExceptionFactory
 	internal static TimeoutException TimerWaitTimeoutException(int executionCount, int timeout)
 		=> new($"The execution count {executionCount} was not reached in {timeout}ms.");
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	internal static UnauthorizedAccessException UnixFileModeAccessDenied(string path)
+		=> new($"Access to the path '{path}' is denied.")
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2147024891,
+#endif
+		};
+#endif
+
 	internal static PlatformNotSupportedException UnixFileModeNotSupportedOnThisPlatform()
 		=> new("Unix file modes are not supported on this platform.")
 		{

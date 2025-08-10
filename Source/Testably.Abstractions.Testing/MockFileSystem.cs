@@ -96,6 +96,14 @@ public sealed class MockFileSystem : IFileSystem
 	internal IReadOnlyList<IStorageContainer> StorageContainers
 		=> _storage.GetContainers();
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	internal IUnixFileModeStrategy UnixFileModeStrategy
+	{
+		get;
+		private set;
+	}
+#endif
+
 	private readonly DirectoryMock _directoryMock;
 	private readonly FileMock _fileMock;
 	private readonly PathMock _pathMock;
@@ -142,6 +150,9 @@ public sealed class MockFileSystem : IFileSystem
 		FileVersionInfo = new FileVersionInfoFactoryMock(this);
 		SafeFileHandleStrategy = new NullSafeFileHandleStrategy();
 		AccessControlStrategy = new NullAccessControlStrategy();
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+		UnixFileModeStrategy = new NullUnixFileModeStrategy();
+#endif
 		InitializeFileSystem(initialization);
 	}
 
@@ -193,6 +204,12 @@ public sealed class MockFileSystem : IFileSystem
 	/// </summary>
 	public MockFileSystem WithAccessControlStrategy(IAccessControlStrategy accessControlStrategy)
 	{
+		if (!Execute.IsWindows)
+		{
+			throw new PlatformNotSupportedException(
+				"Access control lists are only supported on Windows.");
+		}
+
 		AccessControlStrategy = accessControlStrategy;
 		return this;
 	}
@@ -239,6 +256,22 @@ public sealed class MockFileSystem : IFileSystem
 		SafeFileHandleStrategy = safeFileHandleStrategy;
 		return this;
 	}
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <summary>
+	///     Implements a custom strategy to simulate working with the <see cref="UnixFileMode" /> in the
+	///     <see cref="MockFileSystem" />.
+	/// </summary>
+	public MockFileSystem WithUnixFileModeStrategy(IUnixFileModeStrategy unixFileModeStrategy)
+	{
+		if (Execute.IsWindows)
+		{
+			throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform();
+		}
+
+		UnixFileModeStrategy = unixFileModeStrategy;
+		return this;
+	}
+#endif
 
 	private void InitializeFileSystem(MockFileSystemOptions initialization)
 	{
@@ -276,14 +309,14 @@ public sealed class MockFileSystem : IFileSystem
 		internal IRandomProvider? RandomProvider { get; private set; }
 
 		/// <summary>
-		///     The <see cref="ITimeSystem" /> to use within the <see cref="MockFileSystem" />.
-		/// </summary>
-		internal ITimeSystem? TimeSystem { get; private set; }
-
-		/// <summary>
 		///     The simulated operating system.
 		/// </summary>
 		internal SimulationMode SimulationMode { get; private set; } = SimulationMode.Native;
+
+		/// <summary>
+		///     The <see cref="ITimeSystem" /> to use within the <see cref="MockFileSystem" />.
+		/// </summary>
+		internal ITimeSystem? TimeSystem { get; private set; }
 
 #if CAN_SIMULATE_OTHER_OS
 		/// <summary>

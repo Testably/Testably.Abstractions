@@ -3,6 +3,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using Testably.Abstractions.Testing.Helpers;
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+using System.Runtime.InteropServices;
+#endif
 
 namespace Testably.Abstractions.Testing.Initializer;
 
@@ -106,6 +109,14 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 			SearchOption.TopDirectoryOnly))
 		{
 			info.Attributes = FileAttributes.Normal;
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				info.UnixFileMode = UnixFileMode.UserRead | UnixFileMode.UserWrite |
+					UnixFileMode.GroupRead | UnixFileMode.GroupWrite |
+					UnixFileMode.OtherRead | UnixFileMode.OtherWrite;
+			}
+#endif
 			info.Delete();
 		}
 
