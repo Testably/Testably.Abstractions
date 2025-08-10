@@ -26,14 +26,6 @@ namespace Testably.Abstractions.Testing.FileSystem
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification="SafeFileHandle cannot be unit tested.")]
         public Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle) { }
     }
-    public class DefaultUnixFileModeStrategy : Testably.Abstractions.Testing.FileSystem.IUnixFileModeStrategy
-    {
-        public DefaultUnixFileModeStrategy() { }
-        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode, System.IO.FileAccess requestedAccess) { }
-        public void OnSetUnixFileMode(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode) { }
-        public Testably.Abstractions.Testing.FileSystem.DefaultUnixFileModeStrategy SimulateGroup(string group) { }
-        public Testably.Abstractions.Testing.FileSystem.DefaultUnixFileModeStrategy SimulateUser(string user) { }
-    }
     public interface IAccessControlStrategy
     {
         bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility);

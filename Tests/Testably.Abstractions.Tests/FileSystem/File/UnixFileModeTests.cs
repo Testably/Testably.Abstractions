@@ -55,7 +55,6 @@ public partial class UnixFileModeTests
 		FileSystem.File.SetUnixFileMode(path, UnixFileMode.None);
 		#pragma warning restore CA1416
 
-		FileSystem.Directory.CreateDirectory("parent", UnixFileMode.None);
 
 		void Act()
 		{
@@ -129,7 +128,6 @@ public partial class UnixFileModeTests
 		#pragma warning disable CA1416
 		FileSystem.File.SetUnixFileMode(path, UnixFileMode.None);
 
-		FileSystem.Directory.CreateDirectory("parent", UnixFileMode.None);
 
 		void Act()
 		{
