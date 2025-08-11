@@ -20,7 +20,7 @@ public class MockFileSystemInitializationTests
 		var sb2 = new StringBuilder();
 
 		RealFileSystem fileSystem = new();
-		string path = @"C:\Windows";
+		string path = @"C:\Windows\System32";
 		EnumerationOptions enumerationOptions = new()
 		{
 			IgnoreInaccessible = true,
