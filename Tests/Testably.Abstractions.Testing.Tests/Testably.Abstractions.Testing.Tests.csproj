@@ -7,12 +7,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="TestResources\SubResource\SubResourceFile1.txt"/>
-		<EmbeddedResource Include="TestResources\TestFile1.txt"/>
-		<EmbeddedResource Include="TestResources\TestFile2.txt"/>
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Testably.Abstractions.Interface"/>
 		<ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj"/>
 		<ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj"/>
