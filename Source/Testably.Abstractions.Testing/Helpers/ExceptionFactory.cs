@@ -16,9 +16,6 @@ internal static class ExceptionFactory
 #endif
 		};
 
-	internal static IOException AclAccessToPathDenied(string path)
-		=> new($"Access to the path '{path}' is denied.");
-
 	internal static ArgumentException AppendAccessOnlyInWriteOnlyMode(
 		string paramName = "access")
 		=> new($"{nameof(FileMode.Append)} access can be requested only in write-only mode.",

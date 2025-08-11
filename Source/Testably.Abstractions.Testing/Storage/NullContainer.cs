@@ -96,12 +96,13 @@ internal sealed class NullContainer : IStorageContainer
 	public byte[] GetBytes()
 		=> Array.Empty<byte>();
 
-	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, bool, int?)" />
+	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, bool, int?, IStorageLocation?)" />
 	public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
 		bool deleteAccess = false,
 		bool ignoreFileShare = false,
 		bool ignoreMetadataErrors = true,
-		int? hResult = null)
+		int? hResult = null,
+		IStorageLocation? onBehalfOfLocation = null)
 		=> new NullStorageAccessHandle(access, share, deleteAccess);
 
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />

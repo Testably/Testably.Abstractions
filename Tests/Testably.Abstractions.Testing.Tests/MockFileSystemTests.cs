@@ -120,7 +120,7 @@ public class MockFileSystemTests
 
 	[Theory]
 	[AutoData]
-	public async Task WithAccessControl_Denied_CreateDirectoryShouldThrowIOException(
+	public async Task WithAccessControl_Denied_CreateDirectoryShouldThrowUnauthorizedAccessException(
 		string path)
 	{
 		Skip.If(!Test.RunsOnWindows);
@@ -134,7 +134,7 @@ public class MockFileSystemTests
 			sut.Directory.CreateDirectory(path);
 		});
 
-		await That(exception).IsExactly<IOException>();
+		await That(exception).IsExactly<UnauthorizedAccessException>();
 	}
 
 	[Theory]
@@ -155,7 +155,7 @@ public class MockFileSystemTests
 			sut.Directory.CreateDirectory(deniedPath);
 		});
 
-		await That(exception).IsExactly<IOException>();
+		await That(exception).IsExactly<UnauthorizedAccessException>();
 	}
 
 	[Fact]

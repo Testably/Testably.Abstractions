@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
@@ -133,5 +134,34 @@ public partial class CreateTests
 			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
 		await That(FileSystem.Directory.Exists(nameWithSuffix)).IsTrue();
+	}
+
+	[Fact]
+	public async Task
+		CreateDirectory_WithoutAccessRightsToParent_ShouldThrowUnauthorizedAccessException()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		string restrictedDirectory = @"C:\Windows\WaaS";
+		if (FileSystem is MockFileSystem mockFileSystem)
+		{
+			restrictedDirectory = @"C:\Restricted directory";
+			mockFileSystem.Directory.CreateDirectory(restrictedDirectory);
+			mockFileSystem.WithAccessControlStrategy(
+				new DefaultAccessControlStrategy((p, _)
+					=> !restrictedDirectory.Equals(p, StringComparison.Ordinal)));
+		}
+
+		string path = FileSystem.Path.Combine(restrictedDirectory, "my-subdirectory");
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+
+		void Act()
+		{
+			sut.Create();
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.WithHResult(-2147024891).And
+			.WithMessage($"Access to the path '{path}' is denied.");
 	}
 }
