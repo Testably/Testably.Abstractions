@@ -277,16 +277,17 @@ public partial class CreateDirectoryTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		string folderPath = @"C:\Program Files";
+		string restrictedDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 		if (FileSystem is MockFileSystem mockFileSystem)
 		{
-			mockFileSystem.Directory.CreateDirectory(folderPath);
+			restrictedDirectory = @"C:\Restricted directory";
+			mockFileSystem.Directory.CreateDirectory(restrictedDirectory);
 			mockFileSystem.WithAccessControlStrategy(
 				new DefaultAccessControlStrategy((p, _)
-					=> !folderPath.Equals(p, StringComparison.Ordinal)));
+					=> !restrictedDirectory.Equals(p, StringComparison.Ordinal)));
 		}
 
-		string path = FileSystem.Path.Combine(folderPath, "my-subdirectory");
+		string path = FileSystem.Path.Combine(restrictedDirectory, "my-subdirectory");
 
 		void Act()
 		{
