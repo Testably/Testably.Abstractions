@@ -5,13 +5,19 @@ namespace Testably.Abstractions.Tests;
 
 public class MockFileSystemInitializationTests
 {
+	private readonly ITestOutputHelper _testOutputHelper;
+	public MockFileSystemInitializationTests(ITestOutputHelper testOutputHelper)
+	{
+		_testOutputHelper = testOutputHelper;
+	}
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Fact]
 	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderIgnoreInaccessible()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		var sb = new StringBuilder();
+		var sb1 = new StringBuilder();
+		var sb2 = new StringBuilder();
 
 		RealFileSystem fileSystem = new();
 		string path = @"C:\Windows";
@@ -26,20 +32,23 @@ public class MockFileSystemInitializationTests
 			try
 			{
 				fileSystem.Directory.CreateDirectory(fileSystem.Path.Combine(directory, "_test_"));
-				sb.AppendLine("Access allowed for: " + directory);
+				sb2.AppendLine("Access allowed for: " + directory);
 			}
 			catch (UnauthorizedAccessException)
 			{
-				sb.AppendLine("Access denied for: " + directory);
+				sb1.AppendLine("Access denied for: " + directory);
 			}
 			catch (Exception e)
 			{
-				sb.AppendLine("Error for: " + directory + " (" + e.Message + ")");
+				sb2.AppendLine("Error for: " + directory + " (" + e.Message + ")");
 			}
 		}
 
-		var result = sb.ToString();
+		var result = sb1.ToString();
+		_testOutputHelper.WriteLine(result);
+		_testOutputHelper.WriteLine(sb2.ToString());
 		await That(result).IsEmpty();
+		await That(false).IsTrue();
 	}
 #endif
 }
