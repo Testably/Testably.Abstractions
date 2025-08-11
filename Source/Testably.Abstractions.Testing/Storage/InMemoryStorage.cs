@@ -558,8 +558,10 @@ internal sealed class InMemoryStorage : IStorage
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IStorage.ResolveLinkTarget(IStorageLocation, bool)" />
-	public IStorageLocation? ResolveLinkTarget(IStorageLocation location,
-		bool returnFinalTarget = false)
+	public IStorageLocation? ResolveLinkTarget(
+		IStorageLocation location,
+		bool returnFinalTarget = false
+	)
 	{
 		if (!_containers.TryGetValue(location, out IStorageContainer? initialContainer)
 		    || initialContainer.LinkTarget == null)
@@ -567,10 +569,17 @@ internal sealed class InMemoryStorage : IStorage
 			return null;
 		}
 
-		IStorageLocation? nextLocation =
-			_fileSystem.Storage.GetLocation(initialContainer.LinkTarget);
+		IStorageLocation? nextLocation
+			= _fileSystem.Storage.GetLocation(initialContainer.LinkTarget);
 
-		if (returnFinalTarget && _containers.TryGetValue(nextLocation, out IStorageContainer? container) && container.LinkTarget != null)
+		if (!_containers.TryGetValue(nextLocation, out IStorageContainer? container))
+		{
+			return nextLocation;
+		}
+
+		ThrowOnLinkTypeChange(initialContainer, location, container);
+
+		if (returnFinalTarget && container.LinkTarget != null)
 		{
 			nextLocation = ResolveFinalLinkTarget(container, location);
 		}
@@ -1022,11 +1031,14 @@ internal sealed class InMemoryStorage : IStorage
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	private IStorageLocation? ResolveFinalLinkTarget(IStorageContainer container,
-		IStorageLocation originalLocation)
+	private IStorageLocation? ResolveFinalLinkTarget(
+		IStorageContainer container,
+		IStorageLocation originalLocation
+	)
 	{
 		int maxResolveLinks = _fileSystem.Execute.IsWindows ? 63 : 40;
 		IStorageLocation? nextLocation = null;
+
 		for (int i = 1; i < maxResolveLinks; i++)
 		{
 			if (container.LinkTarget == null)
@@ -1035,22 +1047,54 @@ internal sealed class InMemoryStorage : IStorage
 			}
 
 			nextLocation = _fileSystem.Storage.GetLocation(container.LinkTarget);
-			if (!_containers.TryGetValue(nextLocation,
-				out IStorageContainer? nextContainer))
+
+			if (!_containers.TryGetValue(nextLocation, out IStorageContainer? nextContainer))
 			{
 				return nextLocation;
 			}
+
+			ThrowOnLinkTypeChange(container, originalLocation, nextContainer);
 
 			container = nextContainer;
 		}
 
 		if (container.LinkTarget != null)
 		{
-			throw ExceptionFactory.FileNameCannotBeResolved(
-				originalLocation.FullPath);
+			throw ExceptionFactory.FileNameCannotBeResolved(originalLocation.FullPath);
 		}
 
 		return nextLocation;
+	}
+
+	private void ThrowOnLinkTypeChange(
+		IStorageContainer previous,
+		IStorageLocation previousLocation,
+		IStorageContainer next
+	)
+	{
+		if (!_fileSystem.Execute.IsWindows)
+		{
+			return;
+		}
+
+		if (previous.Type == next.Type)
+		{
+			return;
+		}
+
+		switch (previous.Type)
+		{
+			case FileSystemTypes.File:
+				throw new UnauthorizedAccessException(
+					$"Access to the path '{previousLocation.FullPath}' is denied."
+				);
+			case FileSystemTypes.Directory:
+				// This message looks wonky but is correct
+				// See System.IO.Win32Marshal.GetExceptionForWin32Error in the default section
+				throw new IOException(
+					$"The directory name is invalid. : '{previousLocation.FullPath}'"
+				);
+		}
 	}
 #endif
 
