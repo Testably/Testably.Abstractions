@@ -758,7 +758,7 @@ internal sealed class InMemoryStorage : IStorage
 				throw ExceptionFactory.UnixFileModeAccessDenied(location.FullPath);
 			}
 #else
-			using (parentContainer.RequestAccess(FileAccess.Write, FileShare.ReadWrite, location: location))
+			using (parentContainer.RequestAccess(FileAccess.Write, FileShare.ReadWrite, onBehalfOfLocation: location))
 			{
 				TimeAdjustments timeAdjustment = TimeAdjustments.LastWriteTime;
 				if (_fileSystem.Execute.IsWindows)

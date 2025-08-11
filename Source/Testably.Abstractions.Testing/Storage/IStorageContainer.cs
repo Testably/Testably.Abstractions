@@ -91,7 +91,7 @@ internal interface IStorageContainer : IFileSystemEntity, ITimeSystemEntity
 		bool ignoreFileShare = false,
 		bool ignoreMetadataErrors = true,
 		int? hResult = null,
-		IStorageLocation? location = null);
+		IStorageLocation? onBehalfOfLocation = null);
 
 	/// <summary>
 	///     Writes the <paramref name="bytes" /> to the <see cref="IFileInfo" />.

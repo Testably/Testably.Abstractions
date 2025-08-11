@@ -169,7 +169,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 		bool ignoreFileShare = false,
 		bool ignoreMetadataErrors = true,
 		int? hResult = null,
-		IStorageLocation? location = null)
+		IStorageLocation? onBehalfOfLocation = null)
 	{
 		if (FileSystemRegistration.IsInitializing())
 		{
@@ -203,7 +203,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 		if (!_fileSystem.AccessControlStrategy
 			.IsAccessGranted(_location.FullPath, Extensibility))
 		{
-			throw ExceptionFactory.AccessToPathDenied((location ?? _location).FullPath);
+			throw ExceptionFactory.AccessToPathDenied((onBehalfOfLocation ?? _location).FullPath);
 		}
 
 		if (_fileSystem.Storage.TryGetFileAccess(

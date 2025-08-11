@@ -102,7 +102,7 @@ internal sealed class NullContainer : IStorageContainer
 		bool ignoreFileShare = false,
 		bool ignoreMetadataErrors = true,
 		int? hResult = null,
-		IStorageLocation? location = null)
+		IStorageLocation? onBehalfOfLocation = null)
 		=> new NullStorageAccessHandle(access, share, deleteAccess);
 
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />

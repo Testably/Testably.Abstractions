@@ -101,7 +101,7 @@ internal sealed class LockableContainer(
 		bool ignoreFileShare = false,
 		bool ignoreMetadataErrors = true,
 		int? hResult = null,
-		IStorageLocation? location = null)
+		IStorageLocation? onBehalfOfLocation = null)
 	{
 		if (IsLocked)
 		{
