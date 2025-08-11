@@ -1,20 +1,17 @@
 ﻿using System.IO;
-using System.Linq;
+using System.Text;
 
 namespace Testably.Abstractions.Tests;
 
 public class MockFileSystemInitializationTests
 {
-	private readonly ITestOutputHelper _testOutputHelper;
-	public MockFileSystemInitializationTests(ITestOutputHelper testOutputHelper)
-	{
-		_testOutputHelper = testOutputHelper;
-	}
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Fact]
-	public void EnumerateDirectories_WithEnumerationOptions_ShouldConsiderIgnoreInaccessible()
+	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderIgnoreInaccessible()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
+
+		var sb = new StringBuilder();
 
 		RealFileSystem fileSystem = new();
 		string path = @"C:\Windows";
@@ -29,17 +26,20 @@ public class MockFileSystemInitializationTests
 			try
 			{
 				fileSystem.Directory.CreateDirectory(fileSystem.Path.Combine(directory, "_test_"));
-				_testOutputHelper.WriteLine("Access allowed for: " + directory);
+				sb.AppendLine("Access allowed for: " + directory);
 			}
 			catch (UnauthorizedAccessException)
 			{
-				_testOutputHelper.WriteLine("Access denied for: " + directory);
+				sb.AppendLine("Access denied for: " + directory);
 			}
 			catch (Exception e)
 			{
-				_testOutputHelper.WriteLine("Error for: " + directory + " (" + e.Message + ")");
+				sb.AppendLine("Error for: " + directory + " (" + e.Message + ")");
 			}
 		}
+
+		var result = sb.ToString();
+		await That(result).IsEmpty();
 	}
 #endif
 }
