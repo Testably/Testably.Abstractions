@@ -277,7 +277,7 @@ public partial class CreateDirectoryTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		string restrictedDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+		string restrictedDirectory = @"C:\Windows\System32";
 		if (FileSystem is MockFileSystem mockFileSystem)
 		{
 			restrictedDirectory = @"C:\Restricted directory";
