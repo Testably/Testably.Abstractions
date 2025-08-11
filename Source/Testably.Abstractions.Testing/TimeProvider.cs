@@ -34,6 +34,9 @@ public static class TimeProvider
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem.TimeProvider" /> with the specified <paramref name="time" />.
 	/// </summary>
+	/// <remarks>
+	///     If the <paramref name="time" /> has Kind DateTimeKind.Unspecified it will be treated as if it had Kind DateTimeKind.Local.
+	/// </remarks>
 	public static ITimeProvider Use(DateTime time)
 	{
 		return new TimeProviderMock(time, "Fixed");

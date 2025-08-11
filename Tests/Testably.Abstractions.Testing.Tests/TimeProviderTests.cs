@@ -59,4 +59,13 @@ public class TimeProviderTests
 		await That(result1).IsEqualTo(now);
 		await That(result2).IsEqualTo(now);
 	}
+
+	[Fact]
+	public async Task Use_UnspecifiedKind_ShouldConvertToLocalDateTime()
+	{
+		DateTime unspecifiedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Unspecified);
+		ITimeProvider timeProvider = TimeProvider.Use(unspecifiedTime);
+		DateTime result1 = timeProvider.Read();
+		await That(result1).IsEqualTo(DateTime.SpecifyKind(unspecifiedTime, DateTimeKind.Local));
+	}
 }
