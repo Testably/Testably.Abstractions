@@ -125,5 +125,28 @@ public partial class ResolveLinkTargetTests
 
 		await That(resolvedTarget?.FullName).IsEqualTo(targetDir.FullName);
 	}
+
+	[Theory]
+	[AutoData]
+	public async Task ResolveLinkTarget_OfDifferentTypes_ShouldThrow(string directoryName, string fileLinkName, string directoryLinkName)
+	{
+		IDirectoryInfo targetDirectory = FileSystem.Directory.CreateDirectory(directoryName);
+
+		IFileSystemInfo fileSymLink = FileSystem.File.CreateSymbolicLink(fileLinkName, targetDirectory.FullName);
+
+		IFileSystemInfo dirSymLink = FileSystem.Directory.CreateSymbolicLink(directoryLinkName, fileSymLink.FullName);
+
+		if(Test.RunsOnWindows)
+		{
+			await That(() => dirSymLink.ResolveLinkTarget(true))
+				.Throws<IOException>().Which
+				.Satisfies(x => x.Message.Contains(dirSymLink.FullName, StringComparison.Ordinal));
+		}
+		else
+		{
+			await That(() => dirSymLink.ResolveLinkTarget(true))
+				.DoesNotThrow<IOException>();
+		}
+	}
 }
 #endif

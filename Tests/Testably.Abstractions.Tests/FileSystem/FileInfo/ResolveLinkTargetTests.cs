@@ -51,10 +51,7 @@ public partial class ResolveLinkTargetTests
 
 	[Theory]
 	[AutoData]
-	public async Task ResolveLinkTarget_ShouldReturnImmediateFile(
-		string path,
-		string pathToTarget
-	)
+	public async Task ResolveLinkTarget_ShouldReturnImmediateFile(string path, string pathToTarget)
 	{
 		IFileInfo targetFile = FileSystem.FileInfo.New(pathToTarget);
 		await targetFile.Create().DisposeAsync();
@@ -117,6 +114,36 @@ public partial class ResolveLinkTargetTests
 		IFileSystemInfo? resolvedTarget = outerLink.ResolveLinkTarget(true);
 
 		await That(resolvedTarget?.FullName).IsEqualTo(targetFile.FullName);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task ResolveLinkTarget_OfDifferentTypes_ShouldThrow(
+		string fileName,
+		string directoryName,
+		string fileLinkName
+	)
+	{
+		IFileInfo targetFile = FileSystem.FileInfo.New(fileName);
+		await targetFile.Create().DisposeAsync();
+
+		IFileSystemInfo dirSymLink
+			= FileSystem.Directory.CreateSymbolicLink(directoryName, targetFile.FullName);
+
+		IFileSystemInfo fileSymLink
+			= FileSystem.File.CreateSymbolicLink(fileLinkName, dirSymLink.FullName);
+
+		if (Test.RunsOnWindows)
+		{
+			await That(() => fileSymLink.ResolveLinkTarget(true))
+				.Throws<UnauthorizedAccessException>().Which
+				.Satisfies(x => x.Message.Contains(fileSymLink.FullName, StringComparison.Ordinal));
+		}
+		else
+		{
+			await That(() => fileSymLink.ResolveLinkTarget(true))
+				.DoesNotThrow<UnauthorizedAccessException>();
+		}
 	}
 }
 #endif
