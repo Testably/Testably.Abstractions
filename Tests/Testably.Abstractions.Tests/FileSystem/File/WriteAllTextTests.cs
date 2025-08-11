@@ -174,7 +174,7 @@ public partial class WriteAllTextTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		string restrictedDirectory = @"C:\Windows\System32\config";
+		string restrictedDirectory = @"C:\Windows\WaaS";
 		if (FileSystem is MockFileSystem mockFileSystem)
 		{
 			restrictedDirectory = @"C:\Restricted directory";
