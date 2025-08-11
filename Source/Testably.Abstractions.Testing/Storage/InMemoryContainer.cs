@@ -163,12 +163,13 @@ internal sealed class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.GetBytes()" />
 	public byte[] GetBytes() => _bytes;
 
-	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, bool, int?)" />
+	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, bool, int?, IStorageLocation?)" />
 	public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
 		bool deleteAccess = false,
 		bool ignoreFileShare = false,
 		bool ignoreMetadataErrors = true,
-		int? hResult = null)
+		int? hResult = null,
+		IStorageLocation? location = null)
 	{
 		if (FileSystemRegistration.IsInitializing())
 		{
@@ -202,7 +203,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 		if (!_fileSystem.AccessControlStrategy
 			.IsAccessGranted(_location.FullPath, Extensibility))
 		{
-			throw ExceptionFactory.AclAccessToPathDenied(_location.FullPath);
+			throw ExceptionFactory.AccessToPathDenied((location ?? _location).FullPath);
 		}
 
 		if (_fileSystem.Storage.TryGetFileAccess(

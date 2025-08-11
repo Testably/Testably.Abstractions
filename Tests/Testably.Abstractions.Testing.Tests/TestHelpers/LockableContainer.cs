@@ -12,7 +12,7 @@ namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 ///     A <see cref="IStorageContainer" /> for testing purposes.
 ///     <para />
 ///     Set <see cref="IsLocked" /> to <see langword="true" /> to simulate a locked file
-///     (<see cref="RequestAccess(FileAccess, FileShare, bool, bool, bool, int?)" /> throws an <see cref="IOException" />).
+///     (<see cref="RequestAccess(FileAccess, FileShare, bool, bool, bool, int?, IStorageLocation?)" /> throws an <see cref="IOException" />).
 /// </summary>
 internal sealed class LockableContainer(
 	MockFileSystem fileSystem,
@@ -24,7 +24,7 @@ internal sealed class LockableContainer(
 
 	/// <summary>
 	///     Simulate a locked file, if set to <see langword="true" />.<br />
-	///     In this case <see cref="RequestAccess(FileAccess, FileShare, bool, bool, bool, int?)" /> throws
+	///     In this case <see cref="RequestAccess(FileAccess, FileShare, bool, bool, bool, int?, IStorageLocation?)" /> throws
 	///     an <see cref="IOException" />, otherwise it will succeed.
 	/// </summary>
 	public bool IsLocked { get; set; }
@@ -95,12 +95,13 @@ internal sealed class LockableContainer(
 	public byte[] GetBytes()
 		=> _bytes;
 
-	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, bool, int?)" />
+	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, bool, int?, IStorageLocation?)" />
 	public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
 		bool deleteAccess = false,
 		bool ignoreFileShare = false,
 		bool ignoreMetadataErrors = true,
-		int? hResult = null)
+		int? hResult = null,
+		IStorageLocation? location = null)
 	{
 		if (IsLocked)
 		{

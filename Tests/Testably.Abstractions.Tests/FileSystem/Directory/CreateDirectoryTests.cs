@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -269,6 +270,31 @@ public partial class CreateDirectoryTests
 		await That(FileSystem.Directory.Exists(nameWithSuffix)).IsTrue();
 	}
 #endif
+
+	[Fact]
+	public async Task CreateDirectory_WithoutAccessRightsToParent_ShouldThrowUnauthorizedAccessException()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+		if (FileSystem is MockFileSystem mockFileSystem)
+		{
+			mockFileSystem.Directory.CreateDirectory(folderPath);
+			mockFileSystem.WithAccessControlStrategy(
+				new DefaultAccessControlStrategy((p, _) => !folderPath.Equals(p)));
+		}
+
+		string path = FileSystem.Path.Combine(folderPath, "my-subdirectory");
+
+		void Act()
+		{
+			FileSystem.Directory.CreateDirectory(path);
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.WithHResult(-2147024891).And
+			.WithMessage($"Access to the path '{path}' is denied.");
+	}
 
 #if NETFRAMEWORK
 	[Theory]

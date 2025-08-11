@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text;
+using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
@@ -165,6 +166,31 @@ public partial class WriteAllTextTests
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+	}
+
+	[Fact]
+	public async Task WriteAllText_WithoutAccessRightsToParentDirectory_ShouldThrowUnauthorizedAccessException()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+		if (FileSystem is MockFileSystem mockFileSystem)
+		{
+			mockFileSystem.Directory.CreateDirectory(folderPath);
+			mockFileSystem.WithAccessControlStrategy(
+				new DefaultAccessControlStrategy((p, _) => !folderPath.Equals(p)));
+		}
+
+		string path = FileSystem.Path.Combine(folderPath, "my-file.txt");
+
+		void Act()
+		{
+			FileSystem.File.WriteAllText(path, "some-content");
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.WithHResult(-2147024891).And
+			.WithMessage($"Access to the path '{path}' is denied.");
 	}
 
 #if FEATURE_FILE_SPAN
