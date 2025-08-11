@@ -169,16 +169,18 @@ public partial class WriteAllTextTests
 	}
 
 	[Fact]
-	public async Task WriteAllText_WithoutAccessRightsToParentDirectory_ShouldThrowUnauthorizedAccessException()
+	public async Task
+		WriteAllText_WithoutAccessRightsToParentDirectory_ShouldThrowUnauthorizedAccessException()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+		string folderPath = @"C:\Program Files";
 		if (FileSystem is MockFileSystem mockFileSystem)
 		{
 			mockFileSystem.Directory.CreateDirectory(folderPath);
 			mockFileSystem.WithAccessControlStrategy(
-				new DefaultAccessControlStrategy((p, _) => !folderPath.Equals(p)));
+				new DefaultAccessControlStrategy((p, _)
+					=> !folderPath.Equals(p, StringComparison.Ordinal)));
 		}
 
 		string path = FileSystem.Path.Combine(folderPath, "my-file.txt");

@@ -137,16 +137,18 @@ public partial class CreateTests
 	}
 
 	[Fact]
-	public async Task CreateDirectory_WithoutAccessRightsToParent_ShouldThrowUnauthorizedAccessException()
+	public async Task
+		CreateDirectory_WithoutAccessRightsToParent_ShouldThrowUnauthorizedAccessException()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+		string folderPath = @"C:\Program Files";
 		if (FileSystem is MockFileSystem mockFileSystem)
 		{
 			mockFileSystem.Directory.CreateDirectory(folderPath);
 			mockFileSystem.WithAccessControlStrategy(
-				new DefaultAccessControlStrategy((p, _) => !folderPath.Equals(p)));
+				new DefaultAccessControlStrategy((p, _)
+					=> !folderPath.Equals(p, StringComparison.Ordinal)));
 		}
 
 		string path = FileSystem.Path.Combine(folderPath, "my-subdirectory");
