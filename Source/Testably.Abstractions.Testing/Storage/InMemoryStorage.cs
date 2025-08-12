@@ -1092,7 +1092,7 @@ internal sealed class InMemoryStorage : IStorage
 				// This message looks wonky but is correct
 				// See System.IO.Win32Marshal.GetExceptionForWin32Error in the default section
 				throw new IOException(
-					$"The directory name is invalid. : '{previousLocation.FullPath}'"
+					$"The directory name is invalid. : '{previousLocation.FullPath}'", -2147024773
 				);
 		}
 	}
