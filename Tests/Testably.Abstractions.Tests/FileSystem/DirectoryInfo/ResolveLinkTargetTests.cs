@@ -139,13 +139,12 @@ public partial class ResolveLinkTargetTests
 		if(Test.RunsOnWindows)
 		{
 			await That(() => dirSymLink.ResolveLinkTarget(true))
-				.Throws<IOException>().Which
-				.Satisfies(x => x.Message.Contains(dirSymLink.FullName, StringComparison.Ordinal));
+				.Throws<IOException>().WithMessage($"The directory name is invalid. : '{dirSymLink.FullName}'");
 		}
 		else
 		{
-			await That(() => dirSymLink.ResolveLinkTarget(true))
-				.DoesNotThrow<IOException>();
+			await That(dirSymLink.ResolveLinkTarget(true)?.FullName)
+				.IsEqualTo(targetDirectory.FullName);
 		}
 	}
 }

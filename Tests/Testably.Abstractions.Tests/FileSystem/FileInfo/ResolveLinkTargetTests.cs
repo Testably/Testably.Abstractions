@@ -136,8 +136,7 @@ public partial class ResolveLinkTargetTests
 		if (Test.RunsOnWindows)
 		{
 			await That(() => fileSymLink.ResolveLinkTarget(true))
-				.Throws<UnauthorizedAccessException>().Which
-				.Satisfies(x => x.Message.Contains(fileSymLink.FullName, StringComparison.Ordinal));
+				.Throws<UnauthorizedAccessException>().WithMessage($"Access to the path '{fileSymLink.FullName}' is denied.");
 		}
 		else
 		{
