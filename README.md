@@ -24,6 +24,51 @@ In addition, the following interfaces are defined:
 - The `IRandomSystem` interface abstracts away functionality related to randomness:  
   `Random` methods implement a thread-safe Shared instance also under .NET Framework and `Guid` methods allow creating new GUIDs.
 
+## Relationship with TestableIO.System.IO.Abstractions
+
+This library uses the same interfaces as [TestableIO.System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions), which means you can switch between the two testing libraries **without changing your production code**. Both libraries provide `IFileSystem` implementations, but with different testing capabilities and API surfaces.
+
+### When to use Testably.Abstractions vs TestableIO
+- **Use Testably.Abstractions** if you need:
+  - Advanced testing scenarios (FileSystemWatcher, SafeFileHandles, multiple drives)
+  - Additional abstractions (ITimeSystem, IRandomSystem)
+  - Cross-platform file system simulation (Linux, MacOS, Windows)
+  - More extensive and consistent behavior validation
+  - Active development and new features
+
+- **Use TestableIO.System.IO.Abstractions** if you need:
+  - Basic file system mocking capabilities
+  - Direct manipulation of stored file entities (MockFileData, MockDirectoryData)
+  - Established codebase with existing TestableIO integration
+
+### Migrating from TestableIO
+Switching from TestableIO to Testably only requires changes in your test projects:
+
+1. Replace the NuGet package reference in your test projects:
+   ```xml
+   <!-- Remove -->
+   <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" />
+   <!-- Add -->
+   <PackageReference Include="Testably.Abstractions.Testing" />
+   ```
+
+2. Update your test code to use the new `MockFileSystem`:
+   ```csharp
+   // Before (TestableIO)
+   var fileSystem = new MockFileSystem();
+   fileSystem.AddDirectory("some-directory");
+   fileSystem.AddFile("some-file.txt", new MockFileData("content"));
+
+   // After (Testably)
+   var fileSystem = new MockFileSystem();
+   fileSystem.Directory.CreateDirectory("some-directory");
+   fileSystem.File.WriteAllText("some-file.txt", "content");
+   // or using fluent initialization:
+   fileSystem.Initialize().WithSubdirectory("some-directory").WithFile("some-file.txt").Which(f => f.HasStringContent("content"));
+   ```
+
+Your production code using `IFileSystem` remains unchanged.
+
 ## Example
 Use the interfaces and their default implementations using your prefered dependency injection method, e.g.:
 ```csharp
