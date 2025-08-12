@@ -118,7 +118,7 @@ public class MockTimeSystemTests
 		string result = timeSystem.ToString();
 
 		await That(result).Contains("Fixed");
-		await That(result).Contains($"{now.ToUniversalTime()}Z");
+		await That(result).Contains($"{now}Z");
 	}
 
 	[Fact]

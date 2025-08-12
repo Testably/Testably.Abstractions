@@ -18,7 +18,7 @@ internal sealed class TimeProviderMock : ITimeProvider
 	public TimeProviderMock(DateTime now, string description)
 	{
 		_now = now.Kind == DateTimeKind.Unspecified
-			? DateTime.SpecifyKind(now, DateTimeKind.Local)
+			? DateTime.SpecifyKind(now, DateTimeKind.Utc)
 			: now;
 
 		_description = description;
