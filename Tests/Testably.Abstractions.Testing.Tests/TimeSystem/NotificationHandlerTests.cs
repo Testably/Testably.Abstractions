@@ -60,7 +60,7 @@ public class NotificationHandlerTests
 	[Fact]
 	public async Task OnDateTimeRead_Today_ShouldExecuteCallbackWithCorrectParameter()
 	{
-		DateTime expectedTime = TimeTestHelper.GetRandomTime().Date;
+		DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Local).Date;
 		MockTimeSystem timeSystem = new(expectedTime);
 		DateTime? receivedTime = null;
 

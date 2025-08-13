@@ -52,6 +52,22 @@ public class MockTimeSystemTests
 		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>().WithParamName("delay");
 	}
 
+	[Theory]
+	[InlineData(DateTimeKind.Local)]
+	[InlineData(DateTimeKind.Unspecified)]
+	[InlineData(DateTimeKind.Utc)]
+	public async Task DifferenceBetweenDateTimeNowAndDateTimeUtcNow_ShouldBeLocalTimeZoneOffsetFromUtc(DateTimeKind dateTimeKind)
+	{
+		DateTime now = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
+
+		var expectedDifference = TimeZoneInfo.Local.GetUtcOffset(now);
+
+		MockTimeSystem timeSystem = new(DateTime.SpecifyKind(now, dateTimeKind));
+		var actualDifference = timeSystem.DateTime.Now - timeSystem.DateTime.UtcNow;
+
+		await That(actualDifference).IsEqualTo(expectedDifference);
+	}
+
 	[Fact]
 	public async Task Sleep_Infinite_ShouldNotThrowException()
 	{
@@ -102,7 +118,7 @@ public class MockTimeSystemTests
 		string result = timeSystem.ToString();
 
 		await That(result).Contains("Fixed");
-		await That(result).Contains($"{now.ToUniversalTime()}Z");
+		await That(result).Contains($"{now}Z");
 	}
 
 	[Fact]
