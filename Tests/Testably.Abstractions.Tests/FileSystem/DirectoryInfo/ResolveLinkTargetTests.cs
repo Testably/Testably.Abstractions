@@ -1,5 +1,6 @@
 ﻿#if FEATURE_FILESYSTEM_LINK
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
@@ -53,10 +54,7 @@ public partial class ResolveLinkTargetTests
 
 	[Theory]
 	[AutoData]
-	public async Task ResolveLinkTarget_ShouldReturnImmediateFile(
-		string path,
-		string pathToTarget
-	)
+	public async Task ResolveLinkTarget_ShouldReturnImmediateFile(string path, string pathToTarget)
 	{
 		IDirectoryInfo targetDir = FileSystem.DirectoryInfo.New(pathToTarget);
 		targetDir.Create();
@@ -128,18 +126,28 @@ public partial class ResolveLinkTargetTests
 
 	[Theory]
 	[AutoData]
-	public async Task ResolveLinkTarget_OfDifferentTypes_ShouldThrow(string directoryName, string fileLinkName, string directoryLinkName)
+	public async Task ResolveLinkTarget_OfDifferentTypes_ShouldThrow(
+		string directoryName,
+		string fileLinkName,
+		string directoryLinkName
+	)
 	{
 		IDirectoryInfo targetDirectory = FileSystem.Directory.CreateDirectory(directoryName);
 
-		IFileSystemInfo fileSymLink = FileSystem.File.CreateSymbolicLink(fileLinkName, targetDirectory.FullName);
+		IFileSystemInfo fileSymLink = FileSystem.File.CreateSymbolicLink(
+			fileLinkName, targetDirectory.FullName
+		);
 
-		IFileSystemInfo dirSymLink = FileSystem.Directory.CreateSymbolicLink(directoryLinkName, fileSymLink.FullName);
+		IFileSystemInfo dirSymLink = FileSystem.Directory.CreateSymbolicLink(
+			directoryLinkName, fileSymLink.FullName
+		);
 
-		if(Test.RunsOnWindows)
+		if (Test.RunsOnWindows)
 		{
-			await That(() => dirSymLink.ResolveLinkTarget(true))
-				.Throws<IOException>().WithMessage($"The directory name is invalid. : '{dirSymLink.FullName}'");
+			await That(() => dirSymLink.ResolveLinkTarget(true)).Throws<IOException>()
+				.WithMessage(
+					$@"^The directory name is invalid\. \: \'{Regex.Escape(dirSymLink.FullName)}\'\.?$"
+				).AsRegex().And.WithHResult(-2147024629);
 		}
 		else
 		{
