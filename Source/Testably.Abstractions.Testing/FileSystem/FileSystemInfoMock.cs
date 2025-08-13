@@ -336,27 +336,14 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.ResolveLinkTarget(bool)" />
 	public IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
 	{
-		using IDisposable registration = RegisterPathMethod(nameof(ResolveLinkTarget),
-			returnFinalTarget);
+		using IDisposable registration = RegisterPathMethod(
+			nameof(ResolveLinkTarget), returnFinalTarget
+		);
 
-		try
-		{
-			IStorageLocation? targetLocation =
-				_fileSystem.Storage.ResolveLinkTarget(
-					Location,
-					returnFinalTarget);
-			if (targetLocation != null)
-			{
-				return New(targetLocation, _fileSystem);
-			}
+		IStorageLocation? targetLocation
+			= _fileSystem.Storage.ResolveLinkTarget(Location, returnFinalTarget);
 
-			return null;
-		}
-		catch (IOException ex) when (ex.HResult != -2147024773)
-		{
-			throw ExceptionFactory.FileNameCannotBeResolved(Location.FullPath,
-				_fileSystem.Execute.IsWindows ? -2147022975 : -2146232800);
-		}
+		return targetLocation != null ? New(targetLocation, _fileSystem) : null;
 	}
 #endif
 
