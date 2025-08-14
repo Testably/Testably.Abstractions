@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+#if NET8_0_OR_GREATER
+using System.Runtime.InteropServices;
+#endif
 using Testably.Abstractions.Helpers;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
@@ -1091,13 +1094,22 @@ internal sealed class InMemoryStorage : IStorage
 					$"Access to the path '{previousLocation.FullPath}' is denied."
 				);
 			case FileSystemTypes.Directory:
+				// We should be clear here with Marshal, as the symbolic link types only differ on windows
+				string errorMessage =
+#if NET8_0_OR_GREATER
+					Marshal.GetPInvokeErrorMessage(267) // Magic number, error code was discovered via debugger
+#else
+						"The directory name is invalid." // Marshal.GetPInvokeErrorMessage is only available for .NET 7 and above
+#endif
+					;
+
 				// This message looks wonky but is correct
 				// See System.IO.Win32Marshal.GetExceptionForWin32Error in the default section
 				throw new IOException(
-					$"The directory name is invalid. : '{previousLocation.FullPath}'"
-					#if NET9_0_OR_GREATER
+					$"{errorMessage} : '{previousLocation.FullPath}'"
+#if NET9_0_OR_GREATER
 					+ '.'
-					#endif
+#endif
 					, -2147024629
 				);
 		}
