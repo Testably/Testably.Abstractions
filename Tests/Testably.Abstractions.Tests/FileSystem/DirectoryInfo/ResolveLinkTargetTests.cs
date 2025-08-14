@@ -1,5 +1,8 @@
 ﻿#if FEATURE_FILESYSTEM_LINK
 using System.IO;
+#if NET8_0_OR_GREATER
+using System.Runtime.InteropServices;
+#endif
 using System.Text.RegularExpressions;
 
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
@@ -170,9 +173,19 @@ public partial class ResolveLinkTargetTests
 
 		if (Test.RunsOnWindows)
 		{
+			const int errorCode = 267; // Magic number, error code was discovered via debugger
+			Marshal.SetLastPInvokeError(errorCode);
+
+			string errorMessage =
+#if NET8_0_OR_GREATER
+					Marshal.GetPInvokeErrorMessage(errorCode)
+#else
+						"The directory name is invalid." // Marshal.GetPInvokeErrorMessage is only available for .NET 7 and above
+#endif
+				;
 			await That(() => dirSymLink.ResolveLinkTarget(true)).Throws<IOException>()
 				.WithMessage(
-					$@"^The directory name is invalid\. \: \'{Regex.Escape(dirSymLink.FullName)}\'\.?$"
+					$@"^{Regex.Escape(errorMessage)} \: \'{Regex.Escape(dirSymLink.FullName)}\'\.?$"
 				).AsRegex().And.WithHResult(-2147024629);
 		}
 		else
