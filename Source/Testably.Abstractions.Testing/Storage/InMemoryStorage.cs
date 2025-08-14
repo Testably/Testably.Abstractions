@@ -1060,7 +1060,9 @@ internal sealed class InMemoryStorage : IStorage
 
 		if (container.LinkTarget != null)
 		{
-			throw ExceptionFactory.FileNameCannotBeResolved(originalLocation.FullPath);
+			throw ExceptionFactory.FileNameCannotBeResolved(
+				originalLocation.FullPath, _fileSystem.Execute.IsWindows ? -2147022975 : -2146232800
+			);
 		}
 
 		return nextLocation;
