@@ -764,7 +764,7 @@ internal sealed class InMemoryStorage : IStorage
 			catch (UnauthorizedAccessException)
 			{
 				// On Unix, if the parent directory is not writable, we include the child path in the exception.
-				throw ExceptionFactory.UnixFileModeAccessDenied(location.FullPath);
+				throw ExceptionFactory.AccessDenied(location.FullPath);
 			}
 #else
 			using (parentContainer.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
@@ -1087,9 +1087,7 @@ internal sealed class InMemoryStorage : IStorage
 		switch (previous.Type)
 		{
 			case FileSystemTypes.File:
-				throw new UnauthorizedAccessException(
-					$"Access to the path '{previousLocation.FullPath}' is denied."
-				);
+				throw ExceptionFactory.AccessDenied(previousLocation.FullPath);
 			case FileSystemTypes.Directory:
 				throw ExceptionFactory.InvalidDirectoryName(previousLocation.FullPath);
 		}

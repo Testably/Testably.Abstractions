@@ -195,7 +195,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 		if (!deleteAccess && !_fileSystem.UnixFileModeStrategy
 			.IsAccessGranted(_location.FullPath, _extensibility, UnixFileMode, access))
 		{
-			throw ExceptionFactory.UnixFileModeAccessDenied(_location.FullPath);
+			throw ExceptionFactory.AccessDenied(_location.FullPath);
 		}
 #endif
 
