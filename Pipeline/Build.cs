@@ -37,6 +37,6 @@ partial class Build : NukeBuild
 
 	public static int Main() => Execute<Build>([
 		x => x.ApiChecks,
-		x => x.Pack,
+		x => x.UnitTests,
 	]);
 }
