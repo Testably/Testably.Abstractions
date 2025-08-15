@@ -1,8 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
+		<!--<ProjectReference Include="..\..\Source\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />-->
 		<PackageReference Include="Testably.Abstractions.Interface" />
 		<ProjectReference Include="..\..\Source\Testably.Abstractions.Compression\Testably.Abstractions.Compression.csproj" />
+		<PackageReference Remove="aweXpect.Testably" />
 	</ItemGroup>
 
 </Project>
