@@ -3,6 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 using Testably.Abstractions.Internal;
+#if FEATURE_COMPRESSION_ASYNC
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace Testably.Abstractions;
 
@@ -102,10 +106,46 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 			() => _instance.ExtractToFile(destinationFileName, overwrite),
 			() => ZipUtilities.ExtractToFile(this, destinationFileName, overwrite));
 	}
+	
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFileAsync(string, CancellationToken)" />
+	public async Task ExtractToFileAsync(string destinationFileName, CancellationToken cancellationToken = default)
+	{
+		if (destinationFileName == null)
+		{
+			throw new ArgumentNullException(nameof(destinationFileName));
+		}
+
+		await Execute.WhenRealFileSystemAsync(FileSystem,
+			async () => await _instance.ExtractToFileAsync(destinationFileName, cancellationToken),
+			() => ZipUtilities.ExtractToFile(this, destinationFileName, false));
+	}
+#endif
+	
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFileAsync(string, bool, CancellationToken)" />
+	public async Task ExtractToFileAsync(string destinationFileName, bool overwrite, CancellationToken cancellationToken = default)
+	{
+		if (destinationFileName == null)
+		{
+			throw new ArgumentNullException(nameof(destinationFileName));
+		}
+
+		await Execute.WhenRealFileSystemAsync(FileSystem,
+			async () => await _instance.ExtractToFileAsync(destinationFileName, overwrite, cancellationToken),
+			() => ZipUtilities.ExtractToFile(this, destinationFileName, overwrite));
+	}
+#endif
 
 	/// <inheritdoc cref="IZipArchiveEntry.Open()" />
 	public Stream Open()
 		=> _instance.Open();
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipArchiveEntry.OpenAsync(CancellationToken)" />
+	public Task<Stream> OpenAsync(CancellationToken cancellationToken = default)
+		=> _instance.OpenAsync(cancellationToken);
+#endif
 
 	#endregion
 
