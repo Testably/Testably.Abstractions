@@ -27,6 +27,7 @@ partial class Build
 		.After(MutationTestsLinux)
 		.After(MutationTestsWindows)
 		.OnlyWhenDynamic(() => GitHubActions.IsPullRequest)
+		.OnlyWhenDynamic(() => BuildScope == BuildScope.Default)
 		.Executes(async () =>
 		{
 			int? prId = GitHubActions.PullRequestNumber;
@@ -83,6 +84,7 @@ partial class Build
 		});
 
 	Target MutationTestPreparation => _ => _
+		.OnlyWhenDynamic(() => BuildScope == BuildScope.Default)
 		.Executes(() =>
 		{
 			StrykerToolPath.CreateOrCleanDirectory();
@@ -97,11 +99,13 @@ partial class Build
 	Target MutationTests => _ => _
 		.DependsOn(MutationTestsWindows)
 		.DependsOn(MutationTestsLinux)
-		.DependsOn(MutationComment);
+		.DependsOn(MutationComment)
+		.OnlyWhenDynamic(() => BuildScope == BuildScope.Default);
 
 	Target MutationTestsLinux => _ => _
 		.DependsOn(Compile)
 		.DependsOn(MutationTestPreparation)
+		.OnlyWhenDynamic(() => BuildScope == BuildScope.Default)
 		.Executes(() =>
 		{
 			AbsolutePath configFile = StrykerToolPath / "Stryker.Config.json";
@@ -210,6 +214,7 @@ partial class Build
 	Target MutationTestsWindows => _ => _
 		.DependsOn(Compile)
 		.DependsOn(MutationTestPreparation)
+		.OnlyWhenDynamic(() => BuildScope == BuildScope.Default)
 		.Executes(() =>
 		{
 			AbsolutePath configFile = StrykerToolPath / "Stryker.Config.json";
