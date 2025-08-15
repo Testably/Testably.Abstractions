@@ -27,7 +27,7 @@ public partial class Tests
 		await That(entry.Archive).IsEqualTo(archive);
 	}
 
-#if FEATURE_ZIPFILE_NET7
+#if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
 	[Fact]
 	public async Task Comment_ShouldBeInitializedEmpty()
 	{
@@ -47,7 +47,7 @@ public partial class Tests
 	}
 #endif
 
-#if FEATURE_ZIPFILE_NET7
+#if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
 	[Theory]
 	[AutoData]
 	public async Task Comment_ShouldBeSettable(string comment)
@@ -258,6 +258,7 @@ public partial class Tests
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
 		IZipArchiveEntry entry1 = archive.Entries[0];
+
 		void Act()
 		{
 			entry1.LastWriteTime = new DateTimeOffset(lastWriteTime);
@@ -290,6 +291,50 @@ public partial class Tests
 		await That(entry1.LastWriteTime.DateTime).IsEqualTo(lastWriteTime);
 		await That(entry2.LastWriteTime.DateTime).IsNotEqualTo(lastWriteTime);
 	}
+
+	[Fact]
+	public async Task Open_ShouldBeSetToFileName()
+	{
+		FileSystem.Initialize()
+			.WithSubdirectory("foo");
+		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
+		FileSystem.ZipFile()
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+				false);
+
+		using FileSystemStream stream =
+			FileSystem.File.Open("destination.zip", FileMode.Open, FileAccess.ReadWrite);
+
+		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchiveEntry entry = archive.Entries.Single();
+
+		Stream resultStream = entry.Open();
+
+		await That(resultStream).HasLength().EqualTo("FooFooFoo".Length);
+	}
+
+#if FEATURE_COMPRESSION_ASYNC
+	[Fact]
+	public async Task OpenAsync_ShouldBeSetToFileName()
+	{
+		FileSystem.Initialize()
+			.WithSubdirectory("foo");
+		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
+		FileSystem.ZipFile()
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+				false);
+
+		using FileSystemStream stream =
+			FileSystem.File.Open("destination.zip", FileMode.Open, FileAccess.ReadWrite);
+
+		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchiveEntry entry = archive.Entries.Single();
+
+		Stream resultStream = await entry.OpenAsync(TestContext.Current.CancellationToken);
+
+		await That(resultStream).HasLength().EqualTo("FooFooFoo".Length);
+	}
+#endif
 
 	[Fact]
 	public async Task ToString_ShouldBeSetToFileName()
