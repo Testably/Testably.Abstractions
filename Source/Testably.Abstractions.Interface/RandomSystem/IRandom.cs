@@ -7,6 +7,15 @@ namespace Testably.Abstractions.RandomSystem;
 /// </summary>
 public interface IRandom
 {
+#if FEATURE_RANDOM_STRINGS
+	/// <inheritdoc cref="Random.GetHexString(int, bool)" />
+	string GetHexString(int stringLength, bool lowercase = false);
+#endif
+
+#if FEATURE_RANDOM_STRINGS
+	/// <inheritdoc cref="Random.GetHexString(Span{char}, bool)" />
+	void GetHexString(Span<char> destination, bool lowercase = false);
+#endif
 #if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="Random.GetItems{T}(ReadOnlySpan{T}, Span{T})" />
 	void GetItems<T>(ReadOnlySpan<T> choices, Span<T> destination);
@@ -20,6 +29,11 @@ public interface IRandom
 #if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="Random.GetItems{T}(ReadOnlySpan{T}, int)" />
 	T[] GetItems<T>(ReadOnlySpan<T> choices, int length);
+#endif
+
+#if FEATURE_RANDOM_STRINGS
+	/// <inheritdoc cref="Random.GetString(ReadOnlySpan{char}, int)" />
+	string GetString(ReadOnlySpan<char> choices, int length);
 #endif
 
 	/// <inheritdoc cref="Random.Next()" />
