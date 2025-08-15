@@ -8,7 +8,7 @@ namespace Testably.Abstractions
         public static Testably.Abstractions.IZipArchiveFactory ZipArchive(this System.IO.Abstractions.IFileSystem fileSystem) { }
         public static Testably.Abstractions.IZipFile ZipFile(this System.IO.Abstractions.IFileSystem fileSystem) { }
     }
-    public interface IZipArchive : System.IDisposable, System.IO.Abstractions.IFileSystemEntity
+    public interface IZipArchive : System.IAsyncDisposable, System.IDisposable, System.IO.Abstractions.IFileSystemEntity
     {
         string Comment { get; set; }
         System.Collections.ObjectModel.ReadOnlyCollection<Testably.Abstractions.IZipArchiveEntry> Entries { get; }
@@ -17,8 +17,12 @@ namespace Testably.Abstractions
         Testably.Abstractions.IZipArchiveEntry CreateEntry(string entryName, System.IO.Compression.CompressionLevel compressionLevel);
         Testably.Abstractions.IZipArchiveEntry CreateEntryFromFile(string sourceFileName, string entryName);
         Testably.Abstractions.IZipArchiveEntry CreateEntryFromFile(string sourceFileName, string entryName, System.IO.Compression.CompressionLevel compressionLevel);
+        System.Threading.Tasks.Task<Testably.Abstractions.IZipArchiveEntry> CreateEntryFromFileAsync(string sourceFileName, string entryName, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<Testably.Abstractions.IZipArchiveEntry> CreateEntryFromFileAsync(string sourceFileName, string entryName, System.IO.Compression.CompressionLevel compressionLevel, System.Threading.CancellationToken cancellationToken = default);
         void ExtractToDirectory(string destinationDirectoryName);
         void ExtractToDirectory(string destinationDirectoryName, bool overwriteFiles);
+        System.Threading.Tasks.Task ExtractToDirectoryAsync(string destinationDirectoryName, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task ExtractToDirectoryAsync(string destinationDirectoryName, bool overwriteFiles, System.Threading.CancellationToken cancellationToken = default);
         Testably.Abstractions.IZipArchiveEntry? GetEntry(string entryName);
     }
     public interface IZipArchiveEntry : System.IO.Abstractions.IFileSystemEntity
@@ -36,7 +40,10 @@ namespace Testably.Abstractions
         void Delete();
         void ExtractToFile(string destinationFileName);
         void ExtractToFile(string destinationFileName, bool overwrite);
+        System.Threading.Tasks.Task ExtractToFileAsync(string destinationFileName, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task ExtractToFileAsync(string destinationFileName, bool overwrite, System.Threading.CancellationToken cancellationToken = default);
         System.IO.Stream Open();
+        System.Threading.Tasks.Task<System.IO.Stream> OpenAsync(System.Threading.CancellationToken cancellationToken = default);
     }
     public interface IZipArchiveFactory : System.IO.Abstractions.IFileSystemEntity
     {
@@ -53,6 +60,12 @@ namespace Testably.Abstractions
         void CreateFromDirectory(string sourceDirectoryName, string destinationArchiveFileName, System.IO.Compression.CompressionLevel compressionLevel, bool includeBaseDirectory);
         void CreateFromDirectory(string sourceDirectoryName, System.IO.Stream destination, System.IO.Compression.CompressionLevel compressionLevel, bool includeBaseDirectory, System.Text.Encoding entryNameEncoding);
         void CreateFromDirectory(string sourceDirectoryName, string destinationArchiveFileName, System.IO.Compression.CompressionLevel compressionLevel, bool includeBaseDirectory, System.Text.Encoding entryNameEncoding);
+        System.Threading.Tasks.Task CreateFromDirectoryAsync(string sourceDirectoryName, System.IO.Stream destination, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task CreateFromDirectoryAsync(string sourceDirectoryName, string destinationArchiveFileName, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task CreateFromDirectoryAsync(string sourceDirectoryName, System.IO.Stream destination, System.IO.Compression.CompressionLevel compressionLevel, bool includeBaseDirectory, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task CreateFromDirectoryAsync(string sourceDirectoryName, string destinationArchiveFileName, System.IO.Compression.CompressionLevel compressionLevel, bool includeBaseDirectory, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task CreateFromDirectoryAsync(string sourceDirectoryName, System.IO.Stream destination, System.IO.Compression.CompressionLevel compressionLevel, bool includeBaseDirectory, System.Text.Encoding entryNameEncoding, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task CreateFromDirectoryAsync(string sourceDirectoryName, string destinationArchiveFileName, System.IO.Compression.CompressionLevel compressionLevel, bool includeBaseDirectory, System.Text.Encoding entryNameEncoding, System.Threading.CancellationToken cancellationToken = default);
         void ExtractToDirectory(System.IO.Stream source, string destinationDirectoryName);
         void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName);
         void ExtractToDirectory(System.IO.Stream source, string destinationDirectoryName, System.Text.Encoding entryNameEncoding);
@@ -61,8 +74,19 @@ namespace Testably.Abstractions
         void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName, bool overwriteFiles);
         void ExtractToDirectory(System.IO.Stream source, string destinationDirectoryName, System.Text.Encoding entryNameEncoding, bool overwriteFiles);
         void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName, System.Text.Encoding? entryNameEncoding, bool overwriteFiles);
+        System.Threading.Tasks.Task ExtractToDirectoryAsync(System.IO.Stream source, string destinationDirectoryName, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task ExtractToDirectoryAsync(string sourceArchiveFileName, string destinationDirectoryName, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task ExtractToDirectoryAsync(System.IO.Stream source, string destinationDirectoryName, System.Text.Encoding entryNameEncoding, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task ExtractToDirectoryAsync(System.IO.Stream source, string destinationDirectoryName, bool overwriteFiles, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task ExtractToDirectoryAsync(string sourceArchiveFileName, string destinationDirectoryName, System.Text.Encoding? entryNameEncoding, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task ExtractToDirectoryAsync(string sourceArchiveFileName, string destinationDirectoryName, bool overwriteFiles, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task ExtractToDirectoryAsync(System.IO.Stream source, string destinationDirectoryName, System.Text.Encoding entryNameEncoding, bool overwriteFiles, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task ExtractToDirectoryAsync(string sourceArchiveFileName, string destinationDirectoryName, System.Text.Encoding? entryNameEncoding, bool overwriteFiles, System.Threading.CancellationToken cancellationToken = default);
         Testably.Abstractions.IZipArchive Open(string archiveFileName, System.IO.Compression.ZipArchiveMode mode);
         Testably.Abstractions.IZipArchive Open(string archiveFileName, System.IO.Compression.ZipArchiveMode mode, System.Text.Encoding? entryNameEncoding);
+        System.Threading.Tasks.Task<Testably.Abstractions.IZipArchive> OpenAsync(string archiveFileName, System.IO.Compression.ZipArchiveMode mode, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<Testably.Abstractions.IZipArchive> OpenAsync(string archiveFileName, System.IO.Compression.ZipArchiveMode mode, System.Text.Encoding? entryNameEncoding, System.Threading.CancellationToken cancellationToken = default);
         Testably.Abstractions.IZipArchive OpenRead(string archiveFileName);
+        System.Threading.Tasks.Task<Testably.Abstractions.IZipArchive> OpenReadAsync(string archiveFileName, System.Threading.CancellationToken cancellationToken = default);
     }
 }
