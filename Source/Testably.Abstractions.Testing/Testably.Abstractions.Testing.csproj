@@ -23,8 +23,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="DotNet.Glob" />
-		<PackageReference Include="System.Linq.Async" />
 		<PackageReference Include="System.Threading.Channels" />
+	</ItemGroup>
+
+	<!-- https://learn.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/10.0/asyncenumerable -->
+	<ItemGroup Condition=" '$(TargetFramework)' != 'net10.0' ">
+		<PackageReference Include="System.Linq.Async" />
 	</ItemGroup>
 
 </Project>
