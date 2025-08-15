@@ -24,47 +24,53 @@ partial class Build
 			packagesDirectory.CreateOrCleanDirectory();
 
 			List<string> packages = new();
-			Directory.CreateDirectory(packagesDirectory / "Main");
-			foreach (Project mainProject in MainProjects)
+			if (BuildScope != BuildScope.CoreOnly)
 			{
-				foreach (string package in
-					Directory.EnumerateFiles(mainProject.Directory / "bin", "*.nupkg",
-						SearchOption.AllDirectories))
+				Directory.CreateDirectory(packagesDirectory / "Main");
+				foreach (Project mainProject in MainProjects)
 				{
-					File.Move(package, packagesDirectory / "Main" / Path.GetFileName(package));
-					Debug("Found nuget package: {PackagePath}", package);
-					packages.Add(Path.GetFileName(package));
-				}
+					foreach (string package in
+						Directory.EnumerateFiles(mainProject.Directory / "bin", "*.nupkg",
+							SearchOption.AllDirectories))
+					{
+						File.Move(package, packagesDirectory / "Main" / Path.GetFileName(package));
+						Debug("Found nuget package: {PackagePath}", package);
+						packages.Add(Path.GetFileName(package));
+					}
 
-				foreach (string symbolPackage in
-					Directory.EnumerateFiles(mainProject.Directory / "bin", "*.snupkg",
-						SearchOption.AllDirectories))
-				{
-					File.Move(symbolPackage,
-						packagesDirectory / "Main" / Path.GetFileName(symbolPackage));
-					Debug("Found symbol package: {PackagePath}", symbolPackage);
+					foreach (string symbolPackage in
+						Directory.EnumerateFiles(mainProject.Directory / "bin", "*.snupkg",
+							SearchOption.AllDirectories))
+					{
+						File.Move(symbolPackage,
+							packagesDirectory / "Main" / Path.GetFileName(symbolPackage));
+						Debug("Found symbol package: {PackagePath}", symbolPackage);
+					}
 				}
 			}
 
-			Directory.CreateDirectory(packagesDirectory / "Core");
-			foreach (Project coreProject in CoreProjects)
+			if (BuildScope != BuildScope.MainOnly)
 			{
-				foreach (string package in
-					Directory.EnumerateFiles(coreProject.Directory / "bin", "*.nupkg",
-						SearchOption.AllDirectories))
+				Directory.CreateDirectory(packagesDirectory / "Core");
+				foreach (Project coreProject in CoreProjects)
 				{
-					File.Move(package, packagesDirectory / "Core" / Path.GetFileName(package));
-					Debug("Found nuget package: {PackagePath}", package);
-					packages.Add(Path.GetFileName(package));
-				}
+					foreach (string package in
+						Directory.EnumerateFiles(coreProject.Directory / "bin", "*.nupkg",
+							SearchOption.AllDirectories))
+					{
+						File.Move(package, packagesDirectory / "Core" / Path.GetFileName(package));
+						Debug("Found nuget package: {PackagePath}", package);
+						packages.Add(Path.GetFileName(package));
+					}
 
-				foreach (string symbolPackage in
-					Directory.EnumerateFiles(coreProject.Directory / "bin", "*.snupkg",
-						SearchOption.AllDirectories))
-				{
-					File.Move(symbolPackage,
-						packagesDirectory / "Core" / Path.GetFileName(symbolPackage));
-					Debug("Found symbol package: {PackagePath}", symbolPackage);
+					foreach (string symbolPackage in
+						Directory.EnumerateFiles(coreProject.Directory / "bin", "*.snupkg",
+							SearchOption.AllDirectories))
+					{
+						File.Move(symbolPackage,
+							packagesDirectory / "Core" / Path.GetFileName(symbolPackage));
+						Debug("Found symbol package: {PackagePath}", symbolPackage);
+					}
 				}
 			}
 
