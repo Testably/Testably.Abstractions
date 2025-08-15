@@ -168,17 +168,21 @@ public partial class ResolveLinkTargetTests
 			directoryLinkName, fileSymLink.FullName
 		);
 
+		string? Act()
+		{
+			return dirSymLink.ResolveLinkTarget(true)?.FullName;
+		}
+
 		if (Test.RunsOnWindows)
 		{
-			await That(() => dirSymLink.ResolveLinkTarget(true)).Throws<IOException>()
+			await That(Act).Throws<IOException>()
 				.WithMessage(
 					$@"^.*directory.*invalid.*\'{Regex.Escape(dirSymLink.FullName)}\'"
 				).AsRegex().And.WithHResult(-2147024629);
 		}
 		else
 		{
-			await That(dirSymLink.ResolveLinkTarget(true)?.FullName)
-				.IsEqualTo(targetDirectory.FullName);
+			await That(Act()).IsEqualTo(targetDirectory.FullName);
 		}
 	}
 }

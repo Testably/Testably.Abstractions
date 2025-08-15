@@ -25,7 +25,11 @@ public partial class ResolveLinkTargetTests
 	)
 	{
 		int maxLinks = MaxResolveLinks + 1;
-		await FileSystem.File.WriteAllTextAsync(pathToFinalTarget, string.Empty, CancellationToken.None);
+
+		await FileSystem.File.WriteAllTextAsync(
+			pathToFinalTarget, string.Empty, CancellationToken.None
+		);
+
 		string previousPath = pathToFinalTarget;
 
 		for (int i = 0; i < maxLinks; i++)
@@ -160,15 +164,21 @@ public partial class ResolveLinkTargetTests
 		IFileSystemInfo fileSymLink
 			= FileSystem.File.CreateSymbolicLink(fileLinkName, dirSymLink.FullName);
 
+		string? Act()
+		{
+			return fileSymLink.ResolveLinkTarget(true)?.FullName;
+		}
+
 		if (Test.RunsOnWindows)
 		{
-			await That(() => fileSymLink.ResolveLinkTarget(true))
-				.Throws<UnauthorizedAccessException>().WithMessage($"Access to the path '{fileSymLink.FullName}' is denied.");
+			await That(Act)
+				.Throws<UnauthorizedAccessException>().WithMessage(
+					$"Access to the path '{fileSymLink.FullName}' is denied."
+				);
 		}
 		else
 		{
-			await That(() => fileSymLink.ResolveLinkTarget(true))
-				.DoesNotThrow<UnauthorizedAccessException>();
+			await That(Act()).IsEqualTo(targetFile.FullName);
 		}
 	}
 }
