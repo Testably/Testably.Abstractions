@@ -1,24 +1,55 @@
 ﻿#if FEATURE_FILESYSTEM_LINK
 using System.IO;
+using System.Threading;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
 public partial class ResolveLinkTargetTests
 {
+	#region Test Setup
+
+	/// <summary>
+	///     The maximum number of symbolic links that are followed.<br />
+	///     <see href="https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.resolvelinktarget?view=net-6.0#remarks" />
+	/// </summary>
+	private int MaxResolveLinks => Test.RunsOnWindows ? 63 : 40;
+
+	#endregion
+
 	[Theory]
 	[AutoData]
-	public async Task ResolveLinkTarget_ShouldThrow(string path)
+	public async Task ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
+		string path,
+		string pathToFinalTarget
+	)
 	{
-		IFileSystemInfo link = FileSystem.File.CreateSymbolicLink(path, path + "-start");
+		int maxLinks = MaxResolveLinks + 1;
 
-		// UNIX allows 43 and Windows 63 nesting, so 70 is plenty to force the exception
-		for (int i = 0; i < 70; i++)
+		await FileSystem.File.WriteAllTextAsync(
+			pathToFinalTarget, string.Empty, CancellationToken.None
+		);
+
+		string previousPath = pathToFinalTarget;
+
+		for (int i = 0; i < maxLinks; i++)
 		{
-			link = FileSystem.File.CreateSymbolicLink($"{path}{i}", link.Name);
+			string newPath = $"{path}-{i}";
+			IFileInfo linkFileInfo = FileSystem.FileInfo.New(newPath);
+			linkFileInfo.CreateAsSymbolicLink(previousPath);
+			previousPath = newPath;
 		}
 
-		await That(() => link.ResolveLinkTarget(true)).Throws<IOException>();
+		IFileInfo fileInfo = FileSystem.FileInfo.New(previousPath);
+
+		void Act()
+		{
+			_ = fileInfo.ResolveLinkTarget(true);
+		}
+
+		await That(Act).Throws<IOException>()
+			.WithHResult(Test.RunsOnWindows ? -2147022975 : -2146232800).And
+			.WithMessageContaining($"'{fileInfo.FullName}'");
 	}
 
 	[Theory]
@@ -51,10 +82,7 @@ public partial class ResolveLinkTargetTests
 
 	[Theory]
 	[AutoData]
-	public async Task ResolveLinkTarget_ShouldReturnImmediateFile(
-		string path,
-		string pathToTarget
-	)
+	public async Task ResolveLinkTarget_ShouldReturnImmediateFile(string path, string pathToTarget)
 	{
 		IFileInfo targetFile = FileSystem.FileInfo.New(pathToTarget);
 		await targetFile.Create().DisposeAsync();
@@ -117,6 +145,41 @@ public partial class ResolveLinkTargetTests
 		IFileSystemInfo? resolvedTarget = outerLink.ResolveLinkTarget(true);
 
 		await That(resolvedTarget?.FullName).IsEqualTo(targetFile.FullName);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task ResolveLinkTarget_OfDifferentTypes_ShouldThrow(
+		string fileName,
+		string directoryName,
+		string fileLinkName
+	)
+	{
+		IFileInfo targetFile = FileSystem.FileInfo.New(fileName);
+		await targetFile.Create().DisposeAsync();
+
+		IFileSystemInfo dirSymLink
+			= FileSystem.Directory.CreateSymbolicLink(directoryName, targetFile.FullName);
+
+		IFileSystemInfo fileSymLink
+			= FileSystem.File.CreateSymbolicLink(fileLinkName, dirSymLink.FullName);
+
+		string? Act()
+		{
+			return fileSymLink.ResolveLinkTarget(true)?.FullName;
+		}
+
+		if (Test.RunsOnWindows)
+		{
+			await That(Act)
+				.Throws<UnauthorizedAccessException>().WithMessage(
+					$"Access to the path '{fileSymLink.FullName}' is denied."
+				);
+		}
+		else
+		{
+			await That(Act()).IsEqualTo(targetFile.FullName);
+		}
 	}
 }
 #endif

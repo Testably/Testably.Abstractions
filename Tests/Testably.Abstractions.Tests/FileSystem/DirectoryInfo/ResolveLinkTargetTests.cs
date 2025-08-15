@@ -1,24 +1,51 @@
 ﻿#if FEATURE_FILESYSTEM_LINK
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 [FileSystemTests]
 public partial class ResolveLinkTargetTests
 {
+	#region Test Setup
+
+	/// <summary>
+	///     The maximum number of symbolic links that are followed.<br />
+	///     <see href="https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.resolvelinktarget?view=net-6.0#remarks" />
+	/// </summary>
+	private int MaxResolveLinks => Test.RunsOnWindows ? 63 : 40;
+
+	#endregion
+
 	[Theory]
 	[AutoData]
-	public async Task ResolveLinkTarget_ShouldThrow(string path)
+	public async Task ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
+		string path,
+		string pathToFinalTarget
+	)
 	{
-		IFileSystemInfo link = FileSystem.Directory.CreateSymbolicLink(path, path + "-start");
+		int maxLinks = MaxResolveLinks + 1;
+		FileSystem.Directory.CreateDirectory(pathToFinalTarget);
+		string previousPath = pathToFinalTarget;
 
-		// UNIX allows 43 and Windows 63 nesting, so 70 is plenty to force the exception
-		for (int i = 0; i < 70; i++)
+		for (int i = 0; i < maxLinks; i++)
 		{
-			link = FileSystem.Directory.CreateSymbolicLink($"{path}{i}", link.Name);
+			string newPath = $"{path}-{i}";
+			IDirectoryInfo linkDirectoryInfo = FileSystem.DirectoryInfo.New(newPath);
+			linkDirectoryInfo.CreateAsSymbolicLink(previousPath);
+			previousPath = newPath;
 		}
 
-		await That(() => link.ResolveLinkTarget(true)).Throws<IOException>();
+		IDirectoryInfo directoryInfo = FileSystem.DirectoryInfo.New(previousPath);
+
+		void Act()
+		{
+			_ = directoryInfo.ResolveLinkTarget(true);
+		}
+
+		await That(Act).Throws<IOException>()
+			.WithHResult(Test.RunsOnWindows ? -2147022975 : -2146232800).And
+			.WithMessageContaining($"'{directoryInfo.FullName}'");
 	}
 
 	[Theory]
@@ -53,10 +80,7 @@ public partial class ResolveLinkTargetTests
 
 	[Theory]
 	[AutoData]
-	public async Task ResolveLinkTarget_ShouldReturnImmediateFile(
-		string path,
-		string pathToTarget
-	)
+	public async Task ResolveLinkTarget_ShouldReturnImmediateFile(string path, string pathToTarget)
 	{
 		IDirectoryInfo targetDir = FileSystem.DirectoryInfo.New(pathToTarget);
 		targetDir.Create();
@@ -124,6 +148,42 @@ public partial class ResolveLinkTargetTests
 		IFileSystemInfo? resolvedTarget = outerLink.ResolveLinkTarget(true);
 
 		await That(resolvedTarget?.FullName).IsEqualTo(targetDir.FullName);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task ResolveLinkTarget_OfDifferentTypes_ShouldThrow(
+		string directoryName,
+		string fileLinkName,
+		string directoryLinkName
+	)
+	{
+		IDirectoryInfo targetDirectory = FileSystem.Directory.CreateDirectory(directoryName);
+
+		IFileSystemInfo fileSymLink = FileSystem.File.CreateSymbolicLink(
+			fileLinkName, targetDirectory.FullName
+		);
+
+		IFileSystemInfo dirSymLink = FileSystem.Directory.CreateSymbolicLink(
+			directoryLinkName, fileSymLink.FullName
+		);
+
+		string? Act()
+		{
+			return dirSymLink.ResolveLinkTarget(true)?.FullName;
+		}
+
+		if (Test.RunsOnWindows)
+		{
+			await That(Act).Throws<IOException>()
+				.WithMessage(
+					$@"^.*directory.*invalid.*\'{Regex.Escape(dirSymLink.FullName)}\'"
+				).AsRegex().And.WithHResult(-2147024629);
+		}
+		else
+		{
+			await That(Act()).IsEqualTo(targetDirectory.FullName);
+		}
 	}
 }
 #endif

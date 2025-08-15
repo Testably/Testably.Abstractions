@@ -558,8 +558,10 @@ internal sealed class InMemoryStorage : IStorage
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IStorage.ResolveLinkTarget(IStorageLocation, bool)" />
-	public IStorageLocation? ResolveLinkTarget(IStorageLocation location,
-		bool returnFinalTarget = false)
+	public IStorageLocation? ResolveLinkTarget(
+		IStorageLocation location,
+		bool returnFinalTarget = false
+	)
 	{
 		if (!_containers.TryGetValue(location, out IStorageContainer? initialContainer)
 		    || initialContainer.LinkTarget == null)
@@ -567,10 +569,17 @@ internal sealed class InMemoryStorage : IStorage
 			return null;
 		}
 
-		IStorageLocation? nextLocation =
-			_fileSystem.Storage.GetLocation(initialContainer.LinkTarget);
+		IStorageLocation? nextLocation
+			= _fileSystem.Storage.GetLocation(initialContainer.LinkTarget);
 
-		if (returnFinalTarget && _containers.TryGetValue(nextLocation, out IStorageContainer? container) && container.LinkTarget != null)
+		if (!_containers.TryGetValue(nextLocation, out IStorageContainer? container))
+		{
+			return nextLocation;
+		}
+
+		ThrowOnLinkTypeChange(initialContainer, location, container);
+
+		if (returnFinalTarget && container.LinkTarget != null)
 		{
 			nextLocation = ResolveFinalLinkTarget(container, location);
 		}
@@ -755,7 +764,7 @@ internal sealed class InMemoryStorage : IStorage
 			catch (UnauthorizedAccessException)
 			{
 				// On Unix, if the parent directory is not writable, we include the child path in the exception.
-				throw ExceptionFactory.UnixFileModeAccessDenied(location.FullPath);
+				throw ExceptionFactory.AccessDenied(location.FullPath);
 			}
 #else
 			using (parentContainer.RequestAccess(FileAccess.Write, FileShare.ReadWrite, onBehalfOfLocation: location))
@@ -1022,11 +1031,14 @@ internal sealed class InMemoryStorage : IStorage
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	private IStorageLocation? ResolveFinalLinkTarget(IStorageContainer container,
-		IStorageLocation originalLocation)
+	private IStorageLocation? ResolveFinalLinkTarget(
+		IStorageContainer container,
+		IStorageLocation originalLocation
+	)
 	{
 		int maxResolveLinks = _fileSystem.Execute.IsWindows ? 63 : 40;
 		IStorageLocation? nextLocation = null;
+
 		for (int i = 1; i < maxResolveLinks; i++)
 		{
 			if (container.LinkTarget == null)
@@ -1035,11 +1047,13 @@ internal sealed class InMemoryStorage : IStorage
 			}
 
 			nextLocation = _fileSystem.Storage.GetLocation(container.LinkTarget);
-			if (!_containers.TryGetValue(nextLocation,
-				out IStorageContainer? nextContainer))
+
+			if (!_containers.TryGetValue(nextLocation, out IStorageContainer? nextContainer))
 			{
 				return nextLocation;
 			}
+
+			ThrowOnLinkTypeChange(container, originalLocation, nextContainer);
 
 			container = nextContainer;
 		}
@@ -1047,10 +1061,36 @@ internal sealed class InMemoryStorage : IStorage
 		if (container.LinkTarget != null)
 		{
 			throw ExceptionFactory.FileNameCannotBeResolved(
-				originalLocation.FullPath);
+				originalLocation.FullPath, _fileSystem.Execute.IsWindows ? -2147022975 : -2146232800
+			);
 		}
 
 		return nextLocation;
+	}
+
+	private void ThrowOnLinkTypeChange(
+		IStorageContainer previous,
+		IStorageLocation previousLocation,
+		IStorageContainer next
+	)
+	{
+		if (!_fileSystem.Execute.IsWindows)
+		{
+			return;
+		}
+
+		if (previous.Type == next.Type)
+		{
+			return;
+		}
+
+		switch (previous.Type)
+		{
+			case FileSystemTypes.File:
+				throw ExceptionFactory.AccessDenied(previousLocation.FullPath);
+			case FileSystemTypes.Directory:
+				throw ExceptionFactory.InvalidDirectoryName(previousLocation.FullPath);
+		}
 	}
 #endif
 
