@@ -38,6 +38,7 @@
 		<DefineConstants Condition="'$(IS_NET9_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_GUID_V7</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET10_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_GUID_PARSE_UTF8</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET10_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_RANDOM_STRINGS</DefineConstants>
+		<DefineConstants Condition="'$(IS_NET10_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_COMPRESSION_ASYNC</DefineConstants>
 	</PropertyGroup>
 
 </Project>
