@@ -21,6 +21,18 @@ public sealed class RandomWrapper : IRandom
 
 	#region IRandom Members
 
+#if FEATURE_RANDOM_STRINGS
+	/// <inheritdoc cref="IRandom.GetHexString(int, bool)" />
+	public string GetHexString(int stringLength, bool lowercase = false)
+		=> _instance.GetHexString(stringLength, lowercase);
+#endif
+
+#if FEATURE_RANDOM_STRINGS
+	/// <inheritdoc cref="IRandom.GetHexString(Span{char}, bool)" />
+	public void GetHexString(Span<char> destination, bool lowercase = false)
+		=> _instance.GetHexString(destination, lowercase);
+#endif
+
 #if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, Span{T})" />
 	public void GetItems<T>(ReadOnlySpan<T> choices, Span<T> destination)
@@ -37,6 +49,12 @@ public sealed class RandomWrapper : IRandom
 	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, int)" />
 	public T[] GetItems<T>(ReadOnlySpan<T> choices, int length)
 		=> _instance.GetItems(choices, length);
+#endif
+
+#if FEATURE_RANDOM_STRINGS
+	/// <inheritdoc cref="IRandom.GetString(ReadOnlySpan{char}, int)" />
+	public string GetString(ReadOnlySpan<char> choices, int length)
+		=> _instance.GetString(choices, length);
 #endif
 
 	/// <inheritdoc cref="IRandom.Next()" />
