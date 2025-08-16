@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading;
 using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions.Compression.Tests.Internal;
@@ -94,10 +95,28 @@ public sealed class ZipUtilitiesTests
 		/// <inheritdoc cref="IZipArchiveEntry.ExtractToFile(string, bool)" />
 		public void ExtractToFile(string destinationFileName, bool overwrite)
 			=> throw new NotSupportedException();
+	
+#if FEATURE_COMPRESSION_ASYNC
+		/// <inheritdoc cref="IZipArchiveEntry.ExtractToFileAsync(string, CancellationToken)" />
+		public Task ExtractToFileAsync(string destinationFileName, CancellationToken cancellationToken = default)
+			=> throw new NotSupportedException();
+#endif
+	
+#if FEATURE_COMPRESSION_ASYNC
+		/// <inheritdoc cref="IZipArchiveEntry.ExtractToFileAsync(string, bool, CancellationToken)" />
+		public Task ExtractToFileAsync(string destinationFileName, bool overwrite, CancellationToken cancellationToken = default)
+			=> throw new NotSupportedException();
+#endif
 
 		/// <inheritdoc cref="IZipArchiveEntry.Open()" />
 		public Stream Open()
 			=> stream ?? throw new NotSupportedException();
+	
+#if FEATURE_COMPRESSION_ASYNC
+		/// <inheritdoc cref="IZipArchiveEntry.OpenAsync(CancellationToken)" />
+		public Task<Stream> OpenAsync(CancellationToken cancellationToken = default)
+			=> Task.FromResult(Open());
+#endif
 
 		#endregion
 	}

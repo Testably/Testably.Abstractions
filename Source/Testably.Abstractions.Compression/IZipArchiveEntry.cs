@@ -1,6 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Threading;
+#if FEATURE_COMPRESSION_ASYNC
+using System.Threading.Tasks;
+#endif
 
 namespace Testably.Abstractions;
 
@@ -54,7 +58,22 @@ public interface IZipArchiveEntry : IFileSystemEntity
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToFile(ZipArchiveEntry, string, bool)" />
 	void ExtractToFile(string destinationFileName,
 		bool overwrite);
+	
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToFileAsync(ZipArchiveEntry, string, CancellationToken)" />
+	Task ExtractToFileAsync(string destinationFileName, CancellationToken cancellationToken = default);
+#endif
+	
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToFileAsync(ZipArchiveEntry, string, bool, CancellationToken)" />
+	Task ExtractToFileAsync(string destinationFileName, bool overwrite, CancellationToken cancellationToken = default);
+#endif
 
 	/// <inheritdoc cref="ZipArchiveEntry.Open()" />
 	Stream Open();
+	
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="ZipArchiveEntry.OpenAsync(CancellationToken)" />
+	Task<Stream> OpenAsync(CancellationToken cancellationToken = default);
+#endif
 }

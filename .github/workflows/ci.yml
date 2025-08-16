@@ -24,6 +24,7 @@ jobs:
                         6.0.x
                         8.0.x
                         9.0.x
+                        10.0.x
             -   name: Run unit tests (windows)
                 if: matrix.os == 'windows-latest'
                 run: ./build.ps1 CodeCoverage
@@ -55,6 +56,7 @@ jobs:
                         6.0.x
                         8.0.x
                         9.0.x
+                        10.0.x
             -   name: API checks
                 run: ./build.sh ApiChecks
             -   name: Upload artifacts
@@ -86,6 +88,7 @@ jobs:
                         6.0.x
                         8.0.x
                         9.0.x
+                        10.0.x
             -   name: Run mutation tests
                 run: ./build.sh MutationTestsLinux MutationComment
                 env:
@@ -111,6 +114,7 @@ jobs:
                         6.0.x
                         8.0.x
                         9.0.x
+                        10.0.x
             -   name: Run mutation tests
                 run: ./build.ps1 MutationTestsWindows MutationComment
                 env:
@@ -135,6 +139,7 @@ jobs:
                         6.0.x
                         8.0.x
                         9.0.x
+                        10.0.x
             -   name: Run sonarcloud analysis
                 run: ./build.sh CodeAnalysis
     

@@ -29,9 +29,6 @@ public abstract class GuidSystemBase : IGuid
 	/// <inheritdoc cref="IRandomSystemEntity.RandomSystem" />
 	public IRandomSystem RandomSystem { get; }
 
-	/// <inheritdoc cref="IGuid.NewGuid()" />
-	public abstract Guid NewGuid();
-
 #if FEATURE_GUID_V7
 	/// <inheritdoc cref="IGuid.CreateVersion7()" />
 	public abstract Guid CreateVersion7();
@@ -41,6 +38,9 @@ public abstract class GuidSystemBase : IGuid
 	/// <inheritdoc cref="IGuid.CreateVersion7(DateTimeOffset)" />
 	public abstract Guid CreateVersion7(DateTimeOffset timestamp);
 #endif
+
+	/// <inheritdoc cref="IGuid.NewGuid()" />
+	public abstract Guid NewGuid();
 
 #if FEATURE_GUID_PARSE
 	#pragma warning disable MA0011
@@ -58,6 +58,12 @@ public abstract class GuidSystemBase : IGuid
 	#pragma warning restore MA0011
 #endif
 
+#if FEATURE_GUID_PARSE_UTF8
+	/// <inheritdoc cref="IGuid.Parse(ReadOnlySpan{byte})" />
+	public Guid Parse(ReadOnlySpan<byte> utf8Text)
+		=> Guid.Parse(utf8Text);
+#endif
+
 #if FEATURE_GUID_FORMATPROVIDER
 	/// <inheritdoc cref="IGuid.Parse(string, IFormatProvider?)" />
 	public Guid Parse(string s, IFormatProvider? provider)
@@ -68,6 +74,12 @@ public abstract class GuidSystemBase : IGuid
 	/// <inheritdoc cref="IGuid.Parse(ReadOnlySpan{char}, IFormatProvider?)" />
 	public Guid Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
 		=> Guid.Parse(s, provider);
+#endif
+
+#if FEATURE_GUID_PARSE_UTF8
+	/// <inheritdoc cref="IGuid.Parse(ReadOnlySpan{byte}, IFormatProvider)" />
+	public Guid Parse(ReadOnlySpan<byte> utf8Text, IFormatProvider provider)
+		=> Guid.Parse(utf8Text, provider);
 #endif
 
 #if FEATURE_GUID_PARSE
@@ -108,6 +120,18 @@ public abstract class GuidSystemBase : IGuid
 	/// <inheritdoc cref="IGuid.TryParse(ReadOnlySpan{char}, IFormatProvider?, out Guid)" />
 	public bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Guid result)
 		=> Guid.TryParse(s, provider, out result);
+#endif
+
+#if FEATURE_GUID_PARSE_UTF8
+	/// <inheritdoc cref="IGuid.TryParse(ReadOnlySpan{byte}, out Guid)" />
+	public bool TryParse(ReadOnlySpan<byte> utf8Text, out Guid result)
+		=> Guid.TryParse(utf8Text, out result);
+#endif
+
+#if FEATURE_GUID_PARSE_UTF8
+	/// <inheritdoc cref="IGuid.TryParse(ReadOnlySpan{byte}, IFormatProvider, out Guid)" />
+	public bool TryParse(ReadOnlySpan<byte> utf8Text, IFormatProvider provider, out Guid result)
+		=> Guid.TryParse(utf8Text, provider, out result);
 #endif
 
 #if FEATURE_GUID_PARSE
