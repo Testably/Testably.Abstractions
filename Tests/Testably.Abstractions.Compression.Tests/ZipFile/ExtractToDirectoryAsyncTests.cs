@@ -53,7 +53,7 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(sourceArchiveFileName, "bar");
+			await FileSystem.ZipFile().ExtractToDirectoryAsync(sourceArchiveFileName, "bar", TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
@@ -144,7 +144,7 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().ExtractToDirectoryAsync("destination.zip", "bar");
+			await FileSystem.ZipFile().ExtractToDirectoryAsync("destination.zip", "bar", TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<IOException>()
@@ -180,7 +180,7 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(source, "bar");
+			await FileSystem.ZipFile().ExtractToDirectoryAsync(source, "bar", TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentException>()
@@ -198,7 +198,7 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(source, "bar");
+			await FileSystem.ZipFile().ExtractToDirectoryAsync(source, "bar", TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
@@ -295,7 +295,7 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 		async Task Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar");
+			await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar", TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<IOException>()
@@ -319,7 +319,7 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 		async Task Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar");
+			await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar", TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentException>()

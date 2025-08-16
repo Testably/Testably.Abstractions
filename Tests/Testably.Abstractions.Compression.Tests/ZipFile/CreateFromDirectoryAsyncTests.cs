@@ -171,7 +171,7 @@ public partial class CreateFromDirectoryAsyncTests
 		async Task Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream);
+			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream, TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentException>()
@@ -296,7 +296,7 @@ public partial class CreateFromDirectoryAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream);
+			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream, TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentException>()
@@ -313,7 +313,7 @@ public partial class CreateFromDirectoryAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream);
+			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream, TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
