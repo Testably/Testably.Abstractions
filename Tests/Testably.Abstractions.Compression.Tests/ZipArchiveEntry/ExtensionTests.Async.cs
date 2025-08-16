@@ -24,7 +24,7 @@ public partial class ExtensionTests
 		archive.CreateEntryFromFile("foo.txt", "foo/");
 
 		Task Act()
-			=> archive.ExtractToDirectoryAsync("bar");
+			=> archive.ExtractToDirectoryAsync("bar", TestContext.Current.CancellationToken);
 
 		await That(Act).Throws<InvalidOperationException>();
 	}
@@ -96,7 +96,7 @@ public partial class ExtensionTests
 		IZipArchive archive2 = FileSystem.ZipArchive().New(stream2, ZipArchiveMode.Read);
 
 		Task Act()
-			=> archive2.ExtractToDirectoryAsync("bar");
+			=> archive2.ExtractToDirectoryAsync("bar", TestContext.Current.CancellationToken);
 
 		await That(Act).Throws<IOException>();
 	}
@@ -147,7 +147,7 @@ public partial class ExtensionTests
 		IZipArchiveEntry entry = archive.Entries.Single();
 
 		Task Act()
-			=> entry.ExtractToFileAsync("bar/bar.txt");
+			=> entry.ExtractToFileAsync("bar/bar.txt", TestContext.Current.CancellationToken);
 
 		await That(Act).Throws<IOException>()
 			.WithMessage($"*'{FileSystem.Path.GetFullPath("bar/bar.txt")}'*").AsWildcard();

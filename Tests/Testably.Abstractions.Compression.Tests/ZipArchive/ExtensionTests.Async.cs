@@ -83,7 +83,7 @@ public partial class ExtensionTests
 		await That(archive.Entries).IsEmpty();
 
 		Task Act()
-			=> archive.CreateEntryFromFileAsync("bar/foo.txt", null!);
+			=> archive.CreateEntryFromFileAsync("bar/foo.txt", null!, TestContext.Current.CancellationToken);
 
 		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName("entryName");
@@ -106,7 +106,7 @@ public partial class ExtensionTests
 
 		Task Act()
 			=> archive.CreateEntryFromFileAsync(null!, "foo/bar.txt",
-				CompressionLevel.NoCompression);
+				CompressionLevel.NoCompression, TestContext.Current.CancellationToken);
 
 		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName("sourceFileName");
@@ -128,7 +128,7 @@ public partial class ExtensionTests
 		await That(archive.Entries).IsEmpty();
 
 		Task Act()
-			=> archive.CreateEntryFromFileAsync("bar/foo.txt", "foo/bar.txt");
+			=> archive.CreateEntryFromFileAsync("bar/foo.txt", "foo/bar.txt", TestContext.Current.CancellationToken);
 
 		await That(Act).Throws<NotSupportedException>();
 	}
@@ -174,7 +174,7 @@ public partial class ExtensionTests
 			using IZipArchive archive =
 				FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-			await archive.ExtractToDirectoryAsync(null!);
+			await archive.ExtractToDirectoryAsync(null!, TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
@@ -198,7 +198,7 @@ public partial class ExtensionTests
 			using IZipArchive archive =
 				FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-			await archive.ExtractToDirectoryAsync(null!, true);
+			await archive.ExtractToDirectoryAsync(null!, true, TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>();
@@ -241,7 +241,7 @@ public partial class ExtensionTests
 
 		async Task Act()
 		{
-			await archive.ExtractToDirectoryAsync("bar");
+			await archive.ExtractToDirectoryAsync("bar", TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<IOException>()
