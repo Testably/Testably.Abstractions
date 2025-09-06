@@ -279,9 +279,8 @@ public partial class Tests
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
 		await That(sut.Parent).IsNotNull();
-		await That(sut?.Exists).IsFalse();
-		await That(sut?.Parent).IsNotNull();
-		await That(sut?.Parent?.Exists).IsFalse();
+		await That(sut.Exists).IsFalse();
+		await That(sut.Parent!.Exists).IsFalse();
 	}
 
 	[Fact]
@@ -341,6 +340,21 @@ public partial class Tests
 		{
 			await That(parent!.ToString()).IsEqualTo(FileSystem.Path.GetFullPath(expectedParent));
 		}
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task Parent_WithTrailingDirectorySeparator_ShouldReturnCorrectParent(string path1,
+		string path2)
+	{
+		string path = FileSystem.Path.Combine(path1, path2);
+		string expectedParent = FileSystem.Path.GetFullPath(path1);
+
+		IDirectoryInfo sut =
+			FileSystem.DirectoryInfo.New(path + FileSystem.Path.DirectorySeparatorChar);
+
+		await That(sut.Parent).IsNotNull();
+		await That(sut.Parent!.FullName).IsEqualTo(expectedParent);
 	}
 
 	[Fact]
