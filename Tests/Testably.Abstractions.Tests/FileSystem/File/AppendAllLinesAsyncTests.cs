@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
@@ -45,14 +44,30 @@ public partial class AppendAllLinesAsyncTests
 
 	[Theory]
 	[AutoData]
+	public async Task AppendAllLinesAsync_Enumerable_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string[] contents = ["breuß"];
+
+		await FileSystem.File.AppendAllLinesAsync(path, contents.AsEnumerable(),
+			CancellationToken.None);
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6 + Environment.NewLine.Length);
+	}
+
+	[Theory]
+	[AutoData]
 	public async Task AppendAllLinesAsync_ExistingFile_ShouldAppendLinesToFile(
 		string path, List<string> previousContents, List<string> contents)
 	{
 		string expectedContent = string.Join(Environment.NewLine, previousContents.Concat(contents))
 		                         + Environment.NewLine;
-		await FileSystem.File.AppendAllLinesAsync(path, previousContents, TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllLinesAsync(path, previousContents,
+			TestContext.Current.CancellationToken);
 
-		await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllLinesAsync(path, contents,
+			TestContext.Current.CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
@@ -67,7 +82,8 @@ public partial class AppendAllLinesAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllLinesAsync(filePath, contents, TestContext.Current.CancellationToken);
+			await FileSystem.File.AppendAllLinesAsync(filePath, contents,
+				TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
@@ -81,7 +97,8 @@ public partial class AppendAllLinesAsyncTests
 		string expectedContent = string.Join(Environment.NewLine, contents)
 		                         + Environment.NewLine;
 
-		await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllLinesAsync(path, contents,
+			TestContext.Current.CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
@@ -94,7 +111,8 @@ public partial class AppendAllLinesAsyncTests
 	{
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllLinesAsync(path, null!, TestContext.Current.CancellationToken);
+			await FileSystem.File.AppendAllLinesAsync(path, null!,
+				TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
@@ -109,7 +127,8 @@ public partial class AppendAllLinesAsyncTests
 	{
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllLinesAsync(path, [], null!, TestContext.Current.CancellationToken);
+			await FileSystem.File.AppendAllLinesAsync(path, [], null!,
+				TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
@@ -124,7 +143,8 @@ public partial class AppendAllLinesAsyncTests
 		string[] contents = ["foo", "bar"];
 		string expectedResult = "foo" + Environment.NewLine + "bar" + Environment.NewLine;
 
-		await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllLinesAsync(path, contents,
+			TestContext.Current.CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedResult);
@@ -140,7 +160,8 @@ public partial class AppendAllLinesAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
+			await FileSystem.File.AppendAllLinesAsync(path, contents,
+				TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
@@ -157,7 +178,8 @@ public partial class AppendAllLinesAsyncTests
 		string path = new Fixture().Create<string>();
 		string[] lines = new Fixture().Create<string[]>();
 		lines[1] = specialLine;
-		await FileSystem.File.AppendAllLinesAsync(path, lines, writeEncoding, TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllLinesAsync(path, lines, writeEncoding,
+			TestContext.Current.CancellationToken);
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 

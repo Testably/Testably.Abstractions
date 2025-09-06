@@ -90,7 +90,8 @@ public partial class WriteAllTextAsyncTests
 			string result =
 				await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-			await That(result).IsEqualTo(contents).Because($"{contents} should be encoded and decoded identical.");
+			await That(result).IsEqualTo(contents)
+				.Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 
@@ -146,6 +147,19 @@ public partial class WriteAllTextAsyncTests
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
+	[Theory]
+	[AutoData]
+	public async Task WriteAllTextAsync_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string contents = "breuß";
+
+		await FileSystem.File.WriteAllTextAsync(path, contents, CancellationToken.None);
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6);
+	}
+
 #if FEATURE_FILE_SPAN
 	[Theory]
 	[AutoData]
@@ -171,7 +185,8 @@ public partial class WriteAllTextAsyncTests
 		await cts.CancelAsync();
 
 		async Task Act() =>
-			await FileSystem.File.WriteAllTextAsync(path, contents.AsMemory(), Encoding.UTF8, cts.Token);
+			await FileSystem.File.WriteAllTextAsync(path, contents.AsMemory(), Encoding.UTF8,
+				cts.Token);
 
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
@@ -229,7 +244,8 @@ public partial class WriteAllTextAsyncTests
 			string result =
 				await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
-			await That(result).IsEqualTo(contents).Because($"{contents} should be encoded and decoded identical.");
+			await That(result).IsEqualTo(contents)
+				.Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 
@@ -270,6 +286,19 @@ public partial class WriteAllTextAsyncTests
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task WriteAllTextAsync_ReadOnlyMemory_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string contents = "breuß";
+
+		await FileSystem.File.WriteAllTextAsync(path, contents.AsMemory(), CancellationToken.None);
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6);
 	}
 #endif
 }

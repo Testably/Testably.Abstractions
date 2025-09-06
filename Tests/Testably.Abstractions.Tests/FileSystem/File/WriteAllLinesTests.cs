@@ -44,6 +44,19 @@ public partial class WriteAllLinesTests
 
 	[Theory]
 	[AutoData]
+	public async Task WriteAllLines_Enumerable_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string[] contents = ["breuß"];
+
+		FileSystem.File.WriteAllLines(path, contents.AsEnumerable());
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6 + Environment.NewLine.Length);
+	}
+
+	[Theory]
+	[AutoData]
 	public async Task WriteAllLines_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string[] contents)
 	{
@@ -111,5 +124,18 @@ public partial class WriteAllLinesTests
 
 		string[] result = FileSystem.File.ReadAllLines(path, encoding);
 		await That(result).IsEqualTo(contents);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task WriteAllLines_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string[] contents = ["breuß"];
+
+		FileSystem.File.WriteAllLines(path, contents);
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6 + Environment.NewLine.Length);
 	}
 }

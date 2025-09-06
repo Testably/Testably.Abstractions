@@ -44,9 +44,11 @@ public partial class AppendAllTextAsyncTests
 	public async Task AppendAllTextAsync_ExistingFile_ShouldAppendLinesToFile(
 		string path, string previousContents, string contents)
 	{
-		await FileSystem.File.AppendAllTextAsync(path, previousContents, TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllTextAsync(path, previousContents,
+			TestContext.Current.CancellationToken);
 
-		await FileSystem.File.AppendAllTextAsync(path, contents, TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllTextAsync(path, contents,
+			TestContext.Current.CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(previousContents + contents);
@@ -61,7 +63,8 @@ public partial class AppendAllTextAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllTextAsync(filePath, contents, TestContext.Current.CancellationToken);
+			await FileSystem.File.AppendAllTextAsync(filePath, contents,
+				TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
@@ -72,7 +75,8 @@ public partial class AppendAllTextAsyncTests
 	public async Task AppendAllTextAsync_MissingFile_ShouldCreateFile(
 		string path, string contents)
 	{
-		await FileSystem.File.AppendAllTextAsync(path, contents, TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllTextAsync(path, contents,
+			TestContext.Current.CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
@@ -84,7 +88,8 @@ public partial class AppendAllTextAsyncTests
 	{
 		string contents = "foo";
 
-		await FileSystem.File.AppendAllTextAsync(path, contents, TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllTextAsync(path, contents,
+			TestContext.Current.CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
@@ -100,7 +105,8 @@ public partial class AppendAllTextAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllTextAsync(path, contents, TestContext.Current.CancellationToken);
+			await FileSystem.File.AppendAllTextAsync(path, contents,
+				TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
@@ -114,11 +120,25 @@ public partial class AppendAllTextAsyncTests
 		string contents, Encoding writeEncoding, Encoding readEncoding)
 	{
 		string path = new Fixture().Create<string>();
-		await FileSystem.File.AppendAllTextAsync(path, contents, writeEncoding, TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllTextAsync(path, contents, writeEncoding,
+			TestContext.Current.CancellationToken);
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 
 		await That(result).IsNotEqualTo([contents]);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task AppendAllTextAsync_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string contents = "breuß";
+
+		await FileSystem.File.AppendAllTextAsync(path, contents, CancellationToken.None);
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6);
 	}
 
 #if FEATURE_FILE_SPAN
@@ -146,7 +166,8 @@ public partial class AppendAllTextAsyncTests
 		cts.Cancel();
 
 		async Task Act() =>
-			await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(), Encoding.UTF8, cts.Token);
+			await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(), Encoding.UTF8,
+				cts.Token);
 
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
@@ -156,9 +177,11 @@ public partial class AppendAllTextAsyncTests
 	public async Task AppendAllTextAsync_ReadOnlyMemory_ExistingFile_ShouldAppendLinesToFile(
 		string path, string previousContents, string contents)
 	{
-		await FileSystem.File.AppendAllTextAsync(path, previousContents, TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllTextAsync(path, previousContents,
+			TestContext.Current.CancellationToken);
 
-		await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(), TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(),
+			TestContext.Current.CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(previousContents + contents);
@@ -166,14 +189,16 @@ public partial class AppendAllTextAsyncTests
 
 	[Theory]
 	[AutoData]
-	public async Task AppendAllTextAsync_ReadOnlyMemory_MissingDirectory_ShouldThrowDirectoryNotFoundException(
-		string missingPath, string fileName, string contents)
+	public async Task
+		AppendAllTextAsync_ReadOnlyMemory_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+			string missingPath, string fileName, string contents)
 	{
 		string filePath = FileSystem.Path.Combine(missingPath, fileName);
 
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllTextAsync(filePath, contents.AsMemory(), TestContext.Current.CancellationToken);
+			await FileSystem.File.AppendAllTextAsync(filePath, contents.AsMemory(),
+				TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
@@ -184,7 +209,8 @@ public partial class AppendAllTextAsyncTests
 	public async Task AppendAllTextAsync_ReadOnlyMemory_MissingFile_ShouldCreateFile(
 		string path, string contents)
 	{
-		await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(), TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(),
+			TestContext.Current.CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
@@ -196,7 +222,8 @@ public partial class AppendAllTextAsyncTests
 	{
 		string contents = "foo";
 
-		await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(), TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(),
+			TestContext.Current.CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
@@ -212,7 +239,8 @@ public partial class AppendAllTextAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(), TestContext.Current.CancellationToken);
+			await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(),
+				TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
@@ -222,15 +250,30 @@ public partial class AppendAllTextAsyncTests
 
 	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
-	public async Task AppendAllTextAsync_ReadOnlyMemory_WithDifferentEncoding_ShouldNotReturnWrittenText(
-		string contents, Encoding writeEncoding, Encoding readEncoding)
+	public async Task
+		AppendAllTextAsync_ReadOnlyMemory_WithDifferentEncoding_ShouldNotReturnWrittenText(
+			string contents, Encoding writeEncoding, Encoding readEncoding)
 	{
 		string path = new Fixture().Create<string>();
-		await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(), writeEncoding, TestContext.Current.CancellationToken);
+		await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(), writeEncoding,
+			TestContext.Current.CancellationToken);
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 
 		await That(result).IsNotEqualTo([contents]);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task AppendAllTextAsync_ReadOnlyMemory_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string contents = "breuß";
+
+		await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(), CancellationToken.None);
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6);
 	}
 #endif
 }
