@@ -107,7 +107,12 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(AppendAllLines),
 				path, contents);
 
-		AppendAllLines(path, contents, Encoding.Default);
+		_ = contents ?? throw new ArgumentNullException(nameof(contents));
+		WriteText(
+			path,
+			contents.Aggregate(string.Empty, (a, b) => a + b + Environment.NewLine),
+			null,
+			true);
 	}
 
 	/// <inheritdoc cref="IFile.AppendAllLines(string, IEnumerable{string}, Encoding)" />
@@ -122,22 +127,30 @@ internal sealed class FileMock : IFile
 
 		_ = contents ?? throw new ArgumentNullException(nameof(contents));
 		_ = encoding ?? throw new ArgumentNullException(nameof(encoding));
-		AppendAllText(
+		WriteText(
 			path,
 			contents.Aggregate(string.Empty, (a, b) => a + b + Environment.NewLine),
-			encoding);
+			encoding,
+			true);
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
-	public async Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
+	public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
 		CancellationToken cancellationToken = default)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.File.RegisterMethod(nameof(AppendAllLinesAsync),
 				path, contents, cancellationToken);
 
-		await AppendAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
+		_ = contents ?? throw new ArgumentNullException(nameof(contents));
+		ThrowIfCancelled(cancellationToken);
+		WriteText(
+			path,
+			contents.Aggregate(string.Empty, (a, b) => a + b + Environment.NewLine),
+			null,
+			true);
+		return Task.CompletedTask;
 	}
 #endif
 
@@ -151,8 +164,14 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(AppendAllLinesAsync),
 				path, contents, encoding, cancellationToken);
 
+		_ = contents ?? throw new ArgumentNullException(nameof(contents));
+		_ = encoding ?? throw new ArgumentNullException(nameof(encoding));
 		ThrowIfCancelled(cancellationToken);
-		AppendAllLines(path, contents, encoding);
+		WriteText(
+			path,
+			contents.Aggregate(string.Empty, (a, b) => a + b + Environment.NewLine),
+			encoding,
+			true);
 		return Task.CompletedTask;
 	}
 #endif
@@ -164,7 +183,11 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(AppendAllText),
 				path, contents);
 
-		AppendAllText(path, contents, Encoding.Default);
+		WriteText(
+			path,
+			contents,
+			null,
+			true);
 	}
 
 	/// <inheritdoc cref="IFile.AppendAllText(string, string?, Encoding)" />
@@ -174,31 +197,11 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(AppendAllText),
 				path, contents, encoding);
 
-		IStorageContainer container =
-			_fileSystem.Storage.GetOrCreateContainer(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(_fileSystem)),
-				InMemoryContainer.NewFile);
-
-		if (container.Type != FileSystemTypes.File)
-		{
-			throw ExceptionFactory.AccessToPathDenied(path);
-		}
-
-		if (contents != null)
-		{
-			using (container.RequestAccess(
-				FileAccess.ReadWrite,
-				FileStreamFactoryMock.DefaultShare))
-			{
-				if (container.GetBytes().Length == 0)
-				{
-					container.WriteBytes(encoding.GetPreamble());
-				}
-
-				container.AppendBytes(encoding.GetBytes(contents));
-			}
-		}
+		WriteText(
+			path,
+			contents,
+			encoding,
+			true);
 	}
 	
 #if FEATURE_FILE_SPAN
@@ -209,7 +212,11 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(AppendAllText),
 				path, contents);
 
-		AppendAllText(path, contents.ToString(), Encoding.Default);
+		WriteText(
+			path,
+			contents.ToString(),
+			null,
+			true);
 	}
 #endif
 
@@ -221,20 +228,30 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(AppendAllText),
 				path, contents, encoding);
 
-		AppendAllText(path, contents.ToString(), encoding);
+		WriteText(
+			path,
+			contents.ToString(),
+			encoding,
+			true);
 	}
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, CancellationToken)" />
-	public async Task AppendAllTextAsync(string path, string? contents,
+	public Task AppendAllTextAsync(string path, string? contents,
 		CancellationToken cancellationToken = default)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.File.RegisterMethod(nameof(AppendAllTextAsync),
 				path, contents, cancellationToken);
 
-		await AppendAllTextAsync(path, contents, Encoding.Default, cancellationToken);
+		ThrowIfCancelled(cancellationToken);
+		WriteText(
+			path,
+			contents,
+			null,
+			true);
+		return Task.CompletedTask;
 	}
 #endif
 
@@ -248,7 +265,11 @@ internal sealed class FileMock : IFile
 				path, contents, encoding, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
-		AppendAllText(path, contents, encoding);
+		WriteText(
+			path,
+			contents,
+			encoding,
+			true);
 		return Task.CompletedTask;
 	}
 #endif
@@ -262,7 +283,11 @@ internal sealed class FileMock : IFile
 				path, contents, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
-		AppendAllText(path, contents.ToString(), Encoding.Default);
+		WriteText(
+			path,
+			contents.ToString(),
+			null,
+			true);
 		return Task.CompletedTask;
 	}
 #endif
@@ -277,7 +302,11 @@ internal sealed class FileMock : IFile
 				path, contents, encoding, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
-		AppendAllText(path, contents.ToString(), encoding);
+		WriteText(
+			path,
+			contents.ToString(),
+			encoding,
+			true);
 		return Task.CompletedTask;
 	}
 #endif
@@ -881,7 +910,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(ReadAllLines),
 				path);
 
-		return ReadAllLines(path, Encoding.Default);
+		return ReadAllLines(path, Encoding.UTF8);
 	}
 
 	/// <inheritdoc cref="IFile.ReadAllLines(string, Encoding)" />
@@ -904,7 +933,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(ReadAllLinesAsync),
 				path, cancellationToken);
 
-		return await ReadAllLinesAsync(path, Encoding.Default, cancellationToken);
+		return await ReadAllLinesAsync(path, Encoding.UTF8, cancellationToken);
 	}
 #endif
 
@@ -931,7 +960,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(ReadAllText),
 				path);
 
-		return ReadAllText(path, Encoding.Default);
+		return ReadAllText(path, Encoding.UTF8);
 	}
 
 	/// <inheritdoc cref="IFile.ReadAllText(string, Encoding)" />
@@ -969,7 +998,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(ReadAllTextAsync),
 				path, cancellationToken);
 
-		return await ReadAllTextAsync(path, Encoding.Default, cancellationToken);
+		return await ReadAllTextAsync(path, Encoding.UTF8, cancellationToken);
 	}
 #endif
 
@@ -996,7 +1025,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(ReadLines),
 				path);
 
-		return ReadLines(path, Encoding.Default);
+		return ReadLines(path, Encoding.UTF8);
 	}
 
 	/// <inheritdoc cref="IFile.ReadLines(string, Encoding)" />
@@ -1411,7 +1440,9 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(WriteAllLines),
 				path, contents);
 
-		WriteAllLines(path, contents, Encoding.Default);
+		WriteText(path,
+			contents.Aggregate(string.Empty, (a, b) => a + b + Environment.NewLine),
+			null);
 	}
 
 	/// <inheritdoc cref="IFile.WriteAllLines(string, IEnumerable{string})" />
@@ -1421,7 +1452,9 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(WriteAllLines),
 				path, contents);
 
-		WriteAllLines(path, contents, Encoding.Default);
+		WriteText(path,
+			contents.Aggregate(string.Empty, (a, b) => a + b + Environment.NewLine),
+			null);
 	}
 
 	/// <inheritdoc cref="IFile.WriteAllLines(string, string[], Encoding)" />
@@ -1434,7 +1467,9 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(WriteAllLines),
 				path, contents, encoding);
 
-		WriteAllLines(path, contents.AsEnumerable(), encoding);
+		WriteText(path,
+			contents.Aggregate(string.Empty, (a, b) => a + b + Environment.NewLine),
+			encoding);
 	}
 
 	/// <inheritdoc cref="IFile.WriteAllLines(string, IEnumerable{string}, Encoding)" />
@@ -1447,15 +1482,14 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(WriteAllLines),
 				path, contents, encoding);
 
-		WriteAllText(
-			path,
+		WriteText(path,
 			contents.Aggregate(string.Empty, (a, b) => a + b + Environment.NewLine),
 			encoding);
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
-	public async Task WriteAllLinesAsync(
+	public Task WriteAllLinesAsync(
 		string path,
 		IEnumerable<string> contents,
 		CancellationToken cancellationToken = default)
@@ -1464,7 +1498,11 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(WriteAllLinesAsync),
 				path, contents, cancellationToken);
 
-		await WriteAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
+		ThrowIfCancelled(cancellationToken);
+		WriteText(path,
+			contents.Aggregate(string.Empty, (a, b) => a + b + Environment.NewLine),
+			null);
+		return Task.CompletedTask;
 	}
 #endif
 
@@ -1481,7 +1519,9 @@ internal sealed class FileMock : IFile
 				path, contents, encoding, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
-		WriteAllLines(path, contents, encoding);
+		WriteText(path,
+			contents.Aggregate(string.Empty, (a, b) => a + b + Environment.NewLine),
+			encoding);
 		return Task.CompletedTask;
 	}
 #endif
@@ -1493,7 +1533,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(WriteAllText),
 				path, contents);
 
-		WriteAllText(path, contents, Encoding.Default);
+		WriteText(path, contents, null);
 	}
 
 	/// <inheritdoc cref="IFile.WriteAllText(string, string?, Encoding)" />
@@ -1503,37 +1543,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(WriteAllText),
 				path, contents, encoding);
 
-		IStorageContainer container =
-			_fileSystem.Storage.GetOrCreateContainer(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(_fileSystem)),
-				InMemoryContainer.NewFile);
-		if (container is NullContainer)
-		{
-			return;
-		}
-
-		if (container.Type != FileSystemTypes.File)
-		{
-			throw ExceptionFactory.AccessToPathDenied(path);
-		}
-
-		if (contents != null)
-		{
-			if (_fileSystem.Execute.IsWindows &&
-			    container.Attributes.HasFlag(FileAttributes.Hidden))
-			{
-				throw ExceptionFactory.AccessToPathDenied();
-			}
-
-			using (container.RequestAccess(
-				FileAccess.Write,
-				FileStreamFactoryMock.DefaultShare))
-			{
-				container.WriteBytes(encoding.GetPreamble());
-				container.AppendBytes(encoding.GetBytes(contents));
-			}
-		}
+		WriteText(path, contents, encoding);
 	}
 	
 #if FEATURE_FILE_SPAN
@@ -1544,7 +1554,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(WriteAllText),
 				path, contents);
 
-		WriteAllText(path, contents.ToString(), Encoding.Default);
+		WriteText(path, contents.ToString(), null);
 	}
 #endif
 	
@@ -1557,20 +1567,22 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(WriteAllText),
 				path, contents, encoding);
 
-		WriteAllText(path, contents.ToString(), encoding);
+		WriteText(path, contents.ToString(), encoding);
 	}
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, CancellationToken)" />
-	public async Task WriteAllTextAsync(string path, string? contents,
+	public Task WriteAllTextAsync(string path, string? contents,
 		CancellationToken cancellationToken = default)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.File.RegisterMethod(nameof(WriteAllTextAsync),
 				path, contents, cancellationToken);
 
-		await WriteAllTextAsync(path, contents, Encoding.Default, cancellationToken);
+		ThrowIfCancelled(cancellationToken);
+		WriteText(path, contents, null);
+		return Task.CompletedTask;
 	}
 #endif
 
@@ -1584,7 +1596,7 @@ internal sealed class FileMock : IFile
 				path, contents, encoding, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
-		WriteAllText(path, contents, encoding);
+		WriteText(path, contents, encoding);
 		return Task.CompletedTask;
 	}
 #endif
@@ -1598,7 +1610,7 @@ internal sealed class FileMock : IFile
 				path, contents, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
-		WriteAllText(path, contents.ToString(), Encoding.Default);
+		WriteText(path, contents.ToString(), null);
 		return Task.CompletedTask;
 	}
 #endif
@@ -1613,7 +1625,7 @@ internal sealed class FileMock : IFile
 				path, contents, encoding, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
-		WriteAllText(path, contents.ToString(), encoding);
+		WriteText(path, contents.ToString(), encoding);
 		return Task.CompletedTask;
 	}
 #endif
@@ -1674,6 +1686,50 @@ internal sealed class FileMock : IFile
 		return container;
 	}
 #endif
+	
+	private void WriteText(string path, string? contents, Encoding? encoding, bool append = false)
+	{
+		IStorageContainer container =
+			_fileSystem.Storage.GetOrCreateContainer(
+				_fileSystem.Storage.GetLocation(
+					path.EnsureValidFormat(_fileSystem)),
+				InMemoryContainer.NewFile);
+		if (container is NullContainer && !append)
+		{
+			return;
+		}
+
+		if (container.Type != FileSystemTypes.File)
+		{
+			throw ExceptionFactory.AccessToPathDenied(path);
+		}
+
+		if (contents != null)
+		{
+			if (!append &&
+			    _fileSystem.Execute.IsWindows &&
+			    container.Attributes.HasFlag(FileAttributes.Hidden))
+			{
+				throw ExceptionFactory.AccessToPathDenied();
+			}
+
+			using (container.RequestAccess(
+				append ? FileAccess.ReadWrite : FileAccess.Write,
+				FileStreamFactoryMock.DefaultShare))
+			{
+				if (encoding is not null && (!append || container.GetBytes().Length == 0))
+				{
+					container.WriteBytes(encoding.GetPreamble());
+				}
+				else if (!append)
+				{
+					container.WriteBytes([]);
+				}
+				encoding ??= Encoding.UTF8;
+				container.AppendBytes(encoding.GetBytes(contents));
+			}
+		}
+	}
 
 #if FEATURE_FILESYSTEM_ASYNC
 	private static void ThrowIfCancelled(CancellationToken cancellationToken)

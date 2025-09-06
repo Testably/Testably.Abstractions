@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
@@ -78,10 +77,11 @@ public partial class WriteAllLinesAsyncTests
 	{
 		await FileSystem.File.WriteAllTextAsync(path, "foo", TestContext.Current.CancellationToken);
 
-		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(),
+			TestContext.Current.CancellationToken);
 
 		string[] result =
- await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
+			await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 		await That(result).IsEqualTo(contents);
 	}
 
@@ -90,11 +90,26 @@ public partial class WriteAllLinesAsyncTests
 	public async Task WriteAllLinesAsync_Enumerable_ShouldCreateFileWithText(
 		string path, string[] contents)
 	{
-		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(),
+			TestContext.Current.CancellationToken);
 
 		string[] result =
- await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
+			await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 		await That(result).IsEqualTo(contents);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task WriteAllLinesAsync_Enumerable_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string[] contents = ["breuß"];
+
+		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(),
+			CancellationToken.None);
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6 + Environment.NewLine.Length);
 	}
 
 	[Theory]
@@ -104,10 +119,11 @@ public partial class WriteAllLinesAsyncTests
 	{
 		await FileSystem.File.WriteAllTextAsync(path, "foo", TestContext.Current.CancellationToken);
 
-		await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllLinesAsync(path, contents,
+			TestContext.Current.CancellationToken);
 
 		string[] result =
- await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
+			await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 		await That(result).IsEqualTo(contents);
 	}
 
@@ -116,10 +132,11 @@ public partial class WriteAllLinesAsyncTests
 	public async Task WriteAllLinesAsync_ShouldCreateFileWithText(
 		string path, string[] contents)
 	{
-		await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllLinesAsync(path, contents,
+			TestContext.Current.CancellationToken);
 
 		string[] result =
- await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
+			await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 		await That(result).IsEqualTo(contents);
 	}
 
@@ -133,7 +150,8 @@ public partial class WriteAllLinesAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
+			await FileSystem.File.WriteAllLinesAsync(path, contents,
+				TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
@@ -154,7 +172,8 @@ public partial class WriteAllLinesAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
+			await FileSystem.File.WriteAllLinesAsync(path, contents,
+				TestContext.Current.CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);

@@ -152,6 +152,19 @@ public partial class AppendAllTextTests
 		await That(result).IsNotEqualTo([contents]);
 	}
 
+	[Theory]
+	[AutoData]
+	public async Task AppendAllText_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string contents = "breuß";
+
+		FileSystem.File.AppendAllText(path, contents);
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6);
+	}
+
 #if FEATURE_FILE_SPAN
 	[Theory]
 	[AutoData]
@@ -172,6 +185,7 @@ public partial class AppendAllTextTests
 		string missingPath, string fileName, string contents)
 	{
 		string filePath = FileSystem.Path.Combine(missingPath, fileName);
+
 		void Act()
 		{
 			FileSystem.File.AppendAllText(filePath, contents.AsSpan());
@@ -224,12 +238,14 @@ public partial class AppendAllTextTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
@@ -292,6 +308,19 @@ public partial class AppendAllTextTests
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 
 		await That(result).IsNotEqualTo([contents]);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task AppendAllText_Span_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string contents = "breuß";
+
+		FileSystem.File.AppendAllText(path, contents.AsSpan());
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6);
 	}
 #endif
 }

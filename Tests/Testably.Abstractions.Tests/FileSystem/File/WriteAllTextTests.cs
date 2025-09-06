@@ -196,6 +196,19 @@ public partial class WriteAllTextTests
 			.WithMessage($"Access to the path '{path}' is denied.");
 	}
 
+	[Theory]
+	[AutoData]
+	public async Task WriteAllText_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string contents = "breuß";
+
+		FileSystem.File.WriteAllText(path, contents);
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6);
+	}
+
 #if FEATURE_FILE_SPAN
 	[Theory]
 	[AutoData]
@@ -203,6 +216,7 @@ public partial class WriteAllTextTests
 		string directory, string path)
 	{
 		string fullPath = FileSystem.Path.Combine(directory, path);
+
 		void Act()
 		{
 			FileSystem.File.WriteAllText(fullPath, "foo".AsSpan());
@@ -246,12 +260,14 @@ public partial class WriteAllTextTests
 
 		if (Test.RunsOnWindows)
 		{
-			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(creationTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 			await That(lastAccessTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
-			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd).Within(TimeComparison.Tolerance);
+			await That(lastAccessTime).IsBetween(creationTimeStart).And(creationTimeEnd)
+				.Within(TimeComparison.Tolerance);
 		}
 
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
@@ -301,14 +317,16 @@ public partial class WriteAllTextTests
 
 			string result = FileSystem.File.ReadAllText(path);
 
-			await That(result).IsEqualTo(contents).Because($"{contents} should be encoded and decoded identical.");
+			await That(result).IsEqualTo(contents)
+				.Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 
 	[Theory]
 	[AutoData]
-	public async Task WriteAllText_Span_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
-		string path)
+	public async Task
+		WriteAllText_Span_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
+			string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
@@ -324,8 +342,9 @@ public partial class WriteAllTextTests
 
 	[Theory]
 	[AutoData]
-	public async Task WriteAllText_Span_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
-		string path, string contents)
+	public async Task
+		WriteAllText_Span_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+			string path, string contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -338,6 +357,19 @@ public partial class WriteAllTextTests
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task WriteAllText_Span_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string contents = "breuß";
+
+		FileSystem.File.WriteAllText(path, contents.AsSpan());
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6);
 	}
 #endif
 }

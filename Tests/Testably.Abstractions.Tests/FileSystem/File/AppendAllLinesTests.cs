@@ -10,6 +10,19 @@ public partial class AppendAllLinesTests
 {
 	[Theory]
 	[AutoData]
+	public async Task AppendAllLines_Enumerable_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string[] contents = ["breuß"];
+
+		FileSystem.File.AppendAllLines(path, contents.AsEnumerable());
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6 + Environment.NewLine.Length);
+	}
+
+	[Theory]
+	[AutoData]
 	public async Task AppendAllLines_ExistingFile_ShouldAppendLinesToFile(
 		string path, List<string> previousContents, List<string> contents)
 	{
@@ -111,5 +124,18 @@ public partial class AppendAllLinesTests
 
 		await That(result).IsNotEqualTo(lines).InAnyOrder();
 		await That(result[0]).IsEqualTo(lines[0]);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task AppendAllLines_WithoutEncoding_ShouldUseUtf8(
+		string path)
+	{
+		string[] contents = ["breuß"];
+
+		FileSystem.File.AppendAllLines(path, contents);
+
+		byte[] bytes = FileSystem.File.ReadAllBytes(path);
+		await That(bytes.Length).IsEqualTo(6 + Environment.NewLine.Length);
 	}
 }
