@@ -90,10 +90,12 @@ internal sealed class InMemoryLocation : IStorageLocation
 	/// <inheritdoc cref="IStorageLocation.GetParent()" />
 	public IStorageLocation? GetParent()
 	{
-		string path = FullPath.TrimEnd(_fileSystem.Path.DirectorySeparatorChar);
-		string? parentPath = _fileSystem.Execute.Path.GetDirectoryName(path);
+		string fullPathWithoutTrailingSeparator = FullPath
+			.TrimEnd(_fileSystem.Path.DirectorySeparatorChar);
+		string? parentPath =
+			_fileSystem.Execute.Path.GetDirectoryName(fullPathWithoutTrailingSeparator);
 		if (string.Equals(
-			    _fileSystem.Execute.Path.GetPathRoot(path),
+			    _fileSystem.Execute.Path.GetPathRoot(fullPathWithoutTrailingSeparator),
 			    FullPath,
 			    _fileSystem.Execute.StringComparisonMode)
 		    || parentPath == null)
