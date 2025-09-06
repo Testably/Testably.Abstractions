@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Testably.Abstractions.Helpers;
 using Testably.Abstractions.Testing.FileSystem;
@@ -120,8 +121,9 @@ public class MockFileSystemTests
 
 	[Theory]
 	[AutoData]
-	public async Task WithAccessControl_Denied_CreateDirectoryShouldThrowUnauthorizedAccessException(
-		string path)
+	public async Task
+		WithAccessControl_Denied_CreateDirectoryShouldThrowUnauthorizedAccessException(
+			string path)
 	{
 		Skip.If(!Test.RunsOnWindows);
 
@@ -239,6 +241,18 @@ public class MockFileSystemTests
 		await That(drives.Length).IsLessThanOrEqualTo(2);
 		await That(drives).HasSingle().Matching(d
 			=> string.Equals(d.Name, expectedDriveName, StringComparison.Ordinal));
+	}
+
+	[Fact]
+	public async Task WithDrive_ShouldInitializeDrivesWithRootDirectory()
+	{
+		MockFileSystem sut = new MockFileSystem().WithDrive("d");
+		List<IFileInfo> files = sut.DriveInfo.GetDrives()
+			.SelectMany(drive => drive.RootDirectory
+				.EnumerateFiles("*", SearchOption.AllDirectories))
+			.ToList();
+
+		await That(files.Count).IsEqualTo(0);
 	}
 
 	[Theory]

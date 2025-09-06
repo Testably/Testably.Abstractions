@@ -36,6 +36,10 @@ internal sealed class InMemoryStorage : IStorage
 		CurrentDirectory = string.Empty.PrefixRoot(_fileSystem);
 		DriveInfoMock mainDrive = DriveInfoMock.New(CurrentDirectory, _fileSystem);
 		_drives.TryAdd(mainDrive.GetName(), mainDrive);
+		IStorageLocation rootLocation =
+			InMemoryLocation.New(_fileSystem, mainDrive, mainDrive.GetName());
+		_containers.TryAdd(rootLocation, InMemoryContainer.NewDirectory(rootLocation, _fileSystem));
+
 		MainDrive = mainDrive;
 	}
 
@@ -189,7 +193,7 @@ internal sealed class InMemoryStorage : IStorage
 		EnumerationOptions? enumerationOptions = null)
 	{
 		ValidateExpression(searchPattern);
-		if (!_containers.TryGetValue(location, out var parentContainer))
+		if (!_containers.TryGetValue(location, out IStorageContainer? parentContainer))
 		{
 			throw ExceptionFactory.DirectoryNotFound(location.FullPath);
 		}
@@ -227,11 +231,11 @@ internal sealed class InMemoryStorage : IStorage
 			}
 
 			if (enumerationOptions.ReturnSpecialDirectories &&
-				type == FileSystemTypes.Directory)
+			    type == FileSystemTypes.Directory)
 			{
 				IStorageDrive? drive = _fileSystem.Storage.GetDrive(fullPath);
 				if (drive == null &&
-					!fullPath.IsUncPath(_fileSystem))
+				    !fullPath.IsUncPath(_fileSystem))
 				{
 					drive = _fileSystem.Storage.MainDrive;
 				}
@@ -255,11 +259,12 @@ internal sealed class InMemoryStorage : IStorage
 
 			foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
 				.Where(x => x.Key.FullPath.StartsWith(fullPath,
-								_fileSystem.Execute.StringComparisonMode) &&
-							!x.Key.Equals(location)))
+					            _fileSystem.Execute.StringComparisonMode) &&
+				            !x.Key.Equals(location)))
 			{
 				if (type.HasFlag(item.Value.Type) &&
-					IncludeItemInEnumeration(item, fullPathWithoutTrailingSlash, enumerationOptions))
+				    IncludeItemInEnumeration(item, fullPathWithoutTrailingSlash,
+					    enumerationOptions))
 				{
 					string? itemPath = item.Key.FullPath;
 					if (itemPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
@@ -269,14 +274,14 @@ internal sealed class InMemoryStorage : IStorage
 
 					string name = _fileSystem.Execute.Path.GetFileName(itemPath);
 					if (EnumerationOptionsHelper.MatchesPattern(
-							_fileSystem.Execute,
-							enumerationOptions,
-							name,
-							searchPattern) ||
-						(_fileSystem.Execute.IsNetFramework &&
-						 SearchPatternMatchesFileExtensionOnNetFramework(
-							 searchPattern,
-							 _fileSystem.Execute.Path.GetExtension(name))))
+						    _fileSystem.Execute,
+						    enumerationOptions,
+						    name,
+						    searchPattern) ||
+					    (_fileSystem.Execute.IsNetFramework &&
+					     SearchPatternMatchesFileExtensionOnNetFramework(
+						     searchPattern,
+						     _fileSystem.Execute.Path.GetExtension(name))))
 					{
 						yield return item.Key;
 					}
@@ -360,7 +365,11 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
-		return _drives.GetOrAdd(drive.GetName(), _ => drive);
+		return _drives.GetOrAdd(drive.GetName(), _ =>
+		{
+			GetOrCreateContainer(GetLocation(drive.GetName()), InMemoryContainer.NewDirectory);
+			return drive;
+		});
 	}
 
 	/// <inheritdoc cref="IStorage.GetOrCreateContainer" />
