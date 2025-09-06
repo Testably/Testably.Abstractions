@@ -303,7 +303,8 @@ public class InMemoryContainerTests
 		MockFileSystem fileSystem = new();
 		string expectedPath = fileSystem.Path.GetFullPath("foo.txt");
 		fileSystem.File.WriteAllBytes(expectedPath, bytes);
-		IStorageContainer sut = fileSystem.StorageContainers.Single();
+		IStorageContainer sut = fileSystem.StorageContainers
+			.Single(x => x.Type == FileSystemTypes.File);
 
 		string? result = sut.ToString();
 

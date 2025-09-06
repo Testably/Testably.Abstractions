@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Testably.Abstractions.Helpers;
 using Testably.Abstractions.Testing.FileSystem;
@@ -115,13 +116,14 @@ public class MockFileSystemTests
 
 		string result = sut.ToString();
 
-		await That(result).Contains("directories: 0, files: 1");
+		await That(result).Contains("directories: 1, files: 1");
 	}
 
 	[Theory]
 	[AutoData]
-	public async Task WithAccessControl_Denied_CreateDirectoryShouldThrowUnauthorizedAccessException(
-		string path)
+	public async Task
+		WithAccessControl_Denied_CreateDirectoryShouldThrowUnauthorizedAccessException(
+			string path)
 	{
 		Skip.If(!Test.RunsOnWindows);
 
@@ -241,6 +243,20 @@ public class MockFileSystemTests
 			=> string.Equals(d.Name, expectedDriveName, StringComparison.Ordinal));
 	}
 
+	[Fact]
+	public async Task WithDrive_ShouldInitializeDrivesWithRootDirectory()
+	{
+		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
+
+		MockFileSystem sut = new MockFileSystem().WithDrive("V");
+		List<IFileSystemInfo> fileSystemInfos = sut.DriveInfo.GetDrives()
+			.SelectMany(drive => drive.RootDirectory
+				.EnumerateFileSystemInfos("*", SearchOption.AllDirectories))
+			.ToList();
+
+		await That(fileSystemInfos).HasCount(0);
+	}
+
 	[Theory]
 	[AutoData]
 	public async Task WithDrive_WithCallback_ShouldUpdateDrive(long totalSize)
@@ -303,6 +319,22 @@ public class MockFileSystemTests
 
 		string result = sut.File.ReadAllText(fullPath);
 		await That(result).IsEqualTo(contents);
+	}
+
+	[Fact]
+	public async Task WithUncDrive_ShouldInitializeDrivesWithRootDirectory()
+	{
+		MockFileSystem sut = new();
+		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);
+		string uncDrive = $"{uncPrefix}UNC-Path";
+		sut.WithUncDrive("UNC-Path");
+		IDriveInfo drive = sut.DriveInfo.New(uncDrive);
+
+		List<IFileSystemInfo> fileSystemInfos = drive.RootDirectory
+			.EnumerateFileSystemInfos("*", SearchOption.AllDirectories)
+			.ToList();
+
+		await That(fileSystemInfos).HasCount(0);
 	}
 
 	[Theory]
