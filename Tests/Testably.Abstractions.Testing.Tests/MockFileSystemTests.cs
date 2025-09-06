@@ -116,7 +116,7 @@ public class MockFileSystemTests
 
 		string result = sut.ToString();
 
-		await That(result).Contains("directories: 0, files: 1");
+		await That(result).Contains("directories: 1, files: 1");
 	}
 
 	[Theory]
@@ -246,13 +246,13 @@ public class MockFileSystemTests
 	[Fact]
 	public async Task WithDrive_ShouldInitializeDrivesWithRootDirectory()
 	{
-		MockFileSystem sut = new MockFileSystem().WithDrive("d");
-		List<IFileInfo> files = sut.DriveInfo.GetDrives()
+		MockFileSystem sut = new MockFileSystem().WithDrive("V");
+		List<IFileSystemInfo> fileSystemInfos = sut.DriveInfo.GetDrives()
 			.SelectMany(drive => drive.RootDirectory
-				.EnumerateFiles("*", SearchOption.AllDirectories))
+				.EnumerateFileSystemInfos("*", SearchOption.AllDirectories))
 			.ToList();
 
-		await That(files.Count).IsEqualTo(0);
+		await That(fileSystemInfos).HasCount(0);
 	}
 
 	[Theory]
@@ -317,6 +317,22 @@ public class MockFileSystemTests
 
 		string result = sut.File.ReadAllText(fullPath);
 		await That(result).IsEqualTo(contents);
+	}
+
+	[Fact]
+	public async Task WithUncDrive_ShouldInitializeDrivesWithRootDirectory()
+	{
+		MockFileSystem sut = new();
+		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);
+		string uncDrive = $"{uncPrefix}unc-server";
+		sut.WithUncDrive(uncDrive);
+		IDriveInfo drive = sut.DriveInfo.New(uncDrive);
+
+		List<IFileSystemInfo> fileSystemInfos = drive.RootDirectory
+			.EnumerateFileSystemInfos("*", SearchOption.AllDirectories)
+			.ToList();
+
+		await That(fileSystemInfos).HasCount(0);
 	}
 
 	[Theory]

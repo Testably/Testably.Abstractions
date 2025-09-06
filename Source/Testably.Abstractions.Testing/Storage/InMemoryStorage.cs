@@ -351,8 +351,15 @@ internal sealed class InMemoryStorage : IStorage
 			drive = _fileSystem.Storage.MainDrive;
 		}
 
-		return InMemoryLocation.New(_fileSystem, drive, path.GetFullPathOrWhiteSpace(_fileSystem),
-			path);
+		string fullPath = path;
+		if (!fullPath.IsUncPath(_fileSystem) ||
+		    !_fileSystem.Execute.IsNetFramework ||
+		    fullPath.LastIndexOf(_fileSystem.Path.DirectorySeparatorChar) > 2)
+		{
+			fullPath = path.GetFullPathOrWhiteSpace(_fileSystem);
+		}
+
+		return InMemoryLocation.New(_fileSystem, drive, fullPath, path);
 	}
 
 	/// <inheritdoc cref="IStorage.GetOrAddDrive(string)" />
@@ -367,7 +374,10 @@ internal sealed class InMemoryStorage : IStorage
 		DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
 		return _drives.GetOrAdd(drive.GetName(), _ =>
 		{
-			GetOrCreateContainer(GetLocation(drive.GetName()), InMemoryContainer.NewDirectory);
+			IStorageLocation rootLocation =
+				InMemoryLocation.New(_fileSystem, drive, drive.GetName());
+			_containers.TryAdd(rootLocation,
+				InMemoryContainer.NewDirectory(rootLocation, _fileSystem));
 			return drive;
 		});
 	}

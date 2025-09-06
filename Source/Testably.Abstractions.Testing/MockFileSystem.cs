@@ -223,7 +223,7 @@ public sealed class MockFileSystem : IFileSystem
 		Action<IStorageDrive>? driveCallback = null)
 	{
 		IStorageDrive driveInfoMock =
-			drive == null
+			drive == null || string.Equals(drive, "\\", StringComparison.Ordinal)
 				? Storage.MainDrive
 				: Storage.GetOrAddDrive(drive);
 		driveCallback?.Invoke(driveInfoMock);
