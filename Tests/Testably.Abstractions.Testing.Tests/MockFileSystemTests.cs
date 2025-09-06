@@ -246,6 +246,8 @@ public class MockFileSystemTests
 	[Fact]
 	public async Task WithDrive_ShouldInitializeDrivesWithRootDirectory()
 	{
+		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
+
 		MockFileSystem sut = new MockFileSystem().WithDrive("V");
 		List<IFileSystemInfo> fileSystemInfos = sut.DriveInfo.GetDrives()
 			.SelectMany(drive => drive.RootDirectory
@@ -324,8 +326,8 @@ public class MockFileSystemTests
 	{
 		MockFileSystem sut = new();
 		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);
-		string uncDrive = $"{uncPrefix}unc-server";
-		sut.WithUncDrive(uncDrive);
+		string uncDrive = $"{uncPrefix}UNC-Path";
+		sut.WithUncDrive("UNC-Path");
 		IDriveInfo drive = sut.DriveInfo.New(uncDrive);
 
 		List<IFileSystemInfo> fileSystemInfos = drive.RootDirectory

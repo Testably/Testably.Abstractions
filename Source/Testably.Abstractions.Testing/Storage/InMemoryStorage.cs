@@ -351,10 +351,14 @@ internal sealed class InMemoryStorage : IStorage
 			drive = _fileSystem.Storage.MainDrive;
 		}
 
-		string fullPath = path;
-		if (!fullPath.IsUncPath(_fileSystem) ||
-		    !_fileSystem.Execute.IsNetFramework ||
-		    fullPath.LastIndexOf(_fileSystem.Path.DirectorySeparatorChar) > 2)
+		string fullPath;
+		if (path.IsUncPath(_fileSystem) &&
+			_fileSystem.Execute is { IsNetFramework: true } or {IsWindows: false } &&
+			path.LastIndexOf(_fileSystem.Path.DirectorySeparatorChar) <= 2)
+		{
+			fullPath = path;
+		}
+		else
 		{
 			fullPath = path.GetFullPathOrWhiteSpace(_fileSystem);
 		}
