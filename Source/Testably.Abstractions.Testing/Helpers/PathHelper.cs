@@ -178,13 +178,12 @@ internal static class PathHelper
 	internal static string TrimTrailingDirectorySeparator(this string path,
 		MockFileSystem fileSystem)
 	{
-		path = path.TrimEnd(fileSystem.Path.DirectorySeparatorChar);
-		if (string.IsNullOrEmpty(path))
+		if (path.Length == 1 && path[0] == fileSystem.Path.DirectorySeparatorChar)
 		{
-			return $"{fileSystem.Path.DirectorySeparatorChar}";
+			return path;
 		}
 
-		return path;
+		return path.TrimEnd(fileSystem.Path.DirectorySeparatorChar);
 	}
 
 	private static void CheckPathArgument(Execute execute, [NotNull] string? path, string paramName,
