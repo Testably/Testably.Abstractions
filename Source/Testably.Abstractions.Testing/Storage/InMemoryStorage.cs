@@ -260,13 +260,14 @@ internal sealed class InMemoryStorage : IStorage
 			foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
 				.Where(x => x.Key.FullPath.StartsWith(fullPath,
 					            _fileSystem.Execute.StringComparisonMode) &&
-				            !x.Key.Equals(location)))
+				            !x.Key.Equals(location))
+				.OrderBy(x => x.Key.FullPath))
 			{
 				if (type.HasFlag(item.Value.Type) &&
 				    IncludeItemInEnumeration(item, fullPathWithoutTrailingSlash,
 					    enumerationOptions))
 				{
-					string? itemPath = item.Key.FullPath;
+					string itemPath = item.Key.FullPath;
 					if (itemPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
 					{
 						itemPath = itemPath.TrimEnd(_fileSystem.Path.DirectorySeparatorChar);
@@ -353,8 +354,8 @@ internal sealed class InMemoryStorage : IStorage
 
 		string fullPath;
 		if (path.IsUncPath(_fileSystem) &&
-			_fileSystem.Execute is { IsNetFramework: true } or {IsWindows: false } &&
-			path.LastIndexOf(_fileSystem.Path.DirectorySeparatorChar) <= 2)
+		    _fileSystem.Execute is { IsNetFramework: true } or { IsWindows: false } &&
+		    path.LastIndexOf(_fileSystem.Path.DirectorySeparatorChar) <= 2)
 		{
 			fullPath = path;
 		}
@@ -790,7 +791,8 @@ internal sealed class InMemoryStorage : IStorage
 				throw ExceptionFactory.AccessDenied(location.FullPath);
 			}
 #else
-			using (parentContainer.RequestAccess(FileAccess.Write, FileShare.ReadWrite, onBehalfOfLocation: location))
+			using (parentContainer.RequestAccess(FileAccess.Write, FileShare.ReadWrite,
+				onBehalfOfLocation: location))
 			{
 				TimeAdjustments timeAdjustment = TimeAdjustments.LastWriteTime;
 				if (_fileSystem.Execute.IsWindows)
@@ -821,7 +823,7 @@ internal sealed class InMemoryStorage : IStorage
 		List<IStorageAccessHandle> accessHandles = [];
 		try
 		{
-			foreach (string? parentPath in parents)
+			foreach (string parentPath in parents)
 			{
 				ChangeDescription? fileSystemChange = null;
 				IStorageLocation parentLocation =

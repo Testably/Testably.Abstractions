@@ -712,7 +712,8 @@ internal sealed class DirectoryMock : IDirectory
 				adjustedLocation.SearchPattern,
 				enumerationOptions)
 			.Select(x => _fileSystem
-				.GetSubdirectoryPath(x.FullPath, x.FriendlyName, adjustedLocation.GivenPath));
+				.GetSubdirectoryPath(x.FullPath, x.FriendlyName, adjustedLocation.GivenPath)
+				.TrimTrailingDirectorySeparator(_fileSystem));
 	}
 
 	private IDirectoryInfo LoadDirectoryInfoOrThrowNotFoundException(
