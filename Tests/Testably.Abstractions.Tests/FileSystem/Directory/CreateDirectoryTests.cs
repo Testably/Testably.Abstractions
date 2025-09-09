@@ -348,7 +348,8 @@ public partial class CreateDirectoryTests
 		await That(result.Name).IsEqualTo(expectedName.TrimEnd(
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
-		await That(result.FullName).IsEqualTo($"{BasePath}{FileSystem.Path.DirectorySeparatorChar}{expectedName}"
+		await That(result.FullName).IsEqualTo(
+			$"{BasePath}{FileSystem.Path.DirectorySeparatorChar}{expectedName}"
 				.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 					FileSystem.Path.DirectorySeparatorChar));
 		await That(FileSystem.Directory.Exists(nameWithSuffix)).IsTrue();

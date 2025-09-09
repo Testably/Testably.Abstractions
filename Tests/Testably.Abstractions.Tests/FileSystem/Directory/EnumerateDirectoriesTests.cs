@@ -185,7 +185,8 @@ public partial class EnumerateDirectoriesTests
 	public async Task EnumerateDirectories_ShouldIncludeEmptyDirectoriesWithTrailingSlash()
 	{
 		string rootDirectory = "RootDir";
-		string emptyDirectory = FileSystem.Path.Combine(rootDirectory, "EmptyDir") + FileSystem.Path.DirectorySeparatorChar;
+		string emptyDirectory = FileSystem.Path.Combine(rootDirectory, "EmptyDir") +
+		                        FileSystem.Path.DirectorySeparatorChar;
 
 		FileSystem.Directory.CreateDirectory(emptyDirectory);
 
@@ -225,11 +226,29 @@ public partial class EnumerateDirectoriesTests
 			.InAnyOrder();
 	}
 
+	[Theory]
+	[InlineData('/')]
+	[InlineData('\\')]
+	public async Task EnumerateDirectories_TrailingDirectorySeparator_ShouldBeTrimmed(char suffix)
+	{
+		Skip.IfNot(Test.RunsOnWindows ||
+		           suffix == FileSystem.Path.DirectorySeparatorChar ||
+		           suffix == FileSystem.Path.AltDirectorySeparatorChar);
+
+		string path = $"foo{suffix}";
+
+		FileSystem.Directory.CreateDirectory(path);
+		IEnumerable<string> result = FileSystem.Directory.EnumerateDirectories(".");
+
+		await That(result).HasSingle()
+			.Which.DoesNotEndWith(suffix);
+	}
+
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Theory]
 	[AutoData]
 	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderAttributesToSkip(
-			string path)
+		string path)
 	{
 		EnumerationOptions enumerationOptions = new()
 		{
@@ -254,7 +273,7 @@ public partial class EnumerateDirectoriesTests
 	[InlineData(true)]
 	[InlineData(false)]
 	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderIgnoreInaccessible(
-			bool ignoreInaccessible)
+		bool ignoreInaccessible)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -299,8 +318,8 @@ public partial class EnumerateDirectoriesTests
 	[InlineAutoData(MatchCasing.CaseInsensitive)]
 	[InlineAutoData(MatchCasing.CaseSensitive)]
 	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderMatchCasing(
-			MatchCasing matchCasing,
-			string path)
+		MatchCasing matchCasing,
+		string path)
 	{
 		EnumerationOptions enumerationOptions = new()
 		{
@@ -329,8 +348,8 @@ public partial class EnumerateDirectoriesTests
 	[InlineAutoData(MatchType.Simple)]
 	[InlineAutoData(MatchType.Win32)]
 	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderMatchType(
-			MatchType matchType,
-			string path)
+		MatchType matchType,
+		string path)
 	{
 		EnumerationOptions enumerationOptions = new()
 		{
@@ -360,7 +379,8 @@ public partial class EnumerateDirectoriesTests
 	[InlineAutoData(true, 2)]
 	[InlineAutoData(true, 3)]
 	[InlineAutoData(false, 2)]
-	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderMaxRecursionDepthWhenRecurseSubdirectoriesIsSet(
+	public async Task
+		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderMaxRecursionDepthWhenRecurseSubdirectoriesIsSet(
 			bool recurseSubdirectories,
 			int maxRecursionDepth,
 			string path)
@@ -409,7 +429,8 @@ public partial class EnumerateDirectoriesTests
 	[Theory]
 	[InlineAutoData(true)]
 	[InlineAutoData(false)]
-	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderRecurseSubdirectories(
+	public async Task
+		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderRecurseSubdirectories(
 			bool recurseSubdirectories,
 			string path)
 	{
@@ -440,7 +461,8 @@ public partial class EnumerateDirectoriesTests
 	[Theory]
 	[InlineAutoData(true)]
 	[InlineAutoData(false)]
-	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderReturnSpecialDirectories(
+	public async Task
+		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderReturnSpecialDirectories(
 			bool returnSpecialDirectories,
 			string path)
 	{
@@ -469,7 +491,8 @@ public partial class EnumerateDirectoriesTests
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Fact]
-	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderReturnSpecialDirectoriesCorrectlyForPathRoots()
+	public async Task
+		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderReturnSpecialDirectoriesCorrectlyForPathRoots()
 	{
 		string root = FileSystem.Path.GetPathRoot(FileSystem.Directory.GetCurrentDirectory())!;
 		EnumerationOptions enumerationOptions = new()

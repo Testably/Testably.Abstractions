@@ -101,11 +101,29 @@ public partial class GetDirectoriesTests
 		}
 	}
 
+	[Theory]
+	[InlineData('/')]
+	[InlineData('\\')]
+	public async Task GetDirectories_TrailingDirectorySeparator_ShouldBeTrimmed(char suffix)
+	{
+		Skip.IfNot(Test.RunsOnWindows ||
+		           suffix == FileSystem.Path.DirectorySeparatorChar ||
+		           suffix == FileSystem.Path.AltDirectorySeparatorChar);
+
+		string path = $"foo{suffix}";
+
+		FileSystem.Directory.CreateDirectory(path);
+		string[] result = FileSystem.Directory.GetDirectories(".");
+
+		await That(result).HasSingle()
+			.Which.DoesNotEndWith(suffix);
+	}
+
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Theory]
 	[AutoData]
 	public async Task GetDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
-			string path)
+		string path)
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
