@@ -190,7 +190,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 		    !ignoreMetadataErrors &&
 		    Attributes.HasFlag(FileAttributes.ReadOnly))
 		{
-			throw ExceptionFactory.AccessToPathDenied();
+			throw ExceptionFactory.AccessToPathDenied(_location.FullPath);
 		}
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		if (!deleteAccess && !_fileSystem.UnixFileModeStrategy

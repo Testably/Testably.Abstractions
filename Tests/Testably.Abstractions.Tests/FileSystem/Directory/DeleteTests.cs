@@ -64,6 +64,25 @@ public partial class DeleteTests
 
 	[Theory]
 	[AutoData]
+	public async Task Delete_ReadonlyDirectory_ShouldThrowIOExceptionOnWindows(string path)
+	{
+		IDirectoryInfo sut = FileSystem.Directory.CreateDirectory(path);
+		sut.Attributes = FileAttributes.ReadOnly;
+		sut.Refresh();
+
+		void Act()
+		{
+			FileSystem.Directory.Delete(path);
+		}
+
+		await That(Act).Throws<IOException>()
+			.OnlyIf(Test.RunsOnWindows)
+			.WithMessage($"Access to the path '{sut.FullName}' is denied.").And
+			.WithHResult(-2146232800);
+	}
+
+	[Theory]
+	[AutoData]
 	public async Task Delete_Recursive_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directoryName)
 	{
