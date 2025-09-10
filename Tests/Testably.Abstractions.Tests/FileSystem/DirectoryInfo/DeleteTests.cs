@@ -37,7 +37,9 @@ public partial class DeleteTests
 
 		await That(Act).Throws<IOException>()
 			.OnlyIf(Test.RunsOnWindows)
-			.WithMessage($"Access to the path '{sut.FullName}' is denied.").And
+			.WithMessage(Test.IsNetFramework
+				? $"Access to the path '{path}' is denied."
+				: $"Access to the path '{sut.FullName}' is denied.").And
 			.WithHResult(-2146232800);
 	}
 
