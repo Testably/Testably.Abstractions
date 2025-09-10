@@ -170,6 +170,7 @@ internal sealed class InMemoryStorage : IStorage
 				location);
 
 		using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite,
+			ignoreMetadataErrors: false,
 			deleteAccess: true))
 		{
 			if (_containers.TryRemove(location, out IStorageContainer? removed))
