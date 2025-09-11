@@ -193,20 +193,19 @@ internal sealed class InMemoryStorage : IStorage
 		string searchPattern = EnumerationOptionsHelper.DefaultSearchPattern,
 		EnumerationOptions? enumerationOptions = null)
 	{
-		// Perform immediate validation and throw exceptions if necessary
 		ValidateExpression(searchPattern);
 		if (!_containers.TryGetValue(location, out IStorageContainer? parentContainer))
 		{
 			throw ExceptionFactory.DirectoryNotFound(location.FullPath);
 		}
 
-		// Return the actual enumeration implementation
-		return EnumerateLocationsImpl(location, type, requestParentAccess, searchPattern, enumerationOptions, parentContainer);
+		return EnumerateLocationsImpl(location, type, requestParentAccess, searchPattern,
+			enumerationOptions, parentContainer);
 	}
 
 	/// <summary>
-	/// Internal implementation of location enumeration that uses yield return.
-	/// This method contains the actual enumeration logic and is only called after validation passes.
+	///     Internal implementation of location enumeration that uses yield return.
+	///     This method contains the actual enumeration logic and is only called after validation passes.
 	/// </summary>
 	private IEnumerable<IStorageLocation> EnumerateLocationsImpl(
 		IStorageLocation location,
