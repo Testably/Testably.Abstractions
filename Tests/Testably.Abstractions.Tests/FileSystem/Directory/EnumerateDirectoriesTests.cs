@@ -41,6 +41,23 @@ public partial class EnumerateDirectoriesTests
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
+	[Theory]
+	[AutoData]
+	public async Task
+		EnumerateDirectories_MissingDirectory_ShouldThrowDirectoryNotFoundExceptionImmediately(
+			string path)
+	{
+		string expectedPath = FileSystem.Path.Combine(BasePath, path);
+
+		void Act() =>
+			_ = FileSystem.Directory.EnumerateDirectories(path);
+
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{expectedPath}'").And
+			.WithHResult(-2147024893);
+		await That(FileSystem.Directory.Exists(path)).IsFalse();
+	}
+
 	[Fact]
 	public async Task EnumerateDirectories_RelativePath_ShouldNotIncludeTrailingSlash()
 	{
