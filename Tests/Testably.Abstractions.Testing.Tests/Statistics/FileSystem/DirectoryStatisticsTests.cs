@@ -103,6 +103,7 @@ public sealed class DirectoryStatisticsTests
 	public async Task Method_EnumerateDirectories_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		string path = "foo";
 
 		sut.Directory.EnumerateDirectories(path);
@@ -118,6 +119,7 @@ public sealed class DirectoryStatisticsTests
 	public async Task Method_EnumerateDirectories_String_String_EnumerationOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		string path = "foo";
 		string searchPattern = "foo";
 		EnumerationOptions enumerationOptions = new();
@@ -135,6 +137,7 @@ public sealed class DirectoryStatisticsTests
 	public async Task Method_EnumerateDirectories_String_String_SearchOption_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		string path = "foo";
 		string searchPattern = "foo";
 		SearchOption searchOption = SearchOption.AllDirectories;
@@ -151,6 +154,7 @@ public sealed class DirectoryStatisticsTests
 	public async Task Method_EnumerateDirectories_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		string path = "foo";
 		string searchPattern = "foo";
 
