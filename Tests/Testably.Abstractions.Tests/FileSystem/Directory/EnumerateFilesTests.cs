@@ -28,6 +28,23 @@ public partial class EnumerateFilesTests
 	[Theory]
 	[AutoData]
 	public async Task
+		EnumerateFiles_MissingDirectory_ShouldThrowDirectoryNotFoundExceptionImmediately(
+			string path)
+	{
+		string expectedPath = FileSystem.Path.Combine(BasePath, path);
+
+		void Act() =>
+			_ = FileSystem.Directory.EnumerateFiles(path);
+
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{expectedPath}'").And
+			.WithHResult(-2147024893);
+		await That(FileSystem.Directory.Exists(path)).IsFalse();
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task
 		EnumerateFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
 			string path)
 	{

@@ -199,6 +199,22 @@ internal sealed class InMemoryStorage : IStorage
 			throw ExceptionFactory.DirectoryNotFound(location.FullPath);
 		}
 
+		return EnumerateLocationsImpl(location, type, requestParentAccess, searchPattern,
+			enumerationOptions, parentContainer);
+	}
+
+	/// <summary>
+	///     Internal implementation of location enumeration that uses yield return.
+	///     This method contains the actual enumeration logic and is only called after validation passes.
+	/// </summary>
+	private IEnumerable<IStorageLocation> EnumerateLocationsImpl(
+		IStorageLocation location,
+		FileSystemTypes type,
+		bool requestParentAccess,
+		string searchPattern,
+		EnumerationOptions? enumerationOptions,
+		IStorageContainer parentContainer)
+	{
 		IDisposable parentAccess = new NoOpDisposable();
 		if (requestParentAccess)
 		{

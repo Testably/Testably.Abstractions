@@ -31,6 +31,23 @@ public partial class EnumerateFileSystemInfosTests
 	[Theory]
 	[AutoData]
 	public async Task
+		EnumerateFileSystemEntries_MissingDirectory_ShouldThrowDirectoryNotFoundExceptionImmediately(
+			string path)
+	{
+		string expectedPath = FileSystem.Path.Combine(BasePath, path);
+
+		void Act() =>
+			_ = FileSystem.Directory.EnumerateFileSystemEntries(path);
+
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessageContaining($"'{expectedPath}'").And
+			.WithHResult(-2147024893);
+		await That(FileSystem.Directory.Exists(path)).IsFalse();
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task
 		EnumerateFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
 			string path)
 	{
