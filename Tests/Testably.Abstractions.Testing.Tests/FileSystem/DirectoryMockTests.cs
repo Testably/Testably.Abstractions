@@ -8,6 +8,8 @@ public class DirectoryMockTests
 	public async Task
 		EnumerateDirectories_UnauthorizedParentAccess_ShouldThrowUnauthorizedAccessExceptionImmediately()
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		string path = "foo";
 		MockFileSystem fileSystem = new();
 		IDirectoryInfo sut = fileSystem.Directory.CreateDirectory(path);
@@ -27,6 +29,8 @@ public class DirectoryMockTests
 	public async Task
 		EnumerateFiles_UnauthorizedParentAccess_ShouldThrowUnauthorizedAccessExceptionImmediately()
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		string path = "foo";
 		MockFileSystem fileSystem = new();
 		IDirectoryInfo sut = fileSystem.Directory.CreateDirectory(path);
@@ -46,6 +50,8 @@ public class DirectoryMockTests
 	public async Task
 		EnumerateFileSystemEntries_UnauthorizedParentAccess_ShouldThrowUnauthorizedAccessExceptionImmediately()
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		string path = "foo";
 		MockFileSystem fileSystem = new();
 		IDirectoryInfo sut = fileSystem.Directory.CreateDirectory(path);
