@@ -105,6 +105,13 @@ internal sealed class NullContainer : IStorageContainer
 		IStorageLocation? onBehalfOfLocation = null)
 		=> new NullStorageAccessHandle(access, share, deleteAccess);
 
+	/// <inheritdoc cref="IStorageContainer.UpdateLocation(IStorageLocation)" />
+	public IStorageContainer UpdateLocation(IStorageLocation newLocation)
+	{
+		// Do nothing in NullContainer
+		return this;
+	}
+
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />
 	public void WriteBytes(byte[] bytes)
 	{

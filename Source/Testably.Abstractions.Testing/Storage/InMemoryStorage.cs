@@ -549,7 +549,7 @@ internal sealed class InMemoryStorage : IStorage
 						existingDestinationContainer.GetBytes().Length;
 					destination.Drive?.ChangeUsedBytes(-1 * destinationBytesLength);
 					if (backup != null &&
-					    _containers.TryAdd(backup, existingDestinationContainer))
+					    _containers.TryAdd(backup, existingDestinationContainer.UpdateLocation(backup)))
 					{
 						if (_fileSystem.Execute.IsWindows &&
 						    sourceContainer.Type == FileSystemTypes.File)
@@ -586,7 +586,7 @@ internal sealed class InMemoryStorage : IStorage
 								DateTimeKind.Utc);
 						}
 
-						_containers.TryAdd(destination, existingSourceContainer);
+						_containers.TryAdd(destination, existingSourceContainer.UpdateLocation(destination));
 						return destination;
 					}
 				}
@@ -1040,7 +1040,7 @@ internal sealed class InMemoryStorage : IStorage
 					existingContainer.ClearBytes();
 				}
 
-				if (_containers.TryAdd(destination, sourceContainer))
+				if (_containers.TryAdd(destination, sourceContainer.UpdateLocation(destination)))
 				{
 					int bytesLength = sourceContainer.GetBytes().Length;
 					source.Drive?.ChangeUsedBytes(-1 * bytesLength);
