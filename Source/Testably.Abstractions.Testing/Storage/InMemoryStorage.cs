@@ -205,11 +205,8 @@ internal sealed class InMemoryStorage : IStorage
 			parentAccess = parentContainer.RequestAccess(FileAccess.Read, FileShare.ReadWrite);
 		}
 
-		using (parentAccess)
-		{
-			return EnumerateLocationsImpl(location, type, searchPattern,
-				enumerationOptions);
-		}
+		return EnumerateLocationsImpl(location, type, searchPattern,
+			enumerationOptions, parentAccess);
 	}
 
 	/// <summary>
@@ -220,87 +217,91 @@ internal sealed class InMemoryStorage : IStorage
 		IStorageLocation location,
 		FileSystemTypes type,
 		string searchPattern,
-		EnumerationOptions? enumerationOptions)
+		EnumerationOptions? enumerationOptions,
+		IDisposable parentAccess)
 	{
-		enumerationOptions ??= EnumerationOptionsHelper.Compatible;
-
-		string fullPath = location.FullPath;
-
-		if (enumerationOptions.MatchType == MatchType.Win32)
+		using (parentAccess)
 		{
-			EnumerationOptionsHelper.NormalizeInputs(_fileSystem.Execute,
-				ref fullPath,
-				ref searchPattern);
-		}
+			enumerationOptions ??= EnumerationOptionsHelper.Compatible;
 
-		string fullPathWithoutTrailingSlash = fullPath;
-		if (!fullPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar))
-		{
-			fullPath += _fileSystem.Execute.Path.DirectorySeparatorChar;
-		}
-		else if (!string.Equals(_fileSystem.Execute.Path.GetPathRoot(fullPath), fullPath,
-			_fileSystem.Execute.StringComparisonMode))
-		{
-			fullPathWithoutTrailingSlash =
-				fullPathWithoutTrailingSlash.TrimEnd(
-					_fileSystem.Execute.Path.DirectorySeparatorChar);
-		}
+			string fullPath = location.FullPath;
 
-		if (enumerationOptions.ReturnSpecialDirectories &&
-		    type == FileSystemTypes.Directory)
-		{
-			IStorageDrive? drive = _fileSystem.Storage.GetDrive(fullPath);
-			if (drive == null &&
-			    !fullPath.IsUncPath(_fileSystem))
+			if (enumerationOptions.MatchType == MatchType.Win32)
 			{
-				drive = _fileSystem.Storage.MainDrive;
+				EnumerationOptionsHelper.NormalizeInputs(_fileSystem.Execute,
+					ref fullPath,
+					ref searchPattern);
 			}
 
-			string prefix =
-				location.FriendlyName.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar)
-					? location.FriendlyName
-					: location.FriendlyName + _fileSystem.Execute.Path.DirectorySeparatorChar;
-
-			yield return InMemoryLocation.New(_fileSystem, drive, fullPath,
-				$"{prefix}.");
-			string? parentPath = _fileSystem.Execute.Path.GetDirectoryName(
-				fullPath.TrimEnd(_fileSystem.Execute.Path
-					.DirectorySeparatorChar));
-			if (parentPath != null || !_fileSystem.Execute.IsWindows)
+			string fullPathWithoutTrailingSlash = fullPath;
+			if (!fullPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar))
 			{
-				yield return InMemoryLocation.New(_fileSystem, drive, parentPath ?? "/",
-					$"{prefix}..");
+				fullPath += _fileSystem.Execute.Path.DirectorySeparatorChar;
 			}
-		}
-
-		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
-			.Where(x => x.Key.FullPath.StartsWith(fullPath,
-				            _fileSystem.Execute.StringComparisonMode) &&
-			            !x.Key.Equals(location))
-			.OrderBy(x => x.Key.FullPath))
-		{
-			if (type.HasFlag(item.Value.Type) &&
-			    IncludeItemInEnumeration(item, fullPathWithoutTrailingSlash,
-				    enumerationOptions))
+			else if (!string.Equals(_fileSystem.Execute.Path.GetPathRoot(fullPath), fullPath,
+				_fileSystem.Execute.StringComparisonMode))
 			{
-				string itemPath = item.Key.FullPath;
-				if (itemPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
+				fullPathWithoutTrailingSlash =
+					fullPathWithoutTrailingSlash.TrimEnd(
+						_fileSystem.Execute.Path.DirectorySeparatorChar);
+			}
+
+			if (enumerationOptions.ReturnSpecialDirectories &&
+			    type == FileSystemTypes.Directory)
+			{
+				IStorageDrive? drive = _fileSystem.Storage.GetDrive(fullPath);
+				if (drive == null &&
+				    !fullPath.IsUncPath(_fileSystem))
 				{
-					itemPath = itemPath.TrimEnd(_fileSystem.Path.DirectorySeparatorChar);
+					drive = _fileSystem.Storage.MainDrive;
 				}
 
-				string name = _fileSystem.Execute.Path.GetFileName(itemPath);
-				if (EnumerationOptionsHelper.MatchesPattern(
-					    _fileSystem.Execute,
-					    enumerationOptions,
-					    name,
-					    searchPattern) ||
-				    (_fileSystem.Execute.IsNetFramework &&
-				     SearchPatternMatchesFileExtensionOnNetFramework(
-					     searchPattern,
-					     _fileSystem.Execute.Path.GetExtension(name))))
+				string prefix =
+					location.FriendlyName.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar)
+						? location.FriendlyName
+						: location.FriendlyName + _fileSystem.Execute.Path.DirectorySeparatorChar;
+
+				yield return InMemoryLocation.New(_fileSystem, drive, fullPath,
+					$"{prefix}.");
+				string? parentPath = _fileSystem.Execute.Path.GetDirectoryName(
+					fullPath.TrimEnd(_fileSystem.Execute.Path
+						.DirectorySeparatorChar));
+				if (parentPath != null || !_fileSystem.Execute.IsWindows)
 				{
-					yield return item.Key;
+					yield return InMemoryLocation.New(_fileSystem, drive, parentPath ?? "/",
+						$"{prefix}..");
+				}
+			}
+
+			foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
+				.Where(x => x.Key.FullPath.StartsWith(fullPath,
+					            _fileSystem.Execute.StringComparisonMode) &&
+				            !x.Key.Equals(location))
+				.OrderBy(x => x.Key.FullPath))
+			{
+				if (type.HasFlag(item.Value.Type) &&
+				    IncludeItemInEnumeration(item, fullPathWithoutTrailingSlash,
+					    enumerationOptions))
+				{
+					string itemPath = item.Key.FullPath;
+					if (itemPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
+					{
+						itemPath = itemPath.TrimEnd(_fileSystem.Path.DirectorySeparatorChar);
+					}
+
+					string name = _fileSystem.Execute.Path.GetFileName(itemPath);
+					if (EnumerationOptionsHelper.MatchesPattern(
+						    _fileSystem.Execute,
+						    enumerationOptions,
+						    name,
+						    searchPattern) ||
+					    (_fileSystem.Execute.IsNetFramework &&
+					     SearchPatternMatchesFileExtensionOnNetFramework(
+						     searchPattern,
+						     _fileSystem.Execute.Path.GetExtension(name))))
+					{
+						yield return item.Key;
+					}
 				}
 			}
 		}
