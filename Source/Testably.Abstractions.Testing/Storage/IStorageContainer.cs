@@ -94,6 +94,11 @@ internal interface IStorageContainer : IFileSystemEntity, ITimeSystemEntity
 		IStorageLocation? onBehalfOfLocation = null);
 
 	/// <summary>
+	///     Updates the location of the container.
+	/// </summary>
+	IStorageContainer UpdateLocation(IStorageLocation newLocation);
+
+	/// <summary>
 	///     Writes the <paramref name="bytes" /> to the <see cref="IFileInfo" />.
 	/// </summary>
 	void WriteBytes(byte[] bytes);

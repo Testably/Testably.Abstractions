@@ -17,7 +17,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 	private readonly FileSystemExtensibility _extensibility = new();
 	private readonly MockFileSystem _fileSystem;
 	private bool _isEncrypted;
-	private readonly IStorageLocation _location;
+	private IStorageLocation _location;
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	private UnixFileMode _unixFileMode = UnixFileMode.OtherRead |
@@ -221,6 +221,13 @@ internal sealed class InMemoryContainer : IStorageContainer
 
 		throw ExceptionFactory.ProcessCannotAccessTheFile(_location.FullPath,
 			hResult ?? -2147024864);
+	}
+
+	/// <inheritdoc cref="IStorageContainer.UpdateLocation(IStorageLocation)" />
+	public IStorageContainer UpdateLocation(IStorageLocation newLocation)
+	{
+		_location = newLocation;
+		return this;
 	}
 
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />

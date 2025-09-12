@@ -1,3 +1,4 @@
+using aweXpect.Testably;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
@@ -396,6 +397,26 @@ public partial class ReplaceTests
 			// Behaviour on Linux/MacOS is uncertain
 			await That(FileSystem.File.Exists(backupName)).IsFalse();
 		}
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task Replace_Twice_ShouldReplaceFile(
+		string sourceName,
+		string destinationName)
+	{
+		FileSystem.Initialize()
+			.WithFile(sourceName).Which(f => f.HasStringContent("abc"))
+			.WithFile(destinationName).Which(f => f.HasStringContent("xyz"));
+		IFileInfo file1 = FileSystem.FileInfo.New(sourceName);
+		IFileInfo file2 = FileSystem.FileInfo.New(destinationName);
+		file2.Replace(file1.FullName, null);
+
+		IFileInfo file3 = FileSystem.FileInfo.New(destinationName);
+		FileSystem.File.WriteAllText(destinationName, "def");
+		file3.Replace(file1.FullName, null);
+
+		await That(file1).HasContent("def");
 	}
 
 	[Theory]

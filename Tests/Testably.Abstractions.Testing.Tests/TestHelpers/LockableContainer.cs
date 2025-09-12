@@ -111,6 +111,10 @@ internal sealed class LockableContainer(
 		return new AccessHandle(access, share, deleteAccess);
 	}
 
+	/// <inheritdoc cref="IStorageContainer.UpdateLocation(IStorageLocation)" />
+	public IStorageContainer UpdateLocation(IStorageLocation newLocation)
+		=> this;
+
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />
 	public void WriteBytes(byte[] bytes)
 	{

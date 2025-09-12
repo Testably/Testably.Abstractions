@@ -1,3 +1,4 @@
+using aweXpect.Testably;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
@@ -186,6 +187,26 @@ public partial class ReplaceTests
 		await That(FileSystem.File.ReadAllText(destinationName)).IsEquivalentTo(sourceContents);
 		await That(FileSystem.File.Exists(backupName)).IsTrue();
 		await That(FileSystem.File.ReadAllText(backupName)).IsEquivalentTo(destinationContents);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task Replace_Twice_ShouldReplaceFile(
+		string sourceName,
+		string destinationName)
+	{
+		FileSystem.Initialize()
+			.WithFile(sourceName).Which(f => f.HasStringContent("abc"))
+			.WithFile(destinationName).Which(f => f.HasStringContent("xyz"));
+		var file1 = FileSystem.FileInfo.New(sourceName);
+		var file2 = FileSystem.FileInfo.New(destinationName);
+		FileSystem.File.Replace(file2.FullName, file1.FullName, null);
+
+		var file3 = FileSystem.FileInfo.New(destinationName);
+		FileSystem.File.WriteAllText(destinationName, "def");
+		FileSystem.File.Replace(file3.FullName, file1.FullName, null);
+
+		await That(file1).HasContent("def");
 	}
 
 	[Theory]
