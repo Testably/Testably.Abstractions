@@ -199,8 +199,14 @@ internal sealed class InMemoryStorage : IStorage
 			throw ExceptionFactory.DirectoryNotFound(location.FullPath);
 		}
 
-		return EnumerateLocationsImpl(location, type, requestParentAccess, searchPattern,
-			enumerationOptions, parentContainer);
+		IDisposable parentAccess = new NoOpDisposable();
+		if (requestParentAccess)
+		{
+			parentAccess = parentContainer.RequestAccess(FileAccess.Read, FileShare.ReadWrite);
+		}
+
+		return EnumerateLocationsImpl(location, type, searchPattern,
+			enumerationOptions, parentAccess);
 	}
 
 	/// <summary>
@@ -210,17 +216,10 @@ internal sealed class InMemoryStorage : IStorage
 	private IEnumerable<IStorageLocation> EnumerateLocationsImpl(
 		IStorageLocation location,
 		FileSystemTypes type,
-		bool requestParentAccess,
 		string searchPattern,
 		EnumerationOptions? enumerationOptions,
-		IStorageContainer parentContainer)
+		IDisposable parentAccess)
 	{
-		IDisposable parentAccess = new NoOpDisposable();
-		if (requestParentAccess)
-		{
-			parentAccess = parentContainer.RequestAccess(FileAccess.Read, FileShare.ReadWrite);
-		}
-
 		using (parentAccess)
 		{
 			enumerationOptions ??= EnumerationOptionsHelper.Compatible;
