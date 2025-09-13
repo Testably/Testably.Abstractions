@@ -1,0 +1,34 @@
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/Testably/Testably.Abstractions.git")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo(@"Testably.Abstractions.Tests, PublicKey=00240000048000009400000006020000002400005253413100040000010001006104741100251820044d92b34b0519a1de0bccd80d6199aadbdcd5931d035462d42f70b0ae7a7db37bab63afb8a8ad0dc21392bb01f1243bfc51df4b5f1975b1b9746fecbed88913b783fccb69efc59e23b0e019e065abd38731711a2d6ac2569ab57d4b4d529f5903f5bee0f4388b2a5f4d5e0fddab6aac18d96aa78c2e73e0")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v10.0", FrameworkDisplayName=".NET 10.0")]
+namespace Testably.Abstractions
+{
+    public sealed class RealFileSystem : System.IO.Abstractions.IFileSystem
+    {
+        public RealFileSystem() { }
+        public System.IO.Abstractions.IDirectory Directory { get; }
+        public System.IO.Abstractions.IDirectoryInfoFactory DirectoryInfo { get; }
+        public System.IO.Abstractions.IDriveInfoFactory DriveInfo { get; }
+        public System.IO.Abstractions.IFile File { get; }
+        public System.IO.Abstractions.IFileInfoFactory FileInfo { get; }
+        public System.IO.Abstractions.IFileStreamFactory FileStream { get; }
+        public System.IO.Abstractions.IFileSystemWatcherFactory FileSystemWatcher { get; }
+        public System.IO.Abstractions.IFileVersionInfoFactory FileVersionInfo { get; }
+        public System.IO.Abstractions.IPath Path { get; }
+    }
+    public sealed class RealRandomSystem : Testably.Abstractions.IRandomSystem
+    {
+        public RealRandomSystem() { }
+        public Testably.Abstractions.RandomSystem.IGuid Guid { get; }
+        public Testably.Abstractions.RandomSystem.IRandomFactory Random { get; }
+    }
+    public sealed class RealTimeSystem : Testably.Abstractions.ITimeSystem
+    {
+        public RealTimeSystem() { }
+        public Testably.Abstractions.TimeSystem.IDateTime DateTime { get; }
+        public Testably.Abstractions.TimeSystem.ITask Task { get; }
+        public Testably.Abstractions.TimeSystem.IThread Thread { get; }
+        public Testably.Abstractions.TimeSystem.ITimerFactory Timer { get; }
+    }
+}

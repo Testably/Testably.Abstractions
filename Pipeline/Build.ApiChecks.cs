@@ -13,11 +13,16 @@ partial class Build
 		.DependsOn(Compile)
 		.Executes(() =>
 		{
-			Project[] projects =
-			[
-				Solution.Tests.Api.Testably_Abstractions_Api_Tests,
-				Solution.Tests.Api.Testably_Abstractions_Core_Api_Tests,
-			];
+			Project[] projects = BuildScope switch
+			{
+				BuildScope.CoreOnly => [Solution.Tests.Api.Testably_Abstractions_Core_Api_Tests,],
+				BuildScope.MainOnly => [Solution.Tests.Api.Testably_Abstractions_Api_Tests,],
+				_ =>
+				[
+					Solution.Tests.Api.Testably_Abstractions_Api_Tests,
+					Solution.Tests.Api.Testably_Abstractions_Core_Api_Tests,
+				],
+			};
 
 			DotNetTest(s => s
 					.SetConfiguration(Configuration)

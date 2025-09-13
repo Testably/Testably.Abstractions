@@ -10,10 +10,10 @@
 		<PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0"/>
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-		<PackageVersion Include="System.Threading.Channels" Version="9.0.8"/>
+		<PackageVersion Include="System.Threading.Channels" Version="6.0.0"/>
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-		<PackageVersion Include="System.Threading.Channels" Version="9.0.8"/>
+		<PackageVersion Include="System.Threading.Channels" Version="8.0.0"/>
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' != 'net8.0' And '$(TargetFramework)' != 'net6.0' ">
 		<PackageVersion Include="System.Threading.Channels" Version="9.0.8"/>
@@ -47,8 +47,8 @@
 		<PackageVersion Include="NUnit3TestAdapter" Version="5.0.0"/>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageVersion Include="Testably.Abstractions.Interface" Version="9.0.0"/>
-		<PackageVersion Include="Testably.Abstractions" Version="9.0.0"/>
+		<PackageVersion Include="Testably.Abstractions.Interface" Version="10.0.0-pre.1"/>
+		<PackageVersion Include="Testably.Abstractions" Version="10.0.0-pre.1"/>
 		<PackageVersion Include="Testably.Abstractions.Testing" Version="4.3.5"/>
 	</ItemGroup>
 	<ItemGroup>

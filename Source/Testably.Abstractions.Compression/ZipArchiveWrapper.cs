@@ -3,6 +3,10 @@ using System.Collections.ObjectModel;
 using System.IO.Compression;
 using System.Linq;
 using Testably.Abstractions.Internal;
+#if FEATURE_COMPRESSION_ASYNC
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace Testably.Abstractions;
 
@@ -73,9 +77,51 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 				entryName,
 				compressionLevel));
 
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipArchive.CreateEntryFromFileAsync(string, string, CancellationToken)" />
+	public async Task<IZipArchiveEntry> CreateEntryFromFileAsync(string sourceFileName,
+		string entryName,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			async () => ZipArchiveEntryWrapper.New(FileSystem, this,
+				await _instance.CreateEntryFromFileAsync(
+					sourceFileName,
+					entryName,
+					cancellationToken)),
+			() => ZipUtilities.CreateEntryFromFile(this,
+				sourceFileName,
+				entryName));
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc
+	///     cref="IZipArchive.CreateEntryFromFileAsync(string, string, CompressionLevel, CancellationToken)" />
+	public async Task<IZipArchiveEntry> CreateEntryFromFileAsync(string sourceFileName,
+		string entryName,
+		CompressionLevel compressionLevel,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			async () => ZipArchiveEntryWrapper.New(FileSystem, this,
+				await _instance.CreateEntryFromFileAsync(
+					sourceFileName,
+					entryName,
+					compressionLevel,
+					cancellationToken)),
+			() => ZipUtilities.CreateEntryFromFile(this,
+				sourceFileName,
+				entryName,
+				compressionLevel));
+#endif
+
 	/// <inheritdoc cref="IDisposable.Dispose()" />
 	public void Dispose()
 		=> _instance.Dispose();
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IAsyncDisposable.DisposeAsync()" />
+	public ValueTask DisposeAsync()
+		=> _instance.DisposeAsync();
+#endif
 
 	/// <inheritdoc cref="IZipArchive.ExtractToDirectory(string)" />
 	public void ExtractToDirectory(string destinationDirectoryName)
@@ -113,6 +159,54 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 				{
 					entry.ExtractRelativeToDirectory(destinationDirectoryName,
 						overwriteFiles);
+				}
+			});
+	}
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipArchive.ExtractToDirectoryAsync(string, CancellationToken)" />
+	public async Task ExtractToDirectoryAsync(string destinationDirectoryName,
+		CancellationToken cancellationToken = default)
+	{
+		if (destinationDirectoryName == null)
+		{
+			throw new ArgumentNullException(nameof(destinationDirectoryName));
+		}
+
+		await Execute.WhenRealFileSystemAsync(FileSystem,
+			async () => await _instance.ExtractToDirectoryAsync(destinationDirectoryName,
+				cancellationToken),
+			() =>
+			{
+				foreach (IZipArchiveEntry entry in Entries)
+				{
+					entry.ExtractRelativeToDirectory(destinationDirectoryName, overwrite: false);
+				}
+			});
+	}
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipArchive.ExtractToDirectoryAsync(string, bool, CancellationToken)" />
+	public async Task ExtractToDirectoryAsync(string destinationDirectoryName,
+		bool overwriteFiles,
+		CancellationToken cancellationToken = default)
+	{
+		if (destinationDirectoryName == null)
+		{
+			throw new ArgumentNullException(nameof(destinationDirectoryName));
+		}
+
+		await Execute.WhenRealFileSystemAsync(FileSystem,
+			async () => await _instance.ExtractToDirectoryAsync(destinationDirectoryName,
+				overwriteFiles, cancellationToken),
+			() =>
+			{
+				foreach (IZipArchiveEntry entry in Entries)
+				{
+					entry.ExtractRelativeToDirectory(destinationDirectoryName,
+						overwrite: overwriteFiles);
 				}
 			});
 	}
