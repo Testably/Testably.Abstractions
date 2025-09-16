@@ -8,6 +8,74 @@ namespace Testably.Abstractions.Tests.RandomSystem;
 [RandomSystemTests]
 public partial class RandomTests
 {
+#if FEATURE_RANDOM_STRINGS
+	[Theory]
+	[InlineData(2)]
+	[InlineData(100)]
+	[InlineData(1000)]
+	public async Task GetHexString_ShouldHaveExpectedLength(int length)
+	{
+		string result = RandomSystem.Random.Shared.GetHexString(length);
+
+		await That(result).HasLength().EqualTo(length);
+	}
+#endif
+
+#if FEATURE_RANDOM_STRINGS
+	[Fact]
+	public async Task GetHexString_ShouldOnlyContainHexadecimalCharacters()
+	{
+		char[] hexadecimalCharacters = "0123456789ABCDEF".ToCharArray();
+
+		string result = RandomSystem.Random.Shared.GetHexString(10000);
+
+		await That(result.ToCharArray()).All().Satisfy(c => hexadecimalCharacters.Contains(c));
+	}
+#endif
+
+#if FEATURE_RANDOM_STRINGS
+	[Fact]
+	public async Task GetHexString_WithDestinationSpan_ShouldOnlyContainHexadecimalCharacters()
+	{
+		char[] buffer = new char[10000];
+		Span<char> destination = new(buffer);
+		char[] hexadecimalCharacters = "0123456789ABCDEF".ToCharArray();
+
+		RandomSystem.Random.Shared.GetHexString(destination);
+
+		char[] destinationArray = destination.ToArray();
+		await That(destinationArray).All().Satisfy(c => hexadecimalCharacters.Contains(c));
+	}
+#endif
+
+#if FEATURE_RANDOM_STRINGS
+	[Fact]
+	public async Task
+		GetHexString_WithDestinationSpan_WithLowercase_ShouldOnlyContainLowercaseHexadecimalCharacters()
+	{
+		char[] buffer = new char[10000];
+		Span<char> destination = new(buffer);
+		char[] hexadecimalCharacters = "0123456789abcdef".ToCharArray();
+
+		RandomSystem.Random.Shared.GetHexString(destination, true);
+
+		char[] destinationArray = destination.ToArray();
+		await That(destinationArray).All().Satisfy(c => hexadecimalCharacters.Contains(c));
+	}
+#endif
+
+#if FEATURE_RANDOM_STRINGS
+	[Fact]
+	public async Task GetHexString_WithLowercase_ShouldOnlyContainLowercaseHexadecimalCharacters()
+	{
+		char[] hexadecimalCharacters = "0123456789abcdef".ToCharArray();
+
+		string result = RandomSystem.Random.Shared.GetHexString(10000, true);
+
+		await That(result.ToCharArray()).All().Satisfy(c => hexadecimalCharacters.Contains(c));
+	}
+#endif
+
 #if FEATURE_RANDOM_ITEMS
 	[Fact]
 	public async Task GetItems_Array_EmptyChoices_ShouldThrowArgumentNullException()
@@ -43,7 +111,8 @@ public partial class RandomTests
 	[Theory]
 	[InlineData(-1)]
 	[InlineData(-200)]
-	public async Task GetItems_Array_NegativeLength_ShouldThrowArgumentOutOfRangeException(int length)
+	public async Task GetItems_Array_NegativeLength_ShouldThrowArgumentOutOfRangeException(
+		int length)
 	{
 		int[] choices = Enumerable.Range(1, 10).ToArray();
 
@@ -53,7 +122,8 @@ public partial class RandomTests
 		}
 
 		await That(Act).Throws<ArgumentOutOfRangeException>()
-			.WithMessage($"length ('{length}') must be a non-negative value. (Parameter 'length'){Environment.NewLine}Actual value was {length}.");
+			.WithMessage(
+				$"length ('{length}') must be a non-negative value. (Parameter 'length'){Environment.NewLine}Actual value was {length}.");
 	}
 #endif
 
@@ -113,7 +183,8 @@ public partial class RandomTests
 
 #if FEATURE_RANDOM_ITEMS
 	[Fact]
-	public async Task GetItems_SpanDestination_LengthLargerThanChoices_ShouldIncludeDuplicateValues()
+	public async Task
+		GetItems_SpanDestination_LengthLargerThanChoices_ShouldIncludeDuplicateValues()
 	{
 		int[] buffer = new int[100];
 		Span<int> destination = new(buffer);
@@ -121,7 +192,7 @@ public partial class RandomTests
 
 		RandomSystem.Random.Shared.GetItems(choices, destination);
 
-		var destinationArray = destination.ToArray();
+		int[] destinationArray = destination.ToArray();
 		await That(destinationArray).All().Satisfy(r => r >= 1 && r <= 10);
 		await That(destinationArray.Length).IsEqualTo(100);
 	}
@@ -137,11 +208,40 @@ public partial class RandomTests
 
 		RandomSystem.Random.Shared.GetItems(choices, destination);
 
-		var destinationArray = destination.ToArray();
+		int[] destinationArray = destination.ToArray();
 		await That(destinationArray).All().Satisfy(r => r >= 1 && r <= 100);
 		await That(destinationArray.Length).IsEqualTo(10);
 	}
 #endif
+
+#if FEATURE_RANDOM_STRINGS
+	[Theory]
+	[InlineData(2)]
+	[InlineData(100)]
+	[InlineData(1000)]
+	public async Task GetString_ShouldHaveExpectedLength(int length)
+	{
+		ReadOnlySpan<char> choices = "abcde".ToCharArray();
+
+		string result = RandomSystem.Random.Shared.GetString(choices, length);
+
+		await That(result).HasLength().EqualTo(length);
+	}
+#endif
+
+#if FEATURE_RANDOM_STRINGS
+	[Theory]
+	[AutoData]
+	public async Task GetString_ShouldOnlyContainProvidedCharacters(char[] chars)
+	{
+		ReadOnlySpan<char> choices = chars;
+
+		string result = RandomSystem.Random.Shared.GetString(choices, 100);
+
+		await That(result.ToCharArray()).All().Satisfy(c => chars.Contains(c));
+	}
+#endif
+
 	[Fact]
 	public async Task Next_MaxValue_ShouldOnlyReturnValidValues()
 	{
@@ -303,7 +403,8 @@ public partial class RandomTests
 			RandomSystem.Random.Shared.Shuffle(values);
 		}
 
-		await That(Act).ThrowsExactly<ArgumentNullException>().WithParamName(nameof(values));	}
+		await That(Act).ThrowsExactly<ArgumentNullException>().WithParamName(nameof(values));
+	}
 #endif
 
 #if FEATURE_RANDOM_ITEMS
