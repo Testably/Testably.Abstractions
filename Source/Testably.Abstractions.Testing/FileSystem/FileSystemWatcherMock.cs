@@ -353,7 +353,9 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			if (!changeDescription.Path.StartsWith(fullPath,
 				_fileSystem.Execute.StringComparisonMode))
 			{
-				return false;
+				return changeDescription.ChangeType == WatcherChangeTypes.Renamed &&
+				       changeDescription.OldPath?.StartsWith(fullPath,
+					       _fileSystem.Execute.StringComparisonMode) == true;
 			}
 		}
 		else if (!string.Equals(
@@ -536,12 +538,28 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 
 		name = transformedName;
+		if (!_fileSystem.Path.IsPathRooted(Path))
+		{
+			string rootedWatchedPath = _fileSystem.Path.GetFullPath(Path);
+			if (path?.StartsWith(rootedWatchedPath, _fileSystem.Execute.StringComparisonMode) ==
+			    true)
+			{
+				path = _fileSystem.Path.Combine(Path, path.Substring(rootedWatchedPath.Length));
+			}
+		}
+
 		return path ?? "";
 	}
 
 	private void TriggerRenameNotification(ChangeDescription item)
 	{
-		if (_fileSystem.Execute.IsWindows)
+		if (!item.Path.StartsWith(Path, _fileSystem.Execute.StringComparisonMode) &&
+		    item.OldPath != null)
+		{
+			Deleted?.Invoke(this, ToFileSystemEventArgs(
+				WatcherChangeTypes.Deleted, item.OldPath, item.OldName));
+		}
+		else if (_fileSystem.Execute.IsWindows)
 		{
 			if (TryMakeRenamedEventArgs(item,
 				out RenamedEventArgs? eventArgs))
@@ -551,9 +569,9 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			else if (item.OldPath != null)
 			{
 				Deleted?.Invoke(this, ToFileSystemEventArgs(
-					item.ChangeType, item.OldPath, item.OldName));
+					WatcherChangeTypes.Deleted, item.OldPath, item.OldName));
 				Created?.Invoke(this, ToFileSystemEventArgs(
-					item.ChangeType, item.Path, item.Name));
+					WatcherChangeTypes.Created, item.Path, item.Name));
 			}
 		}
 		else
@@ -692,7 +710,8 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		public bool TimedOut { get; }
 	}
 
-	internal sealed class ChangeDescriptionEventArgs(ChangeDescription changeDescription) : EventArgs
+	internal sealed class ChangeDescriptionEventArgs(ChangeDescription changeDescription)
+		: EventArgs
 	{
 		public ChangeDescription ChangeDescription { get; } = changeDescription;
 	}
