@@ -1028,7 +1028,7 @@ internal sealed class InMemoryStorage : IStorage
 			ChangeDescription fileSystemChange =
 				_fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Renamed,
 					container.Type,
-					NotifyFilters.FileName,
+					ToNotifyFilters(container.Type),
 					destination,
 					source);
 			if (_containers.TryRemove(source, out IStorageContainer? sourceContainer))

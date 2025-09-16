@@ -612,6 +612,89 @@ public partial class NotifyFiltersTests
 	}
 
 	[Theory]
+	[InlineAutoData(NotifyFilters.DirectoryName)]
+	public async Task NotifyFilter_MoveDirectory_ShouldTriggerChangedEventOnNotifyFilters(
+		NotifyFilters notifyFilter, string sourceName, string destinationName)
+	{
+		//SkipIfLongRunningTestsShouldBeSkipped();
+
+		FileSystem.Initialize();
+		FileSystem.Directory.CreateDirectory(sourceName);
+		RenamedEventArgs? result = null;
+		using ManualResetEventSlim ms = new();
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		fileSystemWatcher.Renamed += (_, eventArgs) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+
+		fileSystemWatcher.NotifyFilter = notifyFilter;
+		fileSystemWatcher.IncludeSubdirectories = true;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.Directory.Move(sourceName, destinationName);
+
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(result).IsNotNull();
+		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
+		await That(result.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
+		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(destinationName));
+		await That(result.OldFullPath).IsEqualTo(FileSystem.Path.GetFullPath(sourceName));
+		await That(result.OldName).IsEqualTo(FileSystem.Path.GetFileName(sourceName));
+	}
+
+	[Theory]
+	[InlineAutoData(NotifyFilters.DirectoryName)]
+	public async Task NotifyFilter_MoveDirectoryOutOfTheWatchedDirectory_ShouldTriggerChangedEventOnNotifyFilters(
+		NotifyFilters notifyFilter, string sourceName, string destinationName)
+	{
+		//SkipIfLongRunningTestsShouldBeSkipped();
+
+		FileSystem.Initialize().WithSubdirectory("watched");
+		var sourcePath = FileSystem.Path.Combine("watched", sourceName);
+		FileSystem.Directory.CreateDirectory(sourcePath);
+		FileSystemEventArgs? result = null;
+		using ManualResetEventSlim ms = new();
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New("watched");
+		fileSystemWatcher.Deleted += (_, eventArgs) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+
+		fileSystemWatcher.NotifyFilter = notifyFilter;
+		fileSystemWatcher.IncludeSubdirectories = true;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.Directory.Move(sourcePath, destinationName);
+
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(result).IsNotNull();
+		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
+		await That(result.FullPath).IsEqualTo(sourcePath);
+		await That(result.Name).IsEqualTo(sourceName);
+	}
+
+	[Theory]
 	[AutoData]
 	public async Task NotifyFilter_WriteFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
