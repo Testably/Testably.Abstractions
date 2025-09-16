@@ -553,15 +553,15 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private void TriggerRenameNotification(ChangeDescription item)
 	{
-		if (_fileSystem.Execute.IsWindows)
+		if (!item.Path.StartsWith(Path, _fileSystem.Execute.StringComparisonMode) &&
+		    item.OldPath != null)
 		{
-			if (!item.Path.StartsWith(Path, _fileSystem.Execute.StringComparisonMode) &&
-			    item.OldPath != null)
-			{
-				Deleted?.Invoke(this, ToFileSystemEventArgs(
-					WatcherChangeTypes.Deleted, item.OldPath, item.OldName));
-			}
-			else if (TryMakeRenamedEventArgs(item,
+			Deleted?.Invoke(this, ToFileSystemEventArgs(
+				WatcherChangeTypes.Deleted, item.OldPath, item.OldName));
+		}
+		else if (_fileSystem.Execute.IsWindows)
+		{
+			if (TryMakeRenamedEventArgs(item,
 				out RenamedEventArgs? eventArgs))
 			{
 				Renamed?.Invoke(this, eventArgs);

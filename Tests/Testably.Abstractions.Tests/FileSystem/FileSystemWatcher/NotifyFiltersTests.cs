@@ -616,7 +616,7 @@ public partial class NotifyFiltersTests
 	public async Task NotifyFilter_MoveDirectory_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string sourceName, string destinationName)
 	{
-		//SkipIfLongRunningTestsShouldBeSkipped();
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
 		FileSystem.Directory.CreateDirectory(sourceName);
@@ -658,7 +658,7 @@ public partial class NotifyFiltersTests
 	public async Task NotifyFilter_MoveDirectoryOutOfTheWatchedDirectory_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string sourceName, string destinationName)
 	{
-		//SkipIfLongRunningTestsShouldBeSkipped();
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize().WithSubdirectory("watched");
 		var sourcePath = FileSystem.Path.Combine("watched", sourceName);
