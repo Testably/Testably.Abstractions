@@ -613,7 +613,7 @@ public partial class NotifyFiltersTests
 
 	[Theory]
 	[InlineAutoData(NotifyFilters.DirectoryName)]
-	public async Task NotifyFilter_MoveDirectory_ShouldTriggerChangedEventOnNotifyFilters(
+	public async Task NotifyFilter_MoveDirectory_ShouldTriggerRenamedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string sourceName, string destinationName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -654,11 +654,13 @@ public partial class NotifyFiltersTests
 	}
 
 	[Theory]
-	[InlineAutoData(NotifyFilters.DirectoryName)]
-	public async Task NotifyFilter_MoveDirectoryOutOfTheWatchedDirectory_ShouldTriggerChangedEventOnNotifyFilters(
-		NotifyFilters notifyFilter, string sourceName, string destinationName)
+	[InlineAutoData(NotifyFilters.DirectoryName, true)]
+	[InlineAutoData(NotifyFilters.DirectoryName, false)]
+	public async Task NotifyFilter_MoveDirectoryOutOfTheWatchedDirectory_ShouldTriggerDeletedEventOnNotifyFilters_OnWindows(
+		NotifyFilters notifyFilter, bool includeSubdirectories, string sourceName, string destinationName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
+		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystem.Initialize().WithSubdirectory("watched");
 		var sourcePath = FileSystem.Path.Combine("watched", sourceName);
@@ -682,7 +684,7 @@ public partial class NotifyFiltersTests
 		};
 
 		fileSystemWatcher.NotifyFilter = notifyFilter;
-		fileSystemWatcher.IncludeSubdirectories = true;
+		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
 		FileSystem.Directory.Move(sourcePath, destinationName);
@@ -690,8 +692,51 @@ public partial class NotifyFiltersTests
 		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
-		await That(result.FullPath).IsEqualTo(sourcePath);
+		await That(result.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(sourcePath));
 		await That(result.Name).IsEqualTo(sourceName);
+	}
+
+	[Theory]
+	[InlineAutoData(NotifyFilters.DirectoryName, true)]
+	[InlineAutoData(NotifyFilters.DirectoryName, false)]
+	public async Task NotifyFilter_MoveDirectoryInToTheWatchedDirectory_ShouldTriggerCreatedEventOnNotifyFilters_OnWindows(
+		NotifyFilters notifyFilter, bool includeSubdirectories, string sourceName, string destinationName)
+	{
+		SkipIfLongRunningTestsShouldBeSkipped();
+		Skip.IfNot(Test.RunsOnWindows);
+
+		FileSystem.Initialize().WithSubdirectory("watched");
+		var destinationPath = FileSystem.Path.Combine("watched", destinationName);
+		FileSystem.Directory.CreateDirectory(sourceName);
+		FileSystemEventArgs? result = null;
+		using ManualResetEventSlim ms = new();
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New("watched");
+		fileSystemWatcher.Created += (_, eventArgs) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+
+		fileSystemWatcher.NotifyFilter = notifyFilter;
+		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.Directory.Move(sourceName, destinationPath);
+
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(result).IsNotNull();
+		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
+		await That(result.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(destinationPath));
+		await That(result.Name).IsEqualTo(destinationPath);
 	}
 
 	[Theory]

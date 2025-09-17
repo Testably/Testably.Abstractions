@@ -299,7 +299,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			fileSystem.File.WriteAllText(expectedOldFullPath, "foo");
 
 			using IFileSystemWatcher fileSystemWatcher =
-				fileSystem.FileSystemWatcher.New(fileSystem.Path.GetFullPath(parentDirectory));
+				fileSystem.FileSystemWatcher.New(parentDirectory);
 			using ManualResetEventSlim ms = new();
 			fileSystemWatcher.Renamed += (_, eventArgs) =>
 			{
