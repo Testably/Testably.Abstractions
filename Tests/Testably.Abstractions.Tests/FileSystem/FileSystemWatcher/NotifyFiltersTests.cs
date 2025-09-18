@@ -525,6 +525,98 @@ public partial class NotifyFiltersTests
 	}
 
 	[Theory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
+	public async Task NotifyFilter_MoveFileOutOfTheWatchedDirectory_ShouldTriggerDeleted_OnWindows(
+		bool includeSubdirectories, string sourcePath, string sourceName,
+		string destinationPath, string destinationName)
+	{
+		SkipIfLongRunningTestsShouldBeSkipped();
+		Skip.IfNot(Test.RunsOnWindows);
+
+		FileSystem.Initialize()
+			.WithSubdirectory(sourcePath).Initialized(s => s
+				.WithFile(sourceName))
+			.WithSubdirectory(destinationPath);
+		FileSystemEventArgs? result = null;
+		using ManualResetEventSlim ms = new();
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(sourcePath);
+		fileSystemWatcher.Deleted += (_, eventArgs) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+
+		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.File.Move(
+			FileSystem.Path.Combine(sourcePath, sourceName),
+			FileSystem.Path.Combine(destinationPath, destinationName));
+
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(result).IsNotNull();
+		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
+		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(BasePath, sourcePath, sourceName));
+		await That(result.Name).IsEqualTo(FileSystem.Path.Combine(sourcePath, sourceName));
+	}
+
+	[Theory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
+	public async Task NotifyFilter_MoveFileInToTheWatchedDirectory_ShouldTriggerCreated_OnWindows(
+		bool includeSubdirectories, string sourcePath, string sourceName,
+		string destinationPath, string destinationName)
+	{
+		SkipIfLongRunningTestsShouldBeSkipped();
+		Skip.IfNot(Test.RunsOnWindows);
+
+		FileSystem.Initialize()
+			.WithSubdirectory(sourcePath).Initialized(s => s
+				.WithFile(sourceName))
+			.WithSubdirectory(destinationPath);
+		FileSystemEventArgs? result = null;
+		using ManualResetEventSlim ms = new();
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(destinationPath);
+		fileSystemWatcher.Created += (_, eventArgs) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+
+		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.File.Move(
+			FileSystem.Path.Combine(sourcePath, sourceName),
+			FileSystem.Path.Combine(destinationPath, destinationName));
+
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(result).IsNotNull();
+		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
+		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
+		await That(result.Name).IsEqualTo(FileSystem.Path.Combine(destinationPath, destinationName));
+	}
+
+	[Theory]
 	[AutoData]
 	public async Task NotifyFilter_MoveFile_ShouldNotNotifyOnOtherFilters(
 		string sourceName, string destinationName)
@@ -692,7 +784,7 @@ public partial class NotifyFiltersTests
 		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
-		await That(result.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(sourcePath));
+		await That(result.FullPath).IsEqualTo(sourcePath);
 		await That(result.Name).IsEqualTo(sourceName);
 	}
 
@@ -735,8 +827,8 @@ public partial class NotifyFiltersTests
 		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
-		await That(result.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(destinationPath));
-		await That(result.Name).IsEqualTo(destinationPath);
+		await That(result.FullPath).IsEqualTo(destinationPath);
+		await That(result.Name).IsEqualTo(destinationName);
 	}
 
 	[Theory]
