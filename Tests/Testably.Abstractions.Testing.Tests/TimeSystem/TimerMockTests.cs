@@ -70,7 +70,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 			.Whose(x => x.Message,
 				it => it.Satisfies(m
 					=> m!.Contains("Cannot access a disposed object.", StringComparison.Ordinal) &&
-					   m.Contains(nameof(ITimer.Change), StringComparison.Ordinal)));
+					   m!.Contains(nameof(ITimer.Change), StringComparison.Ordinal)));
 #endif
 	}
 

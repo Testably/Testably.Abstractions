@@ -126,7 +126,7 @@ internal static class ParityCheckHelper
 		string firstParameterPrefix = "")
 	{
 		return
-			$"{method.ReturnType.PrintType()} {namePrefix}{method.Name}({firstParameterPrefix}{string.Join(", ", method.GetParameters().Select(x => x.ParameterType.PrintType() + " " + x.Name))})";
+			$"{method.ReturnType.PrintType()} {namePrefix}{method.Name}({firstParameterPrefix}{string.Join(", ", method.GetParameters().Select(x => x.PrintParameter()))})";
 	}
 
 	public static string PrintProperty(this PropertyInfo property, string namePrefix = "")
@@ -149,7 +149,6 @@ internal static class ParityCheckHelper
 
 		if (type.GenericTypeArguments.Length > 0)
 		{
-			
 			#pragma warning disable MA0089 // Use an overload with char instead of string
 			return type.Name.Substring(0, type.Name.Length - 2) +
 			       "<" + string.Join(",",
@@ -344,6 +343,17 @@ internal static class ParityCheckHelper
 		}
 
 		return true;
+	}
+
+	private static string PrintParameter(this ParameterInfo parameter)
+	{
+		string value = $"{parameter.ParameterType.PrintType()} {parameter.Name}";
+		if (parameter.HasDefaultValue)
+		{
+			value += $" = {parameter.DefaultValue}";
+		}
+
+		return value;
 	}
 }
 
