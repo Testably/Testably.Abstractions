@@ -566,8 +566,8 @@ public partial class NotifyFiltersTests
 		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
-		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(BasePath, sourcePath, sourceName));
-		await That(result.Name).IsEqualTo(FileSystem.Path.Combine(sourcePath, sourceName));
+		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(sourcePath, sourceName));
+		await That(result.Name).IsEqualTo(sourceName);
 	}
 
 	[Theory]
@@ -612,8 +612,8 @@ public partial class NotifyFiltersTests
 		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
-		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
-		await That(result.Name).IsEqualTo(FileSystem.Path.Combine(destinationPath, destinationName));
+		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(destinationPath, destinationName));
+		await That(result.Name).IsEqualTo(destinationName);
 	}
 
 	[Theory]
@@ -663,7 +663,7 @@ public partial class NotifyFiltersTests
 
 	[Theory]
 	[InlineAutoData(NotifyFilters.FileName)]
-	public async Task NotifyFilter_MoveFile_ShouldTriggerChangedEventOnNotifyFilters(
+	public async Task NotifyFilter_MoveFile_ShouldTriggerRenamedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string sourceName, string destinationName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
