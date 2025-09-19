@@ -350,7 +350,6 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		if (!MatchesWatcherPath(changeDescription.Path))
 		{
 			if (changeDescription.ChangeType != WatcherChangeTypes.Renamed ||
-			    changeDescription.OldPath == null ||
 			    !MatchesWatcherPath(changeDescription.OldPath))
 			{
 				return false;
@@ -375,8 +374,13 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				filter));
 	}
 
-	private bool MatchesWatcherPath(string path)
+	private bool MatchesWatcherPath(string? path)
 	{
+		if (path == null)
+		{
+			return false;
+		}
+
 		string fullPath = _fileSystem.Execute.Path.GetFullPath(Path);
 		if (IncludeSubdirectories)
 		{
@@ -511,15 +515,15 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		FileSystemEventArgs eventArgs = new(changeType, changePath, name);
 		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
 		// HACK: Have to resort to Reflection to override this behavior!
-		#if NETFRAMEWORK
+#if NETFRAMEWORK
 		typeof(FileSystemEventArgs)
 			.GetField("fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
 			.SetValue(eventArgs, path);
-		#else
+#else
 		typeof(FileSystemEventArgs)
 			.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
 			.SetValue(eventArgs, path);
-		#endif
+#endif
 
 		return eventArgs;
 	}
@@ -543,6 +547,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			{
 				path = path.Substring(rootedWatchedPath.Length);
 			}
+
 			transformedName = _fileSystem.Execute.Path.GetFileName(changeDescriptionPath);
 		}
 		else if (transformedName == null ||
