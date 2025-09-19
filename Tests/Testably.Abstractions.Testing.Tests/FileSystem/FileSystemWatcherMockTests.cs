@@ -252,7 +252,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			string expectedName = fileSystem.Path.Combine(parentDirectory, directoryName);
 
 			using IFileSystemWatcher fileSystemWatcher =
-				fileSystem.FileSystemWatcher.New(parentDirectory);
+				fileSystem.FileSystemWatcher.New(fileSystem.Path.GetFullPath(parentDirectory));
 			using ManualResetEventSlim ms = new();
 			fileSystemWatcher.Created += (_, eventArgs) =>
 			{
