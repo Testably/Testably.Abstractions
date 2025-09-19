@@ -35,11 +35,3 @@ These can be enabled by explicitely running the [`Testably.Abstractions.TestSett
   All tests against the real file system. Per default, they are disabled in DEBUG mode.
 
 *Note: These settings are stored locally in `test.settings.json` which is excluded in [`.gitignore`](https://github.com/Testably/Testably.Abstractions/blob/main/.gitignore) so that it only affects the individual developer!*
-
-## Versioning
-This project uses [MinVer](https://github.com/adamralph/minver) for versioning.  
-Tags are automatically added during a release build. In order to trigger a release, create a release branch. After all tests are successful and the manual check is approved, that Tag is automatically applied and Nuget Packages are pushed to [nuget.org](https://www.nuget.org/packages/Testably.Abstractions).
-Release branches must follow the following naming convention:
-```markdown
-    `release/v{major}.{minor}.{revision}`
-```
