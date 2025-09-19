@@ -512,18 +512,21 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			changeName,
 			out string name);
 
-		FileSystemEventArgs eventArgs = new(changeType, changePath, name);
-		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
-		// HACK: Have to resort to Reflection to override this behavior!
+		FileSystemEventArgs eventArgs = new(changeType, Path, name);
+		if (_fileSystem.SimulationMode != SimulationMode.Native)
+		{
+			// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
+			// HACK: Have to resort to Reflection to override this behavior!
 #if NETFRAMEWORK
-		typeof(FileSystemEventArgs)
-			.GetField("fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-			.SetValue(eventArgs, path);
+			typeof(FileSystemEventArgs)
+				.GetField("fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(eventArgs, path);
 #else
-		typeof(FileSystemEventArgs)
-			.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-			.SetValue(eventArgs, path);
+			typeof(FileSystemEventArgs)
+				.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(eventArgs, path);
 #endif
+		}
 
 		return eventArgs;
 	}
@@ -618,26 +621,30 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 		eventArgs = new RenamedEventArgs(
 			changeDescription.ChangeType,
-			path,
+			Path,
 			name,
 			oldName);
-		// RenamedEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/RenamedEventArgs.cs
-		// HACK: Have to resort to Reflection to override this behavior!
+
+		if (_fileSystem.SimulationMode != SimulationMode.Native)
+		{
+			// RenamedEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/RenamedEventArgs.cs
+			// HACK: Have to resort to Reflection to override this behavior!
 #if NETFRAMEWORK
-		typeof(FileSystemEventArgs)
-			.GetField("fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-			.SetValue(eventArgs, path);
-		typeof(RenamedEventArgs)
-			.GetField("oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-			.SetValue(eventArgs, oldPath);
+			typeof(FileSystemEventArgs)
+				.GetField("fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(eventArgs, path);
+			typeof(RenamedEventArgs)
+				.GetField("oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(eventArgs, oldPath);
 #else
-		typeof(FileSystemEventArgs)
-			.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-			.SetValue(eventArgs, path);
-		typeof(RenamedEventArgs)
-			.GetField("_oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-			.SetValue(eventArgs, oldPath);
+			typeof(FileSystemEventArgs)
+				.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(eventArgs, path);
+			typeof(RenamedEventArgs)
+				.GetField("_oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(eventArgs, oldPath);
 #endif
+		}
 
 		return _fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path)?
 			.Equals(_fileSystem.Execute.Path.GetDirectoryName(changeDescription.OldPath),
