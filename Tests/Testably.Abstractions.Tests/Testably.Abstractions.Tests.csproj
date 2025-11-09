@@ -18,6 +18,8 @@
 		<Compile Remove="$(GeneratedFolder)/**/*.cs"/>
 		<Content Include="$(CompilerGeneratedFilesOutputPath)/**"/>
 		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
+		<!-- Implicitely added from Testably.Abstractions -->
+		<PackageReference Remove="Nullable" />
 	</ItemGroup>
 
 </Project>
