@@ -11,6 +11,10 @@
 		<ProjectReference Include="..\Helpers\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj" OutputItemType="Analyzer" />
 	</ItemGroup>
 
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+		<PackageReference Include="System.IO.Compression" />
+	</ItemGroup>
+
 	<PropertyGroup>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 		<GeneratedFolder>Generated</GeneratedFolder>
