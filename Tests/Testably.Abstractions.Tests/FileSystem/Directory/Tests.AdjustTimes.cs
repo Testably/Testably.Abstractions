@@ -157,8 +157,7 @@ public partial class Tests
 	public async Task AdjustTimes_WhenUpdatingAFile_ShouldAdjustTimesOnlyOnWindows(
 		string path1, string path2, string fileName)
 	{
-		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
-			"Works unreliable on .NET Framework");
+		Skip.If(FileSystem is RealFileSystem && Test.RunsOnWindows, "Works unreliable on Windows");
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		string subdirectoryPath = FileSystem.Path.Combine(path1, path2);
