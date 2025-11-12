@@ -109,31 +109,41 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 	
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFileAsync(string, CancellationToken)" />
-	public async Task ExtractToFileAsync(string destinationFileName, CancellationToken cancellationToken = default)
+	public Task ExtractToFileAsync(string destinationFileName, CancellationToken cancellationToken = default)
 	{
 		if (destinationFileName == null)
 		{
 			throw new ArgumentNullException(nameof(destinationFileName));
 		}
 
-		await Execute.WhenRealFileSystemAsync(FileSystem,
-			async () => await _instance.ExtractToFileAsync(destinationFileName, cancellationToken),
-			() => ZipUtilities.ExtractToFile(this, destinationFileName, false));
+		return ExtractToFileImplAsync(destinationFileName, cancellationToken);
+		
+		async Task ExtractToFileImplAsync(string d, CancellationToken c)
+		{
+			await Execute.WhenRealFileSystemAsync(FileSystem,
+				async () => await _instance.ExtractToFileAsync(d, c),
+				() => ZipUtilities.ExtractToFile(this, d, false));
+		}
 	}
 #endif
 	
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFileAsync(string, bool, CancellationToken)" />
-	public async Task ExtractToFileAsync(string destinationFileName, bool overwrite, CancellationToken cancellationToken = default)
+	public Task ExtractToFileAsync(string destinationFileName, bool overwrite, CancellationToken cancellationToken = default)
 	{
 		if (destinationFileName == null)
 		{
 			throw new ArgumentNullException(nameof(destinationFileName));
 		}
 
-		await Execute.WhenRealFileSystemAsync(FileSystem,
-			async () => await _instance.ExtractToFileAsync(destinationFileName, overwrite, cancellationToken),
-			() => ZipUtilities.ExtractToFile(this, destinationFileName, overwrite));
+		return ExtractToFileImplAsync(destinationFileName, overwrite, cancellationToken);
+		
+		async Task ExtractToFileImplAsync(string d, bool o, CancellationToken c)
+		{
+			await Execute.WhenRealFileSystemAsync(FileSystem,
+				async () => await _instance.ExtractToFileAsync(d, o, c),
+				() => ZipUtilities.ExtractToFile(this, d, o));
+		}
 	}
 #endif
 
