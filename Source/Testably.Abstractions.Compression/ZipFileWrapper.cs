@@ -1,8 +1,12 @@
 ﻿using System.IO.Compression;
 using System.Text;
+using System.Threading;
 using Testably.Abstractions.Internal;
 #if FEATURE_COMPRESSION_STREAM
 using System.IO;
+#endif
+#if FEATURE_COMPRESSION_ASYNC
+using System.Threading.Tasks;
 #endif
 
 namespace Testably.Abstractions;
@@ -132,6 +136,138 @@ internal sealed class ZipFileWrapper : IZipFile
 				compressionLevel,
 				includeBaseDirectory,
 				entryNameEncoding));
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream, CompressionLevel, bool, Encoding)" />
+	public async Task CreateFromDirectoryAsync(
+		string sourceDirectoryName,
+		Stream destination,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.CreateFromDirectoryAsync(
+				sourceDirectoryName,
+				destination,
+				cancellationToken),
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destination));
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream, CompressionLevel, bool, Encoding)" />
+	public async Task CreateFromDirectoryAsync(
+		string sourceDirectoryName,
+		Stream destination,
+		CompressionLevel compressionLevel,
+		bool includeBaseDirectory,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.CreateFromDirectoryAsync(
+				sourceDirectoryName,
+				destination,
+				compressionLevel,
+				includeBaseDirectory,
+				cancellationToken),
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destination,
+				compressionLevel,
+				includeBaseDirectory));
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream, CompressionLevel, bool, Encoding)" />
+	public async Task CreateFromDirectoryAsync(
+		string sourceDirectoryName,
+		Stream destination,
+		CompressionLevel compressionLevel,
+		bool includeBaseDirectory,
+		Encoding entryNameEncoding,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.CreateFromDirectoryAsync(
+				sourceDirectoryName,
+				destination,
+				compressionLevel,
+				includeBaseDirectory,
+				entryNameEncoding,
+				cancellationToken),
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destination,
+				compressionLevel,
+				includeBaseDirectory,
+				entryNameEncoding));
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string, CompressionLevel, bool, Encoding)" />
+	public async Task CreateFromDirectoryAsync(
+		string sourceDirectoryName,
+		string destinationArchiveFileName,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.CreateFromDirectoryAsync(
+				sourceDirectoryName,
+				destinationArchiveFileName,
+				cancellationToken),
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destinationArchiveFileName));
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string, CompressionLevel, bool, Encoding)" />
+	public async Task CreateFromDirectoryAsync(
+		string sourceDirectoryName,
+		string destinationArchiveFileName,
+		CompressionLevel compressionLevel,
+		bool includeBaseDirectory,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.CreateFromDirectoryAsync(
+				sourceDirectoryName,
+				destinationArchiveFileName,
+				compressionLevel,
+				includeBaseDirectory,
+				cancellationToken),
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destinationArchiveFileName,
+				compressionLevel,
+				includeBaseDirectory));
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string, CompressionLevel, bool, Encoding)" />
+	public async Task CreateFromDirectoryAsync(
+		string sourceDirectoryName,
+		string destinationArchiveFileName,
+		CompressionLevel compressionLevel,
+		bool includeBaseDirectory,
+		Encoding entryNameEncoding,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.CreateFromDirectoryAsync(
+				sourceDirectoryName,
+				destinationArchiveFileName,
+				compressionLevel,
+				includeBaseDirectory,
+				entryNameEncoding,
+				cancellationToken),
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destinationArchiveFileName,
+				compressionLevel,
+				includeBaseDirectory,
+				entryNameEncoding));
+#endif
 
 #if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string)" />
@@ -272,7 +408,167 @@ internal sealed class ZipFileWrapper : IZipFile
 				entryNameEncoding,
 				overwriteFiles));
 #endif
+	
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="ZipFile.ExtractToDirectoryAsync(Stream, string, CancellationToken)" />
+	public async Task ExtractToDirectoryAsync(
+		Stream source,
+		string destinationDirectoryName,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.ExtractToDirectoryAsync(
+				source,
+				destinationDirectoryName,
+				cancellationToken),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				source,
+				destinationDirectoryName));
+#endif
 
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="ZipFile.ExtractToDirectoryAsync(Stream, string, bool, CancellationToken)" />
+	public async Task ExtractToDirectoryAsync(
+		Stream source,
+		string destinationDirectoryName,
+		bool overwriteFiles,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.ExtractToDirectoryAsync(
+				source,
+				destinationDirectoryName,
+				overwriteFiles,
+				cancellationToken),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				source,
+				destinationDirectoryName,
+				overwriteFiles: overwriteFiles));
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="ZipFile.ExtractToDirectoryAsync(Stream, string, Encoding, CancellationToken)" />
+	public async Task ExtractToDirectoryAsync(
+		Stream source,
+		string destinationDirectoryName,
+		Encoding entryNameEncoding,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.ExtractToDirectoryAsync(
+				source,
+				destinationDirectoryName,
+				entryNameEncoding,
+				cancellationToken),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				source,
+				destinationDirectoryName,
+				entryNameEncoding));
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="ZipFile.ExtractToDirectoryAsync(Stream, string, Encoding, bool, CancellationToken)" />
+	public async Task ExtractToDirectoryAsync(
+		Stream source,
+		string destinationDirectoryName,
+		Encoding entryNameEncoding,
+		bool overwriteFiles,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.ExtractToDirectoryAsync(
+				source,
+				destinationDirectoryName,
+				entryNameEncoding,
+				overwriteFiles,
+				cancellationToken),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				source,
+				destinationDirectoryName,
+				entryNameEncoding,
+				overwriteFiles));
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipFile.ExtractToDirectoryAsync(string, string, CancellationToken)" />
+	public async Task ExtractToDirectoryAsync(
+		string sourceArchiveFileName,
+		string destinationDirectoryName,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.ExtractToDirectoryAsync(
+				sourceArchiveFileName,
+				destinationDirectoryName,
+				cancellationToken),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				sourceArchiveFileName,
+				destinationDirectoryName));
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipFile.ExtractToDirectoryAsync(string, string, bool, CancellationToken)" />
+	public async Task ExtractToDirectoryAsync(
+		string sourceArchiveFileName,
+		string destinationDirectoryName,
+		bool overwriteFiles,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.ExtractToDirectoryAsync(
+				sourceArchiveFileName,
+				destinationDirectoryName,
+				overwriteFiles,
+				cancellationToken),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				sourceArchiveFileName,
+				destinationDirectoryName,
+				overwriteFiles: overwriteFiles));
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipFile.ExtractToDirectoryAsync(string, string, Encoding?, CancellationToken)" />
+	public async Task ExtractToDirectoryAsync(
+		string sourceArchiveFileName,
+		string destinationDirectoryName,
+		Encoding? entryNameEncoding,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.ExtractToDirectoryAsync(
+				sourceArchiveFileName,
+				destinationDirectoryName,
+				entryNameEncoding,
+				cancellationToken),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				sourceArchiveFileName,
+				destinationDirectoryName,
+				entryNameEncoding: entryNameEncoding));
+#endif
+
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipFile.ExtractToDirectoryAsync(string, string, Encoding?, bool, CancellationToken)" />
+	public async Task ExtractToDirectoryAsync(
+		string sourceArchiveFileName,
+		string destinationDirectoryName,
+		Encoding? entryNameEncoding,
+		bool overwriteFiles,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.ExtractToDirectoryAsync(
+				sourceArchiveFileName,
+				destinationDirectoryName,
+				entryNameEncoding,
+				overwriteFiles,
+				cancellationToken),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				sourceArchiveFileName,
+				destinationDirectoryName,
+				entryNameEncoding,
+				overwriteFiles));
+#endif
+	
 	/// <inheritdoc cref="IZipFile.Open(string, ZipArchiveMode)" />
 	public IZipArchive Open(
 		string archiveFileName,
@@ -296,6 +592,36 @@ internal sealed class ZipFileWrapper : IZipFile
 					archiveFileName,
 					mode,
 					entryNameEncoding)));
+	
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipFile.OpenAsync(string, ZipArchiveMode, CancellationToken)" />
+	public async Task<IZipArchive> OpenAsync(
+		string archiveFileName,
+		ZipArchiveMode mode,
+		CancellationToken cancellationToken = default)
+		=> new ZipArchiveWrapper(FileSystem,
+			await Execute.WhenRealFileSystemAsync(FileSystem,
+				() => ZipFile.OpenAsync(archiveFileName, mode, cancellationToken),
+				() => ZipUtilities.Open(FileSystem,
+					archiveFileName,
+					mode)));
+#endif
+	
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipFile.OpenAsync(string, ZipArchiveMode, Encoding?, CancellationToken)" />
+	public async Task<IZipArchive> OpenAsync(
+		string archiveFileName,
+		ZipArchiveMode mode,
+		Encoding? entryNameEncoding,
+		CancellationToken cancellationToken = default)
+		=> new ZipArchiveWrapper(FileSystem,
+			await Execute.WhenRealFileSystemAsync(FileSystem,
+				() => ZipFile.OpenAsync(archiveFileName, mode, entryNameEncoding, cancellationToken),
+				() => ZipUtilities.Open(FileSystem,
+					archiveFileName,
+					mode,
+					entryNameEncoding)));
+#endif
 
 	/// <inheritdoc cref="IZipFile.OpenRead(string)" />
 	public IZipArchive OpenRead(
@@ -306,6 +632,19 @@ internal sealed class ZipFileWrapper : IZipFile
 				() => ZipUtilities.Open(FileSystem,
 					archiveFileName,
 					ZipArchiveMode.Read)));
+	
+#if FEATURE_COMPRESSION_ASYNC
+	/// <inheritdoc cref="IZipFile.OpenReadAsync(string, CancellationToken)" />
+	public async Task<IZipArchive> OpenReadAsync(
+		string archiveFileName,
+		CancellationToken cancellationToken = default)
+		=> new ZipArchiveWrapper(FileSystem,
+			await Execute.WhenRealFileSystemAsync(FileSystem,
+				() => ZipFile.OpenReadAsync(archiveFileName, cancellationToken),
+				() => ZipUtilities.Open(FileSystem,
+					archiveFileName,
+					ZipArchiveMode.Read)));
+#endif
 
 	#endregion
 }

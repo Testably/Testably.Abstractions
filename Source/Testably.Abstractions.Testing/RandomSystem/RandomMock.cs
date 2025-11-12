@@ -62,6 +62,32 @@ internal sealed class RandomMock : IRandom
 
 	#region IRandom Members
 
+#if FEATURE_RANDOM_STRINGS
+	/// <inheritdoc cref="IRandom.GetHexString(int, bool)" />
+	public string GetHexString(int stringLength, bool lowercase = false)
+	{
+		char[] choices = lowercase
+			? "0123456789abcdef".ToCharArray()
+			: "0123456789ABCDEF".ToCharArray();
+		char[] chars = GetItems(choices, stringLength);
+		return new string(chars);
+	}
+#endif
+
+#if FEATURE_RANDOM_STRINGS
+	/// <inheritdoc cref="IRandom.GetHexString(Span{char}, bool)" />
+	public void GetHexString(Span<char> destination, bool lowercase = false)
+	{
+		char[] choices = lowercase
+			? "0123456789abcdef".ToCharArray()
+			: "0123456789ABCDEF".ToCharArray();
+		for (int i = 0; i < destination.Length; i++)
+		{
+			destination[i] = choices[Next(choices.Length)];
+		}
+	}
+#endif
+
 #if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, Span{T})" />
 	public void GetItems<T>(ReadOnlySpan<T> choices, Span<T> destination)
@@ -96,6 +122,15 @@ internal sealed class RandomMock : IRandom
 		T[] items = new T[length];
 		GetItems(choices, items.AsSpan());
 		return items;
+	}
+#endif
+
+#if FEATURE_RANDOM_STRINGS
+	/// <inheritdoc cref="IRandom.GetString(ReadOnlySpan{char}, int)" />
+	public string GetString(ReadOnlySpan<char> choices, int length)
+	{
+		char[] chars = GetItems(choices, length);
+		return new string(chars);
 	}
 #endif
 

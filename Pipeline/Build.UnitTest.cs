@@ -18,6 +18,7 @@ partial class Build
 	Target DotNetUnitTests => _ => _
 		.Unlisted()
 		.DependsOn(Compile)
+		.OnlyWhenDynamic(() => BuildScope != BuildScope.CoreOnly)
 		.Executes(() =>
 		{
 			string[] excludedFrameworks =

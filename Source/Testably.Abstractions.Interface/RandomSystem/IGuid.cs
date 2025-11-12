@@ -13,9 +13,6 @@ public interface IGuid : IRandomSystemEntity
 	/// <inheritdoc cref="Guid.Empty" />
 	Guid Empty { get; }
 
-	/// <inheritdoc cref="Guid.NewGuid()" />
-	Guid NewGuid();
-
 #if FEATURE_GUID_V7
 	/// <inheritdoc cref="Guid.CreateVersion7()" />
 	Guid CreateVersion7();
@@ -26,6 +23,9 @@ public interface IGuid : IRandomSystemEntity
 	Guid CreateVersion7(DateTimeOffset timestamp);
 #endif
 
+	/// <inheritdoc cref="Guid.NewGuid()" />
+	Guid NewGuid();
+
 #if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="Guid.Parse(string)" />
 	Guid Parse(string input);
@@ -34,6 +34,16 @@ public interface IGuid : IRandomSystemEntity
 #if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="Guid.Parse(ReadOnlySpan{char})" />
 	Guid Parse(ReadOnlySpan<char> input);
+#endif
+
+#if FEATURE_GUID_PARSE_UTF8
+	/// <inheritdoc cref="Guid.Parse(ReadOnlySpan{byte})" />
+	Guid Parse(ReadOnlySpan<byte> utf8Text);
+#endif
+
+#if FEATURE_GUID_PARSE_UTF8
+	/// <inheritdoc cref="Guid.Parse(ReadOnlySpan{byte}, IFormatProvider)" />
+	Guid Parse(ReadOnlySpan<byte> utf8Text, IFormatProvider provider);
 #endif
 
 #if FEATURE_GUID_FORMATPROVIDER
@@ -74,6 +84,16 @@ public interface IGuid : IRandomSystemEntity
 #if FEATURE_GUID_FORMATPROVIDER
 	/// <inheritdoc cref="Guid.TryParse(ReadOnlySpan{char}, IFormatProvider?, out Guid)" />
 	bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Guid result);
+#endif
+
+#if FEATURE_GUID_PARSE_UTF8
+	/// <inheritdoc cref="Guid.TryParse(ReadOnlySpan{byte}, out Guid)" />
+	bool TryParse(ReadOnlySpan<byte> utf8Text, out Guid result);
+#endif
+
+#if FEATURE_GUID_PARSE_UTF8
+	/// <inheritdoc cref="Guid.TryParse(ReadOnlySpan{byte}, IFormatProvider, out Guid)" />
+	bool TryParse(ReadOnlySpan<byte> utf8Text, IFormatProvider provider, out Guid result);
 #endif
 
 #if FEATURE_GUID_PARSE

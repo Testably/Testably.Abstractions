@@ -47,8 +47,8 @@
 		<PackageVersion Include="NUnit3TestAdapter" Version="5.2.0"/>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageVersion Include="Testably.Abstractions.Interface" Version="9.0.0"/>
-		<PackageVersion Include="Testably.Abstractions" Version="9.0.0"/>
+		<PackageVersion Include="Testably.Abstractions.Interface" Version="10.0.0-pre.1"/>
+		<PackageVersion Include="Testably.Abstractions" Version="10.0.0-pre.1"/>
 		<PackageVersion Include="Testably.Abstractions.Testing" Version="4.3.9"/>
 	</ItemGroup>
 	<ItemGroup>

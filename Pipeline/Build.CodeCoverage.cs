@@ -11,6 +11,7 @@ partial class Build
 {
 	Target CodeCoverage => _ => _
 		.DependsOn(UnitTests)
+		.OnlyWhenDynamic(() => BuildScope != BuildScope.CoreOnly)
 		.Executes(() =>
 		{
 			ReportGenerator(s => s
