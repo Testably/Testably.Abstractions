@@ -29,7 +29,7 @@ public partial class ExistsTests
 	[Fact]
 	public async Task Exists_ForwardSlash_ShouldReturnTrue()
 	{
-		FileSystem.InitializeIn("D:");
+		FileSystem.InitializeIn("/");
 
 		bool result = FileSystem.Directory.Exists("/");
 

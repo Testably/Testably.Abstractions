@@ -14,11 +14,11 @@ jobs:
                 os: [ ubuntu-latest, windows-latest, macos-latest ]
         runs-on: ${{ matrix.os }}
         steps:
-            -   uses: actions/checkout@v4
+            -   uses: actions/checkout@v5
                 with:
                     fetch-depth: 0
             -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@v4
+                uses: actions/setup-dotnet@v5
                 with:
                     dotnet-version: |
                         6.0.x
@@ -46,11 +46,11 @@ jobs:
         env:
             DOTNET_NOLOGO: true
         steps:
-            -   uses: actions/checkout@v4
+            -   uses: actions/checkout@v5
                 with:
                     fetch-depth: 0
             -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@v4
+                uses: actions/setup-dotnet@v5
                 with:
                     dotnet-version: |
                         6.0.x
@@ -78,11 +78,11 @@ jobs:
         permissions:
             pull-requests: write
         steps:
-            -   uses: actions/checkout@v4
+            -   uses: actions/checkout@v5
                 with:
                     fetch-depth: 0
             -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@v4
+                uses: actions/setup-dotnet@v5
                 with:
                     dotnet-version: |
                         6.0.x
@@ -104,11 +104,11 @@ jobs:
         permissions:
             pull-requests: write
         steps:
-            -   uses: actions/checkout@v4
+            -   uses: actions/checkout@v5
                 with:
                     fetch-depth: 0
             -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@v4
+                uses: actions/setup-dotnet@v5
                 with:
                     dotnet-version: |
                         6.0.x
@@ -122,18 +122,18 @@ jobs:
     
     static-code-analysis:
         name: "Static code analysis"
-        if: ${{ github.actor == 'vbreuss' }}
+        if: ${{ github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name }}
         runs-on: ubuntu-latest
         env:
             REPORTGENERATOR_LICENSE: ${{ secrets.REPORTGENERATOR_LICENSE }}
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
             DOTNET_NOLOGO: true
         steps:
-            -   uses: actions/checkout@v4
+            -   uses: actions/checkout@v5
                 with:
                     fetch-depth: 0
             -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@v4
+                uses: actions/setup-dotnet@v5
                 with:
                     dotnet-version: |
                         6.0.x

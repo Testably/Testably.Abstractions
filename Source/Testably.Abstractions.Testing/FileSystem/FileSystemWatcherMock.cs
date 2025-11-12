@@ -347,23 +347,13 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private bool MatchesFilter(ChangeDescription changeDescription)
 	{
-		string fullPath = _fileSystem.Execute.Path.GetFullPath(Path);
-		if (IncludeSubdirectories)
+		if (!MatchesWatcherPath(changeDescription.Path))
 		{
-			if (!changeDescription.Path.StartsWith(fullPath,
-				_fileSystem.Execute.StringComparisonMode))
+			if (changeDescription.ChangeType != WatcherChangeTypes.Renamed ||
+			    !MatchesWatcherPath(changeDescription.OldPath))
 			{
-				return changeDescription.ChangeType == WatcherChangeTypes.Renamed &&
-				       changeDescription.OldPath?.StartsWith(fullPath,
-					       _fileSystem.Execute.StringComparisonMode) == true;
+				return false;
 			}
-		}
-		else if (!string.Equals(
-			_fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path),
-			fullPath,
-			_fileSystem.Execute.StringComparisonMode))
-		{
-			return false;
 		}
 
 		if ((NotifyFilter & changeDescription.NotifyFilters) == 0)
@@ -382,6 +372,23 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				EnumerationOptionsHelper.Compatible,
 				_fileSystem.Execute.Path.GetFileName(changeDescription.Path),
 				filter));
+	}
+
+	private bool MatchesWatcherPath(string? path)
+	{
+		if (path == null)
+		{
+			return false;
+		}
+
+		string fullPath = _fileSystem.Execute.Path.GetFullPath(Path);
+		if (IncludeSubdirectories)
+		{
+			return path.StartsWith(fullPath, _fileSystem.Execute.StringComparisonMode);
+		}
+
+		return string.Equals(_fileSystem.Execute.Path.GetDirectoryName(path), fullPath,
+			_fileSystem.Execute.StringComparisonMode);
 	}
 
 	private void NotifyChange(ChangeDescription item)
@@ -505,15 +512,20 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			changeName,
 			out string name);
 
-		FileSystemEventArgs eventArgs = new(changeType, path, name);
+		FileSystemEventArgs eventArgs = new(changeType, Path, name);
 		if (_fileSystem.SimulationMode != SimulationMode.Native)
 		{
 			// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
 			// HACK: Have to resort to Reflection to override this behavior!
-			string fullPath = _fileSystem.Execute.Path.Combine(path, name);
+#if NETFRAMEWORK
+			typeof(FileSystemEventArgs)
+				.GetField("fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(eventArgs, path);
+#else
 			typeof(FileSystemEventArgs)
 				.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-				.SetValue(eventArgs, fullPath);
+				.SetValue(eventArgs, path);
+#endif
 		}
 
 		return eventArgs;
@@ -526,40 +538,35 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	{
 		string? transformedName = changeDescriptionName;
 		string? path = changeDescriptionPath;
-		if (transformedName == null ||
-		    _fileSystem.Execute.Path.IsPathRooted(changeDescriptionName))
+		if (!_fileSystem.Path.IsPathRooted(Path))
+		{
+			string rootedWatchedPath = _fileSystem.Directory.GetCurrentDirectory();
+			if (!rootedWatchedPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
+			{
+				rootedWatchedPath += _fileSystem.Path.DirectorySeparatorChar;
+			}
+
+			if (path.StartsWith(rootedWatchedPath, _fileSystem.Execute.StringComparisonMode))
+			{
+				path = path.Substring(rootedWatchedPath.Length);
+			}
+
+			transformedName = _fileSystem.Execute.Path.GetFileName(changeDescriptionPath);
+		}
+		else if (transformedName == null ||
+		         _fileSystem.Execute.Path.IsPathRooted(changeDescriptionName))
 		{
 			transformedName = _fileSystem.Execute.Path.GetFileName(changeDescriptionPath);
-			path = _fileSystem.Execute.Path.GetDirectoryName(path);
-		}
-		else if (path.EndsWith(transformedName, _fileSystem.Execute.StringComparisonMode))
-		{
-			path = path.Substring(0, path.Length - transformedName.Length);
 		}
 
 		name = transformedName;
-		if (!_fileSystem.Path.IsPathRooted(Path))
-		{
-			string rootedWatchedPath = _fileSystem.Path.GetFullPath(Path);
-			if (path?.StartsWith(rootedWatchedPath, _fileSystem.Execute.StringComparisonMode) ==
-			    true)
-			{
-				path = _fileSystem.Path.Combine(Path, path.Substring(rootedWatchedPath.Length));
-			}
-		}
 
 		return path ?? "";
 	}
 
 	private void TriggerRenameNotification(ChangeDescription item)
 	{
-		if (!item.Path.StartsWith(Path, _fileSystem.Execute.StringComparisonMode) &&
-		    item.OldPath != null)
-		{
-			Deleted?.Invoke(this, ToFileSystemEventArgs(
-				WatcherChangeTypes.Deleted, item.OldPath, item.OldName));
-		}
-		else if (_fileSystem.Execute.IsWindows)
+		if (_fileSystem.Execute.IsWindows)
 		{
 			if (TryMakeRenamedEventArgs(item,
 				out RenamedEventArgs? eventArgs))
@@ -568,10 +575,17 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			}
 			else if (item.OldPath != null)
 			{
-				Deleted?.Invoke(this, ToFileSystemEventArgs(
-					WatcherChangeTypes.Deleted, item.OldPath, item.OldName));
-				Created?.Invoke(this, ToFileSystemEventArgs(
-					WatcherChangeTypes.Created, item.Path, item.Name));
+				if (MatchesWatcherPath(item.OldPath))
+				{
+					Deleted?.Invoke(this, ToFileSystemEventArgs(
+						WatcherChangeTypes.Deleted, item.OldPath, item.OldName));
+				}
+
+				if (MatchesWatcherPath(item.Path))
+				{
+					Created?.Invoke(this, ToFileSystemEventArgs(
+						WatcherChangeTypes.Created, item.Path, item.Name));
+				}
 			}
 		}
 		else
@@ -600,28 +614,36 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			changeDescription.Name,
 			out string name);
 
-		TransformPathAndName(
+		string oldPath = TransformPathAndName(
 			changeDescription.OldPath,
 			changeDescription.OldName,
 			out string oldName);
 
 		eventArgs = new RenamedEventArgs(
 			changeDescription.ChangeType,
-			path,
+			Path,
 			name,
 			oldName);
+
 		if (_fileSystem.SimulationMode != SimulationMode.Native)
 		{
 			// RenamedEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/RenamedEventArgs.cs
 			// HACK: Have to resort to Reflection to override this behavior!
-			string fullPath = _fileSystem.Execute.Path.Combine(path, name);
+#if NETFRAMEWORK
+			typeof(FileSystemEventArgs)
+				.GetField("fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(eventArgs, path);
+			typeof(RenamedEventArgs)
+				.GetField("oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(eventArgs, oldPath);
+#else
 			typeof(FileSystemEventArgs)
 				.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-				.SetValue(eventArgs, fullPath);
-			string oldFullPath = _fileSystem.Execute.Path.Combine(path, oldName);
+				.SetValue(eventArgs, path);
 			typeof(RenamedEventArgs)
 				.GetField("_oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-				.SetValue(eventArgs, oldFullPath);
+				.SetValue(eventArgs, oldPath);
+#endif
 		}
 
 		return _fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path)?
