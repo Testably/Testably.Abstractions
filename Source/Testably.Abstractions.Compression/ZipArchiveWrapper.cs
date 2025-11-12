@@ -166,7 +166,7 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="IZipArchive.ExtractToDirectoryAsync(string, CancellationToken)" />
-	public async Task ExtractToDirectoryAsync(string destinationDirectoryName,
+	public Task ExtractToDirectoryAsync(string destinationDirectoryName,
 		CancellationToken cancellationToken = default)
 	{
 		if (destinationDirectoryName == null)
@@ -174,22 +174,26 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 			throw new ArgumentNullException(nameof(destinationDirectoryName));
 		}
 
-		await Execute.WhenRealFileSystemAsync(FileSystem,
-			async () => await _instance.ExtractToDirectoryAsync(destinationDirectoryName,
-				cancellationToken),
-			() =>
-			{
-				foreach (IZipArchiveEntry entry in Entries)
+		return ExtractToDirectoryImplAsync(destinationDirectoryName, cancellationToken);
+
+		async Task ExtractToDirectoryImplAsync(string d, CancellationToken c)
+		{
+			await Execute.WhenRealFileSystemAsync(FileSystem,
+				async () => await _instance.ExtractToDirectoryAsync(d, c),
+				() =>
 				{
-					entry.ExtractRelativeToDirectory(destinationDirectoryName, overwrite: false);
-				}
-			});
+					foreach (IZipArchiveEntry entry in Entries)
+					{
+						entry.ExtractRelativeToDirectory(d, overwrite: false);
+					}
+				});
+		}
 	}
 #endif
 
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="IZipArchive.ExtractToDirectoryAsync(string, bool, CancellationToken)" />
-	public async Task ExtractToDirectoryAsync(string destinationDirectoryName,
+	public Task ExtractToDirectoryAsync(string destinationDirectoryName,
 		bool overwriteFiles,
 		CancellationToken cancellationToken = default)
 	{
@@ -198,17 +202,20 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 			throw new ArgumentNullException(nameof(destinationDirectoryName));
 		}
 
-		await Execute.WhenRealFileSystemAsync(FileSystem,
-			async () => await _instance.ExtractToDirectoryAsync(destinationDirectoryName,
-				overwriteFiles, cancellationToken),
-			() =>
-			{
-				foreach (IZipArchiveEntry entry in Entries)
+		return ExtractToDirectoryImplAsync(destinationDirectoryName, overwriteFiles, cancellationToken);
+
+		async Task ExtractToDirectoryImplAsync(string d, bool o, CancellationToken c)
+		{
+			await Execute.WhenRealFileSystemAsync(FileSystem,
+				async () => await _instance.ExtractToDirectoryAsync(d, o, c),
+				() =>
 				{
-					entry.ExtractRelativeToDirectory(destinationDirectoryName,
-						overwrite: overwriteFiles);
-				}
-			});
+					foreach (IZipArchiveEntry entry in Entries)
+					{
+						entry.ExtractRelativeToDirectory(d, overwrite: o);
+					}
+				});
+		}
 	}
 #endif
 
