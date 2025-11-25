@@ -249,7 +249,6 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystemEventArgs? result = null;
 			string expectedFullPath = fileSystem.Path.GetFullPath(
 				fileSystem.Path.Combine(parentDirectory, directoryName));
-			string expectedName = fileSystem.Path.Combine(parentDirectory, directoryName);
 
 			using IFileSystemWatcher fileSystemWatcher =
 				fileSystem.FileSystemWatcher.New(fileSystem.Path.GetFullPath(parentDirectory));
@@ -269,12 +268,12 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			};
 			fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
 			fileSystemWatcher.EnableRaisingEvents = true;
-			fileSystem.Directory.CreateDirectory(expectedName);
+			fileSystem.Directory.CreateDirectory(expectedFullPath);
 			ms.Wait(5000, TestContext.Current.CancellationToken);
 
 			await That(result).IsNotNull();
 			await That(result!.FullPath).IsEqualTo(expectedFullPath);
-			await That(result.Name).IsEqualTo(expectedName);
+			await That(result.Name).IsEqualTo(directoryName);
 			await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
 		}
 #endif
