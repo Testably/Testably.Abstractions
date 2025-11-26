@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
@@ -126,7 +125,142 @@ public partial class IncludeSubdirectoriesTests
 	[Theory]
 	[InlineAutoData(true)]
 	[InlineAutoData(false)]
-	public async Task IncludeSubdirectories_SetToTrue_ArgsNameShouldContainRelativePath(
+	public async Task IncludeSubdirectories_SetToTrue_Created_ArgsNameShouldContainRelativePath(
+		bool watchRootedPath,
+		string baseDirectory,
+		string subdirectoryName,
+		string subSubdirectoryName,
+		string fileName
+	)
+	{
+		// Arrange
+		FileSystem.Initialize().WithSubdirectory(baseDirectory)
+			.Initialized(s => s.WithSubdirectory(subdirectoryName)
+				             .Initialized(ss => ss.WithSubdirectory(subSubdirectoryName))
+			);
+
+		string filePath = FileSystem.Path.Combine(
+			baseDirectory, subdirectoryName, subSubdirectoryName, fileName
+		);
+
+		string expectedFileName = FileSystem.Path.Combine(
+			subdirectoryName, subSubdirectoryName, fileName
+		);
+
+		string watchPath = watchRootedPath
+			? FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), baseDirectory)
+			: baseDirectory;
+
+		using ManualResetEventSlim createdMre = new();
+		FileSystemEventArgs? createdArgs = null;
+
+		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New(watchPath);
+
+		fileSystemWatcher.Created += (_, eventArgs) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				createdArgs = eventArgs;
+				createdMre.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+
+		fileSystemWatcher.IncludeSubdirectories = true;
+		fileSystemWatcher.EnableRaisingEvents = true;
+		
+		// Act
+
+		FileSystem.File.Create(filePath).Dispose();
+		
+		// Assert
+
+		await That(createdMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
+
+		await That(createdArgs).IsNotNull().And
+			.Satisfies(args => string.Equals(args?.Name, expectedFileName, StringComparison.Ordinal)
+			);
+	}
+
+	[Theory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
+	public async Task IncludeSubdirectories_SetToTrue_Changed_ArgsNameShouldContainRelativePath(
+		bool watchRootedPath,
+		string baseDirectory,
+		string subdirectoryName,
+		string subSubdirectoryName,
+		string fileName
+	)
+	{
+		// Arrange
+		FileSystem.Initialize().WithSubdirectory(baseDirectory)
+			.Initialized(s => s.WithSubdirectory(subdirectoryName)
+				             .Initialized(ss => ss.WithSubdirectory(subSubdirectoryName))
+			);
+
+		string filePath = FileSystem.Path.Combine(
+			baseDirectory, subdirectoryName, subSubdirectoryName, fileName
+		);
+
+		string expectedFileName = FileSystem.Path.Combine(
+			subdirectoryName, subSubdirectoryName, fileName
+		);
+
+		string watchPath = watchRootedPath
+			? FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), baseDirectory)
+			: baseDirectory;
+
+		using ManualResetEventSlim changedMre = new();
+		FileSystemEventArgs? changedArgs = null;
+
+		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New(watchPath);
+
+		fileSystemWatcher.Changed += (_, eventArgs) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				// OS fires for subSubDir due to item changing
+				if (!string.Equals(eventArgs.Name, expectedFileName, StringComparison.Ordinal))
+				{
+					return;
+				}
+
+				changedArgs ??= eventArgs;
+				changedMre.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+		
+		fileSystemWatcher.IncludeSubdirectories = true;
+		fileSystemWatcher.EnableRaisingEvents = true;
+		
+		// Act
+
+		FileSystem.File.Create(filePath).Dispose();
+		FileSystem.File.WriteAllText(filePath, "Hello World!");
+		
+		// Assert
+
+		await That(changedMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
+
+		await That(changedArgs).IsNotNull().And
+			.Satisfies(args => string.Equals(args?.Name, expectedFileName, StringComparison.Ordinal)
+			);
+	}
+
+	[Theory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
+	public async Task IncludeSubdirectories_SetToTrue_Renamed_ArgsNameShouldContainRelativePath(
 		bool watchRootedPath,
 		string baseDirectory,
 		string subdirectoryName,
@@ -156,57 +290,17 @@ public partial class IncludeSubdirectoriesTests
 			? FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), baseDirectory)
 			: baseDirectory;
 
-		using ManualResetEventSlim createdMre = new();
-		using ManualResetEventSlim changedMre = new();
 		using ManualResetEventSlim renamedMre = new();
-		using ManualResetEventSlim deletedMre = new();
-		FileSystemEventArgs? createdArgs = null;
-		FileSystemEventArgs? changedArgs = null;
 		RenamedEventArgs? renamedArgs = null;
-		FileSystemEventArgs? deletedArgs = null;
 
 		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New(watchPath);
-
-		fileSystemWatcher.Created += (_, eventArgs) =>
-		{
-			// ReSharper disable once AccessToDisposedClosure
-			try
-			{
-				createdArgs ??= eventArgs;
-				createdMre.Set();
-			}
-			catch (ObjectDisposedException)
-			{
-				// Ignore any ObjectDisposedException
-			}
-		};
-
-		fileSystemWatcher.Changed += (_, eventArgs) =>
-		{
-			// ReSharper disable once AccessToDisposedClosure
-			try
-			{
-				// OS fires for subSubDir due to item changing
-				if (!string.Equals(eventArgs.Name, expectedFileName, StringComparison.Ordinal))
-				{
-					return;
-				}
-
-				changedArgs ??= eventArgs;
-				changedMre.Set();
-			}
-			catch (ObjectDisposedException)
-			{
-				// Ignore any ObjectDisposedException
-			}
-		};
 
 		fileSystemWatcher.Renamed += (_, eventArgs) =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				renamedArgs ??= eventArgs;
+				renamedArgs = eventArgs;
 				renamedMre.Set();
 			}
 			catch (ObjectDisposedException)
@@ -214,6 +308,62 @@ public partial class IncludeSubdirectoriesTests
 				// Ignore any ObjectDisposedException
 			}
 		};
+
+		fileSystemWatcher.IncludeSubdirectories = true;
+		fileSystemWatcher.EnableRaisingEvents = true;
+		
+		// Act
+
+		FileSystem.File.Create(filePath).Dispose();
+		FileSystem.File.Move(filePath, newFilePath);
+		
+		// Assert
+
+		await That(renamedMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
+
+		await That(renamedArgs).IsNotNull().And
+			.Satisfies(args => string.Equals(
+				           args?.Name, expectedNewFileName, StringComparison.Ordinal
+			           )
+			).And.Satisfies(args => string.Equals(
+				                args?.OldName, expectedFileName, StringComparison.Ordinal
+			                )
+			);
+	}
+
+	[Theory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
+	public async Task IncludeSubdirectories_SetToTrue_Deleted_ArgsNameShouldContainRelativePath(
+		bool watchRootedPath,
+		string baseDirectory,
+		string subdirectoryName,
+		string subSubdirectoryName,
+		string fileName
+	)
+	{
+		// Arrange
+		FileSystem.Initialize().WithSubdirectory(baseDirectory)
+			.Initialized(s => s.WithSubdirectory(subdirectoryName)
+				             .Initialized(ss => ss.WithSubdirectory(subSubdirectoryName))
+			);
+
+		string filePath = FileSystem.Path.Combine(
+			baseDirectory, subdirectoryName, subSubdirectoryName, fileName
+		);
+
+		string expectedFileName = FileSystem.Path.Combine(
+			subdirectoryName, subSubdirectoryName, fileName
+		);
+
+		string watchPath = watchRootedPath
+			? FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), baseDirectory)
+			: baseDirectory;
+
+		using ManualResetEventSlim deletedMre = new();
+		FileSystemEventArgs? deletedArgs = null;
+
+		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New(watchPath);
 
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
@@ -235,36 +385,14 @@ public partial class IncludeSubdirectoriesTests
 		// Act
 
 		FileSystem.File.Create(filePath).Dispose();
-		FileSystem.File.WriteAllText(filePath, "Hello World!");
-		FileSystem.File.Move(filePath, newFilePath);
-		FileSystem.File.Delete(newFilePath);
+		FileSystem.File.Delete(filePath);
 		
 		// Assert
 
-		await That(createdMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
-		await That(changedMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
-		await That(renamedMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
 		await That(deletedMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
 
-		await That(createdArgs).IsNotNull().And
-			.Satisfies(args => string.Equals(args?.Name, expectedFileName, StringComparison.Ordinal)
-			);
-
-		await That(changedArgs).IsNotNull().And
-			.Satisfies(args => string.Equals(args?.Name, expectedFileName, StringComparison.Ordinal)
-			);
-
-		await That(renamedArgs).IsNotNull().And
-			.Satisfies(args => string.Equals(
-				           args?.Name, expectedNewFileName, StringComparison.Ordinal
-			           )
-			).And.Satisfies(args => string.Equals(
-				                args?.OldName, expectedFileName, StringComparison.Ordinal
-			                )
-			);
-
 		await That(deletedArgs).IsNotNull().And.Satisfies(args => string.Equals(
-			                                                  args?.Name, expectedNewFileName,
+			                                                  args?.Name, expectedFileName,
 			                                                  StringComparison.Ordinal
 		                                                  )
 		);
