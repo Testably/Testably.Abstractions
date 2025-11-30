@@ -128,11 +128,11 @@ public partial class IncludeSubdirectoriesTests
 	public async Task IncludeSubdirectories_SetToTrue_Created_ArgsNameShouldContainRelativePath(
 		bool watchRootedPath,
 		string baseDirectory,
-		string subdirectoryName,
-		string subSubdirectoryName,
 		string fileName
 	)
 	{
+		string subdirectoryName = "a";
+		string subSubdirectoryName = "b";
 		// Arrange
 		FileSystem.Initialize().WithSubdirectory(baseDirectory)
 			.Initialized(s => s.WithSubdirectory(subdirectoryName)
@@ -192,11 +192,11 @@ public partial class IncludeSubdirectoriesTests
 	public async Task IncludeSubdirectories_SetToTrue_Changed_ArgsNameShouldContainRelativePath(
 		bool watchRootedPath,
 		string baseDirectory,
-		string subdirectoryName,
-		string subSubdirectoryName,
 		string fileName
 	)
 	{
+		string subdirectoryName = "a";
+		string subSubdirectoryName = "b";
 		// Arrange
 		FileSystem.Initialize().WithSubdirectory(baseDirectory)
 			.Initialized(s => s.WithSubdirectory(subdirectoryName)
@@ -263,11 +263,11 @@ public partial class IncludeSubdirectoriesTests
 	public async Task IncludeSubdirectories_SetToTrue_Renamed_ArgsNameShouldContainRelativePath(
 		bool watchRootedPath,
 		string baseDirectory,
-		string subdirectoryName,
-		string subSubdirectoryName,
 		string fileName
 	)
 	{
+		string subdirectoryName = "a";
+		string subSubdirectoryName = "b";
 		// Arrange
 		FileSystem.Initialize().WithSubdirectory(baseDirectory)
 			.Initialized(s => s.WithSubdirectory(subdirectoryName)
@@ -337,11 +337,11 @@ public partial class IncludeSubdirectoriesTests
 	public async Task IncludeSubdirectories_SetToTrue_Deleted_ArgsNameShouldContainRelativePath(
 		bool watchRootedPath,
 		string baseDirectory,
-		string subdirectoryName,
-		string subSubdirectoryName,
 		string fileName
 	)
 	{
+		string subdirectoryName = "a";
+		string subSubdirectoryName = "b";
 		// Arrange
 		FileSystem.Initialize().WithSubdirectory(baseDirectory)
 			.Initialized(s => s.WithSubdirectory(subdirectoryName)
