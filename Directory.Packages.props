@@ -49,7 +49,7 @@
 	<ItemGroup>
 		<PackageVersion Include="Testably.Abstractions.Interface" Version="10.0.0"/>
 		<PackageVersion Include="Testably.Abstractions" Version="10.0.0"/>
-		<PackageVersion Include="Testably.Abstractions.Testing" Version="4.3.9"/>
+		<PackageVersion Include="Testably.Abstractions.Testing" Version="5.0.1"/>
 	</ItemGroup>
 	<ItemGroup>
 		<PackageVersion Include="Meziantou.Analyzer" Version="2.0.257"/>
