@@ -133,7 +133,6 @@ public partial class IncludeSubdirectoriesTests
 	{
 		string subdirectoryName = "a";
 		string subSubdirectoryName = "b";
-		// Arrange
 		FileSystem.Initialize().WithSubdirectory(baseDirectory)
 			.Initialized(s => s.WithSubdirectory(subdirectoryName)
 				             .Initialized(ss => ss.WithSubdirectory(subSubdirectoryName))
@@ -172,18 +171,14 @@ public partial class IncludeSubdirectoriesTests
 
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
-		
-		// Act
 
 		FileSystem.File.Create(filePath).Dispose();
-		
-		// Assert
 
 		await That(createdMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
 
 		await That(createdArgs).IsNotNull().And
-			.Satisfies(args => string.Equals(args?.Name, expectedFileName, StringComparison.Ordinal)
-			);
+			.Satisfies(args => string.Equals(args?.Name, expectedFileName,
+				StringComparison.Ordinal));
 	}
 
 	[Theory]
@@ -197,29 +192,22 @@ public partial class IncludeSubdirectoriesTests
 	{
 		string subdirectoryName = "a";
 		string subSubdirectoryName = "b";
-		// Arrange
 		FileSystem.Initialize().WithSubdirectory(baseDirectory)
 			.Initialized(s => s.WithSubdirectory(subdirectoryName)
 				             .Initialized(ss => ss.WithSubdirectory(subSubdirectoryName))
 			);
-
 		string filePath = FileSystem.Path.Combine(
 			baseDirectory, subdirectoryName, subSubdirectoryName, fileName
 		);
-
 		string expectedFileName = FileSystem.Path.Combine(
 			subdirectoryName, subSubdirectoryName, fileName
 		);
-
 		string watchPath = watchRootedPath
 			? FileSystem.Path.Combine(FileSystem.Directory.GetCurrentDirectory(), baseDirectory)
 			: baseDirectory;
-
 		using ManualResetEventSlim changedMre = new();
 		FileSystemEventArgs? changedArgs = null;
-
 		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New(watchPath);
-
 		fileSystemWatcher.Changed += (_, eventArgs) =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
@@ -239,22 +227,16 @@ public partial class IncludeSubdirectoriesTests
 				// Ignore any ObjectDisposedException
 			}
 		};
-		
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
-		
-		// Act
 
 		FileSystem.File.Create(filePath).Dispose();
 		FileSystem.File.WriteAllText(filePath, "Hello World!");
 		
-		// Assert
-
 		await That(changedMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
-
 		await That(changedArgs).IsNotNull().And
-			.Satisfies(args => string.Equals(args?.Name, expectedFileName, StringComparison.Ordinal)
-			);
+			.Satisfies(args => string.Equals(args?.Name, expectedFileName,
+				StringComparison.Ordinal));
 	}
 
 	[Theory]
@@ -268,7 +250,6 @@ public partial class IncludeSubdirectoriesTests
 	{
 		string subdirectoryName = "a";
 		string subSubdirectoryName = "b";
-		// Arrange
 		FileSystem.Initialize().WithSubdirectory(baseDirectory)
 			.Initialized(s => s.WithSubdirectory(subdirectoryName)
 				             .Initialized(ss => ss.WithSubdirectory(subSubdirectoryName))
@@ -312,23 +293,15 @@ public partial class IncludeSubdirectoriesTests
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		
-		// Act
-
 		FileSystem.File.Create(filePath).Dispose();
 		FileSystem.File.Move(filePath, newFilePath);
 		
-		// Assert
-
 		await That(renamedMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
-
 		await That(renamedArgs).IsNotNull().And
-			.Satisfies(args => string.Equals(
-				           args?.Name, expectedNewFileName, StringComparison.Ordinal
-			           )
-			).And.Satisfies(args => string.Equals(
-				                args?.OldName, expectedFileName, StringComparison.Ordinal
-			                )
-			);
+			.Satisfies(args => string.Equals(args?.Name, expectedNewFileName,
+					StringComparison.Ordinal)).And
+			.Satisfies(args => string.Equals(args?.OldName, expectedFileName,
+					StringComparison.Ordinal));
 	}
 
 	[Theory]
@@ -342,7 +315,6 @@ public partial class IncludeSubdirectoriesTests
 	{
 		string subdirectoryName = "a";
 		string subSubdirectoryName = "b";
-		// Arrange
 		FileSystem.Initialize().WithSubdirectory(baseDirectory)
 			.Initialized(s => s.WithSubdirectory(subdirectoryName)
 				             .Initialized(ss => ss.WithSubdirectory(subSubdirectoryName))
@@ -381,20 +353,13 @@ public partial class IncludeSubdirectoriesTests
 
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
-		
-		// Act
 
 		FileSystem.File.Create(filePath).Dispose();
 		FileSystem.File.Delete(filePath);
-		
-		// Assert
 
 		await That(deletedMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
-
-		await That(deletedArgs).IsNotNull().And.Satisfies(args => string.Equals(
-			                                                  args?.Name, expectedFileName,
-			                                                  StringComparison.Ordinal
-		                                                  )
-		);
+		await That(deletedArgs).IsNotNull().And
+			.Satisfies(args => string.Equals(args?.Name, expectedFileName,
+				StringComparison.Ordinal));
 	}
 }

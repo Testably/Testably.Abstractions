@@ -24,11 +24,38 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	/// </summary>
 	private const int BytesPerMessage = 128;
 
+	/// <summary>
+	///     Caches the full path of <see cref="Path" />
+	/// </summary>
+	private string FullPath
+	{
+		get => _fullPath;
+		set
+		{
+			if (string.IsNullOrEmpty(value))
+			{
+				_fullPath = value;
+
+				return;
+			}
+
+			string fullPath = _fileSystem.Path.GetFullPath(value);
+
+			if (!fullPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
+			{
+				fullPath += _fileSystem.Path.DirectorySeparatorChar;
+			}
+
+			_fullPath = fullPath;
+		}
+	}
+
 	private CancellationTokenSource? _cancellationTokenSource;
 	private IDisposable? _changeHandler;
 	private bool _enableRaisingEvents;
 	private readonly MockFileSystem _fileSystem;
 	private readonly Collection<string> _filters = [];
+	private string _fullPath = string.Empty;
 	private bool _includeSubdirectories;
 	private int _internalBufferSize = 8192;
 	private bool _isInitializing;
@@ -38,7 +65,6 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	                                      NotifyFilters.LastWrite;
 
 	private string _path = string.Empty;
-	private string _fullPath = string.Empty;
 
 	private ISynchronizeInvoke? _synchronizingObject;
 
@@ -260,32 +286,6 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 	}
 
-	/// <summary>
-	/// Caches the full path of <see cref="Path"/>
-	/// </summary>
-	private string FullPath
-	{
-		get => _fullPath;
-		set
-		{
-			if (string.IsNullOrEmpty(value))
-			{
-				_fullPath = value;
-				
-				return;
-			}
-			
-			string fullPath = _fileSystem.Path.GetFullPath(value);
-
-			if (!fullPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
-			{
-				fullPath += _fileSystem.Path.DirectorySeparatorChar;
-			}
-			
-			_fullPath = fullPath;
-		}
-	}
-
 	/// <inheritdoc cref="IFileSystemWatcher.BeginInit()" />
 	public void BeginInit()
 	{
@@ -371,6 +371,25 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 
 		base.Dispose(disposing);
+	}
+
+	private static string GetCommonDirectory(string path1, string path2,
+		StringComparison comparisonMode)
+	{
+		for (int i = 0; i < path1.Length; i++)
+		{
+			if (path2.Length <= i)
+			{
+				return path2;
+			}
+
+			if (!string.Equals(path1[i].ToString(), path2[i].ToString(), comparisonMode))
+			{
+				return path1.Substring(0, Math.Max(0, i - 1));
+			}
+		}
+
+		return path1;
 	}
 
 	private bool MatchesFilter(ChangeDescription changeDescription)
@@ -463,6 +482,46 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 	}
 
+	private void SetFileSystemEventArgsFullPath(FileSystemEventArgs args, string fullPath)
+	{
+		if (_fileSystem.SimulationMode == SimulationMode.Native)
+		{
+			return;
+		}
+
+		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
+		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
+#if NETFRAMEWORK
+			typeof(FileSystemEventArgs)
+				.GetField("fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(args, fullPath);
+#else
+		typeof(FileSystemEventArgs)
+			.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+			.SetValue(args, fullPath);
+#endif
+	}
+
+	private void SetRenamedEventArgsOldFullPath(RenamedEventArgs args, string oldFullPath)
+	{
+		if (_fileSystem.SimulationMode == SimulationMode.Native)
+		{
+			return;
+		}
+
+		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
+		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
+#if NETFRAMEWORK
+			typeof(RenamedEventArgs)
+				.GetField("oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(args, oldFullPath);
+#else
+		typeof(RenamedEventArgs)
+			.GetField("_oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+			.SetValue(args, oldFullPath);
+#endif
+	}
+
 	private void Start()
 	{
 		if (_isInitializing)
@@ -530,6 +589,30 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		_changeHandler?.Dispose();
 	}
 
+	private FileSystemEventArgs ToFileSystemEventArgs(
+		WatcherChangeTypes changeType,
+		string changePath)
+	{
+		string name = TransformPathAndName(changePath);
+
+		FileSystemEventArgs eventArgs = new(changeType, Path, name);
+
+		SetFileSystemEventArgsFullPath(eventArgs, _fileSystem.Path.Combine(Path, name));
+
+		return eventArgs;
+	}
+
+	private string TransformPathAndName(string changeDescriptionPath)
+	{
+		if (changeDescriptionPath.StartsWith(FullPath, _fileSystem.Execute.StringComparisonMode))
+		{
+			return changeDescriptionPath.Substring(FullPath.Length)
+				.TrimStart(_fileSystem.Path.DirectorySeparatorChar);
+		}
+
+		return _fileSystem.Path.GetFileName(changeDescriptionPath);
+	}
+
 	private void TriggerRenameNotification(ChangeDescription item)
 	{
 		if (_fileSystem.Execute.IsWindows)
@@ -583,76 +666,25 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 		eventArgs = new RenamedEventArgs(changeDescription.ChangeType, Path, name, oldName);
 
-		SetFileSystemEventArgsFullPath(eventArgs, name);
-		SetRenamedEventArgsFullPath(eventArgs, oldName);
+		string commonDirectory = GetCommonDirectory(changeDescription.Path,
+			changeDescription.OldPath, _fileSystem.Execute.StringComparisonMode);
+
+		SetFileSystemEventArgsFullPath(eventArgs,
+			changeDescription.Path.StartsWith(FullPath, _fileSystem.Execute.StringComparisonMode)
+				? _fileSystem.Path.Combine(Path, name)
+				: changeDescription.Path.Substring(commonDirectory.Length)
+					.TrimStart(_fileSystem.Path.DirectorySeparatorChar));
+		SetRenamedEventArgsOldFullPath(eventArgs,
+			changeDescription.OldPath.StartsWith(FullPath, _fileSystem.Execute.StringComparisonMode)
+				? _fileSystem.Path.Combine(Path, oldName)
+				: changeDescription.OldPath.Substring(commonDirectory.Length)
+					.TrimStart(_fileSystem.Path.DirectorySeparatorChar));
 
 		return _fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path)?.Equals(
 			       _fileSystem.Execute.Path.GetDirectoryName(changeDescription.OldPath),
 			       _fileSystem.Execute.StringComparisonMode
 		       )
 		       ?? true;
-	}
-
-	private FileSystemEventArgs ToFileSystemEventArgs(
-		WatcherChangeTypes changeType,
-		string changePath)
-	{
-		string name = TransformPathAndName(changePath);
-
-		FileSystemEventArgs eventArgs = new(changeType, Path, name);
-		
-		SetFileSystemEventArgsFullPath(eventArgs, name);
-
-		return eventArgs;
-	}
-
-	private string TransformPathAndName(string changeDescriptionPath)
-	{
-		return changeDescriptionPath.Substring(FullPath.Length).TrimStart(_fileSystem.Path.DirectorySeparatorChar);
-	}
-
-	private void SetFileSystemEventArgsFullPath(FileSystemEventArgs args, string name)
-	{
-		if (_fileSystem.SimulationMode == SimulationMode.Native)
-		{
-			return;
-		}
-		
-		string fullPath = _fileSystem.Path.Combine(Path, name);
-		
-		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
-		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
-#if NETFRAMEWORK
-			typeof(FileSystemEventArgs)
-				.GetField("fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-				.SetValue(args, fullPath);
-#else
-		typeof(FileSystemEventArgs)
-			.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-			.SetValue(args, fullPath);
-#endif
-	}
-
-	private void SetRenamedEventArgsFullPath(RenamedEventArgs args, string oldName)
-	{
-		if (_fileSystem.SimulationMode == SimulationMode.Native)
-		{
-			return;
-		}
-		
-		string fullPath = _fileSystem.Path.Combine(Path, oldName);
-		
-		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
-		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
-#if NETFRAMEWORK
-			typeof(RenamedEventArgs)
-				.GetField("oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-				.SetValue(args, fullPath);
-#else
-		typeof(RenamedEventArgs)
-			.GetField("_oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-			.SetValue(args, fullPath);
-#endif
 	}
 
 	private IWaitForChangedResult WaitForChangedInternal(
