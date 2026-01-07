@@ -119,6 +119,30 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			options);
 	}
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	private FileStreamMock New(string path,
+		FileMode mode,
+		FileAccess access,
+		FileShare share,
+		int bufferSize,
+		FileOptions options,
+		UnixFileMode? unixFileMode)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterMethod(nameof(New),
+				path, mode, access, share, bufferSize, options, unixFileMode);
+
+		return new FileStreamMock(_fileSystem,
+			path,
+			mode,
+			access,
+			share,
+			bufferSize,
+			options,
+			unixFileMode);
+	}
+#endif
+
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess)" />
 #if NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
@@ -193,7 +217,11 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			options.Access,
 			options.Share,
 			options.BufferSize,
-			options.Options);
+			options.Options
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+			,options.UnixCreateMode
+#endif
+			);
 	}
 #endif
 

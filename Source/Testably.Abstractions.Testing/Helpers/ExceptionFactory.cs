@@ -304,4 +304,7 @@ internal static class ExceptionFactory
 			HResult = -2146233031,
 #endif
 		};
+	
+	internal static ArgumentException InvalidUnixCreateMode(string paramName)
+		=> new("UnixCreateMode can only be used with file modes that can create a new file.", paramName);
 }
