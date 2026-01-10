@@ -527,6 +527,54 @@ public partial class NotifyFiltersTests
 	[Theory]
 	[InlineAutoData(true)]
 	[InlineAutoData(false)]
+	public async Task NotifyFilter_MoveFileOutOfTheWatchedDirectory_ShouldTriggerRenamed_OnLinuxOrMac(
+		bool includeSubdirectories, string sourcePath, string sourceName,
+		string destinationPath, string destinationName)
+	{
+		SkipIfLongRunningTestsShouldBeSkipped();
+		Skip.If(Test.RunsOnWindows);
+
+		FileSystem.Initialize()
+			.WithSubdirectory(sourcePath).Initialized(s => s
+				.WithFile(sourceName))
+			.WithSubdirectory(destinationPath);
+		RenamedEventArgs? result = null;
+		using ManualResetEventSlim ms = new();
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(sourcePath);
+		fileSystemWatcher.Renamed += (_, eventArgs) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+
+		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.File.Move(
+			FileSystem.Path.Combine(sourcePath, sourceName),
+			FileSystem.Path.Combine(destinationPath, destinationName));
+
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(result).IsNotNull();
+		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
+		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(destinationPath, destinationName));
+		await That(result.Name).IsEqualTo(destinationName);
+		await That(result.OldFullPath).IsEqualTo(FileSystem.Path.Combine(sourcePath, sourceName));
+		await That(result.OldName).IsEqualTo(sourceName);
+	}
+
+	[Theory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
 	public async Task NotifyFilter_MoveFileOutOfTheWatchedDirectory_ShouldTriggerDeleted_OnWindows(
 		bool includeSubdirectories, string sourcePath, string sourceName,
 		string destinationPath, string destinationName)
@@ -568,6 +616,54 @@ public partial class NotifyFiltersTests
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
 		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(sourcePath, sourceName));
 		await That(result.Name).IsEqualTo(sourceName);
+	}
+
+	[Theory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
+	public async Task NotifyFilter_MoveFileInToTheWatchedDirectory_ShouldTriggerRenamed_OnLinuxOrMac(
+		bool includeSubdirectories, string sourcePath, string sourceName,
+		string destinationPath, string destinationName)
+	{
+		SkipIfLongRunningTestsShouldBeSkipped();
+		Skip.If(Test.RunsOnWindows);
+
+		FileSystem.Initialize()
+			.WithSubdirectory(sourcePath).Initialized(s => s
+				.WithFile(sourceName))
+			.WithSubdirectory(destinationPath);
+		RenamedEventArgs? result = null;
+		using ManualResetEventSlim ms = new();
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(destinationPath);
+		fileSystemWatcher.Renamed += (_, eventArgs) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+
+		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.File.Move(
+			FileSystem.Path.Combine(sourcePath, sourceName),
+			FileSystem.Path.Combine(destinationPath, destinationName));
+
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(result).IsNotNull();
+		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
+		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(destinationPath, destinationName));
+		await That(result.Name).IsEqualTo(destinationName);
+		await That(result.OldFullPath).IsEqualTo(FileSystem.Path.Combine(sourcePath, sourceName));
+		await That(result.OldName).IsEqualTo(sourceName);
 	}
 
 	[Theory]
@@ -748,6 +844,51 @@ public partial class NotifyFiltersTests
 	[Theory]
 	[InlineAutoData(NotifyFilters.DirectoryName, true)]
 	[InlineAutoData(NotifyFilters.DirectoryName, false)]
+	public async Task NotifyFilter_MoveDirectoryOutOfTheWatchedDirectory_ShouldTriggerRenamedEventOnNotifyFilters_OnLinuxOrMac(
+		NotifyFilters notifyFilter, bool includeSubdirectories, string sourceName, string destinationName)
+	{
+		SkipIfLongRunningTestsShouldBeSkipped();
+		Skip.If(Test.RunsOnWindows);
+
+		FileSystem.Initialize().WithSubdirectory("watched");
+		var sourcePath = FileSystem.Path.Combine("watched", sourceName);
+		FileSystem.Directory.CreateDirectory(sourcePath);
+		RenamedEventArgs? result = null;
+		using ManualResetEventSlim ms = new();
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New("watched");
+		fileSystemWatcher.Renamed += (_, eventArgs) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+
+		fileSystemWatcher.NotifyFilter = notifyFilter;
+		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.Directory.Move(sourcePath, destinationName);
+
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(result).IsNotNull();
+		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
+		await That(result.FullPath).IsEqualTo(destinationName);
+		await That(result.Name).IsEqualTo(destinationName);
+		await That(result.OldFullPath).IsEqualTo(sourcePath);
+		await That(result.OldName).IsEqualTo(sourceName);
+	}
+
+	[Theory]
+	[InlineAutoData(NotifyFilters.DirectoryName, true)]
+	[InlineAutoData(NotifyFilters.DirectoryName, false)]
 	public async Task NotifyFilter_MoveDirectoryOutOfTheWatchedDirectory_ShouldTriggerDeletedEventOnNotifyFilters_OnWindows(
 		NotifyFilters notifyFilter, bool includeSubdirectories, string sourceName, string destinationName)
 	{
@@ -786,6 +927,51 @@ public partial class NotifyFiltersTests
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
 		await That(result.FullPath).IsEqualTo(sourcePath);
 		await That(result.Name).IsEqualTo(sourceName);
+	}
+
+	[Theory]
+	[InlineAutoData(NotifyFilters.DirectoryName, true)]
+	[InlineAutoData(NotifyFilters.DirectoryName, false)]
+	public async Task NotifyFilter_MoveDirectoryInToTheWatchedDirectory_ShouldTriggerRenamedEventOnNotifyFilters_OnLinuxOrMac(
+		NotifyFilters notifyFilter, bool includeSubdirectories, string sourceName, string destinationName)
+	{
+		SkipIfLongRunningTestsShouldBeSkipped();
+		Skip.If(Test.RunsOnWindows);
+
+		FileSystem.Initialize().WithSubdirectory("watched");
+		var destinationPath = FileSystem.Path.Combine("watched", destinationName);
+		FileSystem.Directory.CreateDirectory(sourceName);
+		RenamedEventArgs? result = null;
+		using ManualResetEventSlim ms = new();
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New("watched");
+		fileSystemWatcher.Renamed += (_, eventArgs) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+
+		fileSystemWatcher.NotifyFilter = notifyFilter;
+		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.Directory.Move(sourceName, destinationPath);
+
+		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(result).IsNotNull();
+		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
+		await That(result.FullPath).IsEqualTo(destinationPath);
+		await That(result.Name).IsEqualTo(destinationName);
+		await That(result.OldFullPath).IsEqualTo(sourceName);
+		await That(result.OldName).IsEqualTo(sourceName);
 	}
 
 	[Theory]
