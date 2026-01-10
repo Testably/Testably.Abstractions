@@ -39,11 +39,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				return;
 			}
 
-			string fullPath = _fileSystem.Path.GetFullPath(value);
+			string fullPath = _fileSystem.Execute.Path.GetFullPath(value);
 
-			if (!fullPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
+			if (!fullPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar))
 			{
-				fullPath += _fileSystem.Path.DirectorySeparatorChar;
+				fullPath += _fileSystem.Execute.Path.DirectorySeparatorChar;
 			}
 
 			_fullPath = fullPath;
@@ -373,25 +373,6 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		base.Dispose(disposing);
 	}
 
-	private static string GetCommonDirectory(string path1, string path2,
-		StringComparison comparisonMode)
-	{
-		for (int i = 0; i < path1.Length; i++)
-		{
-			if (path2.Length <= i)
-			{
-				return path2;
-			}
-
-			if (!string.Equals(path1[i].ToString(), path2[i].ToString(), comparisonMode))
-			{
-				return path1.Substring(0, Math.Max(0, i - 1));
-			}
-		}
-
-		return path1;
-	}
-
 	private bool MatchesFilter(ChangeDescription changeDescription)
 	{
 		if (!MatchesWatcherPath(changeDescription.Path))
@@ -597,7 +578,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 		FileSystemEventArgs eventArgs = new(changeType, Path, name);
 
-		SetFileSystemEventArgsFullPath(eventArgs, _fileSystem.Path.Combine(Path, name));
+		SetFileSystemEventArgsFullPath(eventArgs, _fileSystem.Execute.Path.Combine(Path, name));
 
 		return eventArgs;
 	}
@@ -607,10 +588,10 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		if (changeDescriptionPath.StartsWith(FullPath, _fileSystem.Execute.StringComparisonMode))
 		{
 			return changeDescriptionPath.Substring(FullPath.Length)
-				.TrimStart(_fileSystem.Path.DirectorySeparatorChar);
+				.TrimStart(_fileSystem.Execute.Path.DirectorySeparatorChar);
 		}
 
-		return _fileSystem.Path.GetFileName(changeDescriptionPath);
+		return _fileSystem.Execute.Path.GetFileName(changeDescriptionPath);
 	}
 
 	private void TriggerRenameNotification(ChangeDescription item)
@@ -664,21 +645,18 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 		string oldName = TransformPathAndName(changeDescription.OldPath);
 
-		eventArgs = new RenamedEventArgs(changeDescription.ChangeType, Path, name, oldName);
-
-		string commonDirectory = GetCommonDirectory(changeDescription.Path,
-			changeDescription.OldPath, _fileSystem.Execute.StringComparisonMode);
+		eventArgs = new RenamedEventArgs(changeDescription.ChangeType, Path,
+			_fileSystem.Execute.Path.GetFileName(name),
+			_fileSystem.Execute.Path.GetFileName(oldName));
 
 		SetFileSystemEventArgsFullPath(eventArgs,
 			changeDescription.Path.StartsWith(FullPath, _fileSystem.Execute.StringComparisonMode)
-				? _fileSystem.Path.Combine(Path, name)
-				: changeDescription.Path.Substring(commonDirectory.Length)
-					.TrimStart(_fileSystem.Path.DirectorySeparatorChar));
+				? _fileSystem.Execute.Path.Combine(Path, name)
+				: name);
 		SetRenamedEventArgsOldFullPath(eventArgs,
 			changeDescription.OldPath.StartsWith(FullPath, _fileSystem.Execute.StringComparisonMode)
-				? _fileSystem.Path.Combine(Path, oldName)
-				: changeDescription.OldPath.Substring(commonDirectory.Length)
-					.TrimStart(_fileSystem.Path.DirectorySeparatorChar));
+				? _fileSystem.Execute.Path.Combine(Path, oldName)
+				: oldName);
 
 		return _fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path)?.Equals(
 			       _fileSystem.Execute.Path.GetDirectoryName(changeDescription.OldPath),
