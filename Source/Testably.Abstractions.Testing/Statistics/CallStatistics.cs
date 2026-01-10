@@ -180,6 +180,31 @@ internal class CallStatistics<TType> : IStatistics<TType>
 
 		return release;
 	}
+	
+	/// <summary>
+	///     Registers the method <paramref name="name" /> with <paramref name="parameter1" />, <paramref name="parameter2" />,
+	///     <paramref name="parameter3" />, <paramref name="parameter4" />, <paramref name="parameter5" /> and
+	///     <paramref name="parameter6" />, <paramref name="parameter7" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterMethod<T1, T2, T3, T4, T5, T6, T7>(string name, T1 parameter1,
+		T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5, T6 parameter6, T7 parameter7)
+	{
+		if (_statisticsGate.TryGetLock(out IDisposable release))
+		{
+			int counter = _statisticsGate.GetCounter();
+			_methods.Enqueue(new MethodStatistic(counter, name,
+				ParameterDescription.FromParameter(parameter1),
+				ParameterDescription.FromParameter(parameter2),
+				ParameterDescription.FromParameter(parameter3),
+				ParameterDescription.FromParameter(parameter4),
+				ParameterDescription.FromParameter(parameter5),
+				ParameterDescription.FromParameter(parameter6),
+				ParameterDescription.FromParameter(parameter7)));
+		}
+
+		return release;
+	}
 
 #if FEATURE_SPAN
 	/// <summary>

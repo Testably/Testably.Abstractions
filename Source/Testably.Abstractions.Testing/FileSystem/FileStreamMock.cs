@@ -189,7 +189,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		FileAccess access,
 		FileShare share = FileShare.Read,
 		int bufferSize = 4096,
-		FileOptions options = FileOptions.None)
+		FileOptions options = FileOptions.None
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+		,UnixFileMode? unixFileMode = null
+#endif
+		)
 		: this(new MemoryStream(),
 			fileSystem,
 			path.EnsureValidFormat(fileSystem, nameof(path)),
@@ -197,7 +201,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			access,
 			share,
 			bufferSize,
-			options)
+			options
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+			,unixFileMode
+#endif
+			)
 	{
 	}
 
@@ -208,7 +216,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		FileAccess access,
 		FileShare share,
 		int bufferSize,
-		FileOptions options)
+		FileOptions options
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+		,UnixFileMode? unixFileMode
+#endif
+		)
 		: base(
 			stream,
 			path == null ? "" : fileSystem.Execute.Path.GetFullPath(path),
@@ -263,6 +275,17 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		{
 			throw ExceptionFactory.AccessToPathDenied(_location.FullPath);
 		}
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+		if (unixFileMode.HasValue)
+		{
+			if (_mode.Equals(FileMode.Truncate) || _mode.Equals(FileMode.Open))
+			{
+				throw ExceptionFactory.InvalidUnixCreateMode(nameof(unixFileMode));
+			}
+			
+			file.UnixFileMode = unixFileMode.Value;
+		}
+#endif
 
 		_accessLock = file.RequestAccess(access, share);
 
