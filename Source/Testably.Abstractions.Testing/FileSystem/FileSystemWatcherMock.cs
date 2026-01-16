@@ -643,8 +643,6 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				FireCreated();
 			}
 		}
-
-		return;
 		
 		void FireCreated()
 		{
@@ -964,7 +962,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		bool comesFromInside,
 		bool goesToInside,
 		int oldSubDirectoryCount
-	)
+	) : IEquatable<RenamedContext>
 	{
 		private const int NestedLevelCount = 1;
 
@@ -983,6 +981,33 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		/// If this is <see langword="true"/> then <see cref="ComesFromNested"/> is <see langword="false"/>
 		/// </remarks>
 		public bool ComesFromDeepNested { get; } = oldSubDirectoryCount > NestedLevelCount;
+
+		/// <inheritdoc />
+		public bool Equals(RenamedContext other)
+			=> ComesFromOutside == other.ComesFromOutside
+			   && ComesFromInside == other.ComesFromInside
+			   && GoesToInside == other.GoesToInside
+			   && ComesFromNested == other.ComesFromNested
+			   && ComesFromDeepNested == other.ComesFromDeepNested;
+
+		/// <inheritdoc />
+		public override bool Equals(object? obj)
+			=> obj is RenamedContext other && Equals(other);
+
+		/// <inheritdoc />
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				int hashCode = ComesFromOutside.GetHashCode();
+				hashCode = (hashCode * 397) ^ ComesFromInside.GetHashCode();
+				hashCode = (hashCode * 397) ^ GoesToInside.GetHashCode();
+				hashCode = (hashCode * 397) ^ ComesFromNested.GetHashCode();
+				hashCode = (hashCode * 397) ^ ComesFromDeepNested.GetHashCode();
+
+				return hashCode;
+			}
+		}
 	}
 
 	internal sealed class ChangeDescriptionEventArgs(ChangeDescription changeDescription)
