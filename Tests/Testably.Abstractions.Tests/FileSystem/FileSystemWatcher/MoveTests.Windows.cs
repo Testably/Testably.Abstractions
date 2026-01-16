@@ -6,252 +6,263 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 public partial class MoveTests
 {
 	[Theory]
-	[InlineData(true)]
-	[InlineData(false)]
-	public async Task Windows_ParentWatcher_MoveToChild_ShouldInvokeDeletedAndCreatedAndChanged(
-		bool includeSubdirectories
+	[InlineData(true, "nested")]
+	[InlineData(false, "nested")]
+	[InlineData(true, "nested", "deep")]
+	[InlineData(false, "nested", "deep")]
+	public async Task Windows_MoveOutsideToNested_ShouldInvokeCreatedAndChanged(
+		bool includeSubdirectories,
+		params string[] paths
 	)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
+		if (paths.Length == 0)
+		{
+			throw new ArgumentException("At least one path is required.", nameof(paths));
+		}
+		
+		// Arrange
+
 		// short names, otherwise the path will be too long
-		const string parentDirectory = "parent";
-		const string childDirectory = "child";
+		const string outsideDirectory = "outside";
+		const string insideDirectory = "inside";
+		const string targetName = "target";
 
-		FileSystem.Initialize().WithSubdirectories(parentDirectory, childDirectory);
+		string insideSubDirectory = FileSystem.Path.Combine(
+			insideDirectory, FileSystem.Path.Combine(paths)
+		);
 
-		string newPath = FileSystem.Path.Combine(parentDirectory, childDirectory);
+		string outsideTarget = FileSystem.Path.Combine(outsideDirectory, targetName);
+		string insideTarget = FileSystem.Path.Combine(insideSubDirectory, targetName);
 
-		using ManualResetEventSlim deletedMs = new();
-		FileSystemEventArgs? deletedResult = null;
+		FileSystem.Initialize().WithSubdirectories(insideSubDirectory, outsideTarget);
 
-		using ManualResetEventSlim createdMs = new();
-		FileSystemEventArgs? createdResult = null;
+		using IFileSystemWatcher fileSystemWatcher
+			= FileSystem.FileSystemWatcher.New(insideDirectory);
 
-		using ManualResetEventSlim changedMs = new();
-		FileSystemEventArgs? changedResult = null;
+		using ManualResetEventSlim createdMs = AddEventHandler(
+			fileSystemWatcher, WatcherChangeTypes.Created, out EventBox createdBox
+		);
 
-		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New(BasePath);
+		using ManualResetEventSlim deletedMs = AddEventHandler(
+			fileSystemWatcher, WatcherChangeTypes.Deleted
+		);
 
-		fileSystemWatcher.Deleted += (_, eventArgs) =>
-		{
-			// ReSharper disable once AccessToDisposedClosure
-			try
-			{
-				deletedResult = eventArgs;
-				deletedMs.Set();
-			}
-			catch (ObjectDisposedException)
-			{
-				// Ignore any ObjectDisposedException
-			}
-		};
-
-		fileSystemWatcher.Created += (_, eventArgs) =>
-		{
-			// ReSharper disable once AccessToDisposedClosure
-			try
-			{
-				createdResult = eventArgs;
-				createdMs.Set();
-			}
-			catch (ObjectDisposedException)
-			{
-				// Ignore any ObjectDisposedException
-			}
-		};
-
-		fileSystemWatcher.Changed += (_, eventArgs) =>
-		{
-			// ReSharper disable once AccessToDisposedClosure
-			try
-			{
-				changedResult = eventArgs;
-				changedMs.Set();
-			}
-			catch (ObjectDisposedException)
-			{
-				// Ignore any ObjectDisposedException
-			}
-		};
+		using ManualResetEventSlim renamedMs = AddRenamedEventHandler(fileSystemWatcher);
 
 		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
-		FileSystem.Directory.Move(childDirectory, newPath);
+		// Act
+		
+		FileSystem.Directory.Move(outsideTarget, insideTarget);
 
-		// wait triple the amount in case the other two events are handled first
-		await That(deletedMs.Wait(ExpectTimeout * 3, TestContext.Current.CancellationToken))
-			.IsTrue();
+		// Assert
+		
+		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+			.IsEqualTo(includeSubdirectories);
 
-		await That(changedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
+		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+
+		await ThatIsNullOrNot(createdBox.Value, !includeSubdirectories);
+	}
+
+	[Theory]
+	[InlineData(true, "nested")]
+	[InlineData(false, "nested")]
+	[InlineData(true, "nested", "deep")]
+	[InlineData(false, "nested", "deep")]
+	public async Task Windows_MoveInsideToNested_ShouldInvokeDeletedCreatedAndChanged(
+		bool includeSubdirectories,
+		params string[] paths
+	)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		if (paths.Length == 0)
+		{
+			throw new ArgumentException("At least one path is required.", nameof(paths));
+		}
+		
+		// Arrange
+
+		// short names, otherwise the path will be too long
+		const string insideDirectory = "inside";
+		const string targetName = "target";
+
+		string insideSubDirectory = FileSystem.Path.Combine(
+			insideDirectory, FileSystem.Path.Combine(paths)
+		);
+
+		string insideTarget = FileSystem.Path.Combine(insideDirectory, targetName);
+		string nestedTarget = FileSystem.Path.Combine(insideSubDirectory, targetName);
+
+		FileSystem.Initialize().WithSubdirectories(insideSubDirectory, insideTarget);
+
+		using IFileSystemWatcher fileSystemWatcher
+			= FileSystem.FileSystemWatcher.New(insideDirectory);
+
+		using ManualResetEventSlim deletedMs = AddEventHandler(
+			fileSystemWatcher, WatcherChangeTypes.Deleted, out EventBox deletedBox
+		);
+
+		using ManualResetEventSlim createdMs = AddEventHandler(
+			fileSystemWatcher, WatcherChangeTypes.Created, out EventBox createdBox
+		);
+
+		using ManualResetEventSlim renamedMs = AddRenamedEventHandler(fileSystemWatcher);
+
+		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		 // Act
+		
+		FileSystem.Directory.Move(insideTarget, nestedTarget);
+
+		// Assert
+		
+		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
 
 		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
-		await That(deletedResult).IsNotNull();
-		await That(changedResult).IsNotNull();
+		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
-		if (includeSubdirectories)
-		{
-			await That(createdResult).IsNotNull();
-		}
-		else
-		{
-			await That(createdResult).IsNull();
-		}
+		await That(deletedBox.Value).IsNotNull();
+		
+		await ThatIsNullOrNot(createdBox.Value, !includeSubdirectories);
 	}
 
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	public async Task Windows_ParentWatcher_MoveInPlace_ShouldInvokeChanged(
-		bool includeSubdirectories
+	[InlineData(true, "deep")]
+	[InlineData(false, "deep")]
+	public async Task Windows_MoveNestedTo_ShouldInvokeDeletedCreatedAndChanged(
+		bool includeSubdirectories,
+		string? path = null
 	)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
+		
+		// Arrange
+
+		bool isCreated = path is null || includeSubdirectories;
 
 		// short names, otherwise the path will be too long
-		const string parentDirectory = "parent";
-		const string childDirectory = "child";
+		const string insideDirectory = "inside";
+		const string targetName = "target";
 
-		FileSystem.Initialize().WithSubdirectory(parentDirectory)
-			.Initialized(x => x.WithSubdirectory(childDirectory));
+		string nestedDirectory = FileSystem.Path.Combine(insideDirectory, "nested");
 
-		string oldPath = FileSystem.Path.Combine(parentDirectory, childDirectory);
-		string newPath = FileSystem.Path.Combine(parentDirectory, "newChild");
+		string targetDir = path is null
+			? insideDirectory
+			: FileSystem.Path.Combine(nestedDirectory, path);
 
-		using ManualResetEventSlim renamedMs = new();
-		FileSystemEventArgs? renamedResult = null;
+		string target = FileSystem.Path.Combine(targetDir, targetName);
 
-		using ManualResetEventSlim changedMs = new();
-		FileSystemEventArgs? changedResult = null;
+		string source = FileSystem.Path.Combine(nestedDirectory, targetName);
 
-		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New(BasePath);
+		FileSystem.Initialize().WithSubdirectories(targetDir, source);
 
-		fileSystemWatcher.Renamed += (_, eventArgs) =>
-		{
-			// ReSharper disable once AccessToDisposedClosure
-			try
-			{
-				renamedResult = eventArgs;
-				renamedMs.Set();
-			}
-			catch (ObjectDisposedException)
-			{
-				// Ignore any ObjectDisposedException
-			}
-		};
+		using IFileSystemWatcher fileSystemWatcher
+			= FileSystem.FileSystemWatcher.New(insideDirectory);
 
-		fileSystemWatcher.Changed += (_, eventArgs) =>
-		{
-			// ReSharper disable once AccessToDisposedClosure
-			try
-			{
-				changedResult = eventArgs;
-				changedMs.Set();
-			}
-			catch (ObjectDisposedException)
-			{
-				// Ignore any ObjectDisposedException
-			}
-		};
+		using ManualResetEventSlim createdMs = AddEventHandler(
+			fileSystemWatcher, WatcherChangeTypes.Created, out EventBox createdBox
+		);
+
+		using ManualResetEventSlim deletedMs = AddEventHandler(
+			fileSystemWatcher, WatcherChangeTypes.Deleted, out EventBox deletedBox
+		);
+
+		using ManualResetEventSlim renamedMs = AddRenamedEventHandler(fileSystemWatcher);
 
 		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
-		FileSystem.Directory.Move(oldPath, newPath);
+		// Act
+		
+		FileSystem.Directory.Move(source, target);
 
-		// wait double the amount in case the other event is handled first
-		await That(changedMs.Wait(ExpectTimeout * 2, TestContext.Current.CancellationToken)).IsTrue();
+		// Assert
+		
+		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsEqualTo(isCreated);
 
-		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
-		await That(changedResult).IsNotNull();
+		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
-		if (includeSubdirectories)
-		{
-			await That(renamedResult).IsNotNull();
-		}
-		else
-		{
-			await That(renamedResult).IsNull();
-		}
+		await ThatIsNullOrNot(createdBox.Value, !isCreated);
+		await ThatIsNullOrNot(deletedBox.Value, !includeSubdirectories);
 	}
 
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
-	public async Task Windows_ParentWatcher_MoveToParent_IncludeSubDirectories_ShouldInvokeCreated(
-		bool includeSubdirectories
+	[InlineData(true, "nested")]
+	[InlineData(false, "nested")]
+	public async Task Windows_MoveDeepNestedTo_ShouldInvokeDeletedCreatedAndChanged(
+		bool includeSubdirectories,
+		string? path = null
 	)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
+		
+		// Arrange
+
+		bool isCreated = path is null || includeSubdirectories;
 
 		// short names, otherwise the path will be too long
-		const string parentDirectory = "parent";
-		const string childDirectory = "child";
+		const string insideDirectory = "inside";
+		const string targetName = "target";
 
-		FileSystem.Initialize().WithSubdirectory(parentDirectory)
-			.Initialized(x => x.WithSubdirectory(childDirectory));
+		string deepNestedDirectory = FileSystem.Path.Combine(insideDirectory, "nested", "deep");
 
-		string oldPath = FileSystem.Path.Combine(parentDirectory, childDirectory);
+		string targetDir = path is null
+			? insideDirectory
+			: FileSystem.Path.Combine(insideDirectory, path);
 
-		using ManualResetEventSlim deletedMs = new();
-		FileSystemEventArgs? deletedResult = null;
+		string target = FileSystem.Path.Combine(targetDir, targetName);
 
-		using ManualResetEventSlim createdMs = new();
-		FileSystemEventArgs? createdResult = null;
+		string source = FileSystem.Path.Combine(deepNestedDirectory, targetName);
 
-		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New(BasePath);
+		FileSystem.Initialize().WithSubdirectories(targetDir, source);
 
-		fileSystemWatcher.Deleted += (_, eventArgs) =>
-		{
-			// ReSharper disable once AccessToDisposedClosure
-			try
-			{
-				deletedResult = eventArgs;
-				deletedMs.Set();
-			}
-			catch (ObjectDisposedException)
-			{
-				// Ignore any ObjectDisposedException
-			}
-		};
+		using IFileSystemWatcher fileSystemWatcher
+			= FileSystem.FileSystemWatcher.New(insideDirectory);
 
-		fileSystemWatcher.Created += (_, eventArgs) =>
-		{
-			// ReSharper disable once AccessToDisposedClosure
-			try
-			{
-				createdResult = eventArgs;
-				createdMs.Set();
-			}
-			catch (ObjectDisposedException)
-			{
-				// Ignore any ObjectDisposedException
-			}
-		};
+		using ManualResetEventSlim createdMs = AddEventHandler(
+			fileSystemWatcher, WatcherChangeTypes.Created, out EventBox createdBox
+		);
+
+		using ManualResetEventSlim deletedMs = AddEventHandler(
+			fileSystemWatcher, WatcherChangeTypes.Deleted, out EventBox deletedBox
+		);
+
+		using ManualResetEventSlim renamedMs = AddRenamedEventHandler(fileSystemWatcher);
 
 		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
-		FileSystem.Directory.Move(oldPath, childDirectory);
-
-		// wait double the amount in case the other event is handled first
-		await That(createdMs.Wait(ExpectTimeout * 2, TestContext.Current.CancellationToken)).IsTrue();
-		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsEqualTo(includeSubdirectories);
+		// Act
 		
-		await That(createdResult).IsNotNull();
+		FileSystem.Directory.Move(source, target);
+		
+		// Assert
 
-		if (includeSubdirectories)
-		{
-			await That(deletedResult).IsNotNull();
-		}
-		else
-		{
-			await That(deletedResult).IsNull();
-		}
+		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+			.IsEqualTo(isCreated);
+
+		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+			.IsEqualTo(includeSubdirectories);
+
+		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+
+		await ThatIsNullOrNot(createdBox.Value, !isCreated);
+		await ThatIsNullOrNot(deletedBox.Value, !includeSubdirectories);
 	}
 }
