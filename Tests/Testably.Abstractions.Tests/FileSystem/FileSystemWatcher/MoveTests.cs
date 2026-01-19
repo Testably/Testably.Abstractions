@@ -10,12 +10,16 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class MoveTests
 {
-	protected MoveTests()
+	private bool? _isMac;
+	
+	private bool IsMac
 	{
-		IsMac = this is RealFileSystemTests && RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+		get
+		{
+			_isMac ??= this is RealFileSystemTests && RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+			return _isMac.Value;
+		}
 	}
-
-	private bool IsMac { get; }
 
 	[Theory]
 	[InlineData(true)]
