@@ -11,12 +11,14 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 public partial class MoveTests
 {
 	private bool? _isMac;
-	
+
 	private bool IsMac
 	{
 		get
 		{
-			_isMac ??= this is RealFileSystemTests && RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+			_isMac ??= this is RealFileSystemTests
+			           && RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+
 			return _isMac.Value;
 		}
 	}
@@ -89,6 +91,7 @@ public partial class MoveTests
 		// Arrange
 
 		bool shouldInvokeDeleted = includeSubdirectories || paths.Length == 0;
+		bool shouldInvokeCreated = IsMac && shouldInvokeDeleted;
 
 		// short names, otherwise the path will be too long
 		const string outsideDirectory = "outside";
@@ -135,7 +138,7 @@ public partial class MoveTests
 			.IsEqualTo(shouldInvokeDeleted);
 
 		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
-			.IsEqualTo(IsMac);
+			.IsEqualTo(shouldInvokeCreated);
 
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 

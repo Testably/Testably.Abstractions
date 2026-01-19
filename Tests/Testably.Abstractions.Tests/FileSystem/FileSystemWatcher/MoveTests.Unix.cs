@@ -166,7 +166,9 @@ public partial class MoveTests
 		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
 			.IsEqualTo(IsMac);
 
-		await RemoveMacArrangeEvents(createdBag, string.Empty /*None expected*/, insideSubDirectory, insideTarget);
+		await RemoveMacArrangeEvents(
+			createdBag, string.Empty /*None expected*/, insideSubDirectory, insideTarget
+		);
 
 		await ThatIsSingleOrEmpty(deletedBag, isRenamed);
 		await ThatIsSingleOrEmpty(renamedBag, !isRenamed);
@@ -207,6 +209,7 @@ public partial class MoveTests
 		// Arrange
 
 		bool isCreated = !includeSubdirectories && path is null;
+		bool isMacCreated = IsMac && includeSubdirectories;
 
 		// short names, otherwise the path will be too long
 		const string insideDirectory = "inside";
@@ -261,7 +264,7 @@ public partial class MoveTests
 		// Assert
 
 		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
-			.IsEqualTo(isCreated || IsMac);
+			.IsEqualTo(isCreated || isMacCreated);
 
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
 			.IsEqualTo(includeSubdirectories);
@@ -312,6 +315,7 @@ public partial class MoveTests
 		// Arrange
 
 		bool isCreated = !includeSubdirectories && path is null;
+		bool isMacCreated = IsMac && includeSubdirectories;
 
 		// short names, otherwise the path will be too long
 		const string insideDirectory = "inside";
@@ -362,7 +366,7 @@ public partial class MoveTests
 		// Assert
 
 		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
-			.IsEqualTo(IsMac || isCreated);
+			.IsEqualTo(isMacCreated || isCreated);
 
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
 			.IsEqualTo(includeSubdirectories);
