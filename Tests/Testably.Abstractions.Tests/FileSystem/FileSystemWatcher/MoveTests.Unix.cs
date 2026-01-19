@@ -166,7 +166,7 @@ public partial class MoveTests
 		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
 			.IsEqualTo(IsMac);
 
-		await RemoveMacArrangeEvents(createdBag, insideTarget, insideSubDirectory, insideTarget);
+		await RemoveMacArrangeEvents(createdBag, string.Empty /*None expected*/, insideSubDirectory, insideTarget);
 
 		await ThatIsSingleOrEmpty(deletedBag, isRenamed);
 		await ThatIsSingleOrEmpty(renamedBag, !isRenamed);
@@ -362,7 +362,7 @@ public partial class MoveTests
 		// Assert
 
 		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
-			.IsEqualTo(isCreated);
+			.IsEqualTo(IsMac || isCreated);
 
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
 			.IsEqualTo(includeSubdirectories);

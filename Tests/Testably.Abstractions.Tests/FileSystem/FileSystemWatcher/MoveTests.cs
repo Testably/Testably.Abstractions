@@ -10,8 +10,13 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class MoveTests
 {
-	private static bool IsMac { get; } = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-	
+	protected MoveTests()
+	{
+		IsMac = this is RealFileSystemTests && RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+	}
+
+	private bool IsMac { get; }
+
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
@@ -218,9 +223,9 @@ public partial class MoveTests
 		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
 		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
-			.IsEqualTo(IsMac);
+			.IsEqualTo(IsMac && shouldInvokeRenamed);
 
-		await RemoveMacArrangeEvents(createdBag, insideTarget, insideDirectory, insideTarget);
+		await RemoveMacArrangeEvents(createdBag, string.Empty /*None expected*/, insideTarget);
 
 		await ThatIsSingleOrEmpty(renamedBag, !shouldInvokeRenamed);
 
@@ -259,7 +264,7 @@ public partial class MoveTests
 		}
 	}
 
-	private static async Task RemoveMacArrangeEvents(
+	private async Task RemoveMacArrangeEvents(
 		ConcurrentBag<FileSystemEventArgs> createdBag,
 		string expectedFullPath,
 		params string[] initialDirectories
@@ -278,11 +283,20 @@ public partial class MoveTests
 			    && EqualsOrdinal(createdEvent.FullPath, expectedFullPath))
 			{
 				expectedEvent = createdEvent;
+
+				continue;
 			}
 
 			await That(createdEvent)
-				.Satisfies(x => initialDirectories.Any(directory => EqualsOrdinal(directory, x.Name)
+				.Satisfies(x => initialDirectories.Any(directory => EqualsOrdinal(
+					                                       directory, x.FullPath
+				                                       )
 				           )
+				).Because(
+					nameof(createdEvent.FullPath)
+					+ " should be one of the initial directories: ["
+					+ string.Join(", ", initialDirectories)
+					+ "]"
 				);
 		}
 
