@@ -1,4 +1,8 @@
-﻿using System.IO;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
@@ -6,6 +10,8 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class MoveTests
 {
+	private static bool IsMac { get; } = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+	
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
@@ -28,7 +34,8 @@ public partial class MoveTests
 			= FileSystem.FileSystemWatcher.New(insideDirectory);
 
 		using ManualResetEventSlim createdMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Created, out EventBox createdBox
+			fileSystemWatcher, WatcherChangeTypes.Created,
+			out ConcurrentBag<FileSystemEventArgs> createdBag
 		);
 
 		using ManualResetEventSlim deletedMs = AddEventHandler(
@@ -51,7 +58,11 @@ public partial class MoveTests
 		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
-		await That(createdBox.Value).IsNotNull();
+		await That(createdBag).HasSingle().Which
+			.Satisfies(x => x.ChangeType == WatcherChangeTypes.Created
+			                && string.Equals(x.Name, targetName, StringComparison.Ordinal)
+			                && string.Equals(x.FullPath, insideTarget, StringComparison.Ordinal)
+			);
 	}
 
 	[Theory]
@@ -82,17 +93,22 @@ public partial class MoveTests
 		string outsideTarget = FileSystem.Path.Combine(outsideDirectory, targetName);
 		string insideTarget = FileSystem.Path.Combine(insideSubDirectory, targetName);
 
+		string expectedDeletedName
+			= FileSystem.Path.Combine(FileSystem.Path.Combine(paths), targetName);
+
 		FileSystem.Initialize().WithSubdirectories(outsideDirectory, insideDirectory, insideTarget);
 
 		using IFileSystemWatcher fileSystemWatcher
 			= FileSystem.FileSystemWatcher.New(insideDirectory);
 
 		using ManualResetEventSlim deletedMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Deleted, out EventBox deletedBox
+			fileSystemWatcher, WatcherChangeTypes.Deleted,
+			out ConcurrentBag<FileSystemEventArgs> deletedBag
 		);
 
 		using ManualResetEventSlim createdMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Created
+			fileSystemWatcher, WatcherChangeTypes.Created,
+			out ConcurrentBag<FileSystemEventArgs> createdBag
 		);
 
 		using ManualResetEventSlim renamedMs = AddRenamedEventHandler(fileSystemWatcher);
@@ -109,10 +125,30 @@ public partial class MoveTests
 		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
 			.IsEqualTo(shouldInvokeDeleted);
 
-		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+			.IsEqualTo(IsMac);
+
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
-		await ThatIsNullOrNot(deletedBox.Value, !shouldInvokeDeleted);
+		await RemoveMacArrangeEvents(createdBag, insideTarget, insideDirectory, insideTarget);
+
+		await ThatIsSingleOrEmpty(deletedBag, !shouldInvokeDeleted);
+
+		if (shouldInvokeDeleted)
+		{
+			await That(deletedBag.TryTake(out FileSystemEventArgs? deletedEvent)).IsTrue();
+
+			await That(deletedEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Deleted
+			                                         && string.Equals(
+				                                         x.Name, expectedDeletedName,
+				                                         StringComparison.Ordinal
+			                                         )
+			                                         && string.Equals(
+				                                         x.FullPath, insideTarget,
+				                                         StringComparison.Ordinal
+			                                         )
+			);
+		}
 	}
 
 	[Theory]
@@ -143,13 +179,19 @@ public partial class MoveTests
 		string insideTarget = FileSystem.Path.Combine(insideSubDirectory, targetName);
 		string insideTarget2 = FileSystem.Path.Combine(insideSubDirectory, targetName2);
 
+		string expectedName = FileSystem.Path.Combine(FileSystem.Path.Combine(paths), targetName2);
+
+		string expectedOldName = FileSystem.Path.Combine(
+			FileSystem.Path.Combine(paths), targetName
+		);
+
 		FileSystem.Initialize().WithSubdirectories(insideDirectory, insideTarget);
 
 		using IFileSystemWatcher fileSystemWatcher
 			= FileSystem.FileSystemWatcher.New(insideDirectory);
 
 		using ManualResetEventSlim renamedMs = AddRenamedEventHandler(
-			fileSystemWatcher, out EventBox renamedBox
+			fileSystemWatcher, out ConcurrentBag<RenamedEventArgs> renamedBag
 		);
 
 		using ManualResetEventSlim deletedMs = AddEventHandler(
@@ -157,7 +199,8 @@ public partial class MoveTests
 		);
 
 		using ManualResetEventSlim createdMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Created
+			fileSystemWatcher, WatcherChangeTypes.Created,
+			out ConcurrentBag<FileSystemEventArgs> createdBag
 		);
 
 		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
@@ -173,20 +216,81 @@ public partial class MoveTests
 			.IsEqualTo(shouldInvokeRenamed);
 
 		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
-		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
-		await ThatIsNullOrNot(renamedBox.Value, !shouldInvokeRenamed);
+		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+			.IsEqualTo(IsMac);
+
+		await RemoveMacArrangeEvents(createdBag, insideTarget, insideDirectory, insideTarget);
+
+		await ThatIsSingleOrEmpty(renamedBag, !shouldInvokeRenamed);
+
+		if (shouldInvokeRenamed)
+		{
+			await That(renamedBag.TryTake(out RenamedEventArgs? renamedEvent)).IsTrue();
+
+			await That(renamedEvent!)
+				.Satisfies(x => string.Equals(x.OldName, expectedOldName, StringComparison.Ordinal)
+				                && string.Equals(x.Name, expectedName, StringComparison.Ordinal)
+				                && string.Equals(
+					                x.FullPath, insideTarget2, StringComparison.Ordinal
+				                )
+				                && string.Equals(
+					                x.OldFullPath, insideTarget, StringComparison.Ordinal
+				                )
+				);
+		}
 	}
 
-	private static async Task ThatIsNullOrNot<T>(T? value, bool isNull) where T : class
+	private static bool EqualsOrdinal(string? x, string? y)
 	{
-		if (isNull)
+		return string.Equals(x, y, StringComparison.Ordinal);
+	}
+
+	private static async Task ThatIsSingleOrEmpty<T>(IEnumerable<T> value, bool isEmpty)
+		where T : class
+	{
+		if (isEmpty)
 		{
-			await That(value).IsNull();
+			await That(value).IsEmpty();
 		}
 		else
 		{
-			await That(value).IsNotNull();
+			await That(value).HasSingle();
+		}
+	}
+
+	private static async Task RemoveMacArrangeEvents(
+		ConcurrentBag<FileSystemEventArgs> createdBag,
+		string expectedFullPath,
+		params string[] initialDirectories
+	)
+	{
+		if (!IsMac)
+		{
+			return;
+		}
+
+		FileSystemEventArgs? expectedEvent = null;
+
+		while (createdBag.TryTake(out FileSystemEventArgs? createdEvent))
+		{
+			if (createdEvent.ChangeType == WatcherChangeTypes.Created
+			    && EqualsOrdinal(createdEvent.FullPath, expectedFullPath))
+			{
+				expectedEvent = createdEvent;
+			}
+
+			await That(createdEvent)
+				.Satisfies(x => initialDirectories.Any(directory => EqualsOrdinal(directory, x.Name)
+				           )
+				);
+		}
+
+		await That(createdBag).IsEmpty();
+
+		if (expectedEvent is not null)
+		{
+			createdBag.Add(expectedEvent);
 		}
 	}
 
@@ -206,20 +310,20 @@ public partial class MoveTests
 	private static ManualResetEventSlim AddEventHandler(
 		IFileSystemWatcher fileSystemWatcher,
 		WatcherChangeTypes changeType,
-		out EventBox eventBox
+		out ConcurrentBag<FileSystemEventArgs> events
 	)
 	{
 		ManualResetEventSlim ms = new();
-		EventBox box = new();
+		ConcurrentBag<FileSystemEventArgs> eventBag = new();
 
-		eventBox = box;
+		events = eventBag;
 
 		FileSystemEventHandler handler = (_, args) =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				box.Value = args;
+				eventBag.Add(args);
 				ms.Set();
 			}
 			catch (ObjectDisposedException)
@@ -251,19 +355,19 @@ public partial class MoveTests
 
 	private static ManualResetEventSlim AddRenamedEventHandler(
 		IFileSystemWatcher fileSystemWatcher,
-		out EventBox eventBox
+		out ConcurrentBag<RenamedEventArgs> events
 	)
 	{
 		ManualResetEventSlim ms = new();
-		EventBox box = new();
-		eventBox = box;
+		ConcurrentBag<RenamedEventArgs> eventBag = new();
+		events = eventBag;
 
 		fileSystemWatcher.Renamed += (_, args) =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				box.Value = args;
+				eventBag.Add(args);
 				ms.Set();
 			}
 			catch (ObjectDisposedException)
@@ -273,10 +377,5 @@ public partial class MoveTests
 		};
 
 		return ms;
-	}
-
-	private class EventBox
-	{
-		public FileSystemEventArgs? Value { get; set; }
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Concurrent;
+using System.IO;
 using System.Threading;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
@@ -21,7 +22,7 @@ public partial class MoveTests
 		{
 			throw new ArgumentException("At least one path is required.", nameof(paths));
 		}
-		
+
 		// Arrange
 
 		// short names, otherwise the path will be too long
@@ -29,9 +30,11 @@ public partial class MoveTests
 		const string insideDirectory = "inside";
 		const string targetName = "target";
 
-		string insideSubDirectory = FileSystem.Path.Combine(
-			insideDirectory, FileSystem.Path.Combine(paths)
-		);
+		string nestedDirectory = FileSystem.Path.Combine(paths);
+
+		string expectedName = FileSystem.Path.Combine(nestedDirectory, targetName);
+
+		string insideSubDirectory = FileSystem.Path.Combine(insideDirectory, nestedDirectory);
 
 		string outsideTarget = FileSystem.Path.Combine(outsideDirectory, targetName);
 		string insideTarget = FileSystem.Path.Combine(insideSubDirectory, targetName);
@@ -42,7 +45,8 @@ public partial class MoveTests
 			= FileSystem.FileSystemWatcher.New(insideDirectory);
 
 		using ManualResetEventSlim createdMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Created, out EventBox createdBox
+			fileSystemWatcher, WatcherChangeTypes.Created,
+			out ConcurrentBag<FileSystemEventArgs> createdBag
 		);
 
 		using ManualResetEventSlim deletedMs = AddEventHandler(
@@ -55,18 +59,28 @@ public partial class MoveTests
 		fileSystemWatcher.EnableRaisingEvents = true;
 
 		// Act
-		
+
 		FileSystem.Directory.Move(outsideTarget, insideTarget);
 
 		// Assert
-		
+
 		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
 		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
-		await ThatIsNullOrNot(createdBox.Value, !includeSubdirectories);
+		await ThatIsSingleOrEmpty(createdBag, !includeSubdirectories);
+
+		if (includeSubdirectories)
+		{
+			await That(createdBag.TryTake(out FileSystemEventArgs? createdEvent)).IsTrue();
+
+			await That(createdEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Created
+			                                         && EqualsOrdinal(x.Name, expectedName)
+			                                         && EqualsOrdinal(x.FullPath, insideTarget)
+			);
+		}
 	}
 
 	[Theory]
@@ -85,16 +99,18 @@ public partial class MoveTests
 		{
 			throw new ArgumentException("At least one path is required.", nameof(paths));
 		}
-		
+
 		// Arrange
 
 		// short names, otherwise the path will be too long
 		const string insideDirectory = "inside";
 		const string targetName = "target";
 
-		string insideSubDirectory = FileSystem.Path.Combine(
-			insideDirectory, FileSystem.Path.Combine(paths)
-		);
+		string nestedDirectory = FileSystem.Path.Combine(paths);
+
+		string expectedCreatedName = FileSystem.Path.Combine(nestedDirectory, targetName);
+
+		string insideSubDirectory = FileSystem.Path.Combine(insideDirectory, nestedDirectory);
 
 		string insideTarget = FileSystem.Path.Combine(insideDirectory, targetName);
 		string nestedTarget = FileSystem.Path.Combine(insideSubDirectory, targetName);
@@ -105,11 +121,13 @@ public partial class MoveTests
 			= FileSystem.FileSystemWatcher.New(insideDirectory);
 
 		using ManualResetEventSlim deletedMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Deleted, out EventBox deletedBox
+			fileSystemWatcher, WatcherChangeTypes.Deleted,
+			out ConcurrentBag<FileSystemEventArgs> deletedBag
 		);
 
 		using ManualResetEventSlim createdMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Created, out EventBox createdBox
+			fileSystemWatcher, WatcherChangeTypes.Created,
+			out ConcurrentBag<FileSystemEventArgs> createdBag
 		);
 
 		using ManualResetEventSlim renamedMs = AddRenamedEventHandler(fileSystemWatcher);
@@ -117,12 +135,12 @@ public partial class MoveTests
 		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
-		 // Act
-		
+		// Act
+
 		FileSystem.Directory.Move(insideTarget, nestedTarget);
 
 		// Assert
-		
+
 		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
 
 		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
@@ -130,9 +148,26 @@ public partial class MoveTests
 
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
-		await That(deletedBox.Value).IsNotNull();
-		
-		await ThatIsNullOrNot(createdBox.Value, !includeSubdirectories);
+		await That(deletedBag).HasSingle();
+
+		await That(deletedBag.TryTake(out FileSystemEventArgs? deletedEvent)).IsTrue();
+
+		await That(deletedEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Deleted
+		                                         && EqualsOrdinal(x.Name, targetName)
+		                                         && EqualsOrdinal(x.FullPath, insideTarget)
+		);
+
+		await ThatIsSingleOrEmpty(createdBag, !includeSubdirectories);
+
+		if (includeSubdirectories)
+		{
+			await That(createdBag.TryTake(out FileSystemEventArgs? createdEvent)).IsTrue();
+
+			await That(createdEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Created
+			                                         && EqualsOrdinal(x.Name, expectedCreatedName)
+			                                         && EqualsOrdinal(x.FullPath, nestedTarget)
+			);
+		}
 	}
 
 	[Theory]
@@ -146,7 +181,7 @@ public partial class MoveTests
 	)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
-		
+
 		// Arrange
 
 		bool isCreated = path is null || includeSubdirectories;
@@ -154,8 +189,15 @@ public partial class MoveTests
 		// short names, otherwise the path will be too long
 		const string insideDirectory = "inside";
 		const string targetName = "target";
+		const string nestedDirectoryName = "nested";
 
-		string nestedDirectory = FileSystem.Path.Combine(insideDirectory, "nested");
+		string expectedDeletedName = FileSystem.Path.Combine(nestedDirectoryName, targetName);
+
+		string expectedCreatedName = path is null
+			? targetName
+			: FileSystem.Path.Combine(nestedDirectoryName, path, targetName);
+
+		string nestedDirectory = FileSystem.Path.Combine(insideDirectory, nestedDirectoryName);
 
 		string targetDir = path is null
 			? insideDirectory
@@ -171,11 +213,13 @@ public partial class MoveTests
 			= FileSystem.FileSystemWatcher.New(insideDirectory);
 
 		using ManualResetEventSlim createdMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Created, out EventBox createdBox
+			fileSystemWatcher, WatcherChangeTypes.Created,
+			out ConcurrentBag<FileSystemEventArgs> createdBag
 		);
 
 		using ManualResetEventSlim deletedMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Deleted, out EventBox deletedBox
+			fileSystemWatcher, WatcherChangeTypes.Deleted,
+			out ConcurrentBag<FileSystemEventArgs> deletedBag
 		);
 
 		using ManualResetEventSlim renamedMs = AddRenamedEventHandler(fileSystemWatcher);
@@ -184,20 +228,41 @@ public partial class MoveTests
 		fileSystemWatcher.EnableRaisingEvents = true;
 
 		// Act
-		
+
 		FileSystem.Directory.Move(source, target);
 
 		// Assert
-		
-		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsEqualTo(isCreated);
+
+		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+			.IsEqualTo(isCreated);
 
 		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
-		await ThatIsNullOrNot(createdBox.Value, !isCreated);
-		await ThatIsNullOrNot(deletedBox.Value, !includeSubdirectories);
+		await ThatIsSingleOrEmpty(createdBag, !isCreated);
+		await ThatIsSingleOrEmpty(deletedBag, !includeSubdirectories);
+
+		if (isCreated)
+		{
+			await That(createdBag.TryTake(out FileSystemEventArgs? createdEvent)).IsTrue();
+
+			await That(createdEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Created
+			                                         && EqualsOrdinal(x.Name, expectedCreatedName)
+			                                         && EqualsOrdinal(x.FullPath, target)
+			);
+		}
+
+		if (includeSubdirectories)
+		{
+			await That(deletedBag.TryTake(out FileSystemEventArgs? deletedEvent)).IsTrue();
+
+			await That(deletedEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Deleted
+			                                         && EqualsOrdinal(x.Name, expectedDeletedName)
+			                                         && EqualsOrdinal(x.FullPath, source)
+			);
+		}
 	}
 
 	[Theory]
@@ -211,7 +276,7 @@ public partial class MoveTests
 	)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
-		
+
 		// Arrange
 
 		bool isCreated = path is null || includeSubdirectories;
@@ -219,8 +284,20 @@ public partial class MoveTests
 		// short names, otherwise the path will be too long
 		const string insideDirectory = "inside";
 		const string targetName = "target";
+		const string nestedDirectoryName = "nested";
+		const string deepNestedDirectoryName = "deep";
 
-		string deepNestedDirectory = FileSystem.Path.Combine(insideDirectory, "nested", "deep");
+		string expectedDeletedName = FileSystem.Path.Combine(
+			nestedDirectoryName, deepNestedDirectoryName, targetName
+		);
+
+		string expectedCreatedName = path is null
+			? targetName
+			: FileSystem.Path.Combine(path, targetName);
+
+		string deepNestedDirectory = FileSystem.Path.Combine(
+			insideDirectory, nestedDirectoryName, deepNestedDirectoryName
+		);
 
 		string targetDir = path is null
 			? insideDirectory
@@ -236,11 +313,13 @@ public partial class MoveTests
 			= FileSystem.FileSystemWatcher.New(insideDirectory);
 
 		using ManualResetEventSlim createdMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Created, out EventBox createdBox
+			fileSystemWatcher, WatcherChangeTypes.Created,
+			out ConcurrentBag<FileSystemEventArgs> createdBag
 		);
 
 		using ManualResetEventSlim deletedMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Deleted, out EventBox deletedBox
+			fileSystemWatcher, WatcherChangeTypes.Deleted,
+			out ConcurrentBag<FileSystemEventArgs> deletedBag
 		);
 
 		using ManualResetEventSlim renamedMs = AddRenamedEventHandler(fileSystemWatcher);
@@ -249,9 +328,9 @@ public partial class MoveTests
 		fileSystemWatcher.EnableRaisingEvents = true;
 
 		// Act
-		
+
 		FileSystem.Directory.Move(source, target);
-		
+
 		// Assert
 
 		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
@@ -262,7 +341,27 @@ public partial class MoveTests
 
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
-		await ThatIsNullOrNot(createdBox.Value, !isCreated);
-		await ThatIsNullOrNot(deletedBox.Value, !includeSubdirectories);
+		await ThatIsSingleOrEmpty(createdBag, !isCreated);
+		await ThatIsSingleOrEmpty(deletedBag, !includeSubdirectories);
+
+		if (isCreated)
+		{
+			await That(createdBag.TryTake(out FileSystemEventArgs? createdEvent)).IsTrue();
+
+			await That(createdEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Created
+			                                         && EqualsOrdinal(x.Name, expectedCreatedName)
+			                                         && EqualsOrdinal(x.FullPath, target)
+			);
+		}
+
+		if (includeSubdirectories)
+		{
+			await That(deletedBag.TryTake(out FileSystemEventArgs? deletedEvent)).IsTrue();
+
+			await That(deletedEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Deleted
+			                                         && EqualsOrdinal(x.Name, expectedDeletedName)
+			                                         && EqualsOrdinal(x.FullPath, source)
+			);
+		}
 	}
 }
