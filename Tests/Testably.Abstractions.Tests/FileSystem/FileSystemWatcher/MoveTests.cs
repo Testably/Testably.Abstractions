@@ -70,10 +70,11 @@ public partial class MoveTests
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
 		await That(createdBag).HasSingle().Which
-			.Satisfies(x => x.ChangeType == WatcherChangeTypes.Created
-			                && string.Equals(x.Name, targetName, StringComparison.Ordinal)
-			                && string.Equals(x.FullPath, insideTarget, StringComparison.Ordinal)
-			);
+			.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
+			.And
+			.For(x => x.Name, it => it.IsEqualTo(targetName))
+			.And
+			.For(x => x.FullPath, it => it.IsEqualTo(insideTarget));
 	}
 
 	[Theory]
@@ -150,16 +151,12 @@ public partial class MoveTests
 		{
 			await That(deletedBag.TryTake(out FileSystemEventArgs? deletedEvent)).IsTrue();
 
-			await That(deletedEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Deleted
-			                                         && string.Equals(
-				                                         x.Name, expectedDeletedName,
-				                                         StringComparison.Ordinal
-			                                         )
-			                                         && string.Equals(
-				                                         x.FullPath, insideTarget,
-				                                         StringComparison.Ordinal
-			                                         )
-			);
+			await That(deletedEvent!)
+				.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Deleted))
+				.And
+				.For(x => x.Name, it => it.IsEqualTo(expectedDeletedName))
+				.And
+				.For(x => x.FullPath, it => it.IsEqualTo(insideTarget));
 		}
 	}
 
@@ -241,27 +238,20 @@ public partial class MoveTests
 			await That(renamedBag.TryTake(out RenamedEventArgs? renamedEvent)).IsTrue();
 
 			await That(renamedEvent!)
-				.Satisfies(x => string.Equals(x.OldName, expectedOldName, StringComparison.Ordinal)
-				                && string.Equals(x.Name, expectedName, StringComparison.Ordinal)
-				                && string.Equals(
-					                x.FullPath, insideTarget2, StringComparison.Ordinal
-				                )
-				                && string.Equals(
-					                x.OldFullPath, insideTarget, StringComparison.Ordinal
-				                )
-				);
+				.For(x => x.OldName, it => it.IsEqualTo(expectedOldName))
+				.And
+				.For(x => x.Name, it => it.IsEqualTo(expectedName))
+				.And
+				.For(x => x.FullPath, it => it.IsEqualTo(insideTarget2))
+				.And
+				.For(x => x.OldFullPath, it => it.IsEqualTo(insideTarget));
 		}
 	}
 
-	private static bool EqualsOrdinal(string? x, string? y)
-	{
-		return string.Equals(x, y, StringComparison.Ordinal);
-	}
-
-	private static async Task ThatIsSingleOrEmpty<T>(IEnumerable<T> value, bool isEmpty)
+	private static async Task ThatIsSingleOrEmpty<T>(IEnumerable<T> value, bool expectEmpty)
 		where T : class
 	{
-		if (isEmpty)
+		if (expectEmpty)
 		{
 			await That(value).IsEmpty();
 		}
@@ -287,7 +277,7 @@ public partial class MoveTests
 		while (createdBag.TryTake(out FileSystemEventArgs? createdEvent))
 		{
 			if (createdEvent.ChangeType == WatcherChangeTypes.Created
-			    && EqualsOrdinal(createdEvent.FullPath, expectedFullPath))
+			    && string.Equals(createdEvent.FullPath, expectedFullPath, StringComparison.Ordinal))
 			{
 				expectedEvent = createdEvent;
 
@@ -295,8 +285,9 @@ public partial class MoveTests
 			}
 
 			await That(createdEvent)
-				.Satisfies(x => initialDirectories.Any(directory => EqualsOrdinal(
-					                                       directory, x.FullPath
+				.Satisfies(x => initialDirectories.Any(directory => string.Equals(
+					                                       directory, x.FullPath,
+					                                       StringComparison.Ordinal
 				                                       )
 				           )
 				).Because(

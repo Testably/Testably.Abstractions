@@ -18,11 +18,6 @@ public partial class MoveTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		if (paths.Length == 0)
-		{
-			throw new ArgumentException("At least one path is required.", nameof(paths));
-		}
-
 		// Arrange
 
 		// short names, otherwise the path will be too long
@@ -76,10 +71,12 @@ public partial class MoveTests
 		{
 			await That(createdBag.TryTake(out FileSystemEventArgs? createdEvent)).IsTrue();
 
-			await That(createdEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Created
-			                                         && EqualsOrdinal(x.Name, expectedName)
-			                                         && EqualsOrdinal(x.FullPath, insideTarget)
-			);
+			await That(createdEvent!)
+				.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
+				.And
+				.For(x => x.Name, it => it.IsEqualTo(expectedName))
+				.And
+				.For(x => x.FullPath, it => it.IsEqualTo(insideTarget));
 		}
 	}
 
@@ -94,11 +91,6 @@ public partial class MoveTests
 	)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
-
-		if (paths.Length == 0)
-		{
-			throw new ArgumentException("At least one path is required.", nameof(paths));
-		}
 
 		// Arrange
 
@@ -152,10 +144,12 @@ public partial class MoveTests
 
 		await That(deletedBag.TryTake(out FileSystemEventArgs? deletedEvent)).IsTrue();
 
-		await That(deletedEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Deleted
-		                                         && EqualsOrdinal(x.Name, targetName)
-		                                         && EqualsOrdinal(x.FullPath, insideTarget)
-		);
+		await That(deletedEvent!)
+			.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Deleted))
+			.And
+			.For(x => x.Name, it => it.IsEqualTo(targetName))
+			.And
+			.For(x => x.FullPath, it => it.IsEqualTo(insideTarget));
 
 		await ThatIsSingleOrEmpty(createdBag, !includeSubdirectories);
 
@@ -163,10 +157,12 @@ public partial class MoveTests
 		{
 			await That(createdBag.TryTake(out FileSystemEventArgs? createdEvent)).IsTrue();
 
-			await That(createdEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Created
-			                                         && EqualsOrdinal(x.Name, expectedCreatedName)
-			                                         && EqualsOrdinal(x.FullPath, nestedTarget)
-			);
+			await That(createdEvent!)
+				.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
+				.And
+				.For(x => x.Name, it => it.IsEqualTo(expectedCreatedName))
+				.And
+				.For(x => x.FullPath, it => it.IsEqualTo(nestedTarget));
 		}
 	}
 
@@ -248,20 +244,24 @@ public partial class MoveTests
 		{
 			await That(createdBag.TryTake(out FileSystemEventArgs? createdEvent)).IsTrue();
 
-			await That(createdEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Created
-			                                         && EqualsOrdinal(x.Name, expectedCreatedName)
-			                                         && EqualsOrdinal(x.FullPath, target)
-			);
+			await That(createdEvent!)
+				.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
+				.And
+				.For(x => x.Name, it => it.IsEqualTo(expectedCreatedName))
+				.And
+				.For(x => x.FullPath, it => it.IsEqualTo(target));
 		}
 
 		if (includeSubdirectories)
 		{
 			await That(deletedBag.TryTake(out FileSystemEventArgs? deletedEvent)).IsTrue();
 
-			await That(deletedEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Deleted
-			                                         && EqualsOrdinal(x.Name, expectedDeletedName)
-			                                         && EqualsOrdinal(x.FullPath, source)
-			);
+			await That(deletedEvent!)
+				.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Deleted))
+				.And
+				.For(x => x.Name, it => it.IsEqualTo(expectedDeletedName))
+				.And
+				.For(x => x.FullPath, it => it.IsEqualTo(source));
 		}
 	}
 
@@ -348,20 +348,24 @@ public partial class MoveTests
 		{
 			await That(createdBag.TryTake(out FileSystemEventArgs? createdEvent)).IsTrue();
 
-			await That(createdEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Created
-			                                         && EqualsOrdinal(x.Name, expectedCreatedName)
-			                                         && EqualsOrdinal(x.FullPath, target)
-			);
+			await That(createdEvent!)
+				.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
+				.And
+				.For(x => x.Name, it => it.IsEqualTo(expectedCreatedName))
+				.And
+				.For(x => x.FullPath, it => it.IsEqualTo(target));
 		}
 
 		if (includeSubdirectories)
 		{
 			await That(deletedBag.TryTake(out FileSystemEventArgs? deletedEvent)).IsTrue();
 
-			await That(deletedEvent!).Satisfies(x => x.ChangeType == WatcherChangeTypes.Deleted
-			                                         && EqualsOrdinal(x.Name, expectedDeletedName)
-			                                         && EqualsOrdinal(x.FullPath, source)
-			);
+			await That(deletedEvent!)
+				.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Deleted))
+				.And
+				.For(x => x.Name, it => it.IsEqualTo(expectedDeletedName))
+				.And
+				.For(x => x.FullPath, it => it.IsEqualTo(source));
 		}
 	}
 }
