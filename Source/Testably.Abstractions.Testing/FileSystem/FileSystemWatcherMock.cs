@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -572,9 +573,9 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 			return;
 		}
-		
+
 		RenamedContext context = new(
-			comesFromOutside, comesFromInside, goesToInside,
+			comesFromOutside, comesFromInside, goesToInside, goesToOutside,
 			GetSubDirectoryCount(item.OldPath!)
 		);
 
@@ -601,10 +602,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private void TriggerWindowsRenameNotification(ChangeDescription item, RenamedContext context)
 	{
-		// Premise
-		// context.ComesFromOutside == true && context.GoesToInside == true covered
-		// context.ComesFromInside == true && context.GoesToInside == true covered
-		// context.GoesToOutside == true covered
+		CheckRenamePremise(context);
 
 		if (context.ComesFromOutside)
 		{
@@ -643,7 +641,9 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				FireCreated();
 			}
 		}
-		
+
+		return;
+
 		void FireCreated()
 		{
 			Created?.Invoke(this, ToFileSystemEventArgs(WatcherChangeTypes.Created, item.Path));
@@ -665,12 +665,9 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private void TriggerMacRenameNotification(ChangeDescription item, RenamedContext context)
 	{
-		// Premise
-		// context.ComesFromOutside == true && context.GoesToInside == true covered
-		// context.ComesFromInside == true && context.GoesToInside == true covered
-		// context.GoesToOutside == true covered
+		CheckRenamePremise(context);
 
-		if (context.ComesFromInside && TryMakeRenamedEventArgs(item, out var eventArgs))
+		if (context.ComesFromInside && TryMakeRenamedEventArgs(item, out RenamedEventArgs? eventArgs))
 		{
 			Renamed?.Invoke(this, eventArgs);
 			return;
@@ -681,10 +678,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private void TriggerLinuxRenameNotification(ChangeDescription item, RenamedContext context)
 	{
-		// Premise
-		// context.ComesFromOutside == true && context.GoesToInside == true covered
-		// context.ComesFromInside == true && context.GoesToInside == true covered
-		// context.GoesToOutside == true covered
+		CheckRenamePremise(context);
 
 		bool hasRenameArgs = TryMakeRenamedEventArgs(item, out RenamedEventArgs? eventArgs);
 
@@ -723,6 +717,23 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		{
 			Renamed?.Invoke(this, eventArgs!);
 		}
+	}
+
+	private static void CheckRenamePremise(RenamedContext context)
+	{
+		Debug.Assert(
+			context is not { ComesFromOutside: true, GoesToInside: true },
+			"The premise { ComesFromOutside: true, GoesToInside: true } should have been handled."
+		);
+
+		Debug.Assert(
+			context is not { ComesFromInside: true, GoesToInside: true },
+			"The premise { ComesFromInside: true, GoesToInside: true } should have been handled."
+		);
+
+		Debug.Assert(
+			!context.GoesToOutside, "The premise { GoesToOutside: true } should have been handled."
+		);
 	}
 
 	private string? GetNormalizedParent(string? path)
@@ -961,8 +972,9 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		bool comesFromOutside,
 		bool comesFromInside,
 		bool goesToInside,
+		bool goesToOutside,
 		int oldSubDirectoryCount
-	) : IEquatable<RenamedContext>
+	)
 	{
 		private const int NestedLevelCount = 1;
 
@@ -971,6 +983,8 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		public bool ComesFromInside { get; } = comesFromInside;
 
 		public bool GoesToInside { get; } = goesToInside;
+
+		public bool GoesToOutside { get; } = goesToOutside;
 
 		/// <remarks>
 		/// If this is <see langword="true"/> then <see cref="ComesFromDeepNested"/> is <see langword="false"/>
@@ -981,33 +995,6 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		/// If this is <see langword="true"/> then <see cref="ComesFromNested"/> is <see langword="false"/>
 		/// </remarks>
 		public bool ComesFromDeepNested { get; } = oldSubDirectoryCount > NestedLevelCount;
-
-		/// <inheritdoc />
-		public bool Equals(RenamedContext other)
-			=> ComesFromOutside == other.ComesFromOutside
-			   && ComesFromInside == other.ComesFromInside
-			   && GoesToInside == other.GoesToInside
-			   && ComesFromNested == other.ComesFromNested
-			   && ComesFromDeepNested == other.ComesFromDeepNested;
-
-		/// <inheritdoc />
-		public override bool Equals(object? obj)
-			=> obj is RenamedContext other && Equals(other);
-
-		/// <inheritdoc />
-		public override int GetHashCode()
-		{
-			unchecked
-			{
-				int hashCode = ComesFromOutside.GetHashCode();
-				hashCode = (hashCode * 397) ^ ComesFromInside.GetHashCode();
-				hashCode = (hashCode * 397) ^ GoesToInside.GetHashCode();
-				hashCode = (hashCode * 397) ^ ComesFromNested.GetHashCode();
-				hashCode = (hashCode * 397) ^ ComesFromDeepNested.GetHashCode();
-
-				return hashCode;
-			}
-		}
 	}
 
 	internal sealed class ChangeDescriptionEventArgs(ChangeDescription changeDescription)
