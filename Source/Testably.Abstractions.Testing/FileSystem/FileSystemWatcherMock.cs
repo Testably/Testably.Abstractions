@@ -600,6 +600,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 	}
 
+	#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private void TriggerWindowsRenameNotification(ChangeDescription item, RenamedContext context)
 	{
 		CheckRenamePremise(context);
@@ -718,6 +719,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			Renamed?.Invoke(this, eventArgs!);
 		}
 	}
+	#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	private static void CheckRenamePremise(RenamedContext context)
 	{
