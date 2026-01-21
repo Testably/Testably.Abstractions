@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -275,12 +277,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				return;
 			}
 			
-			string fullPath = _fileSystem.Path.GetFullPath(value);
-
-			if (!fullPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
-			{
-				fullPath += _fileSystem.Path.DirectorySeparatorChar;
-			}
+			string fullPath = GetNormalizedFullPath(value);
 			
 			_fullPath = fullPath;
 		}
@@ -404,19 +401,26 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private bool MatchesWatcherPath(string? path)
 	{
+		return MatchesWatcherPath(path, IncludeSubdirectories);
+	}
+
+	private bool MatchesWatcherPath(string? path, bool includeSubdirectories)
+	{
 		if (path == null)
 		{
 			return false;
 		}
 
-		string fullPath = _fileSystem.Execute.Path.GetFullPath(Path);
-		if (IncludeSubdirectories)
+		string fullPath = _fileSystem.Execute.Path.GetFullPath(path);
+
+		if (includeSubdirectories)
 		{
-			return path.StartsWith(fullPath, _fileSystem.Execute.StringComparisonMode);
+			return fullPath.StartsWith(FullPath, _fileSystem.Execute.StringComparisonMode);
 		}
 
-		return string.Equals(_fileSystem.Execute.Path.GetDirectoryName(path), fullPath,
-			_fileSystem.Execute.StringComparisonMode);
+		return string.Equals(
+			GetNormalizedParent(path), FullPath, _fileSystem.Execute.StringComparisonMode
+		);
 	}
 
 	private void NotifyChange(ChangeDescription item)
@@ -532,37 +536,268 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private void TriggerRenameNotification(ChangeDescription item)
 	{
-		if (_fileSystem.Execute.IsWindows)
+		// Outside: Outside the FullPath
+		// Inside: FullPath/<target>
+		// Nested: FullPath/*/<target>
+		// Deep Nested: FullPath/*/**/<target>
+
+		bool comesFromOutside = !MatchesWatcherPath(item.OldPath, true);
+		bool goesToInside = MatchesWatcherPath(item.Path, false);
+
+		// Outside -> Inside
+		if (comesFromOutside && goesToInside)
 		{
-			if (TryMakeRenamedEventArgs(item,
-				out RenamedEventArgs? eventArgs))
+			Created?.Invoke(this, ToFileSystemEventArgs(WatcherChangeTypes.Created, item.Path));
+
+			return;
+		}
+
+		bool comesFromInside = MatchesWatcherPath(item.OldPath, false);
+		bool goesToOutside = !MatchesWatcherPath(item.Path, true);
+
+		// ... -> Outside
+		if (goesToOutside && (comesFromInside || IncludeSubdirectories))
+		{
+			Deleted?.Invoke(this, ToFileSystemEventArgs(WatcherChangeTypes.Deleted, item.OldPath!));
+
+			return;
+		}
+
+		// Inside -> Inside
+		if (comesFromInside && goesToInside)
+		{
+			if (TryMakeRenamedEventArgs(item, out RenamedEventArgs? eventArgs))
 			{
 				Renamed?.Invoke(this, eventArgs);
 			}
-			else if (item.OldPath != null)
-			{
-				if (MatchesWatcherPath(item.OldPath))
-				{
-					Deleted?.Invoke(this, ToFileSystemEventArgs(
-						WatcherChangeTypes.Deleted, item.OldPath));
-				}
 
-				if (MatchesWatcherPath(item.Path))
-				{
-					Created?.Invoke(this, ToFileSystemEventArgs(
-						WatcherChangeTypes.Created, item.Path));
-				}
-			}
+			return;
+		}
+
+		RenamedContext context = new(
+			comesFromOutside, comesFromInside, goesToInside, goesToOutside,
+			GetSubDirectoryCount(item.OldPath!)
+		);
+
+		if (_fileSystem.Execute.IsWindows)
+		{
+			TriggerWindowsRenameNotification(item, context);
+		}
+		else if (_fileSystem.Execute.IsLinux)
+		{
+			TriggerLinuxRenameNotification(item, context);
+		}
+		else if (_fileSystem.Execute.IsMac)
+		{
+			TriggerMacRenameNotification(item, context);
 		}
 		else
 		{
-			TryMakeRenamedEventArgs(item,
-				out RenamedEventArgs? eventArgs);
-			if (eventArgs != null)
+			if (TryMakeRenamedEventArgs(item, out RenamedEventArgs? eventArgs))
 			{
 				Renamed?.Invoke(this, eventArgs);
 			}
 		}
+	}
+
+	private void TriggerWindowsRenameNotification(ChangeDescription item, RenamedContext context)
+	{
+		CheckRenamePremise(context);
+
+		if (context.ComesFromOutside)
+		{
+			if (IncludeSubdirectories)
+			{
+				FireCreated();
+			}
+		}
+		else if (context.ComesFromInside)
+		{
+			FireDeleted();
+
+			if (IncludeSubdirectories)
+			{
+				FireCreated();
+			}
+		}
+		else if (context.ComesFromNested || context.ComesFromDeepNested)
+		{
+			if (context.GoesToInside)
+			{
+				if (IncludeSubdirectories)
+				{
+					FireDeleted();
+				}
+
+				FireCreated();
+			}
+			else if (IsItemNameChange(item) && IncludeSubdirectories)
+			{
+				FireRenamed();
+			}
+			else if (IncludeSubdirectories)
+			{
+				FireDeleted();
+				FireCreated();
+			}
+		}
+
+		return;
+
+		void FireCreated()
+		{
+			Created?.Invoke(this, ToFileSystemEventArgs(WatcherChangeTypes.Created, item.Path));
+		}
+
+		void FireDeleted()
+		{
+			Deleted?.Invoke(this, ToFileSystemEventArgs(WatcherChangeTypes.Deleted, item.OldPath!));
+		}
+
+		void FireRenamed()
+		{
+			if (TryMakeRenamedEventArgs(item, out RenamedEventArgs? eventArgs))
+			{
+				Renamed?.Invoke(this, eventArgs);
+			}
+		}
+	}
+
+	private void TriggerMacRenameNotification(ChangeDescription item, RenamedContext context)
+	{
+		CheckRenamePremise(context);
+
+		if (context.ComesFromInside && TryMakeRenamedEventArgs(item, out RenamedEventArgs? eventArgs))
+		{
+			Renamed?.Invoke(this, eventArgs);
+			return;
+		}
+
+		TriggerLinuxRenameNotification(item, context);
+	}
+
+	private void TriggerLinuxRenameNotification(ChangeDescription item, RenamedContext context)
+	{
+		CheckRenamePremise(context);
+
+		bool hasRenameArgs = TryMakeRenamedEventArgs(item, out RenamedEventArgs? eventArgs);
+
+		if (context.ComesFromOutside)
+		{
+			if (IncludeSubdirectories)
+			{
+				Created?.Invoke(this, ToFileSystemEventArgs(WatcherChangeTypes.Created, item.Path));
+			}
+		}
+		else if (context.ComesFromInside)
+		{
+			if (IncludeSubdirectories && hasRenameArgs)
+			{
+				Renamed?.Invoke(this, eventArgs!);
+			}
+			else
+			{
+				Deleted?.Invoke(
+					this, ToFileSystemEventArgs(WatcherChangeTypes.Deleted, item.OldPath!)
+				);
+			}
+		}
+		else if (context.GoesToInside)
+		{
+			if (IncludeSubdirectories && hasRenameArgs)
+			{
+				Renamed?.Invoke(this, eventArgs!);
+			}
+			else
+			{
+				Created?.Invoke(this, ToFileSystemEventArgs(WatcherChangeTypes.Created, item.Path));
+			}
+		}
+		else if (IncludeSubdirectories && hasRenameArgs)
+		{
+			Renamed?.Invoke(this, eventArgs!);
+		}
+	}
+
+	private static void CheckRenamePremise(RenamedContext context)
+	{
+		Debug.Assert(
+			context is not { ComesFromOutside: true, GoesToInside: true },
+			"The premise { ComesFromOutside: true, GoesToInside: true } should have been handled."
+		);
+
+		Debug.Assert(
+			context is not { ComesFromInside: true, GoesToInside: true },
+			"The premise { ComesFromInside: true, GoesToInside: true } should have been handled."
+		);
+
+		Debug.Assert(
+			!context.GoesToOutside, "The premise { GoesToOutside: true } should have been handled."
+		);
+	}
+
+	private string? GetNormalizedParent(string? path)
+	{
+		if (path == null)
+		{
+			return null;
+		}
+
+		string normalized = GetNormalizedFullPath(path);
+
+		return _fileSystem.Execute.Path.GetDirectoryName(normalized)
+			?.TrimEnd(_fileSystem.Execute.Path.DirectorySeparatorChar);
+	}
+
+	private string GetNormalizedFullPath(string path)
+	{
+		string normalized = _fileSystem.Execute.Path.GetFullPath(path);
+
+		return normalized.TrimEnd(_fileSystem.Execute.Path.DirectorySeparatorChar);
+	}
+
+	/// <summary>
+	/// Counts the number of directory separators inside the relative path to <see cref="FullPath"/>
+	/// </summary>
+	/// <param name="path"></param>
+	/// <returns>The number of directory separators inside the relative path to <see cref="FullPath"/></returns>
+	/// <remarks>Returns -1 if the path is outside the <see cref="FullPath"/></remarks>
+	private int GetSubDirectoryCount(string path)
+	{
+		string normalizedPath = GetNormalizedFullPath(path);
+
+		if (!normalizedPath.StartsWith(FullPath, _fileSystem.Execute.StringComparisonMode))
+		{
+			return -1;
+		}
+
+		return normalizedPath.Substring(FullPath.Length)
+			.TrimStart(_fileSystem.Execute.Path.DirectorySeparatorChar)
+			.Count(c => c == _fileSystem.Execute.Path.DirectorySeparatorChar);
+	}
+
+	private bool IsItemNameChange(ChangeDescription changeDescription)
+	{
+		string normalizedPath = GetNormalizedFullPath(changeDescription.Path);
+		string normalizedOldPath = GetNormalizedFullPath(changeDescription.OldPath!);
+		
+		string name = _fileSystem.Execute.Path.GetFileName(normalizedPath);
+		string oldName = _fileSystem.Execute.Path.GetFileName(normalizedOldPath);
+
+		if (name.Equals(oldName, _fileSystem.Execute.StringComparisonMode))
+		{
+			return false;
+		}
+
+		if (name.Length == 0 || oldName.Length == 0)
+		{
+			return false;
+		}
+		
+		string? parent = _fileSystem.Execute.Path.GetDirectoryName(normalizedPath);
+		string? oldParent = _fileSystem.Execute.Path.GetDirectoryName(normalizedOldPath);
+		
+		return string.Equals(parent, oldParent, _fileSystem.Execute.StringComparisonMode);
 	}
 
 	private bool TryMakeRenamedEventArgs(
@@ -586,11 +821,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		SetFileSystemEventArgsFullPath(eventArgs, name);
 		SetRenamedEventArgsFullPath(eventArgs, oldName);
 
-		return _fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path)?.Equals(
-			       _fileSystem.Execute.Path.GetDirectoryName(changeDescription.OldPath),
-			       _fileSystem.Execute.StringComparisonMode
-		       )
-		       ?? true;
+		return true;
 	}
 
 	private FileSystemEventArgs ToFileSystemEventArgs(
@@ -608,7 +839,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private string TransformPathAndName(string changeDescriptionPath)
 	{
-		return changeDescriptionPath.Substring(FullPath.Length).TrimStart(_fileSystem.Path.DirectorySeparatorChar);
+		return changeDescriptionPath.Substring(FullPath.Length).TrimStart(_fileSystem.Execute.Path.DirectorySeparatorChar);
 	}
 
 	private void SetFileSystemEventArgsFullPath(FileSystemEventArgs args, string name)
@@ -618,7 +849,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			return;
 		}
 		
-		string fullPath = _fileSystem.Path.Combine(Path, name);
+		string fullPath = _fileSystem.Execute.Path.Combine(Path, name);
 		
 		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
 		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
@@ -640,7 +871,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			return;
 		}
 		
-		string fullPath = _fileSystem.Path.Combine(Path, oldName);
+		string fullPath = _fileSystem.Execute.Path.Combine(Path, oldName);
 		
 		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
 		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
@@ -734,6 +965,36 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 		/// <inheritdoc cref="IWaitForChangedResult.TimedOut" />
 		public bool TimedOut { get; }
+	}
+
+	[StructLayout(LayoutKind.Auto)]
+	private readonly struct RenamedContext(
+		bool comesFromOutside,
+		bool comesFromInside,
+		bool goesToInside,
+		bool goesToOutside,
+		int oldSubDirectoryCount
+	)
+	{
+		private const int NestedLevelCount = 1;
+
+		public bool ComesFromOutside { get; } = comesFromOutside;
+
+		public bool ComesFromInside { get; } = comesFromInside;
+
+		public bool GoesToInside { get; } = goesToInside;
+
+		public bool GoesToOutside { get; } = goesToOutside;
+
+		/// <remarks>
+		/// If this is <see langword="true"/> then <see cref="ComesFromDeepNested"/> is <see langword="false"/>
+		/// </remarks>
+		public bool ComesFromNested { get; } = oldSubDirectoryCount == NestedLevelCount;
+
+		/// <remarks>
+		/// If this is <see langword="true"/> then <see cref="ComesFromNested"/> is <see langword="false"/>
+		/// </remarks>
+		public bool ComesFromDeepNested { get; } = oldSubDirectoryCount > NestedLevelCount;
 	}
 
 	internal sealed class ChangeDescriptionEventArgs(ChangeDescription changeDescription)
