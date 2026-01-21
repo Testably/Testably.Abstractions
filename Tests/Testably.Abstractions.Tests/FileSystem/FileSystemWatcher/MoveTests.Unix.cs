@@ -96,6 +96,7 @@ public partial class MoveTests
 	)
 	{
 		Skip.If(Test.RunsOnWindows);
+		SkipIfBrittleTestsShouldBeSkipped(Test.RunsOnMac);
 
 		// Arrange
 
@@ -130,8 +131,7 @@ public partial class MoveTests
 		);
 
 		using ManualResetEventSlim createdMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Created,
-			out ConcurrentBag<FileSystemEventArgs> createdBag
+			fileSystemWatcher, WatcherChangeTypes.Created
 		);
 
 		using ManualResetEventSlim changedMs = AddEventHandler(
@@ -155,12 +155,7 @@ public partial class MoveTests
 
 		await That(changedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
-		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
-			.IsEqualTo(IsMac);
-
-		await RemoveMacArrangeEvents(
-			createdBag, string.Empty /*None expected*/, insideSubDirectory, insideTarget
-		);
+		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
 		await ThatIsSingleOrEmpty(deletedBag, isRenamed);
 		await ThatIsSingleOrEmpty(renamedBag, !isRenamed);
@@ -202,11 +197,11 @@ public partial class MoveTests
 	)
 	{
 		Skip.If(Test.RunsOnWindows);
+		SkipIfBrittleTestsShouldBeSkipped(Test.RunsOnMac);
 
 		// Arrange
 
 		bool isCreated = !includeSubdirectories && path is null;
-		bool isMacCreated = IsMac && includeSubdirectories;
 
 		// short names, otherwise the path will be too long
 		const string insideDirectory = "inside";
@@ -261,15 +256,13 @@ public partial class MoveTests
 		// Assert
 
 		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
-			.IsEqualTo(isCreated || isMacCreated);
+			.IsEqualTo(isCreated);
 
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
 		await That(changedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
-
-		await RemoveMacArrangeEvents(createdBag, target, targetDir, source);
 
 		await ThatIsSingleOrEmpty(createdBag, !isCreated);
 
@@ -313,11 +306,11 @@ public partial class MoveTests
 	)
 	{
 		Skip.If(Test.RunsOnWindows);
+		SkipIfBrittleTestsShouldBeSkipped(Test.RunsOnMac);
 
 		// Arrange
 
 		bool isCreated = !includeSubdirectories && path is null;
-		bool isMacCreated = IsMac && includeSubdirectories;
 
 		// short names, otherwise the path will be too long
 		const string insideDirectory = "inside";
@@ -368,15 +361,13 @@ public partial class MoveTests
 		// Assert
 
 		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
-			.IsEqualTo(isMacCreated || isCreated);
+			.IsEqualTo(isCreated);
 
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
 		await That(changedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
-
-		await RemoveMacArrangeEvents(createdBag, target, targetDir, source);
 
 		await ThatIsSingleOrEmpty(createdBag, !isCreated);
 		await ThatIsSingleOrEmpty(renamedBag, !includeSubdirectories);

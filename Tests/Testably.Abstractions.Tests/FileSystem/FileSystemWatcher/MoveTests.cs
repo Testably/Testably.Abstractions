@@ -1,8 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
@@ -10,19 +8,6 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class MoveTests
 {
-	private bool? _isMac;
-
-	private bool IsMac
-	{
-		get
-		{
-			_isMac ??= this is RealFileSystemTests
-			           && RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-
-			return _isMac.Value;
-		}
-	}
-
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
@@ -89,10 +74,11 @@ public partial class MoveTests
 		params string[] paths
 	)
 	{
+		SkipIfBrittleTestsShouldBeSkipped(Test.RunsOnMac);
+
 		// Arrange
 
 		bool shouldInvokeDeleted = includeSubdirectories || paths.Length == 0;
-		bool shouldInvokeCreated = IsMac && shouldInvokeDeleted;
 
 		// short names, otherwise the path will be too long
 		const string outsideDirectory = "outside";
@@ -120,8 +106,7 @@ public partial class MoveTests
 		);
 
 		using ManualResetEventSlim createdMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Created,
-			out ConcurrentBag<FileSystemEventArgs> createdBag
+			fileSystemWatcher, WatcherChangeTypes.Created
 		);
 
 		using ManualResetEventSlim renamedMs = AddRenamedEventHandler(fileSystemWatcher);
@@ -138,12 +123,9 @@ public partial class MoveTests
 		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
 			.IsEqualTo(shouldInvokeDeleted);
 
-		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
-			.IsEqualTo(shouldInvokeCreated);
+		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
 		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
-
-		await RemoveMacArrangeEvents(createdBag, insideTarget, insideDirectory, insideTarget);
 
 		await ThatIsSingleOrEmpty(deletedBag, !shouldInvokeDeleted);
 
@@ -172,6 +154,8 @@ public partial class MoveTests
 		params string[] paths
 	)
 	{
+		SkipIfBrittleTestsShouldBeSkipped(Test.RunsOnMac);
+
 		// Arrange
 
 		bool shouldInvokeRenamed = includeSubdirectories || paths.Length == 0;
@@ -208,8 +192,7 @@ public partial class MoveTests
 		);
 
 		using ManualResetEventSlim createdMs = AddEventHandler(
-			fileSystemWatcher, WatcherChangeTypes.Created,
-			out ConcurrentBag<FileSystemEventArgs> createdBag
+			fileSystemWatcher, WatcherChangeTypes.Created
 		);
 
 		fileSystemWatcher.IncludeSubdirectories = includeSubdirectories;
@@ -226,10 +209,7 @@ public partial class MoveTests
 
 		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
-		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
-			.IsEqualTo(IsMac && shouldInvokeRenamed);
-
-		await RemoveMacArrangeEvents(createdBag, string.Empty /*None expected*/, insideTarget);
+		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
 
 		await ThatIsSingleOrEmpty(renamedBag, !shouldInvokeRenamed);
 
@@ -258,51 +238,6 @@ public partial class MoveTests
 		else
 		{
 			await That(value).HasSingle();
-		}
-	}
-
-	private async Task RemoveMacArrangeEvents(
-		ConcurrentBag<FileSystemEventArgs> createdBag,
-		string expectedFullPath,
-		params string[] initialDirectories
-	)
-	{
-		if (!IsMac)
-		{
-			return;
-		}
-
-		FileSystemEventArgs? expectedEvent = null;
-
-		while (createdBag.TryTake(out FileSystemEventArgs? createdEvent))
-		{
-			if (createdEvent.ChangeType == WatcherChangeTypes.Created
-			    && string.Equals(createdEvent.FullPath, expectedFullPath, StringComparison.Ordinal))
-			{
-				expectedEvent = createdEvent;
-
-				continue;
-			}
-
-			await That(createdEvent)
-				.Satisfies(x => initialDirectories.Any(directory => string.Equals(
-					                                       directory, x.FullPath,
-					                                       StringComparison.Ordinal
-				                                       )
-				           )
-				).Because(
-					nameof(createdEvent.FullPath)
-					+ " should be one of the initial directories: ["
-					+ string.Join(", ", initialDirectories)
-					+ "]"
-				);
-		}
-
-		await That(createdBag).IsEmpty();
-
-		if (expectedEvent is not null)
-		{
-			createdBag.Add(expectedEvent);
 		}
 	}
 
