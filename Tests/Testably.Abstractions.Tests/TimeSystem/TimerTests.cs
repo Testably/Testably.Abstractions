@@ -344,7 +344,7 @@ public partial class TimerTests
 					{
 						// Ignore any ObjectDisposedException
 					}
-				}, null, TimeSpan.FromMilliseconds(0 * TimerMultiplier),
+				}, null, TimeSpan.FromMilliseconds(TimerMultiplier),
 				TimeSpan.FromMilliseconds(200 * TimerMultiplier)))
 			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
@@ -354,7 +354,7 @@ public partial class TimerTests
 					// ReSharper disable once AccessToDisposedClosure
 					try
 					{
-						timer1.Change(TimeSpan.FromMilliseconds(0 * TimerMultiplier),
+						timer1.Change(TimeSpan.FromMilliseconds(TimerMultiplier),
 							TimeSpan.FromMilliseconds(200 * TimerMultiplier));
 						// ReSharper disable once AccessToDisposedClosure
 						ms2.Set();
@@ -364,7 +364,7 @@ public partial class TimerTests
 						// Ignore any ObjectDisposedException
 					}
 				}, null, TimeSpan.FromMilliseconds(100 * TimerMultiplier),
-				TimeSpan.FromMilliseconds(0 * TimerMultiplier));
+				TimeSpan.FromMilliseconds(TimerMultiplier));
 
 			await That(ms3.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
 		}

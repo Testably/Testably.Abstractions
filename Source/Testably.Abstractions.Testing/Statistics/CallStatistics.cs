@@ -180,7 +180,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 
 		return release;
 	}
-	
+	#pragma warning disable S107 // Method has too many parameters
 	/// <summary>
 	///     Registers the method <paramref name="name" /> with <paramref name="parameter1" />, <paramref name="parameter2" />,
 	///     <paramref name="parameter3" />, <paramref name="parameter4" />, <paramref name="parameter5" /> and
@@ -205,6 +205,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 
 		return release;
 	}
+	#pragma warning restore S107 // Method has too many parameters
 
 #if FEATURE_SPAN
 	/// <summary>

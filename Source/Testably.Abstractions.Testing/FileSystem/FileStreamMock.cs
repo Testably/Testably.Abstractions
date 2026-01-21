@@ -193,7 +193,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		,UnixFileMode? unixFileMode = null
 #endif
-		)
+	)
 		: this(new MemoryStream(),
 			fileSystem,
 			path.EnsureValidFormat(fileSystem, nameof(path)),
@@ -205,10 +205,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 			,unixFileMode
 #endif
-			)
+		)
 	{
 	}
 
+	#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private FileStreamMock(MemoryStream stream,
 		MockFileSystem fileSystem,
 		string? path,
@@ -220,7 +221,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		,UnixFileMode? unixFileMode
 #endif
-		)
+	)
 		: base(
 			stream,
 			path == null ? "" : fileSystem.Execute.Path.GetFullPath(path),
@@ -293,6 +294,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 
 		InitializeStream();
 	}
+	#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	#region IFileSystemExtensibility Members
 

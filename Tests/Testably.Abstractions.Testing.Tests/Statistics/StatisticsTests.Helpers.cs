@@ -92,7 +92,7 @@ public sealed partial class StatisticsTests
 					.OrderBy(m => m.Name)
 					.ThenBy(m => m.GetParameters().Length))
 			{
-				if (methodInfo.GetCustomAttribute<ObsoleteAttribute>() != null)
+				if (methodInfo.IsDefined(typeof(ObsoleteAttribute)))
 				{
 					continue;
 				}
@@ -125,7 +125,7 @@ public sealed partial class StatisticsTests
 					.Where(p => !p.IsSpecialName && (p.CanRead || p.CanWrite))
 					.OrderBy(m => m.Name))
 			{
-				if (propertyInfo.GetCustomAttribute<ObsoleteAttribute>() != null ||
+				if (propertyInfo.IsDefined(typeof(ObsoleteAttribute)) ||
 				    string.Equals(propertyInfo.Name, nameof(IFileSystemEntity.FileSystem),
 					    StringComparison.Ordinal))
 				{
