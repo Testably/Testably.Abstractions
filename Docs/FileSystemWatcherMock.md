@@ -11,7 +11,7 @@ can be moved from and to.
 |----------|--------------------------------------------------------|
 | _        | Entry was created or deleted                           |
 | Outside  | The location is outside the watching path              |
-| Inside   | The location is immediatly inside the watching path    |
+| Inside   | The location is immediately inside the watching path   |
 | Nested   | The location is nested under the watching path         |
 | Deep     | The location is deeply nested inside the watching path |
 
