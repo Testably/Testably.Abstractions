@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="$(SolutionDir)Docs/Interface.md" Pack="true" PackagePath="/Docs/" Link="Docs\Interface.md" />
+		<None Include="$(SolutionDir)Docs/Nuget/Interface.md" Pack="true" PackagePath="/Docs/" Link="Docs\Interface.md" />
 	</ItemGroup>
 
 	<ItemGroup>

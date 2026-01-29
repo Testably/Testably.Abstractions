@@ -68,12 +68,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Compression.Tests", "Tests\Testably.Abstractions.Compression.Tests\Testably.Abstractions.Compression.Tests.csproj", "{5330AEEE-A915-4FF6-A85D-E9CCA161B654}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{4D70CF83-2EEE-439E-AA30-3FADAACAEB0C}"
-	ProjectSection(SolutionItems) = preProject
-		Docs\AccessControl.md = Docs\AccessControl.md
-		Docs\Compression.md = Docs\Compression.md
-		Docs\Interface.md = Docs\Interface.md
-		Docs\Testing.md = Docs\Testing.md
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{B6C45D8A-A545-402E-A6B0-47BC7D9BBCF5}"
 EndProject
@@ -103,6 +97,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F049D1AF-3FB0-43F0-B7EE-225C37D5D142}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testably.Abstractions.Core.Api.Tests", "Tests\Api\Testably.Abstractions.Core.Api.Tests\Testably.Abstractions.Core.Api.Tests.csproj", "{CF5BBD40-DC43-4B0C-8521-ACD3B8ABFF20}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{B9E1E12B-9E7F-415A-B956-567694022C27}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\Nuget\AccessControl.md = Docs\Nuget\AccessControl.md
+		Docs\Nuget\Compression.md = Docs\Nuget\Compression.md
+		Docs\Nuget\Interface.md = Docs\Nuget\Interface.md
+		Docs\Nuget\Testing.md = Docs\Nuget\Testing.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -204,6 +206,7 @@ Global
 		{B9DFD3C7-44B7-4A38-A2B7-A96B5BC3651C} = {F049D1AF-3FB0-43F0-B7EE-225C37D5D142}
 		{E447F0BC-7630-41E2-9EA3-DC065827694C} = {F049D1AF-3FB0-43F0-B7EE-225C37D5D142}
 		{CF5BBD40-DC43-4B0C-8521-ACD3B8ABFF20} = {8A44FA00-968E-4CEC-90E6-94A878B9DEB2}
+		{B9E1E12B-9E7F-415A-B956-567694022C27} = {4D70CF83-2EEE-439E-AA30-3FADAACAEB0C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EC4D8481-B9FD-41B5-832A-369210993DF4}

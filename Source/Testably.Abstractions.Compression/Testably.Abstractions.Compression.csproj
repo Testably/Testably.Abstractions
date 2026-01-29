@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="$(SolutionDir)Docs/Compression.md"
+		<None Include="$(SolutionDir)Docs/Nuget/Compression.md"
 		      Pack="true" PackagePath="/Docs/"
 		      Link="Docs\Compression.md" />
 	</ItemGroup>
