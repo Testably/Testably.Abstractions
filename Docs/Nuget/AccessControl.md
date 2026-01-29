@@ -4,7 +4,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=coverage)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 
-ACL (access control list) extension methods for [Testably.Abstractions](../README.md) using [System.IO.FileSystem.AccessControl](https://www.nuget.org/packages/System.IO.FileSystem.AccessControl/).  
+ACL (access control list) extension methods for [Testably.Abstractions](https://github.com/Testably/Testably.Abstractions) using [System.IO.FileSystem.AccessControl](https://www.nuget.org/packages/System.IO.FileSystem.AccessControl/).  
 Implements the methods from [FileSystemAclExtensions](https://learn.microsoft.com/en-us/dotnet/api/system.io.filesystemaclextensions) on the `IFileSystem` interface.
 
 ## Example

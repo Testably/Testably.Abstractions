@@ -4,7 +4,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=coverage)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 
-This library contains the abstraction interfaces for [Testably.Abstractions](../README.md), which allow replacing system dependencies:
+This library contains the abstraction interfaces for [Testably.Abstractions](https://github.com/Testably/Testably.Abstractions), which allow replacing system dependencies:
 
 - The `IFileSystem` interface abstracts away all I/O-related functionality from the `System.IO` namespace:  
   Static methods are directly implemented on the `IFileSystem` interface.
