@@ -68,6 +68,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Compression.Tests", "Tests\Testably.Abstractions.Compression.Tests\Testably.Abstractions.Compression.Tests.csproj", "{5330AEEE-A915-4FF6-A85D-E9CCA161B654}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{4D70CF83-2EEE-439E-AA30-3FADAACAEB0C}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\FileSystemWatcherMock.md = Docs\FileSystemWatcherMock.md
+		Docs\Maintainer.md = Docs\Maintainer.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{B6C45D8A-A545-402E-A6B0-47BC7D9BBCF5}"
 EndProject

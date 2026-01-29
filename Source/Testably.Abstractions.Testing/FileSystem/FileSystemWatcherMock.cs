@@ -18,6 +18,9 @@ namespace Testably.Abstractions.Testing.FileSystem;
 /// <summary>
 ///     Mocked instance of a <see cref="IFileSystemWatcher" />
 /// </summary>
+/// <remarks>
+///  For more information about the implementation, see _/Docs/FileSystemWatcherMock.md
+/// </remarks>
 internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 {
 	/// <summary>
