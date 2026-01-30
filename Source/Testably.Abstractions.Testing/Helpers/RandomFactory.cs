@@ -6,12 +6,12 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal static class RandomFactory
 {
-	[ThreadStatic] private static IRandom? _shared;
 	private static readonly Random Global = new();
 
 	/// <inheritdoc cref="IRandomFactory.Shared" />
+	[field: ThreadStatic]
 	public static IRandom Shared
-		=> _shared ??= CreateThreadSafeRandomWrapper();
+		=> field ??= CreateThreadSafeRandomWrapper();
 
 	/// <summary>
 	///     <see href="https://andrewlock.net/building-a-thread-safe-random-implementation-for-dotnet-framework/" />

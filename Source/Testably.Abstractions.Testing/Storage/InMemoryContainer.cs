@@ -12,7 +12,6 @@ namespace Testably.Abstractions.Testing.Storage;
 
 internal sealed class InMemoryContainer : IStorageContainer
 {
-	private FileAttributes _attributes;
 	private byte[] _bytes = Array.Empty<byte>();
 	private readonly FileSystemExtensibility _extensibility = new();
 	private readonly MockFileSystem _fileSystem;
@@ -20,10 +19,6 @@ internal sealed class InMemoryContainer : IStorageContainer
 	private IStorageLocation _location;
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-	private UnixFileMode _unixFileMode = UnixFileMode.OtherRead |
-	                                     UnixFileMode.GroupRead |
-	                                     UnixFileMode.UserWrite |
-	                                     UnixFileMode.UserRead;
 #endif
 
 	public InMemoryContainer(FileSystemTypes type,
@@ -41,7 +36,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.Attributes" />
 	public FileAttributes Attributes
 	{
-		get => AdjustAttributes(_attributes);
+		get => AdjustAttributes(field);
 		set
 		{
 			if (_fileSystem.Execute.IsWindows)
@@ -68,7 +63,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 				         FileAttributes.ReadOnly;
 			}
 
-			_attributes = value;
+			field = value;
 		}
 	}
 
@@ -101,16 +96,19 @@ internal sealed class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.UnixFileMode" />
 	public UnixFileMode UnixFileMode
 	{
-		get => _unixFileMode;
+		get;
 		set
 		{
-			_unixFileMode = value;
+			field = value;
 			_fileSystem.UnixFileModeStrategy.OnSetUnixFileMode(
 				_location.FullPath,
 				_extensibility,
-				_unixFileMode);
+				field);
 		}
-	}
+	} = UnixFileMode.OtherRead |
+	    UnixFileMode.GroupRead |
+	    UnixFileMode.UserWrite |
+	    UnixFileMode.UserRead;
 #endif
 
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />

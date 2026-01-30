@@ -19,8 +19,8 @@ namespace Testably.Abstractions.Testing.FileSystem;
 ///     Mocked instance of a <see cref="IFileSystemWatcher" />
 /// </summary>
 /// <remarks>
-///  For more information about the implementation,
-///  see <see href="https://github.com/Testably/Testably.Abstractions/blob/main/Docs/FileSystemWatcherMock.md">_/Docs/FileSystemWatcherMock.md</see>
+///     For more information about the implementation, see
+///     <see href="https://github.com/Testably/Testably.Abstractions/blob/main/Docs/FileSystemWatcherMock.md">_/Docs/FileSystemWatcherMock.md</see>
 /// </remarks>
 internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 {
@@ -32,21 +32,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private CancellationTokenSource? _cancellationTokenSource;
 	private IDisposable? _changeHandler;
-	private bool _enableRaisingEvents;
 	private readonly MockFileSystem _fileSystem;
 	private readonly Collection<string> _filters = [];
-	private bool _includeSubdirectories;
-	private int _internalBufferSize = 8192;
 	private bool _isInitializing;
 
-	private NotifyFilters _notifyFilter = NotifyFilters.FileName |
-	                                      NotifyFilters.DirectoryName |
-	                                      NotifyFilters.LastWrite;
-
 	private string _path = string.Empty;
-	private string _fullPath = string.Empty;
-
-	private ISynchronizeInvoke? _synchronizingObject;
 
 	private FileSystemWatcherMock(MockFileSystem fileSystem)
 	{
@@ -66,7 +56,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(EnableRaisingEvents), PropertyAccess.Get);
 
-			return _enableRaisingEvents;
+			return field;
 		}
 		set
 		{
@@ -74,8 +64,8 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(EnableRaisingEvents), PropertyAccess.Set);
 
-			_enableRaisingEvents = value;
-			if (_enableRaisingEvents)
+			field = value;
+			if (field)
 			{
 				Start();
 			}
@@ -141,7 +131,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(IncludeSubdirectories), PropertyAccess.Get);
 
-			return _includeSubdirectories;
+			return field;
 		}
 		set
 		{
@@ -149,7 +139,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(IncludeSubdirectories), PropertyAccess.Set);
 
-			_includeSubdirectories = value;
+			field = value;
 		}
 	}
 
@@ -162,7 +152,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(InternalBufferSize), PropertyAccess.Get);
 
-			return _internalBufferSize;
+			return field;
 		}
 		set
 		{
@@ -170,10 +160,10 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(InternalBufferSize), PropertyAccess.Set);
 
-			_internalBufferSize = Math.Max(value, 4096);
+			field = Math.Max(value, 4096);
 			Restart();
 		}
-	}
+	} = 8192;
 
 	/// <inheritdoc cref="IFileSystemWatcher.NotifyFilter" />
 	public NotifyFilters NotifyFilter
@@ -184,7 +174,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(NotifyFilter), PropertyAccess.Get);
 
-			return _notifyFilter;
+			return field;
 		}
 		set
 		{
@@ -192,9 +182,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(NotifyFilter), PropertyAccess.Set);
 
-			_notifyFilter = value;
+			field = value;
 		}
-	}
+	} = NotifyFilters.FileName |
+	    NotifyFilters.DirectoryName |
+	    NotifyFilters.LastWrite;
 
 	/// <inheritdoc cref="IFileSystemWatcher.Path" />
 	public string Path
@@ -254,7 +246,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(SynchronizingObject), PropertyAccess.Get);
 
-			return _synchronizingObject;
+			return field;
 		}
 		set
 		{
@@ -262,30 +254,30 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(SynchronizingObject), PropertyAccess.Set);
 
-			_synchronizingObject = value;
+			field = value;
 		}
 	}
 
 	/// <summary>
-	/// Caches the full path of <see cref="Path"/>
+	///     Caches the full path of <see cref="Path" />
 	/// </summary>
 	private string FullPath
 	{
-		get => _fullPath;
+		get;
 		set
 		{
 			if (string.IsNullOrEmpty(value))
 			{
-				_fullPath = value;
-				
+				field = value;
+
 				return;
 			}
-			
+
 			string fullPath = GetNormalizedFullPath(value);
-			
-			_fullPath = fullPath;
+
+			field = fullPath;
 		}
-	}
+	} = string.Empty;
 
 	/// <inheritdoc cref="IFileSystemWatcher.BeginInit()" />
 	public void BeginInit()
@@ -763,11 +755,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	}
 
 	/// <summary>
-	/// Counts the number of directory separators inside the relative path to <see cref="FullPath"/>
+	///     Counts the number of directory separators inside the relative path to <see cref="FullPath" />
 	/// </summary>
 	/// <param name="path"></param>
-	/// <returns>The number of directory separators inside the relative path to <see cref="FullPath"/></returns>
-	/// <remarks>Returns -1 if the path is outside the <see cref="FullPath"/></remarks>
+	/// <returns>The number of directory separators inside the relative path to <see cref="FullPath" /></returns>
+	/// <remarks>Returns -1 if the path is outside the <see cref="FullPath" /></remarks>
 	private int GetSubDirectoryCount(string path)
 	{
 		string normalizedPath = GetNormalizedFullPath(path);
@@ -786,7 +778,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	{
 		string normalizedPath = GetNormalizedFullPath(changeDescription.Path);
 		string normalizedOldPath = GetNormalizedFullPath(changeDescription.OldPath!);
-		
+
 		string name = _fileSystem.Execute.Path.GetFileName(normalizedPath);
 		string oldName = _fileSystem.Execute.Path.GetFileName(normalizedOldPath);
 
@@ -799,10 +791,10 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		{
 			return false;
 		}
-		
+
 		string? parent = _fileSystem.Execute.Path.GetDirectoryName(normalizedPath);
 		string? oldParent = _fileSystem.Execute.Path.GetDirectoryName(normalizedOldPath);
-		
+
 		return string.Equals(parent, oldParent, _fileSystem.Execute.StringComparisonMode);
 	}
 
@@ -837,7 +829,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		string name = TransformPathAndName(changePath);
 
 		FileSystemEventArgs eventArgs = new(changeType, Path, name);
-		
+
 		SetFileSystemEventArgsFullPath(eventArgs, name);
 
 		return eventArgs;
@@ -845,7 +837,8 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private string TransformPathAndName(string changeDescriptionPath)
 	{
-		return changeDescriptionPath.Substring(FullPath.Length).TrimStart(_fileSystem.Execute.Path.DirectorySeparatorChar);
+		return changeDescriptionPath.Substring(FullPath.Length)
+			.TrimStart(_fileSystem.Execute.Path.DirectorySeparatorChar);
 	}
 
 	private void SetFileSystemEventArgsFullPath(FileSystemEventArgs args, string name)
@@ -854,9 +847,9 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		{
 			return;
 		}
-		
+
 		string fullPath = _fileSystem.Execute.Path.Combine(Path, name);
-		
+
 		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
 		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
 #if NETFRAMEWORK
@@ -876,9 +869,9 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		{
 			return;
 		}
-		
+
 		string fullPath = _fileSystem.Execute.Path.Combine(Path, oldName);
-		
+
 		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
 		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
 #if NETFRAMEWORK
@@ -993,12 +986,12 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		public bool GoesToOutside { get; } = goesToOutside;
 
 		/// <remarks>
-		/// If this is <see langword="true"/> then <see cref="ComesFromDeepNested"/> is <see langword="false"/>
+		///     If this is <see langword="true" /> then <see cref="ComesFromDeepNested" /> is <see langword="false" />
 		/// </remarks>
 		public bool ComesFromNested { get; } = oldSubDirectoryCount == NestedLevelCount;
 
 		/// <remarks>
-		/// If this is <see langword="true"/> then <see cref="ComesFromNested"/> is <see langword="false"/>
+		///     If this is <see langword="true" /> then <see cref="ComesFromNested" /> is <see langword="false" />
 		/// </remarks>
 		public bool ComesFromDeepNested { get; } = oldSubDirectoryCount > NestedLevelCount;
 	}

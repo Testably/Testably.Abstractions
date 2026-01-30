@@ -30,10 +30,10 @@ internal sealed class FileVersionInfoContainer
 	/// <inheritdoc cref="IFileVersionInfo.FileVersion" />
 	public string? FileVersion
 	{
-		get => _fileVersion;
+		get;
 		set
 		{
-			_fileVersion = value;
+			field = value;
 			if (value != null)
 			{
 				string cleanedFileVersion = CleanVersion(value);
@@ -116,10 +116,10 @@ internal sealed class FileVersionInfoContainer
 	/// <inheritdoc cref="IFileVersionInfo.ProductVersion" />
 	public string? ProductVersion
 	{
-		get => _productVersion;
+		get;
 		set
 		{
-			_productVersion = value;
+			field = value;
 			if (value != null)
 			{
 				string cleanedFileVersion = CleanVersion(value);
@@ -151,9 +151,6 @@ internal sealed class FileVersionInfoContainer
 
 	/// <inheritdoc cref="IFileVersionInfo.SpecialBuild" />
 	public string? SpecialBuild { get; set; }
-
-	private string? _fileVersion;
-	private string? _productVersion;
 
 	private static string CleanVersion(string version)
 	{

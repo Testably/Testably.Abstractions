@@ -37,7 +37,6 @@ internal sealed class DriveInfoMock : IStorageDrive
 	private long _totalSize;
 
 	private long _usedBytes;
-	private string _volumeLabel = nameof(MockFileSystem);
 
 	private DriveInfoMock(string driveName, MockFileSystem fileSystem)
 	{
@@ -178,7 +177,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 			using IDisposable registration = _fileSystem.StatisticsRegistration
 				.DriveInfo.RegisterPathProperty(_name, nameof(VolumeLabel), PropertyAccess.Get);
 
-			return _volumeLabel;
+			return field;
 		}
 		[SupportedOSPlatform("windows")]
 		set
@@ -187,13 +186,13 @@ internal sealed class DriveInfoMock : IStorageDrive
 				.DriveInfo.RegisterPathProperty(_name, nameof(VolumeLabel), PropertyAccess.Set);
 
 			// ReSharper disable once ConstantNullCoalescingCondition
-			_volumeLabel = value ?? _volumeLabel;
+			field = value ?? field;
 			if (!_fileSystem.Execute.IsWindows)
 			{
 				throw ExceptionFactory.OperationNotSupportedOnThisPlatform();
 			}
 		}
-	}
+	} = nameof(MockFileSystem);
 
 	/// <inheritdoc cref="IStorageDrive.ChangeUsedBytes(long)" />
 	public IStorageDrive ChangeUsedBytes(long usedBytesDelta)
