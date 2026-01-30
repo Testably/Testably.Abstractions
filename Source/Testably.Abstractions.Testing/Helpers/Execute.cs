@@ -15,14 +15,14 @@ internal sealed partial class Execute
 	{
 		get
 		{
-			_globOptions ??= new GlobOptions
+			field ??= new GlobOptions
 			{
 				Evaluation =
 				{
 					CaseInsensitive = !IsLinux,
 				},
 			};
-			return _globOptions;
+			return field;
 		}
 	}
 
@@ -58,8 +58,6 @@ internal sealed partial class Execute
 	///     The default <see cref="StringComparison" /> used for comparing paths.
 	/// </summary>
 	public StringComparison StringComparisonMode { get; }
-
-	private GlobOptions? _globOptions;
 
 #if !CAN_SIMULATE_OTHER_OS
 	[Obsolete("Simulating other operating systems is not supported on .NET Framework")]

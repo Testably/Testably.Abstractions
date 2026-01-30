@@ -18,18 +18,14 @@ public class AutoDomainDataAttribute : AutoDataAttribute
 	/// </summary>
 	public Type? CustomizeWith
 	{
-		get
-		{
-			return _customizeWith;
-		}
+		get;
 		set
 		{
-			_customizeWith = value;
+			field = value;
 			_fixtureFactory.CustomizeWith(value);
 		}
 	}
 
-	private Type? _customizeWith;
 	private readonly DomainFixtureFactory _fixtureFactory;
 
 	/// <summary>

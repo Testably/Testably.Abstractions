@@ -87,7 +87,7 @@ public class EnumerationOptions
 	/// </remarks>
 	public int MaxRecursionDepth
 	{
-		get => _maxRecursionDepth;
+		get;
 		set
 		{
 			if (value < 0)
@@ -95,7 +95,7 @@ public class EnumerationOptions
 				throw new ArgumentOutOfRangeException(nameof(value));
 			}
 
-			_maxRecursionDepth = value;
+			field = value;
 		}
 	}
 
@@ -116,8 +116,6 @@ public class EnumerationOptions
 	///     <see langword="false" />.
 	/// </value>
 	public bool ReturnSpecialDirectories { get; set; }
-
-	private int _maxRecursionDepth;
 
 	/// <summary>
 	///     Initializes a new instance of the <see cref="EnumerationOptions" /> class with the recommended default
