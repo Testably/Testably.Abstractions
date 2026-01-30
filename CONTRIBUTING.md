@@ -35,3 +35,7 @@ These can be enabled by explicitely running the [`Testably.Abstractions.TestSett
   All tests against the real file system. Per default, they are disabled in DEBUG mode.
 
 *Note: These settings are stored locally in `test.settings.json` which is excluded in [`.gitignore`](https://github.com/Testably/Testably.Abstractions/blob/main/.gitignore) so that it only affects the individual developer!*
+
+## Documentation
+To get a better understanding of the different mock implementations, see [Maintainer.md](./Docs/Maintainer.md).
+The document outlines the different behaviors the mocks replicate.
