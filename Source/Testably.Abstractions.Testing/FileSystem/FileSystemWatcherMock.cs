@@ -446,6 +446,8 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			{
 				TriggerRenameNotification(item);
 			}
+
+			_fileSystem.ChangeHandler.NotifyWatcherTriggeredChange(item);
 		}
 	}
 
@@ -664,7 +666,8 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	{
 		CheckRenamePremise(context);
 
-		if (context.ComesFromInside && TryMakeRenamedEventArgs(item, out RenamedEventArgs? eventArgs))
+		if (context.ComesFromInside &&
+		    TryMakeRenamedEventArgs(item, out RenamedEventArgs? eventArgs))
 		{
 			Renamed?.Invoke(this, eventArgs);
 			return;

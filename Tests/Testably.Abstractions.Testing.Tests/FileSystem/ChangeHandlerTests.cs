@@ -1,5 +1,6 @@
 using aweXpect.Synchronous;
 using System.IO;
+using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
@@ -96,6 +97,38 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 			.Wait();
 
 		await That(receivedPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
+	}
+
+	[Fact]
+	public async Task Watcher_ShouldNotTriggerWhenFileSystemWatcherDoesNotMatch()
+	{
+		FileSystem.Directory.CreateDirectory("bar");
+		IFileSystemWatcher watcher = FileSystem.FileSystemWatcher.New("bar");
+		watcher.EnableRaisingEvents = true;
+
+		IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Watcher.OnTriggered();
+
+		void Act() =>
+			onEvent.Wait(timeout: 100,
+				executeWhenWaiting: () => FileSystem.File.WriteAllText(@"foo.txt", "some-text"));
+
+		await That(Act).Throws<TimeoutException>();
+	}
+
+	[Fact]
+	public async Task Watcher_ShouldTriggerWhenFileSystemWatcherSendsNotification()
+	{
+		bool isTriggered = false;
+		IFileSystemWatcher watcher = FileSystem.FileSystemWatcher.New(".");
+		watcher.Created += (_, __) => isTriggered = true;
+		watcher.EnableRaisingEvents = true;
+
+		IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Watcher.OnTriggered();
+
+		onEvent.Wait(timeout: 1000,
+			executeWhenWaiting: () => FileSystem.File.WriteAllText(@"foo.txt", "some-text"));
+
+		await That(isTriggered).IsTrue();
 	}
 
 	#region Helpers

@@ -42,6 +42,10 @@ namespace Testably.Abstractions.Testing.FileSystem
     {
         Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
     }
+    public interface IWatcherTriggeredHandler : System.IO.Abstractions.IFileSystemEntity
+    {
+        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnTriggered(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? triggerCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
+    }
     public class NullAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy
     {
         public NullAccessControlStrategy() { }
@@ -113,6 +117,7 @@ namespace Testably.Abstractions.Testing
         public Testably.Abstractions.Testing.SimulationMode SimulationMode { get; }
         public Testably.Abstractions.Testing.Statistics.IFileSystemStatistics Statistics { get; }
         public Testably.Abstractions.ITimeSystem TimeSystem { get; }
+        public Testably.Abstractions.Testing.FileSystem.IWatcherTriggeredHandler Watcher { get; }
         public override string ToString() { }
         public Testably.Abstractions.Testing.MockFileSystem WithAccessControlStrategy(Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy accessControlStrategy) { }
         public Testably.Abstractions.Testing.MockFileSystem WithDrive(string? drive, System.Action<Testably.Abstractions.Testing.Storage.IStorageDrive>? driveCallback = null) { }
