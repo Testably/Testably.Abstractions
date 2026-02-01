@@ -228,8 +228,8 @@ public sealed class MockFileSystem : IFileSystem
 		Action<IStorageDrive>? driveCallback = null)
 	{
 		IStorageDrive driveInfoMock =
-			drive == null || string.Equals(drive, Execute.Path.DirectorySeparatorChar.ToString(),
-				StringComparison.Ordinal)
+			drive == null || string.Equals(drive,
+				Execute.Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal)
 				? Storage.MainDrive
 				: Storage.GetOrAddDrive(drive);
 		driveCallback?.Invoke(driveInfoMock);

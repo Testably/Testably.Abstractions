@@ -120,7 +120,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 	{
 		bool isTriggered = false;
 		IFileSystemWatcher watcher = FileSystem.FileSystemWatcher.New(".");
-		watcher.Created += (_, __) => isTriggered = true;
+		watcher.Created += (_, _) => isTriggered = true;
 		watcher.EnableRaisingEvents = true;
 
 		IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Watcher.OnTriggered();
