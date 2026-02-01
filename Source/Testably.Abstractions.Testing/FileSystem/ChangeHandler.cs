@@ -46,7 +46,7 @@ internal sealed class ChangeHandler
 
 	#endregion
 
-	#region IWatcherNotifiedHandler Members
+	#region IWatcherTriggeredHandler Members
 
 	/// <inheritdoc cref="IWatcherTriggeredHandler.OnTriggered" />
 	public IAwaitableCallback<ChangeDescription> OnTriggered(
