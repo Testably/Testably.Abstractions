@@ -47,6 +47,10 @@ namespace Testably.Abstractions.Testing.FileSystem
         bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode, System.IO.FileAccess requestedAccess);
         void OnSetUnixFileMode(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode);
     }
+    public interface IWatcherTriggeredHandler : System.IO.Abstractions.IFileSystemEntity
+    {
+        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnTriggered(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? triggerCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
+    }
     public class NullAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy
     {
         public NullAccessControlStrategy() { }
@@ -124,6 +128,7 @@ namespace Testably.Abstractions.Testing
         public Testably.Abstractions.Testing.SimulationMode SimulationMode { get; }
         public Testably.Abstractions.Testing.Statistics.IFileSystemStatistics Statistics { get; }
         public Testably.Abstractions.ITimeSystem TimeSystem { get; }
+        public Testably.Abstractions.Testing.FileSystem.IWatcherTriggeredHandler Watcher { get; }
         public override string ToString() { }
         public Testably.Abstractions.Testing.MockFileSystem WithAccessControlStrategy(Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy accessControlStrategy) { }
         public Testably.Abstractions.Testing.MockFileSystem WithDrive(string? drive, System.Action<Testably.Abstractions.Testing.Storage.IStorageDrive>? driveCallback = null) { }

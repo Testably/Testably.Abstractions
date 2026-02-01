@@ -27,6 +27,11 @@ public sealed class MockFileSystem : IFileSystem
 	public INotificationHandler Notify => ChangeHandler;
 
 	/// <summary>
+	///     Get notified of events after they were triggered by a <see cref="IFileSystemWatcher" />.
+	/// </summary>
+	public IWatcherTriggeredHandler Watcher => ChangeHandler;
+
+	/// <summary>
 	///     The used random system.
 	/// </summary>
 	public IRandomSystem RandomSystem { get; }
@@ -223,7 +228,8 @@ public sealed class MockFileSystem : IFileSystem
 		Action<IStorageDrive>? driveCallback = null)
 	{
 		IStorageDrive driveInfoMock =
-			drive == null || string.Equals(drive, Execute.Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal)
+			drive == null || string.Equals(drive,
+				Execute.Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal)
 				? Storage.MainDrive
 				: Storage.GetOrAddDrive(drive);
 		driveCallback?.Invoke(driveInfoMock);

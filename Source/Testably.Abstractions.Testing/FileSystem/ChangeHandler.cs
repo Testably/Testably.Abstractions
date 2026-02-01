@@ -4,8 +4,8 @@ using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
-internal sealed class ChangeHandler : IInterceptionHandler,
-	INotificationHandler
+internal sealed class ChangeHandler
+	: IInterceptionHandler, INotificationHandler, IWatcherTriggeredHandler
 {
 	private readonly Notification.INotificationFactory<ChangeDescription>
 		_changeOccurredCallbacks = Notification.CreateFactory<ChangeDescription>();
@@ -14,6 +14,9 @@ internal sealed class ChangeHandler : IInterceptionHandler,
 		_changeOccurringCallbacks = Notification.CreateFactory<ChangeDescription>();
 
 	private readonly MockFileSystem _mockFileSystem;
+
+	private readonly Notification.INotificationFactory<ChangeDescription>
+		_watcherNotificationTriggeredCallbacks = Notification.CreateFactory<ChangeDescription>();
 
 	public ChangeHandler(MockFileSystem mockFileSystem)
 	{
@@ -25,8 +28,7 @@ internal sealed class ChangeHandler : IInterceptionHandler,
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem => _mockFileSystem;
 
-	/// <inheritdoc
-	///     cref="IInterceptionHandler.Event" />
+	/// <inheritdoc cref="IInterceptionHandler.Event" />
 	public IAwaitableCallback<ChangeDescription> Event(
 		Action<ChangeDescription> interceptionCallback,
 		Func<ChangeDescription, bool>? predicate = null)
@@ -36,12 +38,21 @@ internal sealed class ChangeHandler : IInterceptionHandler,
 
 	#region INotificationHandler Members
 
-	/// <inheritdoc
-	///     cref="INotificationHandler.OnEvent" />
+	/// <inheritdoc cref="INotificationHandler.OnEvent" />
 	public IAwaitableCallback<ChangeDescription> OnEvent(
 		Action<ChangeDescription>? notificationCallback = null,
 		Func<ChangeDescription, bool>? predicate = null)
 		=> _changeOccurredCallbacks.RegisterCallback(notificationCallback, predicate);
+
+	#endregion
+
+	#region IWatcherTriggeredHandler Members
+
+	/// <inheritdoc cref="IWatcherTriggeredHandler.OnTriggered" />
+	public IAwaitableCallback<ChangeDescription> OnTriggered(
+		Action<ChangeDescription>? triggerCallback = null,
+		Func<ChangeDescription, bool>? predicate = null)
+		=> _watcherNotificationTriggeredCallbacks.RegisterCallback(triggerCallback, predicate);
 
 	#endregion
 
@@ -65,4 +76,7 @@ internal sealed class ChangeHandler : IInterceptionHandler,
 		_changeOccurringCallbacks.InvokeCallbacks(fileSystemChange);
 		return fileSystemChange;
 	}
+
+	internal void NotifyWatcherTriggeredChange(ChangeDescription fileSystemChange)
+		=> _watcherNotificationTriggeredCallbacks.InvokeCallbacks(fileSystemChange);
 }
