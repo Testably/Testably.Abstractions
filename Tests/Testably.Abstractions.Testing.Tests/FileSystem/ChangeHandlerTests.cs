@@ -119,6 +119,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 	public async Task Watcher_ShouldTriggerWhenFileSystemWatcherSendsNotification()
 	{
 		bool isTriggered = false;
+		FileSystem.InitializeIn(".");
 		IFileSystemWatcher watcher = FileSystem.FileSystemWatcher.New(".");
 		watcher.Created += (_, _) => isTriggered = true;
 		watcher.EnableRaisingEvents = true;

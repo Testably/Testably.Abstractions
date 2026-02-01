@@ -50,9 +50,9 @@ internal sealed class ChangeHandler
 
 	/// <inheritdoc cref="IWatcherTriggeredHandler.OnTriggered" />
 	public IAwaitableCallback<ChangeDescription> OnTriggered(
-		Action<ChangeDescription>? notificationCallback = null,
+		Action<ChangeDescription>? triggerCallback = null,
 		Func<ChangeDescription, bool>? predicate = null)
-		=> _watcherNotificationTriggeredCallbacks.RegisterCallback(notificationCallback, predicate);
+		=> _watcherNotificationTriggeredCallbacks.RegisterCallback(triggerCallback, predicate);
 
 	#endregion
 
