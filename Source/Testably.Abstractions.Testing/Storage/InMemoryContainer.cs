@@ -312,8 +312,8 @@ internal sealed class InMemoryContainer : IStorageContainer
 
 	internal FileAttributes AdjustAttributes(FileAttributes attributes)
 	{
-		if (_fileSystem.Execute.IsLinux &&
-		    _fileSystem.Execute.Path.GetFileName(_location.FullPath).StartsWith('.'))
+		if ((_fileSystem.Execute.IsLinux || _fileSystem.Execute.IsMac)
+		    && _fileSystem.Execute.Path.GetFileName(_location.FullPath).StartsWith('.'))
 		{
 			attributes |= FileAttributes.Hidden;
 		}
