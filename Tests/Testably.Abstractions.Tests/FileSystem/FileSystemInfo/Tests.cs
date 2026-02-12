@@ -156,4 +156,30 @@ public partial class Tests
 			await That(result).IsEqualTo(FileAttributes.Normal);
 		}
 	}
+
+	[Theory]
+	[AutoData]
+	public async Task Attributes_WhenDotFile_ShouldHaveHiddenFlag(bool isFile)
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		const string path = ".env";
+
+		FileAttributes result;
+
+		if (isFile)
+		{
+			FileSystem.File.WriteAllText(path, null);
+
+			result = FileSystem.FileInfo.New(path).Attributes;
+		}
+		else
+		{
+			FileSystem.Directory.CreateDirectory(path);
+
+			result = FileSystem.DirectoryInfo.New(path).Attributes;
+		}
+
+		await That(result).HasFlag(FileAttributes.Hidden);
+	}
 }
