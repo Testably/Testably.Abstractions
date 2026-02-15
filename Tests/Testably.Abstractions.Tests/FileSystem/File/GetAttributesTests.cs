@@ -18,4 +18,19 @@ public partial class GetAttributesTests
 
 		await That(result).IsEqualTo(attributes);
 	}
+
+	[Fact]
+	public async Task GetAttributes_WhenDotEntry_ShouldHaveHiddenFlag()
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		const string path = ".env";
+		FileAttributes result;
+
+		FileSystem.File.WriteAllText(path, null);
+
+		result = FileSystem.File.GetAttributes(path);
+
+		await That(result).HasFlag(FileAttributes.Hidden);
+	}
 }

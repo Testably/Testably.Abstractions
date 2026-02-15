@@ -47,7 +47,7 @@ public class InMemoryContainerTests
 
 	[Theory]
 	[AutoData]
-	public async Task AdjustAttributes_LeadingDot_ShouldBeHiddenOnLinux(string path)
+	public async Task AdjustAttributes_LeadingDot_ShouldBeHiddenOnUnix(string path)
 	{
 		path = "." + path;
 		MockFileSystem fileSystem = new();
@@ -60,7 +60,7 @@ public class InMemoryContainerTests
 
 		FileAttributes result = container.AdjustAttributes(FileAttributes.Normal);
 
-		if (Test.RunsOnLinux)
+		if (!Test.RunsOnWindows)
 		{
 			await That(result).HasFlag(FileAttributes.Hidden);
 		}
