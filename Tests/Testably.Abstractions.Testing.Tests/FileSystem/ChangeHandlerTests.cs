@@ -57,18 +57,16 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 
 		string path = FileSystem.Path.Combine(path1, path2, path3);
 		int eventCount = 0;
-		FileSystem.Notify
+		using IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Notify
 			.OnEvent(c =>
 				{
 					testOutputHelper.WriteLine($"Received event {c}");
 					eventCount++;
 				},
-				c => c.ChangeType == WatcherChangeTypes.Created)
-			.ExecuteWhileWaiting(() =>
-			{
-				FileSystem.Directory.CreateDirectory(path);
-			})
-			.Wait(count: 3);
+				c => c.ChangeType == WatcherChangeTypes.Created);
+		FileSystem.Directory.CreateDirectory(path);
+
+		onEvent.Wait(3);
 
 		await That(eventCount).IsEqualTo(3);
 	}
@@ -86,15 +84,14 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		FileSystem.Initialize();
 		initialization?.Invoke(FileSystem, path);
 
-		FileSystem.Notify
+		using IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Notify
 			.OnEvent(c => receivedPath = c.Path,
 				c => c.ChangeType == expectedChangeType &&
-				     c.FileSystemType == expectedFileSystemType)
-			.ExecuteWhileWaiting(() =>
-			{
-				callback.Invoke(FileSystem, path);
-			})
-			.Wait();
+				     c.FileSystemType == expectedFileSystemType);
+
+		callback.Invoke(FileSystem, path);
+
+		onEvent.Wait();
 
 		await That(receivedPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
 	}
@@ -106,11 +103,13 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		IFileSystemWatcher watcher = FileSystem.FileSystemWatcher.New("bar");
 		watcher.EnableRaisingEvents = true;
 
-		IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Watcher.OnTriggered();
+		using IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Watcher.OnTriggered();
+
+		FileSystem.File.WriteAllText(@"foo.txt", "some-text");
 
 		void Act() =>
-			onEvent.Wait(timeout: 100,
-				executeWhenWaiting: () => FileSystem.File.WriteAllText(@"foo.txt", "some-text"));
+			// ReSharper disable once AccessToDisposedClosure
+			onEvent.Wait(timeout: TimeSpan.FromMilliseconds(100));
 
 		await That(Act).Throws<TimeoutException>();
 	}
@@ -124,10 +123,10 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		watcher.Created += (_, _) => isTriggered = true;
 		watcher.EnableRaisingEvents = true;
 
-		IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Watcher.OnTriggered();
+		using IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Watcher.OnTriggered();
+		FileSystem.File.WriteAllText(@"foo.txt", "some-text");
 
-		onEvent.Wait(timeout: 5000,
-			executeWhenWaiting: () => FileSystem.File.WriteAllText(@"foo.txt", "some-text"));
+		onEvent.Wait(timeout: TimeSpan.FromMilliseconds(5000));
 
 		await That(isTriggered).IsTrue();
 	}

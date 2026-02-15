@@ -293,6 +293,9 @@ internal static class ExceptionFactory
 		=> new(
 			$"The timeout of {timeoutMilliseconds}ms expired in the awaitable callback.");
 
+	internal static TimeoutException TimeoutExpired(TimeSpan timeout)
+		=> new($"The timeout of {timeout} expired in the awaitable callback.");
+
 	internal static ArgumentOutOfRangeException TimerArgumentOutOfRange(string propertyName)
 		=> new(propertyName,
 			"Number must be either non-negative and less than or equal to Int32.MaxValue or -1")

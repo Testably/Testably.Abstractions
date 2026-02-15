@@ -2,82 +2,13 @@
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/Testably/Testably.Abstractions.git")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(@"Testably.Abstractions.Testing.Tests, PublicKey=00240000048000009400000006020000002400005253413100040000010001006104741100251820044d92b34b0519a1de0bccd80d6199aadbdcd5931d035462d42f70b0ae7a7db37bab63afb8a8ad0dc21392bb01f1243bfc51df4b5f1975b1b9746fecbed88913b783fccb69efc59e23b0e019e065abd38731711a2d6ac2569ab57d4b4d529f5903f5bee0f4388b2a5f4d5e0fddab6aac18d96aa78c2e73e0")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName=".NET 8.0")]
-namespace Testably.Abstractions.Testing.FileSystem
-{
-    public class ChangeDescription
-    {
-        public System.IO.WatcherChangeTypes ChangeType { get; }
-        public Testably.Abstractions.Testing.FileSystemTypes FileSystemType { get; }
-        public string? Name { get; }
-        public System.IO.NotifyFilters NotifyFilters { get; }
-        public string? OldName { get; }
-        public string? OldPath { get; }
-        public string Path { get; }
-        public override string ToString() { }
-    }
-    public class DefaultAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy
-    {
-        public DefaultAccessControlStrategy(System.Func<string, Testably.Abstractions.Helpers.IFileSystemExtensibility, bool> callback) { }
-        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility) { }
-    }
-    public class DefaultSafeFileHandleStrategy : Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy
-    {
-        public DefaultSafeFileHandleStrategy(System.Func<Microsoft.Win32.SafeHandles.SafeFileHandle, Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock> callback) { }
-        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification="SafeFileHandle cannot be unit tested.")]
-        public Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle) { }
-    }
-    public interface IAccessControlStrategy
-    {
-        bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility);
-    }
-    public interface IInterceptionHandler : System.IO.Abstractions.IFileSystemEntity
-    {
-        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> Event(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
-    }
-    public interface INotificationHandler : System.IO.Abstractions.IFileSystemEntity
-    {
-        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnEvent(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
-    }
-    public interface ISafeFileHandleStrategy
-    {
-        Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
-    }
-    public interface IUnixFileModeStrategy
-    {
-        bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode, System.IO.FileAccess requestedAccess);
-        void OnSetUnixFileMode(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode);
-    }
-    public interface IWatcherTriggeredHandler : System.IO.Abstractions.IFileSystemEntity
-    {
-        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnTriggered(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? triggerCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
-    }
-    public class NullAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy
-    {
-        public NullAccessControlStrategy() { }
-        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility) { }
-    }
-    public class NullSafeFileHandleStrategy : Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy
-    {
-        public NullSafeFileHandleStrategy() { }
-        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification="SafeFileHandle cannot be unit tested.")]
-        public Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle) { }
-    }
-    public class NullUnixFileModeStrategy : Testably.Abstractions.Testing.FileSystem.IUnixFileModeStrategy
-    {
-        public NullUnixFileModeStrategy() { }
-        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode, System.IO.FileAccess requestedAccess) { }
-        public void OnSetUnixFileMode(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode) { }
-    }
-    public class SafeFileHandleMock
-    {
-        public SafeFileHandleMock(string path, System.IO.FileMode mode = 3, System.IO.FileShare share = 0) { }
-        public System.IO.FileMode Mode { get; }
-        public string Path { get; }
-        public System.IO.FileShare Share { get; }
-    }
-}
 namespace Testably.Abstractions.Testing
 {
+    public static class AwaitableCallbackExtensions
+    {
+        public static TValue[] Wait<TValue>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> callback, int count = 1, int timeout = 30000) { }
+        public static System.Threading.Tasks.Task<TValue[]> WaitAsync<TValue>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> callback, int count = 1, int timeout = 30000, System.Threading.CancellationToken? cancellationToken = default) { }
+    }
     public static class FileSystemInitializerExtensions
     {
         public static Testably.Abstractions.Testing.Initializer.IFileSystemInitializer<TFileSystem> Initialize<TFileSystem>(this TFileSystem fileSystem, System.Action<Testably.Abstractions.Testing.FileSystemInitializerOptions>? options = null)
@@ -99,9 +30,13 @@ namespace Testably.Abstractions.Testing
         File = 2,
         DirectoryOrFile = 3,
     }
-    public interface IAwaitableCallback<out TValue> : System.IDisposable
+    public interface IAwaitableCallback<TValue> : System.IDisposable
     {
-        void Wait(System.Func<TValue, bool>? filter = null, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
+        TValue[] Wait(int count = 1, System.TimeSpan? timeout = default);
+        [System.Obsolete("Use another `Wait` or `WaitAsync` overload and move the filter to the creation of" +
+            " the awaitable callback.")]
+        void Wait(System.Func<TValue, bool>? filter, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
+        System.Threading.Tasks.Task<TValue[]> WaitAsync(int count = 1, System.TimeSpan? timeout = default, System.Threading.CancellationToken? cancellationToken = default);
     }
     public static class InterceptionHandlerExtensions
     {
@@ -177,11 +112,14 @@ namespace Testably.Abstractions.Testing
     }
     public static class Notification
     {
+        [System.Obsolete("Execute the callback before calling `Wait` or `WaitAsync` instead.")]
         public static Testably.Abstractions.Testing.IAwaitableCallback<TValue> ExecuteWhileWaiting<TValue>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> awaitable, System.Action callback) { }
+        [System.Obsolete("Execute the callback before calling `Wait` or `WaitAsync` instead.")]
         public static Testably.Abstractions.Testing.Notification.IAwaitableCallback<TValue, TFunc> ExecuteWhileWaiting<TValue, TFunc>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> awaitable, System.Func<TFunc> callback) { }
-        public interface IAwaitableCallback<out TValue, out TFunc> : System.IDisposable, Testably.Abstractions.Testing.IAwaitableCallback<TValue>
+        [System.Obsolete("Will be removed when `ExecuteWhileWaiting` is removed.", true)]
+        public interface IAwaitableCallback<TValue, out TFunc> : System.IDisposable, Testably.Abstractions.Testing.IAwaitableCallback<TValue>
         {
-            TFunc Wait(System.Func<TValue, bool>? filter = null, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
+            TFunc Wait(System.Func<TValue, bool>? filter, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
         }
     }
     public static class NotificationHandlerExtensions
@@ -223,6 +161,80 @@ namespace Testably.Abstractions.Testing
         public static Testably.Abstractions.Testing.TimeSystem.ITimeProvider Now() { }
         public static Testably.Abstractions.Testing.TimeSystem.ITimeProvider Random() { }
         public static Testably.Abstractions.Testing.TimeSystem.ITimeProvider Use(System.DateTime time) { }
+    }
+}
+namespace Testably.Abstractions.Testing.FileSystem
+{
+    public class ChangeDescription
+    {
+        public System.IO.WatcherChangeTypes ChangeType { get; }
+        public Testably.Abstractions.Testing.FileSystemTypes FileSystemType { get; }
+        public string? Name { get; }
+        public System.IO.NotifyFilters NotifyFilters { get; }
+        public string? OldName { get; }
+        public string? OldPath { get; }
+        public string Path { get; }
+        public override string ToString() { }
+    }
+    public class DefaultAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy
+    {
+        public DefaultAccessControlStrategy(System.Func<string, Testably.Abstractions.Helpers.IFileSystemExtensibility, bool> callback) { }
+        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility) { }
+    }
+    public class DefaultSafeFileHandleStrategy : Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy
+    {
+        public DefaultSafeFileHandleStrategy(System.Func<Microsoft.Win32.SafeHandles.SafeFileHandle, Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock> callback) { }
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification="SafeFileHandle cannot be unit tested.")]
+        public Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle) { }
+    }
+    public interface IAccessControlStrategy
+    {
+        bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility);
+    }
+    public interface IInterceptionHandler : System.IO.Abstractions.IFileSystemEntity
+    {
+        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> Event(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
+    }
+    public interface INotificationHandler : System.IO.Abstractions.IFileSystemEntity
+    {
+        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnEvent(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
+    }
+    public interface ISafeFileHandleStrategy
+    {
+        Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
+    }
+    public interface IUnixFileModeStrategy
+    {
+        bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode, System.IO.FileAccess requestedAccess);
+        void OnSetUnixFileMode(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode);
+    }
+    public interface IWatcherTriggeredHandler : System.IO.Abstractions.IFileSystemEntity
+    {
+        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnTriggered(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? triggerCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
+    }
+    public class NullAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy
+    {
+        public NullAccessControlStrategy() { }
+        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility) { }
+    }
+    public class NullSafeFileHandleStrategy : Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy
+    {
+        public NullSafeFileHandleStrategy() { }
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification="SafeFileHandle cannot be unit tested.")]
+        public Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle) { }
+    }
+    public class NullUnixFileModeStrategy : Testably.Abstractions.Testing.FileSystem.IUnixFileModeStrategy
+    {
+        public NullUnixFileModeStrategy() { }
+        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode, System.IO.FileAccess requestedAccess) { }
+        public void OnSetUnixFileMode(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode) { }
+    }
+    public class SafeFileHandleMock
+    {
+        public SafeFileHandleMock(string path, System.IO.FileMode mode = 3, System.IO.FileShare share = 0) { }
+        public System.IO.FileMode Mode { get; }
+        public string Path { get; }
+        public System.IO.FileShare Share { get; }
     }
 }
 namespace Testably.Abstractions.Testing.Initializer

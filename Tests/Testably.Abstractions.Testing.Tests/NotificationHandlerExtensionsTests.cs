@@ -1,3 +1,5 @@
+using Testably.Abstractions.Testing.FileSystem;
+
 namespace Testably.Abstractions.Testing.Tests;
 
 public class NotificationHandlerExtensionsTests
@@ -14,15 +16,15 @@ public class NotificationHandlerExtensionsTests
 	{
 		bool isNotified = false;
 
+		using IAwaitableCallback<ChangeDescription> onChanged =
+			FileSystem.Notify
+				.OnChanged(FileSystemTypes.File, _ => isNotified = true);
+
+		FileSystem.File.WriteAllText(path, null);
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnChanged(FileSystemTypes.File, _ => isNotified = true)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.WriteAllText(path, null);
-				})
-				.Wait(timeout: 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onChanged.Wait(timeout: TimeSpan.FromMilliseconds(50));
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -37,15 +39,13 @@ public class NotificationHandlerExtensionsTests
 		FileSystem.File.WriteAllText(path1, null);
 		FileSystem.File.WriteAllText(path2, null);
 
+		using IAwaitableCallback<ChangeDescription> onChanged = FileSystem.Notify
+			.OnChanged(FileSystemTypes.File, _ => isNotified = true, path2);
+		FileSystem.File.AppendAllText(path1, "foo");
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnChanged(FileSystemTypes.File, _ => isNotified = true, path2)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.AppendAllText(path1, "foo");
-				})
-				.Wait(timeout: 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onChanged.Wait(timeout: TimeSpan.FromMilliseconds(50));
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -66,16 +66,14 @@ public class NotificationHandlerExtensionsTests
 		string filePath = FileSystem.Path.Combine(directoryPath, fileName);
 		FileSystem.Directory.CreateDirectory(directoryPath);
 		FileSystem.File.WriteAllText(filePath, null);
+		using IAwaitableCallback<ChangeDescription> onChanged = FileSystem.Notify
+			.OnChanged(FileSystemTypes.File, _ => isNotified = true, globPattern);
+		FileSystem.File.AppendAllText(filePath, "foo");
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnChanged(FileSystemTypes.File, _ => isNotified = true, globPattern)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.AppendAllText(filePath, "foo");
-				})
-				.Wait(timeout: expectedResult ? 30000 : 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onChanged.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -97,13 +95,12 @@ public class NotificationHandlerExtensionsTests
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);
 
-		FileSystem.Notify
-			.OnChanged(FileSystemTypes.File, _ => isNotified = true)
-			.ExecuteWhileWaiting(() =>
-			{
-				FileSystem.File.AppendAllText(path, "foo");
-			})
-			.Wait();
+		using IAwaitableCallback<ChangeDescription> onChanged = FileSystem.Notify
+			.OnChanged(FileSystemTypes.File, _ => isNotified = true);
+
+		FileSystem.File.AppendAllText(path, "foo");
+
+		onChanged.Wait();
 
 		await That(isNotified).IsTrue();
 	}
@@ -116,16 +113,15 @@ public class NotificationHandlerExtensionsTests
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);
 
+		using IAwaitableCallback<ChangeDescription> onChanged = FileSystem.Notify
+			.OnChanged(FileSystemTypes.File, _ => isNotified = true,
+				predicate: _ => expectedResult);
+		FileSystem.File.AppendAllText(path, "foo");
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnChanged(FileSystemTypes.File, _ => isNotified = true,
-					predicate: _ => expectedResult)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.AppendAllText(path, "foo");
-				})
-				.Wait(timeout: expectedResult ? 30000 : 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onChanged.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
 		});
 
 		if (expectedResult)
@@ -147,15 +143,14 @@ public class NotificationHandlerExtensionsTests
 		bool isNotified = false;
 		FileSystem.Directory.CreateDirectory(path);
 
+		using IAwaitableCallback<ChangeDescription> onCreated = FileSystem.Notify
+			.OnCreated(FileSystemTypes.Directory, _ => isNotified = true);
+		FileSystem.Directory.Delete(path);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnCreated(FileSystemTypes.Directory, _ => isNotified = true)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.Delete(path);
-				})
-				.Wait(timeout: 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(50));
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -168,15 +163,14 @@ public class NotificationHandlerExtensionsTests
 	{
 		bool isNotified = false;
 
+		using IAwaitableCallback<ChangeDescription> onCreated = FileSystem.Notify
+			.OnCreated(FileSystemTypes.Directory, _ => isNotified = true, path2);
+		FileSystem.Directory.CreateDirectory(path1);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnCreated(FileSystemTypes.Directory, _ => isNotified = true, path2)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.CreateDirectory(path1);
-				})
-				.Wait(timeout: 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(50));
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -197,16 +191,15 @@ public class NotificationHandlerExtensionsTests
 		FileSystem.Directory.CreateDirectory(directoryPath);
 		bool isNotified = false;
 
+		using IAwaitableCallback<ChangeDescription> onCreated = FileSystem.Notify
+			.OnCreated(FileSystemTypes.Directory, _ => isNotified = true,
+				globPattern);
+		FileSystem.Directory.CreateDirectory(filePath);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnCreated(FileSystemTypes.Directory, _ => isNotified = true,
-					globPattern)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.CreateDirectory(filePath);
-				})
-				.Wait(timeout: expectedResult ? 30000 : 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onCreated.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -227,13 +220,11 @@ public class NotificationHandlerExtensionsTests
 	{
 		bool isNotified = false;
 
-		FileSystem.Notify
-			.OnCreated(FileSystemTypes.Directory, _ => isNotified = true)
-			.ExecuteWhileWaiting(() =>
-			{
-				FileSystem.Directory.CreateDirectory(path);
-			})
-			.Wait();
+		using IAwaitableCallback<ChangeDescription> onCreated = FileSystem.Notify
+			.OnCreated(FileSystemTypes.Directory, _ => isNotified = true);
+		FileSystem.Directory.CreateDirectory(path);
+
+		onCreated.Wait();
 
 		await That(isNotified).IsTrue();
 	}
@@ -245,16 +236,15 @@ public class NotificationHandlerExtensionsTests
 	{
 		bool isNotified = false;
 
+		using IAwaitableCallback<ChangeDescription> onCreated = FileSystem.Notify
+			.OnCreated(FileSystemTypes.Directory, _ => isNotified = true,
+				predicate: _ => expectedResult);
+		FileSystem.Directory.CreateDirectory(path);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnCreated(FileSystemTypes.Directory, _ => isNotified = true,
-					predicate: _ => expectedResult)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.CreateDirectory(path);
-				})
-				.Wait(timeout: expectedResult ? 30000 : 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
 		});
 
 		if (expectedResult)
@@ -276,15 +266,14 @@ public class NotificationHandlerExtensionsTests
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);
 
+		using IAwaitableCallback<ChangeDescription> onCreated = FileSystem.Notify
+			.OnCreated(FileSystemTypes.File, _ => isNotified = true);
+		FileSystem.File.Delete(path);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnCreated(FileSystemTypes.File, _ => isNotified = true)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.Delete(path);
-				})
-				.Wait(timeout: 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(50));
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -297,15 +286,14 @@ public class NotificationHandlerExtensionsTests
 	{
 		bool isNotified = false;
 
+		using IAwaitableCallback<ChangeDescription> onCreated = FileSystem.Notify
+			.OnCreated(FileSystemTypes.File, _ => isNotified = true, path2);
+		FileSystem.File.WriteAllText(path1, null);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnCreated(FileSystemTypes.File, _ => isNotified = true, path2)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.WriteAllText(path1, null);
-				})
-				.Wait(timeout: 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(50));
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -326,16 +314,15 @@ public class NotificationHandlerExtensionsTests
 		FileSystem.Directory.CreateDirectory(directoryPath);
 		bool isNotified = false;
 
+		using IAwaitableCallback<ChangeDescription> onCreated = FileSystem.Notify
+			.OnCreated(FileSystemTypes.File, _ => isNotified = true,
+				globPattern);
+		FileSystem.File.WriteAllText(filePath, null);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnCreated(FileSystemTypes.File, _ => isNotified = true,
-					globPattern)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.WriteAllText(filePath, null);
-				})
-				.Wait(timeout: expectedResult ? 30000 : 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
 		});
 
 		if (expectedResult)
@@ -356,13 +343,11 @@ public class NotificationHandlerExtensionsTests
 	{
 		bool isNotified = false;
 
-		FileSystem.Notify
-			.OnCreated(FileSystemTypes.File, _ => isNotified = true)
-			.ExecuteWhileWaiting(() =>
-			{
-				FileSystem.File.WriteAllText(path, null);
-			})
-			.Wait();
+		using IAwaitableCallback<ChangeDescription> onCreated = FileSystem.Notify
+			.OnCreated(FileSystemTypes.File, _ => isNotified = true);
+		FileSystem.File.WriteAllText(path, null);
+
+		onCreated.Wait();
 
 		await That(isNotified).IsTrue();
 	}
@@ -374,16 +359,15 @@ public class NotificationHandlerExtensionsTests
 	{
 		bool isNotified = false;
 
+		using IAwaitableCallback<ChangeDescription> onCreated = FileSystem.Notify
+			.OnCreated(FileSystemTypes.File, _ => isNotified = true,
+				predicate: _ => expectedResult);
+		FileSystem.File.WriteAllText(path, null);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnCreated(FileSystemTypes.File, _ => isNotified = true,
-					predicate: _ => expectedResult)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.WriteAllText(path, null);
-				})
-				.Wait(timeout: expectedResult ? 30000 : 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
 		});
 
 		if (expectedResult)
@@ -404,15 +388,14 @@ public class NotificationHandlerExtensionsTests
 	{
 		bool isNotified = false;
 
+		using IAwaitableCallback<ChangeDescription> onDeleted = FileSystem.Notify
+			.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true);
+		FileSystem.Directory.CreateDirectory(path);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.CreateDirectory(path);
-				})
-				.Wait(timeout: 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(50));
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -427,15 +410,14 @@ public class NotificationHandlerExtensionsTests
 		FileSystem.Directory.CreateDirectory(path1);
 		FileSystem.Directory.CreateDirectory(path2);
 
+		using IAwaitableCallback<ChangeDescription> onDeleted = FileSystem.Notify
+			.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true, path2);
+		FileSystem.Directory.Delete(path1);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true, path2)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.Delete(path1);
-				})
-				.Wait(timeout: 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(50));
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -457,16 +439,15 @@ public class NotificationHandlerExtensionsTests
 		FileSystem.Directory.CreateDirectory(basePath);
 		FileSystem.Directory.CreateDirectory(directoryPath);
 
+		using IAwaitableCallback<ChangeDescription> onDeleted = FileSystem.Notify
+			.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true,
+				globPattern);
+		FileSystem.Directory.Delete(directoryPath);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true,
-					globPattern)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.Delete(directoryPath);
-				})
-				.Wait(timeout: expectedResult ? 30000 : 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
 		});
 
 		if (expectedResult)
@@ -488,13 +469,11 @@ public class NotificationHandlerExtensionsTests
 		bool isNotified = false;
 		FileSystem.Directory.CreateDirectory(path);
 
-		FileSystem.Notify
-			.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true)
-			.ExecuteWhileWaiting(() =>
-			{
-				FileSystem.Directory.Delete(path);
-			})
-			.Wait();
+		using IAwaitableCallback<ChangeDescription> onDeleted = FileSystem.Notify
+			.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true);
+		FileSystem.Directory.Delete(path);
+
+		onDeleted.Wait();
 
 		await That(isNotified).IsTrue();
 	}
@@ -507,16 +486,15 @@ public class NotificationHandlerExtensionsTests
 		bool isNotified = false;
 		FileSystem.Directory.CreateDirectory(path);
 
+		using IAwaitableCallback<ChangeDescription> onDeleted = FileSystem.Notify
+			.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true,
+				predicate: _ => expectedResult);
+		FileSystem.Directory.Delete(path);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true,
-					predicate: _ => expectedResult)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.Delete(path);
-				})
-				.Wait(timeout: expectedResult ? 30000 : 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
 		});
 
 		if (expectedResult)
@@ -537,15 +515,14 @@ public class NotificationHandlerExtensionsTests
 	{
 		bool isNotified = false;
 
+		using IAwaitableCallback<ChangeDescription> onDeleted = FileSystem.Notify
+			.OnDeleted(FileSystemTypes.File, _ => isNotified = true);
+		FileSystem.File.WriteAllText(path, null);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnDeleted(FileSystemTypes.File, _ => isNotified = true)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.WriteAllText(path, null);
-				})
-				.Wait(timeout: 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(50));
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -560,15 +537,14 @@ public class NotificationHandlerExtensionsTests
 		FileSystem.File.WriteAllText(path1, null);
 		FileSystem.File.WriteAllText(path2, null);
 
+		using IAwaitableCallback<ChangeDescription> onDeleted = FileSystem.Notify
+			.OnDeleted(FileSystemTypes.File, _ => isNotified = true, path2);
+		FileSystem.File.Delete(path1);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnDeleted(FileSystemTypes.File, _ => isNotified = true, path2)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.Delete(path1);
-				})
-				.Wait(timeout: 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(50));
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -590,16 +566,15 @@ public class NotificationHandlerExtensionsTests
 		FileSystem.Directory.CreateDirectory(directoryPath);
 		FileSystem.File.WriteAllText(filePath, null);
 
+		using IAwaitableCallback<ChangeDescription> onDeleted = FileSystem.Notify
+			.OnDeleted(FileSystemTypes.File, _ => isNotified = true,
+				globPattern);
+		FileSystem.File.Delete(filePath);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnDeleted(FileSystemTypes.File, _ => isNotified = true,
-					globPattern)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.Delete(filePath);
-				})
-				.Wait(timeout: expectedResult ? 30000 : 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
 		});
 
 		if (expectedResult)
@@ -621,13 +596,11 @@ public class NotificationHandlerExtensionsTests
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);
 
-		FileSystem.Notify
-			.OnDeleted(FileSystemTypes.File, _ => isNotified = true)
-			.ExecuteWhileWaiting(() =>
-			{
-				FileSystem.File.Delete(path);
-			})
-			.Wait();
+		using IAwaitableCallback<ChangeDescription> onDeleted = FileSystem.Notify
+			.OnDeleted(FileSystemTypes.File, _ => isNotified = true);
+		FileSystem.File.Delete(path);
+
+		onDeleted.Wait();
 
 		await That(isNotified).IsTrue();
 	}
@@ -640,16 +613,15 @@ public class NotificationHandlerExtensionsTests
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);
 
+		using IAwaitableCallback<ChangeDescription> onDeleted = FileSystem.Notify
+			.OnDeleted(FileSystemTypes.File, _ => isNotified = true,
+				predicate: _ => expectedResult);
+		FileSystem.File.Delete(path);
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-				.OnDeleted(FileSystemTypes.File, _ => isNotified = true,
-					predicate: _ => expectedResult)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.Delete(path);
-				})
-				.Wait(timeout: expectedResult ? 30000 : 50);
+			// ReSharper disable once AccessToDisposedClosure
+			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
 		});
 
 		if (expectedResult)

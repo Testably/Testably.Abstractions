@@ -2,7 +2,7 @@
 
 namespace Testably.Abstractions.Testing.Tests;
 
-public class NotificationTests
+public partial class NotificationTests
 {
 	[Fact]
 	public async Task AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
@@ -60,8 +60,7 @@ public class NotificationTests
 				.ThreadSleep(_ =>
 				{
 					isCalled = true;
-				})
-				.ExecuteWhileWaiting(() => { });
+				});
 
 		wait.Dispose();
 
@@ -71,6 +70,7 @@ public class NotificationTests
 	}
 
 	[Fact]
+	[Obsolete("TODO: Remove once the obsolete filter overload is removed from the public API.")]
 	public async Task AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		MockTimeSystem timeSystem = new();
@@ -198,7 +198,7 @@ public class NotificationTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			wait.Wait(timeout: 10);
+			wait.Wait(timeout: TimeSpan.FromMilliseconds(10));
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -217,7 +217,7 @@ public class NotificationTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			wait.Wait(timeout: 100);
+			wait.Wait(timeout: TimeSpan.FromMilliseconds(100));
 		});
 
 		await That(exception).IsExactly<ObjectDisposedException>();
@@ -240,17 +240,6 @@ public class NotificationTests
 					{
 						isCalledFromSecondThread = true;
 					}
-				}).ExecuteWhileWaiting(() =>
-				{
-					// ReSharper disable once AccessToDisposedClosure
-					try
-					{
-						listening.Set();
-					}
-					catch (ObjectDisposedException)
-					{
-						// Ignore any ObjectDisposedException
-					}
 				});
 		new Thread(() =>
 		{
@@ -265,6 +254,7 @@ public class NotificationTests
 				// Ignore any ObjectDisposedException
 			}
 		}).Start();
+		listening.Set();
 		wait.Wait();
 		listening.Reset();
 
@@ -291,9 +281,10 @@ public class NotificationTests
 		ms.Set();
 		await That(isCalledFromSecondThread).IsTrue();
 	}
-
+	
 	[Theory]
 	[AutoData]
+	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 	public async Task Execute_ShouldBeExecutedBeforeWait(int milliseconds)
 	{
 		MockTimeSystem timeSystem = new();
@@ -309,7 +300,7 @@ public class NotificationTests
 			{
 				timeSystem.Thread.Sleep(milliseconds);
 			})
-			.Wait(executeWhenWaiting: () =>
+			.Wait(null, executeWhenWaiting: () =>
 			{
 				isExecuted = true;
 			});
@@ -320,6 +311,7 @@ public class NotificationTests
 
 	[Theory]
 	[AutoData]
+	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 	public async Task Execute_WithReturnValue_ShouldBeExecutedAndReturnValue(
 		int milliseconds, string result)
 	{
@@ -337,7 +329,7 @@ public class NotificationTests
 				timeSystem.Thread.Sleep(milliseconds);
 				return result;
 			})
-			.Wait(executeWhenWaiting: () =>
+			.Wait(null, executeWhenWaiting: () =>
 			{
 				isExecuted = true;
 			});
@@ -348,6 +340,7 @@ public class NotificationTests
 	}
 
 	[Fact]
+	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 	public async Task ExecuteWhileWaiting_ShouldExecuteCallback()
 	{
 		MockTimeSystem timeSystem = new();
@@ -367,6 +360,7 @@ public class NotificationTests
 
 	[Theory]
 	[AutoData]
+	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 	public async Task ExecuteWhileWaiting_WithReturnValue_ShouldExecuteCallback(int result)
 	{
 		MockTimeSystem timeSystem = new();
@@ -380,7 +374,7 @@ public class NotificationTests
 				timeSystem.Thread.Sleep(10);
 				return result;
 			})
-			.Wait();
+			.Wait(null);
 
 		await That(actualResult).IsEqualTo(result);
 		await That(isExecuted).IsTrue();
