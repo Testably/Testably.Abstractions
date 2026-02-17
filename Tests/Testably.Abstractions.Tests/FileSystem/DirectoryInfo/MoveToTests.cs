@@ -169,4 +169,39 @@ public partial class MoveToTests
 					SearchOption.AllDirectories))
 			.HasSingle();
 	}
+
+	[Theory]
+	[AutoData]
+	[InlineData(null)]
+	public async Task MoveTo_CurrentDirectory_ShouldThrowIOException_OnWindows(string? nested)
+	{
+		// Arrange
+		string directory = FileSystem.Directory.GetCurrentDirectory();
+
+		if (nested != null)
+		{
+			string nestedDirectory = FileSystem.Path.Combine(directory, nested);
+			FileSystem.Directory.CreateDirectory(nestedDirectory);
+			FileSystem.Directory.SetCurrentDirectory(nestedDirectory);
+		}
+
+		// Act
+		void Act()
+		{
+			FileSystem.DirectoryInfo.New(directory).MoveTo("new");
+		}
+
+		// Assert
+		if (Test.RunsOnWindows)
+		{
+			await That(Act)
+				.ThrowsExactly<IOException>().Which.HasMessage(
+					"The process cannot access the file because it is being used by another process."
+				);
+		}
+		else
+		{
+			await That(Act).DoesNotThrow();
+		}
+	}
 }

@@ -306,4 +306,40 @@ public partial class DeleteTests
 				: $"'{FileSystem.Path.Combine(BasePath, path)}'");
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
+
+	[Theory]
+	[AutoData]
+	[InlineData(null)]
+	public async Task Delete_CurrentDirectory_ShouldThrowIOException_OnWindows(string? nested)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		// Arrange
+		string directory = FileSystem.Directory.GetCurrentDirectory();
+
+		if (nested != null)
+		{
+			string nestedDirectory = FileSystem.Path.Combine(directory, nested);
+			FileSystem.Directory.CreateDirectory(nestedDirectory);
+			FileSystem.Directory.SetCurrentDirectory(nestedDirectory);
+		}
+
+		// Act
+		void Act()
+		{
+			FileSystem.Directory.Delete(directory);
+		}
+
+		// Assert
+		if (Test.RunsOnWindows)
+		{
+			await That(Act).ThrowsExactly<IOException>().Which.HasMessage(
+				$"The process cannot access the file '{directory}' because it is being used by another process."
+			);
+		}
+		else
+		{
+			await That(Act).DoesNotThrow();
+		}
+	}
 }
