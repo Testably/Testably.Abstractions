@@ -177,6 +177,7 @@ public partial class MoveToTests
 	{
 		// Arrange
 		string directory = FileSystem.Directory.GetCurrentDirectory();
+		string newPath = FileSystem.Path.GetFullPath("../new");
 
 		if (nested != null)
 		{
@@ -188,7 +189,7 @@ public partial class MoveToTests
 		// Act
 		void Act()
 		{
-			FileSystem.DirectoryInfo.New(directory).MoveTo("new");
+			FileSystem.DirectoryInfo.New(directory).MoveTo(newPath);
 		}
 
 		// Assert
