@@ -162,7 +162,7 @@ public partial class DeleteTests
 		// Act
 		void Act()
 		{
-			FileSystem.DirectoryInfo.New(directory).Delete();
+			FileSystem.DirectoryInfo.New(directory).Delete(true);
 		}
 
 		// Assert

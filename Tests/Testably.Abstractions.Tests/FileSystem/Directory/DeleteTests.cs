@@ -327,7 +327,7 @@ public partial class DeleteTests
 		// Act
 		void Act()
 		{
-			FileSystem.Directory.Delete(directory);
+			FileSystem.Directory.Delete(directory, true);
 		}
 
 		// Assert
