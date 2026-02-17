@@ -144,7 +144,9 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		ValidateContainerType(container.Type, expectedType, _fileSystem.Execute, location);
-
+		
+		ValidateHandle(location.FullPath, location.FullPath);
+		
 		if (container.Type == FileSystemTypes.Directory)
 		{
 			IEnumerable<IStorageLocation> children =
@@ -991,6 +993,8 @@ internal sealed class InMemoryStorage : IStorage
 		{
 			return null;
 		}
+		
+		ValidateHandle(source.FullPath);
 
 		if (container.Type == FileSystemTypes.Directory &&
 		    source.FullPath.Equals(destination.FullPath, _fileSystem.Execute.IsNetFramework
@@ -1194,6 +1198,26 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				throw ExceptionFactory.AccessToPathDenied(location.FullPath);
 			}
+		}
+	}
+
+	private void ValidateHandle(string fullPath, string? errorPath = null)
+	{
+		if (!_fileSystem.Execute.IsWindows)
+		{
+			return;
+		}
+
+		string path = fullPath.TrimEnd(_fileSystem.Path.DirectorySeparatorChar)
+			.TrimEnd(_fileSystem.Path.AltDirectorySeparatorChar);
+
+		if (_fileSystem.Directory.GetCurrentDirectory().StartsWith(
+				path, _fileSystem.Execute.StringComparisonMode
+			))
+		{
+			throw string.IsNullOrEmpty(errorPath)
+				? ExceptionFactory.FileSharingViolation()
+				: ExceptionFactory.FileSharingViolation(errorPath);
 		}
 	}
 

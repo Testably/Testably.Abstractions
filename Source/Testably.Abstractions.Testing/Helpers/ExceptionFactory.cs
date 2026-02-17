@@ -85,6 +85,22 @@ internal static class ExceptionFactory
 #endif
 		};
 
+	internal static IOException FileSharingViolation()
+		=> new("The process cannot access the file because it is being used by another process.")
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2147024864,
+#endif
+		};
+
+	internal static IOException FileSharingViolation(string path)
+		=> new($"The process cannot access the file '{path}' because it is being used by another process.")
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2147024864,
+#endif
+		};
+
 	internal static ArgumentException HandleIsInvalid(string? paramName = "handle")
 		=> new("Invalid handle.", paramName);
 
