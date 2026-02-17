@@ -1208,11 +1208,8 @@ internal sealed class InMemoryStorage : IStorage
 			return;
 		}
 
-		string path = fullPath.TrimEnd(_fileSystem.Path.DirectorySeparatorChar)
-			.TrimEnd(_fileSystem.Path.AltDirectorySeparatorChar);
-
 		if (_fileSystem.Directory.GetCurrentDirectory().StartsWith(
-				path, _fileSystem.Execute.StringComparisonMode
+				fullPath, _fileSystem.Execute.StringComparisonMode
 			))
 		{
 			throw string.IsNullOrEmpty(errorPath)
