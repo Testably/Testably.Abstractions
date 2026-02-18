@@ -145,7 +145,7 @@ internal sealed class InMemoryStorage : IStorage
 
 		ValidateContainerType(container.Type, expectedType, _fileSystem.Execute, location);
 		
-		ValidateHandle(location.FullPath, location.FullPath);
+		ValidateDeleteHandle(location.FullPath);
 		
 		if (container.Type == FileSystemTypes.Directory)
 		{
@@ -994,7 +994,7 @@ internal sealed class InMemoryStorage : IStorage
 			return null;
 		}
 		
-		ValidateHandle(source.FullPath);
+		ValidateMoveHandle(source.FullPath);
 
 		if (container.Type == FileSystemTypes.Directory &&
 		    source.FullPath.Equals(destination.FullPath, _fileSystem.Execute.IsNetFramework
@@ -1201,20 +1201,38 @@ internal sealed class InMemoryStorage : IStorage
 		}
 	}
 
-	private void ValidateHandle(string fullPath, string? errorPath = null)
+	private void ValidateDeleteHandle(string fullPath)
 	{
 		if (!_fileSystem.Execute.IsWindows)
 		{
 			return;
 		}
+		
+		string? currentDirectory = _fileSystem.Directory.GetCurrentDirectory().NormalizePath(_fileSystem);
 
-		if (_fileSystem.Directory.GetCurrentDirectory().StartsWith(
-				fullPath, _fileSystem.Execute.StringComparisonMode
-			))
+		if (currentDirectory.StartsWith(fullPath, _fileSystem.Execute.StringComparisonMode))
 		{
-			throw string.IsNullOrEmpty(errorPath)
-				? ExceptionFactory.FileSharingViolation()
-				: ExceptionFactory.FileSharingViolation(errorPath);
+			throw ExceptionFactory.FileSharingViolation(currentDirectory);
+		}
+	}
+
+	private void ValidateMoveHandle(string fullPath)
+	{
+		if (!_fileSystem.Execute.IsWindows)
+		{
+			return;
+		}
+		
+		string? currentDirectory = _fileSystem.Directory.GetCurrentDirectory().NormalizePath(_fileSystem);
+
+		if (currentDirectory.Equals(fullPath, _fileSystem.Execute.StringComparisonMode))
+		{
+			throw ExceptionFactory.FileSharingViolation();
+		}
+
+		if (currentDirectory.StartsWith(fullPath, _fileSystem.Execute.StringComparisonMode))
+		{
+			throw ExceptionFactory.IOAccessDenied(fullPath);
 		}
 	}
 

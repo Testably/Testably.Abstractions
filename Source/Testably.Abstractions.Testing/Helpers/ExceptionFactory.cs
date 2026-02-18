@@ -313,6 +313,14 @@ internal static class ExceptionFactory
 #endif
 		};
 
+	internal static IOException IOAccessDenied(string path)
+		=> new($"Access to the path '{path}' is denied.")
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2147024891,
+#endif
+		};
+
 	internal static PlatformNotSupportedException UnixFileModeNotSupportedOnThisPlatform()
 		=> new("Unix file modes are not supported on this platform.")
 		{
