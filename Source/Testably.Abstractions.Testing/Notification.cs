@@ -17,7 +17,9 @@ public static class Notification
 	///     Executes the <paramref name="callback" /> while waiting for the notification.
 	/// </summary>
 	/// <returns>The <paramref name="awaitable" /> callback.</returns>
+#if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("Execute the callback before calling `Wait` or `WaitAsync` instead.")]
+#endif
 	public static IAwaitableCallback<TValue> ExecuteWhileWaiting<TValue>(
 		this IAwaitableCallback<TValue> awaitable, Action callback)
 	{
@@ -32,7 +34,9 @@ public static class Notification
 	///     Executes the <paramref name="callback" /> while waiting for the notification.
 	/// </summary>
 	/// <returns>The <paramref name="awaitable" /> callback.</returns>
+#if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("Execute the callback before calling `Wait` or `WaitAsync` instead.")]
+#endif
 	public static IAwaitableCallback<TValue, TFunc> ExecuteWhileWaiting<TValue, TFunc>(
 		this IAwaitableCallback<TValue> awaitable, Func<TFunc> callback)
 	{
@@ -275,7 +279,9 @@ public static class Notification
 	///     - un-registering a callback by calling <see cref="IDisposable.Dispose()" /><br />
 	///     - blocking for the callback to be executed
 	/// </summary>
-	[Obsolete("Will be removed when `ExecuteWhileWaiting` is removed.", error: true)]
+#if MarkExecuteWhileWaitingNotificationObsolete
+	[Obsolete("Will be removed when `ExecuteWhileWaiting` is removed.")]
+#endif
 	public interface IAwaitableCallback<TValue, out TFunc>
 		: IAwaitableCallback<TValue>
 	{
@@ -308,7 +314,9 @@ public static class Notification
 			Action? executeWhenWaiting = null);
 	}
 
-	[Obsolete("Will be removed when `ExecuteWhileWaiting` is removed.", error: true)]
+#if MarkExecuteWhileWaitingNotificationObsolete
+	[Obsolete("Will be removed when `ExecuteWhileWaiting` is removed.")]
+#endif
 	private sealed class CallbackWaiterWithValue<TValue, TFunc>
 		: IAwaitableCallback<TValue, TFunc>
 	{

@@ -32,7 +32,9 @@ public interface IAwaitableCallback<TValue> : IDisposable
 	/// <param name="executeWhenWaiting">
 	///     (optional) A callback to execute when waiting started.
 	/// </param>
+#if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("Use another `Wait` or `WaitAsync` overload and move the filter to the creation of the awaitable callback.")]
+#endif
 	void Wait(Func<TValue, bool>? filter,
 		int timeout = 30000,
 		int count = 1,
