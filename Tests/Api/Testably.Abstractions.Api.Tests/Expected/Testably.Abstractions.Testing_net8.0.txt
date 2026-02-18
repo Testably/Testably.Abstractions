@@ -6,6 +6,10 @@ namespace Testably.Abstractions.Testing
 {
     public static class AwaitableCallbackExtensions
     {
+        public static System.Collections.Generic.IAsyncEnumerable<TValue> ToAsyncEnumerable<TValue>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> source, System.Threading.CancellationToken cancellationToken = default) { }
+        [System.Runtime.CompilerServices.AsyncIteratorStateMachine(typeof(Testably.Abstractions.Testing.AwaitableCallbackExtensions.<ToAsyncEnumerable>d__3<TValue>))]
+        public static System.Collections.Generic.IAsyncEnumerable<TValue> ToAsyncEnumerable<TValue>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> source, System.TimeSpan? timeout, [System.Runtime.CompilerServices.EnumeratorCancellation] System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Collections.Generic.IAsyncEnumerable<TValue> ToAsyncEnumerable<TValue>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> source, int timeout, System.Threading.CancellationToken cancellationToken = default) { }
         public static TValue[] Wait<TValue>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> callback, int count = 1, int timeout = 30000) { }
         public static System.Threading.Tasks.Task<TValue[]> WaitAsync<TValue>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> callback, int count = 1, int timeout = 30000, System.Threading.CancellationToken? cancellationToken = default) { }
     }

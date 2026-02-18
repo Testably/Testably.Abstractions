@@ -1,11 +1,15 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+#if NET6_0_OR_GREATER
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+#endif
 
 namespace Testably.Abstractions.Testing;
 
 /// <summary>
-///     Extension methods on <see cref="IAwaitableCallback{TValue}"/>.
+///     Extension methods on <see cref="IAwaitableCallback{TValue}" />.
 /// </summary>
 public static class AwaitableCallbackExtensions
 {
@@ -50,4 +54,68 @@ public static class AwaitableCallbackExtensions
 		int timeout = 30000,
 		CancellationToken? cancellationToken = null)
 		=> callback.WaitAsync(count, TimeSpan.FromMilliseconds(timeout), cancellationToken);
+
+#if NET6_0_OR_GREATER
+	/// <summary>
+	///     Converts the <see cref="IAwaitableCallback{TValue}" /> to an <see cref="IAsyncEnumerable{TValue}" /> that yields a
+	///     value each time the callback is executed.
+	/// </summary>
+	/// <remarks>
+	///     Uses a default timeout of 30 seconds to prevent infinite waiting if the callback is never executed.
+	/// </remarks>
+	public static IAsyncEnumerable<TValue> ToAsyncEnumerable<TValue>(
+		this IAwaitableCallback<TValue> source,
+		CancellationToken cancellationToken = default)
+		=> ToAsyncEnumerable(source, null, cancellationToken);
+
+	/// <summary>
+	///     Converts the <see cref="IAwaitableCallback{TValue}" /> to an <see cref="IAsyncEnumerable{TValue}" /> that yields a
+	///     value each time the callback is executed.
+	/// </summary>
+	/// <remarks>
+	///     If no <paramref name="timeout" /> is specified (<see langword="null" />), a default timeout of 30 seconds is used
+	///     to prevent infinite waiting if the callback is never executed.
+	/// </remarks>
+	public static async IAsyncEnumerable<TValue> ToAsyncEnumerable<TValue>(
+		this IAwaitableCallback<TValue> source,
+		TimeSpan? timeout,
+		[EnumeratorCancellation] CancellationToken cancellationToken = default)
+	{
+		using CancellationTokenSource cts =
+			CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+		cts.CancelAfter(timeout ?? TimeSpan.FromSeconds(30));
+		CancellationToken token = cts.Token;
+
+		while (!token.IsCancellationRequested)
+		{
+			TValue item;
+			try
+			{
+				TValue[] items = await source.WaitAsync(cancellationToken: token);
+				if (items.Length == 0)
+				{
+					continue;
+				}
+
+				item = items[0];
+			}
+			catch (OperationCanceledException)
+			{
+				yield break;
+			}
+
+			yield return item;
+		}
+	}
+
+	/// <summary>
+	///     Converts the <see cref="IAwaitableCallback{TValue}" /> to an <see cref="IAsyncEnumerable{TValue}" /> that yields a
+	///     value each time the callback is executed.
+	/// </summary>
+	public static IAsyncEnumerable<TValue> ToAsyncEnumerable<TValue>(
+		this IAwaitableCallback<TValue> source,
+		int timeout,
+		CancellationToken cancellationToken = default)
+		=> ToAsyncEnumerable(source, TimeSpan.FromMilliseconds(timeout), cancellationToken);
+#endif
 }

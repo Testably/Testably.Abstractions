@@ -11,7 +11,7 @@ public interface INotificationHandler : IFileSystemEntity
 	///     Callback executed when any change in the <see cref="MockFileSystem" /> matching the <paramref name="predicate" />
 	///     occurred.
 	/// </summary>
-	/// <param name="notificationCallback">The callback to execute after the change occurred.</param>
+	/// <param name="notificationCallback">(optional) The callback to execute after the change occurred.</param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
