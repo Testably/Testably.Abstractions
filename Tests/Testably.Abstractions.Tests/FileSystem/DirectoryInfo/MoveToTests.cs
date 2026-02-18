@@ -184,17 +184,9 @@ public partial class MoveToTests
 		}
 
 		// Assert
-		if (Test.RunsOnWindows)
-		{
-			await That(Act)
-				.ThrowsExactly<IOException>().Which.HasMessage(
-					"The process cannot access the file because it is being used by another process."
-				);
-		}
-		else
-		{
-			await That(Act).DoesNotThrow();
-		}
+		await That(Act).ThrowsExactly<IOException>().OnlyIf(Test.RunsOnWindows).Which.HasMessage(
+			"The process cannot access the file because it is being used by another process."
+		);
 	}
 
 	[Theory]
@@ -218,15 +210,8 @@ public partial class MoveToTests
 		try
 		{
 			// Assert
-			if (Test.RunsOnWindows)
-			{
-				await That(Act).ThrowsExactly<IOException>().Which
-					.HasMessage($"Access to the path '*{directory}' is denied.").AsWildcard();
-			}
-			else
-			{
-				await That(Act).DoesNotThrow();
-			}
+			await That(Act).ThrowsExactly<IOException>().OnlyIf(Test.RunsOnWindows).Which
+				.HasMessage($"Access to the path '*{directory}' is denied.").AsWildcard();
 		}
 		finally
 		{

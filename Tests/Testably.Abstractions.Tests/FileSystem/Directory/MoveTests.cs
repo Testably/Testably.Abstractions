@@ -283,17 +283,9 @@ public partial class MoveTests
 		}
 
 		// Assert
-		if (Test.RunsOnWindows)
-		{
-			await That(Act)
-				.ThrowsExactly<IOException>().Which.HasMessage(
-					"The process cannot access the file because it is being used by another process."
-				);
-		}
-		else
-		{
-			await That(Act).DoesNotThrow();
-		}
+		await That(Act).ThrowsExactly<IOException>().OnlyIf(Test.RunsOnWindows).Which.HasMessage(
+			"The process cannot access the file because it is being used by another process."
+		);
 	}
 
 	[Theory]
@@ -315,16 +307,18 @@ public partial class MoveTests
 		}
 
 		// Assert
-		if (Test.RunsOnWindows)
+		try
 		{
-			await That(Act)
-				.ThrowsExactly<IOException>().Which.HasMessage(
-					$"Access to the path '{directory}' is denied."
-				);
+			await That(Act).ThrowsExactly<IOException>().OnlyIf(Test.RunsOnWindows).Which
+				.HasMessage($"Access to the path '{directory}' is denied.");
 		}
-		else
+		finally
 		{
-			await That(Act).DoesNotThrow();
+			if (Test.RunsOnWindows)
+			{
+				// Cleanup
+				FileSystem.Directory.SetCurrentDirectory(BasePath);
+			}
 		}
 	}
 }

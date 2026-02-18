@@ -333,16 +333,10 @@ public partial class DeleteTests
 		try
 		{
 			// Assert
-			if (Test.RunsOnWindows)
-			{
-				await That(Act).ThrowsExactly<IOException>().Which.HasMessage(
+			await That(Act).ThrowsExactly<IOException>().OnlyIf(Test.RunsOnWindows).Which
+				.HasMessage(
 					$"The process cannot access the file '*{expectedExceptionDirectory}' because it is being used by another process."
 				).AsWildcard();
-			}
-			else
-			{
-				await That(Act).DoesNotThrow();
-			}
 		}
 		finally
 		{
