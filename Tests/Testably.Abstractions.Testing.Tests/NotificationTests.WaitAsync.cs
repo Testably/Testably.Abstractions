@@ -145,7 +145,7 @@ public partial class NotificationTests
 			
 			_ = Task.Delay(50, TestContext.Current.CancellationToken)
 				.ContinueWith(_ => timeSystem.Thread.Sleep(firstThreadMilliseconds), TestContext.Current.CancellationToken)
-				.ContinueWith(async _ => await Task.Delay(20), TestContext.Current.CancellationToken)
+				.ContinueWith(async _ => await Task.Delay(20, TestContext.Current.CancellationToken), TestContext.Current.CancellationToken)
 				.ContinueWith(_ => timeSystem.Thread.Sleep(secondThreadMilliseconds), TestContext.Current.CancellationToken);
 			
 			var result1 = await onThreadSleep.WaitAsync(cancellationToken: TestContext.Current.CancellationToken);

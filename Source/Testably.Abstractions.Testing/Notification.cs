@@ -80,10 +80,9 @@ public static class Notification
 		{
 			private readonly Action<TValue>? _callback;
 			private readonly Channel<TValue> _channel = Channel.CreateUnbounded<TValue>();
-			private int _count;
 			private readonly NotificationFactory<TValue> _factory;
 			private Func<TValue, bool>? _filter;
-			private bool _isDisposed;
+			private volatile bool _isDisposed;
 			private readonly Guid _key;
 			private readonly Func<TValue, bool> _predicate;
 			private readonly ManualResetEventSlim _reset;
@@ -108,6 +107,7 @@ public static class Notification
 			public void Dispose()
 			{
 				_factory.UnRegisterCallback(_key);
+				_writer.TryComplete();
 				_reset.Dispose();
 				_isDisposed = true;
 			}
@@ -118,7 +118,12 @@ public static class Notification
 				int count = 1,
 				Action? executeWhenWaiting = null)
 			{
-				_count = count;
+				if (_isDisposed)
+				{
+					throw new ObjectDisposedException(
+						"The awaitable callback is already disposed.");
+				}
+
 				_filter = filter;
 				_reset.Reset();
 				if (executeWhenWaiting != null)
@@ -153,19 +158,20 @@ public static class Notification
 			/// <inheritdoc />
 			public TValue[] Wait(int count = 1, TimeSpan? timeout = null)
 			{
-				_count = count;
+				if (_isDisposed)
+				{
+					throw new ObjectDisposedException(
+						"The awaitable callback is already disposed.");
+				}
+
 				_reset.Reset();
 
 				TValue[]? result = null;
-				_ = Task.Run(async () =>
+				Task task = Task.Run(async () =>
 				{
 					try
 					{
 						result = await WaitAsync(count, timeout);
-					}
-					catch
-					{
-						// Ignore exceptions as they will be handled by the timeout or cancellation token
 					}
 					finally
 					{
@@ -177,7 +183,8 @@ public static class Notification
 				if (!_reset.Wait(timeoutOrDefault) ||
 				    result is null)
 				{
-					throw ExceptionFactory.TimeoutExpired(timeoutOrDefault);
+					throw task.Exception?.InnerException ??
+					      ExceptionFactory.TimeoutExpired(timeoutOrDefault);
 				}
 
 				return result;
@@ -196,7 +203,6 @@ public static class Notification
 				}
 
 				List<TValue> values = [];
-				_count = count;
 				ChannelReader<TValue> reader = _channel.Reader;
 
 				CancellationTokenSource? cts = null;
@@ -221,7 +227,7 @@ public static class Notification
 						if (_filter?.Invoke(value) != false)
 						{
 							values.Add(value);
-							if (Interlocked.Decrement(ref _count) <= 0)
+							if (--count <= 0)
 							{
 								break;
 							}
