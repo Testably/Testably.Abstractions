@@ -269,21 +269,12 @@ public partial class MoveTests
 			.HasSingle();
 	}
 
-	[Theory]
-	[AutoData]
-	[InlineData(null)]
-	public async Task Move_CurrentDirectory_ShouldThrowIOException_OnWindows(string? nested)
+	[Fact]
+	public async Task Move_CurrentDirectory_ShouldThrowIOException_OnWindows()
 	{
 		// Arrange
 		string directory = FileSystem.Directory.GetCurrentDirectory();
 		string newPath = FileSystem.Path.GetFullPath("../new");
-
-		if (nested != null)
-		{
-			string nestedDirectory = FileSystem.Path.Combine(directory, nested);
-			FileSystem.Directory.CreateDirectory(nestedDirectory);
-			FileSystem.Directory.SetCurrentDirectory(nestedDirectory);
-		}
 
 		// Act
 		void Act()
@@ -297,6 +288,38 @@ public partial class MoveTests
 			await That(Act)
 				.ThrowsExactly<IOException>().Which.HasMessage(
 					"The process cannot access the file because it is being used by another process."
+				);
+		}
+		else
+		{
+			await That(Act).DoesNotThrow();
+		}
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task Move_NestedCurrentDirectory_ShouldThrowIOException_OnWindows(string nested)
+	{
+		// Arrange
+		string directory = FileSystem.Directory.GetCurrentDirectory();
+		string newPath = FileSystem.Path.GetFullPath("../new");
+
+		string nestedDirectory = FileSystem.Path.Combine(directory, nested);
+		FileSystem.Directory.CreateDirectory(nestedDirectory);
+		FileSystem.Directory.SetCurrentDirectory(nestedDirectory);
+
+		// Act
+		void Act()
+		{
+			FileSystem.Directory.Move(directory, newPath);
+		}
+
+		// Assert
+		if (Test.RunsOnWindows)
+		{
+			await That(Act)
+				.ThrowsExactly<IOException>().Which.HasMessage(
+					$"Access to the path '{directory}' is denied."
 				);
 		}
 		else

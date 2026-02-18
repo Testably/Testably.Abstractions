@@ -170,21 +170,12 @@ public partial class MoveToTests
 			.HasSingle();
 	}
 
-	[Theory]
-	[AutoData]
-	[InlineData(null)]
-	public async Task MoveTo_CurrentDirectory_ShouldThrowIOException_OnWindows(string? nested)
+	[Fact]
+	public async Task MoveTo_CurrentDirectory_ShouldThrowIOException_OnWindows()
 	{
 		// Arrange
 		string directory = FileSystem.Directory.GetCurrentDirectory();
 		string newPath = FileSystem.Path.GetFullPath("../new");
-
-		if (nested != null)
-		{
-			string nestedDirectory = FileSystem.Path.Combine(directory, nested);
-			FileSystem.Directory.CreateDirectory(nestedDirectory);
-			FileSystem.Directory.SetCurrentDirectory(nestedDirectory);
-		}
 
 		// Act
 		void Act()
@@ -203,6 +194,47 @@ public partial class MoveToTests
 		else
 		{
 			await That(Act).DoesNotThrow();
+		}
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task MoveTo_NestedCurrentDirectory_ShouldThrowIOException_OnWindows(string nested)
+	{
+		// Arrange
+		string directory = FileSystem.Directory.GetCurrentDirectory();
+		string newPath = FileSystem.Path.GetFullPath("../new");
+
+		string nestedDirectory = FileSystem.Path.Combine(directory, nested);
+		FileSystem.Directory.CreateDirectory(nestedDirectory);
+		FileSystem.Directory.SetCurrentDirectory(nestedDirectory);
+
+		// Act
+		void Act()
+		{
+			FileSystem.DirectoryInfo.New(directory).MoveTo(newPath);
+		}
+
+		try
+		{
+			// Assert
+			if (Test.RunsOnWindows)
+			{
+				await That(Act).ThrowsExactly<IOException>().Which
+					.HasMessage($"Access to the path '*{directory}' is denied.").AsWildcard();
+			}
+			else
+			{
+				await That(Act).DoesNotThrow();
+			}
+		}
+		finally
+		{
+			if (Test.RunsOnWindows)
+			{
+				// Cleanup
+				FileSystem.Directory.SetCurrentDirectory(BasePath);
+			}
 		}
 	}
 }

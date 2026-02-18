@@ -312,16 +312,16 @@ public partial class DeleteTests
 	[InlineData(null)]
 	public async Task Delete_CurrentDirectory_ShouldThrowIOException_OnWindows(string? nested)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		// Arrange
 		string directory = FileSystem.Directory.GetCurrentDirectory();
+		string expectedExceptionDirectory = directory;
 
 		if (nested != null)
 		{
 			string nestedDirectory = FileSystem.Path.Combine(directory, nested);
 			FileSystem.Directory.CreateDirectory(nestedDirectory);
 			FileSystem.Directory.SetCurrentDirectory(nestedDirectory);
+			expectedExceptionDirectory = nestedDirectory;
 		}
 
 		// Act
@@ -330,16 +330,27 @@ public partial class DeleteTests
 			FileSystem.Directory.Delete(directory, true);
 		}
 
-		// Assert
-		if (Test.RunsOnWindows)
+		try
 		{
-			await That(Act).ThrowsExactly<IOException>().Which.HasMessage(
-				$"The process cannot access the file '{directory}' because it is being used by another process."
-			);
+			// Assert
+			if (Test.RunsOnWindows)
+			{
+				await That(Act).ThrowsExactly<IOException>().Which.HasMessage(
+					$"The process cannot access the file '*{expectedExceptionDirectory}' because it is being used by another process."
+				).AsWildcard();
+			}
+			else
+			{
+				await That(Act).DoesNotThrow();
+			}
 		}
-		else
+		finally
 		{
-			await That(Act).DoesNotThrow();
+			if (Test.RunsOnWindows)
+			{
+				// Cleanup
+				FileSystem.Directory.SetCurrentDirectory(BasePath);
+			}
 		}
 	}
 }
