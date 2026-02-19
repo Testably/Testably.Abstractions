@@ -109,7 +109,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 
 		void Act() =>
 			// ReSharper disable once AccessToDisposedClosure
-			onEvent.Wait(timeout: TimeSpan.FromMilliseconds(100));
+			onEvent.Wait(timeout: 100);
 
 		await That(Act).Throws<TimeoutException>();
 	}
@@ -126,7 +126,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		using IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Watcher.OnTriggered();
 		FileSystem.File.WriteAllText(@"foo.txt", "some-text");
 
-		onEvent.Wait(timeout: TimeSpan.FromMilliseconds(5000));
+		onEvent.Wait(timeout: 5000);
 
 		await That(isTriggered).IsTrue();
 	}

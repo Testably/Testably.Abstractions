@@ -28,7 +28,7 @@ public partial class NotificationTests
 			}
 		}, TestContext.Current.CancellationToken);
 
-		wait.Wait(count: 7);
+		wait.Wait(7);
 		await That(receivedCount).IsGreaterThanOrEqualTo(7);
 	}
 
@@ -200,7 +200,7 @@ public partial class NotificationTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			wait.Wait(timeout: TimeSpan.FromMilliseconds(10));
+			wait.Wait(timeout: 10);
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -219,7 +219,7 @@ public partial class NotificationTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			wait.Wait(timeout: TimeSpan.FromMilliseconds(100));
+			wait.Wait(timeout: 100);
 		});
 
 		await That(exception).IsExactly<ObjectDisposedException>();

@@ -24,7 +24,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onChanged.Wait(timeout: TimeSpan.FromMilliseconds(50));
+			onChanged.Wait(timeout: 50);
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -45,7 +45,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onChanged.Wait(timeout: TimeSpan.FromMilliseconds(50));
+			onChanged.Wait(timeout: 50);
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -121,7 +121,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onChanged.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
+			onChanged.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -150,7 +150,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(50));
+			onCreated.Wait(timeout: 50);
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -170,7 +170,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(50));
+			onCreated.Wait(timeout: 50);
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -244,7 +244,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
+			onCreated.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -273,7 +273,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(50));
+			onCreated.Wait(timeout: 50);
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -293,7 +293,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(50));
+			onCreated.Wait(timeout: 50);
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -322,7 +322,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
+			onCreated.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -367,7 +367,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onCreated.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
+			onCreated.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -395,7 +395,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(50));
+			onDeleted.Wait(timeout: 50);
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -417,7 +417,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(50));
+			onDeleted.Wait(timeout: 50);
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -447,7 +447,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
+			onDeleted.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -494,7 +494,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
+			onDeleted.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -522,7 +522,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(50));
+			onDeleted.Wait(timeout: 50);
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -544,7 +544,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(50));
+			onDeleted.Wait(timeout: 50);
 		});
 
 		await That(exception).IsExactly<TimeoutException>();
@@ -574,7 +574,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
+			onDeleted.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -621,7 +621,7 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			onDeleted.Wait(timeout: TimeSpan.FromMilliseconds(expectedResult ? 30000 : 50));
+			onDeleted.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)

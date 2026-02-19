@@ -32,8 +32,8 @@ namespace Testably.Abstractions.Testing
     }
     public interface IAwaitableCallback<TValue> : System.IDisposable
     {
-        TValue[] Wait(int count = 1, System.TimeSpan? timeout = default);
-        void Wait(System.Func<TValue, bool>? filter, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
+        TValue[] Wait(int count, System.TimeSpan? timeout = default);
+        void Wait(System.Func<TValue, bool>? filter = null, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
         System.Threading.Tasks.Task<TValue[]> WaitAsync(int count = 1, System.TimeSpan? timeout = default, System.Threading.CancellationToken? cancellationToken = default);
     }
     public static class InterceptionHandlerExtensions
@@ -112,7 +112,7 @@ namespace Testably.Abstractions.Testing
         public static Testably.Abstractions.Testing.Notification.IAwaitableCallback<TValue, TFunc> ExecuteWhileWaiting<TValue, TFunc>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> awaitable, System.Func<TFunc> callback) { }
         public interface IAwaitableCallback<TValue, out TFunc> : System.IDisposable, Testably.Abstractions.Testing.IAwaitableCallback<TValue>
         {
-            TFunc Wait(System.Func<TValue, bool>? filter, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
+            TFunc Wait(System.Func<TValue, bool>? filter = null, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
         }
     }
     public static class NotificationHandlerExtensions
