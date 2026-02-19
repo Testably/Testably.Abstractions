@@ -1209,12 +1209,14 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		string? currentDirectory
-			= _fileSystem.Directory.GetCurrentDirectory().NormalizePath(_fileSystem)
-			  + _fileSystem.Path.DirectorySeparatorChar;
+			= _fileSystem.Directory.GetCurrentDirectory().NormalizePath(_fileSystem);
+
+		string currentDirectoryWithSeparator
+			= currentDirectory + _fileSystem.Path.DirectorySeparatorChar;
 
 		string fullPathWithSeparator = fullPath + _fileSystem.Path.DirectorySeparatorChar;
 
-		if (currentDirectory.StartsWith(
+		if (currentDirectoryWithSeparator.StartsWith(
 				fullPathWithSeparator, _fileSystem.Execute.StringComparisonMode
 			))
 		{
