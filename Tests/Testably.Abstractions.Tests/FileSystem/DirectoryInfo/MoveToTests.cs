@@ -222,4 +222,31 @@ public partial class MoveToTests
 			}
 		}
 	}
+
+	[Theory]
+	[InlineData("next")]
+	[InlineData("next", "sub")]
+	public async Task Move_DirNextToCurrentDirectory_ShouldNotThrow(params string[] paths)
+	{
+		// Arrange
+		string directory = FileSystem.Directory.GetCurrentDirectory();
+		// Intended missing separator, we want to test that the handle does not affect similar paths
+		string nextTo = directory + FileSystem.Path.Combine(paths);
+		string moveTarget = FileSystem.Path.Combine(nextTo, "move-target");
+
+		FileSystem.Directory.CreateDirectory(nextTo);
+		FileSystem.Directory.SetCurrentDirectory(nextTo);
+
+		// Act
+		void Act()
+		{
+			FileSystem.DirectoryInfo.New(directory).MoveTo(moveTarget);
+		}
+
+		// Assert
+		await That(Act).DoesNotThrow();
+
+		await That(FileSystem.Directory.Exists(directory)).IsFalse();
+		await That(FileSystem.Directory.Exists(nextTo)).IsTrue();
+	}
 }

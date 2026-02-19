@@ -145,7 +145,7 @@ internal sealed class InMemoryStorage : IStorage
 
 		ValidateContainerType(container.Type, expectedType, _fileSystem.Execute, location);
 		
-		ValidateDeleteHandle(location.FullPath);
+		ValidateDeleteHandle(container, location.FullPath);
 		
 		if (container.Type == FileSystemTypes.Directory)
 		{
@@ -993,8 +993,8 @@ internal sealed class InMemoryStorage : IStorage
 		{
 			return null;
 		}
-		
-		ValidateMoveHandle(source.FullPath);
+
+		ValidateMoveHandle(container, source.FullPath);
 
 		if (container.Type == FileSystemTypes.Directory &&
 		    source.FullPath.Equals(destination.FullPath, _fileSystem.Execute.IsNetFramework
@@ -1201,36 +1201,46 @@ internal sealed class InMemoryStorage : IStorage
 		}
 	}
 
-	private void ValidateDeleteHandle(string fullPath)
+	private void ValidateDeleteHandle(IStorageContainer container, string fullPath)
 	{
-		if (!_fileSystem.Execute.IsWindows)
+		if (!_fileSystem.Execute.IsWindows || container.Type != FileSystemTypes.Directory)
 		{
 			return;
 		}
-		
-		string? currentDirectory = _fileSystem.Directory.GetCurrentDirectory().NormalizePath(_fileSystem);
 
-		if (currentDirectory.StartsWith(fullPath, _fileSystem.Execute.StringComparisonMode))
+		string? currentDirectory
+			= _fileSystem.Directory.GetCurrentDirectory().NormalizePath(_fileSystem)
+			  + _fileSystem.Path.DirectorySeparatorChar;
+
+		string fullPathWithSeparator = fullPath + _fileSystem.Path.DirectorySeparatorChar;
+
+		if (currentDirectory.StartsWith(
+				fullPathWithSeparator, _fileSystem.Execute.StringComparisonMode
+			))
 		{
 			throw ExceptionFactory.FileSharingViolation(currentDirectory);
 		}
 	}
 
-	private void ValidateMoveHandle(string fullPath)
+	private void ValidateMoveHandle(IStorageContainer container, string fullPath)
 	{
-		if (!_fileSystem.Execute.IsWindows)
+		if (!_fileSystem.Execute.IsWindows || container.Type != FileSystemTypes.Directory)
 		{
 			return;
 		}
 		
-		string? currentDirectory = _fileSystem.Directory.GetCurrentDirectory().NormalizePath(_fileSystem);
+		string? currentDirectory
+			= _fileSystem.Directory.GetCurrentDirectory().NormalizePath(_fileSystem)
+			  + _fileSystem.Path.DirectorySeparatorChar;
 
-		if (currentDirectory.Equals(fullPath, _fileSystem.Execute.StringComparisonMode))
+		string fullPathWithSeparator = fullPath + _fileSystem.Path.DirectorySeparatorChar;
+
+		if (currentDirectory.Equals(fullPathWithSeparator, _fileSystem.Execute.StringComparisonMode))
 		{
 			throw ExceptionFactory.FileSharingViolation();
 		}
 
-		if (currentDirectory.StartsWith(fullPath, _fileSystem.Execute.StringComparisonMode))
+		if (currentDirectory.StartsWith(fullPathWithSeparator, _fileSystem.Execute.StringComparisonMode))
 		{
 			throw ExceptionFactory.IOAccessDenied(fullPath);
 		}

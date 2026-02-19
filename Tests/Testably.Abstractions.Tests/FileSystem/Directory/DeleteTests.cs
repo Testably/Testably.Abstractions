@@ -347,4 +347,30 @@ public partial class DeleteTests
 			}
 		}
 	}
+
+	[Theory]
+	[InlineData("next")]
+	[InlineData("next", "sub")]
+	public async Task Delete_DirNextToCurrentDirectory_ShouldNotThrow(params string[] paths)
+	{
+		// Arrange
+		string directory = FileSystem.Directory.GetCurrentDirectory();
+		// Intended missing separator, we want to test that the handle does not affect similar paths
+		string nextTo = directory + FileSystem.Path.Combine(paths);
+
+		FileSystem.Directory.CreateDirectory(nextTo);
+		FileSystem.Directory.SetCurrentDirectory(nextTo);
+
+		// Act
+		void Act()
+		{
+			FileSystem.Directory.Delete(directory, true);
+		}
+
+		// Assert
+		await That(Act).DoesNotThrow();
+
+		await That(FileSystem.Directory.Exists(directory)).IsFalse();
+		await That(FileSystem.Directory.Exists(nextTo)).IsTrue();
+	}
 }
