@@ -209,20 +209,41 @@ public partial class NotificationTests
 	}
 
 	[Fact]
-	public async Task AwaitableCallback_Wait_AfterDispose_ShouldThrowObjectDisposedException()
+	public async Task
+		AwaitableCallback_Wait_AfterDispose_ShouldThrowObjectDisposedException()
 	{
 		MockTimeSystem timeSystem = new();
-		IAwaitableCallback<TimeSpan> wait =
+		IAwaitableCallback<TimeSpan> onThreadSleep =
 			timeSystem.On.ThreadSleep();
 
-		wait.Dispose();
+		onThreadSleep.Dispose();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
-			wait.Wait(timeout: 100);
-		});
+			onThreadSleep.Wait();
+		}
 
-		await That(exception).IsExactly<ObjectDisposedException>();
+		await That(Act).ThrowsExactly<ObjectDisposedException>()
+			.WithMessage("The awaitable callback is already disposed.");
+	}
+
+	[Fact]
+	public async Task
+		AwaitableCallback_Wait_WithCount_AfterDispose_ShouldThrowObjectDisposedException()
+	{
+		MockTimeSystem timeSystem = new();
+		IAwaitableCallback<TimeSpan> onThreadSleep =
+			timeSystem.On.ThreadSleep();
+
+		onThreadSleep.Dispose();
+
+		void Act()
+		{
+			onThreadSleep.Wait(1, TimeSpan.FromSeconds(20));
+		}
+
+		await That(Act).ThrowsExactly<ObjectDisposedException>()
+			.WithMessage("The awaitable callback is already disposed.");
 	}
 
 	[Fact]
@@ -283,7 +304,7 @@ public partial class NotificationTests
 		ms.Set();
 		await That(isCalledFromSecondThread).IsTrue();
 	}
-	
+
 	[Theory]
 	[AutoData]
 #if MarkExecuteWhileWaitingNotificationObsolete
@@ -304,7 +325,7 @@ public partial class NotificationTests
 			{
 				timeSystem.Thread.Sleep(milliseconds);
 			})
-			.Wait(null, executeWhenWaiting: () =>
+			.Wait(executeWhenWaiting: () =>
 			{
 				isExecuted = true;
 			});
@@ -335,7 +356,7 @@ public partial class NotificationTests
 				timeSystem.Thread.Sleep(milliseconds);
 				return result;
 			})
-			.Wait(null, executeWhenWaiting: () =>
+			.Wait(executeWhenWaiting: () =>
 			{
 				isExecuted = true;
 			});
@@ -384,7 +405,7 @@ public partial class NotificationTests
 				timeSystem.Thread.Sleep(10);
 				return result;
 			})
-			.Wait(null);
+			.Wait();
 
 		await That(actualResult).IsEqualTo(result);
 		await That(isExecuted).IsTrue();

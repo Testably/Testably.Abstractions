@@ -124,8 +124,7 @@ public static class Notification
 			{
 				if (_isDisposed)
 				{
-					throw new ObjectDisposedException(
-						"The awaitable callback is already disposed.");
+					throw new ObjectDisposedException(null, "The awaitable callback is already disposed.");
 				}
 
 				_filter = filter;
@@ -164,8 +163,7 @@ public static class Notification
 			{
 				if (_isDisposed)
 				{
-					throw new ObjectDisposedException(
-						"The awaitable callback is already disposed.");
+					throw new ObjectDisposedException(null, "The awaitable callback is already disposed.");
 				}
 
 				_reset.Reset();
@@ -202,8 +200,7 @@ public static class Notification
 			{
 				if (_isDisposed)
 				{
-					throw new ObjectDisposedException(
-						"The awaitable callback is already disposed.");
+					throw new ObjectDisposedException(null, "The awaitable callback is already disposed.");
 				}
 
 				List<TValue> values = [];

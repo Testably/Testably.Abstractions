@@ -2,7 +2,7 @@ using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Testing.Tests;
 
-public class NotificationHandlerExtensionsTests
+public partial class NotificationHandlerExtensionsTests
 {
 	#region Test Setup
 

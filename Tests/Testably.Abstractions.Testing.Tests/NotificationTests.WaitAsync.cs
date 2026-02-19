@@ -37,6 +37,45 @@ public partial class NotificationTests
 		}
 
 		[Fact]
+		public async Task
+			AwaitableCallback_CancellationTokenCancelled_ShouldThrowOperationCancelledException()
+		{
+			MockTimeSystem timeSystem = new();
+			bool isCalled = false;
+			using ManualResetEventSlim ms = new();
+			using IAwaitableCallback<TimeSpan> onThreadSleep =
+				timeSystem.On.ThreadSleep(_ =>
+				{
+					isCalled = true;
+				});
+			new Thread(() =>
+			{
+				// ReSharper disable once AccessToDisposedClosure
+				try
+				{
+					// Delay larger than cancellation after 10ms
+					ms.Wait(TestContext.Current.CancellationToken);
+					timeSystem.Thread.Sleep(1);
+				}
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
+				}
+			}).Start();
+
+			Exception? exception = await Record.ExceptionAsync(async () =>
+			{
+				using CancellationTokenSource cts = new();
+				cts.CancelAfter(10);
+				await onThreadSleep.WaitAsync(cancellationToken: cts.Token);
+			});
+
+			await That(exception).IsExactly<OperationCanceledException>();
+			await That(isCalled).IsFalse();
+			ms.Set();
+		}
+
+		[Fact]
 		public async Task AwaitableCallback_ShouldWaitForCallbackExecution()
 		{
 			using ManualResetEventSlim ms = new();
@@ -67,7 +106,8 @@ public partial class NotificationTests
 					}
 				}, TestContext.Current.CancellationToken);
 
-				await onThreadSleep.WaitAsync(cancellationToken: TestContext.Current.CancellationToken);
+				await onThreadSleep.WaitAsync(
+					cancellationToken: TestContext.Current.CancellationToken);
 				await That(isCalled).IsTrue();
 			}
 			finally
@@ -77,7 +117,8 @@ public partial class NotificationTests
 		}
 
 		[Fact]
-		public async Task AwaitableCallback_CancellationTokenCancelled_ShouldThrowOperationCancelledException()
+		public async Task
+			AwaitableCallback_TimeoutExpired_ShouldThrowOperationCancelledException()
 		{
 			MockTimeSystem timeSystem = new();
 			bool isCalled = false;
@@ -104,9 +145,8 @@ public partial class NotificationTests
 
 			Exception? exception = await Record.ExceptionAsync(async () =>
 			{
-				using CancellationTokenSource cts = new();
-				cts.CancelAfter(10);
-				await onThreadSleep.WaitAsync(cancellationToken: cts.Token);
+				await onThreadSleep.WaitAsync(1, TimeSpan.FromMilliseconds(10),
+					TestContext.Current.CancellationToken);
 			});
 
 			await That(exception).IsExactly<OperationCanceledException>();
@@ -124,12 +164,14 @@ public partial class NotificationTests
 
 			onThreadSleep.Dispose();
 
-			Exception? exception = await Record.ExceptionAsync(async () =>
+			async Task Act()
 			{
-				await onThreadSleep.WaitAsync(cancellationToken: TestContext.Current.CancellationToken);
-			});
+				await onThreadSleep.WaitAsync(timeout: 20000,
+					cancellationToken: TestContext.Current.CancellationToken);
+			}
 
-			await That(exception).IsExactly<ObjectDisposedException>();
+			await That(Act).ThrowsExactly<ObjectDisposedException>()
+				.WithMessage("The awaitable callback is already disposed.");
 		}
 
 		[Fact]
@@ -142,16 +184,26 @@ public partial class NotificationTests
 			using ManualResetEventSlim listening = new();
 			using IAwaitableCallback<TimeSpan> onThreadSleep =
 				timeSystem.On.ThreadSleep();
-			
+
 			_ = Task.Delay(50, TestContext.Current.CancellationToken)
-				.ContinueWith(_ => timeSystem.Thread.Sleep(firstThreadMilliseconds), TestContext.Current.CancellationToken)
-				.ContinueWith(async _ => await Task.Delay(20, TestContext.Current.CancellationToken), TestContext.Current.CancellationToken)
-				.ContinueWith(_ => timeSystem.Thread.Sleep(secondThreadMilliseconds), TestContext.Current.CancellationToken);
-			
-			var result1 = await onThreadSleep.WaitAsync(cancellationToken: TestContext.Current.CancellationToken);
-			var result2 = await onThreadSleep.WaitAsync(cancellationToken: TestContext.Current.CancellationToken);
-			await That(result1).HasSingle().Which.Satisfies(f => f.Milliseconds == firstThreadMilliseconds);
-			await That(result2).HasSingle().Which.Satisfies(f => f.Milliseconds == secondThreadMilliseconds);
+				.ContinueWith(_ => timeSystem.Thread.Sleep(firstThreadMilliseconds),
+					TestContext.Current.CancellationToken)
+				.ContinueWith(
+					async _ => await Task.Delay(20, TestContext.Current.CancellationToken),
+					TestContext.Current.CancellationToken)
+				.ContinueWith(_ => timeSystem.Thread.Sleep(secondThreadMilliseconds),
+					TestContext.Current.CancellationToken);
+
+			TimeSpan[] result1 =
+				await onThreadSleep.WaitAsync(
+					cancellationToken: TestContext.Current.CancellationToken);
+			TimeSpan[] result2 =
+				await onThreadSleep.WaitAsync(
+					cancellationToken: TestContext.Current.CancellationToken);
+			await That(result1).HasSingle().Which
+				.Satisfies(f => f.Milliseconds == firstThreadMilliseconds);
+			await That(result2).HasSingle().Which
+				.Satisfies(f => f.Milliseconds == secondThreadMilliseconds);
 		}
 
 		[Theory]
@@ -181,7 +233,8 @@ public partial class NotificationTests
 
 			timeSystem.Thread.Sleep(10);
 			TimeSpan[] result =
-				await onThreadSleep.WaitAsync(cancellationToken: TestContext.Current.CancellationToken);
+				await onThreadSleep.WaitAsync(
+					cancellationToken: TestContext.Current.CancellationToken);
 			await That(result).HasSingle().Which.Satisfies(f => f.Milliseconds == 10);
 		}
 	}
