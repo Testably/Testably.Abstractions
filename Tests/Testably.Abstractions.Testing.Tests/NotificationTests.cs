@@ -2,7 +2,7 @@
 
 namespace Testably.Abstractions.Testing.Tests;
 
-public class NotificationTests
+public partial class NotificationTests
 {
 	[Fact]
 	public async Task AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
@@ -28,7 +28,7 @@ public class NotificationTests
 			}
 		}, TestContext.Current.CancellationToken);
 
-		wait.Wait(count: 7);
+		wait.Wait(7);
 		await That(receivedCount).IsGreaterThanOrEqualTo(7);
 	}
 
@@ -60,8 +60,7 @@ public class NotificationTests
 				.ThreadSleep(_ =>
 				{
 					isCalled = true;
-				})
-				.ExecuteWhileWaiting(() => { });
+				});
 
 		wait.Dispose();
 
@@ -71,6 +70,9 @@ public class NotificationTests
 	}
 
 	[Fact]
+#if MarkExecuteWhileWaitingNotificationObsolete
+	[Obsolete("TODO: Remove once the obsolete filter overload is removed from the public API.")]
+#endif
 	public async Task AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		MockTimeSystem timeSystem = new();
@@ -207,20 +209,41 @@ public class NotificationTests
 	}
 
 	[Fact]
-	public async Task AwaitableCallback_Wait_AfterDispose_ShouldThrowObjectDisposedException()
+	public async Task
+		AwaitableCallback_Wait_AfterDispose_ShouldThrowObjectDisposedException()
 	{
 		MockTimeSystem timeSystem = new();
-		IAwaitableCallback<TimeSpan> wait =
+		IAwaitableCallback<TimeSpan> onThreadSleep =
 			timeSystem.On.ThreadSleep();
 
-		wait.Dispose();
+		onThreadSleep.Dispose();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
-			wait.Wait(timeout: 100);
-		});
+			onThreadSleep.Wait();
+		}
 
-		await That(exception).IsExactly<ObjectDisposedException>();
+		await That(Act).ThrowsExactly<ObjectDisposedException>()
+			.WithMessage("The awaitable callback is already disposed.");
+	}
+
+	[Fact]
+	public async Task
+		AwaitableCallback_Wait_WithCount_AfterDispose_ShouldThrowObjectDisposedException()
+	{
+		MockTimeSystem timeSystem = new();
+		IAwaitableCallback<TimeSpan> onThreadSleep =
+			timeSystem.On.ThreadSleep();
+
+		onThreadSleep.Dispose();
+
+		void Act()
+		{
+			onThreadSleep.Wait(1, TimeSpan.FromSeconds(20));
+		}
+
+		await That(Act).ThrowsExactly<ObjectDisposedException>()
+			.WithMessage("The awaitable callback is already disposed.");
 	}
 
 	[Fact]
@@ -240,17 +263,6 @@ public class NotificationTests
 					{
 						isCalledFromSecondThread = true;
 					}
-				}).ExecuteWhileWaiting(() =>
-				{
-					// ReSharper disable once AccessToDisposedClosure
-					try
-					{
-						listening.Set();
-					}
-					catch (ObjectDisposedException)
-					{
-						// Ignore any ObjectDisposedException
-					}
 				});
 		new Thread(() =>
 		{
@@ -265,6 +277,7 @@ public class NotificationTests
 				// Ignore any ObjectDisposedException
 			}
 		}).Start();
+		listening.Set();
 		wait.Wait();
 		listening.Reset();
 
@@ -294,6 +307,9 @@ public class NotificationTests
 
 	[Theory]
 	[AutoData]
+#if MarkExecuteWhileWaitingNotificationObsolete
+	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
+#endif
 	public async Task Execute_ShouldBeExecutedBeforeWait(int milliseconds)
 	{
 		MockTimeSystem timeSystem = new();
@@ -320,6 +336,9 @@ public class NotificationTests
 
 	[Theory]
 	[AutoData]
+#if MarkExecuteWhileWaitingNotificationObsolete
+	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
+#endif
 	public async Task Execute_WithReturnValue_ShouldBeExecutedAndReturnValue(
 		int milliseconds, string result)
 	{
@@ -348,6 +367,9 @@ public class NotificationTests
 	}
 
 	[Fact]
+#if MarkExecuteWhileWaitingNotificationObsolete
+	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
+#endif
 	public async Task ExecuteWhileWaiting_ShouldExecuteCallback()
 	{
 		MockTimeSystem timeSystem = new();
@@ -367,6 +389,9 @@ public class NotificationTests
 
 	[Theory]
 	[AutoData]
+#if MarkExecuteWhileWaitingNotificationObsolete
+	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
+#endif
 	public async Task ExecuteWhileWaiting_WithReturnValue_ShouldExecuteCallback(int result)
 	{
 		MockTimeSystem timeSystem = new();
