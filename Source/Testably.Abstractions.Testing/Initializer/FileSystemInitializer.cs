@@ -37,6 +37,15 @@ internal class FileSystemInitializer<TFileSystem>
 		_basePath = FileSystem.Path.Combine(parent._basePath, subdirectory.Name);
 	}
 
+	internal FileSystemInitializer(FileSystemInitializer<TFileSystem> parent,
+		string subdirectory)
+	{
+		FileSystem = parent.FileSystem;
+		using IDisposable release = FileSystem.IgnoreStatistics();
+		_initializedFileSystemInfos = parent._initializedFileSystemInfos;
+		_basePath = FileSystem.Path.Combine(parent._basePath, subdirectory);
+	}
+
 	#region IFileSystemInitializer<TFileSystem> Members
 
 	/// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.BaseDirectory" />
@@ -146,7 +155,7 @@ internal class FileSystemInitializer<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory(directoryInfo.FullName);
 
-		FileSystemInitializer<TFileSystem> subdirectoryInitializer = new(this, directoryInfo);
+		FileSystemInitializer<TFileSystem> subdirectoryInitializer = new(this, directory.Name);
 		foreach (FileSystemInfoDescription children in directory.Children)
 		{
 			subdirectoryInitializer.WithFileOrDirectory(children);

@@ -128,7 +128,7 @@ public class FileSystemInitializerTests
 	
 	[Theory]
 	[AutoData]
-	public async Task With_FilesAndDirectoriesWithAbsolutePath_ShouldBeCreatedAtTheCorrectPath(
+	public async Task With_FilesAndDirectoriesWithMultiplePathComponents_ShouldBeCreatedAtTheCorrectPath(
 		string level1, string level2, string fileName)
 	{
 		string directoryPath = Path.Combine(level1, level2);
@@ -203,6 +203,24 @@ public class FileSystemInitializerTests
 		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
 		await That(fileSystem.File.Exists(path)).IsTrue();
 		await That(fileSystem.Directory.Exists(directoryPath)).IsTrue();
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task WithFile_MultiplePathComponents_ShouldCreateDirectories(string level1,
+		string level2, string level3, string fileName)
+	{
+		string path = Path.Combine(level1, level2, level3, fileName);
+		MockFileSystem fileSystem = new();
+		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
+
+		sut.WithFile(path);
+
+		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
+		await That(fileSystem.File.Exists(path)).IsTrue();
+		await That(fileSystem.Directory.Exists(level1)).IsTrue();
+		await That(fileSystem.Directory.Exists(Path.Combine(level1, level2))).IsTrue();
+		await That(fileSystem.Directory.Exists(Path.Combine(level1, level2, level3))).IsTrue();
 	}
 
 	[Theory]
