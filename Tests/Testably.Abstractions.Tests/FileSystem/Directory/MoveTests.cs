@@ -268,4 +268,84 @@ public partial class MoveTests
 					SearchOption.AllDirectories))
 			.HasSingle();
 	}
+
+	[Fact]
+	public async Task Move_CurrentDirectory_ShouldThrowIOException_OnWindows()
+	{
+		// Arrange
+		string directory = FileSystem.Directory.GetCurrentDirectory();
+		string newPath = FileSystem.Path.GetFullPath("../new");
+
+		// Act
+		void Act()
+		{
+			FileSystem.Directory.Move(directory, newPath);
+		}
+
+		// Assert
+		await That(Act).ThrowsExactly<IOException>().OnlyIf(Test.RunsOnWindows).Which.HasMessage(
+			"The process cannot access the file because it is being used by another process."
+		);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task Move_NestedCurrentDirectory_ShouldThrowIOException_OnWindows(string nested)
+	{
+		// Arrange
+		string directory = FileSystem.Directory.GetCurrentDirectory();
+		string newPath = FileSystem.Path.GetFullPath("../new");
+
+		string nestedDirectory = FileSystem.Path.Combine(directory, nested);
+		FileSystem.Directory.CreateDirectory(nestedDirectory);
+		FileSystem.Directory.SetCurrentDirectory(nestedDirectory);
+
+		// Act
+		void Act()
+		{
+			FileSystem.Directory.Move(directory, newPath);
+		}
+
+		// Assert
+		try
+		{
+			await That(Act).ThrowsExactly<IOException>().OnlyIf(Test.RunsOnWindows).Which
+				.HasMessage($"Access to the path '{directory}' is denied.");
+		}
+		finally
+		{
+			if (Test.RunsOnWindows)
+			{
+				// Cleanup
+				FileSystem.Directory.SetCurrentDirectory(BasePath);
+			}
+		}
+	}
+
+	[Theory]
+	[InlineData("next")]
+	[InlineData("next", "sub")]
+	public async Task Move_DirNextToCurrentDirectory_ShouldNotThrow(params string[] paths)
+	{
+		// Arrange
+		string directory = FileSystem.Directory.GetCurrentDirectory();
+		// Intended missing separator, we want to test that the handle does not affect similar paths
+		string nextTo = directory + FileSystem.Path.Combine(paths);
+		string moveTarget = FileSystem.Path.Combine(nextTo, "move-target");
+
+		FileSystem.Directory.CreateDirectory(nextTo);
+		FileSystem.Directory.SetCurrentDirectory(nextTo);
+
+		// Act
+		void Act()
+		{
+			FileSystem.Directory.Move(directory, moveTarget);
+		}
+
+		// Assert
+		await That(Act).DoesNotThrow();
+
+		await That(FileSystem.Directory.Exists(directory)).IsFalse();
+		await That(FileSystem.Directory.Exists(nextTo)).IsTrue();
+	}
 }

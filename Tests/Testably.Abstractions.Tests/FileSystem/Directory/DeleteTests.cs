@@ -306,4 +306,71 @@ public partial class DeleteTests
 				: $"'{FileSystem.Path.Combine(BasePath, path)}'");
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
+
+	[Theory]
+	[AutoData]
+	[InlineData(null)]
+	public async Task Delete_CurrentDirectory_ShouldThrowIOException_OnWindows(string? nested)
+	{
+		// Arrange
+		string directory = FileSystem.Directory.GetCurrentDirectory();
+		string expectedExceptionDirectory = directory;
+
+		if (nested != null)
+		{
+			string nestedDirectory = FileSystem.Path.Combine(directory, nested);
+			FileSystem.Directory.CreateDirectory(nestedDirectory);
+			FileSystem.Directory.SetCurrentDirectory(nestedDirectory);
+			expectedExceptionDirectory = nestedDirectory;
+		}
+
+		// Act
+		void Act()
+		{
+			FileSystem.Directory.Delete(directory, true);
+		}
+
+		try
+		{
+			// Assert
+			await That(Act).ThrowsExactly<IOException>().OnlyIf(Test.RunsOnWindows).Which
+				.HasMessage(
+					$"The process cannot access the file '*{expectedExceptionDirectory}' because it is being used by another process."
+				).AsWildcard();
+		}
+		finally
+		{
+			if (Test.RunsOnWindows)
+			{
+				// Cleanup
+				FileSystem.Directory.SetCurrentDirectory(BasePath);
+			}
+		}
+	}
+
+	[Theory]
+	[InlineData("next")]
+	[InlineData("next", "sub")]
+	public async Task Delete_DirNextToCurrentDirectory_ShouldNotThrow(params string[] paths)
+	{
+		// Arrange
+		string directory = FileSystem.Directory.GetCurrentDirectory();
+		// Intended missing separator, we want to test that the handle does not affect similar paths
+		string nextTo = directory + FileSystem.Path.Combine(paths);
+
+		FileSystem.Directory.CreateDirectory(nextTo);
+		FileSystem.Directory.SetCurrentDirectory(nextTo);
+
+		// Act
+		void Act()
+		{
+			FileSystem.Directory.Delete(directory, true);
+		}
+
+		// Assert
+		await That(Act).DoesNotThrow();
+
+		await That(FileSystem.Directory.Exists(directory)).IsFalse();
+		await That(FileSystem.Directory.Exists(nextTo)).IsTrue();
+	}
 }

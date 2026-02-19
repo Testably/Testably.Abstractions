@@ -144,7 +144,9 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		ValidateContainerType(container.Type, expectedType, _fileSystem.Execute, location);
-
+		
+		ValidateDeleteHandle(container, location.FullPath);
+		
 		if (container.Type == FileSystemTypes.Directory)
 		{
 			IEnumerable<IStorageLocation> children =
@@ -992,6 +994,8 @@ internal sealed class InMemoryStorage : IStorage
 			return null;
 		}
 
+		ValidateMoveHandle(container, source.FullPath);
+
 		if (container.Type == FileSystemTypes.Directory &&
 		    source.FullPath.Equals(destination.FullPath, _fileSystem.Execute.IsNetFramework
 			    ? StringComparison.OrdinalIgnoreCase
@@ -1194,6 +1198,53 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				throw ExceptionFactory.AccessToPathDenied(location.FullPath);
 			}
+		}
+	}
+
+	private void ValidateDeleteHandle(IStorageContainer container, string fullPath)
+	{
+		if (!_fileSystem.Execute.IsWindows || container.Type != FileSystemTypes.Directory)
+		{
+			return;
+		}
+
+		string? currentDirectory
+			= _fileSystem.Directory.GetCurrentDirectory().NormalizePath(_fileSystem);
+
+		string currentDirectoryWithSeparator
+			= currentDirectory + _fileSystem.Path.DirectorySeparatorChar;
+
+		string fullPathWithSeparator = fullPath + _fileSystem.Path.DirectorySeparatorChar;
+
+		if (currentDirectoryWithSeparator.StartsWith(
+				fullPathWithSeparator, _fileSystem.Execute.StringComparisonMode
+			))
+		{
+			throw ExceptionFactory.FileSharingViolation(currentDirectory);
+		}
+	}
+
+	private void ValidateMoveHandle(IStorageContainer container, string fullPath)
+	{
+		if (!_fileSystem.Execute.IsWindows || container.Type != FileSystemTypes.Directory)
+		{
+			return;
+		}
+		
+		string? currentDirectory
+			= _fileSystem.Directory.GetCurrentDirectory().NormalizePath(_fileSystem)
+			  + _fileSystem.Path.DirectorySeparatorChar;
+
+		string fullPathWithSeparator = fullPath + _fileSystem.Path.DirectorySeparatorChar;
+
+		if (currentDirectory.Equals(fullPathWithSeparator, _fileSystem.Execute.StringComparisonMode))
+		{
+			throw ExceptionFactory.FileSharingViolation();
+		}
+
+		if (currentDirectory.StartsWith(fullPathWithSeparator, _fileSystem.Execute.StringComparisonMode))
+		{
+			throw ExceptionFactory.IOAccessDenied(fullPath);
 		}
 	}
 
