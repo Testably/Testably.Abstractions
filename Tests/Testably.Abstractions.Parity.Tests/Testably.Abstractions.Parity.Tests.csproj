@@ -1,10 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<ItemGroup Condition=" '$(Configuration)' != 'Debug' ">
-		<PackageReference Include="Testably.Abstractions.Interface" />
-	</ItemGroup>
-
-	<ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+	<ItemGroup>
 		<ProjectReference Include="..\..\Source\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
 	</ItemGroup>
 

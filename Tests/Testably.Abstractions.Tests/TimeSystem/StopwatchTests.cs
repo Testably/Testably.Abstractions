@@ -54,7 +54,7 @@ public partial class StopwatchTests
 		TimeSpan elapsed = stopwatch.Elapsed;
 		long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
 
-		await That(elapsedMilliseconds).IsEqualTo(elapsed.Milliseconds);
+		await That(elapsedMilliseconds).IsEqualTo(elapsed.TotalMilliseconds);
 	}
 
 	[Fact]
@@ -81,7 +81,7 @@ public partial class StopwatchTests
 		stopwatch.Reset();
 		TimeSpan elapsed = stopwatch.Elapsed;
 
-		await That(elapsed.Milliseconds).IsEqualTo(0);
+		await That(elapsed.TotalMilliseconds).IsEqualTo(0);
 		await That(stopwatch.IsRunning).IsFalse();
 	}
 
@@ -96,7 +96,7 @@ public partial class StopwatchTests
 		stopwatch.Restart();
 		TimeSpan elapsed = stopwatch.Elapsed;
 
-		await That(elapsed.Milliseconds).IsLessThan(100);
+		await That(elapsed.TotalMilliseconds).IsLessThan(100);
 		await That(stopwatch.IsRunning).IsTrue();
 	}
 
@@ -133,7 +133,7 @@ public partial class StopwatchTests
 		stopwatch.Stop();
 		TimeSpan elapsed = stopwatch.Elapsed;
 
-		await That(elapsed.Milliseconds).IsGreaterThanOrEqualTo(100);
+		await That(elapsed.TotalMilliseconds).IsGreaterThanOrEqualTo(100);
 		await That(stopwatch.IsRunning).IsFalse();
 	}
 

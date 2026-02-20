@@ -1,5 +1,7 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+#if FEATURE_STOPWATCH_GETELAPSEDTIME
+using System;
+#endif
 
 namespace Testably.Abstractions.TimeSystem;
 

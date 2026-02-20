@@ -1,6 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
+#if FEATURE_STOPWATCH_GETELAPSEDTIME
+using System;
+#endif
 
 namespace Testably.Abstractions.TimeSystem;
 
@@ -48,7 +49,7 @@ internal sealed class StopwatchFactory : IStopwatchFactory
 	public IStopwatch StartNew()
 		=> Wrap(Stopwatch.StartNew());
 
-	/// <inheritdoc cref="IFileStreamFactory.Wrap(FileStream)" />
+	/// <inheritdoc cref="IStopwatchFactory.Wrap(Stopwatch)" />
 	public IStopwatch Wrap(Stopwatch stopwatch)
 		=> new StopwatchWrapper(TimeSystem, stopwatch);
 

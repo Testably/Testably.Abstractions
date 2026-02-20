@@ -33,11 +33,10 @@ public class TimerFactoryMockTests
 	{
 		MockTimeSystem timeSystem = new();
 
-		Exception? exception = Record.Exception(() =>
-		{
-			timeSystem.Timer.Wrap(new Timer(_ => { }));
-		});
+		void Act()
+			=> timeSystem.Timer.Wrap(new Timer(_ => { }));
 
-		await That(exception).IsExactly<NotSupportedException>();
+		await That(Act).ThrowsExactly<NotSupportedException>()
+			.WithMessage("You cannot wrap an existing Timer in the MockTimeSystem instance!");
 	}
 }

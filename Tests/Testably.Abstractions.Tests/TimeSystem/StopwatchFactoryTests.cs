@@ -1,16 +1,19 @@
-﻿using Testably.Abstractions.TimeSystem;
+﻿using System.Diagnostics;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 [TimeSystemTests]
-public partial class StopwatchFactoryTests
+public class StopwatchFactoryTests
 {
 	[Fact]
 	public async Task Frequency_ShouldReturnValueOfAtLeastTicksPerSecond()
 	{
+		var expectedMinimum = TimeSystem is RealTimeSystem
+			? Stopwatch.Frequency
+			: TimeSpan.TicksPerSecond;
 		long frequency = TimeSystem.Stopwatch.Frequency;
 
-		await That(frequency).IsGreaterThanOrEqualTo(TimeSpan.TicksPerSecond);
+		await That(frequency).IsGreaterThanOrEqualTo(expectedMinimum);
 	}
 
 #if FEATURE_STOPWATCH_GETELAPSEDTIME
@@ -66,9 +69,10 @@ public partial class StopwatchFactoryTests
 	[Fact]
 	public async Task IsHighResolution_ShouldReturnTrue()
 	{
+		bool expected = TimeSystem is MockTimeSystem || Stopwatch.IsHighResolution;
 		bool isHighResolution = TimeSystem.Stopwatch.IsHighResolution;
 
-		await That(isHighResolution).IsTrue();
+		await That(isHighResolution).IsEqualTo(expected);
 	}
 
 	[Fact]

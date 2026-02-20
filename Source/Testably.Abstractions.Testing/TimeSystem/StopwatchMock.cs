@@ -65,7 +65,10 @@ internal sealed class StopwatchMock : IStopwatch
 	/// <inheritdoc cref="IStopwatch.Start()" />
 	public void Start()
 	{
-		_start = _mockTimeSystem.TimeProvider.Read();
+		if (_start is null)
+		{
+			_start = _mockTimeSystem.TimeProvider.Read();
+		}
 	}
 
 	/// <inheritdoc cref="IStopwatch.Stop()" />
