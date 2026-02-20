@@ -19,8 +19,12 @@
 			  Link="\Docs\README.md"/>
 	</ItemGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition=" '$(Configuration)' != 'Debug' ">
 		<PackageReference Include="Testably.Abstractions.Interface" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+		<ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

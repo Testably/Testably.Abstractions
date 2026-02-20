@@ -75,6 +75,11 @@ public class Parity
 
 	public ParityCheck Random { get; } = new();
 
+	public ParityCheck Stopwatch { get; } = new(excludeMethods:
+	[
+		typeof(Stopwatch).GetMethod(nameof(ToString)),
+	]);
+
 	public ParityCheck Timer { get; } = new(excludeMethods:
 		[
 			typeof(Timer).GetMethod(nameof(System.Threading.Timer.Change), [

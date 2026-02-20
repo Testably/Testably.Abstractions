@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.RandomSystem;
@@ -151,6 +152,22 @@ public abstract class ParityTests(
 			.GetErrorsToInstanceType<ITimer, ITimerFactory>(
 				typeof(Timer),
 				testOutputHelper);
+
+		await That(parityErrors).IsEmpty();
+	}
+
+	[Fact]
+	public async Task
+		IStopwatchAndIStopwatchFactory_EnsureParityWith_Stopwatch()
+	{
+		List<string> parityErrors = Parity.Stopwatch
+			.GetErrorsToInstanceType<IStopwatch, IStopwatchFactory>(
+				typeof(Stopwatch),
+				testOutputHelper);
+		parityErrors.AddRange(Parity.Stopwatch
+			.GetErrorsToStaticType<IStopwatchFactory>(
+				typeof(Stopwatch),
+				testOutputHelper));
 
 		await That(parityErrors).IsEmpty();
 	}
