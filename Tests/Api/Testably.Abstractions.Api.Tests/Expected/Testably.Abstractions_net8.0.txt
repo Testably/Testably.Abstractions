@@ -27,6 +27,7 @@ namespace Testably.Abstractions
     {
         public RealTimeSystem() { }
         public Testably.Abstractions.TimeSystem.IDateTime DateTime { get; }
+        public Testably.Abstractions.TimeSystem.IStopwatchFactory Stopwatch { get; }
         public Testably.Abstractions.TimeSystem.ITask Task { get; }
         public Testably.Abstractions.TimeSystem.IThread Thread { get; }
         public Testably.Abstractions.TimeSystem.ITimerFactory Timer { get; }
