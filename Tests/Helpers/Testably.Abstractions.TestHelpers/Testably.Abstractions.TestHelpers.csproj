@@ -6,9 +6,14 @@
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition=" '$(Configuration)' != 'Debug' ">
+		<PackageReference Include="Testably.Abstractions" />
 		<PackageReference Include="Testably.Abstractions.Interface" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
 		<ProjectReference Include="..\..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
+		<ProjectReference Include="..\..\..\Source\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

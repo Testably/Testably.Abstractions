@@ -20,7 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Testably.Abstractions.Interface" />
+		<ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
