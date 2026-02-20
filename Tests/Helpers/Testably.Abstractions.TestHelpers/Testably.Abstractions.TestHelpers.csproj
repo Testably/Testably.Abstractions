@@ -6,10 +6,6 @@
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
-	</ItemGroup>
-
 	<ItemGroup Condition=" '$(Configuration)' != 'Debug' ">
 		<PackageReference Include="Testably.Abstractions.Interface" />
 	</ItemGroup>

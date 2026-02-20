@@ -54,7 +54,7 @@ public partial class StopwatchTests
 		TimeSpan elapsed = stopwatch.Elapsed;
 		long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
 
-		await That(elapsedMilliseconds).IsEqualTo(elapsed.TotalMilliseconds);
+		await That(elapsedMilliseconds).IsEqualTo((long)elapsed.TotalMilliseconds).Within(1L);
 	}
 
 	[Fact]

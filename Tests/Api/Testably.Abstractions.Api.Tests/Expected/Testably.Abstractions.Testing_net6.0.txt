@@ -103,6 +103,7 @@ namespace Testably.Abstractions.Testing
         public MockTimeSystem(Testably.Abstractions.Testing.TimeSystem.ITimeProvider timeProvider) { }
         public Testably.Abstractions.TimeSystem.IDateTime DateTime { get; }
         public Testably.Abstractions.Testing.TimeSystem.INotificationHandler On { get; }
+        public Testably.Abstractions.TimeSystem.IStopwatchFactory Stopwatch { get; }
         public Testably.Abstractions.TimeSystem.ITask Task { get; }
         public Testably.Abstractions.TimeSystem.IThread Thread { get; }
         public Testably.Abstractions.Testing.TimeSystem.ITimeProvider TimeProvider { get; }

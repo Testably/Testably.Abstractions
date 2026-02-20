@@ -1,9 +1,10 @@
 ﻿using System.Diagnostics;
+using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 [TimeSystemTests]
-public class StopwatchFactoryTests
+public partial class StopwatchFactoryTests
 {
 	[Fact]
 	public async Task Frequency_ShouldReturnValueOfAtLeastTicksPerSecond()
