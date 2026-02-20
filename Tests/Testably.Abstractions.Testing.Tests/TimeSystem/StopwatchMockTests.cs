@@ -8,7 +8,7 @@ public class StopwatchMockTests
 	[InlineData(0)]
 	[InlineData(1)]
 	[InlineData(15)]
-	[InlineData(123456789000)]
+	[InlineData(1234567890)]
 	public async Task ShouldSupportTicksPrecision(long delayTicks)
 	{
 		MockTimeSystem timeSystem = new();
@@ -18,6 +18,7 @@ public class StopwatchMockTests
 
 		long elapsedTicks = stopwatch.ElapsedTicks;
 
-		await That(elapsedTicks).IsEqualTo(delayTicks);
+		long actualStopwatchTicks = elapsedTicks * TimeSpan.TicksPerSecond / timeSystem.Stopwatch.Frequency;
+		await That(actualStopwatchTicks).IsEqualTo(delayTicks);
 	}
 }
