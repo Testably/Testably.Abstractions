@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<PackageReference Include="Testably.Abstractions.Interface"/>
+		<ProjectReference Include="..\..\Source\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
 		<ProjectReference Include="..\..\Source\Testably.Abstractions.Compression\Testably.Abstractions.Compression.csproj" />
 	</ItemGroup>
 
