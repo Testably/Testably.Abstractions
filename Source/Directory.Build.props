@@ -54,4 +54,10 @@
 		</PackageReference>
 	</ItemGroup>
 
+	<PropertyGroup>
+		<!-- The version is only set to support local builds.
+		In the build pipeline it is overwritten with the actual version in the `nuke Compile` step -->
+		<Version>255.255.255.255</Version>
+	</PropertyGroup>
+
 </Project>

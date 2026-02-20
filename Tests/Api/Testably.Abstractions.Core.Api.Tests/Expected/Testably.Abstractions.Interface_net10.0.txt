@@ -67,6 +67,7 @@ namespace Testably.Abstractions
     public interface ITimeSystem
     {
         Testably.Abstractions.TimeSystem.IDateTime DateTime { get; }
+        Testably.Abstractions.TimeSystem.IStopwatchFactory Stopwatch { get; }
         Testably.Abstractions.TimeSystem.ITask Task { get; }
         Testably.Abstractions.TimeSystem.IThread Thread { get; }
         Testably.Abstractions.TimeSystem.ITimerFactory Timer { get; }
@@ -139,6 +140,28 @@ namespace Testably.Abstractions.TimeSystem
         System.DateTime Today { get; }
         System.DateTime UnixEpoch { get; }
         System.DateTime UtcNow { get; }
+    }
+    public interface IStopwatch : Testably.Abstractions.TimeSystem.ITimeSystemEntity
+    {
+        System.TimeSpan Elapsed { get; }
+        long ElapsedMilliseconds { get; }
+        long ElapsedTicks { get; }
+        bool IsRunning { get; }
+        void Reset();
+        void Restart();
+        void Start();
+        void Stop();
+    }
+    public interface IStopwatchFactory : Testably.Abstractions.TimeSystem.ITimeSystemEntity
+    {
+        long Frequency { get; }
+        bool IsHighResolution { get; }
+        System.TimeSpan GetElapsedTime(long startingTimestamp);
+        System.TimeSpan GetElapsedTime(long startingTimestamp, long endingTimestamp);
+        long GetTimestamp();
+        Testably.Abstractions.TimeSystem.IStopwatch New();
+        Testably.Abstractions.TimeSystem.IStopwatch StartNew();
+        Testably.Abstractions.TimeSystem.IStopwatch Wrap(System.Diagnostics.Stopwatch stopwatch);
     }
     public interface ITask : Testably.Abstractions.TimeSystem.ITimeSystemEntity
     {

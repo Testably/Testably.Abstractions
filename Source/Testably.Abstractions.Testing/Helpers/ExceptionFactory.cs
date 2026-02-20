@@ -153,6 +153,9 @@ internal static class ExceptionFactory
 		=> new(
 			"You cannot mock a safe file handle in the mocked file system without registering a strategy explicitly. Use `MockFileSystem.WithSafeFileHandleStrategy`!");
 
+	internal static NotSupportedException NotSupportedStopwatchWrapping()
+		=> new("You cannot wrap an existing Stopwatch in the MockTimeSystem instance!");
+
 	internal static NotSupportedException NotSupportedTimerWrapping()
 		=> new("You cannot wrap an existing Timer in the MockTimeSystem instance!");
 

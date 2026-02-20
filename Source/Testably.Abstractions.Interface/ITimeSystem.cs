@@ -13,6 +13,11 @@ public interface ITimeSystem
 	IDateTime DateTime { get; }
 
 	/// <summary>
+	///     Abstractions for <see cref="System.Diagnostics.Stopwatch" />.
+	/// </summary>
+	IStopwatchFactory Stopwatch { get; }
+
+	/// <summary>
 	///     Abstractions for <see cref="System.Threading.Tasks.Task" />.
 	/// </summary>
 	ITask Task { get; }

@@ -120,35 +120,41 @@ partial class Build
 			ReportSummary(s => s
 				.WhenNotNull(SemVer, (summary, semVer) => summary
 					.AddPair("Version", semVer)));
-			
-			UpdateReadme(MainVersion!.FileVersion, false);
-			foreach (var mainProject in MainProjects)
+
+			if (BuildScope != BuildScope.CoreOnly)
 			{
-				ClearNugetPackages(mainProject.Directory / "bin");
-				DotNetBuild(s => s
-					.SetProjectFile(mainProject)
-					.SetConfiguration(Configuration)
-					.EnableNoLogo()
-					.EnableNoRestore()
-					.SetProcessAdditionalArguments($"/p:SolutionDir={RootDirectory}/")
-					.SetVersion(MainVersion.FileVersion + CoreVersion!.PreRelease)
-					.SetAssemblyVersion(MainVersion.FileVersion)
-					.SetFileVersion(MainVersion.FileVersion));
+				UpdateReadme(MainVersion!.FileVersion, false);
+				foreach (var mainProject in MainProjects)
+				{
+					ClearNugetPackages(mainProject.Directory / "bin");
+					DotNetBuild(s => s
+						.SetProjectFile(mainProject)
+						.SetConfiguration(Configuration)
+						.EnableNoLogo()
+						.EnableNoRestore()
+						.SetProcessAdditionalArguments($"/p:SolutionDir={RootDirectory}/")
+						.SetVersion(MainVersion.FileVersion + CoreVersion!.PreRelease)
+						.SetAssemblyVersion(MainVersion.FileVersion)
+						.SetFileVersion(MainVersion.FileVersion));
+				}
 			}
-			
-			UpdateReadme(CoreVersion!.FileVersion, true);
-			foreach (var coreProject in CoreProjects)
+
+			if (BuildScope != BuildScope.MainOnly)
 			{
-				ClearNugetPackages(coreProject.Directory / "bin");
-				DotNetBuild(s => s
-					.SetProjectFile(coreProject)
-					.SetConfiguration(Configuration)
-					.EnableNoLogo()
-					.EnableNoRestore()
-					.SetProcessAdditionalArguments($"/p:SolutionDir={RootDirectory}/")
-					.SetVersion(CoreVersion.FileVersion + CoreVersion.PreRelease)
-					.SetAssemblyVersion(CoreVersion.FileVersion)
-					.SetFileVersion(CoreVersion.FileVersion));
+				UpdateReadme(CoreVersion!.FileVersion, true);
+				foreach (var coreProject in CoreProjects)
+				{
+					ClearNugetPackages(coreProject.Directory / "bin");
+					DotNetBuild(s => s
+						.SetProjectFile(coreProject)
+						.SetConfiguration(Configuration)
+						.EnableNoLogo()
+						.EnableNoRestore()
+						.SetProcessAdditionalArguments($"/p:SolutionDir={RootDirectory}/")
+						.SetVersion(CoreVersion.FileVersion + CoreVersion.PreRelease)
+						.SetAssemblyVersion(CoreVersion.FileVersion)
+						.SetFileVersion(CoreVersion.FileVersion));
+				}
 			}
 		});
 	

@@ -25,13 +25,14 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <summary>
 	///     The handler for mocked timers.
 	/// </summary>
-	public ITimerHandler TimerHandler => _timerMock;
+	public ITimerHandler TimerHandler => _timerFactoryMock;
 
 	private readonly NotificationHandler _callbackHandler;
 	private readonly DateTimeMock _dateTimeMock;
+	private readonly StopwatchFactoryMock _stopwatchFactoryMock;
 	private readonly TaskMock _taskMock;
 	private readonly ThreadMock _threadMock;
-	private readonly TimerFactoryMock _timerMock;
+	private readonly TimerFactoryMock _timerFactoryMock;
 
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with a random time.
@@ -55,9 +56,10 @@ public sealed class MockTimeSystem : ITimeSystem
 		TimeProvider = timeProvider;
 		_callbackHandler = new NotificationHandler();
 		_dateTimeMock = new DateTimeMock(this, _callbackHandler);
+		_stopwatchFactoryMock = new StopwatchFactoryMock(this);
 		_threadMock = new ThreadMock(this, _callbackHandler);
 		_taskMock = new TaskMock(this, _callbackHandler);
-		_timerMock = new TimerFactoryMock(this);
+		_timerFactoryMock = new TimerFactoryMock(this);
 	}
 
 	#region ITimeSystem Members
@@ -65,6 +67,10 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <inheritdoc cref="ITimeSystem.DateTime" />
 	public IDateTime DateTime
 		=> _dateTimeMock;
+
+	/// <inheritdoc cref="ITimeSystem.Stopwatch" />
+	public IStopwatchFactory Stopwatch
+		=> _stopwatchFactoryMock;
 
 	/// <inheritdoc cref="ITimeSystem.Task" />
 	public ITask Task
@@ -76,7 +82,7 @@ public sealed class MockTimeSystem : ITimeSystem
 
 	/// <inheritdoc cref="ITimeSystem.Timer" />
 	public ITimerFactory Timer
-		=> _timerMock;
+		=> _timerFactoryMock;
 
 	#endregion
 
@@ -90,7 +96,7 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <param name="timerStrategy">The timer strategy. </param>
 	public MockTimeSystem WithTimerStrategy(ITimerStrategy timerStrategy)
 	{
-		_timerMock.SetTimerStrategy(timerStrategy);
+		_timerFactoryMock.SetTimerStrategy(timerStrategy);
 		return this;
 	}
 }

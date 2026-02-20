@@ -35,7 +35,7 @@ internal sealed class TimerFactory : ITimerFactory
 	public ITimer New(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
 		=> Wrap(new Timer(callback, state, dueTime, period));
 
-	/// <inheritdoc cref="IFileStreamFactory.Wrap(FileStream)" />
+	/// <inheritdoc cref="ITimerFactory.Wrap(Timer)" />
 	public ITimer Wrap(Timer timer)
 		=> new TimerWrapper(TimeSystem, timer);
 }

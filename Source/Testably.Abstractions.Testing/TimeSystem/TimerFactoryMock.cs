@@ -66,7 +66,7 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 		return RegisterTimerMock(timerMock);
 	}
 
-	/// <inheritdoc cref="IFileStreamFactory.Wrap(FileStream)" />
+	/// <inheritdoc cref="ITimerFactory.Wrap(Timer)" />
 	public ITimer Wrap(Timer timer)
 		=> throw ExceptionFactory.NotSupportedTimerWrapping();
 

@@ -13,10 +13,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Testably.Abstractions.Interface"/>
 		<ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj"/>
 		<ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj"/>
 		<ProjectReference Include="..\Helpers\Testably.Abstractions.TestHelpers\Testably.Abstractions.TestHelpers.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' != 'Debug' ">
+		<PackageReference Include="Testably.Abstractions.Interface" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+		<ProjectReference Include="..\..\Source\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

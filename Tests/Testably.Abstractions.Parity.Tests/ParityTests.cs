@@ -156,6 +156,22 @@ public abstract class ParityTests(
 	}
 
 	[Fact]
+	public async Task
+		IStopwatchAndIStopwatchFactory_EnsureParityWith_Stopwatch()
+	{
+		List<string> parityErrors = Parity.Stopwatch
+			.GetErrorsToInstanceType<IStopwatch, IStopwatchFactory>(
+				typeof(Stopwatch),
+				testOutputHelper);
+		parityErrors.AddRange(Parity.Stopwatch
+			.GetErrorsToStaticType<IStopwatchFactory>(
+				typeof(Stopwatch),
+				testOutputHelper));
+
+		await That(parityErrors).IsEmpty();
+	}
+
+	[Fact]
 	public async Task IZipArchive_EnsureParityWith_ZipArchive()
 	{
 		List<string> parityErrors = Parity.ZipArchive

@@ -16,6 +16,7 @@ public sealed class RealTimeSystem : ITimeSystem
 	public RealTimeSystem()
 	{
 		DateTime = new DateTimeWrapper(this);
+		Stopwatch = new StopwatchFactory(this);
 		Task = new TaskWrapper(this);
 		Thread = new ThreadWrapper(this);
 		Timer = new TimerFactory(this);
@@ -25,6 +26,9 @@ public sealed class RealTimeSystem : ITimeSystem
 
 	/// <inheritdoc cref="ITimeSystem.DateTime" />
 	public IDateTime DateTime { get; }
+
+	/// <inheritdoc cref="ITimeSystem.Stopwatch" />
+	public IStopwatchFactory Stopwatch { get; }
 
 	/// <inheritdoc cref="ITimeSystem.Task" />
 	public ITask Task { get; }
