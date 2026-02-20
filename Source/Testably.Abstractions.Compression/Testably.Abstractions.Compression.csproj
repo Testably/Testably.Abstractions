@@ -12,12 +12,8 @@
 		      Link="Docs\Compression.md" />
 	</ItemGroup>
 
-	<ItemGroup Condition=" '$(Configuration)' != 'Debug' ">
+	<ItemGroup>
 		<PackageReference Include="Testably.Abstractions.Interface" />
-	</ItemGroup>
-
-	<ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
-		<ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
