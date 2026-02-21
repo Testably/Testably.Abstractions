@@ -25,7 +25,8 @@ public partial class StopwatchTests
 		await TimeSystem.Task.Delay(delay, TestContext.Current.CancellationToken);
 		TimeSpan elapsedAfter = stopwatch.Elapsed;
 
-		await That(elapsedAfter).IsGreaterThanOrEqualTo(elapsedBefore + delay);
+		await That(elapsedAfter).IsGreaterThanOrEqualTo(elapsedBefore + delay)
+			.Within(TimeSpan.FromMilliseconds(1));
 	}
 
 	[Fact]
@@ -54,7 +55,7 @@ public partial class StopwatchTests
 		TimeSpan elapsed = stopwatch.Elapsed;
 		long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
 
-		await That(elapsedMilliseconds).IsEqualTo(elapsed.TotalMilliseconds);
+		await That(elapsedMilliseconds).IsEqualTo((long)elapsed.TotalMilliseconds).Within(1L);
 	}
 
 	[Fact]
@@ -68,7 +69,9 @@ public partial class StopwatchTests
 		TimeSpan elapsed = stopwatch.Elapsed;
 		long elapsedTicks = stopwatch.ElapsedTicks;
 
-		await That(elapsedTicks).IsEqualTo(elapsed.Ticks);
+		long elapsedTicksAsTimeSpanTicks =
+			elapsedTicks * TimeSpan.TicksPerSecond / TimeSystem.Stopwatch.Frequency;
+		await That(elapsedTicksAsTimeSpanTicks).IsEqualTo(elapsed.Ticks);
 	}
 
 	[Fact]

@@ -9,6 +9,7 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 internal sealed class StopwatchFactoryMock : IStopwatchFactory
 {
 	private readonly MockTimeSystem _mockTimeSystem;
+	private readonly long _tickPeriod = 10;
 
 	internal StopwatchFactoryMock(MockTimeSystem timeSystem)
 	{
@@ -18,7 +19,7 @@ internal sealed class StopwatchFactoryMock : IStopwatchFactory
 	#region IStopwatchFactory Members
 
 	/// <inheritdoc cref="IStopwatchFactory.Frequency" />
-	public long Frequency => TimeSpan.TicksPerSecond;
+	public long Frequency => TimeSpan.TicksPerSecond * _tickPeriod;
 
 	/// <inheritdoc cref="IStopwatchFactory.IsHighResolution" />
 	public bool IsHighResolution => true;
@@ -36,7 +37,7 @@ internal sealed class StopwatchFactoryMock : IStopwatchFactory
 #if FEATURE_STOPWATCH_GETELAPSEDTIME
 	/// <inheritdoc cref="IStopwatchFactory.GetElapsedTime(long, long)" />
 	public TimeSpan GetElapsedTime(long startingTimestamp, long endingTimestamp)
-		=> TimeSpan.FromTicks(endingTimestamp - startingTimestamp);
+		=> TimeSpan.FromTicks((endingTimestamp - startingTimestamp) / _tickPeriod);
 #endif
 
 	/// <inheritdoc cref="IStopwatchFactory.GetTimestamp()" />
@@ -46,7 +47,7 @@ internal sealed class StopwatchFactoryMock : IStopwatchFactory
 	/// <inheritdoc cref="IStopwatchFactory.New()" />
 	public IStopwatch New()
 	{
-		StopwatchMock stopwatchMock = new(_mockTimeSystem);
+		StopwatchMock stopwatchMock = new(_mockTimeSystem, _tickPeriod);
 		return stopwatchMock;
 	}
 

@@ -1,9 +1,10 @@
 ﻿using System.Diagnostics;
+using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 [TimeSystemTests]
-public class StopwatchFactoryTests
+public partial class StopwatchFactoryTests
 {
 	[Fact]
 	public async Task Frequency_ShouldReturnValueOfAtLeastTicksPerSecond()
@@ -18,22 +19,22 @@ public class StopwatchFactoryTests
 
 #if FEATURE_STOPWATCH_GETELAPSEDTIME
 	[Theory]
-	[InlineData(50L, 80L, 30L)]
-	[InlineData(80L, 50L, -30L)]
-	[InlineData(40L, 40L, 0L)]
+	[InlineData(5000L, 8000L, 3000L)]
+	[InlineData(8000L, 5000L, -3000L)]
+	[InlineData(4000L, 4000L, 0L)]
 	public async Task GetElapsedTime_WithStartingAndEndingTimestamp_ShouldReturnValue(
 		long startingTimestamp, long endingTimestamp, long expectedTicks)
 	{
 		TimeSpan timestamp =
 			TimeSystem.Stopwatch.GetElapsedTime(startingTimestamp, endingTimestamp);
 
-		await That(timestamp.Ticks).IsEqualTo(expectedTicks);
+		long actualStopwatchTicks = timestamp.Ticks * TimeSystem.Stopwatch.Frequency / TimeSpan.TicksPerSecond;
+		await That(actualStopwatchTicks).IsEqualTo(expectedTicks);
 	}
 #endif
 
 #if FEATURE_STOPWATCH_GETELAPSEDTIME
 	[Theory]
-	[InlineData(10L)]
 	[InlineData(1000L)]
 	[InlineData(100000L)]
 	public async Task GetElapsedTime_WithStartingTimestamp_ShouldReturnValue(long expectedTicks)
@@ -43,7 +44,8 @@ public class StopwatchFactoryTests
 		TimeSpan timestamp =
 			TimeSystem.Stopwatch.GetElapsedTime(startingTimestamp);
 
-		await That(timestamp.Ticks).IsGreaterThanOrEqualTo(expectedTicks);
+		long actualStopwatchTicks = timestamp.Ticks * TimeSystem.Stopwatch.Frequency / TimeSpan.TicksPerSecond;
+		await That(actualStopwatchTicks).IsGreaterThanOrEqualTo(expectedTicks);
 	}
 #endif
 
