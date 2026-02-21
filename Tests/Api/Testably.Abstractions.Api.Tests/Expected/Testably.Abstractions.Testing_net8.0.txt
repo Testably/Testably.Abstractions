@@ -18,6 +18,7 @@ namespace Testably.Abstractions.Testing
         public static Testably.Abstractions.Testing.Initializer.IFileSystemInitializer<TFileSystem> Initialize<TFileSystem>(this TFileSystem fileSystem, System.Action<Testably.Abstractions.Testing.FileSystemInitializerOptions>? options = null)
             where TFileSystem : System.IO.Abstractions.IFileSystem { }
         public static void InitializeEmbeddedResourcesFromAssembly(this System.IO.Abstractions.IFileSystem fileSystem, string directoryPath, System.Reflection.Assembly assembly, string? relativePath = null, string searchPattern = "*", System.IO.SearchOption searchOption = 1) { }
+        public static void InitializeFromRealDirectory(this System.IO.Abstractions.IFileSystem fileSystem, string sourceDirectory, string? targetDirectory = null) { }
         public static Testably.Abstractions.Testing.Initializer.IFileSystemInitializer<TFileSystem> InitializeIn<TFileSystem>(this TFileSystem fileSystem, string basePath, System.Action<Testably.Abstractions.Testing.FileSystemInitializerOptions>? options = null)
             where TFileSystem : System.IO.Abstractions.IFileSystem { }
         public static Testably.Abstractions.Testing.Initializer.IDirectoryCleaner SetCurrentDirectoryToEmptyTemporaryDirectory(this System.IO.Abstractions.IFileSystem fileSystem, string? prefix = null, System.Action<string>? logger = null) { }

@@ -109,6 +109,40 @@ public static class FileSystemInitializerExtensions
 	#pragma warning restore MA0051 // Method is too long
 
 	/// <summary>
+	///     Initializes the <see cref="IFileSystem" /> from the real <paramref name="sourceDirectory" /> into the
+	///     <paramref name="targetDirectory" /> on the provided file system.
+	/// </summary>
+	/// <param name="fileSystem">The target file system to which the data is copied.</param>
+	/// <param name="sourceDirectory">
+	///     The source directory on the real file system that is copied to the
+	///     <paramref name="fileSystem" />.
+	/// </param>
+	/// <param name="targetDirectory">
+	///     The target directory on the <paramref name="fileSystem" /> to which the data is copied to.<br />
+	///     If no <paramref name="targetDirectory" /> is set, <paramref name="sourceDirectory" /> is used instead.
+	/// </param>
+	/// <remarks>
+	///     <b>Warning</b>:<br />
+	///     This method will recursively copy the content of all files and directories from the
+	///     <paramref name="sourceDirectory" /> to the <paramref name="targetDirectory" />. With large files, this can be very
+	///     resource intensive!<br />
+	/// </remarks>
+	public static void InitializeFromRealDirectory(this IFileSystem fileSystem,
+		string sourceDirectory, string? targetDirectory = null)
+	{
+		using IDisposable release = fileSystem.IgnoreStatistics();
+		targetDirectory ??= sourceDirectory;
+		if (fileSystem.Path.IsPathRooted(targetDirectory) &&
+		    fileSystem is MockFileSystem mockFileSystem)
+		{
+			string? drive = fileSystem.Path.GetPathRoot(targetDirectory);
+			mockFileSystem.WithDrive(drive);
+		}
+
+		CopyDirectory(fileSystem, sourceDirectory, targetDirectory);
+	}
+
+	/// <summary>
 	///     Initializes the <see cref="IFileSystem" /> in the <paramref name="basePath" /> with test data.
 	/// </summary>
 	public static IFileSystemInitializer<TFileSystem> InitializeIn<TFileSystem>(
@@ -156,6 +190,31 @@ public static class FileSystemInitializerExtensions
 	{
 		using IDisposable release = fileSystem.IgnoreStatistics();
 		return new DirectoryCleaner(fileSystem, prefix, logger);
+	}
+
+	private static void CopyDirectory(
+		IFileSystem fileSystem, string sourceDirectory, string targetDirectory)
+	{
+		if (!Directory.Exists(sourceDirectory))
+		{
+			throw new DirectoryNotFoundException(
+				$"The directory '{sourceDirectory}' does not exist.");
+		}
+
+		fileSystem.Directory.CreateDirectory(targetDirectory);
+		foreach (string file in Directory.EnumerateFiles(sourceDirectory))
+		{
+			string fileName = Path.GetFileName(file);
+			fileSystem.File.WriteAllBytes(fileSystem.Path.Combine(targetDirectory, fileName),
+				File.ReadAllBytes(file));
+		}
+
+		foreach (string directory in Directory.EnumerateDirectories(sourceDirectory))
+		{
+			string directoryName = Path.GetFileName(directory);
+			CopyDirectory(fileSystem, directory,
+				fileSystem.Path.Combine(targetDirectory, directoryName));
+		}
 	}
 
 	private static void InitializeFileFromEmbeddedResource(this IFileSystem fileSystem,
