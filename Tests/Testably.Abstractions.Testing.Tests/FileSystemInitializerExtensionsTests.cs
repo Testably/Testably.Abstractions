@@ -244,6 +244,41 @@ public class FileSystemInitializerExtensionsTests
 			.Contains(x => x.EndsWith("SubResourceFile1.txt", StringComparison.Ordinal));
 	}
 
+	[Theory]
+	[AutoData]
+	public async Task InitializeFromRealDirectory_MissingDrive_ShouldCreateDrive(
+		string directoryName)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+		try
+		{
+			Directory.CreateDirectory(tempPath);
+			MockFileSystem sut = new();
+			IDriveInfo[] drives = sut.DriveInfo.GetDrives();
+			for (char c = 'D'; c <= 'Z'; c++)
+			{
+				if (drives.Any(d => d.Name.StartsWith($"{c}", StringComparison.Ordinal)))
+				{
+					continue;
+				}
+
+				directoryName = Path.Combine($"{c}:\\", directoryName);
+				break;
+			}
+
+			sut.InitializeFromRealDirectory(tempPath, directoryName);
+
+			await That(sut.Directory.Exists(directoryName)).IsTrue();
+			await That(sut.DriveInfo.GetDrives()).HasCount(drives.Length + 1);
+		}
+		finally
+		{
+			Directory.Delete(tempPath, true);
+		}
+	}
+
 	[Fact]
 	public async Task InitializeFromRealDirectory_ShouldCopyFileToTargetDirectory()
 	{
@@ -295,7 +330,7 @@ public class FileSystemInitializerExtensionsTests
 
 	[Fact]
 	public async Task
-		InitializeFromRealDirectory_WhenDirectoryDoesNotExist_ShouldThrowNotSupportedException()
+		InitializeFromRealDirectory_WhenDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException()
 	{
 		MockFileSystem fileSystem = new();
 		string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -307,7 +342,7 @@ public class FileSystemInitializerExtensionsTests
 		void Act()
 			=> fileSystem.InitializeFromRealDirectory(tempPath, "foo");
 
-		await That(Act).Throws<NotSupportedException>()
+		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithMessage($"The directory '{tempPath}' does not exist.");
 	}
 
