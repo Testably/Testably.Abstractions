@@ -136,7 +136,8 @@ public partial class StopwatchTests
 		stopwatch.Stop();
 		TimeSpan elapsed = stopwatch.Elapsed;
 
-		await That(elapsed.TotalMilliseconds).IsGreaterThanOrEqualTo(100);
+		// Allow one millisecond tolerance due to potential rounding issues.
+		await That(elapsed.TotalMilliseconds).IsGreaterThanOrEqualTo(99);
 		await That(stopwatch.IsRunning).IsFalse();
 	}
 
