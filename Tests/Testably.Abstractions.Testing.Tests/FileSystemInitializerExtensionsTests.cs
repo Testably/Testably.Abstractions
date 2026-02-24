@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Testably.Abstractions.TestHelpers.Settings;
 using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Testing.Tests;
 
-public class FileSystemInitializerExtensionsTests
+[Collection("RealFileSystemTests")]
+public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 {
 	[Fact]
 	public async Task Initialize_WithAFile_ShouldCreateFile()
@@ -250,6 +252,7 @@ public class FileSystemInitializerExtensionsTests
 		string directoryName)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
+		SkipIfRealFileSystemShouldBeSkipped();
 
 		string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 		try
@@ -282,6 +285,8 @@ public class FileSystemInitializerExtensionsTests
 	[Fact]
 	public async Task InitializeFromRealDirectory_ShouldCopyFileToTargetDirectory()
 	{
+		SkipIfRealFileSystemShouldBeSkipped();
+
 		MockFileSystem fileSystem = new();
 		string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 		try
@@ -305,6 +310,8 @@ public class FileSystemInitializerExtensionsTests
 	public async Task
 		InitializeFromRealDirectory_ShouldRecursivelyCopyDirectoriesToTargetDirectory()
 	{
+		SkipIfRealFileSystemShouldBeSkipped();
+
 		MockFileSystem fileSystem = new();
 		string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 		try
@@ -383,4 +390,24 @@ public class FileSystemInitializerExtensionsTests
 		await That(sut.Statistics.TotalCount).IsEqualTo(0);
 		await That(sut.Directory.GetCurrentDirectory()).IsEqualTo(expectedPath);
 	}
+
+	#region Helpers
+
+	private void SkipIfRealFileSystemShouldBeSkipped()
+	{
+#if DEBUG
+		if (fixture.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
+		{
+			aweXpect.Skip.Test(
+				$"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
+		}
+#else
+		if (fixture.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
+		{
+			aweXpect.Skip.Test($"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
+		}
+#endif
+	}
+
+	#endregion
 }
