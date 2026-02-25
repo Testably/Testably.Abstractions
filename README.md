@@ -18,6 +18,7 @@ As the test suite runs both against the mocked and the real file system, the beh
 In addition, the following interfaces are defined:
 - The `ITimeSystem` interface abstracts away time-related functionality:  
   - `DateTime` methods give access to the current time
+  - `Stopwatch` is a wrapper around [`System.Diagnostics.Stopwatch`](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.stopwatch)
   - `Task` allows replacing [`Task.Delay`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.delay)
   - `Thread` allows replacing [`Thread.Sleep`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.thread.sleep)
   - `Timer` is a wrapper around [`System.Threading.Timer`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.timer)
