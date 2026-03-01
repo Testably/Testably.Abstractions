@@ -2,10 +2,10 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class TryJoinTests
+public class TryJoinTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task TryJoin_2Paths_BufferTooLittle_ShouldReturnFalse(
 		string path1, string path2)
 	{
@@ -25,13 +25,13 @@ public partial class TryJoinTests
 		await That(charsWritten).IsEqualTo(0);
 	}
 
-	[Theory]
-	[InlineAutoData("/foo/", "/bar/", "/foo//bar/")]
-	[InlineAutoData("foo/", "/bar", "foo//bar")]
-	[InlineAutoData("foo/", "bar", "foo/bar")]
-	[InlineAutoData("foo", "/bar", "foo/bar")]
-	[InlineAutoData("foo", "bar", "foo/bar")]
-	[InlineAutoData("/foo", "bar/", "/foo/bar/")]
+	[Test]
+	[AutoArguments("/foo/", "/bar/", "/foo//bar/")]
+	[AutoArguments("foo/", "/bar", "foo//bar")]
+	[AutoArguments("foo/", "bar", "foo/bar")]
+	[AutoArguments("foo", "/bar", "foo/bar")]
+	[AutoArguments("foo", "bar", "foo/bar")]
+	[AutoArguments("/foo", "bar/", "/foo/bar/")]
 	public async Task TryJoin_2Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string expectedResult)
 	{
@@ -53,8 +53,8 @@ public partial class TryJoinTests
 		await That(writtenString).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task TryJoin_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2)
 	{
@@ -76,8 +76,8 @@ public partial class TryJoinTests
 		await That(writtenString).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task TryJoin_3Paths_BufferTooLittle_ShouldReturnFalse(
 		string path1, string path2, string path3)
 	{
@@ -99,14 +99,14 @@ public partial class TryJoinTests
 		await That(charsWritten).IsEqualTo(0);
 	}
 
-	[Theory]
-	[InlineAutoData("/foo/", "/bar/", "/baz/", "/foo//bar//baz/")]
-	[InlineAutoData("foo/", "/bar/", "/baz", "foo//bar//baz")]
-	[InlineAutoData("foo/", "bar", "/baz", "foo/bar/baz")]
-	[InlineAutoData("foo", "/bar", "/baz", "foo/bar/baz")]
-	[InlineAutoData("foo", "/bar/", "baz", "foo/bar/baz")]
-	[InlineAutoData("foo", "bar", "baz", "foo/bar/baz")]
-	[InlineAutoData("/foo", "bar", "baz/", "/foo/bar/baz/")]
+	[Test]
+	[AutoArguments("/foo/", "/bar/", "/baz/", "/foo//bar//baz/")]
+	[AutoArguments("foo/", "/bar/", "/baz", "foo//bar//baz")]
+	[AutoArguments("foo/", "bar", "/baz", "foo/bar/baz")]
+	[AutoArguments("foo", "/bar", "/baz", "foo/bar/baz")]
+	[AutoArguments("foo", "/bar/", "baz", "foo/bar/baz")]
+	[AutoArguments("foo", "bar", "baz", "foo/bar/baz")]
+	[AutoArguments("/foo", "bar", "baz/", "/foo/bar/baz/")]
 	public async Task TryJoin_3Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string expectedResult)
 	{
@@ -130,8 +130,8 @@ public partial class TryJoinTests
 		await That(writtenString).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task TryJoin_3Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3)
 	{

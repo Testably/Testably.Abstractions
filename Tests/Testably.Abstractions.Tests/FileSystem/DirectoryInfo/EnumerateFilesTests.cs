@@ -6,10 +6,10 @@ using Testably.Abstractions.Testing.Initializer;
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 [FileSystemTests]
-public partial class EnumerateFilesTests
+public class EnumerateFilesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateFiles_SearchOptionAllFiles_ShouldReturnAllFiles(
 		string path)
 	{
@@ -36,20 +36,20 @@ public partial class EnumerateFilesTests
 			=> string.Equals(d.Name, initialized[5].Name, StringComparison.Ordinal));
 	}
 
-	[Theory]
+	[Test]
 #if NETFRAMEWORK
-	[InlineAutoData(false, "")]
+	[AutoArguments(false, "")]
 #else
-	[InlineAutoData(true, "")]
+	[AutoArguments(true, "")]
 #endif
-	[InlineAutoData(true, "*")]
-	[InlineAutoData(true, ".")]
-	[InlineAutoData(true, "*.*")]
-	[InlineData(true, "a*c", "abc")]
-	[InlineData(true, "ab*c", "abc")]
-	[InlineData(true, "abc?", "abc")]
-	[InlineData(false, "ab?c", "abc")]
-	[InlineData(false, "ac", "abc")]
+	[AutoArguments(true, "*")]
+	[AutoArguments(true, ".")]
+	[AutoArguments(true, "*.*")]
+	[Arguments(true, "a*c", "abc")]
+	[Arguments(true, "ab*c", "abc")]
+	[Arguments(true, "abc?", "abc")]
+	[Arguments(false, "ab?c", "abc")]
+	[Arguments(false, "ac", "abc")]
 	public async Task EnumerateFiles_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
@@ -74,7 +74,7 @@ public partial class EnumerateFilesTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Fact]
+	[Test]
 	public async Task EnumerateFiles_WithEnumerationOptions_ShouldConsiderSetOptions()
 	{
 		IDirectoryInfo baseDirectory =
@@ -103,8 +103,8 @@ public partial class EnumerateFilesTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateFiles_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
@@ -120,7 +120,7 @@ public partial class EnumerateFilesTests
 		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
-	[Fact]
+	[Test]
 	public async Task EnumerateFiles_WithoutSearchString_ShouldReturnAllDirectFiles()
 	{
 		IDirectoryInfo baseDirectory =
@@ -141,7 +141,7 @@ public partial class EnumerateFilesTests
 		await That(result).Contains(d => string.Equals(d.Name, "bar", StringComparison.Ordinal));
 	}
 
-	[Fact]
+	[Test]
 	public async Task EnumerateFiles_WithSearchPattern_ShouldReturnMatchingFiles()
 	{
 		IDirectoryInfo baseDirectory =
@@ -158,7 +158,7 @@ public partial class EnumerateFilesTests
 		await That(result.Count()).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		EnumerateFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFiles()
 	{
@@ -178,7 +178,7 @@ public partial class EnumerateFilesTests
 		await That(result).HasCount(2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		EnumerateFiles_WithSearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
 	{

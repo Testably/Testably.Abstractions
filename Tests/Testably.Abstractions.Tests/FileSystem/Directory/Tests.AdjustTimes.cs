@@ -2,8 +2,8 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 public partial class Tests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AdjustTimes_WhenCreatingAFile_ShouldAdjustTimes(
 		string path1, string path2, string fileName)
 	{
@@ -53,8 +53,8 @@ public partial class Tests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AdjustTimes_WhenCreatingASymbolicLink_ShouldAdjustTimes(
 		string path1, string path2, string fileName, string pathToTarget)
 	{
@@ -101,8 +101,8 @@ public partial class Tests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AdjustTimes_WhenDeletingAFile_ShouldAdjustTimes(
 		string path1, string path2, string fileName)
 	{
@@ -152,8 +152,8 @@ public partial class Tests
 			.Within(TimeComparison.Tolerance);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AdjustTimes_WhenUpdatingAFile_ShouldAdjustTimesOnlyOnWindows(
 		string path1, string path2, string fileName)
 	{

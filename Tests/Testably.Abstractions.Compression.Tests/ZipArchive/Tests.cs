@@ -5,10 +5,10 @@ using System.IO.Compression;
 namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 #if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
-	[Fact]
+	[Test]
 	public async Task Comment_ShouldBeInitializedEmpty()
 	{
 		FileSystem.Initialize()
@@ -26,8 +26,8 @@ public partial class Tests
 	}
 #endif
 #if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Comment_ShouldBeSettable(string comment)
 	{
 		FileSystem.Initialize()
@@ -46,7 +46,7 @@ public partial class Tests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Entries_CreateMode_ShouldThrowNotSupportedException()
 	{
 		using FileSystemStream stream =
@@ -59,8 +59,8 @@ public partial class Tests
 		await That(Act).Throws<NotSupportedException>();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FileSystem_ShouldBeSet(
 		CompressionLevel compressionLevel)
 	{
@@ -76,7 +76,7 @@ public partial class Tests
 		await That(archive.FileSystem).IsEqualTo(FileSystem);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetEntry_WhenNameIsNotFound_ShouldReturnNull()
 	{
 		FileSystem.Initialize()
@@ -94,8 +94,8 @@ public partial class Tests
 		await That(archive.GetEntry("foo/foo.txt")).IsNotNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Mode_ShouldBeSetCorrectly(ZipArchiveMode mode)
 	{
 		FileSystem.Initialize()

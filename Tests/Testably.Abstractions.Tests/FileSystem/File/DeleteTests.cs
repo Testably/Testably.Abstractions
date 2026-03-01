@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class DeleteTests
+public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingDirectory, string fileName)
 	{
@@ -20,8 +20,8 @@ public partial class DeleteTests
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Delete_MissingFile_ShouldDoNothing(
 		string fileName)
 	{
@@ -33,8 +33,8 @@ public partial class DeleteTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Delete_WhenDirectory_ShouldThrowUnauthorizedAccessException(
 		string fileName)
 	{
@@ -51,8 +51,8 @@ public partial class DeleteTests
 			.WithHResult(-2147024891);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Delete_WithOpenFile_ShouldThrowIOException_OnWindows(string filename)
 	{
 		FileSystem.Initialize();

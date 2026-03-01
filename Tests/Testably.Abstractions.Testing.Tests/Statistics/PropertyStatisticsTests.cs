@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics;
 
 public sealed class PropertyStatisticsTests
 {
-	[Fact]
+	[Test]
 	public async Task Counter_ShouldBeInitializedWithOne()
 	{
 		MockFileSystem fileSystem = new();
@@ -14,7 +14,7 @@ public sealed class PropertyStatisticsTests
 		await That(sut.Counter).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_Get_ShouldContainNameAndGet()
 	{
 		MockFileSystem fileSystem = new();
@@ -28,7 +28,7 @@ public sealed class PropertyStatisticsTests
 		await That(result).Contains(nameof(IFileInfo.IsReadOnly)).And.Contains("{get;}");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_Set_ShouldContainNameAndSet()
 	{
 		MockFileSystem fileSystem = new();

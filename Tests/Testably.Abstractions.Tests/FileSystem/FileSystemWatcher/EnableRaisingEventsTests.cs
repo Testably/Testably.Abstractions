@@ -3,10 +3,10 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 [FileSystemTests]
-public partial class EnableRaisingEventsTests
+public class EnableRaisingEventsTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnableRaisingEvents_SetToFalse_ShouldStop(string path1, string path2)
 	{
 		FileSystem.Initialize().WithSubdirectory(path1).WithSubdirectory(path2);
@@ -27,17 +27,17 @@ public partial class EnableRaisingEventsTests
 		};
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(path1);
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		ms.Reset();
 
 		fileSystemWatcher.EnableRaisingEvents = false;
 
 		FileSystem.Directory.Delete(path2);
-		await That(ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnableRaisingEvents_ShouldBeInitializedAsFalse(string path)
 	{
 		FileSystem.Initialize().WithSubdirectory(path);
@@ -59,6 +59,6 @@ public partial class EnableRaisingEventsTests
 
 		FileSystem.Directory.Delete(path);
 
-		await That(ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 	}
 }

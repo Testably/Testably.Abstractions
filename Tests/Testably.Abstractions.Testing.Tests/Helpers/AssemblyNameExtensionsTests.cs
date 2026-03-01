@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
 using Testably.Abstractions.Testing.Helpers;
+using Assembly = System.Reflection.Assembly;
 
 namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public class AssemblyNameExtensionsTests
 {
-	[Fact]
+	[Test]
 	public async Task GetNameOrDefault_ExecutingAssembly_ShouldReturnCorrectString()
 	{
 		AssemblyName assemblyName = Assembly.GetExecutingAssembly().GetName();
@@ -15,7 +16,7 @@ public class AssemblyNameExtensionsTests
 		await That(result).IsEqualTo("Testably.Abstractions.Testing.Tests");
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetNameOrDefault_NullName_ShouldReturnEmptyString()
 	{
 		AssemblyName assemblyName = Assembly.GetExecutingAssembly().GetName();

@@ -1,9 +1,9 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class GetFullPathTests
+public class GetFullPathTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task GetFullPath_Dot_ShouldReturnToCurrentDirectory()
 	{
 		string expectedFullPath = FileSystem.Directory.GetCurrentDirectory();
@@ -13,16 +13,16 @@ public partial class GetFullPathTests
 		await That(result).IsEqualTo(expectedFullPath);
 	}
 
-	[Theory]
-	[InlineData(@"C:\..", @"C:\", TestOS.Windows)]
-	[InlineData(@"C:\foo", @"C:\foo", TestOS.Windows)]
-	[InlineData(@"C:\foo\", @"C:\foo\", TestOS.Windows)]
-	[InlineData(@"\\?\", @"\\?\", TestOS.Windows)]
-	[InlineData(@"\\?\foo", @"\\?\foo", TestOS.Windows)]
-	[InlineData(@"\??\", @"\??\", TestOS.Windows)]
-	[InlineData(@"\??\BAR", @"\??\BAR", TestOS.Windows)]
-	[InlineData("/foo", "/foo", TestOS.Linux | TestOS.Mac)]
-	[InlineData("/foo/", "/foo/", TestOS.Linux | TestOS.Mac)]
+	[Test]
+	[Arguments(@"C:\..", @"C:\", TestOS.Windows)]
+	[Arguments(@"C:\foo", @"C:\foo", TestOS.Windows)]
+	[Arguments(@"C:\foo\", @"C:\foo\", TestOS.Windows)]
+	[Arguments(@"\\?\", @"\\?\", TestOS.Windows)]
+	[Arguments(@"\\?\foo", @"\\?\foo", TestOS.Windows)]
+	[Arguments(@"\??\", @"\??\", TestOS.Windows)]
+	[Arguments(@"\??\BAR", @"\??\BAR", TestOS.Windows)]
+	[Arguments("/foo", "/foo", TestOS.Linux | TestOS.Mac)]
+	[Arguments("/foo/", "/foo/", TestOS.Linux | TestOS.Mac)]
 	public async Task GetFullPath_EdgeCases_ShouldReturnExpectedValue(
 		string path, string expected, TestOS operatingSystem)
 	{
@@ -38,9 +38,9 @@ public partial class GetFullPathTests
 		await That(result).IsEqualTo(expected);
 	}
 
-	[Theory]
-	[InlineData(@"C:\..", @"C:\", TestOS.Windows)]
-	[InlineData("/..", "/", TestOS.Linux | TestOS.Mac)]
+	[Test]
+	[Arguments(@"C:\..", @"C:\", TestOS.Windows)]
+	[Arguments("/..", "/", TestOS.Linux | TestOS.Mac)]
 	public async Task GetFullPath_ParentOfRoot_ShouldReturnRoot(string path,
 		string expected, TestOS operatingSystem)
 	{
@@ -52,7 +52,7 @@ public partial class GetFullPathTests
 	}
 
 #if FEATURE_PATH_RELATIVE
-	[Fact]
+	[Test]
 	public async Task GetFullPath_Relative_NullBasePath_ShouldThrowArgumentNullException()
 	{
 		void Act()
@@ -65,7 +65,7 @@ public partial class GetFullPathTests
 #endif
 
 #if FEATURE_PATH_RELATIVE
-	[Fact]
+	[Test]
 	public async Task GetFullPath_Relative_RelativeBasePath_ShouldThrowArgumentException()
 	{
 		string relativeBasePath = "not-fully-qualified-base-path";
@@ -83,10 +83,10 @@ public partial class GetFullPathTests
 #endif
 
 #if FEATURE_PATH_RELATIVE
-	[Theory]
-	[InlineData("top/../most/file", "foo/bar", "foo/bar/most/file")]
-	[InlineData("top/../most/../dir/file", "foo", "foo/dir/file")]
-	[InlineData("top/../../most/file", "foo/bar", "foo/most/file")]
+	[Test]
+	[Arguments("top/../most/file", "foo/bar", "foo/bar/most/file")]
+	[Arguments("top/../most/../dir/file", "foo", "foo/dir/file")]
+	[Arguments("top/../../most/file", "foo/bar", "foo/most/file")]
 	public async Task GetFullPath_Relative_ShouldRemoveRelativeSegments(string input, string basePath,
 		string expected)
 	{
@@ -102,10 +102,10 @@ public partial class GetFullPathTests
 #endif
 
 #if FEATURE_PATH_RELATIVE
-	[Theory]
-	[InlineData(@"C:\top\..\most\file", @"C:\foo\bar", @"C:\most\file", TestOS.Windows)]
-	[InlineData(@"C:\top\..\most\file", @"D:\foo\bar", @"C:\most\file", TestOS.Windows)]
-	[InlineData("/top/../most/file", "/foo/bar", "/most/file", TestOS.Linux | TestOS.Mac)]
+	[Test]
+	[Arguments(@"C:\top\..\most\file", @"C:\foo\bar", @"C:\most\file", TestOS.Windows)]
+	[Arguments(@"C:\top\..\most\file", @"D:\foo\bar", @"C:\most\file", TestOS.Windows)]
+	[Arguments("/top/../most/file", "/foo/bar", "/most/file", TestOS.Linux | TestOS.Mac)]
 	public async Task GetFullPath_Relative_WithRootedPath_ShouldIgnoreBasePath(
 		string path, string basePath, string expected, TestOS operatingSystem)
 	{
@@ -118,7 +118,7 @@ public partial class GetFullPathTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task GetFullPath_RelativePathWithDrive_ShouldReturnExpectedValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -133,7 +133,7 @@ public partial class GetFullPathTests
 		await That(result).IsEqualTo(expectedFullPath);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		GetFullPath_RelativePathWithDrive_WhenCurrentDirectoryIsDifferent_ShouldReturnExpectedValue()
 	{
@@ -153,9 +153,9 @@ public partial class GetFullPathTests
 		await That(result).IsEqualTo(expectedFullPath);
 	}
 
-	[Theory]
-	[InlineData(@"X:\foo/bar", @"X:\foo\bar")]
-	[InlineData(@"Y:\foo/bar/", @"Y:\foo\bar\")]
+	[Test]
+	[Arguments(@"X:\foo/bar", @"X:\foo\bar")]
+	[Arguments(@"Y:\foo/bar/", @"Y:\foo\bar\")]
 	public async Task GetFullPath_ShouldFlipAltDirectorySeparators(string path,
 		string expected)
 	{
@@ -166,15 +166,15 @@ public partial class GetFullPathTests
 		await That(result).IsEqualTo(expected);
 	}
 
-	[Theory]
-	[InlineData("top/../most/file", "most/file")]
-	[InlineData("top/../most/../dir/file", "dir/file")]
-	[InlineData("top/../../most/file", "most/file")]
-	[InlineData("top/..//../most/file", "most/file")]
-	[InlineData("top//most//file", "top/most/file")]
-	[InlineData("top//.//file", "top/file")]
-	[InlineData("top/most/file/..", "top/most")]
-	[InlineData("top/..most/file", "top/..most/file")]
+	[Test]
+	[Arguments("top/../most/file", "most/file")]
+	[Arguments("top/../most/../dir/file", "dir/file")]
+	[Arguments("top/../../most/file", "most/file")]
+	[Arguments("top/..//../most/file", "most/file")]
+	[Arguments("top//most//file", "top/most/file")]
+	[Arguments("top//.//file", "top/file")]
+	[Arguments("top/most/file/..", "top/most")]
+	[Arguments("top/..most/file", "top/..most/file")]
 	public async Task GetFullPath_ShouldRemoveRelativeSegments(string input, string expected)
 	{
 		string expectedRootedPath = FileTestHelper.RootDrive(Test,

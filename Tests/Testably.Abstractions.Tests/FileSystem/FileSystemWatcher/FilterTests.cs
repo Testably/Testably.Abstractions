@@ -8,10 +8,10 @@ using System.Linq;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 [FileSystemTests]
-public partial class FilterTests
+public class FilterTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Filter_Matching_ShouldTriggerNotification(string path)
 	{
 		FileSystem.Initialize().WithSubdirectory(path);
@@ -35,7 +35,7 @@ public partial class FilterTests
 		fileSystemWatcher.Filter = path;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(path);
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
@@ -43,8 +43,8 @@ public partial class FilterTests
 		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(path));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Filter_NotMatching_ShouldNotTriggerNotification(
 		string path, string filter)
 	{
@@ -71,14 +71,14 @@ public partial class FilterTests
 		fileSystemWatcher.Filter = filter;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(path);
-		await That(ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 
 		await That(result).IsNull();
 	}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Filters_ShouldMatchAnyOfTheSpecifiedFilters(
 		string[] filteredPaths, string[] otherPaths)
 	{
@@ -107,7 +107,7 @@ public partial class FilterTests
 			FileSystem.Directory.Delete(path);
 		}
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 
 		foreach (string path in otherPaths)
 		{

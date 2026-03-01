@@ -10,8 +10,8 @@ namespace Testably.Abstractions.Testing.Tests.FileSystem;
 public class FileMockTests
 {
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetAttributes_SafeFileHandle_WithMissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
@@ -29,8 +29,8 @@ public class FileMockTests
 	}
 #endif
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetUnixFileMode_SafeFileHandle_ShouldThrowPlatformNotSupportedExceptionOnWindows(
 		string path)
 	{
@@ -54,8 +54,8 @@ public class FileMockTests
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetAttributes_SafeFileHandle_ShouldUpdateValue(
 		string path, FileAttributes attributes)
 	{
@@ -75,8 +75,8 @@ public class FileMockTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetCreationTime(string path, DateTime creationTime)
 	{
 		MockFileSystem fileSystem = new();
@@ -88,8 +88,8 @@ public class FileMockTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetCreationTime_SafeFileHandle_ShouldUpdateValue(
 		string path, DateTime creationTime)
 	{
@@ -107,8 +107,8 @@ public class FileMockTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetCreationTimeUtc(string path, DateTime creationTime)
 	{
 		MockFileSystem fileSystem = new();
@@ -120,8 +120,8 @@ public class FileMockTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetCreationTimeUtc_SafeFileHandle_ShouldUpdateValue(
 		string path, DateTime creationTimeUtc)
 	{
@@ -140,8 +140,8 @@ public class FileMockTests
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastAccessTime_SafeFileHandle_ShouldUpdateValue(
 		string path, DateTime lastAccessTime)
 	{
@@ -160,8 +160,8 @@ public class FileMockTests
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastAccessTimeUtc_SafeFileHandle_ShouldUpdateValue(
 		string path, DateTime lastAccessTimeUtc)
 	{
@@ -180,8 +180,8 @@ public class FileMockTests
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastWriteTime_SafeFileHandle_ShouldUpdateValue(
 		string path, DateTime lastWriteTime)
 	{
@@ -200,8 +200,8 @@ public class FileMockTests
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastWriteTimeUtc_SafeFileHandle_ShouldUpdateValue(
 		string path, DateTime lastWriteTimeUtc)
 	{
@@ -220,8 +220,8 @@ public class FileMockTests
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetUnixFileMode_SafeFileHandle_ShouldUpdateValue(
 		string path, UnixFileMode mode)
 	{

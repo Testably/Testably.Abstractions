@@ -5,8 +5,8 @@ namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public class FileSystemExtensionsTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetMoveLocation_LocationNotUnderSource_ShouldThrowNotSupportedException(
 		string location, string source, string destination)
 	{
@@ -26,7 +26,7 @@ public class FileSystemExtensionsTests
 				.Contains($"'{sut.Path.GetFullPath(source)}'"));
 	}
 
-	[Fact]
+	[Test]
 	public async Task RandomOrDefault_WithMockFileSystem_ShouldUseRandomFromRandomSystem()
 	{
 		MockFileSystem fileSystem = new();
@@ -37,7 +37,7 @@ public class FileSystemExtensionsTests
 		await That(result).IsEqualTo(fileSystem.RandomSystem.Random.Shared);
 	}
 
-	[Fact]
+	[Test]
 	public async Task RandomOrDefault_WithRealFileSystem_ShouldUseSharedRandom()
 	{
 		RealFileSystem fileSystem = new();

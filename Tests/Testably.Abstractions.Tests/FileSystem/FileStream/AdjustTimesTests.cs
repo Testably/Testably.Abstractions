@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
 [FileSystemTests]
-public partial class AdjustTimesTests
+public class AdjustTimesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CopyTo_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
@@ -50,8 +50,8 @@ public partial class AdjustTimesTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Read_AsSpan_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -85,8 +85,8 @@ public partial class AdjustTimesTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Read_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
@@ -125,21 +125,21 @@ public partial class AdjustTimesTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAsync_AsMemory_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		byte[] buffer = new byte[2];
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
-		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, CancellationToken);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay, CancellationToken);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		_ = await stream.ReadAsync(buffer.AsMemory(), TestContext.Current.CancellationToken);
+		_ = await stream.ReadAsync(buffer.AsMemory(), CancellationToken);
 
 		DateTime lastAccessTime = WaitToBeUpdatedToAfter(
 			() => FileSystem.File.GetLastAccessTimeUtc(path), updateTime);
@@ -161,8 +161,8 @@ public partial class AdjustTimesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAsync_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
@@ -171,14 +171,14 @@ public partial class AdjustTimesTests
 
 		byte[] buffer = new byte[2];
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
-		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, CancellationToken);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay, CancellationToken);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
 #pragma warning disable CA1835
-		_ = await stream.ReadAsync(buffer, 0, 2, TestContext.Current.CancellationToken);
+		_ = await stream.ReadAsync(buffer, 0, 2, CancellationToken);
 #pragma warning restore CA1835
 
 		DateTime lastAccessTime = WaitToBeUpdatedToAfter(
@@ -200,8 +200,8 @@ public partial class AdjustTimesTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadByte_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
@@ -238,8 +238,8 @@ public partial class AdjustTimesTests
 			.Within(TimeComparison.Tolerance);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Seek_ShouldNotAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
@@ -271,8 +271,8 @@ public partial class AdjustTimesTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Write_AsSpan_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -307,8 +307,8 @@ public partial class AdjustTimesTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Write_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
@@ -347,21 +347,21 @@ public partial class AdjustTimesTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAsync_AsMemory_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
-		await FileSystem.File.WriteAllBytesAsync(path, Array.Empty<byte>(), TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllBytesAsync(path, Array.Empty<byte>(), CancellationToken);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay, CancellationToken);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 
 		await using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
 		{
-			await stream.WriteAsync(bytes.AsMemory(), TestContext.Current.CancellationToken);
+			await stream.WriteAsync(bytes.AsMemory(), CancellationToken);
 		}
 
 		DateTime lastWriteTime = WaitToBeUpdatedToAfter(
@@ -384,8 +384,8 @@ public partial class AdjustTimesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAsync_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
@@ -393,15 +393,15 @@ public partial class AdjustTimesTests
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
-		await FileSystem.File.WriteAllBytesAsync(path, Array.Empty<byte>(), TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllBytesAsync(path, Array.Empty<byte>(), CancellationToken);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay, CancellationToken);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 
 		await using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
 		{
 #pragma warning disable CA1835
-			await stream.WriteAsync(bytes, 0, 2, TestContext.Current.CancellationToken);
+			await stream.WriteAsync(bytes, 0, 2, CancellationToken);
 #pragma warning restore CA1835
 		}
 
@@ -424,8 +424,8 @@ public partial class AdjustTimesTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteByte_ShouldAdjustTimes(string path, byte[] bytes, byte singleByte)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,

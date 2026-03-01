@@ -6,10 +6,10 @@ using System.Text;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class AppendAllLinesTests
+public class AppendAllLinesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllLines_Enumerable_WithoutEncoding_ShouldUseUtf8(
 		string path)
 	{
@@ -21,8 +21,8 @@ public partial class AppendAllLinesTests
 		await That(bytes.Length).IsEqualTo(6 + Environment.NewLine.Length);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllLines_ExistingFile_ShouldAppendLinesToFile(
 		string path, List<string> previousContents, List<string> contents)
 	{
@@ -36,8 +36,8 @@ public partial class AppendAllLinesTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllLines_MissingFile_ShouldCreateFile(
 		string path, List<string> contents)
 	{
@@ -49,8 +49,8 @@ public partial class AppendAllLinesTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllLines_NullContent_ShouldThrowArgumentNullException(
 		string path)
 	{
@@ -64,8 +64,8 @@ public partial class AppendAllLinesTests
 			.WithParamName("contents");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllLines_NullEncoding_ShouldThrowArgumentNullException(
 		string path)
 	{
@@ -79,8 +79,8 @@ public partial class AppendAllLinesTests
 			.WithParamName("encoding");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllLines_ShouldEndWithNewline(string path)
 	{
 		string[] contents = ["foo", "bar"];
@@ -92,8 +92,8 @@ public partial class AppendAllLinesTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		AppendAllLines_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path, string[] contents)
@@ -110,8 +110,8 @@ public partial class AppendAllLinesTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[ClassData(typeof(TestDataGetEncodingDifference))]
+	[Test]
+	[MethodDataSource(typeof(TestData), nameof(TestData.GetEncodingDifference))]
 	public async Task AppendAllLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding)
 	{
@@ -126,8 +126,8 @@ public partial class AppendAllLinesTests
 		await That(result[0]).IsEqualTo(lines[0]);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllLines_WithoutEncoding_ShouldUseUtf8(
 		string path)
 	{

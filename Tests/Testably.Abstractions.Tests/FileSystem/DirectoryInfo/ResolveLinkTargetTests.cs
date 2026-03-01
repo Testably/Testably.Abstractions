@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 [FileSystemTests]
-public partial class ResolveLinkTargetTests
+public class ResolveLinkTargetTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	#region Test Setup
 
@@ -17,8 +17,8 @@ public partial class ResolveLinkTargetTests
 
 	#endregion
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
 		string path,
 		string pathToFinalTarget
@@ -48,8 +48,8 @@ public partial class ResolveLinkTargetTests
 			.WithMessageContaining($"'{directoryInfo.FullName}'");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_ShouldReturnNull(string path)
 	{
 		IDirectoryInfo targetDir = FileSystem.DirectoryInfo.New(path);
@@ -60,8 +60,8 @@ public partial class ResolveLinkTargetTests
 		await That(resolvedTarget).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_WithChainedLink_ShouldReturnNull(
 		string path,
 		string pathToLink,
@@ -78,8 +78,8 @@ public partial class ResolveLinkTargetTests
 		await That(resolvedTarget?.Name).IsEqualTo(innerLink.LinkTarget);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_ShouldReturnImmediateFile(string path, string pathToTarget)
 	{
 		IDirectoryInfo targetDir = FileSystem.DirectoryInfo.New(pathToTarget);
@@ -93,8 +93,8 @@ public partial class ResolveLinkTargetTests
 		await That(resolvedTarget?.FullName).IsEqualTo(targetDir.FullName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_WithChainedLink_ShouldReturnImmediateLink(
 		string path,
 		string pathToLink,
@@ -113,8 +113,8 @@ public partial class ResolveLinkTargetTests
 		await That(resolvedTarget?.FullName).IsEqualTo(innerLink.FullName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_ShouldReturnFinalFile(string path, string pathToTarget)
 	{
 		IDirectoryInfo targetDir = FileSystem.DirectoryInfo.New(pathToTarget);
@@ -128,8 +128,8 @@ public partial class ResolveLinkTargetTests
 		await That(resolvedTarget?.FullName).IsEqualTo(targetDir.FullName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_WithChainedLink_ShouldReturnFinalFile(
 		string path,
 		string pathToLink,
@@ -150,8 +150,8 @@ public partial class ResolveLinkTargetTests
 		await That(resolvedTarget?.FullName).IsEqualTo(targetDir.FullName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_OfDifferentTypes_ShouldThrow(
 		string directoryName,
 		string fileLinkName,

@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public partial class RandomProviderTests
 {
-	[Fact]
+	[Test]
 	public async Task Default_ShouldReturnRandomGuid()
 	{
 		List<Guid> results = [];
@@ -22,7 +22,7 @@ public partial class RandomProviderTests
 		await That(results).AreAllUnique();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Default_ShouldReturnRandomNumbers()
 	{
 		List<int> results = [];
@@ -37,8 +37,8 @@ public partial class RandomProviderTests
 		await That(results).AreAllUnique();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateGuid_ShouldReturnSpecifiedGuid(Guid guid)
 	{
 		List<Guid> results = [];
@@ -53,8 +53,8 @@ public partial class RandomProviderTests
 		await That(results).All().AreEqualTo(guid);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateGuid_ShouldReturnSpecifiedGuids(Guid[] guids)
 	{
 		List<Guid> results = [];
@@ -69,8 +69,8 @@ public partial class RandomProviderTests
 		await That(results).Contains(guids).IgnoringInterspersedItems();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_Next_ShouldReturnSpecifiedValue(int seed, int value)
 	{
 		List<int> results = [];
@@ -86,8 +86,8 @@ public partial class RandomProviderTests
 		await That(results).All().AreEqualTo(value);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_Next_ShouldReturnSpecifiedValues(int seed, int[] values)
 	{
 		List<int> results = [];
@@ -103,8 +103,8 @@ public partial class RandomProviderTests
 		await That(results).Contains(values).IgnoringInterspersedItems();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_Next_WithMaxValue_ShouldReturnSpecifiedValue(
 		int seed, int value)
 	{
@@ -123,8 +123,8 @@ public partial class RandomProviderTests
 		await That(results).All().AreEqualTo(expectedValue);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_Next_WithMinAndMaxValue_Larger_ShouldReturnSpecifiedValue(
 		int seed, int value)
 	{
@@ -144,8 +144,8 @@ public partial class RandomProviderTests
 		await That(results).All().AreEqualTo(expectedValue);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_Next_WithMinAndMaxValue_Smaller_ShouldReturnSpecifiedValue(
 		int seed, int value)
 	{
@@ -164,8 +164,8 @@ public partial class RandomProviderTests
 		await That(results).All().AreEqualTo(minValue);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_Next_WithoutGenerator_ShouldReturnRandomValues(int seed)
 	{
 		List<int> results = [];
@@ -181,8 +181,8 @@ public partial class RandomProviderTests
 		await That(results).AreAllUnique();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextBytes_ShouldReturnSpecifiedValue(
 		int seed, byte[] value)
 	{
@@ -202,8 +202,8 @@ public partial class RandomProviderTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextBytes_Span_ShouldReturnSpecifiedValue(
 		int seed, byte[] value)
 	{
@@ -224,8 +224,8 @@ public partial class RandomProviderTests
 #endif
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextBytes_Span_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
@@ -246,8 +246,8 @@ public partial class RandomProviderTests
 #endif
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextBytes_Span_WithSmallerBuffer_ShouldReturnPartlyInitializedBytes(
 			int seed, byte[] value)
 	{
@@ -271,8 +271,8 @@ public partial class RandomProviderTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextBytes_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
@@ -291,8 +291,8 @@ public partial class RandomProviderTests
 		await That(results).AreAllUnique();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextBytes_WithSmallerBuffer_ShouldReturnPartlyInitializedBytes(
 		int seed, byte[] value)
 	{
@@ -316,8 +316,8 @@ public partial class RandomProviderTests
 		await That(results).All().ComplyWith(v => v.IsEqualTo(expected));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextDouble_ShouldReturnSpecifiedValue(
 		int seed, double value)
 	{
@@ -334,8 +334,8 @@ public partial class RandomProviderTests
 		await That(results).All().AreEqualTo(value);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextDouble_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
@@ -353,8 +353,8 @@ public partial class RandomProviderTests
 	}
 
 #if FEATURE_RANDOM_ADVANCED
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextInt64_ShouldReturnSpecifiedValue(int seed, long value)
 	{
 		List<long> results = [];
@@ -372,8 +372,8 @@ public partial class RandomProviderTests
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextInt64_WithMaxValue_ShouldReturnSpecifiedValue(
 		int seed, long value)
 	{
@@ -394,8 +394,8 @@ public partial class RandomProviderTests
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextInt64_WithMinAndMaxValue_Larger_ShouldReturnSpecifiedValue(
 			int seed, long value)
 	{
@@ -417,8 +417,8 @@ public partial class RandomProviderTests
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextInt64_WithMinAndMaxValue_Smaller_ShouldReturnSpecifiedValue(
 			int seed, long value)
 	{
@@ -440,8 +440,8 @@ public partial class RandomProviderTests
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextInt64_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
@@ -460,8 +460,8 @@ public partial class RandomProviderTests
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextSingle_ShouldReturnSpecifiedValue(
 		int seed, float value)
 	{
@@ -480,8 +480,8 @@ public partial class RandomProviderTests
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GenerateRandom_NextSingle_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
@@ -499,7 +499,7 @@ public partial class RandomProviderTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task GetRandom_DefaultValue_ShouldReturnSharedRandom()
 	{
 		RandomProviderMock randomProvider = new();
@@ -516,8 +516,8 @@ public partial class RandomProviderTests
 		await That(result1).IsNotEqualTo(result2).InAnyOrder();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetRandom_FixedSeed_ShouldReturnSeparateRandomInstances(int seed)
 	{
 		RandomProviderMock randomProvider = new();
@@ -535,8 +535,8 @@ public partial class RandomProviderTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NextBytes_Span_WithoutByteGenerator_ShouldUseRealRandomValuesFromSeed(
 		int seed)
 	{
@@ -552,8 +552,8 @@ public partial class RandomProviderTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NextBytes_WithoutByteGenerator_ShouldUseRealRandomValuesFromSeed(
 		int seed)
 	{

@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class GetRelativePathTests
+public class GetRelativePathTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetRelativePath_CommonParentDirectory_ShouldReturnRelativePath(
 		string baseDirectory, string directory1, string directory2)
 	{
@@ -20,8 +20,8 @@ public partial class GetRelativePathTests
 		await That(result).IsEqualTo(expectedRelativePath);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetRelativePath_DifferentDrives_ShouldReturnAbsolutePath(
 		string path1, string path2)
 	{
@@ -34,27 +34,27 @@ public partial class GetRelativePathTests
 		await That(result).IsEqualTo(path2);
 	}
 
-	[Theory]
-	[InlineData(@"C:\FOO", @"C:\foo", ".", TestOS.Windows)]
-	[InlineData("/FOO", "/foo", "../foo", TestOS.Linux)]
-	[InlineData("/FOO", "/foo", ".", TestOS.Mac)]
-	[InlineData("foo", "foo/", ".", TestOS.All)]
-	[InlineData("foo", "foo-bar", "../foo-bar", TestOS.All)]
-	[InlineData("foo/", "foo/", ".", TestOS.All)]
-	[InlineData(@"C:\Foo", @"C:\Bar", @"..\Bar", TestOS.Windows)]
-	[InlineData(@"C:\Foo", @"C:\Bar\", @"..\Bar\", TestOS.Windows)]
-	[InlineData(@"C:\Foo", @"C:\Foo\Bar", "Bar", TestOS.Windows)]
-	[InlineData(@"C:\Foo\Bar", @"C:\Foo\", "..", TestOS.Windows)]
-	[InlineData(@"C:\Foo", @"C:\Foo\Bar\", @"Bar\", TestOS.Windows)]
-	[InlineData(@"C:\Foo\Bar", @"C:\Bar\Bar", @"..\..\Bar\Bar", TestOS.Windows)]
-	[InlineData(@"C:\Foo\Foo", @"C:\Foo\Bar", @"..\Bar", TestOS.Windows)]
-	[InlineData("/Foo", "/Bar", "../Bar", TestOS.Linux | TestOS.Mac)]
-	[InlineData("/", "/Bar", "Bar", TestOS.Linux | TestOS.Mac)]
-	[InlineData("/Foo", "/Bar/", "../Bar/", TestOS.Linux | TestOS.Mac)]
-	[InlineData("/Foo", "/Foo/Bar", "Bar", TestOS.Linux | TestOS.Mac)]
-	[InlineData("/Foo", "/Foo/Bar/", "Bar/", TestOS.Linux | TestOS.Mac)]
-	[InlineData("/Foo/Bar", "/Bar/Bar", "../../Bar/Bar", TestOS.Linux | TestOS.Mac)]
-	[InlineData("/Foo/Foo", "/Foo/Bar", "../Bar", TestOS.Linux | TestOS.Mac)]
+	[Test]
+	[Arguments(@"C:\FOO", @"C:\foo", ".", TestOS.Windows)]
+	[Arguments("/FOO", "/foo", "../foo", TestOS.Linux)]
+	[Arguments("/FOO", "/foo", ".", TestOS.Mac)]
+	[Arguments("foo", "foo/", ".", TestOS.All)]
+	[Arguments("foo", "foo-bar", "../foo-bar", TestOS.All)]
+	[Arguments("foo/", "foo/", ".", TestOS.All)]
+	[Arguments(@"C:\Foo", @"C:\Bar", @"..\Bar", TestOS.Windows)]
+	[Arguments(@"C:\Foo", @"C:\Bar\", @"..\Bar\", TestOS.Windows)]
+	[Arguments(@"C:\Foo", @"C:\Foo\Bar", "Bar", TestOS.Windows)]
+	[Arguments(@"C:\Foo\Bar", @"C:\Foo\", "..", TestOS.Windows)]
+	[Arguments(@"C:\Foo", @"C:\Foo\Bar\", @"Bar\", TestOS.Windows)]
+	[Arguments(@"C:\Foo\Bar", @"C:\Bar\Bar", @"..\..\Bar\Bar", TestOS.Windows)]
+	[Arguments(@"C:\Foo\Foo", @"C:\Foo\Bar", @"..\Bar", TestOS.Windows)]
+	[Arguments("/Foo", "/Bar", "../Bar", TestOS.Linux | TestOS.Mac)]
+	[Arguments("/", "/Bar", "Bar", TestOS.Linux | TestOS.Mac)]
+	[Arguments("/Foo", "/Bar/", "../Bar/", TestOS.Linux | TestOS.Mac)]
+	[Arguments("/Foo", "/Foo/Bar", "Bar", TestOS.Linux | TestOS.Mac)]
+	[Arguments("/Foo", "/Foo/Bar/", "Bar/", TestOS.Linux | TestOS.Mac)]
+	[Arguments("/Foo/Bar", "/Bar/Bar", "../../Bar/Bar", TestOS.Linux | TestOS.Mac)]
+	[Arguments("/Foo/Foo", "/Foo/Bar", "../Bar", TestOS.Linux | TestOS.Mac)]
 	public async Task GetRelativePath_EdgeCases_ShouldReturnExpectedValue(string relativeTo, string path,
 		string expected, TestOS operatingSystem)
 	{
@@ -69,7 +69,7 @@ public partial class GetRelativePathTests
 		await That(result).IsEqualTo(expected);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetRelativePath_FromAbsolutePathInCurrentDirectory_ShouldReturnRelativePath()
 	{
 		string rootedPath = FileSystem.Path.Combine(BasePath, "input");
@@ -81,8 +81,8 @@ public partial class GetRelativePathTests
 		await That(result).IsEqualTo("a.txt");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetRelativePath_RootedPath_ShouldReturnAbsolutePath(
 		string baseDirectory, string directory1, string directory2)
 	{
@@ -95,7 +95,7 @@ public partial class GetRelativePathTests
 		await That(result).IsEqualTo(expectedRelativePath);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetRelativePath_RootedPath_ShouldWorkOnAnyDrive()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -109,8 +109,8 @@ public partial class GetRelativePathTests
 		await That(result).IsEqualTo("subDirectory");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetRelativePath_ToItself_ShouldReturnDot(string path)
 	{
 		string expectedResult = ".";

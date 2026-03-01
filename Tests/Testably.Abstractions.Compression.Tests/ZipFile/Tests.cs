@@ -1,9 +1,9 @@
 ﻿namespace Testably.Abstractions.Compression.Tests.ZipFile;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task FileSystemExtension_ShouldBeSet()
 	{
 		IZipFile result = FileSystem.ZipFile();

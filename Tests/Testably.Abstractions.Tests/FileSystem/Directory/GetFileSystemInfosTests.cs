@@ -9,10 +9,10 @@ using System.Globalization;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class GetFileSystemInfosTests
+public class GetFileSystemInfosTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		GetFileSystemEntries_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
@@ -28,8 +28,8 @@ public partial class GetFileSystemInfosTests
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		GetFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
 			string path)
@@ -53,8 +53,8 @@ public partial class GetFileSystemInfosTests
 		await That(result).Contains(initialized[2].FullName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		GetFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
 			string path)
@@ -75,20 +75,20 @@ public partial class GetFileSystemInfosTests
 		await That(result).Contains(initialized[2].ToString());
 	}
 
-	[Theory]
+	[Test]
 #if NETFRAMEWORK
-	[InlineAutoData(false, "")]
+	[AutoArguments(false, "")]
 #else
-	[InlineAutoData(true, "")]
+	[AutoArguments(true, "")]
 #endif
-	[InlineAutoData(true, "*")]
-	[InlineAutoData(true, ".")]
-	[InlineAutoData(true, "*.*")]
-	[InlineData(true, "a*c", "abc")]
-	[InlineData(true, "ab*c", "abc")]
-	[InlineData(true, "abc?", "abc")]
-	[InlineData(false, "ab?c", "abc")]
-	[InlineData(false, "ac", "abc")]
+	[AutoArguments(true, "*")]
+	[AutoArguments(true, ".")]
+	[AutoArguments(true, "*.*")]
+	[Arguments(true, "a*c", "abc")]
+	[Arguments(true, "ab*c", "abc")]
+	[Arguments(true, "abc?", "abc")]
+	[Arguments(false, "ab?c", "abc")]
+	[Arguments(false, "ac", "abc")]
 	public async Task GetFileSystemEntries_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
@@ -109,8 +109,8 @@ public partial class GetFileSystemInfosTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFileSystemEntries_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
 	{
@@ -137,8 +137,8 @@ public partial class GetFileSystemInfosTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFileSystemEntries_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
@@ -157,8 +157,8 @@ public partial class GetFileSystemInfosTests
 				Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		GetFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
 			string path)
@@ -182,8 +182,8 @@ public partial class GetFileSystemInfosTests
 		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
 		string path)
 	{
@@ -204,7 +204,7 @@ public partial class GetFileSystemInfosTests
 		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		GetFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
 	{

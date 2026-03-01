@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class Tests
+public partial class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 #if FEATURE_FILESYSTEM_NET_7_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task CreateTempSubdirectory_ShouldCreateTheTemporaryDirectory()
 	{
 		IDirectoryInfo result = FileSystem.Directory.CreateTempSubdirectory();
@@ -16,8 +16,8 @@ public partial class Tests
 #endif
 
 #if FEATURE_FILESYSTEM_NET_7_OR_GREATER
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateTempSubdirectory_WithPrefix_ShouldStartWithPrefix(string prefix)
 	{
 		IDirectoryInfo result = FileSystem.Directory.CreateTempSubdirectory(prefix);
@@ -25,7 +25,7 @@ public partial class Tests
 		await That(result.Name).StartsWith(prefix);
 	}
 #endif
-	[Fact]
+	[Test]
 	public async Task GetCurrentDirectory_ShouldNotBeRooted()
 	{
 		string result = FileSystem.Directory.GetCurrentDirectory();
@@ -33,8 +33,8 @@ public partial class Tests
 		await That(result).IsNotEqualTo(FileTestHelper.RootDrive(Test));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetDirectoryRoot_ShouldReturnRoot(string path)
 	{
 		string root = FileTestHelper.RootDrive(Test);
@@ -45,7 +45,7 @@ public partial class Tests
 		await That(result).IsEqualTo(root);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetLogicalDrives_ShouldNotBeEmpty()
 	{
 		string[] result = FileSystem.Directory.GetLogicalDrives();
@@ -54,8 +54,8 @@ public partial class Tests
 		await That(result).Contains(FileTestHelper.RootDrive(Test));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetParent_ArbitraryPaths_ShouldNotBeNull(string path1,
 		string path2,
 		string path3)
@@ -70,7 +70,7 @@ public partial class Tests
 		await That(result!.FullName).IsEqualTo(expectedParent.FullName);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetParent_Root_ShouldReturnNull()
 	{
 		string path = FileTestHelper.RootDrive(Test);
@@ -80,8 +80,8 @@ public partial class Tests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		SetCurrentDirectory_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
@@ -104,8 +104,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetCurrentDirectory_RelativePath_ShouldBeFullyQualified(string path)
 	{
 		string previousCurrentDirectory = FileSystem.Directory.GetCurrentDirectory();

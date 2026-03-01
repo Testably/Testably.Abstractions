@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class EncryptDecryptTests
+public class EncryptDecryptTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	[SupportedOSPlatform("windows")]
 	public async Task Decrypt_EncryptedData_ShouldReturnOriginalText(
 		string path, string contents)
@@ -23,8 +23,8 @@ public partial class EncryptDecryptTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	[SupportedOSPlatform("windows")]
 	public async Task Decrypt_UnencryptedData_ShouldReturnOriginalText(
 		string path, string contents)
@@ -39,8 +39,8 @@ public partial class EncryptDecryptTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	[SupportedOSPlatform("windows")]
 	public async Task Encrypt_Decrypt_ShouldChangeEncryptedFileAttribute(
 		string path, string contents)
@@ -58,8 +58,8 @@ public partial class EncryptDecryptTests
 		await That(FileSystem.File.GetAttributes(path)).DoesNotHaveFlag(FileAttributes.Encrypted);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	[SupportedOSPlatform("windows")]
 	public async Task Encrypt_ShouldChangeData(
 		string path, byte[] bytes)
@@ -75,8 +75,8 @@ public partial class EncryptDecryptTests
 		await That(result).IsNotEqualTo(bytes).InAnyOrder();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	[SupportedOSPlatform("windows")]
 	public async Task Encrypt_Twice_ShouldIgnoreTheSecondTime(
 		string path, string contents)

@@ -1,13 +1,29 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 [FileSystemTests]
-public partial class WaitForChangedTests
+public class WaitForChangedTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	#pragma warning disable MA0018
+	public static IEnumerable<(string, Func<IFileSystemWatcher, IWaitForChangedResult>)>
+		GetWaitForChangedTimeoutParameters()
+	{
+		yield return ("foo.dll", fileSystemWatcher
+			=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100));
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
+		yield return ("bar.txt",
+				fileSystemWatcher
+					=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed,
+						TimeSpan.FromMilliseconds(100))
+			);
+#endif
+	}
+	#pragma warning restore MA0018
+	[Test]
+	[AutoArguments]
 	public async Task WaitForChanged_ShouldBlockUntilEventHappens(string path)
 	{
 		SkipIfBrittleTestsShouldBeSkipped();
@@ -24,7 +40,7 @@ public partial class WaitForChangedTests
 				{
 					while (!ms.IsSet)
 					{
-						await Task.Delay(10, TestContext.Current.CancellationToken);
+						await Task.Delay(10, CancellationToken);
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
 					}
@@ -33,7 +49,7 @@ public partial class WaitForChangedTests
 				{
 					// Ignore any ObjectDisposedException
 				}
-			}, TestContext.Current.CancellationToken);
+			}, CancellationToken);
 
 			using (CancellationTokenSource cts = new(ExpectSuccess))
 			{
@@ -53,8 +69,8 @@ public partial class WaitForChangedTests
 		}
 	}
 
-	[Theory]
-	[MemberData(nameof(GetWaitForChangedTimeoutParameters))]
+	[Test]
+	[MethodDataSource(nameof(GetWaitForChangedTimeoutParameters))]
 	public async Task WaitForChanged_Timeout_ShouldReturnTimedOut(string path,
 		Func<IFileSystemWatcher, IWaitForChangedResult> callback)
 	{
@@ -73,7 +89,7 @@ public partial class WaitForChangedTests
 				{
 					while (!ms.IsSet)
 					{
-						await Task.Delay(10, TestContext.Current.CancellationToken);
+						await Task.Delay(10, CancellationToken);
 						FileSystem.Directory.CreateDirectory(fullPath);
 						FileSystem.Directory.Delete(fullPath);
 					}
@@ -82,7 +98,7 @@ public partial class WaitForChangedTests
 				{
 					// Ignore any ObjectDisposedException
 				}
-			}, TestContext.Current.CancellationToken);
+			}, CancellationToken);
 			IWaitForChangedResult result = callback(fileSystemWatcher);
 
 			await That(fileSystemWatcher.EnableRaisingEvents).IsTrue();
@@ -96,31 +112,4 @@ public partial class WaitForChangedTests
 			ms.Set();
 		}
 	}
-
-	#region Helpers
-
-	#pragma warning disable MA0018
-	public static TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>>
-		GetWaitForChangedTimeoutParameters()
-	{
-		TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>> theoryData = new()
-		{
-			{
-				"foo.dll", fileSystemWatcher
-					=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100)
-			},
-		};
-#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
-		theoryData.Add(
-			"bar.txt",
-			fileSystemWatcher
-				=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed,
-					TimeSpan.FromMilliseconds(100))
-		);
-#endif
-		return theoryData;
-	}
-	#pragma warning restore MA0018
-
-	#endregion
 }

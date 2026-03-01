@@ -2,7 +2,7 @@
 
 public class DriveInfoWrapperTests
 {
-	[Fact]
+	[Test]
 	public async Task FromDriveInfo_Null_ShouldReturnNull()
 	{
 		RealFileSystem fileSystem = new();

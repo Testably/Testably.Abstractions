@@ -5,10 +5,10 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task BeginInit_ShouldStopListening(string path)
 	{
 		FileSystem.Initialize();
@@ -31,7 +31,7 @@ public partial class Tests
 				{
 					while (!ms.IsSet)
 					{
-						await Task.Delay(10, TestContext.Current.CancellationToken);
+						await Task.Delay(10, CancellationToken);
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
 					}
@@ -40,7 +40,7 @@ public partial class Tests
 				{
 					// Ignore any ObjectDisposedException
 				}
-			}, TestContext.Current.CancellationToken);
+			}, CancellationToken);
 			IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 250);
 
@@ -56,7 +56,7 @@ public partial class Tests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task Container_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
@@ -66,8 +66,8 @@ public partial class Tests
 		await That(fileSystemWatcher.Container).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EndInit_ShouldRestartListening(string path)
 	{
 		FileSystem.Initialize();
@@ -89,7 +89,7 @@ public partial class Tests
 				{
 					while (!ms.IsSet)
 					{
-						await Task.Delay(10, TestContext.Current.CancellationToken);
+						await Task.Delay(10, CancellationToken);
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
 					}
@@ -98,7 +98,7 @@ public partial class Tests
 				{
 					// Ignore any ObjectDisposedException
 				}
-			}, TestContext.Current.CancellationToken);
+			}, CancellationToken);
 			IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, ExpectSuccess);
 
@@ -111,10 +111,10 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[InlineData(-1, 4096)]
-	[InlineData(4095, 4096)]
-	[InlineData(4097, 4097)]
+	[Test]
+	[Arguments(-1, 4096)]
+	[Arguments(4095, 4096)]
+	[Arguments(4097, 4097)]
 	public async Task InternalBufferSize_ShouldAtLeastHave4096Bytes(
 		int bytes, int expectedBytes)
 	{
@@ -127,7 +127,7 @@ public partial class Tests
 		await That(fileSystemWatcher.InternalBufferSize).IsEqualTo(expectedBytes);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Site_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
@@ -137,7 +137,7 @@ public partial class Tests
 		await That(fileSystemWatcher.Site).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Site_ShouldBeWritable()
 	{
 		ISite site = new MockSite();
@@ -150,7 +150,7 @@ public partial class Tests
 		await That(fileSystemWatcher.Site).IsEqualTo(site);
 	}
 
-	[Fact]
+	[Test]
 	public async Task SynchronizingObject_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
@@ -160,7 +160,7 @@ public partial class Tests
 		await That(fileSystemWatcher.SynchronizingObject).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task SynchronizingObject_ShouldBeWritable()
 	{
 		ISynchronizeInvoke synchronizingObject = new MockSynchronizeInvoke();

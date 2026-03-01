@@ -5,7 +5,7 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
-public partial class ResolveLinkTargetTests
+public class ResolveLinkTargetTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	#region Test Setup
 
@@ -17,8 +17,8 @@ public partial class ResolveLinkTargetTests
 
 	#endregion
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
 		string path,
 		string pathToFinalTarget
@@ -52,8 +52,8 @@ public partial class ResolveLinkTargetTests
 			.WithMessageContaining($"'{fileInfo.FullName}'");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_ShouldReturnNull(string path)
 	{
 		IFileInfo targetFile = FileSystem.FileInfo.New(path);
@@ -64,8 +64,8 @@ public partial class ResolveLinkTargetTests
 		await That(resolvedTarget).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_WithChainedLink_ShouldReturnNull(
 		string path,
 		string pathToLink,
@@ -80,8 +80,8 @@ public partial class ResolveLinkTargetTests
 		await That(resolvedTarget?.Name).IsEqualTo(innerLink.LinkTarget);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_ShouldReturnImmediateFile(string path, string pathToTarget)
 	{
 		IFileInfo targetFile = FileSystem.FileInfo.New(pathToTarget);
@@ -95,8 +95,8 @@ public partial class ResolveLinkTargetTests
 		await That(resolvedTarget?.FullName).IsEqualTo(targetFile.FullName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_WithChainedLink_ShouldReturnImmediateLink(
 		string path,
 		string pathToLink,
@@ -113,8 +113,8 @@ public partial class ResolveLinkTargetTests
 		await That(resolvedTarget?.FullName).IsEqualTo(innerLink.FullName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_ShouldReturnFinalFile(string path, string pathToTarget)
 	{
 		IFileInfo targetFile = FileSystem.FileInfo.New(pathToTarget);
@@ -128,8 +128,8 @@ public partial class ResolveLinkTargetTests
 		await That(resolvedTarget?.FullName).IsEqualTo(targetFile.FullName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_WithChainedLink_ShouldReturnFinalFile(
 		string path,
 		string pathToLink,
@@ -147,8 +147,8 @@ public partial class ResolveLinkTargetTests
 		await That(resolvedTarget?.FullName).IsEqualTo(targetFile.FullName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_OfDifferentTypes_ShouldThrow(
 		string fileName,
 		string directoryName,

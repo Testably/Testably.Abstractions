@@ -2,10 +2,10 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class ExistsTests
+public class ExistsTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_ExistingDirectory_ShouldReturnTrue(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -15,8 +15,8 @@ public partial class ExistsTests
 		await That(result).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_ExistingFile_ShouldReturnTrue(string path)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
@@ -26,8 +26,8 @@ public partial class ExistsTests
 		await That(result).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_ExistingFileOrDirectory_ShouldReturnTrue(string path)
 	{
 		bool result = FileSystem.Path.Exists(path);
@@ -35,7 +35,7 @@ public partial class ExistsTests
 		await That(result).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Exists_Null_ShouldReturnFalse()
 	{
 		bool result = FileSystem.Path.Exists(null);
@@ -43,8 +43,8 @@ public partial class ExistsTests
 		await That(result).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_ShouldWorkWithAbsolutePaths(string path)
 	{
 		string absolutePath = FileSystem.Path.GetFullPath(path);

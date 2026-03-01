@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public class TimeProviderTests
 {
-	[Fact]
+	[Test]
 	public async Task Now_ShouldReturnCurrentDateTime()
 	{
 		DateTime begin = DateTime.UtcNow;
@@ -20,7 +20,7 @@ public class TimeProviderTests
 		await That(result2).IsOnOrAfter(begin).And.IsOnOrBefore(end);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Random_ShouldReturnRandomDateTime()
 	{
 		ConcurrentBag<DateTime> results = [];
@@ -33,8 +33,8 @@ public class TimeProviderTests
 		await That(results).AreAllUnique();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetTo_ShouldChangeTimeForRead(DateTime time1, DateTime time2)
 	{
 		ITimeProvider timeProvider = TimeProvider.Use(time1);
@@ -47,7 +47,7 @@ public class TimeProviderTests
 		await That(result2).IsEqualTo(time2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Use_ShouldReturnFixedDateTime()
 	{
 		DateTime now = TimeTestHelper.GetRandomTime();
@@ -60,7 +60,7 @@ public class TimeProviderTests
 		await That(result2).IsEqualTo(now);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Use_UnspecifiedKind_ShouldConvertToUtcDateTime()
 	{
 		DateTime unspecifiedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Unspecified);

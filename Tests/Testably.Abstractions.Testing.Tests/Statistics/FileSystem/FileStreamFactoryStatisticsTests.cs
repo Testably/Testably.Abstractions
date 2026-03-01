@@ -11,7 +11,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 public class FileStreamFactoryStatisticsTests
 {
 #if NET6_0_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task Method_New_SafeFileHandle_FileAccess_Int_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -32,7 +32,7 @@ public class FileStreamFactoryStatisticsTests
 #endif
 
 #if NET6_0_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task Method_New_SafeFileHandle_FileAccess_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -51,7 +51,7 @@ public class FileStreamFactoryStatisticsTests
 	}
 #endif
 #if NET6_0_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task Method_New_SafeFileHandle_FileAccess_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -69,7 +69,7 @@ public class FileStreamFactoryStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_New_String_FileMode_FileAccess_FileShare_Int_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -88,7 +88,7 @@ public class FileStreamFactoryStatisticsTests
 			path, mode, access, share, bufferSize, useAsync);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		Method_New_String_FileMode_FileAccess_FileShare_Int_FileOptions_ShouldRegisterCall()
 	{
@@ -108,7 +108,7 @@ public class FileStreamFactoryStatisticsTests
 			path, mode, access, share, bufferSize, options);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_New_String_FileMode_FileAccess_FileShare_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -125,7 +125,7 @@ public class FileStreamFactoryStatisticsTests
 			path, mode, access, share, bufferSize);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_New_String_FileMode_FileAccess_FileShare_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -141,7 +141,7 @@ public class FileStreamFactoryStatisticsTests
 			path, mode, access, share);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_New_String_FileMode_FileAccess_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -156,7 +156,7 @@ public class FileStreamFactoryStatisticsTests
 			path, mode, access);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_New_String_FileMode_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -171,7 +171,7 @@ public class FileStreamFactoryStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
-	[Fact]
+	[Test]
 	public async Task Method_New_String_FileStreamOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -187,7 +187,7 @@ public class FileStreamFactoryStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_Wrap_FileStream_ShouldRegisterCall()
 	{
 		string path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -216,7 +216,7 @@ public class FileStreamFactoryStatisticsTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldBeFileStream()
 	{
 		IPathStatistics<IFileStreamFactory, FileSystemStream> sut

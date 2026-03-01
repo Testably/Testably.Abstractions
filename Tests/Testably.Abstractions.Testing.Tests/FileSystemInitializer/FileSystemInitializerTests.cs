@@ -6,8 +6,8 @@ namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
 public class FileSystemInitializerTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task With_DirectoryDescriptions_ShouldCreateDirectories(
 		DirectoryDescription[] directories)
 	{
@@ -23,8 +23,8 @@ public class FileSystemInitializerTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task With_DirectoryDescriptions_WithSubdirectories_ShouldCreateDirectories(
 		string parent, DirectoryDescription[] directories)
 	{
@@ -42,8 +42,8 @@ public class FileSystemInitializerTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task With_FileDescription_WithBytes_ShouldCreateFileContent(string name,
 		byte[] bytes)
 	{
@@ -58,8 +58,8 @@ public class FileSystemInitializerTests
 		await That(fileSystem.File.ReadAllBytes(name)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task With_FileDescription_WithContent_ShouldCreateFileContent(string name,
 		string content)
 	{
@@ -74,8 +74,8 @@ public class FileSystemInitializerTests
 		await That(fileSystem.File.ReadAllText(name)).IsEqualTo(content);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task With_FileDescriptions_ShouldCreateFiles(FileDescription[] files)
 	{
 		MockFileSystem fileSystem = new();
@@ -90,9 +90,9 @@ public class FileSystemInitializerTests
 		}
 	}
 
-	[Theory]
-	[InlineAutoData(true)]
-	[InlineAutoData(false)]
+	[Test]
+	[AutoArguments(true)]
+	[AutoArguments(false)]
 	public async Task With_FileDescriptions_ShouldSetIsReadOnlyFlag(bool isReadOnly, string name)
 	{
 		FileDescription description = new(name)
@@ -109,8 +109,8 @@ public class FileSystemInitializerTests
 		await That(fileSystem.FileInfo.New(name).IsReadOnly).IsEqualTo(isReadOnly);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task With_FilesAndDirectories_ShouldBothBeCreated(string fileName,
 		string directoryName)
 	{
@@ -126,8 +126,8 @@ public class FileSystemInitializerTests
 		await That(fileSystem.Directory.Exists(directoryName)).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithFile_ExistingDirectory_ShouldThrowTestingException(string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -142,8 +142,8 @@ public class FileSystemInitializerTests
 		await That(Act).ThrowsExactly<TestingException>().WithMessage($"*{path}*").AsWildcard();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithFile_ExistingFile_ShouldThrowTestingException(string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -156,8 +156,8 @@ public class FileSystemInitializerTests
 		await That(Act).ThrowsExactly<TestingException>().WithMessage($"*{path}*").AsWildcard();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithFile_HasStringContent_ShouldWriteFileContent(string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -170,8 +170,8 @@ public class FileSystemInitializerTests
 		await That(fileSystem.File.ReadAllText(path)).IsEqualTo("foo");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithFile_MissingDirectory_ShouldCreateDirectory(string directoryPath,
 		string fileName)
 	{
@@ -186,8 +186,8 @@ public class FileSystemInitializerTests
 		await That(fileSystem.Directory.Exists(directoryPath)).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithSubdirectories_ShouldCreateAllDirectories(string[] paths)
 	{
 		MockFileSystem fileSystem = new();
@@ -205,8 +205,8 @@ public class FileSystemInitializerTests
 		await That(result).IsEqualTo(sut);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithSubdirectory_ExistingDirectory_ShouldThrowTestingException(string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -219,8 +219,8 @@ public class FileSystemInitializerTests
 		await That(Act).ThrowsExactly<TestingException>().WithMessage($"*{path}*").AsWildcard();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithSubdirectory_ExistingFile_ShouldThrowTestingException(string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -233,8 +233,8 @@ public class FileSystemInitializerTests
 		await That(Act).ThrowsExactly<TestingException>().WithMessage($"*{path}*").AsWildcard();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithSubdirectory_MultipleDirectoryLevels(string level1, string level2)
 	{
 		string path = Path.Combine(level1, level2);

@@ -1,9 +1,9 @@
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class GetDirectoryRootTests
+public class GetDirectoryRootTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task GetDirectoryRoot_Empty_ShouldThrowArgumentException()
 	{
 		void Act()
@@ -14,7 +14,7 @@ public partial class GetDirectoryRootTests
 		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetDirectoryRoot_ShouldReturnDefaultRoot()
 	{
 		string expectedRoot = FileTestHelper.RootDrive(Test);
@@ -24,10 +24,10 @@ public partial class GetDirectoryRootTests
 		await That(result).IsEqualTo(expectedRoot);
 	}
 
-	[Theory]
-	[InlineData('A')]
-	[InlineData('C')]
-	[InlineData('X')]
+	[Test]
+	[Arguments('A')]
+	[Arguments('C')]
+	[Arguments('X')]
 	public async Task GetDirectoryRoot_SpecificDrive_ShouldReturnRootWithCorrectDrive(
 		char drive)
 	{

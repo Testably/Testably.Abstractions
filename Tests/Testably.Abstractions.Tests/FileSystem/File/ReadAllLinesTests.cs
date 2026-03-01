@@ -5,10 +5,10 @@ using System.Text;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class ReadAllLinesTests
+public class ReadAllLinesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllLines_Empty_ShouldReturnEmptyArray(string path)
 	{
 		FileSystem.File.WriteAllText(path, "");
@@ -18,8 +18,8 @@ public partial class ReadAllLinesTests
 		await That(results).IsEmpty();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllLines_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		void Act()
@@ -32,8 +32,8 @@ public partial class ReadAllLinesTests
 			.WithHResult(-2147024894);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllLines_ShouldEnumerateLines(string path, string[] lines)
 	{
 		string contents = string.Join(Environment.NewLine, lines);
@@ -44,8 +44,8 @@ public partial class ReadAllLinesTests
 		await That(results).IsEqualTo(lines);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllLines_ShouldNotReturnByteOrderMark(string path, string content)
 	{
 		FileSystem.File.WriteAllLines(path, [content], Encoding.UTF32);
@@ -58,8 +58,8 @@ public partial class ReadAllLinesTests
 		await That(result[0]).IsEqualTo(content);
 	}
 
-	[Theory]
-	[ClassData(typeof(TestDataGetEncodingDifference))]
+	[Test]
+	[MethodDataSource(typeof(TestData), nameof(TestData.GetEncodingDifference))]
 	public async Task ReadAllLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding)
 	{

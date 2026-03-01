@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
 public class TimerHandlerTests
 {
-	[Fact]
+	[Test]
 	public async Task Index_AccessDisposedIndex_ShouldThrowException()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
@@ -26,7 +26,7 @@ public class TimerHandlerTests
 		await That(exception).IsExactly<KeyNotFoundException>();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Index_MultipleTimers_ShouldIncrement()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
@@ -40,7 +40,7 @@ public class TimerHandlerTests
 		await That(sut[1]).IsEqualTo(timer1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Index_ShouldNotReuseDisposedIndexes()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()

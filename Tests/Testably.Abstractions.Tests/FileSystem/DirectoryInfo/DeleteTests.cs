@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 [FileSystemTests]
-public partial class DeleteTests
+public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -22,8 +22,8 @@ public partial class DeleteTests
 			.WithHResult(-2147024893);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Delete_ReadonlyDirectory_ShouldThrowIOExceptionOnWindows(string path)
 	{
 		IDirectoryInfo sut = FileSystem.Directory.CreateDirectory(path);
@@ -43,8 +43,8 @@ public partial class DeleteTests
 			.WithHResult(-2146232800);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Delete_Recursive_WithOpenFile_ShouldThrowIOException_OnWindows(
 		string path, string filename)
 	{
@@ -77,8 +77,8 @@ public partial class DeleteTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
 		string path, string subdirectory)
 	{
@@ -99,8 +99,8 @@ public partial class DeleteTests
 		await That(FileSystem.Directory.Exists(subdirectoryPath)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Delete_ShouldDeleteDirectory(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -118,8 +118,8 @@ public partial class DeleteTests
 		await That(FileSystem.Directory.Exists(sut.FullName)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Delete_WithSubdirectory_ShouldThrowIOException_AndNotDeleteDirectory(
 		string path, string subdirectory)
 	{
@@ -144,9 +144,9 @@ public partial class DeleteTests
 		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
-	[InlineData(null)]
+	[Test]
+	[AutoArguments]
+	[Arguments(null)]
 	public async Task Delete_CurrentDirectory_ShouldThrowIOException_OnWindows(string? nested)
 	{
 		// Arrange
@@ -185,9 +185,9 @@ public partial class DeleteTests
 		}
 	}
 
-	[Theory]
-	[InlineData("next")]
-	[InlineData("next", "sub")]
+	[Test]
+	[Arguments("next")]
+	[Arguments("next", "sub")]
 	public async Task Delete_DirNextToCurrentDirectory_ShouldNotThrow(params string[] paths)
 	{
 		// Arrange

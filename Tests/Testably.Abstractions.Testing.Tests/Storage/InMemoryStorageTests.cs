@@ -21,8 +21,8 @@ public class InMemoryStorageTests
 
 	#endregion
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Copy_Overwrite_ShouldAdjustAvailableFreeSpace(
 		int file1Size, int file2Size)
 	{
@@ -45,14 +45,14 @@ public class InMemoryStorageTests
 			.IsEqualTo(availableFreeSpaceBefore + file2Size - file1Size);
 	}
 
-	[Fact]
+	[Test]
 	public async Task CurrentDirectory_ShouldBeInitializedToDefaultRoot()
 	{
 		string expectedRoot = string.Empty.PrefixRoot(new MockFileSystem());
 		await That(Storage.CurrentDirectory).IsEqualTo(expectedRoot);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Delete_RaceCondition_ShouldReturnFalse()
 	{
 		MockFileSystem fileSystem = new();
@@ -75,11 +75,11 @@ public class InMemoryStorageTests
 		await That(exception).IsExactly<DirectoryNotFoundException>();
 	}
 
-	[Theory]
-	[InlineData((string?)null)]
-	[InlineData("")]
-	[InlineData(" ")]
-	[InlineData("\t")]
+	[Test]
+	[Arguments((string?)null)]
+	[Arguments("")]
+	[Arguments(" ")]
+	[Arguments("\t")]
 	public async Task GetDrive_NullOrWhitespace_ShouldReturnNull(string? driveName)
 	{
 		IStorageDrive? result = Storage.GetDrive(driveName);
@@ -87,7 +87,7 @@ public class InMemoryStorageTests
 		await That(result).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetOrAddDrive_Null_ShouldReturnNull()
 	{
 		IStorageDrive? result = Storage.GetOrAddDrive(driveName: null);
@@ -95,7 +95,7 @@ public class InMemoryStorageTests
 		await That(result).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetOrCreateContainer_WithMetadata_ShouldBeKept()
 	{
 		FileSystemExtensibility extensibility = new();
@@ -114,8 +114,8 @@ public class InMemoryStorageTests
 		await That(result2).IsEqualTo(42);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_RequestDeniedForChild_ShouldRollback(
 		string locationPath, string destinationPath)
 	{
@@ -152,8 +152,8 @@ public class InMemoryStorageTests
 		await That(exception).IsExactly<IOException>();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_WithBackup_ShouldChangeAvailableFreeSpace(
 		int file1Size, int file2Size, int file3Size)
 	{
@@ -178,8 +178,8 @@ public class InMemoryStorageTests
 		await That(availableFreeSpaceAfter).IsEqualTo(availableFreeSpaceBefore + file2Size);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_WithoutBackup_ShouldNotChangeAvailableFreeSpace(
 		int file1Size, int file2Size)
 	{
@@ -201,8 +201,8 @@ public class InMemoryStorageTests
 		await That(availableFreeSpaceAfter).IsEqualTo(availableFreeSpaceBefore);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task TryAddContainer_ShouldNotifyWhenAdded(string path)
 	{
 		bool receivedNotification = false;
@@ -218,8 +218,8 @@ public class InMemoryStorageTests
 		await That(container!.Type).IsEqualTo(FileSystemTypes.Directory);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task TryAddContainer_ShouldNotNotifyWhenExistsPreviously(string path)
 	{
 		IStorageLocation location = Storage.GetLocation(path);

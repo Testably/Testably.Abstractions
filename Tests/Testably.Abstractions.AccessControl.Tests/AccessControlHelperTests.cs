@@ -3,9 +3,9 @@
 namespace Testably.Abstractions.AccessControl.Tests;
 
 [FileSystemTests]
-public partial class AccessControlHelperTests
+public class AccessControlHelperTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task GetExtensibilityOrThrow_DirectoryInfo_ShouldNotThrow()
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("foo");
@@ -13,7 +13,7 @@ public partial class AccessControlHelperTests
 		await That(() => sut.GetExtensibilityOrThrow()).DoesNotThrow();
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetExtensibilityOrThrow_FileInfo_ShouldNotThrow()
 	{
 		IFileInfo sut = FileSystem.FileInfo.New("foo");
@@ -21,7 +21,7 @@ public partial class AccessControlHelperTests
 		await That(() => sut.GetExtensibilityOrThrow()).DoesNotThrow();
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetExtensibilityOrThrow_FileSystemStream_ShouldNotThrow()
 	{
 		FileSystemStream sut = FileSystem.FileStream.New("foo", FileMode.Create);

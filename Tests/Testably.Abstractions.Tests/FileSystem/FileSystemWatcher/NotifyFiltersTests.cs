@@ -4,10 +4,10 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 [FileSystemTests]
-public partial class NotifyFiltersTests
+public class NotifyFiltersTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NotifyFilter_AppendFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
 		// This test is brittle on MacOS
@@ -53,16 +53,16 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.AppendAllText(fileName, "foo");
 
-		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(EnsureTimeout, CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[InlineAutoData(NotifyFilters.CreationTime)]
-	[InlineAutoData(NotifyFilters.LastAccess)]
-	[InlineAutoData(NotifyFilters.LastWrite)]
-	[InlineAutoData(NotifyFilters.Security)]
-	[InlineAutoData(NotifyFilters.Size)]
+	[Test]
+	[AutoArguments(NotifyFilters.CreationTime)]
+	[AutoArguments(NotifyFilters.LastAccess)]
+	[AutoArguments(NotifyFilters.LastWrite)]
+	[AutoArguments(NotifyFilters.Security)]
+	[AutoArguments(NotifyFilters.Size)]
 	public async Task NotifyFilter_AppendFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string fileName)
 	{
@@ -109,15 +109,15 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.AppendAllText(fileName, "foo");
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(fileName));
 		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Changed);
 		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(fileName));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NotifyFilter_CreateDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
 		// This test is brittle on MacOS
@@ -154,12 +154,12 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.CreateDirectory(path);
 
-		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(EnsureTimeout, CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[InlineAutoData(NotifyFilters.DirectoryName)]
+	[Test]
+	[AutoArguments(NotifyFilters.DirectoryName)]
 	public async Task NotifyFilter_CreateDirectory_ShouldTriggerCreatedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
@@ -188,15 +188,15 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.CreateDirectory(path);
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
 		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
 		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(path));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NotifyFilter_CreateFile_ShouldNotNotifyOnOtherFilters(string path)
 	{
 		// This test is brittle on MacOS
@@ -233,12 +233,12 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(path, "foo");
 
-		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(EnsureTimeout, CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[InlineAutoData(NotifyFilters.FileName)]
+	[Test]
+	[AutoArguments(NotifyFilters.FileName)]
 	public async Task NotifyFilter_CreateFile_ShouldTriggerCreatedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
@@ -267,15 +267,15 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(path, "foo");
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
 		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
 		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(path));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NotifyFilter_DeleteDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
 		// This test is brittle on MacOS
@@ -312,12 +312,12 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.Delete(path);
 
-		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(EnsureTimeout, CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[InlineAutoData(NotifyFilters.DirectoryName)]
+	[Test]
+	[AutoArguments(NotifyFilters.DirectoryName)]
 	public async Task NotifyFilter_DeleteDirectory_ShouldTriggerDeletedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
@@ -346,15 +346,15 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.Delete(path);
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
 		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
 		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(path));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NotifyFilter_DeleteFile_ShouldNotNotifyOnOtherFilters(string path)
 	{
 		// This test is brittle on MacOS
@@ -391,12 +391,12 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Delete(path);
 
-		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(EnsureTimeout, CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[InlineAutoData(NotifyFilters.FileName)]
+	[Test]
+	[AutoArguments(NotifyFilters.FileName)]
 	public async Task NotifyFilter_DeleteFile_ShouldTriggerDeletedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
@@ -425,15 +425,15 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Delete(path);
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
 		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
 		await That(result.Name).IsEqualTo(FileSystem.Path.GetFileName(path));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NotifyFilter_MoveFile_DifferentDirectories_ShouldNotifyOnLinuxOrMac(
 		string sourcePath, string sourceName,
 		string destinationPath, string destinationName)
@@ -470,7 +470,7 @@ public partial class NotifyFiltersTests
 			FileSystem.Path.Combine(sourcePath, sourceName),
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
 		await That(result.FullPath)
@@ -482,8 +482,8 @@ public partial class NotifyFiltersTests
 		await That(result.OldName).IsEqualTo(FileSystem.Path.Combine(sourcePath, sourceName));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NotifyFilter_MoveFile_DifferentDirectories_ShouldNotNotify_OnWindows(
 		string sourcePath, string sourceName,
 		string destinationPath, string destinationName)
@@ -520,13 +520,13 @@ public partial class NotifyFiltersTests
 			FileSystem.Path.Combine(sourcePath, sourceName),
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
-		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(EnsureTimeout, CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[InlineAutoData(true)]
-	[InlineAutoData(false)]
+	[Test]
+	[AutoArguments(true)]
+	[AutoArguments(false)]
 	public async Task NotifyFilter_MoveFileOutOfTheWatchedDirectory_ShouldTriggerDeleted_OnWindows(
 		bool includeSubdirectories, string sourcePath, string sourceName,
 		string destinationPath, string destinationName)
@@ -563,16 +563,16 @@ public partial class NotifyFiltersTests
 			FileSystem.Path.Combine(sourcePath, sourceName),
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
 		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(sourcePath, sourceName));
 		await That(result.Name).IsEqualTo(sourceName);
 	}
 
-	[Theory]
-	[InlineAutoData(true)]
-	[InlineAutoData(false)]
+	[Test]
+	[AutoArguments(true)]
+	[AutoArguments(false)]
 	public async Task NotifyFilter_MoveFileInToTheWatchedDirectory_ShouldTriggerCreated_OnWindows(
 		bool includeSubdirectories, string sourcePath, string sourceName,
 		string destinationPath, string destinationName)
@@ -609,15 +609,15 @@ public partial class NotifyFiltersTests
 			FileSystem.Path.Combine(sourcePath, sourceName),
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
 		await That(result.FullPath).IsEqualTo(FileSystem.Path.Combine(destinationPath, destinationName));
 		await That(result.Name).IsEqualTo(destinationName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NotifyFilter_MoveFile_ShouldNotNotifyOnOtherFilters(
 		string sourceName, string destinationName)
 	{
@@ -657,12 +657,12 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(EnsureTimeout, CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[InlineAutoData(NotifyFilters.FileName)]
+	[Test]
+	[AutoArguments(NotifyFilters.FileName)]
 	public async Task NotifyFilter_MoveFile_ShouldTriggerRenamedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string sourceName, string destinationName)
 	{
@@ -694,7 +694,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
 		await That(result.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
@@ -703,8 +703,8 @@ public partial class NotifyFiltersTests
 		await That(result.OldName).IsEqualTo(FileSystem.Path.GetFileName(sourceName));
 	}
 
-	[Theory]
-	[InlineAutoData(NotifyFilters.DirectoryName)]
+	[Test]
+	[AutoArguments(NotifyFilters.DirectoryName)]
 	public async Task NotifyFilter_MoveDirectory_ShouldTriggerRenamedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string sourceName, string destinationName)
 	{
@@ -736,7 +736,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.Move(sourceName, destinationName);
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Renamed);
 		await That(result.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
@@ -745,9 +745,9 @@ public partial class NotifyFiltersTests
 		await That(result.OldName).IsEqualTo(FileSystem.Path.GetFileName(sourceName));
 	}
 
-	[Theory]
-	[InlineAutoData(NotifyFilters.DirectoryName, true)]
-	[InlineAutoData(NotifyFilters.DirectoryName, false)]
+	[Test]
+	[AutoArguments(NotifyFilters.DirectoryName, true)]
+	[AutoArguments(NotifyFilters.DirectoryName, false)]
 	public async Task NotifyFilter_MoveDirectoryOutOfTheWatchedDirectory_ShouldTriggerDeletedEventOnNotifyFilters_OnWindows(
 		NotifyFilters notifyFilter, bool includeSubdirectories, string sourceName, string destinationName)
 	{
@@ -781,16 +781,16 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.Move(sourcePath, destinationName);
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
 		await That(result.FullPath).IsEqualTo(sourcePath);
 		await That(result.Name).IsEqualTo(sourceName);
 	}
 
-	[Theory]
-	[InlineAutoData(NotifyFilters.DirectoryName, true)]
-	[InlineAutoData(NotifyFilters.DirectoryName, false)]
+	[Test]
+	[AutoArguments(NotifyFilters.DirectoryName, true)]
+	[AutoArguments(NotifyFilters.DirectoryName, false)]
 	public async Task NotifyFilter_MoveDirectoryInToTheWatchedDirectory_ShouldTriggerCreatedEventOnNotifyFilters_OnWindows(
 		NotifyFilters notifyFilter, bool includeSubdirectories, string sourceName, string destinationName)
 	{
@@ -824,15 +824,15 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.Move(sourceName, destinationPath);
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Created);
 		await That(result.FullPath).IsEqualTo(destinationPath);
 		await That(result.Name).IsEqualTo(destinationName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NotifyFilter_WriteFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
 		// This test is brittle on MacOS
@@ -879,16 +879,16 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(fileName, "foo");
 
-		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(EnsureTimeout, CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[InlineAutoData(NotifyFilters.CreationTime)]
-	[InlineAutoData(NotifyFilters.LastAccess)]
-	[InlineAutoData(NotifyFilters.LastWrite)]
-	[InlineAutoData(NotifyFilters.Security)]
-	[InlineAutoData(NotifyFilters.Size)]
+	[Test]
+	[AutoArguments(NotifyFilters.CreationTime)]
+	[AutoArguments(NotifyFilters.LastAccess)]
+	[AutoArguments(NotifyFilters.LastWrite)]
+	[AutoArguments(NotifyFilters.Security)]
+	[AutoArguments(NotifyFilters.Size)]
 	public async Task NotifyFilter_WriteFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string fileName)
 	{
@@ -935,7 +935,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(fileName, "foo");
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(fileName));
 		await That(result.ChangeType).IsEqualTo(WatcherChangeTypes.Changed);

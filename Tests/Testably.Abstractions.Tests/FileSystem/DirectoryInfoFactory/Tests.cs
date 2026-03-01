@@ -1,11 +1,11 @@
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfoFactory;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[InlineData("\0foo")]
-	[InlineData("foo\0bar")]
+	[Test]
+	[Arguments("\0foo")]
+	[Arguments("foo\0bar")]
 	public async Task New_NullCharacter_ShouldThrowArgumentException(string path)
 	{
 #if NET8_0_OR_GREATER
@@ -26,8 +26,8 @@ public partial class Tests
 			.WithHResult(-2147024809);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_ShouldCreateNewDirectoryInfoFromPath(string path)
 	{
 		IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
@@ -36,8 +36,8 @@ public partial class Tests
 		await That(result.Exists).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_WithTrailingDirectorySeparatorChar_ShouldHavePathAsName(string path)
 	{
 		IDirectoryInfo result = FileSystem.DirectoryInfo
@@ -46,7 +46,7 @@ public partial class Tests
 		await That(result.Name).IsEqualTo(path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Wrap_Null_ShouldReturnNull()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
@@ -57,8 +57,8 @@ public partial class Tests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Wrap_ShouldWrapFromDirectoryInfo(string path)
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
@@ -72,8 +72,8 @@ public partial class Tests
 		await That(result.Exists).IsEqualTo(directoryInfo.Exists);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException(string path)
 	{
 		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&

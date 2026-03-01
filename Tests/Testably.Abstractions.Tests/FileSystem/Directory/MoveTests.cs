@@ -4,10 +4,10 @@ using Testably.Abstractions.Testing.Initializer;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class MoveTests
+public class MoveTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_CaseOnlyChange_ShouldMoveDirectoryWithContent(string path)
 	{
 		Skip.If(Test.IsNetFramework);
@@ -37,8 +37,8 @@ public partial class MoveTests
 			SearchOption.AllDirectories)).HasSingle();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_CaseOnlyChange_ShouldThrowIOException_OnNetFramework(string path)
 	{
 		Skip.IfNot(Test.IsNetFramework);
@@ -56,8 +56,8 @@ public partial class MoveTests
 		await That(Act).Throws<IOException>().WithHResult(-2146232800);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_DestinationDoesNotExist_ShouldThrowDirectoryNotFoundException(
 		string source)
 	{
@@ -73,8 +73,8 @@ public partial class MoveTests
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_ShouldMoveAttributes(string source, string destination)
 	{
 		FileSystem.Initialize()
@@ -89,8 +89,8 @@ public partial class MoveTests
 			.IsEqualTo(expectedAttributes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_ShouldMoveDirectoryWithContent(string source, string destination)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -114,8 +114,8 @@ public partial class MoveTests
 			SearchOption.AllDirectories)).HasSingle();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_ShouldNotAdjustTimes(string source, string destination)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -148,8 +148,8 @@ public partial class MoveTests
 			.Within(TimeComparison.Tolerance);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_SourceAndDestinationIdentical_ShouldThrowIOException(string path)
 	{
 		FileSystem.Initialize()
@@ -163,8 +163,8 @@ public partial class MoveTests
 		await That(Act).Throws<IOException>().WithHResult(-2146232800);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_WithLockedFile_ShouldStillMoveDirectory_NotOnWindows(
 		string source, string destination)
 	{
@@ -202,8 +202,8 @@ public partial class MoveTests
 			.HasSingle();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_WithLockedFile_ShouldThrowIOException_AndNotMoveDirectoryAtAll_OnWindows(
 		string source, string destination)
 	{
@@ -239,8 +239,8 @@ public partial class MoveTests
 			.HasSingle();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
 		string source, string destination)
 	{
@@ -269,7 +269,7 @@ public partial class MoveTests
 			.HasSingle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Move_CurrentDirectory_ShouldThrowIOException_OnWindows()
 	{
 		// Arrange
@@ -288,8 +288,8 @@ public partial class MoveTests
 		);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_NestedCurrentDirectory_ShouldThrowIOException_OnWindows(string nested)
 	{
 		// Arrange
@@ -322,9 +322,9 @@ public partial class MoveTests
 		}
 	}
 
-	[Theory]
-	[InlineData("next")]
-	[InlineData("next", "sub")]
+	[Test]
+	[Arguments("next")]
+	[Arguments("next", "sub")]
 	public async Task Move_DirNextToCurrentDirectory_ShouldNotThrow(params string[] paths)
 	{
 		// Arrange

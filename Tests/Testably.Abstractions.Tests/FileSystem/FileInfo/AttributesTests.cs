@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
-public partial class AttributesTests
+public class AttributesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Attributes_SetDirectoryAttribute_ShouldRemainFile(string path)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
@@ -17,8 +17,8 @@ public partial class AttributesTests
 		await That(sut.Attributes).DoesNotHaveFlag(FileAttributes.Directory);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Attributes_ShouldNotHaveDirectoryAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, "foo");

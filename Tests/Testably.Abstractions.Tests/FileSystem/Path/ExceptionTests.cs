@@ -5,10 +5,22 @@ using System.Linq.Expressions;
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class ExceptionTests
+public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[MemberData(nameof(GetPathCallbacks), "")]
+	public static IEnumerable<(Expression<Action<IPath>>, string, bool)>
+		GetPathCallbacksWithEmptyPath()
+		=> GetPathCallbacks("");
+
+	public static IEnumerable<(Expression<Action<IPath>>, string, bool)>
+		GetPathCallbacksWithNullPath()
+		=> GetPathCallbacks(null);
+
+	public static IEnumerable<(Expression<Action<IPath>>, string, bool)>
+		GetPathCallbacksWithWhitespacePath()
+		=> GetPathCallbacks("  ");
+
+	[Test]
+	[MethodDataSource(nameof(GetPathCallbacksWithEmptyPath))]
 	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IPath>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -25,8 +37,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetPathCallbacks), (string?)null)]
+	[Test]
+	[MethodDataSource(nameof(GetPathCallbacksWithNullPath))]
 	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IPath>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -42,8 +54,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetPathCallbacks), "  ")]
+	[Test]
+	[MethodDataSource(nameof(GetPathCallbacksWithWhitespacePath))]
 	public async Task Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IPath>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -65,21 +77,18 @@ public partial class ExceptionTests
 	#region Helpers
 
 	#pragma warning disable MA0018
-	public static TheoryData<Expression<Action<IPath>>, string, bool> GetPathCallbacks(string? path)
+	private static IEnumerable<(Expression<Action<IPath>>, string, bool)> GetPathCallbacks(string? path)
 	{
-		TheoryData<Expression<Action<IPath>>, string, bool> theoryData = new();
 		foreach ((ExceptionTestHelper.TestTypes TestType,
 			string ParamName,
 			Expression<Action<IPath>> Callback) item in GetPathCallbackTestParameters(path!)
 				.Where(item => item.TestType.HasFlag(path.ToTestType())))
 		{
-			theoryData.Add(
+			yield return (
 				item.Callback,
 				item.ParamName,
 				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck));
 		}
-
-		return theoryData;
 	}
 	#pragma warning restore MA0018
 

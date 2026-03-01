@@ -8,9 +8,9 @@ using Testably.Abstractions.Testing.FileSystem;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class EnumerateDirectoriesTests
+public class EnumerateDirectoriesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task EnumerateDirectories_AbsolutePath_ShouldNotIncludeTrailingSlash()
 	{
 		FileSystem.Directory.CreateDirectory("foo");
@@ -24,8 +24,8 @@ public partial class EnumerateDirectoriesTests
 		await That(result).Contains(FileSystem.Path.Combine(BasePath, "bar"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateDirectories_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
@@ -41,8 +41,8 @@ public partial class EnumerateDirectoriesTests
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateDirectories_MissingDirectory_ShouldThrowDirectoryNotFoundExceptionImmediately(
 			string path)
@@ -58,7 +58,7 @@ public partial class EnumerateDirectoriesTests
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task EnumerateDirectories_RelativePath_ShouldNotIncludeTrailingSlash()
 	{
 		string path = ".";
@@ -73,7 +73,7 @@ public partial class EnumerateDirectoriesTests
 		await That(result).Contains(FileSystem.Path.Combine(path, "bar"));
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		EnumerateDirectories_RelativePathToParentDirectory_ShouldNotIncludeTrailingSlash()
 	{
@@ -89,8 +89,8 @@ public partial class EnumerateDirectoriesTests
 		await That(result).Contains(FileSystem.Path.Combine(path, "bar"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateDirectories_SearchOptionAllDirectories_FullPath_ShouldReturnAllSubdirectoriesWithFullPath(
 			string path)
@@ -110,8 +110,8 @@ public partial class EnumerateDirectoriesTests
 		await That(result).Contains(FileSystem.Path.Combine(baseDirectory.FullName, "bar"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
 		string path)
 	{
@@ -129,20 +129,20 @@ public partial class EnumerateDirectoriesTests
 		await That(result).Contains(FileSystem.Path.Combine(path, "bar"));
 	}
 
-	[Theory]
+	[Test]
 #if NETFRAMEWORK
-	[InlineAutoData(false, "")]
+	[AutoArguments(false, "")]
 #else
-	[InlineAutoData(true, "")]
+	[AutoArguments(true, "")]
 #endif
-	[InlineAutoData(true, "*")]
-	[InlineAutoData(true, ".")]
-	[InlineAutoData(true, "*.*")]
-	[InlineData(true, "a*c", "abc")]
-	[InlineData(true, "ab*c", "abc")]
-	[InlineData(true, "abc?", "abc")]
-	[InlineData(false, "ab?c", "abc")]
-	[InlineData(false, "ac", "abc")]
+	[AutoArguments(true, "*")]
+	[AutoArguments(true, ".")]
+	[AutoArguments(true, "*.*")]
+	[Arguments(true, "a*c", "abc")]
+	[Arguments(true, "ab*c", "abc")]
+	[Arguments(true, "abc?", "abc")]
+	[Arguments(false, "ab?c", "abc")]
+	[Arguments(false, "ac", "abc")]
 	public async Task EnumerateDirectories_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string subdirectoryName)
 	{
@@ -166,16 +166,16 @@ public partial class EnumerateDirectoriesTests
 		}
 	}
 
-	[Theory]
-	[InlineAutoData(true, "*.xls", ".xls")]
-	[InlineAutoData(false, "*.x", ".xls")]
+	[Test]
+	[AutoArguments(true, "*.xls", ".xls")]
+	[AutoArguments(false, "*.x", ".xls")]
 #if NETFRAMEWORK
-	[InlineAutoData(true, "*.xls", ".xlsx")]
+	[AutoArguments(true, "*.xls", ".xlsx")]
 #else
-	[InlineAutoData(false, "*.xls", ".xlsx")]
+	[AutoArguments(false, "*.xls", ".xlsx")]
 #endif
-	[InlineAutoData(false, "foo.x", ".xls", "foo")]
-	[InlineAutoData(false, "?.xls", ".xlsx", "a")]
+	[AutoArguments(false, "foo.x", ".xls", "foo")]
+	[AutoArguments(false, "?.xls", ".xlsx", "a")]
 	public async Task
 		EnumerateDirectories_SearchPattern_WithFileExtension_ShouldReturnExpectedValue(
 			bool expectToBeFound, string searchPattern, string extension,
@@ -198,7 +198,7 @@ public partial class EnumerateDirectoriesTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task EnumerateDirectories_ShouldIncludeEmptyDirectoriesWithTrailingSlash()
 	{
 		string rootDirectory = "RootDir";
@@ -211,7 +211,7 @@ public partial class EnumerateDirectoriesTests
 		await That(FileSystem.Directory.EnumerateDirectories(rootDirectory)).HasCount(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task EnumerateDirectories_ShouldSupportExtendedLengthPaths1()
 	{
 		Skip.If(!Test.RunsOnWindows);
@@ -227,7 +227,7 @@ public partial class EnumerateDirectoriesTests
 			.InAnyOrder();
 	}
 
-	[Fact]
+	[Test]
 	public async Task EnumerateDirectories_ShouldSupportExtendedLengthPaths2()
 	{
 		Skip.If(!Test.RunsOnWindows);
@@ -243,9 +243,9 @@ public partial class EnumerateDirectoriesTests
 			.InAnyOrder();
 	}
 
-	[Theory]
-	[InlineData('/')]
-	[InlineData('\\')]
+	[Test]
+	[Arguments('/')]
+	[Arguments('\\')]
 	public async Task EnumerateDirectories_TrailingDirectorySeparator_ShouldBeTrimmed(char suffix)
 	{
 		Skip.IfNot(Test.RunsOnWindows ||
@@ -262,8 +262,8 @@ public partial class EnumerateDirectoriesTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderAttributesToSkip(
 		string path)
 	{
@@ -286,9 +286,9 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[InlineData(true)]
-	[InlineData(false)]
+	[Test]
+	[Arguments(true)]
+	[Arguments(false)]
 	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderIgnoreInaccessible(
 		bool ignoreInaccessible)
 	{
@@ -331,9 +331,9 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[InlineAutoData(MatchCasing.CaseInsensitive)]
-	[InlineAutoData(MatchCasing.CaseSensitive)]
+	[Test]
+	[AutoArguments(MatchCasing.CaseInsensitive)]
+	[AutoArguments(MatchCasing.CaseSensitive)]
 	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderMatchCasing(
 		MatchCasing matchCasing,
 		string path)
@@ -361,9 +361,9 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[InlineAutoData(MatchType.Simple)]
-	[InlineAutoData(MatchType.Win32)]
+	[Test]
+	[AutoArguments(MatchType.Simple)]
+	[AutoArguments(MatchType.Win32)]
 	public async Task EnumerateDirectories_WithEnumerationOptions_ShouldConsiderMatchType(
 		MatchType matchType,
 		string path)
@@ -390,12 +390,12 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[InlineAutoData(true, 0)]
-	[InlineAutoData(true, 1)]
-	[InlineAutoData(true, 2)]
-	[InlineAutoData(true, 3)]
-	[InlineAutoData(false, 2)]
+	[Test]
+	[AutoArguments(true, 0)]
+	[AutoArguments(true, 1)]
+	[AutoArguments(true, 2)]
+	[AutoArguments(true, 3)]
+	[AutoArguments(false, 2)]
 	public async Task
 		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderMaxRecursionDepthWhenRecurseSubdirectoriesIsSet(
 			bool recurseSubdirectories,
@@ -443,9 +443,9 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[InlineAutoData(true)]
-	[InlineAutoData(false)]
+	[Test]
+	[AutoArguments(true)]
+	[AutoArguments(false)]
 	public async Task
 		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderRecurseSubdirectories(
 			bool recurseSubdirectories,
@@ -475,9 +475,9 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[InlineAutoData(true)]
-	[InlineAutoData(false)]
+	[Test]
+	[AutoArguments(true)]
+	[AutoArguments(false)]
 	public async Task
 		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderReturnSpecialDirectories(
 			bool returnSpecialDirectories,
@@ -507,7 +507,7 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Fact]
+	[Test]
 	public async Task
 		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderReturnSpecialDirectoriesCorrectlyForPathRoots()
 	{
@@ -533,8 +533,8 @@ public partial class EnumerateDirectoriesTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateDirectories_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
@@ -549,8 +549,8 @@ public partial class EnumerateDirectoriesTests
 		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
 		string path)
 	{
@@ -567,8 +567,8 @@ public partial class EnumerateDirectoriesTests
 		await That(result).Contains(FileSystem.Path.Combine(path, "bar"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
 		string path)
 	{
@@ -583,8 +583,8 @@ public partial class EnumerateDirectoriesTests
 		await That(result).Contains(FileSystem.Path.Combine(path, "foo"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(
 			string path)
@@ -600,7 +600,7 @@ public partial class EnumerateDirectoriesTests
 		await That(result).HasCount(2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task EnumerateDirectories_WithTrailingSlash_ShouldEnumerateSubdirectories()
 	{
 		string queryPath = "foo" + FileSystem.Path.DirectorySeparatorChar;

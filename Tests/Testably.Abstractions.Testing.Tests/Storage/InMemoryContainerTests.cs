@@ -8,8 +8,8 @@ namespace Testably.Abstractions.Testing.Tests.Storage;
 
 public class InMemoryContainerTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AdjustAttributes_Decrypt_ShouldNotHaveEncryptedAttribute(string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -27,8 +27,8 @@ public class InMemoryContainerTests
 		await That(result).DoesNotHaveFlag(FileAttributes.Encrypted);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AdjustAttributes_Encrypt_ShouldHaveEncryptedAttribute(string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -45,8 +45,8 @@ public class InMemoryContainerTests
 		await That(result).HasFlag(FileAttributes.Encrypted);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AdjustAttributes_LeadingDot_ShouldBeHiddenOnUnix(string path)
 	{
 		path = "." + path;
@@ -71,9 +71,9 @@ public class InMemoryContainerTests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[Theory]
-	[InlineAutoData(null, false)]
-	[InlineAutoData("foo", true)]
+	[Test]
+	[AutoArguments(null, false)]
+	[AutoArguments("foo", true)]
 	public async Task AdjustAttributes_ShouldHaveReparsePointAttributeWhenLinkTargetIsNotNull(
 		string? linkTarget, bool shouldHaveReparsePoint, string path)
 	{
@@ -101,8 +101,8 @@ public class InMemoryContainerTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Container_ShouldProvideCorrectTimeAndFileSystem(string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -113,8 +113,8 @@ public class InMemoryContainerTests
 		await That(sut.TimeSystem).IsSameAs(fileSystem.TimeSystem);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Decrypt_Encrypted_ShouldDecryptBytes(
 		string path, byte[] bytes)
 	{
@@ -133,8 +133,8 @@ public class InMemoryContainerTests
 		await That(fileContainer.GetBytes()).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Decrypt_Unencrypted_ShouldDoNothing(
 		string path, byte[] bytes)
 	{
@@ -151,8 +151,8 @@ public class InMemoryContainerTests
 		await That(fileContainer.GetBytes()).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Encrypt_Encrypted_ShouldDoNothing(
 		string path, byte[] bytes)
 	{
@@ -171,8 +171,8 @@ public class InMemoryContainerTests
 		await That(fileContainer.GetBytes()).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Encrypt_ShouldEncryptBytes(
 		string path, byte[] bytes)
 	{
@@ -190,8 +190,8 @@ public class InMemoryContainerTests
 		await That(fileContainer.GetBytes()).IsNotEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task RequestAccess_ToString_DeleteAccess_ShouldContainAccessAndShare(string path,
 		FileAccess access, FileShare share)
 	{
@@ -208,8 +208,8 @@ public class InMemoryContainerTests
 		await That(result.ToString()).Contains(share.ToString());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task RequestAccess_ToString_ShouldContainAccessAndShare(string path,
 		FileAccess access,
 		FileShare share)
@@ -226,8 +226,8 @@ public class InMemoryContainerTests
 		await That(result.ToString()).Contains(share.ToString());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task RequestAccess_WithoutDrive_ShouldThrowDirectoryNotFoundException(
 		string path)
 	{
@@ -243,9 +243,9 @@ public class InMemoryContainerTests
 		await That(exception).IsExactly<DirectoryNotFoundException>();
 	}
 
-	[Theory]
-	[InlineAutoData(DateTimeKind.Local)]
-	[InlineAutoData(DateTimeKind.Utc)]
+	[Test]
+	[AutoArguments(DateTimeKind.Local)]
+	[AutoArguments(DateTimeKind.Utc)]
 	public async Task TimeContainer_Time_Set_WithUnspecifiedKind_ShouldSetToProvidedKind(
 		DateTimeKind kind, string path, DateTime time)
 	{
@@ -262,8 +262,8 @@ public class InMemoryContainerTests
 		await That(result.Kind).IsEqualTo(kind);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task TimeContainer_ToString_ShouldReturnUtcTime(
 		string path, DateTime time)
 	{
@@ -281,7 +281,7 @@ public class InMemoryContainerTests
 		await That(result).IsEqualTo(expectedString);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_Directory_ShouldIncludePath()
 	{
 		MockFileSystem fileSystem = new();
@@ -296,8 +296,8 @@ public class InMemoryContainerTests
 		await That(result).IsEqualTo($"{expectedPath}: Directory");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ToString_File_ShouldIncludePathAndFileSize(byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
@@ -311,7 +311,7 @@ public class InMemoryContainerTests
 		await That(result).IsEqualTo($"{expectedPath}: File ({bytes.Length} bytes)");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_UnknownContainer_ShouldIncludePath()
 	{
 		MockFileSystem fileSystem = new();

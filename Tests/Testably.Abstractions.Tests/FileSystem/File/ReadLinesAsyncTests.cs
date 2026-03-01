@@ -1,6 +1,5 @@
 #if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 using AutoFixture;
-using NSubstitute.ExceptionExtensions;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -10,14 +9,14 @@ using System.Threading.Tasks;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class ReadLinesAsyncTests
+public class ReadLinesAsyncTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadLinesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, "some content", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, "some content", CancellationToken);
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
@@ -32,13 +31,13 @@ public partial class ReadLinesAsyncTests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		ReadLinesAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
 			string path)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, "some content", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, "some content", CancellationToken);
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
@@ -54,14 +53,14 @@ public partial class ReadLinesAsyncTests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadLinesAsync_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
 		async Task Act()
 		{
-			await foreach (string _ in FileSystem.File.ReadLinesAsync(path, TestContext.Current.CancellationToken))
+			await foreach (string _ in FileSystem.File.ReadLinesAsync(path, CancellationToken))
 			{
 				// do nothing
 			}
@@ -72,15 +71,15 @@ public partial class ReadLinesAsyncTests
 			.WithHResult(-2147024894);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadLinesAsync_ShouldEnumerateLines(string path, string[] lines)
 	{
 		string contents = string.Join(Environment.NewLine, lines);
-		await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, contents, CancellationToken);
 		List<string> results = [];
 
-		await foreach (string line in FileSystem.File.ReadLinesAsync(path, TestContext.Current.CancellationToken))
+		await foreach (string line in FileSystem.File.ReadLinesAsync(path, CancellationToken))
 		{
 			results.Add(line);
 		}
@@ -88,8 +87,8 @@ public partial class ReadLinesAsyncTests
 		await That(results).IsEqualTo(lines);
 	}
 
-	[Theory]
-	[ClassData(typeof(TestDataGetEncodingDifference))]
+	[Test]
+	[MethodDataSource(typeof(TestData), nameof(TestData.GetEncodingDifference))]
 	public async Task ReadLinesAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding)
 	{
@@ -97,10 +96,10 @@ public partial class ReadLinesAsyncTests
 		string[] lines = new Fixture().Create<string[]>();
 		lines[1] = specialLine;
 		string contents = string.Join(Environment.NewLine, lines);
-		await FileSystem.File.WriteAllTextAsync(path, contents, writeEncoding, TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, contents, writeEncoding, CancellationToken);
 		List<string> results = [];
 
-		await foreach (string line in FileSystem.File.ReadLinesAsync(path, readEncoding, TestContext.Current.CancellationToken))
+		await foreach (string line in FileSystem.File.ReadLinesAsync(path, readEncoding, CancellationToken))
 		{
 			results.Add(line);
 		}

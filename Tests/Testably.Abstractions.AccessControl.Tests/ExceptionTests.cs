@@ -1,16 +1,14 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.AccessControl;
 using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
 [FileSystemTests]
-public partial class ExceptionTests
+public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks),
-		(int)BaseTypes.All)]
+	[Test]
+	[MethodDataSource(nameof(GetFileCallbacks))]
 	public async Task Operations_WhenPathIsEmpty_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
@@ -21,9 +19,8 @@ public partial class ExceptionTests
 			.Because($"\n{exceptionType} on {baseType}\n was called with an empty path");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks),
-		(int)BaseTypes.All)]
+	[Test]
+	[MethodDataSource(nameof(GetFileCallbacks))]
 	public async Task Operations_WhenPathIsNull_ShouldThrowArgumentNullException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
@@ -34,9 +31,8 @@ public partial class ExceptionTests
 			.Because($"\n{exceptionType} on {baseType}\n was called with a null path");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks),
-		(int)BaseTypes.All)]
+	[Test]
+	[MethodDataSource(nameof(GetFileCallbacks))]
 	public async Task Operations_WhenPathIsWhiteSpace_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
@@ -50,18 +46,13 @@ public partial class ExceptionTests
 	#region Helpers
 
 	#pragma warning disable MA0018 // Do not declare static members on generic types
-	public static TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> GetFileCallbacks(
-		int baseType)
+	public static IEnumerable<(Action<IFileSystem, string>, BaseTypes, MethodType)> GetFileCallbacks()
 	{
-		TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> theoryData = new();
 		foreach ((BaseTypes BaseType, MethodType MethodType, Action<IFileSystem, string> Callback)
-			item in GetFileCallbackTestParameters()
-				.Where(item => (item.BaseType & (BaseTypes)baseType) > 0))
+			item in GetFileCallbackTestParameters())
 		{
-			theoryData.Add(item.Callback, item.BaseType, item.MethodType);
+			yield return (item.Callback, item.BaseType, item.MethodType);
 		}
-
-		return theoryData;
 	}
 	#pragma warning restore MA0018 // Do not declare static members on generic types
 

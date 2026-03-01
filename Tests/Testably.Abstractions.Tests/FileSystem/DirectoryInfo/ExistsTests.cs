@@ -1,10 +1,10 @@
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 [FileSystemTests]
-public partial class ExistsTests
+public class ExistsTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_ArbitraryPath_ShouldBeFalse(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -13,8 +13,8 @@ public partial class ExistsTests
 		await That(FileSystem.Directory.Exists(sut.FullName)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_ExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -26,8 +26,8 @@ public partial class ExistsTests
 		await That(FileSystem.Directory.Exists(sut.FullName)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_File_ShouldReturnFalse(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -36,7 +36,7 @@ public partial class ExistsTests
 		await That(sut.Exists).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Exists_ForwardSlash_ShouldReturnTrue()
 	{
 		FileSystem.InitializeIn("/");
@@ -46,8 +46,8 @@ public partial class ExistsTests
 		await That(sut.Exists).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_NotExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -58,8 +58,8 @@ public partial class ExistsTests
 		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_ShouldNotChangeOnMoveTo(string path, string destination)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -71,8 +71,8 @@ public partial class ExistsTests
 		await That(sut.Exists).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_ShouldUpdateOnCreateWhenNotNetFramework(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -83,8 +83,8 @@ public partial class ExistsTests
 		await That(sut.Exists).IsEqualTo(!Test.IsNetFramework);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_ShouldUpdateOnDeleteWhenNotNetFramework(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -96,8 +96,8 @@ public partial class ExistsTests
 		await That(sut.Exists).IsEqualTo(Test.IsNetFramework);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_ShouldUpdateOnRecursiveDeleteWhenNotNetFramework(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -109,8 +109,8 @@ public partial class ExistsTests
 		await That(sut.Exists).IsEqualTo(Test.IsNetFramework);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_ShouldUpdateOnRefresh(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);

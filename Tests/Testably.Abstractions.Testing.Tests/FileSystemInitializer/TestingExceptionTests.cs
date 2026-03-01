@@ -7,8 +7,8 @@ namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
 public class TestingExceptionTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		TestingException_SerializationAndDeserialization_ShouldKeepMessageAndInnerException(
 			string message, Exception innerException)

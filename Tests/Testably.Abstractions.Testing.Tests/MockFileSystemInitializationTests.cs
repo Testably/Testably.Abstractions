@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Testing.Tests;
 public class MockFileSystemInitializationTests
 {
 #if CAN_SIMULATE_OTHER_OS
-	[Fact]
+	[Test]
 	public async Task MockFileSystem_WhenSimulatingLinux_ShouldBeLinux()
 	{
 		MockFileSystem sut = new(o => o
@@ -21,7 +21,7 @@ public class MockFileSystemInitializationTests
 #endif
 
 #if CAN_SIMULATE_OTHER_OS
-	[Fact]
+	[Test]
 	public async Task MockFileSystem_WhenSimulatingMacOS_ShouldBeMac()
 	{
 		MockFileSystem sut = new(o => o
@@ -35,7 +35,7 @@ public class MockFileSystemInitializationTests
 #endif
 
 #if CAN_SIMULATE_OTHER_OS
-	[Fact]
+	[Test]
 	public async Task MockFileSystem_WhenSimulatingWindows_ShouldBeWindows()
 	{
 		MockFileSystem sut = new(o => o
@@ -48,7 +48,7 @@ public class MockFileSystemInitializationTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task MockFileSystem_WithCurrentDirectory_ShouldInitializeCurrentDirectory()
 	{
 		string expected = Directory.GetCurrentDirectory();
@@ -59,8 +59,8 @@ public class MockFileSystemInitializationTests
 		await That(result).IsEqualTo(expected);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MockFileSystem_WithExplicitCurrentDirectory_ShouldInitializeCurrentDirectory(
 		string path)
 	{
@@ -72,7 +72,7 @@ public class MockFileSystemInitializationTests
 		await That(result).IsEqualTo(expected);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		MockFileSystem_WithoutCurrentDirectory_ShouldUseDefaultDriveAsCurrentDirectory()
 	{
@@ -85,8 +85,8 @@ public class MockFileSystemInitializationTests
 	}
 
 #if CAN_SIMULATE_OTHER_OS
-	[Theory]
-	[MemberData(nameof(ValidOperatingSystems))]
+	[Test]
+	[MethodDataSource(nameof(ValidOperatingSystems))]
 	public async Task SimulatingOperatingSystem_ValidOSPlatform_ShouldSetOperatingSystem(
 		SimulationMode simulationMode)
 	{
@@ -99,7 +99,7 @@ public class MockFileSystemInitializationTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task UseCurrentDirectory_Empty_ShouldUseCurrentDirectory()
 	{
 		string expected = Directory.GetCurrentDirectory();
@@ -111,8 +111,8 @@ public class MockFileSystemInitializationTests
 		await That(sut.CurrentDirectory).IsEqualTo(expected);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task UseCurrentDirectory_WithPath_ShouldUsePathCurrentDirectory(string path)
 	{
 		MockFileSystem.MockFileSystemOptions sut = new();
@@ -123,8 +123,8 @@ public class MockFileSystemInitializationTests
 		await That(sut.CurrentDirectory).IsEqualTo(path);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task UseRandomProvider_ShouldUseFixedRandomValue(int fixedRandomValue)
 	{
 		MockFileSystem fileSystem = new(options => options
@@ -139,8 +139,8 @@ public class MockFileSystemInitializationTests
 		await That(results).All().AreEqualTo(fixedRandomValue);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task UseTimeSystem_ShouldUseProvidedTimeSystem(int offsetSeconds)
 	{
 		DateTime simulatedNow = DateTime.Now.AddSeconds(offsetSeconds);
@@ -154,12 +154,12 @@ public class MockFileSystemInitializationTests
 		await That(result).IsEqualTo(simulatedNow);
 	}
 
-	#region Helpers
-
 #if CAN_SIMULATE_OTHER_OS
-	public static TheoryData<SimulationMode> ValidOperatingSystems()
-		=> new(SimulationMode.Linux, SimulationMode.MacOS, SimulationMode.Windows);
+	public static IEnumerable<SimulationMode> ValidOperatingSystems()
+	{
+		yield return SimulationMode.Linux;
+		yield return SimulationMode.MacOS;
+		yield return SimulationMode.Windows;
+	}
 #endif
-
-	#endregion
 }

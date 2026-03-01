@@ -4,10 +4,10 @@ using Testably.Abstractions.Testing.FileSystem;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class CreateDirectoryTests
+public class CreateDirectoryTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateDirectory_AlreadyExisting_ShouldDoNothing(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -21,8 +21,8 @@ public partial class CreateDirectoryTests
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateDirectory_ReadOnlyParent_ShouldStillCreateDirectoryUnderWindows(
 		string parent,
 		string subdirectory)
@@ -50,7 +50,7 @@ public partial class CreateDirectoryTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task CreateDirectory_ShouldSupportExtendedLengthPaths()
 	{
 		Skip.If(!Test.RunsOnWindows);
@@ -60,8 +60,8 @@ public partial class CreateDirectoryTests
 		await That(FileSystem.Directory.Exists(@"\\?\c:\bar")).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateDirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(
 		string name)
 	{
@@ -77,7 +77,7 @@ public partial class CreateDirectoryTests
 		await That(FileSystem.Directory.Exists(name)).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task CreateDirectory_Root_ShouldNotThrowException()
 	{
 		string path = FileTestHelper.RootDrive(Test);
@@ -92,8 +92,8 @@ public partial class CreateDirectoryTests
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateDirectory_ShouldTrimTrailingSpaces_OnWindows(string path)
 	{
 		string pathWithSpaces = path + "  ";
@@ -110,8 +110,8 @@ public partial class CreateDirectoryTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateDirectory_ShouldAdjustTimes(string path, string subdirectoryName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -144,8 +144,8 @@ public partial class CreateDirectoryTests
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateDirectory_ShouldAdjustTimesOnlyForDirectParentDirectory(
 		string rootPath)
 	{
@@ -181,8 +181,8 @@ public partial class CreateDirectoryTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateDirectory_ShouldSetCreationTime(string path)
 	{
 		DateTime start = TimeSystem.DateTime.Now;
@@ -195,8 +195,8 @@ public partial class CreateDirectoryTests
 		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateDirectory_ShouldSetCreationTimeUtc(string path)
 	{
 		DateTime start = TimeSystem.DateTime.UtcNow;
@@ -209,7 +209,7 @@ public partial class CreateDirectoryTests
 		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
 	}
 
-	[Fact]
+	[Test]
 	public async Task CreateDirectory_NullCharacter_ShouldThrowArgumentException()
 	{
 		string path = "foo\0bar";
@@ -219,7 +219,7 @@ public partial class CreateDirectoryTests
 		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
-	[Fact]
+	[Test]
 	public async Task CreateDirectory_ShouldCreateDirectoryInBasePath()
 	{
 		IDirectoryInfo result = FileSystem.Directory.CreateDirectory("foo");
@@ -228,7 +228,7 @@ public partial class CreateDirectoryTests
 		await That(result.FullName).StartsWith(BasePath);
 	}
 
-	[Fact]
+	[Test]
 	public async Task CreateDirectory_ShouldCreateParentDirectories()
 	{
 		string directoryLevel1 = "lvl1";
@@ -248,9 +248,9 @@ public partial class CreateDirectoryTests
 	}
 
 #if NETFRAMEWORK
-	[Theory]
-	[InlineData("/")]
-	[InlineData("\\")]
+	[Test]
+	[Arguments("/")]
+	[Arguments("\\")]
 	public async Task CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
 		string suffix)
 	{
@@ -271,7 +271,7 @@ public partial class CreateDirectoryTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task
 		CreateDirectory_WithoutAccessRightsToParent_ShouldThrowUnauthorizedAccessException()
 	{
@@ -300,9 +300,9 @@ public partial class CreateDirectoryTests
 	}
 
 #if NETFRAMEWORK
-	[Theory]
-	[InlineData("")]
-	[InlineData(" ")]
+	[Test]
+	[Arguments("")]
+	[Arguments(" ")]
 	public async Task CreateDirectory_EmptyOrWhitespace_ShouldReturnEmptyString(
 		string suffix)
 	{
@@ -322,11 +322,11 @@ public partial class CreateDirectoryTests
 		await That(FileSystem.Directory.Exists(nameWithSuffix)).IsTrue();
 	}
 #else
-	[Theory]
-	[InlineData("")]
-	[InlineData(" ")]
-	[InlineData("/")]
-	[InlineData("\\")]
+	[Test]
+	[Arguments("")]
+	[Arguments(" ")]
+	[Arguments("/")]
+	[Arguments("\\")]
 	public async Task CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
 		string suffix)
 	{

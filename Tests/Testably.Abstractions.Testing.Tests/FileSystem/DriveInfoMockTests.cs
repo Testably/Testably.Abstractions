@@ -12,8 +12,8 @@ public class DriveInfoMockTests
 
 	#endregion
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AvailableFreeSpace_CannotGetNegative(long size)
 	{
 		FileSystem.WithDrive(d => d.SetTotalSize(size));
@@ -24,8 +24,8 @@ public class DriveInfoMockTests
 		await That(drive.AvailableFreeSpace).IsEqualTo(size);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AvailableFreeSpace_NotEnoughSpace_ShouldThrowIOException(
 		int fileSize, string path)
 	{
@@ -41,8 +41,8 @@ public class DriveInfoMockTests
 		await That(drive.AvailableFreeSpace).IsEqualTo(fileSize - 1);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AvailableFreeSpace_ShouldBeChangedWhenAppendingToAFile(
 		string fileContent1, string fileContent2, int expectedRemainingBytes,
 		string path, Encoding encoding)
@@ -60,10 +60,10 @@ public class DriveInfoMockTests
 		await That(drive.AvailableFreeSpace).IsEqualTo(expectedRemainingBytes);
 	}
 
-	[Theory]
-	[InlineAutoData(0)]
-	[InlineAutoData(1)]
-	[InlineAutoData(10)]
+	[Test]
+	[AutoArguments(0)]
+	[AutoArguments(1)]
+	[AutoArguments(10)]
 	public async Task AvailableFreeSpace_ShouldBeChangedWhenWorkingWithStreams(
 		int reduceLength, string path, string previousContent)
 	{
@@ -81,8 +81,8 @@ public class DriveInfoMockTests
 		await That(drive.AvailableFreeSpace).IsEqualTo(previousFreeSpace + reduceLength);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AvailableFreeSpace_ShouldBeReducedByWritingToFile(
 		int fileSize, string path)
 	{
@@ -97,8 +97,8 @@ public class DriveInfoMockTests
 		await That(drive.AvailableFreeSpace).IsEqualTo(0);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AvailableFreeSpace_ShouldBeReleasedWhenDeletingAFile(
 		int fileSize, string path)
 	{
@@ -114,8 +114,8 @@ public class DriveInfoMockTests
 		await That(drive.AvailableFreeSpace).IsEqualTo(fileSize);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AvailableFreeSpace_ShouldBeSetTotalSize(long size)
 	{
 		FileSystem.WithDrive(d => d.SetTotalSize(size));
@@ -125,10 +125,10 @@ public class DriveInfoMockTests
 		await That(drive.AvailableFreeSpace).IsEqualTo(size);
 	}
 
-	[Theory]
-	[InlineData(@"//foo", @"//foo")]
-	[InlineData(@"//foo/bar", @"//foo")]
-	[InlineData(@"//foo/bar/xyz", @"//foo")]
+	[Test]
+	[Arguments(@"//foo", @"//foo")]
+	[Arguments(@"//foo/bar", @"//foo")]
+	[Arguments(@"//foo/bar/xyz", @"//foo")]
 	public async Task New_DriveNameWithUncPath_ShouldUseTopMostDirectory(
 		string driveName, string expectedName)
 	{
@@ -141,8 +141,8 @@ public class DriveInfoMockTests
 		await That(drive.Name).IsEqualTo(expectedName);
 	}
 
-	[Theory]
-	[InlineData("foo")]
+	[Test]
+	[Arguments("foo")]
 	public async Task New_InvalidDriveName_ShouldThrowArgumentException(string driveName)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -153,7 +153,7 @@ public class DriveInfoMockTests
 		await That(exception).IsExactly<ArgumentException>();
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_Null_ShouldReturnNull()
 	{
 		IDriveInfo? drive =
@@ -162,7 +162,7 @@ public class DriveInfoMockTests
 		await That(drive).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_UncPath_ShouldSetFlag()
 	{
 		IDriveInfo drive =
@@ -171,9 +171,9 @@ public class DriveInfoMockTests
 		await That((drive as DriveInfoMock)?.IsUncPath).IsTrue();
 	}
 
-	[Theory]
-	[InlineData("C", "C:\\")]
-	[InlineData("d", "D:\\")]
+	[Test]
+	[Arguments("C", "C:\\")]
+	[Arguments("d", "D:\\")]
 	public async Task New_ValidDriveName_ShouldAppendColonAndSlash(
 		string driveName, string expectedDriveName)
 	{
@@ -183,8 +183,8 @@ public class DriveInfoMockTests
 		await That(result.Name).IsEqualTo(expectedDriveName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NotReady_AccessDirectory_ShouldThrowIOException(
 		string path)
 	{
@@ -198,8 +198,8 @@ public class DriveInfoMockTests
 		await That(exception).IsExactly<IOException>();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NotReady_AccessFile_ShouldThrowIOException(
 		string path, string contents)
 	{
@@ -214,7 +214,7 @@ public class DriveInfoMockTests
 		await That(exception).IsExactly<IOException>();
 	}
 
-	[Fact]
+	[Test]
 	public async Task SetDriveFormat_Default_ShouldBeNTFS()
 	{
 		FileSystem.WithDrive(d => d.SetDriveFormat());
@@ -223,8 +223,8 @@ public class DriveInfoMockTests
 		await That(drive.DriveFormat).IsEqualTo("NTFS");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetDriveFormat_ShouldChangeDriveFormat(string driveFormat)
 	{
 		FileSystem.WithDrive(d => d.SetDriveFormat(driveFormat));
@@ -233,7 +233,7 @@ public class DriveInfoMockTests
 		await That(drive.DriveFormat).IsEqualTo(driveFormat);
 	}
 
-	[Fact]
+	[Test]
 	public async Task SetDriveType_Default_ShouldBeFixed()
 	{
 		FileSystem.WithDrive(d => d.SetDriveType());
@@ -242,8 +242,8 @@ public class DriveInfoMockTests
 		await That(drive.DriveType).IsEqualTo(DriveType.Fixed);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetDriveType_ShouldChangeDriveType(DriveType driveType)
 	{
 		FileSystem.WithDrive(d => d.SetDriveType(driveType));
@@ -252,9 +252,9 @@ public class DriveInfoMockTests
 		await That(drive.DriveType).IsEqualTo(driveType);
 	}
 
-	[Theory]
-	[InlineData(true)]
-	[InlineData(false)]
+	[Test]
+	[Arguments(true)]
+	[Arguments(false)]
 	public async Task SetIsReady_ShouldChangeIsReady(bool isReady)
 	{
 		FileSystem.WithDrive(d => d.SetIsReady(isReady));
@@ -263,7 +263,7 @@ public class DriveInfoMockTests
 		await That(drive.IsReady).IsEqualTo(isReady);
 	}
 
-	[Fact]
+	[Test]
 	public async Task SetTotalSize_Default_ShouldBe1Gigabyte()
 	{
 		FileSystem.WithDrive(d => d.SetTotalSize());

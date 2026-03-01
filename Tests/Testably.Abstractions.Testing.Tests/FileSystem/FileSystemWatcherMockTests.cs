@@ -4,7 +4,7 @@ using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
-[Collection(nameof(IDirectoryCleaner))]
+[NotInParallel(nameof(IDirectoryCleaner))]
 public sealed class FileSystemWatcherMockTests : IDisposable
 {
 	#region Test Setup
@@ -32,8 +32,8 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 
 	#endregion
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Error_DefaultTo64Messages_ShouldBeTriggeredWhenBufferOverflows(
 		string path)
 	{
@@ -63,7 +63,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				block1.Wait(10000, TestContext.Current.CancellationToken);
+				block1.Wait(10000, TestContext.Current!.Execution.CancellationToken);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -82,14 +82,14 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path}");
 		}
 
-		await That(block2.Wait(10000, TestContext.Current.CancellationToken)).IsTrue();
+		await That(block2.Wait(10000, TestContext.Current!.Execution.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.GetException()).IsExactly<InternalBufferOverflowException>();
 	}
 
-	[Theory]
-	[InlineAutoData(4096)]
-	[InlineAutoData(8192)]
+	[Test]
+	[AutoArguments(4096)]
+	[AutoArguments(8192)]
 	public async Task Error_ShouldBeTriggeredWhenBufferOverflows(
 		int internalBufferSize, string path)
 	{
@@ -120,7 +120,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				block1.Wait(5000, TestContext.Current.CancellationToken);
+				block1.Wait(5000, TestContext.Current!.Execution.CancellationToken);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -140,14 +140,14 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path}");
 		}
 
-		await That(block2.Wait(5000, TestContext.Current.CancellationToken)).IsTrue();
+		await That(block2.Wait(5000, TestContext.Current!.Execution.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.GetException()).IsExactly<InternalBufferOverflowException>();
 	}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Filter_ShouldResetFiltersToOnlyContainASingleValue(
 		string[] filters, string expectedFilter)
 	{
@@ -168,8 +168,8 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task InternalBufferSize_ShouldResetQueue(string path1, string path2)
 	{
 		Skip.If(true, "Brittle test fails on build system (disabled in #284)");
@@ -199,7 +199,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				block1.Wait(100, TestContext.Current.CancellationToken);
+				block1.Wait(100, TestContext.Current!.Execution.CancellationToken);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -230,17 +230,17 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path2}");
 		}
 
-		await That(block2.Wait(100, TestContext.Current.CancellationToken)).IsFalse();
+		await That(block2.Wait(100, TestContext.Current!.Execution.CancellationToken)).IsFalse();
 		await That(result).IsNull();
 	}
 
 #if CAN_SIMULATE_OTHER_OS
 	public sealed class EventArgsTests
 	{
-		[Theory]
-		[InlineAutoData(SimulationMode.Linux)]
-		[InlineAutoData(SimulationMode.MacOS)]
-		[InlineAutoData(SimulationMode.Windows)]
+		[Test]
+		[AutoArguments(SimulationMode.Linux)]
+		[AutoArguments(SimulationMode.MacOS)]
+		[AutoArguments(SimulationMode.Windows)]
 		public async Task FileSystemEventArgs_ShouldUseDirectorySeparatorFromSimulatedFileSystem(
 			SimulationMode simulationMode, string parentDirectory, string directoryName)
 		{
@@ -269,7 +269,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
 			fileSystemWatcher.EnableRaisingEvents = true;
 			fileSystem.Directory.CreateDirectory(expectedFullPath);
-			ms.Wait(5000, TestContext.Current.CancellationToken);
+			ms.Wait(5000, TestContext.Current!.Execution.CancellationToken);
 
 			await That(result).IsNotNull();
 			await That(result!.FullPath).IsEqualTo(expectedFullPath);
@@ -279,10 +279,10 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 #endif
 
 #if CAN_SIMULATE_OTHER_OS
-		[Theory]
-		[InlineAutoData(SimulationMode.Linux)]
-		[InlineAutoData(SimulationMode.MacOS)]
-		[InlineAutoData(SimulationMode.Windows)]
+		[Test]
+		[AutoArguments(SimulationMode.Linux)]
+		[AutoArguments(SimulationMode.MacOS)]
+		[AutoArguments(SimulationMode.Windows)]
 		public async Task RenamedEventArgs_ShouldUseDirectorySeparatorFromSimulatedFileSystem(
 			SimulationMode simulationMode, string parentDirectory,
 			string sourceName, string destinationName)
@@ -316,7 +316,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			fileSystemWatcher.NotifyFilter = NotifyFilters.FileName;
 			fileSystemWatcher.EnableRaisingEvents = true;
 			fileSystem.File.Move(expectedOldFullPath, expectedFullPath);
-			ms.Wait(5000, TestContext.Current.CancellationToken);
+			ms.Wait(5000, TestContext.Current!.Execution.CancellationToken);
 
 			await That(result).IsNotNull();
 			await That(result!.FullPath).IsEqualTo(expectedFullPath);

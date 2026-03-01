@@ -5,10 +5,10 @@ using System.Linq;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class GetDirectoriesTests
+public class GetDirectoriesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		GetDirectories_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
@@ -24,8 +24,8 @@ public partial class GetDirectoriesTests
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		GetDirectories_SearchOptionAllDirectories_FullPath_ShouldReturnAllSubdirectoriesWithFullPath(
 			string path)
@@ -45,8 +45,8 @@ public partial class GetDirectoriesTests
 		await That(result).Contains(FileSystem.Path.Combine(baseDirectory.FullName, "bar"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
 		string path)
 	{
@@ -64,20 +64,20 @@ public partial class GetDirectoriesTests
 		await That(result).Contains(FileSystem.Path.Combine(path, "bar"));
 	}
 
-	[Theory]
+	[Test]
 #if NETFRAMEWORK
-	[InlineAutoData(false, "")]
+	[AutoArguments(false, "")]
 #else
-	[InlineAutoData(true, "")]
+	[AutoArguments(true, "")]
 #endif
-	[InlineAutoData(true, "*")]
-	[InlineAutoData(true, ".")]
-	[InlineAutoData(true, "*.*")]
-	[InlineData(true, "a*c", "abc")]
-	[InlineData(true, "ab*c", "abc")]
-	[InlineData(true, "abc?", "abc")]
-	[InlineData(false, "ab?c", "abc")]
-	[InlineData(false, "ac", "abc")]
+	[AutoArguments(true, "*")]
+	[AutoArguments(true, ".")]
+	[AutoArguments(true, "*.*")]
+	[Arguments(true, "a*c", "abc")]
+	[Arguments(true, "ab*c", "abc")]
+	[Arguments(true, "abc?", "abc")]
+	[Arguments(false, "ab?c", "abc")]
+	[Arguments(false, "ac", "abc")]
 	public async Task GetDirectories_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string subdirectoryName)
 	{
@@ -101,9 +101,9 @@ public partial class GetDirectoriesTests
 		}
 	}
 
-	[Theory]
-	[InlineData('/')]
-	[InlineData('\\')]
+	[Test]
+	[Arguments('/')]
+	[Arguments('\\')]
 	public async Task GetDirectories_TrailingDirectorySeparator_ShouldBeTrimmed(char suffix)
 	{
 		Skip.IfNot(Test.RunsOnWindows ||
@@ -120,8 +120,8 @@ public partial class GetDirectoriesTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
 		string path)
 	{
@@ -147,8 +147,8 @@ public partial class GetDirectoriesTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetDirectories_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
@@ -163,8 +163,8 @@ public partial class GetDirectoriesTests
 		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
 		string path)
 	{
@@ -181,7 +181,7 @@ public partial class GetDirectoriesTests
 		await That(result).Contains(FileSystem.Path.Combine(path, "bar"));
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetDirectories_WithRelativePath_ShouldReturnRelativePaths()
 	{
 		string path = $"foo{FileSystem.Path.DirectorySeparatorChar}bar";
@@ -192,8 +192,8 @@ public partial class GetDirectoriesTests
 		await That(result).IsEqualTo([path]);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
 		string path)
 	{
@@ -208,8 +208,8 @@ public partial class GetDirectoriesTests
 		await That(result).Contains(FileSystem.Path.Combine(path, "foo"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		GetDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(
 			string path)

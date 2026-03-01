@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Tests.Internal;
 
 public class FileInfoWrapperTests
 {
-	[Fact]
+	[Test]
 	public async Task FromFileInfo_Null_ShouldReturnNull()
 	{
 		RealFileSystem fileSystem = new();
@@ -15,8 +15,8 @@ public class FileInfoWrapperTests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path")]
 	public async Task FromFileInfo_ShouldBePartOfFileSystem(string path)
 	{
 		RealFileSystem fileSystem = new();

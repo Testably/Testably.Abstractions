@@ -6,10 +6,26 @@ using System.Linq.Expressions;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcherFactory;
 
 [FileSystemTests]
-public partial class ExceptionTests
+public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), "Illegal\tCharacter?InPath")]
+	public static IEnumerable<(Expression<Action<IFileSystemWatcherFactory>>, string, bool)>
+		GetFileSystemWatcherFactoryCallbacksWithEmptyPath()
+		=> GetFileSystemWatcherFactoryCallbacks("");
+
+	public static IEnumerable<(Expression<Action<IFileSystemWatcherFactory>>, string, bool)>
+		GetFileSystemWatcherFactoryCallbacksWithIllegalPathCharacters()
+		=> GetFileSystemWatcherFactoryCallbacks("Illegal\tCharacter?InPath");
+
+	public static IEnumerable<(Expression<Action<IFileSystemWatcherFactory>>, string, bool)>
+		GetFileSystemWatcherFactoryCallbacksWithNullPath()
+		=> GetFileSystemWatcherFactoryCallbacks(null);
+
+	public static IEnumerable<(Expression<Action<IFileSystemWatcherFactory>>, string, bool)>
+		GetFileSystemWatcherFactoryCallbacksWithWhitespacePath()
+		=> GetFileSystemWatcherFactoryCallbacks("  ");
+
+	[Test]
+	[MethodDataSource(nameof(GetFileSystemWatcherFactoryCallbacksWithIllegalPathCharacters))]
 	public async Task
 		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
@@ -38,8 +54,8 @@ public partial class ExceptionTests
 		}
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), "")]
+	[Test]
+	[MethodDataSource(nameof(GetFileSystemWatcherFactoryCallbacksWithEmptyPath))]
 	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -56,8 +72,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), (string?)null)]
+	[Test]
+	[MethodDataSource(nameof(GetFileSystemWatcherFactoryCallbacksWithNullPath))]
 	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -73,8 +89,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), "  ")]
+	[Test]
+	[MethodDataSource(nameof(GetFileSystemWatcherFactoryCallbacksWithWhitespacePath))]
 	public async Task Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -95,26 +111,21 @@ public partial class ExceptionTests
 
 	#region Helpers
 
-	#pragma warning disable MA0018
-	public static TheoryData<Expression<Action<IFileSystemWatcherFactory>>, string, bool>
+	private static IEnumerable<(Expression<Action<IFileSystemWatcherFactory>>, string, bool)>
 		GetFileSystemWatcherFactoryCallbacks(string? path)
 	{
-		TheoryData<Expression<Action<IFileSystemWatcherFactory>>, string, bool> theoryData = new();
 		foreach ((ExceptionTestHelper.TestTypes TestType,
 			string ParamName,
 			Expression<Action<IFileSystemWatcherFactory>> Callback) item in
 			GetFileSystemWatcherFactoryCallbackTestParameters(path!)
 				.Where(item => item.TestType.HasFlag(path.ToTestType())))
 		{
-			theoryData.Add(
+			yield return (
 				item.Callback,
 				item.ParamName,
 				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck));
 		}
-
-		return theoryData;
 	}
-	#pragma warning restore MA0018
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IFileSystemWatcherFactory>> Callback)>

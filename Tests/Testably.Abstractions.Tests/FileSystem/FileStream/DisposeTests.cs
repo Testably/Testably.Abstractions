@@ -6,10 +6,10 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
 [FileSystemTests]
-public partial class DisposeTests
+public class DisposeTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Dispose_CalledTwiceShouldDoNothing(
 		string path, byte[] bytes)
 	{
@@ -29,8 +29,8 @@ public partial class DisposeTests
 		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Dispose_ShouldNotResurrectFile(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -50,8 +50,8 @@ public partial class DisposeTests
 		await That(fileCount3).IsEqualTo(0).Because("Dispose should not have resurrected the file");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileStreamCallbacks))]
+	[Test]
+	[MethodDataSource(nameof(GetFileStreamCallbacks))]
 	public async Task Operations_ShouldThrowAfterStreamIsDisposed(
 		Expression<Action<FileSystemStream>> callback)
 	{
@@ -71,13 +71,8 @@ public partial class DisposeTests
 
 	#region Helpers
 
-	#pragma warning disable MA0018
-	public static TheoryData<Expression<Action<FileSystemStream>>> GetFileStreamCallbacks()
-		=> new(GetFileStreamCallbackTestParameters());
-	#pragma warning restore MA0018
-
-	private static IEnumerable<Expression<Action<FileSystemStream>>>
-		GetFileStreamCallbackTestParameters()
+	public static IEnumerable<Expression<Action<FileSystemStream>>>
+		GetFileStreamCallbacks()
 	{
 		yield return fileStream => fileStream.BeginRead(Array.Empty<byte>(), 0, 0, null, null);
 		yield return fileStream => fileStream.BeginWrite(Array.Empty<byte>(), 0, 0, null, null);
@@ -95,14 +90,14 @@ public partial class DisposeTests
 		#pragma warning restore CA2022
 		#pragma warning restore MA0060
 		yield return fileStream => fileStream
-			.ReadAsync(Array.Empty<byte>(), 0, 0, TestContext.Current.CancellationToken)
+			.ReadAsync(Array.Empty<byte>(), 0, 0, CancellationToken.None)
 			.GetAwaiter().GetResult();
 		yield return fileStream => fileStream.ReadByte();
 		yield return fileStream => fileStream.Seek(0, SeekOrigin.Begin);
 		yield return fileStream => fileStream.SetLength(0);
 		yield return fileStream => fileStream.Write(Array.Empty<byte>(), 0, 0);
 		yield return fileStream => fileStream
-			.WriteAsync(Array.Empty<byte>(), 0, 0, TestContext.Current.CancellationToken)
+			.WriteAsync(Array.Empty<byte>(), 0, 0, CancellationToken.None)
 			.GetAwaiter().GetResult();
 		yield return fileStream => fileStream.WriteByte(0x42);
 	}

@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_AppendAccessWithReadWriteMode_ShouldThrowArgumentException(
 		string path)
 	{
@@ -21,8 +21,8 @@ public partial class Tests
 			.WithParamName(Test.IsNetFramework ? null : "access");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_ExistingFileWithCreateMode_ShouldIgnoreContent(
 		string path)
 	{
@@ -33,8 +33,8 @@ public partial class Tests
 		await That(FileSystem.File.ReadAllText(path)).IsEmpty();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_ExistingFileWithCreateNewMode_ShouldThrowIOException(
 		string path)
 	{
@@ -50,8 +50,8 @@ public partial class Tests
 			.WithHResult(Test.RunsOnWindows ? -2147024816 : 17);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_ExistingFileWithTruncateMode_ShouldIgnoreContent(
 		string path)
 	{
@@ -62,12 +62,12 @@ public partial class Tests
 		await That(FileSystem.File.ReadAllText(path)).IsEmpty();
 	}
 
-	[Theory]
-	[InlineAutoData(FileMode.Append)]
-	[InlineAutoData(FileMode.Truncate)]
-	[InlineAutoData(FileMode.Create)]
-	[InlineAutoData(FileMode.CreateNew)]
-	[InlineAutoData(FileMode.Append)]
+	[Test]
+	[AutoArguments(FileMode.Append)]
+	[AutoArguments(FileMode.Truncate)]
+	[AutoArguments(FileMode.Create)]
+	[AutoArguments(FileMode.CreateNew)]
+	[AutoArguments(FileMode.Append)]
 	public async Task New_InvalidModeForReadAccess_ShouldThrowArgumentException(
 		FileMode mode, string path)
 	{
@@ -85,9 +85,9 @@ public partial class Tests
 				it => it.Contains(mode.ToString()).And.Contains(access.ToString()));
 	}
 
-	[Theory]
-	[InlineAutoData(FileMode.Open)]
-	[InlineAutoData(FileMode.Truncate)]
+	[Test]
+	[AutoArguments(FileMode.Open)]
+	[AutoArguments(FileMode.Truncate)]
 	public async Task New_MissingFileWithIncorrectMode_ShouldThrowFileNotFoundException(
 		FileMode mode, string path)
 	{
@@ -101,8 +101,8 @@ public partial class Tests
 			.WithHResult(-2147024894);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_MissingFileWithTruncateMode_ShouldThrowFileNotFoundException(
 		string path)
 	{
@@ -116,10 +116,10 @@ public partial class Tests
 			.WithHResult(-2147024894);
 	}
 
-	[Theory]
-	[InlineAutoData(FileAccess.Read)]
-	[InlineAutoData(FileAccess.ReadWrite)]
-	[InlineAutoData(FileAccess.Write)]
+	[Test]
+	[AutoArguments(FileAccess.Read)]
+	[AutoArguments(FileAccess.ReadWrite)]
+	[AutoArguments(FileAccess.Write)]
 	public async Task
 		New_ReadOnlyFlag_ShouldThrowUnauthorizedAccessException_WhenAccessContainsWrite(
 			FileAccess access,
@@ -143,8 +143,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_SamePathAsExistingDirectory_ShouldThrowCorrectException(
 		string path)
 	{
@@ -169,9 +169,9 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
+	[Test]
+	[AutoArguments(false)]
+	[AutoArguments(true)]
 	public async Task New_WithUseAsyncSet_ShouldSetProperty(bool useAsync, string path)
 	{
 		using FileSystemStream stream = FileSystem.FileStream.New(

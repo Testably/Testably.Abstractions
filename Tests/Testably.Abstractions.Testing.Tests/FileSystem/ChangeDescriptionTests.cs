@@ -6,8 +6,8 @@ namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public class ChangeDescriptionTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ToString_ShouldIncludeChangeType(
 		WatcherChangeTypes changeType,
 		FileSystemTypes fileSystemType,
@@ -28,8 +28,8 @@ public class ChangeDescriptionTests
 		await That(result).Contains(changeType.ToString());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ToString_ShouldIncludeFileSystemType(
 		WatcherChangeTypes changeType,
 		FileSystemTypes fileSystemType,
@@ -50,8 +50,8 @@ public class ChangeDescriptionTests
 		await That(result).Contains(fileSystemType.ToString());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ToString_ShouldIncludeNotifyFilters(
 		WatcherChangeTypes changeType,
 		FileSystemTypes fileSystemType,
@@ -72,8 +72,8 @@ public class ChangeDescriptionTests
 		await That(result).Contains(notifyFilters.ToString());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ToString_ShouldIncludePath(
 		WatcherChangeTypes changeType,
 		FileSystemTypes fileSystemType,

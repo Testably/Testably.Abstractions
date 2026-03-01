@@ -4,10 +4,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class CreateSymbolicLinkTests
+public class CreateSymbolicLinkTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateSymbolicLink_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
 	{
@@ -19,8 +19,8 @@ public partial class CreateSymbolicLinkTests
 			.HasFlag(FileAttributes.ReparsePoint);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateSymbolicLink_SourceDirectoryAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
 	{
@@ -46,8 +46,8 @@ public partial class CreateSymbolicLinkTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateSymbolicLink_TargetDirectoryMissing_ShouldNotThrowException(
 		string path, string pathToTarget)
 	{
@@ -59,8 +59,8 @@ public partial class CreateSymbolicLinkTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateSymbolicLink_WithIllegalCharactersInTarget_ShouldThrowIOException(
 		string path)
 	{
@@ -76,8 +76,8 @@ public partial class CreateSymbolicLinkTests
 		await That(Act).Throws<IOException>().WithHResult(-2147024713);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateSymbolicLink_WithIllegalPath_ShouldThrowArgumentException_OnWindows(
 		string pathToTarget)
 	{
@@ -98,8 +98,8 @@ public partial class CreateSymbolicLinkTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateSymbolicLink_WithIllegalTarget_ShouldNotThrowException(string path)
 	{
 		void Act()

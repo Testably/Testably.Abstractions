@@ -12,8 +12,8 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public class MockFileSystemTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FileSystemMock_File_Decrypt(string path, string contents)
 	{
 		MockFileSystem sut = new();
@@ -29,8 +29,8 @@ public class MockFileSystemTests
 		await That(sut.File.ReadAllText(path)).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FileSystemMock_File_Encrypt(string path, string contents)
 	{
 		MockFileSystem sut = new();
@@ -43,8 +43,8 @@ public class MockFileSystemTests
 		await That(sut.File.ReadAllText(path)).IsNotEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FileSystemMock_FileInfo_Decrypt(string path, string contents)
 	{
 		MockFileSystem sut = new();
@@ -60,8 +60,8 @@ public class MockFileSystemTests
 		await That(sut.File.ReadAllText(path)).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FileSystemMock_FileInfo_Encrypt(string path, string contents)
 	{
 		MockFileSystem sut = new();
@@ -74,7 +74,7 @@ public class MockFileSystemTests
 		await That(sut.File.ReadAllText(path)).IsNotEqualTo(contents);
 	}
 
-	[Fact]
+	[Test]
 	public async Task FileSystemMock_ShouldBeInitializedWithADefaultDrive()
 	{
 		MockFileSystem sut = new();
@@ -91,10 +91,10 @@ public class MockFileSystemTests
 		await That(drive.VolumeLabel).IsNotNullOrEmpty();
 	}
 
-	[Theory]
-	[InlineData("A:\\")]
-	[InlineData("G:\\")]
-	[InlineData("z:\\")]
+	[Test]
+	[Arguments("A:\\")]
+	[Arguments("G:\\")]
+	[Arguments("z:\\")]
 	public async Task FileSystemMock_ShouldInitializeDriveFromCurrentDirectory(string driveName)
 	{
 		Skip.If(!Test.RunsOnWindows);
@@ -108,7 +108,7 @@ public class MockFileSystemTests
 			.Contains(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldContainStorageInformation()
 	{
 		MockFileSystem sut = new();
@@ -119,8 +119,8 @@ public class MockFileSystemTests
 		await That(result).Contains("directories: 1, files: 1");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WithAccessControl_Denied_CreateDirectoryShouldThrowUnauthorizedAccessException(
 			string path)
@@ -139,8 +139,8 @@ public class MockFileSystemTests
 		await That(exception).IsExactly<UnauthorizedAccessException>();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithAccessControl_ShouldConsiderPath(
 		string allowedPath, string deniedPath)
 	{
@@ -160,7 +160,7 @@ public class MockFileSystemTests
 		await That(exception).IsExactly<UnauthorizedAccessException>();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		WithAccessControlStrategy_OutsideWindows_ShouldThrowPlatformNotSupportedException()
 	{
@@ -177,8 +177,8 @@ public class MockFileSystemTests
 			.WithMessage("Access control lists are only supported on Windows.");
 	}
 
-	[Theory]
-	[InlineData("D:\\")]
+	[Test]
+	[Arguments("D:\\")]
 	public async Task WithDrive_Duplicate_ShouldUpdateExistingDrive(string driveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
@@ -195,7 +195,7 @@ public class MockFileSystemTests
 		await That(drive.TotalSize).IsEqualTo(200);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithDrive_ExistingName_ShouldUpdateDrive()
 	{
 		MockFileSystem sut = new();
@@ -209,8 +209,8 @@ public class MockFileSystemTests
 			.Matching(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
 	}
 
-	[Theory]
-	[InlineData("D:\\")]
+	[Test]
+	[Arguments("D:\\")]
 	public async Task WithDrive_NewName_ShouldCreateNewDrives(string driveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
@@ -225,9 +225,9 @@ public class MockFileSystemTests
 			.Matching(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
 	}
 
-	[Theory]
-	[InlineData("D")]
-	[InlineData("D:")]
+	[Test]
+	[Arguments("D")]
+	[Arguments("D:")]
 	public async Task WithDrive_ShouldHavePathSeparatorSuffix(string driveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
@@ -243,7 +243,7 @@ public class MockFileSystemTests
 			=> string.Equals(d.Name, expectedDriveName, StringComparison.Ordinal));
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithDrive_ShouldInitializeDrivesWithRootDirectory()
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
@@ -257,8 +257,8 @@ public class MockFileSystemTests
 		await That(fileSystemInfos).HasCount(0);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithDrive_WithCallback_ShouldUpdateDrive(long totalSize)
 	{
 		MockFileSystem sut = new();
@@ -272,8 +272,8 @@ public class MockFileSystemTests
 	}
 
 #if NET6_0_OR_GREATER
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithSafeFileHandleStrategy_DefaultStrategy_ShouldUseMappedSafeFileHandleMock(
 		string path, string contents)
 	{
@@ -292,8 +292,8 @@ public class MockFileSystemTests
 #endif
 
 #if NET6_0_OR_GREATER
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithSafeFileHandleStrategy_NullStrategy_ShouldThrowException(
 		string path, string contents)
 	{
@@ -307,8 +307,8 @@ public class MockFileSystemTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithUncDrive_ShouldCreateUncDrive(
 		string path, string contents)
 	{
@@ -321,7 +321,7 @@ public class MockFileSystemTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithUncDrive_ShouldInitializeDrivesWithRootDirectory()
 	{
 		MockFileSystem sut = new();
@@ -337,8 +337,8 @@ public class MockFileSystemTests
 		await That(fileSystemInfos).HasCount(0);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithUncDrive_ShouldNotBeIncludedInGetDrives(
 		string server)
 	{
@@ -354,8 +354,8 @@ public class MockFileSystemTests
 		await That(sut.DriveInfo.GetDrives().Length).IsEqualTo(expectedDrives);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithUncDrive_WriteBytes_ShouldReduceAvailableFreeSpace(
 		string server, string path, byte[] bytes)
 	{
@@ -372,7 +372,7 @@ public class MockFileSystemTests
 	}
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-	[Fact]
+	[Test]
 	public async Task
 		WithUnixFileModeStrategy_OnWindows_ShouldThrowPlatformNotSupportedException()
 	{
@@ -391,8 +391,8 @@ public class MockFileSystemTests
 #endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithUnixFileModeStrategy_ShouldConsiderPath(
 		string allowedPath, string deniedPath)
 	{
@@ -413,8 +413,8 @@ public class MockFileSystemTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_OnUncPath_ShouldThrowDirectoryNotFoundException(
 		string path, string contents)
 	{

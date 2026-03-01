@@ -18,7 +18,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 public sealed class FileStatisticsTests
 {
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_AppendAllBytes_String_ByteArray_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -33,7 +33,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_AppendAllBytes_String_ReadOnlySpanByte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -48,7 +48,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task
 		Method_AppendAllBytesAsync_String_ByteArray_CancellationToken_ShouldRegisterCall()
 	{
@@ -65,7 +65,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task
 		Method_AppendAllBytesAsync_String_ReadOnlyMemoryByte_CancellationToken_ShouldRegisterCall()
 	{
@@ -81,7 +81,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_AppendAllLines_String_IEnumerableString_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -96,7 +96,7 @@ public sealed class FileStatisticsTests
 			path, contents, encoding);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_AppendAllLines_String_IEnumerableString_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -111,7 +111,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task
 		Method_AppendAllLinesAsync_String_IEnumerableString_CancellationToken_ShouldRegisterCall()
 	{
@@ -129,7 +129,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task
 		Method_AppendAllLinesAsync_String_IEnumerableString_Encoding_CancellationToken_ShouldRegisterCall()
 	{
@@ -148,7 +148,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_AppendAllText_String_ReadOnlySpanChar_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -164,7 +164,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_AppendAllText_String_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -178,7 +178,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_AppendAllText_String_String_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -193,7 +193,7 @@ public sealed class FileStatisticsTests
 			path, contents, encoding);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_AppendAllText_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -208,7 +208,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task
 		Method_AppendAllTextAsync_String_ReadOnlyMemoryChar_CancellationToken_ShouldRegisterCall()
 	{
@@ -225,7 +225,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task
 		Method_AppendAllTextAsync_String_ReadOnlyMemoryChar_Encoding_CancellationToken_ShouldRegisterCall()
 	{
@@ -243,7 +243,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task Method_AppendAllTextAsync_String_String_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -260,7 +260,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task
 		Method_AppendAllTextAsync_String_String_Encoding_CancellationToken_ShouldRegisterCall()
 	{
@@ -278,7 +278,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_AppendText_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -291,7 +291,7 @@ public sealed class FileStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Copy_String_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -307,7 +307,7 @@ public sealed class FileStatisticsTests
 			sourceFileName, destFileName, overwrite);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Copy_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -322,7 +322,7 @@ public sealed class FileStatisticsTests
 			sourceFileName, destFileName);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Create_String_Int_FileOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -337,7 +337,7 @@ public sealed class FileStatisticsTests
 			path, bufferSize, options);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Create_String_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -351,7 +351,7 @@ public sealed class FileStatisticsTests
 			path, bufferSize);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Create_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -365,7 +365,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[Fact]
+	[Test]
 	public async Task Method_CreateSymbolicLink_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -380,7 +380,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_CreateText_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -393,7 +393,7 @@ public sealed class FileStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Decrypt_String_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnWindows);
@@ -411,7 +411,7 @@ public sealed class FileStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Delete_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -425,7 +425,7 @@ public sealed class FileStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Encrypt_String_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnWindows);
@@ -443,7 +443,7 @@ public sealed class FileStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Exists_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -457,7 +457,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_GetAttributes_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -474,7 +474,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetAttributes_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -489,7 +489,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_GetCreationTime_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -506,7 +506,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetCreationTime_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -521,7 +521,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_GetCreationTimeUtc_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -538,7 +538,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetCreationTimeUtc_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -553,7 +553,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_GetLastAccessTime_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -570,7 +570,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetLastAccessTime_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -585,7 +585,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_GetLastAccessTimeUtc_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -602,7 +602,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetLastAccessTimeUtc_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -617,7 +617,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_GetLastWriteTime_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -634,7 +634,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetLastWriteTime_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -649,7 +649,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_GetLastWriteTimeUtc_SafeFileHandle_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -666,7 +666,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetLastWriteTimeUtc_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -681,7 +681,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_GetUnixFileMode_SafeFileHandle_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnLinux);
@@ -703,7 +703,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-	[Fact]
+	[Test]
 	public async Task Method_GetUnixFileMode_String_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnLinux);
@@ -723,7 +723,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
-	[Fact]
+	[Test]
 	public async Task Method_Move_String_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -740,7 +740,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_Move_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -755,7 +755,7 @@ public sealed class FileStatisticsTests
 			sourceFileName, destFileName);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Open_String_FileMode_FileAccess_FileShare_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -771,7 +771,7 @@ public sealed class FileStatisticsTests
 			path, mode, access, share);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Open_String_FileMode_FileAccess_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -786,7 +786,7 @@ public sealed class FileStatisticsTests
 			path, mode, access);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Open_String_FileMode_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -801,7 +801,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
-	[Fact]
+	[Test]
 	public async Task Method_Open_String_FileStreamOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -817,7 +817,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_OpenRead_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -831,7 +831,7 @@ public sealed class FileStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_OpenText_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -845,7 +845,7 @@ public sealed class FileStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_OpenWrite_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -858,7 +858,7 @@ public sealed class FileStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_ReadAllBytes_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -873,7 +873,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task Method_ReadAllBytesAsync_String_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -889,7 +889,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_ReadAllLines_String_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -904,7 +904,7 @@ public sealed class FileStatisticsTests
 			path, encoding);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_ReadAllLines_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -919,7 +919,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task Method_ReadAllLinesAsync_String_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -936,7 +936,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task
 		Method_ReadAllLinesAsync_String_Encoding_CancellationToken_ShouldRegisterCall()
 	{
@@ -954,7 +954,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_ReadAllText_String_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -969,7 +969,7 @@ public sealed class FileStatisticsTests
 			path, encoding);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_ReadAllText_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -984,7 +984,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task Method_ReadAllTextAsync_String_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1001,7 +1001,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task Method_ReadAllTextAsync_String_Encoding_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1018,7 +1018,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_ReadLines_String_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1033,7 +1033,7 @@ public sealed class FileStatisticsTests
 			path, encoding);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_ReadLines_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1048,7 +1048,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_NET_7_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task Method_ReadLinesAsync_String_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1065,7 +1065,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_NET_7_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task Method_ReadLinesAsync_String_Encoding_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1082,7 +1082,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_Replace_String_String_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1100,7 +1100,7 @@ public sealed class FileStatisticsTests
 			sourceFileName, destinationFileName, destinationBackupFileName, ignoreMetadataErrors);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Replace_String_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1117,7 +1117,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[Fact]
+	[Test]
 	public async Task Method_ResolveLinkTarget_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1134,7 +1134,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_SetAttributes_SafeFileHandle_FileAttributes_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1152,7 +1152,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_SetAttributes_String_FileAttributes_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1168,7 +1168,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_SetCreationTime_SafeFileHandle_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1186,7 +1186,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_SetCreationTime_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1202,7 +1202,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_SetCreationTimeUtc_SafeFileHandle_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1220,7 +1220,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_SetCreationTimeUtc_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1236,7 +1236,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_SetLastAccessTime_SafeFileHandle_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1254,7 +1254,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_SetLastAccessTime_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1270,7 +1270,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_SetLastAccessTimeUtc_SafeFileHandle_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1288,7 +1288,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_SetLastAccessTimeUtc_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1304,7 +1304,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_SetLastWriteTime_SafeFileHandle_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1322,7 +1322,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_SetLastWriteTime_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1338,7 +1338,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_SetLastWriteTimeUtc_SafeFileHandle_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1356,7 +1356,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_SetLastWriteTimeUtc_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1372,7 +1372,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[Fact]
+	[Test]
 	public async Task Method_SetUnixFileMode_SafeFileHandle_UnixFileMode_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnLinux);
@@ -1395,7 +1395,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-	[Fact]
+	[Test]
 	public async Task Method_SetUnixFileMode_String_UnixFileMode_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnLinux);
@@ -1415,7 +1415,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_WriteAllBytes_String_ByteArray_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1430,7 +1430,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_WriteAllBytes_String_ReadOnlySpanByte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1445,7 +1445,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task
 		Method_WriteAllBytesAsync_String_ByteArray_CancellationToken_ShouldRegisterCall()
 	{
@@ -1463,7 +1463,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task
 		Method_WriteAllBytesAsync_String_ReadOnlyMemoryByte_CancellationToken_ShouldRegisterCall()
 	{
@@ -1479,7 +1479,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_WriteAllLines_String_IEnumerableString_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1494,7 +1494,7 @@ public sealed class FileStatisticsTests
 			path, contents, encoding);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_WriteAllLines_String_IEnumerableString_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1508,7 +1508,7 @@ public sealed class FileStatisticsTests
 			path, contents);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_WriteAllLines_String_StringArray_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1523,7 +1523,7 @@ public sealed class FileStatisticsTests
 			path, contents, encoding);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_WriteAllLines_String_StringArray_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1538,7 +1538,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task
 		Method_WriteAllLinesAsync_String_IEnumerableString_CancellationToken_ShouldRegisterCall()
 	{
@@ -1556,7 +1556,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task
 		Method_WriteAllLinesAsync_String_IEnumerableString_Encoding_CancellationToken_ShouldRegisterCall()
 	{
@@ -1575,7 +1575,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_WriteAllText_String_ReadOnlySpanChar_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1591,7 +1591,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_WriteAllText_String_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1605,7 +1605,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_WriteAllText_String_String_Encoding_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1620,7 +1620,7 @@ public sealed class FileStatisticsTests
 			path, contents, encoding);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_WriteAllText_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1635,7 +1635,7 @@ public sealed class FileStatisticsTests
 	}
 
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task
 		Method_WriteAllTextAsync_String_ReadOnlyMemoryChar_CancellationToken_ShouldRegisterCall()
 	{
@@ -1652,7 +1652,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILE_SPAN
-	[Fact]
+	[Test]
 	public async Task
 		Method_WriteAllTextAsync_String_ReadOnlyMemoryChar_Encoding_CancellationToken_ShouldRegisterCall()
 	{
@@ -1670,7 +1670,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task Method_WriteAllTextAsync_String_String_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1687,7 +1687,7 @@ public sealed class FileStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Fact]
+	[Test]
 	public async Task
 		Method_WriteAllTextAsync_String_String_Encoding_CancellationToken_ShouldRegisterCall()
 	{
@@ -1705,7 +1705,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldBeFile()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.File;

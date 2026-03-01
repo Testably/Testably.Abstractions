@@ -1,30 +1,30 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class GetPathRootTests
+public class GetPathRootTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[InlineData(@"\\?\foo", @"\\?\foo", TestOS.Windows)]
-	[InlineData(@"\\.\BAR", @"\\.\BAR", TestOS.Windows)]
-	[InlineData(@"\\.\.", @"\\.\.", TestOS.Windows)]
-	[InlineData(@"\\.\\", @"\\.\", TestOS.Windows)]
-	[InlineData(@"\\.\a\", @"\\.\a\", TestOS.Windows)]
-	[InlineData(@"\\?\\", @"\\?\", TestOS.Windows)]
-	[InlineData(@"\\?\a\", @"\\?\a\", TestOS.Windows)]
-	[InlineData(@"\\?\UNC\", @"\\?\UNC\", TestOS.Windows)]
-	[InlineData(@"\\?\UNC\Bar", @"\\?\UNC\Bar", TestOS.Windows)]
-	[InlineData(@"\\?\UNC\a\b\c\d", @"\\?\UNC\a\b", TestOS.Windows)]
-	[InlineData(@"//?/UNC/a\b\c\d", @"\\?\UNC\a\b", TestOS.Windows)]
-	[InlineData(@"\\.\UNC\a\b\c\d", @"\\.\UNC\a\b", TestOS.Windows)]
-	[InlineData(@"//./UNC/a\b\c\d", @"\\.\UNC\a\b", TestOS.Windows)]
-	[InlineData(@"\\?\ABC\a\b\c\d", @"\\?\ABC\", TestOS.Windows)]
-	[InlineData(@"//?/ABC\a\b\c\d", @"\\?\ABC\", TestOS.Windows)]
-	[InlineData(@"\\.\ABC\a\b\c\d", @"\\.\ABC\", TestOS.Windows)]
-	[InlineData(@"//./ABC\a\b\c\d", @"\\.\ABC\", TestOS.Windows)]
-	[InlineData(@"\\X\ABC\a\b\c\d", @"\\X\ABC", TestOS.Windows)]
-	[InlineData(@"//X\ABC\a\b\c\d", @"\\X\ABC", TestOS.Windows)]
-	[InlineData(@"\??\ABC\a\b\c\d", @"\??\ABC\", TestOS.Windows)]
-	[InlineData(@"/??/ABC\a\b\c\d", @"\", TestOS.Windows)]
+	[Test]
+	[Arguments(@"\\?\foo", @"\\?\foo", TestOS.Windows)]
+	[Arguments(@"\\.\BAR", @"\\.\BAR", TestOS.Windows)]
+	[Arguments(@"\\.\.", @"\\.\.", TestOS.Windows)]
+	[Arguments(@"\\.\\", @"\\.\", TestOS.Windows)]
+	[Arguments(@"\\.\a\", @"\\.\a\", TestOS.Windows)]
+	[Arguments(@"\\?\\", @"\\?\", TestOS.Windows)]
+	[Arguments(@"\\?\a\", @"\\?\a\", TestOS.Windows)]
+	[Arguments(@"\\?\UNC\", @"\\?\UNC\", TestOS.Windows)]
+	[Arguments(@"\\?\UNC\Bar", @"\\?\UNC\Bar", TestOS.Windows)]
+	[Arguments(@"\\?\UNC\a\b\c\d", @"\\?\UNC\a\b", TestOS.Windows)]
+	[Arguments(@"//?/UNC/a\b\c\d", @"\\?\UNC\a\b", TestOS.Windows)]
+	[Arguments(@"\\.\UNC\a\b\c\d", @"\\.\UNC\a\b", TestOS.Windows)]
+	[Arguments(@"//./UNC/a\b\c\d", @"\\.\UNC\a\b", TestOS.Windows)]
+	[Arguments(@"\\?\ABC\a\b\c\d", @"\\?\ABC\", TestOS.Windows)]
+	[Arguments(@"//?/ABC\a\b\c\d", @"\\?\ABC\", TestOS.Windows)]
+	[Arguments(@"\\.\ABC\a\b\c\d", @"\\.\ABC\", TestOS.Windows)]
+	[Arguments(@"//./ABC\a\b\c\d", @"\\.\ABC\", TestOS.Windows)]
+	[Arguments(@"\\X\ABC\a\b\c\d", @"\\X\ABC", TestOS.Windows)]
+	[Arguments(@"//X\ABC\a\b\c\d", @"\\X\ABC", TestOS.Windows)]
+	[Arguments(@"\??\ABC\a\b\c\d", @"\??\ABC\", TestOS.Windows)]
+	[Arguments(@"/??/ABC\a\b\c\d", @"\", TestOS.Windows)]
 	public async Task GetPathRoot_EdgeCases_ShouldReturnExpectedValue(
 		string path, string expected, TestOS operatingSystem)
 	{
@@ -35,7 +35,7 @@ public partial class GetPathRootTests
 		await That(result).IsEqualTo(expected);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetPathRoot_Null_ShouldReturnNull()
 	{
 		string? result = FileSystem.Path.GetPathRoot(null);
@@ -43,9 +43,9 @@ public partial class GetPathRootTests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[InlineData("D:")]
-	[InlineData("D:\\")]
+	[Test]
+	[Arguments("D:")]
+	[Arguments("D:\\")]
 	public async Task GetPathRoot_RootedDrive_ShouldReturnDriveOnWindows(string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -55,9 +55,9 @@ public partial class GetPathRootTests
 		await That(result).IsEqualTo(path);
 	}
 
-	[Theory]
-	[InlineData("D:some-path", "D:")]
-	[InlineData("D:\\some-path", "D:\\")]
+	[Test]
+	[Arguments("D:some-path", "D:")]
+	[Arguments("D:\\some-path", "D:\\")]
 	public async Task GetPathRoot_RootedDriveWithPath_ShouldReturnDriveOnWindows(
 		string path, string expected)
 	{
@@ -68,8 +68,8 @@ public partial class GetPathRootTests
 		await That(result).IsEqualTo(expected);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetPathRoot_ShouldReturnDefaultValue(string path)
 	{
 		string? result = FileSystem.Path.GetPathRoot(path);
@@ -78,8 +78,8 @@ public partial class GetPathRootTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetPathRoot_Span_ShouldReturnDefaultValue(string path)
 	{
 		ReadOnlySpan<char> result = FileSystem.Path.GetPathRoot(path.AsSpan());

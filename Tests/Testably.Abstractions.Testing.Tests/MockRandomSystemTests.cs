@@ -2,7 +2,7 @@
 
 public class MockRandomSystemTests
 {
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldContainMockRandomSystem()
 	{
 		MockRandomSystem randomSystem = new();

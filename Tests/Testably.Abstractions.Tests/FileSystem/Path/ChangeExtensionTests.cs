@@ -1,10 +1,10 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class ChangeExtensionTests
+public class ChangeExtensionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ChangeExtension_EmptyPath_ShouldReturnEmptyString(string extension)
 	{
 		string result = FileSystem.Path.ChangeExtension(string.Empty, extension);
@@ -12,8 +12,8 @@ public partial class ChangeExtensionTests
 		await That(result).IsEmpty();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ChangeExtension_NullPath_ShouldReturnNull(string extension)
 	{
 		string? result = FileSystem.Path.ChangeExtension(null, extension);
@@ -21,8 +21,8 @@ public partial class ChangeExtensionTests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ChangeExtension_WhenExtensionIsNull_ShouldRemovePreviousExtension(
 		string fileName)
 	{
@@ -34,8 +34,8 @@ public partial class ChangeExtensionTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ChangeExtension_WithDirectory_ShouldIncludeDirectory(
 		string directory, string fileName, string extension)
 	{
@@ -48,8 +48,8 @@ public partial class ChangeExtensionTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ChangeExtension_WithDotOnlyInDirectory_ShouldAppendExtensionToPath(
 		string directory, string fileName, string extension)
 	{
@@ -62,8 +62,8 @@ public partial class ChangeExtensionTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ChangeExtension_WithFileStartingWithDot_ShouldAppendExtensionToPath(
 		string fileName, string extension)
 	{
@@ -75,8 +75,8 @@ public partial class ChangeExtensionTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ChangeExtension_WithLeadingDotInExtension_ShouldNotIncludeTwoDots(
 		string fileName, string extension)
 	{

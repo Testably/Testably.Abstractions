@@ -22,10 +22,6 @@
   </Folder>
   <Folder Name="/Tests/Helpers/">
     <Project Path="Tests/Helpers/Testably.Abstractions.TestHelpers/Testably.Abstractions.TestHelpers.csproj" />
-    <Project Path="Tests/Helpers/Testably.Abstractions.Tests.SourceGenerator/Testably.Abstractions.Tests.SourceGenerator.csproj" />
-  </Folder>
-  <Folder Name="/Tests/Settings/">
-    <Project Path="Tests/Settings/Testably.Abstractions.TestSettings/Testably.Abstractions.TestSettings.csproj" />
   </Folder>
   <Folder Name="/_/">
     <File Path=".codacy.yml" />
@@ -68,9 +64,6 @@
   </Folder>
   <Folder Name="/_/Tests/">
     <File Path="Tests/Directory.Build.props" />
-  </Folder>
-  <Folder Name="/_/Tests/Api/">
-    <File Path="Tests/Api/Directory.Build.props" />
   </Folder>
   <Project Path="Source/Testably.Abstractions.AccessControl/Testably.Abstractions.AccessControl.csproj" />
   <Project Path="Source/Testably.Abstractions.Compression/Testably.Abstractions.Compression.csproj" />

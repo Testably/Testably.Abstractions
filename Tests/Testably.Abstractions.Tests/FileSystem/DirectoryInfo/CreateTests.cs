@@ -4,10 +4,10 @@ using Testably.Abstractions.Testing.FileSystem;
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 [FileSystemTests]
-public partial class CreateTests
+public class CreateTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Create_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)
 	{
 		FileSystem.File.WriteAllText(name, "");
@@ -22,8 +22,8 @@ public partial class CreateTests
 		await That(FileSystem.Directory.Exists(name)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Create_ShouldCreateDirectory(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -40,7 +40,7 @@ public partial class CreateTests
 		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_ShouldCreateInBasePath()
 	{
 		IDirectoryInfo result = FileSystem.DirectoryInfo.New("foo");
@@ -51,7 +51,7 @@ public partial class CreateTests
 		await That(result.FullName).StartsWith(BasePath);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create_ShouldCreateParentDirectories()
 	{
 		string directoryLevel1 = "lvl1";
@@ -72,8 +72,8 @@ public partial class CreateTests
 		await That(result.ToString()).IsEqualTo(path);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Create_ShouldRefreshExistsCacheForCurrentItem_ExceptOnNetFramework(
 		string path)
 	{
@@ -102,10 +102,10 @@ public partial class CreateTests
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 
-	[Theory]
-	[InlineData("")]
-	[InlineData("/")]
-	[InlineData("\\")]
+	[Test]
+	[Arguments("")]
+	[Arguments("/")]
+	[Arguments("\\")]
 	public async Task Create_TrailingDirectorySeparator_ShouldNotBeTrimmed(
 		string suffix)
 	{
@@ -136,7 +136,7 @@ public partial class CreateTests
 		await That(FileSystem.Directory.Exists(nameWithSuffix)).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		CreateDirectory_WithoutAccessRightsToParent_ShouldThrowUnauthorizedAccessException()
 	{

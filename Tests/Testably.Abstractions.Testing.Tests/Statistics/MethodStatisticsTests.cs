@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics;
 
 public sealed class MethodStatisticsTests
 {
-	[Fact]
+	[Test]
 	public async Task Counter_ShouldBeInitializedWithOne()
 	{
 		MockFileSystem fileSystem = new();
@@ -14,7 +14,7 @@ public sealed class MethodStatisticsTests
 		await That(sut.Counter).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldContainName()
 	{
 		MockFileSystem fileSystem = new();
@@ -27,7 +27,7 @@ public sealed class MethodStatisticsTests
 			.DoesNotContain(",");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldContainParameters()
 	{
 		MockFileSystem fileSystem = new();

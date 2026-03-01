@@ -1,9 +1,9 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class GetTempFileNameTests
+public class GetTempFileNameTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task GetTempFileName_ShouldBeInTempPath()
 	{
 		string tempPath = FileSystem.Path.GetTempPath();
@@ -15,7 +15,7 @@ public partial class GetTempFileNameTests
 		await That(result).StartsWith(tempPath);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetTempFileName_ShouldExist()
 	{
 		#pragma warning disable CS0618 // Type or member is obsolete

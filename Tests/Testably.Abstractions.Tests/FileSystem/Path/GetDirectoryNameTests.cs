@@ -1,12 +1,12 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class GetDirectoryNameTests
+public class GetDirectoryNameTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[InlineData((string?)null)]
+	[Test]
+	[Arguments((string?)null)]
 #if !NETFRAMEWORK
-	[InlineData("")]
+	[Arguments("")]
 #endif
 	public async Task GetDirectoryName_NullOrEmpty_ShouldReturnNull(string? path)
 	{
@@ -16,12 +16,12 @@ public partial class GetDirectoryNameTests
 	}
 
 #if NETFRAMEWORK
-	[Theory]
-	[InlineData("")]
-	[InlineData(" ")]
-	[InlineData("    ")]
-	[InlineData("\t")]
-	[InlineData("\n")]
+	[Test]
+	[Arguments("")]
+	[Arguments(" ")]
+	[Arguments("    ")]
+	[Arguments("\t")]
+	[Arguments("\n")]
 	public async Task GetDirectoryName_EmptyOrWhiteSpace_ShouldThrowArgumentException(string path)
 	{
 		void Act()
@@ -34,9 +34,9 @@ public partial class GetDirectoryNameTests
 #endif
 
 #if !NETFRAMEWORK
-	[Theory]
-	[InlineData(" ")]
-	[InlineData("    ")]
+	[Test]
+	[Arguments(" ")]
+	[Arguments("    ")]
 	public async Task GetDirectoryName_Spaces_ShouldReturnNullOnWindowsOtherwiseEmpty(string? path)
 	{
 		string? result = FileSystem.Path.GetDirectoryName(path);
@@ -53,11 +53,11 @@ public partial class GetDirectoryNameTests
 #endif
 
 #if !NETFRAMEWORK
-	[Theory]
-	[InlineData("\t")]
-	[InlineData("\n")]
-	[InlineData(" \t")]
-	[InlineData("\n  ")]
+	[Test]
+	[Arguments("\t")]
+	[Arguments("\n")]
+	[Arguments(" \t")]
+	[Arguments("\n  ")]
 	public async Task GetDirectoryName_TabOrNewline_ShouldReturnEmptyString(string? path)
 	{
 		string? result = FileSystem.Path.GetDirectoryName(path);
@@ -66,8 +66,8 @@ public partial class GetDirectoryNameTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetDirectoryName_ShouldReturnDirectory(
 		string directory, string filename, string extension)
 	{
@@ -79,8 +79,8 @@ public partial class GetDirectoryNameTests
 		await That(result).IsEqualTo(directory);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetDirectoryName_ShouldReplaceAltDirectorySeparator(
 		string parentDirectory, string directory, string filename)
 	{
@@ -93,12 +93,12 @@ public partial class GetDirectoryNameTests
 		await That(result).IsEqualTo(expected);
 	}
 
-	[Theory]
-	[InlineData("foo//bar/file", "foo/bar", TestOS.All)]
-	[InlineData("foo///bar/file", "foo/bar", TestOS.All)]
-	[InlineData("//foo//bar/file", "/foo/bar", TestOS.Linux | TestOS.Mac)]
-	[InlineData(@"foo\\bar/file", "foo/bar", TestOS.Windows)]
-	[InlineData(@"foo\\\bar/file", "foo/bar", TestOS.Windows)]
+	[Test]
+	[Arguments("foo//bar/file", "foo/bar", TestOS.All)]
+	[Arguments("foo///bar/file", "foo/bar", TestOS.All)]
+	[Arguments("//foo//bar/file", "/foo/bar", TestOS.Linux | TestOS.Mac)]
+	[Arguments(@"foo\\bar/file", "foo/bar", TestOS.Windows)]
+	[Arguments(@"foo\\\bar/file", "foo/bar", TestOS.Windows)]
 	public async Task GetDirectoryName_ShouldNormalizeDirectorySeparators(
 		string path, string expected, TestOS operatingSystem)
 	{
@@ -112,8 +112,8 @@ public partial class GetDirectoryNameTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetDirectoryName_Span_ShouldReturnDirectory(
 		string directory, string filename, string extension)
 	{
@@ -126,56 +126,56 @@ public partial class GetDirectoryNameTests
 	}
 #endif
 
-	[Theory]
-	[InlineData("//", null, TestOS.Windows)]
-	[InlineData(@"\\", null, TestOS.Windows)]
-	[InlineData(@"\\", "", TestOS.Linux | TestOS.Mac)]
-	[InlineData(@"\", "", TestOS.Linux | TestOS.Mac)]
-	[InlineData(@"/", null, TestOS.Linux | TestOS.Mac)]
-	[InlineData(@"/a", "/", TestOS.Linux | TestOS.Mac)]
-	[InlineData(@"/a\b", @"/", TestOS.Linux | TestOS.Mac)]
-	[InlineData(@"/a\b/c", @"/a\b", TestOS.Linux | TestOS.Mac)]
-	[InlineData(@"/a/b/c", @"/a/b", TestOS.Linux | TestOS.Mac)]
-	[InlineData(@"/a/b", "/a", TestOS.Linux | TestOS.Mac)]
-	[InlineData("//?/G:/", null, TestOS.Windows)]
-	[InlineData("/??/H:/", @"\??\H:", TestOS.Windows)]
-	[InlineData("//?/I:/a", @"\\?\I:\", TestOS.Windows)]
-	[InlineData("/??/J:/a", @"\??\J:", TestOS.Windows)]
-	[InlineData(@"\\?\K:\", null, TestOS.Windows)]
-	[InlineData(@"\??\L:\", null, TestOS.Windows)]
-	[InlineData(@"\\?\M:\a", @"\\?\M:\", TestOS.Windows)]
-	[InlineData(@"\??\N:\a", @"\??\N:\", TestOS.Windows)]
-	[InlineData(@"\\?\UNC\", null, TestOS.Windows)]
-	[InlineData(@"//?/UNC/", null, TestOS.Windows)]
-	[InlineData(@"\??\UNC\", null, TestOS.Windows)]
-	[InlineData(@"/??/UNC/", @"\??\UNC", TestOS.Windows)]
-	[InlineData(@"\\?\UNC\a", null, TestOS.Windows)]
-	[InlineData(@"//?/UNC/a", null, TestOS.Windows)]
-	[InlineData(@"\??\UNC\a", null, TestOS.Windows)]
-	[InlineData(@"/??/UNC/a", @"\??\UNC", TestOS.Windows)]
-	[InlineData(@"\\?\ABC\", null, TestOS.Windows)]
-	[InlineData(@"//?/ABC/", null, TestOS.Windows)]
-	[InlineData(@"\??\XYZ\", null, TestOS.Windows)]
-	[InlineData(@"/??/XYZ/", @"\??\XYZ", TestOS.Windows)]
-	[InlineData(@"\\?\unc\a", @"\\?\unc\", TestOS.Windows)]
-	[InlineData(@"//?/unc/a", @"\\?\unc\", TestOS.Windows)]
-	[InlineData(@"\??\unc\a", @"\??\unc\", TestOS.Windows)]
-	[InlineData(@"/??/unc/a", @"\??\unc", TestOS.Windows)]
-	[InlineData("//./", null, TestOS.Windows)]
-	[InlineData(@"\\.\", null, TestOS.Windows)]
-	[InlineData("//?/", null, TestOS.Windows)]
-	[InlineData(@"\\?\", null, TestOS.Windows)]
-	[InlineData("//a/", null, TestOS.Windows)]
-	[InlineData(@"\\a\", null, TestOS.Windows)]
-	[InlineData(@"C:", null, TestOS.Windows)]
-	[InlineData(@"D:\", null, TestOS.Windows)]
-	[InlineData(@"E:/", null, TestOS.Windows)]
-	[InlineData(@"F:\a", @"F:\", TestOS.Windows)]
-	[InlineData(@"F:\b\c", @"F:\b", TestOS.Windows)]
-	[InlineData(@"F:\d/e", @"F:\d", TestOS.Windows)]
-	[InlineData(@"G:/f", @"G:\", TestOS.Windows)]
-	[InlineData(@"F:/g\h", @"F:\g", TestOS.Windows)]
-	[InlineData(@"G:/i/j", @"G:\i", TestOS.Windows)]
+	[Test]
+	[Arguments("//", null, TestOS.Windows)]
+	[Arguments(@"\\", null, TestOS.Windows)]
+	[Arguments(@"\\", "", TestOS.Linux | TestOS.Mac)]
+	[Arguments(@"\", "", TestOS.Linux | TestOS.Mac)]
+	[Arguments(@"/", null, TestOS.Linux | TestOS.Mac)]
+	[Arguments(@"/a", "/", TestOS.Linux | TestOS.Mac)]
+	[Arguments(@"/a\b", @"/", TestOS.Linux | TestOS.Mac)]
+	[Arguments(@"/a\b/c", @"/a\b", TestOS.Linux | TestOS.Mac)]
+	[Arguments(@"/a/b/c", @"/a/b", TestOS.Linux | TestOS.Mac)]
+	[Arguments(@"/a/b", "/a", TestOS.Linux | TestOS.Mac)]
+	[Arguments("//?/G:/", null, TestOS.Windows)]
+	[Arguments("/??/H:/", @"\??\H:", TestOS.Windows)]
+	[Arguments("//?/I:/a", @"\\?\I:\", TestOS.Windows)]
+	[Arguments("/??/J:/a", @"\??\J:", TestOS.Windows)]
+	[Arguments(@"\\?\K:\", null, TestOS.Windows)]
+	[Arguments(@"\??\L:\", null, TestOS.Windows)]
+	[Arguments(@"\\?\M:\a", @"\\?\M:\", TestOS.Windows)]
+	[Arguments(@"\??\N:\a", @"\??\N:\", TestOS.Windows)]
+	[Arguments(@"\\?\UNC\", null, TestOS.Windows)]
+	[Arguments(@"//?/UNC/", null, TestOS.Windows)]
+	[Arguments(@"\??\UNC\", null, TestOS.Windows)]
+	[Arguments(@"/??/UNC/", @"\??\UNC", TestOS.Windows)]
+	[Arguments(@"\\?\UNC\a", null, TestOS.Windows)]
+	[Arguments(@"//?/UNC/a", null, TestOS.Windows)]
+	[Arguments(@"\??\UNC\a", null, TestOS.Windows)]
+	[Arguments(@"/??/UNC/a", @"\??\UNC", TestOS.Windows)]
+	[Arguments(@"\\?\ABC\", null, TestOS.Windows)]
+	[Arguments(@"//?/ABC/", null, TestOS.Windows)]
+	[Arguments(@"\??\XYZ\", null, TestOS.Windows)]
+	[Arguments(@"/??/XYZ/", @"\??\XYZ", TestOS.Windows)]
+	[Arguments(@"\\?\unc\a", @"\\?\unc\", TestOS.Windows)]
+	[Arguments(@"//?/unc/a", @"\\?\unc\", TestOS.Windows)]
+	[Arguments(@"\??\unc\a", @"\??\unc\", TestOS.Windows)]
+	[Arguments(@"/??/unc/a", @"\??\unc", TestOS.Windows)]
+	[Arguments("//./", null, TestOS.Windows)]
+	[Arguments(@"\\.\", null, TestOS.Windows)]
+	[Arguments("//?/", null, TestOS.Windows)]
+	[Arguments(@"\\?\", null, TestOS.Windows)]
+	[Arguments("//a/", null, TestOS.Windows)]
+	[Arguments(@"\\a\", null, TestOS.Windows)]
+	[Arguments(@"C:", null, TestOS.Windows)]
+	[Arguments(@"D:\", null, TestOS.Windows)]
+	[Arguments(@"E:/", null, TestOS.Windows)]
+	[Arguments(@"F:\a", @"F:\", TestOS.Windows)]
+	[Arguments(@"F:\b\c", @"F:\b", TestOS.Windows)]
+	[Arguments(@"F:\d/e", @"F:\d", TestOS.Windows)]
+	[Arguments(@"G:/f", @"G:\", TestOS.Windows)]
+	[Arguments(@"F:/g\h", @"F:\g", TestOS.Windows)]
+	[Arguments(@"G:/i/j", @"G:\i", TestOS.Windows)]
 	public async Task GetDirectoryName_SpecialCases_ShouldReturnExpectedValue(
 		string path, string? expected, TestOS operatingSystem)
 	{

@@ -9,10 +9,10 @@ using System.Globalization;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class GetFilesTests
+public class GetFilesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		GetFiles_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
@@ -28,8 +28,8 @@ public partial class GetFilesTests
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFiles_Path_NotOnLinux_ShouldBeCaseInsensitive(string path)
 	{
 		Skip.If(Test.RunsOnLinux);
@@ -43,8 +43,8 @@ public partial class GetFilesTests
 		await That(result.Length).IsEqualTo(1);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFiles_Path_OnLinux_ShouldBeCaseSensitive(string path)
 	{
 		Skip.IfNot(Test.RunsOnLinux);
@@ -64,8 +64,8 @@ public partial class GetFilesTests
 		await That(result2.Length).IsEqualTo(1);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
 		string path)
 	{
@@ -85,8 +85,8 @@ public partial class GetFilesTests
 		await That(result).Contains(initialized[2].FullName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
 		string path)
 	{
@@ -105,20 +105,20 @@ public partial class GetFilesTests
 		await That(result).Contains(initialized[2].ToString());
 	}
 
-	[Theory]
+	[Test]
 #if NETFRAMEWORK
-	[InlineAutoData(false, "")]
+	[AutoArguments(false, "")]
 #else
-	[InlineAutoData(true, "")]
+	[AutoArguments(true, "")]
 #endif
-	[InlineAutoData(true, "*")]
-	[InlineAutoData(true, ".")]
-	[InlineAutoData(true, "*.*")]
-	[InlineData(true, "a*c", "abc")]
-	[InlineData(true, "ab*c", "abc")]
-	[InlineData(true, "abc?", "abc")]
-	[InlineData(false, "ab?c", "abc")]
-	[InlineData(false, "ac", "abc")]
+	[AutoArguments(true, "*")]
+	[AutoArguments(true, ".")]
+	[AutoArguments(true, "*.*")]
+	[Arguments(true, "a*c", "abc")]
+	[Arguments(true, "ab*c", "abc")]
+	[Arguments(true, "abc?", "abc")]
+	[Arguments(false, "ab?c", "abc")]
+	[Arguments(false, "ac", "abc")]
 	public async Task GetFiles_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
@@ -138,7 +138,7 @@ public partial class GetFilesTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetFiles_SearchPatternForFileWithoutExtension_ShouldWorkConsistently()
 	{
 		FileSystem.Initialize()
@@ -150,7 +150,7 @@ public partial class GetFilesTests
 		await That(result.Length).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		GetFiles_SearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
 	{
@@ -176,7 +176,7 @@ public partial class GetFilesTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetFiles_SearchPatternWithTooManyAsterisk_ShouldWorkConsistently()
 	{
 		FileSystem.Initialize()
@@ -188,8 +188,8 @@ public partial class GetFilesTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFiles_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
 	{
@@ -216,8 +216,8 @@ public partial class GetFilesTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFiles_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
@@ -236,8 +236,8 @@ public partial class GetFilesTests
 				Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
 		string path)
 	{
@@ -258,8 +258,8 @@ public partial class GetFilesTests
 		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFiles_WithRelativePathAndSubfolders_ShouldReturnRelativeFilePath(
 		string subfolder1, string subfolder2, string[] files)
 	{
@@ -280,8 +280,8 @@ public partial class GetFilesTests
 		await That(result).IsEqualTo(expectation).InAnyOrder();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFiles_WithSearchPattern_ShouldReturnMatchingFiles(
 		string path)
 	{
@@ -302,7 +302,7 @@ public partial class GetFilesTests
 		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		GetFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
 	{

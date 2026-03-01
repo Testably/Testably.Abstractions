@@ -5,12 +5,20 @@ using System.Linq.Expressions;
 namespace Testably.Abstractions.Tests.FileSystem.DriveInfoFactory;
 
 [FileSystemTests]
-public partial class ExceptionTests
+public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[InlineData("?invalid-drive-name")]
-	[InlineData("invalid")]
-	[InlineData(" ")]
+	public static IEnumerable<(Expression<Action<IDriveInfoFactory>>, string, bool)>
+		GetDriveInfoFactoryCallbacksWithEmptyPath()
+		=> GetDriveInfoFactoryCallbacks("");
+
+	public static IEnumerable<(Expression<Action<IDriveInfoFactory>>, string, bool)>
+		GetDriveInfoFactoryCallbacksWithNullPath()
+		=> GetDriveInfoFactoryCallbacks(null);
+
+	[Test]
+	[Arguments("?invalid-drive-name")]
+	[Arguments("invalid")]
+	[Arguments(" ")]
 	public async Task New_WhenDriveNameIsInvalid_ShouldThrowArgumentException(
 		string driveName)
 	{
@@ -24,8 +32,8 @@ public partial class ExceptionTests
 		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
-	[Theory]
-	[MemberData(nameof(GetDriveInfoFactoryCallbacks), "")]
+	[Test]
+	[MethodDataSource(nameof(GetDriveInfoFactoryCallbacksWithEmptyPath))]
 	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -42,8 +50,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetDriveInfoFactoryCallbacks), (string?)null)]
+	[Test]
+	[MethodDataSource(nameof(GetDriveInfoFactoryCallbacksWithNullPath))]
 	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -59,28 +67,21 @@ public partial class ExceptionTests
 				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	#region Helpers
-
-	#pragma warning disable MA0018
-	public static TheoryData<Expression<Action<IDriveInfoFactory>>, string, bool>
+	private static IEnumerable<(Expression<Action<IDriveInfoFactory>>, string, bool)>
 		GetDriveInfoFactoryCallbacks(string? path)
 	{
-		TheoryData<Expression<Action<IDriveInfoFactory>>, string, bool> theoryData = new();
 		foreach ((ExceptionTestHelper.TestTypes TestType,
 			string ParamName,
 			Expression<Action<IDriveInfoFactory>> Callback) item in
 			GetDriveInfoFactoryCallbackTestParameters(path!)
 				.Where(item => item.TestType.HasFlag(path.ToTestType())))
 		{
-			theoryData.Add(
+			yield return (
 				item.Callback,
 				item.ParamName,
 				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck));
 		}
-
-		return theoryData;
 	}
-	#pragma warning restore MA0018
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IDriveInfoFactory>> Callback)>
@@ -89,6 +90,4 @@ public partial class ExceptionTests
 		yield return (ExceptionTestHelper.TestTypes.All, "driveName", driveInfoFactory
 			=> driveInfoFactory.New(value));
 	}
-
-	#endregion
 }

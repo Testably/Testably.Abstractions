@@ -1,5 +1,6 @@
-﻿using NUnit.Framework;
-using System.Collections;
+﻿using aweXpect;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Api.Tests;
 
@@ -10,65 +11,54 @@ namespace Testably.Abstractions.Api.Tests;
 /// </summary>
 public sealed class ApiApprovalTests
 {
-	[TestCaseSource(typeof(TargetFrameworksTheoryData))]
-	public void VerifyPublicApiForTestablyAbstractions(string framework)
+	public static IEnumerable<string> TargetFrameworks()
+		=> Helper.GetTargetFrameworks();
+
+	[Test]
+	[MethodDataSource(nameof(TargetFrameworks))]
+	public async Task VerifyPublicApiForTestablyAbstractions(string framework)
 	{
 		const string assemblyName = "Testably.Abstractions";
 
 		string publicApi = Helper.CreatePublicApi(framework, assemblyName);
 		string expectedApi = Helper.GetExpectedApi(framework, assemblyName);
 
-		Assert.That(publicApi, Is.EqualTo(expectedApi));
+		await Expect.That(publicApi).IsEqualTo(expectedApi);
 	}
 
-	[TestCaseSource(typeof(TargetFrameworksTheoryData))]
-	public void VerifyPublicApiForTestablyAbstractionsAccessControl(string framework)
+	[Test]
+	[MethodDataSource(nameof(TargetFrameworks))]
+	public async Task VerifyPublicApiForTestablyAbstractionsAccessControl(string framework)
 	{
 		const string assemblyName = "Testably.Abstractions.AccessControl";
 
 		string publicApi = Helper.CreatePublicApi(framework, assemblyName);
 		string expectedApi = Helper.GetExpectedApi(framework, assemblyName);
 
-		Assert.That(publicApi, Is.EqualTo(expectedApi));
+		await Expect.That(publicApi).IsEqualTo(expectedApi);
 	}
 
-	[TestCaseSource(typeof(TargetFrameworksTheoryData))]
-	public void VerifyPublicApiForTestablyAbstractionsCompression(string framework)
+	[Test]
+	[MethodDataSource(nameof(TargetFrameworks))]
+	public async Task VerifyPublicApiForTestablyAbstractionsCompression(string framework)
 	{
 		const string assemblyName = "Testably.Abstractions.Compression";
 
 		string publicApi = Helper.CreatePublicApi(framework, assemblyName);
 		string expectedApi = Helper.GetExpectedApi(framework, assemblyName);
 
-		Assert.That(publicApi, Is.EqualTo(expectedApi));
+		await Expect.That(publicApi).IsEqualTo(expectedApi);
 	}
 
-	[TestCaseSource(typeof(TargetFrameworksTheoryData))]
-	public void VerifyPublicApiForTestablyAbstractionsTesting(string framework)
+	[Test]
+	[MethodDataSource(nameof(TargetFrameworks))]
+	public async Task VerifyPublicApiForTestablyAbstractionsTesting(string framework)
 	{
 		const string assemblyName = "Testably.Abstractions.Testing";
 
 		string publicApi = Helper.CreatePublicApi(framework, assemblyName);
 		string expectedApi = Helper.GetExpectedApi(framework, assemblyName);
 
-		Assert.That(publicApi, Is.EqualTo(expectedApi));
-	}
-
-	private sealed class TargetFrameworksTheoryData : IEnumerable
-	{
-		#region IEnumerable Members
-
-		public IEnumerator GetEnumerator()
-		{
-			foreach (string targetFramework in Helper.GetTargetFrameworks())
-			{
-				yield return new object[]
-				{
-					targetFramework
-				};
-			}
-		}
-
-		#endregion
+		await Expect.That(publicApi).IsEqualTo(expectedApi);
 	}
 }

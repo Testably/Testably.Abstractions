@@ -1,10 +1,10 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class GetFileNameWithoutExtensionTests
+public class GetFileNameWithoutExtensionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		GetFileNameWithoutExtension_MultipleDots_ShouldReturnOnlyRemoveTheLastExtension(
 			string directory, string filename1, string filename2, string extension)
@@ -18,7 +18,7 @@ public partial class GetFileNameWithoutExtensionTests
 		await That(result).IsEqualTo(filename);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetFileNameWithoutExtension_Null_ShouldReturnNull()
 	{
 		string? result = FileSystem.Path.GetFileNameWithoutExtension(null);
@@ -26,8 +26,8 @@ public partial class GetFileNameWithoutExtensionTests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFileNameWithoutExtension_ShouldReturnFileNameWithoutExtension(
 		string directory, string filename, string extension)
 	{
@@ -40,8 +40,8 @@ public partial class GetFileNameWithoutExtensionTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFileNameWithoutExtension_Span_ShouldReturnFileNameWithoutExtension(
 		string directory, string filename, string extension)
 	{
@@ -55,8 +55,8 @@ public partial class GetFileNameWithoutExtensionTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFileNameWithoutExtension_StartingDot_ShouldReturnEmptyString(
 		string directory, string filename)
 	{
@@ -67,8 +67,8 @@ public partial class GetFileNameWithoutExtensionTests
 		await That(result).IsEqualTo("");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		GetFileNameWithoutExtension_TrailingDot_ShouldReturnFilenameWithoutTrailingDot(
 			string directory, string filename)

@@ -3,7 +3,7 @@ using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
-[Collection(nameof(IDirectoryCleaner))]
+[NotInParallel(nameof(IDirectoryCleaner))]
 public sealed class FileSystemWatcherFactoryMockTests : IDisposable
 {
 	#region Test Setup
@@ -29,8 +29,8 @@ public sealed class FileSystemWatcherFactoryMockTests : IDisposable
 
 	#endregion
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Wrap_ShouldUsePropertiesFromFileSystemWatcher(
 		string path, bool includeSubdirectories, NotifyFilters notifyFilter,
 		int internalBufferSize, bool enableRaisingEvents, string filter)
@@ -56,8 +56,8 @@ public sealed class FileSystemWatcherFactoryMockTests : IDisposable
 	}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Wrap_WithFilters_ShouldUsePropertiesFromFileSystemWatcher(
 		string[] filters)
 	{

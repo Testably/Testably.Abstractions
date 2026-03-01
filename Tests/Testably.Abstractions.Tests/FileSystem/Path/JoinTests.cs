@@ -2,11 +2,11 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class JoinTests
+public class JoinTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[InlineAutoData((string?)null)]
-	[InlineAutoData("")]
+	[Test]
+	[AutoArguments((string?)null)]
+	[AutoArguments("")]
 	public async Task Join_2Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string? path)
 	{
@@ -17,13 +17,13 @@ public partial class JoinTests
 		await That(result2).IsEqualTo(path);
 	}
 
-	[Theory]
-	[InlineAutoData("/foo/", "/bar/", "/foo//bar/")]
-	[InlineAutoData("foo/", "/bar", "foo//bar")]
-	[InlineAutoData("foo/", "bar", "foo/bar")]
-	[InlineAutoData("foo", "/bar", "foo/bar")]
-	[InlineAutoData("foo", "bar", "foo/bar")]
-	[InlineAutoData("/foo", "bar/", "/foo/bar/")]
+	[Test]
+	[AutoArguments("/foo/", "/bar/", "/foo//bar/")]
+	[AutoArguments("foo/", "/bar", "foo//bar")]
+	[AutoArguments("foo/", "bar", "foo/bar")]
+	[AutoArguments("foo", "/bar", "foo/bar")]
+	[AutoArguments("foo", "bar", "foo/bar")]
+	[AutoArguments("/foo", "bar/", "/foo/bar/")]
 	public async Task Join_2Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string expectedResult)
 	{
@@ -36,8 +36,8 @@ public partial class JoinTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Join_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2)
 	{
@@ -49,8 +49,8 @@ public partial class JoinTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Join_2Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2)
 	{
@@ -64,9 +64,9 @@ public partial class JoinTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[InlineAutoData((string?)null)]
-	[InlineAutoData("")]
+	[Test]
+	[AutoArguments((string?)null)]
+	[AutoArguments("")]
 	public async Task Join_3Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string path1, string path2)
 	{
@@ -81,14 +81,14 @@ public partial class JoinTests
 		await That(result3).IsEqualTo(expectedPath);
 	}
 
-	[Theory]
-	[InlineAutoData("/foo/", "/bar/", "/baz/", "/foo//bar//baz/")]
-	[InlineAutoData("foo/", "/bar/", "/baz", "foo//bar//baz")]
-	[InlineAutoData("foo/", "bar", "/baz", "foo/bar/baz")]
-	[InlineAutoData("foo", "/bar", "/baz", "foo/bar/baz")]
-	[InlineAutoData("foo", "/bar/", "baz", "foo/bar/baz")]
-	[InlineAutoData("foo", "bar", "baz", "foo/bar/baz")]
-	[InlineAutoData("/foo", "bar", "baz/", "/foo/bar/baz/")]
+	[Test]
+	[AutoArguments("/foo/", "/bar/", "/baz/", "/foo//bar//baz/")]
+	[AutoArguments("foo/", "/bar/", "/baz", "foo//bar//baz")]
+	[AutoArguments("foo/", "bar", "/baz", "foo/bar/baz")]
+	[AutoArguments("foo", "/bar", "/baz", "foo/bar/baz")]
+	[AutoArguments("foo", "/bar/", "baz", "foo/bar/baz")]
+	[AutoArguments("foo", "bar", "baz", "foo/bar/baz")]
+	[AutoArguments("/foo", "bar", "baz/", "/foo/bar/baz/")]
 	public async Task Join_3Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string expectedResult)
 	{
@@ -102,8 +102,8 @@ public partial class JoinTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Join_3Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3)
 	{
@@ -116,8 +116,8 @@ public partial class JoinTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Join_3Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3)
 	{
@@ -133,9 +133,9 @@ public partial class JoinTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[InlineAutoData((string?)null)]
-	[InlineAutoData("")]
+	[Test]
+	[AutoArguments((string?)null)]
+	[AutoArguments("")]
 	public async Task Join_4Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string path1, string path2, string path3)
 	{
@@ -153,14 +153,14 @@ public partial class JoinTests
 		await That(result4).IsEqualTo(expectedPath);
 	}
 
-	[Theory]
-	[InlineAutoData("/foo/", "/bar/", "/baz/", "/muh/", "/foo//bar//baz//muh/")]
-	[InlineAutoData("foo/", "/bar/", "/baz/", "/muh", "foo//bar//baz//muh")]
-	[InlineAutoData("foo/", "bar", "/baz", "/muh", "foo/bar/baz/muh")]
-	[InlineAutoData("foo", "/bar", "/baz", "/muh", "foo/bar/baz/muh")]
-	[InlineAutoData("foo", "/bar/", "baz/", "muh", "foo/bar/baz/muh")]
-	[InlineAutoData("foo", "bar", "baz", "muh", "foo/bar/baz/muh")]
-	[InlineAutoData("/foo", "bar", "baz", "muh/", "/foo/bar/baz/muh/")]
+	[Test]
+	[AutoArguments("/foo/", "/bar/", "/baz/", "/muh/", "/foo//bar//baz//muh/")]
+	[AutoArguments("foo/", "/bar/", "/baz/", "/muh", "foo//bar//baz//muh")]
+	[AutoArguments("foo/", "bar", "/baz", "/muh", "foo/bar/baz/muh")]
+	[AutoArguments("foo", "/bar", "/baz", "/muh", "foo/bar/baz/muh")]
+	[AutoArguments("foo", "/bar/", "baz/", "muh", "foo/bar/baz/muh")]
+	[AutoArguments("foo", "bar", "baz", "muh", "foo/bar/baz/muh")]
+	[AutoArguments("/foo", "bar", "baz", "muh/", "/foo/bar/baz/muh/")]
 	public async Task Join_4Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string path4, string expectedResult)
 	{
@@ -175,8 +175,8 @@ public partial class JoinTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Join_4Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4)
 	{
@@ -190,8 +190,8 @@ public partial class JoinTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Join_4Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4)
 	{
@@ -209,7 +209,7 @@ public partial class JoinTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Join_ParamPaths_Empty_ShouldReturnEmptyString()
 	{
 		string?[] paths = [];
@@ -219,7 +219,7 @@ public partial class JoinTests
 		await That(result).IsEqualTo(string.Empty);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Join_ParamPaths_Null_ShouldThrow()
 	{
 		void Act()
@@ -230,9 +230,9 @@ public partial class JoinTests
 		await That(Act).Throws<ArgumentNullException>().WithParamName("paths");
 	}
 
-	[Theory]
-	[InlineAutoData((string?)null)]
-	[InlineAutoData("")]
+	[Test]
+	[AutoArguments((string?)null)]
+	[AutoArguments("")]
 	public async Task Join_ParamPaths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string path1, string path2, string path3, string path4)
 	{
@@ -292,14 +292,14 @@ public partial class JoinTests
 		await That(result5).IsEqualTo(expectedPath);
 	}
 
-	[Theory]
-	[InlineAutoData("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/foo//bar//baz//muh//maeh/")]
-	[InlineAutoData("foo/", "/bar/", "/baz/", "/muh", "/maeh", "foo//bar//baz//muh/maeh")]
-	[InlineAutoData("foo/", "bar", "/baz", "/muh", "/maeh", "foo/bar/baz/muh/maeh")]
-	[InlineAutoData("foo", "/bar", "/baz", "/muh", "/maeh", "foo/bar/baz/muh/maeh")]
-	[InlineAutoData("foo", "/bar/", "baz/", "muh/", "maeh", "foo/bar/baz/muh/maeh")]
-	[InlineAutoData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
-	[InlineAutoData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
+	[Test]
+	[AutoArguments("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/foo//bar//baz//muh//maeh/")]
+	[AutoArguments("foo/", "/bar/", "/baz/", "/muh", "/maeh", "foo//bar//baz//muh/maeh")]
+	[AutoArguments("foo/", "bar", "/baz", "/muh", "/maeh", "foo/bar/baz/muh/maeh")]
+	[AutoArguments("foo", "/bar", "/baz", "/muh", "/maeh", "foo/bar/baz/muh/maeh")]
+	[AutoArguments("foo", "/bar/", "baz/", "muh/", "maeh", "foo/bar/baz/muh/maeh")]
+	[AutoArguments("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
+	[AutoArguments("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
 	public async Task Join_ParamPaths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string path4, string path5, string expectedResult)
 	{
@@ -322,8 +322,8 @@ public partial class JoinTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Join_ParamPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4, string path5)
 	{
@@ -340,7 +340,7 @@ public partial class JoinTests
 
 #if FEATURE_PATH_SPAN
 
-	[Fact]
+	[Test]
 	public async Task Join_ReadOnlySpanPaths_Empty_ShouldReturnEmptyString()
 	{
 		ReadOnlySpan<string?> paths = Array.Empty<string?>();
@@ -350,9 +350,9 @@ public partial class JoinTests
 		await That(result).IsEqualTo(string.Empty);
 	}
 
-	[Theory]
-	[InlineAutoData((string?)null)]
-	[InlineAutoData("")]
+	[Test]
+	[AutoArguments((string?)null)]
+	[AutoArguments("")]
 	public async Task Join_ReadOnlySpanPaths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string path1, string path2, string path3, string path4)
 	{
@@ -377,14 +377,14 @@ public partial class JoinTests
 		await That(result5).IsEqualTo(expectedPath);
 	}
 
-	[Theory]
-	[InlineAutoData("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/foo//bar//baz//muh//maeh/")]
-	[InlineAutoData("foo/", "/bar/", "/baz/", "/muh", "/maeh", "foo//bar//baz//muh/maeh")]
-	[InlineAutoData("foo/", "bar", "/baz", "/muh", "/maeh", "foo/bar/baz/muh/maeh")]
-	[InlineAutoData("foo", "/bar", "/baz", "/muh", "/maeh", "foo/bar/baz/muh/maeh")]
-	[InlineAutoData("foo", "/bar/", "baz/", "muh/", "maeh", "foo/bar/baz/muh/maeh")]
-	[InlineAutoData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
-	[InlineAutoData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
+	[Test]
+	[AutoArguments("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/foo//bar//baz//muh//maeh/")]
+	[AutoArguments("foo/", "/bar/", "/baz/", "/muh", "/maeh", "foo//bar//baz//muh/maeh")]
+	[AutoArguments("foo/", "bar", "/baz", "/muh", "/maeh", "foo/bar/baz/muh/maeh")]
+	[AutoArguments("foo", "/bar", "/baz", "/muh", "/maeh", "foo/bar/baz/muh/maeh")]
+	[AutoArguments("foo", "/bar/", "baz/", "muh/", "maeh", "foo/bar/baz/muh/maeh")]
+	[AutoArguments("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
+	[AutoArguments("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
 	public async Task Join_ReadOnlySpanPaths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string path4, string path5, string expectedResult)
 	{
@@ -400,8 +400,8 @@ public partial class JoinTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Join_ReadOnlySpanPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4, string path5)
 	{

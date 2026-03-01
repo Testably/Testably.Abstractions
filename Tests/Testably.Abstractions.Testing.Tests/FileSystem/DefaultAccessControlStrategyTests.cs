@@ -11,7 +11,7 @@ public class DefaultAccessControlStrategyTests
 
 	#endregion
 
-	[Fact]
+	[Test]
 	public async Task Constructor_NullCallback_ShouldThrowArgumentNullException()
 	{
 		void Act()
@@ -22,7 +22,7 @@ public class DefaultAccessControlStrategyTests
 		await That(Act).ThrowsExactly<ArgumentNullException>().WithParamName("callback");
 	}
 
-	[Fact]
+	[Test]
 	public async Task IsAccessGranted_ShouldUseCallback()
 	{
 		DefaultAccessControlStrategy sut = new((p, _) => p.StartsWith('a'));

@@ -4,10 +4,10 @@ using Testably.Abstractions.Testing.Initializer;
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 [FileSystemTests]
-public partial class MoveToTests
+public class MoveToTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MoveTo_ShouldMoveDirectoryWithContent(string source, string destination)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -32,8 +32,8 @@ public partial class MoveToTests
 			SearchOption.AllDirectories)).HasSingle();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MoveTo_ShouldUpdatePropertiesOfDirectoryInfo(
 		string source, string destination)
 	{
@@ -51,8 +51,8 @@ public partial class MoveToTests
 			.IsEqualTo(FileSystem.Path.GetFullPath(destination));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MoveTo_WithLockedFile_ShouldMoveDirectory_NotOnWindows(
 		string source, string destination)
 	{
@@ -91,8 +91,8 @@ public partial class MoveToTests
 			.HasSingle();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MoveTo_WithLockedFile_ShouldThrowIOException_AndNotMoveDirectory_OnWindows(
 		string source, string destination)
 	{
@@ -139,8 +139,8 @@ public partial class MoveToTests
 			.HasSingle();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MoveTo_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
 		string source, string destination)
 	{
@@ -170,7 +170,7 @@ public partial class MoveToTests
 			.HasSingle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task MoveTo_CurrentDirectory_ShouldThrowIOException_OnWindows()
 	{
 		// Arrange
@@ -189,8 +189,8 @@ public partial class MoveToTests
 		);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MoveTo_NestedCurrentDirectory_ShouldThrowIOException_OnWindows(string nested)
 	{
 		// Arrange
@@ -223,9 +223,9 @@ public partial class MoveToTests
 		}
 	}
 
-	[Theory]
-	[InlineData("next")]
-	[InlineData("next", "sub")]
+	[Test]
+	[Arguments("next")]
+	[Arguments("next", "sub")]
 	public async Task Move_DirNextToCurrentDirectory_ShouldNotThrow(params string[] paths)
 	{
 		// Arrange

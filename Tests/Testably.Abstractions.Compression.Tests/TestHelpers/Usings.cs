@@ -1,10 +1,9 @@
-﻿global using AutoFixture.Xunit3;
-global using System;
+﻿global using System;
 global using System.Threading.Tasks;
 global using System.IO.Abstractions;
 global using Testably.Abstractions.TestHelpers;
 global using Testably.Abstractions.Testing;
-global using Xunit;
+global using TUnit;
 global using aweXpect;
 global using aweXpect.Testably;
 global using static aweXpect.Expect;

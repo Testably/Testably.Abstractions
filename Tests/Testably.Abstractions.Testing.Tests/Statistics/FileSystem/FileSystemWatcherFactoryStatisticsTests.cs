@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public class FileSystemWatcherFactoryStatisticsTests
 {
-	[Fact]
+	[Test]
 	public async Task Method_New_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -18,7 +18,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 			nameof(IFileSystemWatcherFactory.New));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_New_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -33,7 +33,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_New_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -49,7 +49,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 			path, filter);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Wrap_FileSystemWatcher_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -64,7 +64,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 			fileSystemWatcher);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldBeFileSystemWatcher()
 	{
 		IPathStatistics<IFileSystemWatcherFactory, IFileSystemWatcher> sut

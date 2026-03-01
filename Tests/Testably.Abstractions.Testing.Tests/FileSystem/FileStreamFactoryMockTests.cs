@@ -4,7 +4,7 @@ using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
-[Collection(nameof(IDirectoryCleaner))]
+[NotInParallel(nameof(IDirectoryCleaner))]
 public sealed class FileStreamFactoryMockTests : IDisposable
 {
 	#region Test Setup
@@ -28,8 +28,8 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 
 	#endregion
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Wrap_ShouldThrowNotSupportedException(
 		string path, string contents)
 	{
@@ -46,11 +46,11 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 	}
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-	[Theory]
-	[InlineAutoData(FileMode.CreateNew)]
-	[InlineAutoData(FileMode.Create)]
-	[InlineAutoData(FileMode.OpenOrCreate)]
-	[InlineAutoData(FileMode.Append)]
+	[Test]
+	[AutoArguments(FileMode.CreateNew)]
+	[AutoArguments(FileMode.Create)]
+	[AutoArguments(FileMode.OpenOrCreate)]
+	[AutoArguments(FileMode.Append)]
 	[SuppressMessage("Interoperability", "CA1416:Validate platform compatibility",
 		Justification = "Skip.If(Test.RunsOnWindows) handles platform check.")]
 	public async Task New_ShouldSetUnixFileMode(FileMode mode, string path)
@@ -70,9 +70,9 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 		await That(result).IsEqualTo(options.UnixCreateMode);
 	}
 
-	[Theory]
-	[InlineAutoData(FileMode.Open)]
-	[InlineAutoData(FileMode.Truncate)]
+	[Test]
+	[AutoArguments(FileMode.Open)]
+	[AutoArguments(FileMode.Truncate)]
 	[SuppressMessage("Interoperability", "CA1416:Validate platform compatibility",
 		Justification = "Skip.If(Test.RunsOnWindows) handles platform check.")]
 	public async Task New_ShouldThrowArgumentException_When_InvalidFileMode(FileMode mode,

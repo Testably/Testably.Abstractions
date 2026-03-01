@@ -4,9 +4,9 @@ using System.Linq;
 namespace Testably.Abstractions.Tests.FileSystem.DriveInfoFactory;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task GetDrives_ShouldNotBeEmpty()
 	{
 		IDriveInfo[] result = FileSystem.DriveInfo.GetDrives();
@@ -14,8 +14,8 @@ public partial class Tests
 		await That(result).IsNotEmpty();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MissingDrive_CreateDirectoryInfo_ShouldOnlyThrowWhenAccessingData(
 		string path, string subPath)
 	{
@@ -38,8 +38,8 @@ public partial class Tests
 			.WithHResult(-2147024893);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MissingDrive_WriteAllBytes_ShouldThrowDirectoryNotFoundException(
 		string path, byte[] bytes)
 	{
@@ -59,7 +59,7 @@ public partial class Tests
 			.WithHResult(-2147024893);
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_DefaultDrive_ShouldBeFixed()
 	{
 		IDriveInfo result =
@@ -75,8 +75,8 @@ public partial class Tests
 		await That(result.VolumeLabel).IsNotEmpty();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_InvalidDriveName_ShouldThrowArgumentException(
 		string invalidDriveName)
 	{
@@ -90,10 +90,10 @@ public partial class Tests
 		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
-	[Theory]
-	[InlineData('A')]
-	[InlineData('C')]
-	[InlineData('X')]
+	[Test]
+	[Arguments('A')]
+	[Arguments('C')]
+	[Arguments('X')]
 	public async Task New_WithDriveLetter_ShouldReturnDriveInfo(char driveLetter)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
@@ -103,10 +103,10 @@ public partial class Tests
 		await That(result.Name).IsEqualTo($"{driveLetter}:\\");
 	}
 
-	[Theory]
-	[InlineAutoData('A')]
-	[InlineAutoData('C')]
-	[InlineAutoData('Y')]
+	[Test]
+	[AutoArguments('A')]
+	[AutoArguments('C')]
+	[AutoArguments('Y')]
 	public async Task New_WithRootedPath_ShouldReturnDriveInfo(char driveLetter, string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
@@ -118,7 +118,7 @@ public partial class Tests
 		await That(result.Name).IsEqualTo($"{driveLetter}:\\");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Wrap_Null_ShouldReturnNull()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
@@ -129,7 +129,7 @@ public partial class Tests
 		await That(result).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Wrap_ShouldReturnDriveInfoWithSameName()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
@@ -142,7 +142,7 @@ public partial class Tests
 		await That(result.Name).IsEqualTo(driveInfo.Name);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException()
 	{
 		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&

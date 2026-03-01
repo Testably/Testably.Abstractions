@@ -4,10 +4,10 @@ using Testably.Abstractions.Testing.Initializer;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException(
 		string path)
 	{
@@ -21,8 +21,8 @@ public partial class Tests
 		await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Attributes_WhenFileIsMissing_ShouldReturnMinusOne(string path)
 	{
 		FileAttributes expected = (FileAttributes)(-1);
@@ -31,7 +31,7 @@ public partial class Tests
 		await That(sut.Attributes).IsEqualTo(expected);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Directory_ShouldReturnParentDirectory()
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -44,7 +44,7 @@ public partial class Tests
 		await That(file!.Directory!.FullName).IsEqualTo(initialized[0].FullName);
 	}
 
-	[Fact]
+	[Test]
 	public async Task DirectoryName_ShouldReturnNameOfParentDirectory()
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -57,10 +57,10 @@ public partial class Tests
 		await That(file!.DirectoryName).IsEqualTo(initialized[0].FullName);
 	}
 
-	[Theory]
-	[InlineData("foo", "")]
-	[InlineData("foo.txt", ".txt")]
-	[InlineData("foo.bar.txt", ".txt")]
+	[Test]
+	[Arguments("foo", "")]
+	[Arguments("foo.txt", ".txt")]
+	[Arguments("foo.bar.txt", ".txt")]
 	public async Task Extension_ShouldReturnExpectedValue(string fileName, string expectedValue)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(fileName);
@@ -68,7 +68,7 @@ public partial class Tests
 		await That(sut.Extension).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Extension_WithTrailingDot_ShouldReturnExpectedValue()
 	{
 		IFileInfo sut = FileSystem.FileInfo.New("foo.");
@@ -83,8 +83,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IsReadOnly_MissingFile_ShouldBeTrue(string path)
 	{
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
@@ -92,8 +92,8 @@ public partial class Tests
 		await That(fileInfo.IsReadOnly).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IsReadOnly_SetToFalse_ShouldRemoveReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -106,8 +106,8 @@ public partial class Tests
 		await That(fileInfo.Attributes).IsEqualTo(FileAttributes.Normal);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IsReadOnly_SetToTrue_ShouldAddReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -129,8 +129,8 @@ public partial class Tests
 		await That(fileInfo.Attributes).DoesNotHaveFlag(FileAttributes.ReadOnly);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IsReadOnly_ShouldChangeWhenSettingReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -142,8 +142,8 @@ public partial class Tests
 		await That(fileInfo.Attributes).HasFlag(FileAttributes.ReadOnly);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IsReadOnly_ShouldInitializeToReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -153,10 +153,10 @@ public partial class Tests
 		await That(fileInfo.Attributes).DoesNotHaveFlag(FileAttributes.ReadOnly);
 	}
 
-	[Theory]
-	[InlineData("/foo")]
-	[InlineData("./foo")]
-	[InlineData("foo")]
+	[Test]
+	[Arguments("/foo")]
+	[Arguments("./foo")]
+	[Arguments("foo")]
 	public async Task ToString_ShouldReturnProvidedPath(string path)
 	{
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);

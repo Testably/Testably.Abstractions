@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
 [FileSystemTests]
-public partial class WriteTests
+public class WriteTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task BeginWrite_CanWriteFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
@@ -28,8 +28,8 @@ public partial class WriteTests
 		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task BeginWrite_ShouldCopyContentsToFile(
 		string path, byte[] bytes)
 	{
@@ -53,15 +53,15 @@ public partial class WriteTests
 				}
 			}, null);
 
-			await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+			await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		}
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EndWrite_Null_ShouldThrowArgumentNullException(string path)
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
@@ -75,8 +75,8 @@ public partial class WriteTests
 		await That(Act).Throws<ArgumentNullException>().WithHResult(-2147467261);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EndWrite_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		using ManualResetEventSlim ms = new();
@@ -104,7 +104,7 @@ public partial class WriteTests
 				}
 			}, null);
 
-			await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+			await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		}
 
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
@@ -127,8 +127,8 @@ public partial class WriteTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Write_AsSpan_CanWriteFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
@@ -149,8 +149,8 @@ public partial class WriteTests
 #endif
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Write_AsSpan_ShouldFillBuffer(string path, byte[] bytes)
 	{
 		using (FileSystemStream stream = FileSystem.File.Create(path))
@@ -163,8 +163,8 @@ public partial class WriteTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Write_CanWriteFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
@@ -183,8 +183,8 @@ public partial class WriteTests
 		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Write_ShouldFillBuffer(string path, byte[] bytes)
 	{
 		using (FileSystemStream stream = FileSystem.File.Create(path))
@@ -197,8 +197,8 @@ public partial class WriteTests
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAsync_CanWriteFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
@@ -222,8 +222,8 @@ public partial class WriteTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAsync_ShouldFillBuffer(string path, byte[] bytes)
 	{
 		using CancellationTokenSource cts = new(ExpectSuccess);
@@ -240,8 +240,8 @@ public partial class WriteTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteByte_HiddenFile_ShouldNotThrow(
 		string path, byte[] bytes)
 	{
@@ -260,8 +260,8 @@ public partial class WriteTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteByte_ShouldWriteSingleByteAndAdvancePosition(
 		string path, byte byte1, byte byte2)
 	{
@@ -277,8 +277,8 @@ public partial class WriteTests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([byte1, byte2]);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteTimeout_ShouldThrowInvalidOperationException(
 		string path, string contents)
 	{

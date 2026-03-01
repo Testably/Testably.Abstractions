@@ -1,11 +1,12 @@
-﻿using Testably.Abstractions.TimeSystem;
+﻿using System.Threading;
+using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 [TimeSystemTests]
-public partial class StopwatchTests
+public class StopwatchTests(TimeSystemTestData testData) : TimeSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task Elapsed_ShouldInitializeToZero()
 	{
 		IStopwatch stopwatch = TimeSystem.Stopwatch.New();
@@ -14,7 +15,7 @@ public partial class StopwatchTests
 		await That(elapsed).IsEqualTo(TimeSpan.Zero);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Elapsed_WhenRunning_ShouldIncreaseValue()
 	{
 		TimeSpan delay = TimeSpan.FromMilliseconds(100);
@@ -22,34 +23,34 @@ public partial class StopwatchTests
 		stopwatch.Start();
 
 		TimeSpan elapsedBefore = stopwatch.Elapsed;
-		await TimeSystem.Task.Delay(delay, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(delay, CancellationToken);
 		TimeSpan elapsedAfter = stopwatch.Elapsed;
 
 		await That(elapsedAfter).IsGreaterThanOrEqualTo(elapsedBefore + delay)
 			.Within(TimeSpan.FromMilliseconds(1));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Elapsed_WhenStopped_ShouldRemainUnchanged()
 	{
 		TimeSpan delay = TimeSpan.FromMilliseconds(100);
 		IStopwatch stopwatch = TimeSystem.Stopwatch.StartNew();
-		await TimeSystem.Task.Delay(delay, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(delay, CancellationToken);
 		stopwatch.Stop();
 
 		TimeSpan elapsedBefore = stopwatch.Elapsed;
-		await TimeSystem.Task.Delay(delay, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(delay, CancellationToken);
 		TimeSpan elapsedAfter = stopwatch.Elapsed;
 
 		await That(elapsedAfter).IsEqualTo(elapsedBefore);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ElapsedMilliseconds_ShouldBeEqualToElapsed()
 	{
 		TimeSpan delay = TimeSpan.FromMilliseconds(100);
 		IStopwatch stopwatch = TimeSystem.Stopwatch.StartNew();
-		await TimeSystem.Task.Delay(delay, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(delay, CancellationToken);
 
 		stopwatch.Stop();
 		TimeSpan elapsed = stopwatch.Elapsed;
@@ -58,12 +59,12 @@ public partial class StopwatchTests
 		await That(elapsedMilliseconds).IsEqualTo((long)elapsed.TotalMilliseconds).Within(1L);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ElapsedTicks_ShouldBeEqualToElapsed()
 	{
 		TimeSpan delay = TimeSpan.FromMilliseconds(100);
 		IStopwatch stopwatch = TimeSystem.Stopwatch.StartNew();
-		await TimeSystem.Task.Delay(delay, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(delay, CancellationToken);
 
 		stopwatch.Stop();
 		TimeSpan elapsed = stopwatch.Elapsed;
@@ -74,12 +75,12 @@ public partial class StopwatchTests
 		await That(elapsedTicksAsTimeSpanTicks).IsEqualTo(elapsed.Ticks);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Reset_ShouldResetElapsedAndStop()
 	{
 		TimeSpan delay = TimeSpan.FromMilliseconds(100);
 		IStopwatch stopwatch = TimeSystem.Stopwatch.StartNew();
-		await TimeSystem.Task.Delay(delay, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(delay, CancellationToken);
 
 		stopwatch.Reset();
 		TimeSpan elapsed = stopwatch.Elapsed;
@@ -88,12 +89,12 @@ public partial class StopwatchTests
 		await That(stopwatch.IsRunning).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Restart_ShouldResetElapsedAndSetIsRunningToTrue()
 	{
 		TimeSpan delay = TimeSpan.FromMilliseconds(100);
 		IStopwatch stopwatch = TimeSystem.Stopwatch.StartNew();
-		await TimeSystem.Task.Delay(delay, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(delay, CancellationToken);
 		stopwatch.Stop();
 
 		stopwatch.Restart();
@@ -103,7 +104,7 @@ public partial class StopwatchTests
 		await That(stopwatch.IsRunning).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Start_ShouldSetIsRunningToTrue()
 	{
 		IStopwatch stopwatch = TimeSystem.Stopwatch.New();
@@ -115,7 +116,7 @@ public partial class StopwatchTests
 		await That(stopwatch.IsRunning).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Start_WhenStarted_ShouldDoNothing()
 	{
 		IStopwatch stopwatch = TimeSystem.Stopwatch.New();
@@ -126,12 +127,12 @@ public partial class StopwatchTests
 		await That(stopwatch.IsRunning).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Stop_ShouldSetIsRunningToFalse()
 	{
 		TimeSpan delay = TimeSpan.FromMilliseconds(100);
 		IStopwatch stopwatch = TimeSystem.Stopwatch.StartNew();
-		await TimeSystem.Task.Delay(delay, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(delay, CancellationToken);
 
 		stopwatch.Stop();
 		TimeSpan elapsed = stopwatch.Elapsed;
@@ -141,12 +142,12 @@ public partial class StopwatchTests
 		await That(stopwatch.IsRunning).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Stop_WhenStopped_ShouldDoNothing()
 	{
 		TimeSpan delay = TimeSpan.FromMilliseconds(100);
 		IStopwatch stopwatch = TimeSystem.Stopwatch.StartNew();
-		await TimeSystem.Task.Delay(delay, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(delay, CancellationToken);
 
 		stopwatch.Stop();
 		TimeSpan elapsed1 = stopwatch.Elapsed;

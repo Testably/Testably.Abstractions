@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public class PathStatisticsTests
 {
-	[Fact]
+	[Test]
 	public async Task Method_ChangeExtension_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -22,7 +22,7 @@ public class PathStatisticsTests
 			path, extension);
 	}
 #if FEATURE_PATH_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_Combine_ReadOnlySpanString_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -35,7 +35,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_Combine_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -49,7 +49,7 @@ public class PathStatisticsTests
 			path1, path2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Combine_String_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -64,7 +64,7 @@ public class PathStatisticsTests
 			path1, path2, path3);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Combine_String_String_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -80,7 +80,7 @@ public class PathStatisticsTests
 			path1, path2, path3, path4);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Combine_StringArray_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -94,7 +94,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_PATH_ADVANCED
-	[Fact]
+	[Test]
 	public async Task Method_EndsInDirectorySeparator_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -109,7 +109,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_ADVANCED
-	[Fact]
+	[Test]
 	public async Task Method_EndsInDirectorySeparator_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -124,7 +124,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_NET_7_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task Method_Exists_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -139,7 +139,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_GetDirectoryName_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -153,7 +153,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetDirectoryName_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -167,7 +167,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_GetExtension_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -181,7 +181,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetExtension_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -195,7 +195,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_GetFileName_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -209,7 +209,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetFileName_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -223,7 +223,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_GetFileNameWithoutExtension_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -237,7 +237,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetFileNameWithoutExtension_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -251,7 +251,7 @@ public class PathStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetFullPath_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -265,7 +265,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_PATH_RELATIVE
-	[Fact]
+	[Test]
 	public async Task Method_GetFullPath_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -280,7 +280,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetInvalidFileNameChars_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -292,7 +292,7 @@ public class PathStatisticsTests
 			.OnlyContainsMethodCall(nameof(IPath.GetInvalidFileNameChars));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetInvalidPathChars_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -304,7 +304,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_GetPathRoot_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -318,7 +318,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetPathRoot_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -331,7 +331,7 @@ public class PathStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetRandomFileName_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -343,7 +343,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_PATH_RELATIVE
-	[Fact]
+	[Test]
 	public async Task Method_GetRelativePath_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -358,7 +358,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetTempFileName_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -371,7 +371,7 @@ public class PathStatisticsTests
 		await That(sut.Statistics.Path).OnlyContainsMethodCall(nameof(IPath.GetTempFileName));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetTempPath_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -383,7 +383,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_HasExtension_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -397,7 +397,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_HasExtension_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -411,7 +411,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_IsPathFullyQualified_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -426,7 +426,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_RELATIVE
-	[Fact]
+	[Test]
 	public async Task Method_IsPathFullyQualified_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -441,7 +441,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_IsPathRooted_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -455,7 +455,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_IsPathRooted_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -469,7 +469,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_PATH_JOIN
-	[Fact]
+	[Test]
 	public async Task Method_Join_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -487,7 +487,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[Fact]
+	[Test]
 	public async Task Method_Join_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -504,7 +504,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[Fact]
+	[Test]
 	public async Task Method_Join_ReadOnlySpanChar_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -520,7 +520,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_SPAN
-	[Fact]
+	[Test]
 	public async Task Method_Join_ReadOnlySpanString_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -534,7 +534,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[Fact]
+	[Test]
 	public async Task Method_Join_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -550,7 +550,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[Fact]
+	[Test]
 	public async Task Method_Join_String_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -567,7 +567,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[Fact]
+	[Test]
 	public async Task Method_Join_String_String_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -585,7 +585,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[Fact]
+	[Test]
 	public async Task Method_Join_StringArray_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -600,7 +600,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_ADVANCED
-	[Fact]
+	[Test]
 	public async Task Method_TrimEndingDirectorySeparator_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -615,7 +615,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_ADVANCED
-	[Fact]
+	[Test]
 	public async Task Method_TrimEndingDirectorySeparator_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -630,7 +630,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[Fact]
+	[Test]
 	public async Task Method_TryJoin_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_SpanChar_OutInt_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -648,7 +648,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[Fact]
+	[Test]
 	public async Task Method_TryJoin_ReadOnlySpanChar_ReadOnlySpanChar_SpanChar_OutInt_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -664,7 +664,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Property_AltDirectorySeparatorChar_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -676,7 +676,7 @@ public class PathStatisticsTests
 			nameof(IPath.AltDirectorySeparatorChar));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_DirectorySeparatorChar_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -688,7 +688,7 @@ public class PathStatisticsTests
 			nameof(IPath.DirectorySeparatorChar));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_PathSeparator_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -699,7 +699,7 @@ public class PathStatisticsTests
 		await That(sut.Statistics.Path).OnlyContainsPropertyGetAccess(nameof(IPath.PathSeparator));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_VolumeSeparatorChar_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -711,7 +711,7 @@ public class PathStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IPath.VolumeSeparatorChar));
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldBePath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.Path;

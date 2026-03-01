@@ -6,10 +6,10 @@ using Testably.Abstractions.Testing.Initializer;
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 [FileSystemTests]
-public partial class EnumerateFileSystemInfosTests
+public class EnumerateFileSystemInfosTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateFileSystemInfos_SearchOptionAllFiles_ShouldReturnAllFiles(
 		string path)
 	{
@@ -40,20 +40,20 @@ public partial class EnumerateFileSystemInfosTests
 			=> string.Equals(d.Name, initialized[5].Name, StringComparison.Ordinal));
 	}
 
-	[Theory]
+	[Test]
 #if NETFRAMEWORK
-	[InlineAutoData(false, "")]
+	[AutoArguments(false, "")]
 #else
-	[InlineAutoData(true, "")]
+	[AutoArguments(true, "")]
 #endif
-	[InlineAutoData(true, "*")]
-	[InlineAutoData(true, ".")]
-	[InlineAutoData(true, "*.*")]
-	[InlineData(true, "a*c", "abc")]
-	[InlineData(true, "ab*c", "abc")]
-	[InlineData(true, "abc?", "abc")]
-	[InlineData(false, "ab?c", "abc")]
-	[InlineData(false, "ac", "abc")]
+	[AutoArguments(true, "*")]
+	[AutoArguments(true, ".")]
+	[AutoArguments(true, "*.*")]
+	[Arguments(true, "a*c", "abc")]
+	[Arguments(true, "ab*c", "abc")]
+	[Arguments(true, "abc?", "abc")]
+	[Arguments(false, "ab?c", "abc")]
+	[Arguments(false, "ac", "abc")]
 	public async Task EnumerateFileSystemInfos_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
@@ -77,8 +77,8 @@ public partial class EnumerateFileSystemInfosTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateFileSystemInfos_ShouldMatchTypes(string path)
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -102,7 +102,7 @@ public partial class EnumerateFileSystemInfosTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Fact]
+	[Test]
 	public async Task EnumerateFileSystemInfos_WithEnumerationOptions_ShouldConsiderSetOptions()
 	{
 		IDirectoryInfo baseDirectory =
@@ -131,8 +131,8 @@ public partial class EnumerateFileSystemInfosTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateFileSystemInfos_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
@@ -148,7 +148,7 @@ public partial class EnumerateFileSystemInfosTests
 		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		EnumerateFileSystemInfos_WithoutSearchString_ShouldReturnAllDirectFilesAndDirectories()
 	{
@@ -171,7 +171,7 @@ public partial class EnumerateFileSystemInfosTests
 		await That(result).Contains(d => string.Equals(d.Name, "bar", StringComparison.Ordinal));
 	}
 
-	[Fact]
+	[Test]
 	public async Task EnumerateFileSystemInfos_WithSearchPattern_ShouldReturnMatchingFiles()
 	{
 		IDirectoryInfo baseDirectory =
@@ -188,7 +188,7 @@ public partial class EnumerateFileSystemInfosTests
 		await That(result.Count()).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		EnumerateFileSystemInfos_WithSearchPatternInSubdirectory_ShouldReturnMatchingFiles()
 	{

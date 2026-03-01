@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
-public partial class CopyToTests
+public class CopyToTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CopyTo_DestinationExists_ShouldThrowIOException_AndNotCopyFile(
 		string sourceName,
 		string destinationName,
@@ -31,8 +31,8 @@ public partial class CopyToTests
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CopyTo_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
 		string destinationName,
@@ -56,8 +56,8 @@ public partial class CopyToTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CopyTo_ReadOnly_ShouldCopyFile(
 		string sourceName, string destinationName, string contents)
 	{
@@ -73,9 +73,9 @@ public partial class CopyToTests
 		await That(FileSystem.File.GetAttributes(destinationName)).HasFlag(FileAttributes.ReadOnly);
 	}
 
-	[Theory]
-	[InlineAutoData(FileAttributes.ReadOnly)]
-	[InlineAutoData(FileAttributes.System)]
+	[Test]
+	[AutoArguments(FileAttributes.ReadOnly)]
+	[AutoArguments(FileAttributes.System)]
 	public async Task CopyTo_ShouldAddArchiveAttribute_OnWindows(
 		FileAttributes fileAttributes,
 		string sourceName,
@@ -98,8 +98,8 @@ public partial class CopyToTests
 		await That(FileSystem.File.GetAttributes(destinationName)).IsEqualTo(expectedAttributes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CopyTo_ShouldCopyFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{
@@ -122,8 +122,8 @@ public partial class CopyToTests
 		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CopyTo_ShouldKeepMetadata(
 		string sourceName,
 		string destinationName,
@@ -169,13 +169,13 @@ public partial class CopyToTests
 			.IsEqualTo(sourceLastWriteTime);
 	}
 
-	[Theory]
-	[InlineAutoData(FileAccess.Read, FileShare.Read)]
-	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.Read)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite)]
-	[InlineAutoData(FileAccess.Write, FileShare.Read)]
-	[InlineAutoData(FileAccess.Write, FileShare.ReadWrite)]
+	[Test]
+	[AutoArguments(FileAccess.Read, FileShare.Read)]
+	[AutoArguments(FileAccess.Read, FileShare.ReadWrite)]
+	[AutoArguments(FileAccess.ReadWrite, FileShare.Read)]
+	[AutoArguments(FileAccess.ReadWrite, FileShare.ReadWrite)]
+	[AutoArguments(FileAccess.Write, FileShare.Read)]
+	[AutoArguments(FileAccess.Write, FileShare.ReadWrite)]
 	public async Task CopyTo_SourceAccessedWithReadShare_ShouldNotThrow(
 		FileAccess fileAccess,
 		FileShare fileShare,
@@ -196,10 +196,10 @@ public partial class CopyToTests
 		await That(FileSystem.File.ReadAllText(destinationPath)).IsEqualTo(sourceContents);
 	}
 
-	[Theory]
-	[InlineAutoData(FileAccess.Read)]
-	[InlineAutoData(FileAccess.ReadWrite)]
-	[InlineAutoData(FileAccess.Write)]
+	[Test]
+	[AutoArguments(FileAccess.Read)]
+	[AutoArguments(FileAccess.ReadWrite)]
+	[AutoArguments(FileAccess.Write)]
 	public async Task CopyTo_SourceAccessedWithWriteShare_ShouldNotThrowOnLinuxOrMac(
 		FileAccess fileAccess,
 		string sourcePath,
@@ -221,8 +221,8 @@ public partial class CopyToTests
 		await That(FileSystem.File.ReadAllText(destinationPath)).IsEqualTo(sourceContents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CopyTo_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
 			string sourceName,
@@ -243,9 +243,9 @@ public partial class CopyToTests
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 
-	[Theory]
-	[InlineAutoData(FileShare.None)]
-	[InlineAutoData(FileShare.Write)]
+	[Test]
+	[AutoArguments(FileShare.None)]
+	[AutoArguments(FileShare.Write)]
 	public async Task CopyTo_SourceLocked_ShouldThrowIOException(
 		FileShare fileShare,
 		string sourceName,
@@ -276,8 +276,8 @@ public partial class CopyToTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CopyTo_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
 		string destinationName)

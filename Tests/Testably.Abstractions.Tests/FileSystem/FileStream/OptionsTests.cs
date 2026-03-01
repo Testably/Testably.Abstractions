@@ -4,10 +4,10 @@ using System.Text;
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
 [FileSystemTests]
-public partial class OptionsTests
+public class OptionsTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Options_DeleteOnClose_ShouldDeleteFileOnClose(
 		string path, string contents)
 	{
@@ -22,8 +22,8 @@ public partial class OptionsTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Options_DeleteOnClose_ShouldDeleteFileOnDispose(
 		string path, string contents)
 	{
@@ -38,8 +38,8 @@ public partial class OptionsTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	[SupportedOSPlatform("windows")]
 	public async Task Options_Encrypt_ShouldKeepEncryptionFlag(
 		string path, string contents1, string contents2)
@@ -63,8 +63,8 @@ public partial class OptionsTests
 		await That(FileSystem.File.GetAttributes(path)).HasFlag(FileAttributes.Encrypted);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Options_Encrypt_Unencrypted_ShouldBeIgnored(
 		string path, string contents1, string contents2)
 	{
@@ -81,8 +81,8 @@ public partial class OptionsTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents2);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	[SupportedOSPlatform("windows")]
 	public async Task Options_EncryptedWithoutEncryptionOption_ShouldKeepEncryptionFlag(
 		string path, string contents1, string contents2)

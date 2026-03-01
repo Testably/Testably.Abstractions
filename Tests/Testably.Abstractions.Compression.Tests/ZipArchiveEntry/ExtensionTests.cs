@@ -6,9 +6,9 @@ using System.Linq;
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 
 [FileSystemTests]
-public partial class ExtensionTests
+public partial class ExtensionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task
 		ExtractToFile_AccessLengthOnWritableStream_ShouldThrowInvalidOperationException()
 	{
@@ -29,8 +29,8 @@ public partial class ExtensionTests
 		await That(Act).Throws<InvalidOperationException>();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToFile_DestinationNull_ShouldThrowArgumentNullException(
 		CompressionLevel compressionLevel)
 	{
@@ -53,8 +53,8 @@ public partial class ExtensionTests
 			.WithParamName("destinationFileName");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		ExtractToFile_DestinationNull_WithOverwrite_ShouldThrowArgumentNullException(
 			CompressionLevel compressionLevel)
@@ -77,7 +77,7 @@ public partial class ExtensionTests
 		await That(Act).Throws<ArgumentNullException>();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ExtractToFile_IncorrectEntryType_ShouldThrowIOException()
 	{
 		FileSystem.Initialize()
@@ -101,10 +101,10 @@ public partial class ExtensionTests
 		await That(Act).Throws<IOException>();
 	}
 
-	[Theory]
-	[InlineData("2000-01-01T12:14:15")]
-	[InlineData("1980-01-01T00:00:00")]
-	[InlineData("2107-12-31T23:59:59")]
+	[Test]
+	[Arguments("2000-01-01T12:14:15")]
+	[Arguments("1980-01-01T00:00:00")]
+	[Arguments("2107-12-31T23:59:59")]
 	public async Task ExtractToFile_LastWriteTime_ShouldBeCopiedFromFile(string lastWriteTimeString)
 	{
 		DateTime lastWriteTime = DateTime.Parse(lastWriteTimeString, CultureInfo.InvariantCulture);
@@ -131,7 +131,7 @@ public partial class ExtensionTests
 			.WithLastWriteTime(lastWriteTime);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ExtractToFile_WithoutOverwrite_ShouldThrowIOException()
 	{
 		FileSystem.Initialize()
@@ -157,7 +157,7 @@ public partial class ExtensionTests
 			.WhoseContent(f => f.IsNotEqualTo("FooFooFoo"));
 	}
 
-	[Fact]
+	[Test]
 	public async Task ExtractToFile_WithOverwrite_ShouldOverwriteExistingFile()
 	{
 		FileSystem.Initialize()

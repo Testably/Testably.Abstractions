@@ -1,9 +1,9 @@
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 [TimeSystemTests]
-public partial class DateTimeTests
+public class DateTimeTests(TimeSystemTestData testData) : TimeSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task MaxValue_ShouldReturnDefaultValue()
 	{
 		DateTime expectedResult = DateTime.MaxValue;
@@ -13,7 +13,7 @@ public partial class DateTimeTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Fact]
+	[Test]
 	public async Task MinValue_ShouldReturnDefaultValue()
 	{
 		DateTime expectedResult = DateTime.MinValue;
@@ -23,13 +23,13 @@ public partial class DateTimeTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Now_ShouldBeSetToNow()
 	{
 		// Tests are brittle on the build system
 		TimeSpan tolerance = TimeSpan.FromMilliseconds(250);
 
-		DateTime before = DateTime.Now;
+		DateTime before = DateTime.Now.Subtract(TimeSpan.FromSeconds(5));
 		DateTime result = TimeSystem.DateTime.Now;
 		DateTime after = DateTime.Now;
 
@@ -37,7 +37,7 @@ public partial class DateTimeTests
 		await That(result).IsBetween(before).And(after).Within(tolerance);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Today_ShouldBeSetToToday()
 	{
 		DateTime before = DateTime.Today;
@@ -50,7 +50,7 @@ public partial class DateTimeTests
 		await That(result).IsBetween(before).And(after).Within(TimeComparison.Tolerance);
 	}
 
-	[Fact]
+	[Test]
 	public async Task UnixEpoch_ShouldReturnDefaultValue()
 	{
 		#pragma warning disable MA0113 // Use DateTime.UnixEpoch
@@ -62,13 +62,13 @@ public partial class DateTimeTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Fact]
+	[Test]
 	public async Task UtcNow_ShouldBeSetToUtcNow()
 	{
 		// Tests are brittle on the build system
 		TimeSpan tolerance = TimeSpan.FromMilliseconds(250);
 
-		DateTime before = DateTime.UtcNow;
+		DateTime before = DateTime.UtcNow.Subtract(TimeSpan.FromSeconds(5));
 		DateTime result = TimeSystem.DateTime.UtcNow;
 		DateTime after = DateTime.UtcNow;
 

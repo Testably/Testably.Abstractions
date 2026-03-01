@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class MoveTests
+public class MoveTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_CaseOnlyChange_ShouldMoveFileWithContent(
 		string name, string contents)
 	{
@@ -28,8 +28,8 @@ public partial class MoveTests
 			.Matching(d => d.Contains(destinationName, StringComparison.Ordinal));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		Move_DestinationDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException(
 			string source)
@@ -46,8 +46,8 @@ public partial class MoveTests
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_DestinationExists_ShouldThrowIOException_AndNotMoveFile(
 		string sourceName,
 		string destinationName,
@@ -71,8 +71,8 @@ public partial class MoveTests
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
 		string destinationName,
@@ -90,8 +90,8 @@ public partial class MoveTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_ReadOnly_ShouldMoveFile(
 		string sourceName, string destinationName, string contents)
 	{
@@ -106,8 +106,8 @@ public partial class MoveTests
 		await That(FileSystem.File.GetAttributes(destinationName)).HasFlag(FileAttributes.ReadOnly);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_ShouldMoveFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{
@@ -120,8 +120,8 @@ public partial class MoveTests
 		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_ShouldNotAdjustTimes(string source, string destination)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -145,8 +145,8 @@ public partial class MoveTests
 			.Within(TimeComparison.Tolerance);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_SourceAndDestinationIdentical_ShouldNotThrowException(string path)
 	{
 		FileSystem.Initialize()
@@ -160,8 +160,8 @@ public partial class MoveTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_SourceDirectoryMissing_ShouldThrowFileNotFoundException(
 		string missingDirectory,
 		string sourceName,
@@ -180,19 +180,19 @@ public partial class MoveTests
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 
-	[Theory]
-	[InlineAutoData(FileAccess.Read, FileShare.None)]
-	[InlineAutoData(FileAccess.Read, FileShare.Read)]
-	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite)]
-	[InlineAutoData(FileAccess.Read, FileShare.Write)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.None)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.Read)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.Write)]
-	[InlineAutoData(FileAccess.Write, FileShare.None)]
-	[InlineAutoData(FileAccess.Write, FileShare.Read)]
-	[InlineAutoData(FileAccess.Write, FileShare.ReadWrite)]
-	[InlineAutoData(FileAccess.Write, FileShare.Write)]
+	[Test]
+	[AutoArguments(FileAccess.Read, FileShare.None)]
+	[AutoArguments(FileAccess.Read, FileShare.Read)]
+	[AutoArguments(FileAccess.Read, FileShare.ReadWrite)]
+	[AutoArguments(FileAccess.Read, FileShare.Write)]
+	[AutoArguments(FileAccess.ReadWrite, FileShare.None)]
+	[AutoArguments(FileAccess.ReadWrite, FileShare.Read)]
+	[AutoArguments(FileAccess.ReadWrite, FileShare.ReadWrite)]
+	[AutoArguments(FileAccess.ReadWrite, FileShare.Write)]
+	[AutoArguments(FileAccess.Write, FileShare.None)]
+	[AutoArguments(FileAccess.Write, FileShare.Read)]
+	[AutoArguments(FileAccess.Write, FileShare.ReadWrite)]
+	[AutoArguments(FileAccess.Write, FileShare.Write)]
 	public async Task Move_SourceLocked_ShouldThrowIOException_OnWindows(
 		FileAccess fileAccess,
 		FileShare fileShare,
@@ -223,8 +223,8 @@ public partial class MoveTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_SourceMissing_CopyToItself_ShouldThrowFileNotFoundException(
 		string sourceName)
 	{
@@ -238,8 +238,8 @@ public partial class MoveTests
 			.WithHResult(-2147024894);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Move_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
 		string destinationName)

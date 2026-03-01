@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public sealed class DirectoryStatisticsTests
 {
-	[Fact]
+	[Test]
 	public async Task Method_CreateDirectory_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -21,7 +21,7 @@ public sealed class DirectoryStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-	[Fact]
+	[Test]
 	public async Task Method_CreateDirectory_String_UnixFileMode_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnLinux);
@@ -39,7 +39,7 @@ public sealed class DirectoryStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_LINK
-	[Fact]
+	[Test]
 	public async Task Method_CreateSymbolicLink_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -55,7 +55,7 @@ public sealed class DirectoryStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_NET_7_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task Method_CreateTempSubdirectory_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -70,7 +70,7 @@ public sealed class DirectoryStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_Delete_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -85,7 +85,7 @@ public sealed class DirectoryStatisticsTests
 			path, recursive);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Delete_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -99,7 +99,7 @@ public sealed class DirectoryStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_EnumerateDirectories_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -115,7 +115,7 @@ public sealed class DirectoryStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Fact]
+	[Test]
 	public async Task Method_EnumerateDirectories_String_String_EnumerationOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -133,7 +133,7 @@ public sealed class DirectoryStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_EnumerateDirectories_String_String_SearchOption_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -150,7 +150,7 @@ public sealed class DirectoryStatisticsTests
 			path, searchPattern, searchOption);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_EnumerateDirectories_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -166,7 +166,7 @@ public sealed class DirectoryStatisticsTests
 			path, searchPattern);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_EnumerateFiles_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -182,7 +182,7 @@ public sealed class DirectoryStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Fact]
+	[Test]
 	public async Task Method_EnumerateFiles_String_String_EnumerationOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -199,7 +199,7 @@ public sealed class DirectoryStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_EnumerateFiles_String_String_SearchOption_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -216,7 +216,7 @@ public sealed class DirectoryStatisticsTests
 			path, searchPattern, searchOption);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_EnumerateFiles_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -232,7 +232,7 @@ public sealed class DirectoryStatisticsTests
 			path, searchPattern);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_EnumerateFileSystemEntries_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -248,7 +248,7 @@ public sealed class DirectoryStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Fact]
+	[Test]
 	public async Task Method_EnumerateFileSystemEntries_String_String_EnumerationOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -266,7 +266,7 @@ public sealed class DirectoryStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task
 		Method_EnumerateFileSystemEntries_String_String_SearchOption_ShouldRegisterCall()
 	{
@@ -284,7 +284,7 @@ public sealed class DirectoryStatisticsTests
 			path, searchPattern, searchOption);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_EnumerateFileSystemEntries_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -300,7 +300,7 @@ public sealed class DirectoryStatisticsTests
 			path, searchPattern);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Exists_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -313,7 +313,7 @@ public sealed class DirectoryStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetCreationTime_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -327,7 +327,7 @@ public sealed class DirectoryStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetCreationTimeUtc_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -341,7 +341,7 @@ public sealed class DirectoryStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetCurrentDirectory_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -353,7 +353,7 @@ public sealed class DirectoryStatisticsTests
 			nameof(IDirectory.GetCurrentDirectory));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetDirectories_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -369,7 +369,7 @@ public sealed class DirectoryStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Fact]
+	[Test]
 	public async Task Method_GetDirectories_String_String_EnumerationOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -386,7 +386,7 @@ public sealed class DirectoryStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetDirectories_String_String_SearchOption_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -403,7 +403,7 @@ public sealed class DirectoryStatisticsTests
 			path, searchPattern, searchOption);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetDirectories_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -419,7 +419,7 @@ public sealed class DirectoryStatisticsTests
 			path, searchPattern);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetDirectoryRoot_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -433,7 +433,7 @@ public sealed class DirectoryStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetFiles_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -448,7 +448,7 @@ public sealed class DirectoryStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Fact]
+	[Test]
 	public async Task Method_GetFiles_String_String_EnumerationOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -465,7 +465,7 @@ public sealed class DirectoryStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetFiles_String_String_SearchOption_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -481,7 +481,7 @@ public sealed class DirectoryStatisticsTests
 			path, searchPattern, searchOption);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetFiles_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -496,7 +496,7 @@ public sealed class DirectoryStatisticsTests
 			path, searchPattern);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetFileSystemEntries_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -512,7 +512,7 @@ public sealed class DirectoryStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Fact]
+	[Test]
 	public async Task Method_GetFileSystemEntries_String_String_EnumerationOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -530,7 +530,7 @@ public sealed class DirectoryStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_GetFileSystemEntries_String_String_SearchOption_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -547,7 +547,7 @@ public sealed class DirectoryStatisticsTests
 			path, searchPattern, searchOption);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetFileSystemEntries_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -563,7 +563,7 @@ public sealed class DirectoryStatisticsTests
 			path, searchPattern);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetLastAccessTime_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -577,7 +577,7 @@ public sealed class DirectoryStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetLastAccessTimeUtc_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -591,7 +591,7 @@ public sealed class DirectoryStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetLastWriteTime_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -605,7 +605,7 @@ public sealed class DirectoryStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetLastWriteTimeUtc_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -619,7 +619,7 @@ public sealed class DirectoryStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetLogicalDrives_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -631,7 +631,7 @@ public sealed class DirectoryStatisticsTests
 			.OnlyContainsMethodCall(nameof(IDirectory.GetLogicalDrives));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_GetParent_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -644,7 +644,7 @@ public sealed class DirectoryStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Move_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -660,7 +660,7 @@ public sealed class DirectoryStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[Fact]
+	[Test]
 	public async Task Method_ResolveLinkTarget_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -675,7 +675,7 @@ public sealed class DirectoryStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_SetCreationTime_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -691,7 +691,7 @@ public sealed class DirectoryStatisticsTests
 			path, creationTime);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_SetCreationTimeUtc_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -707,7 +707,7 @@ public sealed class DirectoryStatisticsTests
 			path, creationTimeUtc);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_SetCurrentDirectory_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -722,7 +722,7 @@ public sealed class DirectoryStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_SetLastAccessTime_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -738,7 +738,7 @@ public sealed class DirectoryStatisticsTests
 			path, lastAccessTime);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_SetLastAccessTimeUtc_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -754,7 +754,7 @@ public sealed class DirectoryStatisticsTests
 			path, lastAccessTimeUtc);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_SetLastWriteTime_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -770,7 +770,7 @@ public sealed class DirectoryStatisticsTests
 			path, lastWriteTime);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_SetLastWriteTimeUtc_String_DateTime_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -786,7 +786,7 @@ public sealed class DirectoryStatisticsTests
 			path, lastWriteTimeUtc);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldBeDirectory()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.Directory;

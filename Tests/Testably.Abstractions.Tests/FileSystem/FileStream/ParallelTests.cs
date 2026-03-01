@@ -4,10 +4,10 @@ using System.Text;
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
 [FileSystemTests]
-public partial class ParallelTests
+public class ParallelTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MultipleFlush_DifferentLength_ShouldKeepAdditionalBytes(string path)
 	{
 		using (FileSystemStream stream1 = FileSystem.File.Open(path, FileMode.OpenOrCreate,
@@ -36,8 +36,8 @@ public partial class ParallelTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo("foofoo");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MultipleFlush_DifferentPosition_ShouldKeepAdditionalBytes(string path)
 	{
 		FileSystem.File.WriteAllText(path, "AAAAAAAAAAAA");
@@ -59,8 +59,8 @@ public partial class ParallelTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo("AAbCCCbbAAAA");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MultipleFlush_DifferentPositionWithGaps_ShouldKeepAdditionalBytes(string path)
 	{
 		FileSystem.File.WriteAllText(path, "AAAAAAAAAAAA");
@@ -84,8 +84,8 @@ public partial class ParallelTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo("AAbbbCbbAAAA");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MultipleFlush_ShouldKeepLatestChanges(string path)
 	{
 		using (FileSystemStream stream1 = FileSystem.File.Open(path, FileMode.OpenOrCreate,
@@ -104,8 +104,8 @@ public partial class ParallelTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo("foo");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteEmpty_ShouldNotOverwrite(string path)
 	{
 		using (FileSystemStream stream1 = FileSystem.File.Open(path, FileMode.OpenOrCreate,

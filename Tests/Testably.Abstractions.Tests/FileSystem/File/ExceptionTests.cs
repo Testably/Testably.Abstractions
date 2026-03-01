@@ -10,10 +10,26 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class ExceptionTests
+public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks), "Illegal\tCharacter?InPath")]
+	public static IEnumerable<(Expression<Action<IFile>>, string, bool, Func<Test, bool>)>
+		GetFileCallbacksWithEmptyPath()
+		=> GetFileCallbacks("");
+
+	public static IEnumerable<(Expression<Action<IFile>>, string, bool, Func<Test, bool>)>
+		GetFileCallbacksWithIllegalPathCharacters()
+		=> GetFileCallbacks("Illegal\tCharacter?InPath");
+
+	public static IEnumerable<(Expression<Action<IFile>>, string, bool, Func<Test, bool>)>
+		GetFileCallbacksWithNullPath()
+		=> GetFileCallbacks(null);
+
+	public static IEnumerable<(Expression<Action<IFile>>, string, bool, Func<Test, bool>)>
+		GetFileCallbacksWithWhitespacePath()
+		=> GetFileCallbacks("  ");
+
+	[Test]
+	[MethodDataSource(nameof(GetFileCallbacksWithIllegalPathCharacters))]
 	public async Task
 		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck,
@@ -54,8 +70,8 @@ public partial class ExceptionTests
 		}
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks), "")]
+	[Test]
+	[MethodDataSource(nameof(GetFileCallbacksWithEmptyPath))]
 	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck,
 		Func<Test, bool> skipTest)
@@ -74,8 +90,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks), (string?)null)]
+	[Test]
+	[MethodDataSource(nameof(GetFileCallbacksWithNullPath))]
 	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck,
 		Func<Test, bool> skipTest)
@@ -93,8 +109,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks), "  ")]
+	[Test]
+	[MethodDataSource(nameof(GetFileCallbacksWithWhitespacePath))]
 	public async Task Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck,
 		Func<Test, bool> skipTest)
@@ -117,23 +133,20 @@ public partial class ExceptionTests
 	#region Helpers
 
 	#pragma warning disable MA0018
-	public static TheoryData<Expression<Action<IFile>>, string, bool, Func<Test, bool>>
+	private static IEnumerable<(Expression<Action<IFile>>, string, bool, Func<Test, bool>)>
 		GetFileCallbacks(string? path)
 	{
-		TheoryData<Expression<Action<IFile>>, string, bool, Func<Test, bool>> theoryData = new();
 		foreach ((ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IFile>> Callback, Func<Test, bool>? SkipTest) item in
 			GetFileCallbackTestParameters(path!)
 				.Where(item => item.TestType.HasFlag(path.ToTestType())))
 		{
-			theoryData.Add(
+			yield return (
 				item.Callback,
 				item.ParamName,
 				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck),
 				item.SkipTest ?? (_ => false));
 		}
-
-		return theoryData;
 	}
 	#pragma warning restore MA0018
 

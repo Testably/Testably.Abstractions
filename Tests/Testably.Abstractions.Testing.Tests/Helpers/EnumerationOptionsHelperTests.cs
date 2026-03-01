@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public class EnumerationOptionsHelperTests
 {
-	[Fact]
+	[Test]
 	public async Task FromSearchOption_InvalidValue_ShouldThrowArgumentOutOfRangeException()
 	{
 		SearchOption invalidSearchOption = (SearchOption)(-1);
@@ -19,7 +19,7 @@ public class EnumerationOptionsHelperTests
 	}
 
 #if NET6_0_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task MatchesPattern_InvalidMatchType_ShouldThrowArgumentOutOfRangeException()
 	{
 		EnumerationOptions invalidEnumerationOptions = new()

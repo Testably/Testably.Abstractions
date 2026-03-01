@@ -7,21 +7,4 @@
 		<ProjectReference Include="..\Helpers\Testably.Abstractions.TestHelpers\Testably.Abstractions.TestHelpers.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Helpers\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj" OutputItemType="Analyzer" />
-	</ItemGroup>
-
-	<PropertyGroup>
-		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-		<GeneratedFolder>Generated</GeneratedFolder>
-		<CompilerGeneratedFilesOutputPath>$(GeneratedFolder)\$(TargetFramework)</CompilerGeneratedFilesOutputPath>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Remove="$(GeneratedFolder)/**/*.cs" />
-		<Content Include="$(CompilerGeneratedFilesOutputPath)/**" />
-		<!-- Implicitely added from Testably.Abstractions.AccessControl -->
-		<PackageReference Remove="Nullable" />
-	</ItemGroup>
-
 </Project>

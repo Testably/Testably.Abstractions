@@ -9,10 +9,10 @@ using System.Globalization;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class EnumerateFileSystemInfosTests
+public class EnumerateFileSystemInfosTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateFileSystemEntries_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
@@ -28,8 +28,8 @@ public partial class EnumerateFileSystemInfosTests
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateFileSystemEntries_MissingDirectory_ShouldThrowDirectoryNotFoundExceptionImmediately(
 			string path)
@@ -45,8 +45,8 @@ public partial class EnumerateFileSystemInfosTests
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
 			string path)
@@ -70,8 +70,8 @@ public partial class EnumerateFileSystemInfosTests
 		await That(result).Contains(initialized[2].FullName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
 			string path)
@@ -92,20 +92,20 @@ public partial class EnumerateFileSystemInfosTests
 		await That(result).Contains(initialized[2].ToString());
 	}
 
-	[Theory]
+	[Test]
 #if NETFRAMEWORK
-	[InlineAutoData(false, "")]
+	[AutoArguments(false, "")]
 #else
-	[InlineAutoData(true, "")]
+	[AutoArguments(true, "")]
 #endif
-	[InlineAutoData(true, "*")]
-	[InlineAutoData(true, ".")]
-	[InlineAutoData(true, "*.*")]
-	[InlineData(true, "a*c", "abc")]
-	[InlineData(true, "ab*c", "abc")]
-	[InlineData(true, "abc?", "abc")]
-	[InlineData(false, "ab?c", "abc")]
-	[InlineData(false, "ac", "abc")]
+	[AutoArguments(true, "*")]
+	[AutoArguments(true, ".")]
+	[AutoArguments(true, "*.*")]
+	[Arguments(true, "a*c", "abc")]
+	[Arguments(true, "ab*c", "abc")]
+	[Arguments(true, "abc?", "abc")]
+	[Arguments(false, "ab?c", "abc")]
+	[Arguments(false, "ac", "abc")]
 	public async Task EnumerateFileSystemEntries_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
@@ -126,8 +126,8 @@ public partial class EnumerateFileSystemInfosTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateFileSystemEntries_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
 	{
@@ -154,8 +154,8 @@ public partial class EnumerateFileSystemInfosTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateFileSystemEntries_WithFileNameStartingWithDirectoryName_ShouldNotBeIncluded(
 			string path)
@@ -171,8 +171,8 @@ public partial class EnumerateFileSystemInfosTests
 		await That(result).IsEmpty();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateFileSystemEntries_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
@@ -191,8 +191,8 @@ public partial class EnumerateFileSystemInfosTests
 				Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
 			string path)
@@ -216,8 +216,8 @@ public partial class EnumerateFileSystemInfosTests
 		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
 			string path)
@@ -239,7 +239,7 @@ public partial class EnumerateFileSystemInfosTests
 		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		EnumerateFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
 	{

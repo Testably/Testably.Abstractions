@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public sealed partial class ExecuteTests
 {
-	[Fact]
+	[Test]
 	public async Task Constructor_ForLinux_ShouldInitializeAccordingly()
 	{
 		#pragma warning disable CS0618
@@ -18,7 +18,7 @@ public sealed partial class ExecuteTests
 		await That(sut.StringComparisonMode).IsEqualTo(StringComparison.Ordinal);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Constructor_ForMacOS_ShouldInitializeAccordingly()
 	{
 		#pragma warning disable CS0618
@@ -32,7 +32,7 @@ public sealed partial class ExecuteTests
 		await That(sut.StringComparisonMode).IsEqualTo(StringComparison.OrdinalIgnoreCase);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Constructor_ForWindows_ShouldInitializeAccordingly()
 	{
 		#pragma warning disable CS0618
@@ -46,7 +46,7 @@ public sealed partial class ExecuteTests
 		await That(sut.StringComparisonMode).IsEqualTo(StringComparison.OrdinalIgnoreCase);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Constructor_UnsupportedSimulationMode_ShouldThrowNotSupportedException()
 	{
 		void Act()

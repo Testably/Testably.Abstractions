@@ -1,15 +1,15 @@
-﻿using System.IO;
+﻿using Mockolate;
+using System.IO;
 using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions.AccessControl.Tests.Internal;
 
 public sealed class AccessControlHelperTests
 {
-	[Theory]
-	[AutoDomainData]
-	public async Task GetExtensibilityOrThrow_CustomDirectoryInfo_ShouldThrowNotSupportedException(
-		IDirectoryInfo sut)
+	[Test]
+	public async Task GetExtensibilityOrThrow_CustomDirectoryInfo_ShouldThrowNotSupportedException()
 	{
+		var sut = Mock.Create<IDirectoryInfo>();
 		void Act()
 		{
 			sut.GetExtensibilityOrThrow();
@@ -19,11 +19,10 @@ public sealed class AccessControlHelperTests
 			.WithMessage($"*{sut.GetType().Name}*{nameof(IFileSystemExtensibility)}*").AsWildcard();
 	}
 
-	[Theory]
-	[AutoDomainData]
-	public async Task GetExtensibilityOrThrow_CustomFileInfo_ShouldThrowNotSupportedException(
-		IFileInfo sut)
+	[Test]
+	public async Task GetExtensibilityOrThrow_CustomFileInfo_ShouldThrowNotSupportedException()
 	{
+		var sut = Mock.Create<IFileInfo>();
 		void Act()
 		{
 			sut.GetExtensibilityOrThrow();
@@ -33,7 +32,7 @@ public sealed class AccessControlHelperTests
 			.WithMessage($"*{sut.GetType().Name}*{nameof(IFileSystemExtensibility)}*").AsWildcard();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		GetExtensibilityOrThrow_CustomFileSystemStream_ShouldThrowNotSupportedException()
 	{
@@ -48,7 +47,7 @@ public sealed class AccessControlHelperTests
 			.WithMessage($"*{sut.GetType().Name}*{nameof(IFileSystemExtensibility)}*").AsWildcard();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ThrowIfMissing_ExistingDirectoryInfo_ShouldNotThrow()
 	{
 		MockFileSystem fileSystem = new();
@@ -63,7 +62,7 @@ public sealed class AccessControlHelperTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ThrowIfMissing_ExistingFileInfo_ShouldNotThrow()
 	{
 		MockFileSystem fileSystem = new();
@@ -78,7 +77,7 @@ public sealed class AccessControlHelperTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ThrowIfMissing_MissingDirectoryInfo_ShouldThrowDirectoryNotFoundException()
 	{
 		MockFileSystem fileSystem = new();
@@ -94,7 +93,7 @@ public sealed class AccessControlHelperTests
 			.WithHResult(-2147024893);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ThrowIfMissing_MissingFileInfo_ShouldThrowFileNotFoundException()
 	{
 		MockFileSystem fileSystem = new();

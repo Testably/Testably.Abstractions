@@ -1,12 +1,13 @@
 ﻿using System.Diagnostics;
+using System.Threading;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 [TimeSystemTests]
-public partial class StopwatchFactoryTests
+public class StopwatchFactoryTests(TimeSystemTestData testData) : TimeSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task Frequency_ShouldReturnValueOfAtLeastTicksPerSecond()
 	{
 		var expectedMinimum = TimeSystem is RealTimeSystem
@@ -18,10 +19,10 @@ public partial class StopwatchFactoryTests
 	}
 
 #if FEATURE_STOPWATCH_GETELAPSEDTIME
-	[Theory]
-	[InlineData(5000L, 8000L, 3000L)]
-	[InlineData(8000L, 5000L, -3000L)]
-	[InlineData(4000L, 4000L, 0L)]
+	[Test]
+	[Arguments(5000L, 8000L, 3000L)]
+	[Arguments(8000L, 5000L, -3000L)]
+	[Arguments(4000L, 4000L, 0L)]
 	public async Task GetElapsedTime_WithStartingAndEndingTimestamp_ShouldReturnValue(
 		long startingTimestamp, long endingTimestamp, long expectedTicks)
 	{
@@ -34,9 +35,9 @@ public partial class StopwatchFactoryTests
 #endif
 
 #if FEATURE_STOPWATCH_GETELAPSEDTIME
-	[Theory]
-	[InlineData(1000L)]
-	[InlineData(100000L)]
+	[Test]
+	[Arguments(1000L)]
+	[Arguments(100000L)]
 	public async Task GetElapsedTime_WithStartingTimestamp_ShouldReturnValue(long expectedTicks)
 	{
 		long endingTimestamp = TimeSystem.Stopwatch.GetTimestamp();
@@ -49,18 +50,18 @@ public partial class StopwatchFactoryTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task GetTimestamp_AfterDelay_ShouldBeDifferent()
 	{
 		long timestamp1 = TimeSystem.Stopwatch.GetTimestamp();
 
-		await TimeSystem.Task.Delay(10, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(10, CancellationToken);
 
 		long timestamp2 = TimeSystem.Stopwatch.GetTimestamp();
 		await That(timestamp2).IsGreaterThan(timestamp1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetTimestamp_ShouldReturnValue()
 	{
 		long timestamp = TimeSystem.Stopwatch.GetTimestamp();
@@ -68,7 +69,7 @@ public partial class StopwatchFactoryTests
 		await That(timestamp).IsGreaterThan(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IsHighResolution_ShouldReturnTrue()
 	{
 		bool expected = TimeSystem is MockTimeSystem || Stopwatch.IsHighResolution;
@@ -77,7 +78,7 @@ public partial class StopwatchFactoryTests
 		await That(isHighResolution).IsEqualTo(expected);
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_ShouldCreateNotRunningStopwatch()
 	{
 		IStopwatch stopwatch = TimeSystem.Stopwatch.New();
@@ -85,7 +86,7 @@ public partial class StopwatchFactoryTests
 		await That(stopwatch.IsRunning).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task StartNew_ShouldCreateRunningStopwatch()
 	{
 		IStopwatch stopwatch = TimeSystem.Stopwatch.StartNew();

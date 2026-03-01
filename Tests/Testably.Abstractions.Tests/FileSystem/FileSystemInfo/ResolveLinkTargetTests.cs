@@ -5,7 +5,7 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
 [FileSystemTests]
-public partial class ResolveLinkTargetTests
+public class ResolveLinkTargetTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	#region Test Setup
 
@@ -18,8 +18,8 @@ public partial class ResolveLinkTargetTests
 
 	#endregion
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_FileWithDifferentCase_ShouldReturnPathToMissingFile(
 		string path, string pathToTarget, string contents)
 	{
@@ -44,8 +44,8 @@ public partial class ResolveLinkTargetTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_FinalTarget_ShouldFollowSymbolicLinkToFinalTarget(
 		string path, string pathToFinalTarget)
 	{
@@ -68,8 +68,8 @@ public partial class ResolveLinkTargetTests
 		await That(target!.FullName).IsEqualTo(FileSystem.Path.GetFullPath(pathToFinalTarget));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
 		string path, string pathToFinalTarget)
 	{
@@ -96,8 +96,8 @@ public partial class ResolveLinkTargetTests
 			.WithMessageContaining($"'{fileInfo.FullName}'");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_MissingFileInLinkChain_ShouldReturnPathToMissingFile(
 		string path, string pathToFinalTarget, string pathToMissingFile)
 	{
@@ -113,8 +113,8 @@ public partial class ResolveLinkTargetTests
 		await That(target!.FullName).IsEqualTo(FileSystem.Path.GetFullPath(pathToMissingFile));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_NormalDirectory_ShouldReturnNull(
 		string path)
 	{
@@ -126,8 +126,8 @@ public partial class ResolveLinkTargetTests
 		await That(target).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_NormalFile_ShouldReturnNull(
 		string path)
 	{
@@ -139,8 +139,8 @@ public partial class ResolveLinkTargetTests
 		await That(target).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_ShouldFollowSymbolicLink(
 		string path, string pathToTarget)
 	{
@@ -155,8 +155,8 @@ public partial class ResolveLinkTargetTests
 		await That(target.Exists).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ResolveLinkTarget_TargetDeletedAfterLinkCreation_ShouldReturnNull(
 		string path, string pathToTarget)
 	{

@@ -7,20 +7,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AutoFixture" />
 		<PackageReference Include="Testably.Abstractions" />
 		<PackageReference Include="Testably.Abstractions.Interface" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoFixture.AutoNSubstitute" />
-		<PackageReference Remove="Microsoft.NET.Test.Sdk" />
-		<PackageReference Remove="xunit.v3" />
-		<PackageReference Remove="xunit.runner.visualstudio" />
-		<PackageReference Remove="coverlet.collector" />
+	  <PackageReference Include="Newtonsoft.Json" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Newtonsoft.Json" />
+	  <ProjectReference Include="..\..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
 	</ItemGroup>
 
 </Project>

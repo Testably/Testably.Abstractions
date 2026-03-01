@@ -1,9 +1,9 @@
 namespace Testably.Abstractions.Tests.FileSystem.DriveInfo;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldReturnDriveName()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -14,7 +14,7 @@ public partial class Tests
 		await That(result.ToString()).IsEqualTo("C:\\");
 	}
 
-	[Fact]
+	[Test]
 	public async Task VolumeLabel_ShouldBeWritable_OnWindows()
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();

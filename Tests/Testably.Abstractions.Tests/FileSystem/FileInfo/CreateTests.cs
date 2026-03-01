@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
-public partial class CreateTests
+public class CreateTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Create_MissingFile_ShouldCreateFile(string path)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
@@ -17,8 +17,8 @@ public partial class CreateTests
 		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Create_ShouldRefreshExistsCacheForCurrentItem_ExceptOnNetFramework(
 		string path)
 	{
@@ -47,8 +47,8 @@ public partial class CreateTests
 		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Create_ShouldUseReadWriteAccessAndNoneShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);

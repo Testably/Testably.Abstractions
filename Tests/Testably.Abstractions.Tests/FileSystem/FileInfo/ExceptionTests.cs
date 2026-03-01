@@ -6,10 +6,26 @@ using System.Linq.Expressions;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
-public partial class ExceptionTests
+public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[MemberData(nameof(GetFileInfoCallbacks), "Illegal\tCharacter?InPath")]
+	public static IEnumerable<(Expression<Action<IFileInfo>>, string, bool)>
+		GetFileInfoCallbacksWithEmptyPath()
+		=> GetFileInfoCallbacks("");
+
+	public static IEnumerable<(Expression<Action<IFileInfo>>, string, bool)>
+		GetFileInfoCallbacksWithIllegalPathCharacters()
+		=> GetFileInfoCallbacks("Illegal\tCharacter?InPath");
+
+	public static IEnumerable<(Expression<Action<IFileInfo>>, string, bool)>
+		GetFileInfoCallbacksWithNullPath()
+		=> GetFileInfoCallbacks(null);
+
+	public static IEnumerable<(Expression<Action<IFileInfo>>, string, bool)>
+		GetFileInfoCallbacksWithWhitespacePath()
+		=> GetFileInfoCallbacks("  ");
+
+	[Test]
+	[MethodDataSource(nameof(GetFileInfoCallbacksWithIllegalPathCharacters))]
 	public async Task
 		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IFileInfo>> callback, string paramName,
@@ -48,8 +64,8 @@ public partial class ExceptionTests
 		}
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileInfoCallbacks), "")]
+	[Test]
+	[MethodDataSource(nameof(GetFileInfoCallbacksWithEmptyPath))]
 	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileInfo>> callback, string paramName, bool ignoreParamCheck)
 	{
@@ -65,8 +81,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileInfoCallbacks), (string?)null)]
+	[Test]
+	[MethodDataSource(nameof(GetFileInfoCallbacksWithNullPath))]
 	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileInfo>> callback, string paramName, bool ignoreParamCheck)
 	{
@@ -84,22 +100,19 @@ public partial class ExceptionTests
 	#region Helpers
 
 	#pragma warning disable MA0018
-	public static TheoryData<Expression<Action<IFileInfo>>, string, bool> GetFileInfoCallbacks(
+	public static IEnumerable<(Expression<Action<IFileInfo>>, string, bool)> GetFileInfoCallbacks(
 		string? path)
 	{
-		TheoryData<Expression<Action<IFileInfo>>, string, bool> theoryData = new();
 		foreach ((ExceptionTestHelper.TestTypes TestType,
 			string ParamName,
 			Expression<Action<IFileInfo>> Callback) item in GetFileInfoCallbackTestParameters(path!)
 				.Where(item => item.TestType.HasFlag(path.ToTestType())))
 		{
-			theoryData.Add(
+			yield return (
 				item.Callback,
 				item.ParamName,
 				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck));
 		}
-
-		return theoryData;
 	}
 	#pragma warning restore MA0018
 

@@ -1,10 +1,10 @@
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class ExistsTests
+public class ExistsTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_Directory_ShouldReturnFalse(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -14,7 +14,7 @@ public partial class ExistsTests
 		await That(result).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Exists_Empty_ShouldReturnFalse()
 	{
 		bool result = FileSystem.File.Exists(string.Empty);
@@ -22,7 +22,7 @@ public partial class ExistsTests
 		await That(result).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Exists_Null_ShouldReturnFalse()
 	{
 		bool result = FileSystem.File.Exists(null);

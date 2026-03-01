@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
 [FileSystemTests]
-public partial class ReadTests
+public class ReadTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task BeginRead_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
@@ -31,8 +31,8 @@ public partial class ReadTests
 		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task BeginRead_ShouldCopyContentsToBuffer(
 		string path, byte[] bytes)
 	{
@@ -56,12 +56,12 @@ public partial class ReadTests
 			}
 		}, null);
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(buffer).IsEqualTo(bytes).InAnyOrder();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EndRead_Null_ShouldThrowArgumentNullException(
 		string path, byte[] bytes)
 	{
@@ -77,8 +77,8 @@ public partial class ReadTests
 		await That(Act).Throws<ArgumentNullException>().WithHResult(-2147467261);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EndRead_ShouldNotAdjustTimes(string path, byte[] bytes)
 	{
 		SkipIfBrittleTestsShouldBeSkipped(Test.RunsOnMac);
@@ -107,7 +107,7 @@ public partial class ReadTests
 				}
 			}, null);
 
-			await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+			await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		}
 
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
@@ -123,8 +123,8 @@ public partial class ReadTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Read_AsSpan_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
@@ -144,8 +144,8 @@ public partial class ReadTests
 #endif
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Read_AsSpan_ShouldFillBuffer(string path, byte[] bytes)
 	{
 		byte[] buffer = new byte[bytes.Length];
@@ -160,8 +160,8 @@ public partial class ReadTests
 #endif
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Read_AsSpan_ShouldUseSharedBuffer(string path)
 	{
 		List<int> results = [];
@@ -187,8 +187,8 @@ public partial class ReadTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Read_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
@@ -206,8 +206,8 @@ public partial class ReadTests
 		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Read_ShouldFillBuffer(string path, byte[] bytes)
 	{
 		byte[] buffer = new byte[bytes.Length];
@@ -221,8 +221,8 @@ public partial class ReadTests
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAsync_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
@@ -246,8 +246,8 @@ public partial class ReadTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAsync_Memory_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
@@ -271,8 +271,8 @@ public partial class ReadTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAsync_ShouldFillBuffer(string path, byte[] bytes)
 	{
 		using CancellationTokenSource cts = new(ExpectSuccess);
@@ -289,8 +289,8 @@ public partial class ReadTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadByte_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
@@ -307,8 +307,8 @@ public partial class ReadTests
 		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadByte_ShouldReadSingleByteAndAdvancePosition(
 		string path, byte[] bytes)
 	{
@@ -324,8 +324,8 @@ public partial class ReadTests
 		await That(result2).IsEqualTo(bytes[1]);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadTimeout_ShouldThrowInvalidOperationException(
 		string path, string contents)
 	{

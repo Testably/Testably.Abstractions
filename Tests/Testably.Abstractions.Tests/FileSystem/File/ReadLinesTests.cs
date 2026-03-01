@@ -6,10 +6,10 @@ using System.Text;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class ReadLinesTests
+public class ReadLinesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadLines_EmptyFile_ShouldEnumerateLines(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -19,8 +19,8 @@ public partial class ReadLinesTests
 		await That(results).IsEmpty();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadLines_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		void Act()
@@ -33,8 +33,8 @@ public partial class ReadLinesTests
 			.WithHResult(-2147024894);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadLines_ShouldEnumerateLines(string path, string[] lines)
 	{
 		string contents = string.Join(Environment.NewLine, lines);
@@ -45,8 +45,8 @@ public partial class ReadLinesTests
 		await That(results).IsEqualTo(lines).InAnyOrder();
 	}
 
-	[Theory]
-	[ClassData(typeof(TestDataGetEncodingDifference))]
+	[Test]
+	[MethodDataSource(typeof(TestData), nameof(TestData.GetEncodingDifference))]
 	public async Task ReadLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding)
 	{

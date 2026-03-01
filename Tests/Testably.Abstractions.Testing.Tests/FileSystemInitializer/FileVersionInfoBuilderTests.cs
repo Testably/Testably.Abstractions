@@ -2,8 +2,8 @@
 
 public class FileVersionInfoBuilderTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ShouldBePossibleToChainMethods(
 		string comments,
 		string companyName,
@@ -68,8 +68,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.SpecialBuild).IsEqualTo(specialBuild);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithComments_ShouldSetComments(string comments)
 	{
 		MockFileSystem fileSystem = new();
@@ -81,8 +81,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.Comments).IsEqualTo(comments);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithCompanyName_ShouldSetCompanyName(string? companyName)
 	{
 		MockFileSystem fileSystem = new();
@@ -94,8 +94,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.CompanyName).IsEqualTo(companyName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithFileDescription_ShouldSetFileDescription(string? fileDescription)
 	{
 		MockFileSystem fileSystem = new();
@@ -107,12 +107,12 @@ public class FileVersionInfoBuilderTests
 		await That(result.FileDescription).IsEqualTo(fileDescription);
 	}
 
-	[Theory]
-	[InlineData("1", 1, 0)]
-	[InlineData("0.1", 0, 1)]
-	[InlineData("1.2", 1, 2)]
-	[InlineData("1.2.3", 1, 2, 3)]
-	[InlineData("1.2.3.4", 1, 2, 3, 4)]
+	[Test]
+	[Arguments("1", 1, 0)]
+	[Arguments("0.1", 0, 1)]
+	[Arguments("1.2", 1, 2)]
+	[Arguments("1.2.3", 1, 2, 3)]
+	[Arguments("1.2.3.4", 1, 2, 3, 4)]
 	public async Task WithFileVersion_ShouldSetFileVersion(
 		string? fileVersion,
 		int fileMajorPart, int fileMinorPart, int fileBuildPart = 0, int filePrivatePart = 0)
@@ -130,22 +130,22 @@ public class FileVersionInfoBuilderTests
 		await That(result.FilePrivatePart).IsEqualTo(filePrivatePart);
 	}
 
-	[Theory]
-	[InlineData("1-foo", 1, 0)]
-	[InlineData("1+bar", 1, 0)]
-	[InlineData("1some-text", 1, 0)]
-	[InlineData("0.1-foo", 0, 1)]
-	[InlineData("0.1+bar", 0, 1)]
-	[InlineData("0.1some-text", 0, 1)]
-	[InlineData("1.2-foo", 1, 2)]
-	[InlineData("1.2+bar", 1, 2)]
-	[InlineData("1.2some-text", 1, 2)]
-	[InlineData("1.2.3-foo", 1, 2, 3)]
-	[InlineData("1.2.3+bar", 1, 2, 3)]
-	[InlineData("1.2.3some-text", 1, 2, 3)]
-	[InlineData("1.2.3.4-foo", 1, 2, 3, 4)]
-	[InlineData("1.2.3.4+bar", 1, 2, 3, 4)]
-	[InlineData("1.2.3.4some-text", 1, 2, 3, 4)]
+	[Test]
+	[Arguments("1-foo", 1, 0)]
+	[Arguments("1+bar", 1, 0)]
+	[Arguments("1some-text", 1, 0)]
+	[Arguments("0.1-foo", 0, 1)]
+	[Arguments("0.1+bar", 0, 1)]
+	[Arguments("0.1some-text", 0, 1)]
+	[Arguments("1.2-foo", 1, 2)]
+	[Arguments("1.2+bar", 1, 2)]
+	[Arguments("1.2some-text", 1, 2)]
+	[Arguments("1.2.3-foo", 1, 2, 3)]
+	[Arguments("1.2.3+bar", 1, 2, 3)]
+	[Arguments("1.2.3some-text", 1, 2, 3)]
+	[Arguments("1.2.3.4-foo", 1, 2, 3, 4)]
+	[Arguments("1.2.3.4+bar", 1, 2, 3, 4)]
+	[Arguments("1.2.3.4some-text", 1, 2, 3, 4)]
 	public async Task WithFileVersion_WhenContainsPreReleaseInfo_ShouldIgnorePreReleaseInfo(
 		string? fileVersion,
 		int fileMajorPart, int fileMinorPart, int fileBuildPart = 0, int filePrivatePart = 0)
@@ -162,11 +162,11 @@ public class FileVersionInfoBuilderTests
 		await That(result.FilePrivatePart).IsEqualTo(filePrivatePart);
 	}
 
-	[Theory]
-	[InlineData("")]
-	[InlineData("-1")]
-	[InlineData("+1.2.3-bar")]
-	[InlineData("abc")]
+	[Test]
+	[Arguments("")]
+	[Arguments("-1")]
+	[Arguments("+1.2.3-bar")]
+	[Arguments("abc")]
 	public async Task WithFileVersion_WhenStringIsInvalid_ShouldNotSetFileVersionParts(
 		string? fileVersion)
 	{
@@ -183,8 +183,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.FilePrivatePart).IsEqualTo(0);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithInternalName_ShouldSetInternalName(string? internalName)
 	{
 		MockFileSystem fileSystem = new();
@@ -196,8 +196,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.InternalName).IsEqualTo(internalName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithIsDebug_ShouldSetIsDebug(bool isDebug)
 	{
 		MockFileSystem fileSystem = new();
@@ -209,8 +209,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.IsDebug).IsEqualTo(isDebug);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithIsPatched_ShouldSetIsPatched(bool isPatched)
 	{
 		MockFileSystem fileSystem = new();
@@ -222,8 +222,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.IsPatched).IsEqualTo(isPatched);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithIsPreRelease_ShouldSetIsPreRelease(bool isPreRelease)
 	{
 		MockFileSystem fileSystem = new();
@@ -235,8 +235,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.IsPreRelease).IsEqualTo(isPreRelease);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithIsPrivateBuild_ShouldSetIsPrivateBuild(bool isPrivateBuild)
 	{
 		MockFileSystem fileSystem = new();
@@ -248,8 +248,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.IsPrivateBuild).IsEqualTo(isPrivateBuild);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithIsSpecialBuild_ShouldSetIsSpecialBuild(bool isSpecialBuild)
 	{
 		MockFileSystem fileSystem = new();
@@ -261,8 +261,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.IsSpecialBuild).IsEqualTo(isSpecialBuild);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithLanguage_ShouldSetLanguage(string? language)
 	{
 		MockFileSystem fileSystem = new();
@@ -274,8 +274,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.Language).IsEqualTo(language);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithLegalCopyright_ShouldSetLegalCopyright(string? legalCopyright)
 	{
 		MockFileSystem fileSystem = new();
@@ -287,8 +287,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.LegalCopyright).IsEqualTo(legalCopyright);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithLegalTrademarks_ShouldSetLegalTrademarks(string? legalTrademarks)
 	{
 		MockFileSystem fileSystem = new();
@@ -300,8 +300,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.LegalTrademarks).IsEqualTo(legalTrademarks);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithOriginalFilename_ShouldSetOriginalFilename(string? originalFilename)
 	{
 		MockFileSystem fileSystem = new();
@@ -313,8 +313,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.OriginalFilename).IsEqualTo(originalFilename);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithPrivateBuild_ShouldSetPrivateBuild(string? privateBuild)
 	{
 		MockFileSystem fileSystem = new();
@@ -326,8 +326,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.PrivateBuild).IsEqualTo(privateBuild);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithProductName_ShouldSetProductName(string? productName)
 	{
 		MockFileSystem fileSystem = new();
@@ -339,12 +339,12 @@ public class FileVersionInfoBuilderTests
 		await That(result.ProductName).IsEqualTo(productName);
 	}
 
-	[Theory]
-	[InlineData("1", 1, 0)]
-	[InlineData("0.1", 0, 1)]
-	[InlineData("1.2", 1, 2)]
-	[InlineData("1.2.3", 1, 2, 3)]
-	[InlineData("1.2.3.4", 1, 2, 3, 4)]
+	[Test]
+	[Arguments("1", 1, 0)]
+	[Arguments("0.1", 0, 1)]
+	[Arguments("1.2", 1, 2)]
+	[Arguments("1.2.3", 1, 2, 3)]
+	[Arguments("1.2.3.4", 1, 2, 3, 4)]
 	public async Task WithProductVersion_ShouldSetProductVersion(
 		string? productVersion,
 		int fileMajorPart, int fileMinorPart, int fileBuildPart = 0, int filePrivatePart = 0)
@@ -362,22 +362,22 @@ public class FileVersionInfoBuilderTests
 		await That(result.ProductPrivatePart).IsEqualTo(filePrivatePart);
 	}
 
-	[Theory]
-	[InlineData("1-foo", 1, 0)]
-	[InlineData("1+bar", 1, 0)]
-	[InlineData("1some-text", 1, 0)]
-	[InlineData("0.1-foo", 0, 1)]
-	[InlineData("0.1+bar", 0, 1)]
-	[InlineData("0.1some-text", 0, 1)]
-	[InlineData("1.2-foo", 1, 2)]
-	[InlineData("1.2+bar", 1, 2)]
-	[InlineData("1.2some-text", 1, 2)]
-	[InlineData("1.2.3-foo", 1, 2, 3)]
-	[InlineData("1.2.3+bar", 1, 2, 3)]
-	[InlineData("1.2.3some-text", 1, 2, 3)]
-	[InlineData("1.2.3.4-foo", 1, 2, 3, 4)]
-	[InlineData("1.2.3.4+bar", 1, 2, 3, 4)]
-	[InlineData("1.2.3.4some-text", 1, 2, 3, 4)]
+	[Test]
+	[Arguments("1-foo", 1, 0)]
+	[Arguments("1+bar", 1, 0)]
+	[Arguments("1some-text", 1, 0)]
+	[Arguments("0.1-foo", 0, 1)]
+	[Arguments("0.1+bar", 0, 1)]
+	[Arguments("0.1some-text", 0, 1)]
+	[Arguments("1.2-foo", 1, 2)]
+	[Arguments("1.2+bar", 1, 2)]
+	[Arguments("1.2some-text", 1, 2)]
+	[Arguments("1.2.3-foo", 1, 2, 3)]
+	[Arguments("1.2.3+bar", 1, 2, 3)]
+	[Arguments("1.2.3some-text", 1, 2, 3)]
+	[Arguments("1.2.3.4-foo", 1, 2, 3, 4)]
+	[Arguments("1.2.3.4+bar", 1, 2, 3, 4)]
+	[Arguments("1.2.3.4some-text", 1, 2, 3, 4)]
 	public async Task WithProductVersion_WhenContainsPreReleaseInfo_ShouldIgnorePreReleaseInfo(
 		string? productVersion,
 		int fileMajorPart, int fileMinorPart, int fileBuildPart = 0, int filePrivatePart = 0)
@@ -394,11 +394,11 @@ public class FileVersionInfoBuilderTests
 		await That(result.ProductPrivatePart).IsEqualTo(filePrivatePart);
 	}
 
-	[Theory]
-	[InlineData("")]
-	[InlineData("-1")]
-	[InlineData("+1.2.3-bar")]
-	[InlineData("abc")]
+	[Test]
+	[Arguments("")]
+	[Arguments("-1")]
+	[Arguments("+1.2.3-bar")]
+	[Arguments("abc")]
 	public async Task WithProductVersion_WhenStringIsInvalid_ShouldNotSetProductVersionParts(
 		string? productVersion)
 	{
@@ -415,8 +415,8 @@ public class FileVersionInfoBuilderTests
 		await That(result.ProductPrivatePart).IsEqualTo(0);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithSpecialBuild_ShouldSetSpecialBuild(string? specialBuild)
 	{
 		MockFileSystem fileSystem = new();

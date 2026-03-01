@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public sealed class DirectoryInfoFactoryStatisticsTests
 {
-	[Fact]
+	[Test]
 	public async Task Method_New_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -20,7 +20,7 @@ public sealed class DirectoryInfoFactoryStatisticsTests
 			path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Wrap_DirectoryInfo_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -34,7 +34,7 @@ public sealed class DirectoryInfoFactoryStatisticsTests
 			directoryInfo);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldBeDirectoryInfo()
 	{
 		IPathStatistics<IDirectoryInfoFactory, IDirectoryInfo> sut

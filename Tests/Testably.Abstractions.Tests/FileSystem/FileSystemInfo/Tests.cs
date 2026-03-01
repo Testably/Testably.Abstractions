@@ -4,10 +4,10 @@ using Testably.Abstractions.Helpers;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Extensibility_ShouldWrapFileSystemInfoOnRealFileSystem(
 		string path)
 	{
@@ -32,8 +32,8 @@ public partial class Tests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task LinkTarget_ShouldBeSetByCreateAsSymbolicLink(
 		string path, string pathToTarget)
 	{
@@ -47,8 +47,8 @@ public partial class Tests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetAttributes_Hidden_OnFileStartingWithDot_ShouldBeSet(string path)
 	{
 		Skip.IfNot(Test.RunsOnLinux);
@@ -64,8 +64,8 @@ public partial class Tests
 		await That(result2).IsEqualTo(FileAttributes.Hidden);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetAttributes_Hidden_OnNormalFile_ShouldBeIgnored(string path)
 	{
 		Skip.IfNot(Test.RunsOnLinux);
@@ -80,13 +80,13 @@ public partial class Tests
 		await That(result2).IsEqualTo(FileAttributes.Normal);
 	}
 
-	[Theory]
-	[InlineAutoData(FileAttributes.Compressed)]
-	[InlineAutoData(FileAttributes.Device)]
-	[InlineAutoData(FileAttributes.Encrypted)]
-	[InlineAutoData(FileAttributes.IntegrityStream)]
-	[InlineAutoData(FileAttributes.SparseFile)]
-	[InlineAutoData(FileAttributes.ReparsePoint)]
+	[Test]
+	[AutoArguments(FileAttributes.Compressed)]
+	[AutoArguments(FileAttributes.Device)]
+	[AutoArguments(FileAttributes.Encrypted)]
+	[AutoArguments(FileAttributes.IntegrityStream)]
+	[AutoArguments(FileAttributes.SparseFile)]
+	[AutoArguments(FileAttributes.ReparsePoint)]
 	public async Task SetAttributes_ShouldBeIgnoredOnAllPlatforms(FileAttributes attributes,
 		string path)
 	{
@@ -98,8 +98,8 @@ public partial class Tests
 		await That(result).IsEqualTo(FileAttributes.Normal);
 	}
 
-	[Theory]
-	[InlineAutoData(FileAttributes.Hidden)]
+	[Test]
+	[AutoArguments(FileAttributes.Hidden)]
 	public async Task SetAttributes_ShouldBeIgnoredOnLinux(FileAttributes attributes,
 		string path)
 	{
@@ -118,8 +118,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[InlineAutoData(FileAttributes.ReadOnly)]
+	[Test]
+	[AutoArguments(FileAttributes.ReadOnly)]
 	public async Task SetAttributes_ShouldBeSupportedOnAllPlatforms(
 		FileAttributes attributes,
 		string path)
@@ -132,13 +132,13 @@ public partial class Tests
 		await That(result).IsEqualTo(attributes);
 	}
 
-	[Theory]
-	[InlineAutoData(FileAttributes.Archive)]
-	[InlineAutoData(FileAttributes.NoScrubData)]
-	[InlineAutoData(FileAttributes.NotContentIndexed)]
-	[InlineAutoData(FileAttributes.Offline)]
-	[InlineAutoData(FileAttributes.System)]
-	[InlineAutoData(FileAttributes.Temporary)]
+	[Test]
+	[AutoArguments(FileAttributes.Archive)]
+	[AutoArguments(FileAttributes.NoScrubData)]
+	[AutoArguments(FileAttributes.NotContentIndexed)]
+	[AutoArguments(FileAttributes.Offline)]
+	[AutoArguments(FileAttributes.System)]
+	[AutoArguments(FileAttributes.Temporary)]
 	public async Task SetAttributes_ShouldOnlyWork_OnWindows(FileAttributes attributes,
 		string path)
 	{
@@ -157,8 +157,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Attributes_WhenDotFile_ShouldHaveHiddenFlag(bool isFile)
 	{
 		Skip.If(Test.RunsOnWindows);

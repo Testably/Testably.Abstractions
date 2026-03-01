@@ -3,6 +3,7 @@ using System.IO;
 
 namespace Testably.Abstractions.Parity.Tests;
 
+[InheritsTests]
 // ReSharper disable once UnusedMember.Global
 public class Net6ParityTests : ParityTests
 {

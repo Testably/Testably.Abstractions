@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using Testably.Abstractions.TestHelpers.Settings;
 using Testably.Abstractions.Testing.Initializer;
+using Assembly = System.Reflection.Assembly;
 
 namespace Testably.Abstractions.Testing.Tests;
 
-[Collection("RealFileSystemTests")]
-public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
+[NotInParallel(nameof(RealFileSystem))]
+public class FileSystemInitializerExtensionsTests
 {
-	[Fact]
+	[Test]
 	public async Task Initialize_WithAFile_ShouldCreateFile()
 	{
 		MockFileSystem sut = new();
@@ -21,8 +20,8 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		await That(sut.Directory.EnumerateFiles(".")).HasSingle();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("txt")]
 	public async Task Initialize_WithAFile_WithExtension_ShouldCreateFileWithExtension(
 		string extension)
 	{
@@ -33,7 +32,7 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		await That(sut.Directory.EnumerateFiles(".", $"*.{extension}")).HasSingle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Initialize_WithASubdirectory_ShouldCreateDirectory()
 	{
 		MockFileSystem sut = new();
@@ -43,8 +42,8 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		await That(sut.Directory.EnumerateDirectories(".")).HasSingle();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("foo.txt")]
 	public async Task Initialize_WithFile_Existing_ShouldThrowTestingException(string fileName)
 	{
 		MockFileSystem sut = new();
@@ -55,11 +54,11 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 			sut.Initialize().WithFile(fileName);
 		}
 
-		await That(Act).ThrowsExactly<TestingException>().WithMessage("*fileName*").AsWildcard();
+		await That(Act).ThrowsExactly<TestingException>().WithMessage($"*{fileName}*").AsWildcard();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("foo.txt", new byte[]{ 0x1, 0x2, 0x3, })]
 	public async Task Initialize_WithFile_HasBytesContent_ShouldCreateFileWithGivenFileContent(
 		string fileName, byte[] fileContent)
 	{
@@ -74,8 +73,8 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		await That(result).IsEqualTo(fileContent).InAnyOrder();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("foo.txt", "file-content")]
 	public async Task Initialize_WithFile_HasStringContent_ShouldCreateFileWithGivenFileContent(
 		string fileName, string fileContent)
 	{
@@ -90,8 +89,8 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		await That(result).IsEqualTo(fileContent);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("foo.txt")]
 	public async Task Initialize_WithFile_ShouldCreateFileWithGivenFileName(string fileName)
 	{
 		MockFileSystem sut = new();
@@ -101,7 +100,7 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		await That(sut.Directory.EnumerateFiles(".", fileName)).HasSingle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Initialize_WithNestedSubdirectories_ShouldCreateAllNestedDirectories()
 	{
 		MockFileSystem sut = new();
@@ -120,9 +119,9 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		await That(result).Contains(sut.Path.Combine(".", "foo", "bar", "xyz"));
 	}
 
-	[Theory]
-	[InlineData(false)]
-	[InlineData(true)]
+	[Test]
+	[Arguments(false)]
+	[Arguments(true)]
 	public async Task Initialize_WithOptions_ShouldConsiderValueOfInitializeTempDirectory(
 		bool initializeTempDirectory)
 	{
@@ -134,8 +133,8 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		await That(sut.Directory.Exists(sut.Path.GetTempPath())).IsEqualTo(initializeTempDirectory);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-directory")]
 	public async Task Initialize_WithSubdirectory_Existing_ShouldThrowTestingException(
 		string directoryName)
 	{
@@ -149,8 +148,8 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 			.AsWildcard();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-directory")]
 	public async Task Initialize_WithSubdirectory_ShouldCreateDirectoryWithGivenDirectoryName(
 		string directoryName)
 	{
@@ -161,8 +160,8 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		await That(sut.Directory.EnumerateDirectories(".", directoryName)).HasSingle();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-directory")]
 	public async Task Initialize_WithSubdirectory_ShouldExist(string directoryName)
 	{
 		MockFileSystem sut = new();
@@ -174,8 +173,8 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		await That(result.Directory.Exists).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path")]
 	public async Task
 		InitializeEmbeddedResourcesFromAssembly_ShouldCopyAllMatchingResourceFilesInDirectory(
 			string path)
@@ -200,8 +199,8 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 			.Contains(x => x.EndsWith("SubResourceFile1.txt", StringComparison.Ordinal));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path")]
 	public async Task
 		InitializeEmbeddedResourcesFromAssembly_WithoutRecurseSubdirectories_ShouldOnlyCopyTopmostFilesInRelativePath(
 			string path)
@@ -224,8 +223,8 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		await That(fileSystem.Directory.Exists(Path.Combine(path, "SubResource"))).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path")]
 	public async Task
 		InitializeEmbeddedResourcesFromAssembly_WithRelativePath_ShouldCopyAllResourceInMatchingPathInDirectory(
 			string path)
@@ -246,8 +245,8 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 			.Contains(x => x.EndsWith("SubResourceFile1.txt", StringComparison.Ordinal));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-directory")]
 	public async Task InitializeFromRealDirectory_MissingDrive_ShouldCreateDrive(
 		string directoryName)
 	{
@@ -282,7 +281,7 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task InitializeFromRealDirectory_ShouldCopyFileToTargetDirectory()
 	{
 		SkipIfRealFileSystemShouldBeSkipped();
@@ -306,7 +305,7 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		InitializeFromRealDirectory_ShouldRecursivelyCopyDirectoriesToTargetDirectory()
 	{
@@ -335,7 +334,7 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		InitializeFromRealDirectory_WhenDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException()
 	{
@@ -353,8 +352,8 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 			.WithMessage($"The directory '{tempPath}' does not exist.");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-directory")]
 	public async Task InitializeIn_MissingDrive_ShouldCreateDrive(string directoryName)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -378,8 +377,8 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 		await That(sut.DriveInfo.GetDrives()).HasCount(drives.Length + 1);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path")]
 	public async Task InitializeIn_ShouldSetCurrentDirectory(string path)
 	{
 		MockFileSystem sut = new();
@@ -395,18 +394,19 @@ public class FileSystemInitializerExtensionsTests(TestSettingsFixture fixture)
 
 	private void SkipIfRealFileSystemShouldBeSkipped()
 	{
-#if DEBUG
-		if (fixture.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
-		{
-			aweXpect.Skip.Test(
-				$"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
-		}
-#else
-		if (fixture.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
-		{
-			aweXpect.Skip.Test($"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
-		}
-#endif
+		//TODO: Reuse the same logic for skipping real file system tests in all tests that require it. Maybe move it to a common helper method or base class.
+//#if DEBUG
+//		if (fixture.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
+//		{
+//			aweXpect.Skip.Test(
+//				$"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
+//		}
+//#else
+//		if (fixture.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
+//		{
+//			aweXpect.Skip.Test($"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
+//		}
+//#endif
 	}
 
 	#endregion

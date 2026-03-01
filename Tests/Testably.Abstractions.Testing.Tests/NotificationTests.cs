@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public partial class NotificationTests
 {
-	[Fact]
+	[Test]
 	public async Task AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
 	{
 		MockTimeSystem timeSystem = new();
@@ -20,19 +20,19 @@ public partial class NotificationTests
 
 		_ = Task.Run(async () =>
 		{
-			await Task.Delay(10, TestContext.Current.CancellationToken);
+			await Task.Delay(10, TestContext.Current!.Execution.CancellationToken);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				await Task.Delay(1, TestContext.Current.CancellationToken);
+				await Task.Delay(1, TestContext.Current!.Execution.CancellationToken);
 			}
-		}, TestContext.Current.CancellationToken);
+		}, TestContext.Current!.Execution.CancellationToken);
 
 		wait.Wait(7);
 		await That(receivedCount).IsGreaterThanOrEqualTo(7);
 	}
 
-	[Fact]
+	[Test]
 	public async Task AwaitableCallback_Dispose_ShouldStopListening()
 	{
 		MockTimeSystem timeSystem = new();
@@ -46,11 +46,11 @@ public partial class NotificationTests
 		wait.Dispose();
 
 		timeSystem.Thread.Sleep(1);
-		await Task.Delay(10, TestContext.Current.CancellationToken);
+		await Task.Delay(10, TestContext.Current!.Execution.CancellationToken);
 		await That(isCalled).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task AwaitableCallback_DisposeFromExecuteWhileWaiting_ShouldStopListening()
 	{
 		MockTimeSystem timeSystem = new();
@@ -65,11 +65,11 @@ public partial class NotificationTests
 		wait.Dispose();
 
 		timeSystem.Thread.Sleep(1);
-		await Task.Delay(10, TestContext.Current.CancellationToken);
+		await Task.Delay(10, TestContext.Current!.Execution.CancellationToken);
 		await That(isCalled).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 #if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("TODO: Remove once the obsolete filter overload is removed from the public API.")]
 #endif
@@ -85,19 +85,19 @@ public partial class NotificationTests
 
 		_ = Task.Run(async () =>
 		{
-			await Task.Delay(10, TestContext.Current.CancellationToken);
+			await Task.Delay(10, TestContext.Current!.Execution.CancellationToken);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				await Task.Delay(1, TestContext.Current.CancellationToken);
+				await Task.Delay(1, TestContext.Current!.Execution.CancellationToken);
 			}
-		}, TestContext.Current.CancellationToken);
+		}, TestContext.Current!.Execution.CancellationToken);
 
 		wait.Wait(t => t.TotalMilliseconds > 6);
 		await That(receivedCount).IsGreaterThanOrEqualTo(6);
 	}
 
-	[Fact]
+	[Test]
 	public async Task AwaitableCallback_Predicate_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		MockTimeSystem timeSystem = new();
@@ -113,11 +113,11 @@ public partial class NotificationTests
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				await Task.Delay(10, TestContext.Current.CancellationToken);
+				await Task.Delay(10, TestContext.Current!.Execution.CancellationToken);
 				for (int i = 1; i <= 10; i++)
 				{
 					timeSystem.Thread.Sleep(i);
-					await Task.Delay(1, TestContext.Current.CancellationToken);
+					await Task.Delay(1, TestContext.Current!.Execution.CancellationToken);
 				}
 
 				ms.Set();
@@ -126,13 +126,13 @@ public partial class NotificationTests
 			{
 				// Ignore any ObjectDisposedException
 			}
-		}, TestContext.Current.CancellationToken);
+		}, TestContext.Current!.Execution.CancellationToken);
 
-		ms.Wait(30000, TestContext.Current.CancellationToken);
+		ms.Wait(30000, TestContext.Current!.Execution.CancellationToken);
 		await That(receivedCount).IsLessThanOrEqualTo(4);
 	}
 
-	[Fact]
+	[Test]
 	public async Task AwaitableCallback_ShouldWaitForCallbackExecution()
 	{
 		using ManualResetEventSlim ms = new();
@@ -154,14 +154,14 @@ public partial class NotificationTests
 					while (!ms.IsSet)
 					{
 						timeSystem.Thread.Sleep(1);
-						await Task.Delay(1, TestContext.Current.CancellationToken);
+						await Task.Delay(1, TestContext.Current!.Execution.CancellationToken);
 					}
 				}
 				catch (ObjectDisposedException)
 				{
 					// Ignore any ObjectDisposedException
 				}
-			}, TestContext.Current.CancellationToken);
+			}, TestContext.Current!.Execution.CancellationToken);
 
 			wait.Wait();
 			await That(isCalled).IsTrue();
@@ -172,7 +172,7 @@ public partial class NotificationTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -189,7 +189,7 @@ public partial class NotificationTests
 			try
 			{
 				// Delay larger than timeout of 10ms
-				ms.Wait(TestContext.Current.CancellationToken);
+				ms.Wait(TestContext.Current!.Execution.CancellationToken);
 				timeSystem.Thread.Sleep(1);
 			}
 			catch (ObjectDisposedException)
@@ -208,7 +208,7 @@ public partial class NotificationTests
 		ms.Set();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		AwaitableCallback_Wait_AfterDispose_ShouldThrowObjectDisposedException()
 	{
@@ -227,7 +227,7 @@ public partial class NotificationTests
 			.WithMessage("The awaitable callback is already disposed.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		AwaitableCallback_Wait_WithCount_AfterDispose_ShouldThrowObjectDisposedException()
 	{
@@ -246,7 +246,7 @@ public partial class NotificationTests
 			.WithMessage("The awaitable callback is already disposed.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task AwaitableCallback_WaitedPreviously_ShouldWaitAgainForCallbackExecution()
 	{
 		int secondThreadMilliseconds = 42;
@@ -269,7 +269,7 @@ public partial class NotificationTests
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				listening.Wait(1000, TestContext.Current.CancellationToken);
+				listening.Wait(1000, TestContext.Current!.Execution.CancellationToken);
 				timeSystem.Thread.Sleep(firstThreadMilliseconds);
 			}
 			catch (ObjectDisposedException)
@@ -286,7 +286,7 @@ public partial class NotificationTests
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				listening.Wait(1000, TestContext.Current.CancellationToken);
+				listening.Wait(1000, TestContext.Current!.Execution.CancellationToken);
 				// ReSharper disable once AccessToDisposedClosure
 				if (!ms.IsSet)
 				{
@@ -305,8 +305,8 @@ public partial class NotificationTests
 		await That(isCalledFromSecondThread).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 #if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 #endif
@@ -334,8 +334,8 @@ public partial class NotificationTests
 		await That(isExecuted).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 #if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 #endif
@@ -366,7 +366,7 @@ public partial class NotificationTests
 		await That(isExecuted).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 #if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 #endif
@@ -387,8 +387,8 @@ public partial class NotificationTests
 		await That(isExecuted).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 #if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 #endif

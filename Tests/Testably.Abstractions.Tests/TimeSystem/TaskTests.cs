@@ -3,16 +3,16 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 [TimeSystemTests]
-public partial class TaskTests
+public class TaskTests(TimeSystemTestData testData) : TimeSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task
 		Delay_Milliseconds_Cancelled_ShouldThrowTaskCanceledException()
 	{
 		int millisecondsTimeout = 100;
 
 		using CancellationTokenSource cts = new();
-		await cts.CancelAsync();
+		cts.Cancel();
 
 		async Task Act()
 			=> await TimeSystem.Task.Delay(millisecondsTimeout, cts.Token);
@@ -20,37 +20,37 @@ public partial class TaskTests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		Delay_Milliseconds_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
 		async Task Act()
-			=> await TimeSystem.Task.Delay(-2, TestContext.Current.CancellationToken);
+			=> await TimeSystem.Task.Delay(-2, CancellationToken);
 
 		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		Delay_Milliseconds_ShouldDelayForSpecifiedMilliseconds()
 	{
 		int millisecondsTimeout = 100;
 
 		DateTime before = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(millisecondsTimeout, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(millisecondsTimeout, CancellationToken);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
 		await That(after)
 			.IsOnOrAfter(before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		Delay_Timespan_Cancelled_ShouldThrowTaskCanceledException()
 	{
 		TimeSpan timeout = TimeSpan.FromMilliseconds(100);
 		using CancellationTokenSource cts = new();
-		await cts.CancelAsync();
+		cts.Cancel();
 
 		async Task Act()
 			=> await TimeSystem.Task.Delay(timeout, cts.Token);
@@ -58,25 +58,25 @@ public partial class TaskTests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		Delay_Timespan_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
 		async Task Act()
 			=> await TimeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2),
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 
 		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		Delay_Timespan_ShouldDelayForSpecifiedMilliseconds()
 	{
 		TimeSpan timeout = TimeSpan.FromMilliseconds(100);
 
 		DateTime before = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(timeout, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(timeout, CancellationToken);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
 		await That(after).IsOnOrAfter(before.Add(timeout).ApplySystemClockTolerance());

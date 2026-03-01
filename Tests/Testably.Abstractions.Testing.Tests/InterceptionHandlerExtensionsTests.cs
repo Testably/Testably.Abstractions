@@ -8,8 +8,8 @@ public class InterceptionHandlerExtensionsTests
 
 	#endregion
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Changing_File_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
@@ -26,8 +26,8 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Changing_File_ShouldConsiderBasePath(string path1, string path2,
 		Exception exceptionToThrow)
 	{
@@ -44,13 +44,13 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[InlineAutoData(".", "foo", "f*o", true)]
-	[InlineAutoData(".", "foo", "*fo", false)]
-	[InlineAutoData("bar", "foo", "f*o", true)]
-	[InlineAutoData("bar", "foo", "baz/f*o", false)]
-	[InlineAutoData("bar", "foo", "/f*o", false)]
-	[InlineAutoData("bar", "foo", "**/f*o", true)]
+	[Test]
+	[AutoArguments(".", "foo", "f*o", true)]
+	[AutoArguments(".", "foo", "*fo", false)]
+	[AutoArguments("bar", "foo", "f*o", true)]
+	[AutoArguments("bar", "foo", "baz/f*o", false)]
+	[AutoArguments("bar", "foo", "/f*o", false)]
+	[AutoArguments("bar", "foo", "**/f*o", true)]
 	public async Task Changing_File_ShouldConsiderGlobPattern(
 		string basePath, string fileName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
@@ -82,9 +82,9 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
+	[Test]
+	[AutoArguments(false)]
+	[AutoArguments(true)]
 	public async Task Changing_File_ShouldUsePredicate(bool expectedResult, string path,
 		Exception exceptionToThrow)
 	{
@@ -113,8 +113,8 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Creating_Directory_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
@@ -131,8 +131,8 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Creating_Directory_ShouldConsiderBasePath(
 		string path1, string path2, Exception exceptionToThrow)
 	{
@@ -148,13 +148,13 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[InlineAutoData(".", "foo", "f*o", true)]
-	[InlineAutoData(".", "foo", "*fo", false)]
-	[InlineAutoData("bar", "foo", "f*o", true)]
-	[InlineAutoData("bar", "foo", "baz/f*o", false)]
-	[InlineAutoData("bar", "foo", "/f*o", false)]
-	[InlineAutoData("bar", "foo", "**/f*o", true)]
+	[Test]
+	[AutoArguments(".", "foo", "f*o", true)]
+	[AutoArguments(".", "foo", "*fo", false)]
+	[AutoArguments("bar", "foo", "f*o", true)]
+	[AutoArguments("bar", "foo", "baz/f*o", false)]
+	[AutoArguments("bar", "foo", "/f*o", false)]
+	[AutoArguments("bar", "foo", "**/f*o", true)]
 	public async Task Creating_Directory_ShouldConsiderGlobPattern(
 		string basePath, string fileName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
@@ -186,9 +186,9 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
+	[Test]
+	[AutoArguments(false)]
+	[AutoArguments(true)]
 	public async Task Creating_Directory_ShouldUsePredicate(bool expectedResult, string path,
 		Exception exceptionToThrow)
 	{
@@ -216,8 +216,8 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Creating_File_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
@@ -234,8 +234,8 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Creating_File_ShouldConsiderBasePath(string path1, string path2,
 		Exception exceptionToThrow)
 	{
@@ -251,13 +251,13 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[InlineAutoData(".", "foo", "f*o", true)]
-	[InlineAutoData(".", "foo", "*fo", false)]
-	[InlineAutoData("bar", "foo", "f*o", true)]
-	[InlineAutoData("bar", "foo", "baz/f*o", false)]
-	[InlineAutoData("bar", "foo", "/f*o", false)]
-	[InlineAutoData("bar", "foo", "**/f*o", true)]
+	[Test]
+	[AutoArguments(".", "foo", "f*o", true)]
+	[AutoArguments(".", "foo", "*fo", false)]
+	[AutoArguments("bar", "foo", "f*o", true)]
+	[AutoArguments("bar", "foo", "baz/f*o", false)]
+	[AutoArguments("bar", "foo", "/f*o", false)]
+	[AutoArguments("bar", "foo", "**/f*o", true)]
 	public async Task Creating_File_ShouldConsiderGlobPattern(
 		string basePath, string fileName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
@@ -289,9 +289,9 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
+	[Test]
+	[AutoArguments(false)]
+	[AutoArguments(true)]
 	public async Task Creating_File_ShouldUsePredicate(bool expectedResult, string path,
 		Exception exceptionToThrow)
 	{
@@ -319,8 +319,8 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Deleting_Directory_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
@@ -336,8 +336,8 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Deleting_Directory_ShouldConsiderBasePath(
 		string path1, string path2, Exception exceptionToThrow)
 	{
@@ -354,13 +354,13 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[InlineAutoData(".", "foo", "f*o", true)]
-	[InlineAutoData(".", "foo", "*fo", false)]
-	[InlineAutoData("bar", "foo", "f*o", true)]
-	[InlineAutoData("bar", "foo", "baz/f*o", false)]
-	[InlineAutoData("bar", "foo", "/f*o", false)]
-	[InlineAutoData("bar", "foo", "**/f*o", true)]
+	[Test]
+	[AutoArguments(".", "foo", "f*o", true)]
+	[AutoArguments(".", "foo", "*fo", false)]
+	[AutoArguments("bar", "foo", "f*o", true)]
+	[AutoArguments("bar", "foo", "baz/f*o", false)]
+	[AutoArguments("bar", "foo", "/f*o", false)]
+	[AutoArguments("bar", "foo", "**/f*o", true)]
 	public async Task Deleting_Directory_ShouldConsiderGlobPattern(
 		string basePath, string directoryName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
@@ -392,9 +392,9 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
+	[Test]
+	[AutoArguments(false)]
+	[AutoArguments(true)]
 	public async Task Deleting_Directory_ShouldUsePredicate(bool expectedResult, string path,
 		Exception exceptionToThrow)
 	{
@@ -423,8 +423,8 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Deleting_File_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
@@ -440,8 +440,8 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Deleting_File_ShouldConsiderBasePath(string path1, string path2,
 		Exception exceptionToThrow)
 	{
@@ -458,13 +458,13 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[InlineAutoData(".", "foo", "f*o", true)]
-	[InlineAutoData(".", "foo", "*fo", false)]
-	[InlineAutoData("bar", "foo", "f*o", true)]
-	[InlineAutoData("bar", "foo", "baz/f*o", false)]
-	[InlineAutoData("bar", "foo", "/f*o", false)]
-	[InlineAutoData("bar", "foo", "**/f*o", true)]
+	[Test]
+	[AutoArguments(".", "foo", "f*o", true)]
+	[AutoArguments(".", "foo", "*fo", false)]
+	[AutoArguments("bar", "foo", "f*o", true)]
+	[AutoArguments("bar", "foo", "baz/f*o", false)]
+	[AutoArguments("bar", "foo", "/f*o", false)]
+	[AutoArguments("bar", "foo", "**/f*o", true)]
 	public async Task Deleting_File_ShouldConsiderGlobPattern(
 		string basePath, string fileName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
@@ -496,9 +496,9 @@ public class InterceptionHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
+	[Test]
+	[AutoArguments(false)]
+	[AutoArguments(true)]
 	public async Task Deleting_File_ShouldUsePredicate(bool expectedResult, string path,
 		Exception exceptionToThrow)
 	{

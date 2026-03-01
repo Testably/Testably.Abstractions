@@ -7,10 +7,10 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 [FileSystemTests]
-public partial class EventTests
+public class EventTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Changed_ShouldTriggerUntilEventIsRemoved(string path)
 	{
 		int callCount = 0;
@@ -83,8 +83,8 @@ public partial class EventTests
 		cts.Cancel();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Created_ShouldTriggerUntilEventIsRemoved(string path)
 	{
 		int callCount = 0;
@@ -153,8 +153,8 @@ public partial class EventTests
 		cts.Cancel();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Deleted_ShouldTriggerUntilEventIsRemoved(string path)
 	{
 		int callCount = 0;
@@ -223,8 +223,8 @@ public partial class EventTests
 		cts.Cancel();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Renamed_ShouldTriggerUntilEventIsRemoved(string path)
 	{
 		int callCount = 0;

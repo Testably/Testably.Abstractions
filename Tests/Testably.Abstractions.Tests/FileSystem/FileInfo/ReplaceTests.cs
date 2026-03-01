@@ -4,10 +4,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
-public partial class ReplaceTests
+public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_BackupDirectoryMissing_ShouldThrowCorrectException(
 		string sourceName,
 		string destinationName,
@@ -26,8 +26,8 @@ public partial class ReplaceTests
 		await That(Act).ThrowsAFileOrDirectoryNotFoundException();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_DestinationDirectoryMissing_ShouldThrowDirectoryNotFoundException(
 		string sourceName,
 		string missingDirectory,
@@ -47,8 +47,8 @@ public partial class ReplaceTests
 		await That(Act).ThrowsAFileOrDirectoryNotFoundException();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_DestinationIsDirectory_ShouldThrowUnauthorizedAccessException(
 		string sourceName,
 		string destinationName,
@@ -66,8 +66,8 @@ public partial class ReplaceTests
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_DestinationMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
 		string destinationName,
@@ -85,8 +85,8 @@ public partial class ReplaceTests
 		await That(FileSystem.File.Exists(backupName)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_ReadOnly_WithIgnoreMetadataError_ShouldReplaceFile(
 		string sourceName,
 		string destinationName,
@@ -111,8 +111,8 @@ public partial class ReplaceTests
 		await That(FileSystem.File.ReadAllText(backupName)).IsEqualTo(destinationContents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		Replace_ReadOnly_WithoutIgnoreMetadataError_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string sourceName,
@@ -154,9 +154,9 @@ public partial class ReplaceTests
 		}
 	}
 
-	[Theory]
-	[InlineAutoData(FileAttributes.Hidden, FileAttributes.System)]
-	[InlineAutoData(FileAttributes.System, FileAttributes.Hidden)]
+	[Test]
+	[AutoArguments(FileAttributes.Hidden, FileAttributes.System)]
+	[AutoArguments(FileAttributes.System, FileAttributes.Hidden)]
 	public async Task Replace_ShouldAddArchiveAttribute_OnWindows(
 		FileAttributes sourceFileAttributes,
 		FileAttributes destinationFileAttributes,
@@ -203,8 +203,8 @@ public partial class ReplaceTests
 			.IsEqualTo(expectedDestinationAttributes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_ShouldKeepMetadata(
 		string sourceName,
 		string destinationName,
@@ -254,8 +254,8 @@ public partial class ReplaceTests
 			.IsEqualTo(destinationLastWriteTime);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_ShouldReplaceFile(
 		string sourceName,
 		string destinationName,
@@ -278,8 +278,8 @@ public partial class ReplaceTests
 		await That(FileSystem.File.ReadAllText(backupName)).IsEqualTo(destinationContents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_SourceDirectoryMissing_ShouldThrowFileNotFoundException(
 		string missingDirectory,
 		string sourceName,
@@ -297,8 +297,8 @@ public partial class ReplaceTests
 		await That(Act).ThrowsAFileOrDirectoryNotFoundException();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_SourceIsDirectory_ShouldThrowUnauthorizedAccessException(
 		string sourceName,
 		string destinationName,
@@ -318,19 +318,19 @@ public partial class ReplaceTests
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
-	[Theory]
-	[InlineAutoData(FileAccess.Read, FileShare.None)]
-	[InlineAutoData(FileAccess.Read, FileShare.Read)]
-	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite)]
-	[InlineAutoData(FileAccess.Read, FileShare.Write)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.None)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.Read)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.Write)]
-	[InlineAutoData(FileAccess.Write, FileShare.None)]
-	[InlineAutoData(FileAccess.Write, FileShare.Read)]
-	[InlineAutoData(FileAccess.Write, FileShare.ReadWrite)]
-	[InlineAutoData(FileAccess.Write, FileShare.Write)]
+	[Test]
+	[AutoArguments(FileAccess.Read, FileShare.None)]
+	[AutoArguments(FileAccess.Read, FileShare.Read)]
+	[AutoArguments(FileAccess.Read, FileShare.ReadWrite)]
+	[AutoArguments(FileAccess.Read, FileShare.Write)]
+	[AutoArguments(FileAccess.ReadWrite, FileShare.None)]
+	[AutoArguments(FileAccess.ReadWrite, FileShare.Read)]
+	[AutoArguments(FileAccess.ReadWrite, FileShare.ReadWrite)]
+	[AutoArguments(FileAccess.ReadWrite, FileShare.Write)]
+	[AutoArguments(FileAccess.Write, FileShare.None)]
+	[AutoArguments(FileAccess.Write, FileShare.Read)]
+	[AutoArguments(FileAccess.Write, FileShare.ReadWrite)]
+	[AutoArguments(FileAccess.Write, FileShare.Write)]
 	public async Task Replace_SourceLocked_ShouldThrowIOException_OnWindows(
 		FileAccess fileAccess,
 		FileShare fileShare,
@@ -376,8 +376,8 @@ public partial class ReplaceTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
 		string destinationName,
@@ -399,8 +399,8 @@ public partial class ReplaceTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_Twice_ShouldReplaceFile(
 		string sourceName,
 		string destinationName)
@@ -419,8 +419,8 @@ public partial class ReplaceTests
 		await That(file1).HasContent("def");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_WhenFileIsReadOnly_ShouldThrowUnauthorizedAccessException_OnWindows(
 		string sourceName,
 		string destinationName,
@@ -445,8 +445,8 @@ public partial class ReplaceTests
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_WithExistingBackupFile_ShouldIgnoreBackup(
 		string sourceName,
 		string destinationName,
@@ -471,8 +471,8 @@ public partial class ReplaceTests
 		await That(FileSystem.File.ReadAllText(backupName)).IsEqualTo(backupContents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Replace_WithoutBackup_ShouldReplaceFile(
 		string sourceName,
 		string destinationName,

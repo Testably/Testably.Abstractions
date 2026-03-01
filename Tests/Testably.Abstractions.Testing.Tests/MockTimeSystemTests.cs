@@ -5,57 +5,57 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public class MockTimeSystemTests
 {
-	[Fact]
+	[Test]
 	public async Task Delay_Infinite_ShouldNotThrowException()
 	{
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
 			await Record.ExceptionAsync(()
-				=> timeSystem.Task.Delay(Timeout.Infinite, TestContext.Current.CancellationToken));
+				=> timeSystem.Task.Delay(Timeout.Infinite, TestContext.Current!.Execution.CancellationToken));
 
 		await That(exception).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Delay_InfiniteTimeSpan_ShouldNotThrowException()
 	{
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
 			await Record.ExceptionAsync(()
 				=> timeSystem.Task.Delay(Timeout.InfiniteTimeSpan,
-					TestContext.Current.CancellationToken));
+					TestContext.Current!.Execution.CancellationToken));
 
 		await That(exception).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Delay_LessThanInfinite_ShouldNotThrowException()
 	{
 		MockTimeSystem timeSystem = new();
 
 		async Task Act()
-			=> await timeSystem.Task.Delay(-2, TestContext.Current.CancellationToken);
+			=> await timeSystem.Task.Delay(-2, TestContext.Current!.Execution.CancellationToken);
 
 		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>()
 			.WithParamName("millisecondsDelay");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Delay_LessThanInfiniteTimeSpan_ShouldNotThrowException()
 	{
 		MockTimeSystem timeSystem = new();
 
 		async Task Act()
 			=> await timeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2),
-				TestContext.Current.CancellationToken);
+				TestContext.Current!.Execution.CancellationToken);
 
 		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>().WithParamName("delay");
 	}
 
-	[Theory]
-	[InlineData(DateTimeKind.Local)]
-	[InlineData(DateTimeKind.Unspecified)]
-	[InlineData(DateTimeKind.Utc)]
+	[Test]
+	[Arguments(DateTimeKind.Local)]
+	[Arguments(DateTimeKind.Unspecified)]
+	[Arguments(DateTimeKind.Utc)]
 	public async Task DifferenceBetweenDateTimeNowAndDateTimeUtcNow_ShouldBeLocalTimeZoneOffsetFromUtc(DateTimeKind dateTimeKind)
 	{
 		DateTime now = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
@@ -68,7 +68,7 @@ public class MockTimeSystemTests
 		await That(actualDifference).IsEqualTo(expectedDifference);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Sleep_Infinite_ShouldNotThrowException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -78,7 +78,7 @@ public class MockTimeSystemTests
 		await That(exception).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Sleep_InfiniteTimeSpan_ShouldNotThrowException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -88,7 +88,7 @@ public class MockTimeSystemTests
 		await That(exception).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Sleep_LessThanInfinite_ShouldThrowArgumentOutOfRangeException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -98,7 +98,7 @@ public class MockTimeSystemTests
 		await That(exception).IsExactly<ArgumentOutOfRangeException>();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Sleep_LessThanInfiniteTimeSpan_ShouldThrowArgumentOutOfRangeException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -109,7 +109,7 @@ public class MockTimeSystemTests
 		await That(exception).IsExactly<ArgumentOutOfRangeException>();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_WithFixedContainer_ShouldContainTimeProvider()
 	{
 		DateTime now = TimeTestHelper.GetRandomTime();
@@ -121,7 +121,7 @@ public class MockTimeSystemTests
 		await That(result).Contains($"{now}Z");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_WithNowContainer_ShouldContainTimeProvider()
 	{
 		MockTimeSystem timeSystem = new(TimeProvider.Now());
@@ -132,7 +132,7 @@ public class MockTimeSystemTests
 		await That(result).Contains($"{timeSystem.DateTime.UtcNow}Z");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_WithRandomContainer_ShouldContainTimeProvider()
 	{
 		MockTimeSystem timeSystem = new(TimeProvider.Random());

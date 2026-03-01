@@ -8,7 +8,7 @@ public partial class RandomProviderTests
 {
 	public class GeneratorTests
 	{
-		[Fact]
+		[Test]
 		public async Task Dispose_ShouldThrowObjectDisposedExceptionOnGetNext()
 		{
 			int maxRange = 100;
@@ -26,8 +26,8 @@ public partial class RandomProviderTests
 			await That(exception).IsExactly<ObjectDisposedException>();
 		}
 
-		[Theory]
-		[AutoData]
+		[Test]
+		[AutoArguments]
 		public async Task FromArray_Overflow_ShouldStartAgain(Guid[] values)
 		{
 			RandomProvider.Generator<Guid> sut = RandomProvider.Generator.FromArray(values);
@@ -41,8 +41,8 @@ public partial class RandomProviderTests
 			await That(results).IsEqualTo([.. values, .. values]).InAnyOrder();
 		}
 
-		[Theory]
-		[AutoData]
+		[Test]
+		[AutoArguments]
 		public async Task FromArray_ShouldIterateThroughArrayValue(Guid[] values)
 		{
 			RandomProvider.Generator<Guid> sut = RandomProvider.Generator.FromArray(values);
@@ -56,7 +56,7 @@ public partial class RandomProviderTests
 			await That(results).IsEqualTo(values).InAnyOrder();
 		}
 
-		[Fact]
+		[Test]
 		public async Task FromCallback_ShouldExecuteCallback()
 		{
 			int iterations = 30;
@@ -75,7 +75,7 @@ public partial class RandomProviderTests
 			await That(results).IsEqualTo(Enumerable.Range(startValue, iterations)).InAnyOrder();
 		}
 
-		[Fact]
+		[Test]
 		public async Task FromEnumerable_Dispose_ShouldDisposeEnumerator()
 		{
 			EnumerableMock enumerable = new();
@@ -87,7 +87,7 @@ public partial class RandomProviderTests
 			await That(enumerable.Enumerator.IsDisposed).IsTrue();
 		}
 
-		[Fact]
+		[Test]
 		public async Task FromEnumerable_Overflow_List_ShouldResetEnumerator()
 		{
 			int maxRange = 100;
@@ -106,7 +106,7 @@ public partial class RandomProviderTests
 			await That(results).IsEqualTo([.. values, .. values]).InAnyOrder();
 		}
 
-		[Fact]
+		[Test]
 		public async Task FromEnumerable_Overflow_ShouldResetEnumerator()
 		{
 			int maxRange = 100;
@@ -128,7 +128,7 @@ public partial class RandomProviderTests
 			await That(exception).IsExactly<NotSupportedException>();
 		}
 
-		[Fact]
+		[Test]
 		public async Task FromEnumerable_ShouldReturnEnumerableValues()
 		{
 			int maxRange = 100;
@@ -145,8 +145,8 @@ public partial class RandomProviderTests
 			await That(results).IsEqualTo(Enumerable.Range(0, maxRange)).InAnyOrder();
 		}
 
-		[Theory]
-		[AutoData]
+		[Test]
+		[AutoArguments]
 		public async Task FromValue_ShouldReturnFixedValue(Guid value)
 		{
 			int maxRange = 100;
@@ -161,8 +161,8 @@ public partial class RandomProviderTests
 			await That(results).All().AreEquivalentTo(value);
 		}
 
-		[Theory]
-		[AutoData]
+		[Test]
+		[AutoArguments]
 		public async Task Operator_FromArray(Guid[] values)
 		{
 			RandomProvider.Generator<Guid> sut = values;
@@ -176,8 +176,8 @@ public partial class RandomProviderTests
 			await That(results).IsEqualTo(values).InAnyOrder();
 		}
 
-		[Theory]
-		[AutoData]
+		[Test]
+		[AutoArguments]
 		public async Task Operator_FromCallback(Guid value)
 		{
 			int maxRange = 100;
@@ -194,8 +194,8 @@ public partial class RandomProviderTests
 			await That(results).All().AreEquivalentTo(value);
 		}
 
-		[Theory]
-		[AutoData]
+		[Test]
+		[AutoArguments]
 		public async Task Operator_FromValue(Guid value)
 		{
 			int maxRange = 100;
