@@ -1,0 +1,78 @@
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="Source/Testably.Abstractions.FileSystem.Interface/Testably.Abstractions.FileSystem.Interface.csproj" />
+    <Project Path="Source/Testably.Abstractions.Interface/Testably.Abstractions.Interface.csproj" />
+    <Project Path="Source/Testably.Abstractions/Testably.Abstractions.csproj" />
+  </Folder>
+  <Folder Name="/Pipeline/">
+    <Project Path="Pipeline/Build.csproj">
+      <Build Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/Testably.Abstractions.AccessControl.Tests/Testably.Abstractions.AccessControl.Tests.csproj" />
+    <Project Path="Tests/Testably.Abstractions.Compression.Tests/Testably.Abstractions.Compression.Tests.csproj" />
+    <Project Path="Tests/Testably.Abstractions.Parity.Tests/Testably.Abstractions.Parity.Tests.csproj" />
+    <Project Path="Tests/Testably.Abstractions.Testing.Tests/Testably.Abstractions.Testing.Tests.csproj" />
+    <Project Path="Tests/Testably.Abstractions.Tests/Testably.Abstractions.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Api/">
+    <Project Path="Tests/Api/Testably.Abstractions.Api.Tests/Testably.Abstractions.Api.Tests.csproj" />
+    <Project Path="Tests/Api/Testably.Abstractions.Core.Api.Tests/Testably.Abstractions.Core.Api.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Helpers/">
+    <Project Path="Tests/Helpers/Testably.Abstractions.TestHelpers/Testably.Abstractions.TestHelpers.csproj" />
+    <Project Path="Tests/Helpers/Testably.Abstractions.Tests.SourceGenerator/Testably.Abstractions.Tests.SourceGenerator.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Settings/">
+    <Project Path="Tests/Settings/Testably.Abstractions.TestSettings/Testably.Abstractions.TestSettings.csproj" />
+  </Folder>
+  <Folder Name="/_/">
+    <File Path=".codacy.yml" />
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="build.cmd" />
+    <File Path="build.ps1" />
+    <File Path="build.sh" />
+    <File Path="CODE_OF_CONDUCT.md" />
+    <File Path="CONTRIBUTING.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="Feature.Flags.props" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="nuget.config" />
+    <File Path="README.md" />
+    <File Path="renovate.json" />
+  </Folder>
+  <Folder Name="/_/.github/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path=".github/coverage-settings.xml" />
+  </Folder>
+  <Folder Name="/_/.github/workflows/">
+    <File Path=".github/workflows/build.yml" />
+    <File Path=".github/workflows/ci.yml" />
+  </Folder>
+  <Folder Name="/_/Docs/">
+    <File Path="Docs/FileSystemWatcherMock.md" />
+    <File Path="Docs/Maintainer.md" />
+  </Folder>
+  <Folder Name="/_/Docs/Nuget/">
+    <File Path="Docs/Nuget/AccessControl.md" />
+    <File Path="Docs/Nuget/Compression.md" />
+    <File Path="Docs/Nuget/Interface.md" />
+    <File Path="Docs/Nuget/Testing.md" />
+  </Folder>
+  <Folder Name="/_/Source/">
+    <File Path="Source/Directory.Build.props" />
+  </Folder>
+  <Folder Name="/_/Tests/">
+    <File Path="Tests/Directory.Build.props" />
+  </Folder>
+  <Folder Name="/_/Tests/Api/">
+    <File Path="Tests/Api/Directory.Build.props" />
+  </Folder>
+  <Project Path="Source/Testably.Abstractions.AccessControl/Testably.Abstractions.AccessControl.csproj" />
+  <Project Path="Source/Testably.Abstractions.Compression/Testably.Abstractions.Compression.csproj" />
+  <Project Path="Source/Testably.Abstractions.Testing/Testably.Abstractions.Testing.csproj" />
+</Solution>
