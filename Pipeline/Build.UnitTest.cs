@@ -32,18 +32,16 @@ partial class Build
 					DotNetTest(s => s
 							.SetConfiguration(Configuration)
 							.SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
-							.SetDataCollector("XPlat Code Coverage")
 							.SetResultsDirectory(TestResultsDirectory)
 							.CombineWith(
 								UnitTestProjects,
 								(settings, project) => settings
-									.SetProjectFile(project)
 									.CombineWith(
 										project.GetTargetFrameworks()?.Except(excludedFrameworks),
 										(frameworkSettings, framework) => frameworkSettings
 											.SetFramework(framework)
-											.AddLoggers(
-												$"trx;LogFileName={project.Name}_{framework}.trx")
+											.AddProcessAdditionalArguments(
+												$"--project \"{project.Path}\" -- --report-trx --coverage --coverage-output-format cobertura ")
 									)
 							), completeOnFailure: true
 					);

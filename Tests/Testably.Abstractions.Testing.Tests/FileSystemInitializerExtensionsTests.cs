@@ -394,19 +394,13 @@ public class FileSystemInitializerExtensionsTests
 
 	private void SkipIfRealFileSystemShouldBeSkipped()
 	{
-		//TODO: Reuse the same logic for skipping real file system tests in all tests that require it. Maybe move it to a common helper method or base class.
-//#if DEBUG
-//		if (fixture.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
-//		{
-//			aweXpect.Skip.Test(
-//				$"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
-//		}
-//#else
-//		if (fixture.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
-//		{
-//			aweXpect.Skip.Test($"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
-//		}
-//#endif
+#if DEBUG
+		Skip.If(Settings.RealFileSystemTests == Settings.TestSettingStatus.AlwaysEnabled,
+			$"Tests against the real file system are {Settings.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
+#else
+		Skip.If(Settings.RealFileSystemTests != Settings.TestSettingStatus.AlwaysDisabled,
+			$"Tests against the real file system are {Settings.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
+#endif
 	}
 
 	#endregion

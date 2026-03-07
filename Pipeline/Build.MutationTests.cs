@@ -142,7 +142,7 @@ partial class Build
 				                      			{{string.Join(",\n\t\t\t", project.Value.Select(PathForJson))}}
 				                      		],
 				                      		"project": {{PathForJson(project.Key)}},
-				                      		"target-framework": "net8.0",
+				                      		"target-framework": "net10.0",
 				                      		"since": {
 				                      			"target": "main",
 				                      			"enabled": {{(GitVersion?.BranchName != "main").ToString().ToLowerInvariant()}},
@@ -259,7 +259,7 @@ partial class Build
 				                      			{{string.Join(",\n\t\t\t", project.Value.Select(PathForJson))}}
 				                      		],
 				                      		"project": {{PathForJson(project.Key)}},
-				                      		"target-framework": "net8.0",
+				                      		"target-framework": "net10.0",
 				                      		"since": {
 				                      			"target": "main",
 				                      			"enabled": {{(GitVersion?.BranchName != "main").ToString().ToLowerInvariant()}},
@@ -280,8 +280,8 @@ partial class Build
 				Log.Debug($"Created '{configFile}':{Environment.NewLine}{configText}");
 
 				string arguments = IsServerBuild
-					? $"-f \"{configFile}\" -O \"{StrykerOutputDirectory}\" -r \"Markdown\" -r \"Dashboard\" -r \"cleartext\""
-					: $"-f \"{configFile}\" -O \"{StrykerOutputDirectory}\" -r \"Markdown\" -r \"cleartext\"";
+					? $"-f \"{configFile}\" -O \"{StrykerOutputDirectory}\" -r \"Markdown\" -r \"Dashboard\" -r \"cleartext\" --test-runner mtp"
+					: $"-f \"{configFile}\" -O \"{StrykerOutputDirectory}\" -r \"Markdown\" -r \"cleartext\" --test-runner mtp";
 
 				string executable = EnvironmentInfo.IsWin ? "dotnet-stryker.exe" : "dotnet-stryker";
 				IProcess process = ProcessTasks.StartProcess(
