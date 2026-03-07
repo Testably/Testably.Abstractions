@@ -10,14 +10,14 @@ internal class FileSystemInitializer<TFileSystem>
 	: IFileSystemInitializer<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	private readonly string _basePath;
+	protected string BasePath { get; }
 
 	private readonly Dictionary<int, IFileSystemInfo>
 		_initializedFileSystemInfos = new();
 
 	public FileSystemInitializer(TFileSystem fileSystem, string basePath)
 	{
-		_basePath = basePath;
+		BasePath = basePath;
 		FileSystem = fileSystem;
 	}
 
@@ -25,32 +25,23 @@ internal class FileSystemInitializer<TFileSystem>
 	{
 		FileSystem = parent.FileSystem;
 		_initializedFileSystemInfos = parent._initializedFileSystemInfos;
-		_basePath = parent._basePath;
+		BasePath = parent.BasePath;
 	}
 
 	internal FileSystemInitializer(FileSystemInitializer<TFileSystem> parent,
-		IDirectoryInfo subdirectory)
+		string basePath)
 	{
 		FileSystem = parent.FileSystem;
 		using IDisposable release = FileSystem.IgnoreStatistics();
 		_initializedFileSystemInfos = parent._initializedFileSystemInfos;
-		_basePath = FileSystem.Path.Combine(parent._basePath, subdirectory.Name);
-	}
-
-	internal FileSystemInitializer(FileSystemInitializer<TFileSystem> parent,
-		string subdirectory)
-	{
-		FileSystem = parent.FileSystem;
-		using IDisposable release = FileSystem.IgnoreStatistics();
-		_initializedFileSystemInfos = parent._initializedFileSystemInfos;
-		_basePath = FileSystem.Path.Combine(parent._basePath, subdirectory);
+		BasePath = basePath;
 	}
 
 	#region IFileSystemInitializer<TFileSystem> Members
 
 	/// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.BaseDirectory" />
 	public IDirectoryInfo BaseDirectory
-		=> FileSystem.DirectoryInfo.New(_basePath);
+		=> FileSystem.DirectoryInfo.New(BasePath);
 
 	/// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.FileSystem" />
 	public TFileSystem FileSystem { get; }
@@ -87,7 +78,7 @@ internal class FileSystemInitializer<TFileSystem>
 			fileName =
 				$"{random.GenerateFileName()}-{random.Next(10000)}.{random.GenerateFileExtension(extension)}";
 		} while (FileSystem.File.Exists(
-			FileSystem.Path.Combine(_basePath, fileName)));
+			FileSystem.Path.Combine(BasePath, fileName)));
 
 		return WithFile(fileName);
 	}
@@ -103,7 +94,7 @@ internal class FileSystemInitializer<TFileSystem>
 			directoryName =
 				$"{random.GenerateFileName()}-{random.Next(10000)}";
 		} while (FileSystem.Directory.Exists(
-			FileSystem.Path.Combine(_basePath, directoryName)));
+			FileSystem.Path.Combine(BasePath, directoryName)));
 
 		return WithSubdirectory(directoryName);
 	}
@@ -140,7 +131,7 @@ internal class FileSystemInitializer<TFileSystem>
 	{
 		using IDisposable release = FileSystem.IgnoreStatistics();
 		IDirectoryInfo directoryInfo = FileSystem.DirectoryInfo.New(
-			FileSystem.Path.Combine(_basePath, directory.Name));
+			FileSystem.Path.Combine(BasePath, directory.Name));
 		if (directoryInfo.Exists)
 		{
 			throw new TestingException(
@@ -155,7 +146,8 @@ internal class FileSystemInitializer<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory(directoryInfo.FullName);
 
-		FileSystemInitializer<TFileSystem> subdirectoryInitializer = new(this, directory.Name);
+		FileSystemInitializer<TFileSystem> subdirectoryInitializer = new(this,
+			FileSystem.Path.Combine(BasePath, directory.Name));
 		foreach (FileSystemInfoDescription children in directory.Children)
 		{
 			subdirectoryInitializer.WithFileOrDirectory(children);
@@ -173,7 +165,7 @@ internal class FileSystemInitializer<TFileSystem>
 	{
 		using IDisposable release = FileSystem.IgnoreStatistics();
 		IFileInfo fileInfo = FileSystem.FileInfo.New(
-			FileSystem.Path.Combine(_basePath, file.Name));
+			FileSystem.Path.Combine(BasePath, file.Name));
 		if (fileInfo.Exists)
 		{
 			throw new TestingException(
