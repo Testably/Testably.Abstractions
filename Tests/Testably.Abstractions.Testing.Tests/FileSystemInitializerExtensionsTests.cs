@@ -395,10 +395,10 @@ public class FileSystemInitializerExtensionsTests
 	private void SkipIfRealFileSystemShouldBeSkipped()
 	{
 #if DEBUG
-		Skip.If(Settings.RealFileSystemTests == Settings.TestSettingStatus.AlwaysEnabled,
+		Skip.If(Settings.RealFileSystemTests == Settings.TestSettingStatus.AlwaysDisabled,
 			$"Tests against the real file system are {Settings.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
 #else
-		Skip.If(Settings.RealFileSystemTests != Settings.TestSettingStatus.AlwaysDisabled,
+		Skip.If(Settings.RealFileSystemTests != Settings.TestSettingStatus.AlwaysEnabled,
 			$"Tests against the real file system are {Settings.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
 #endif
 	}

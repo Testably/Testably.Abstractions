@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO.Abstractions;
-using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing;
 using Testably.Abstractions.Testing.Initializer;
+#if !NETFRAMEWORK
+using System.Runtime.InteropServices;
+#endif
 
 namespace Testably.Abstractions.TestHelpers;
 
@@ -25,8 +27,10 @@ public abstract class FileSystemTestData
 
 	public class Mocked : FileSystemTestData
 	{
+#if !NETFRAMEWORK
 		private readonly OSPlatform? _osPlatform;
 		private readonly SimulationMode? _simulationMode;
+#endif
 
 		public Mocked(string testCase) : base(testCase)
 		{
@@ -61,9 +65,15 @@ public abstract class FileSystemTestData
 			return fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		}
 
+#if !NETFRAMEWORK
 		/// <inheritdoc />
 		public override Test GetTest()
 			=> _osPlatform is null ? new Test() : new Test(_osPlatform.Value);
+#else
+		/// <inheritdoc />
+		public override Test GetTest()
+			=> new();
+#endif
 	}
 
 	public class Real : FileSystemTestData

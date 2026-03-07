@@ -120,11 +120,11 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 
 	#region Helpers
 
-	public static IEnumerable<(string, Encoding, bool)> EntryNameEncoding()
+	public static IEnumerable<Func<(string, Encoding, bool)>> EntryNameEncoding()
 	{
 		// ReSharper disable StringLiteralTypo
-		yield return ("Dans mes rêves.mp3", Encoding.Default, true);
-		yield return ("Dans mes rêves.mp3", Encoding.ASCII, false);
+		yield return () => ("Dans mes rêves.mp3", Encoding.Default, true);
+		yield return () => ("Dans mes rêves.mp3", Encoding.ASCII, false);
 	}
 
 	#endregion

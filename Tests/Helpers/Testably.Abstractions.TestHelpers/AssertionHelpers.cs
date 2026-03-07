@@ -4,6 +4,9 @@ using aweXpect.Core.Sources;
 using aweXpect.Delegates;
 using aweXpect.Formatting;
 using System;
+#if NET8_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.IO;
 using System.Text;
 using static aweXpect.Delegates.ThatDelegate;
@@ -85,7 +88,14 @@ public static class AssertionHelpers
 		public override ConstraintResult Negate()
 			=> this;
 
+#if NET8_0_OR_GREATER
+		public override bool TryGetValue<TValue>([NotNullWhen(true)] out TValue? value)
+			where TValue : default
+#else
+		#pragma warning disable CS8765
 		public override bool TryGetValue<TValue>(out TValue? value) where TValue : default
+		#pragma warning restore CS8765
+#endif
 		{
 			value = default;
 			return false;
@@ -174,7 +184,14 @@ public static class AssertionHelpers
 			return this;
 		}
 
+#if NET8_0_OR_GREATER
+		public override bool TryGetValue<TValue>([NotNullWhen(true)] out TValue? value)
+			where TValue : default
+#else
+		#pragma warning disable CS8765
 		public override bool TryGetValue<TValue>(out TValue? value) where TValue : default
+		#pragma warning restore CS8765
+#endif
 		{
 			if (_actual is TValue typedValue)
 			{

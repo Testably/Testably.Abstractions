@@ -6,7 +6,8 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 [FileSystemTests]
-[NotInParallel(nameof(MoveTests))] // TODO: Check why this is needed
+// TODO #956: Investigate, why these tests are not stable when run in parallel
+[NotInParallel(nameof(MoveTests))]
 public partial class MoveTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	[Test]

@@ -53,10 +53,10 @@ public abstract class FileSystemTestBase : IDisposable
 	public void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
 	{
 #if DEBUG
-		Skip.If(Settings.BrittleTests == Settings.TestSettingStatus.AlwaysEnabled,
+		Skip.If(Settings.BrittleTests == Settings.TestSettingStatus.AlwaysDisabled,
 			$"Brittle tests are {Settings.BrittleTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
 #else
-		Skip.If(Settings.BrittleTests != Settings.TestSettingStatus.AlwaysDisabled,
+		Skip.If(Settings.BrittleTests != Settings.TestSettingStatus.AlwaysEnabled,
 			$"Brittle tests are {Settings.BrittleTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
 #endif
 	}
@@ -67,10 +67,10 @@ public abstract class FileSystemTestBase : IDisposable
 	public void SkipIfLongRunningTestsShouldBeSkipped()
 	{
 #if DEBUG
-		Skip.If(Settings.LongRunningTests == Settings.TestSettingStatus.AlwaysEnabled,
+		Skip.If(Settings.LongRunningTests == Settings.TestSettingStatus.AlwaysDisabled,
 			$"Long-running tests are {Settings.LongRunningTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
 #else
-		Skip.If(Settings.LongRunningTests != Settings.TestSettingStatus.AlwaysDisabled,
+		Skip.If(Settings.LongRunningTests != Settings.TestSettingStatus.AlwaysEnabled,
 			$"Long-running tests are {Settings.LongRunningTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
 #endif
 	}

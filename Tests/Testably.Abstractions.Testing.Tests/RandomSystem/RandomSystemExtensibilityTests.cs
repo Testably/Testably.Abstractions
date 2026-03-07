@@ -5,10 +5,10 @@ namespace Testably.Abstractions.Testing.Tests.RandomSystem;
 
 public class RandomSystemExtensibilityTests
 {
-	public static IEnumerable<IRandomSystem> GetRandomSystems()
+	public static IEnumerable<Func<IRandomSystem>> GetRandomSystems()
 	{
-		yield return new RealRandomSystem();
-		yield return new MockRandomSystem();
+		yield return () => new RealRandomSystem();
+		yield return () => new MockRandomSystem();
 	}
 
 	[Test]

@@ -29,14 +29,14 @@ public abstract class TimeSystemTestBase
 	/// </param>
 	public void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
 	{
-		if (TimeSystem is RealTimeSystem timeSystem)
+		if (TimeSystem is RealTimeSystem)
 		{
 #if DEBUG
-			//aweXpect.Skip.When(condition && _fixture.BrittleTests != TestSettingStatus.AlwaysEnabled,
-			//	$"Brittle tests are {_fixture.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
+			aweXpect.Skip.When(condition && Settings.BrittleTests == Settings.TestSettingStatus.AlwaysDisabled,
+				$"Brittle tests are {Settings.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
 #else
-			//aweXpect.Skip.When(condition && _fixture.BrittleTests == TestSettingStatus.AlwaysDisabled,
-			//	$"Brittle tests are {_fixture.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
+			aweXpect.Skip.When(condition && Settings.BrittleTests != Settings.TestSettingStatus.AlwaysEnabled,
+				$"Brittle tests are {Settings.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
 #endif
 		}
 	}

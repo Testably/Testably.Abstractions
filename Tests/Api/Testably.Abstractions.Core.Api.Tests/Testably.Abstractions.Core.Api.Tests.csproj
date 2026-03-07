@@ -6,6 +6,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="PublicApiGenerator" />
+		<PackageReference Remove="System.Net.Http" />
 	</ItemGroup>
 
 	<ItemGroup>

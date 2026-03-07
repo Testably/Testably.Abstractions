@@ -7,10 +7,10 @@ public class TimeSystemExtensibilityTests
 {
 	#region Test Setup
 
-	public static IEnumerable<ITimeSystem> GetTimeSystems()
+	public static IEnumerable<Func<ITimeSystem>> GetTimeSystems()
 	{
-		yield return new RealTimeSystem();
-		yield return new MockTimeSystem();
+		yield return () => new RealTimeSystem();
+		yield return () => new MockTimeSystem();
 	}
 
 	#endregion

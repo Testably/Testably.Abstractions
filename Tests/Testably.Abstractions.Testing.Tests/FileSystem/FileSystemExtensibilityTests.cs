@@ -4,10 +4,10 @@ namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public class FileSystemExtensibilityTests
 {
-	public static IEnumerable<IFileSystem> GetFileSystems()
+	public static IEnumerable<Func<IFileSystem>> GetFileSystems()
 	{
-		yield return new RealFileSystem();
-		yield return new MockFileSystem();
+		yield return () => new RealFileSystem();
+		yield return () => new MockFileSystem();
 	}
 
 	[Test]
