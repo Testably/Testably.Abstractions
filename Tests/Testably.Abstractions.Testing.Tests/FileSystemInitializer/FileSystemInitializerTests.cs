@@ -147,6 +147,25 @@ public class FileSystemInitializerTests
 
 	[Theory]
 	[AutoData]
+	public async Task With_AbsoluteDirectoryWithChildren_ShouldBeCreatedAtTheCorrectPath(
+		string level1, string level2, string fileName)
+	{
+		string directoryPath = Path.GetFullPath(Path.Combine(level1, level2));
+		string filePath = Path.Combine(directoryPath, fileName);
+		FileDescription fileDescription = new(fileName);
+		DirectoryDescription directoryDescription = new(directoryPath, fileDescription);
+		MockFileSystem fileSystem = new();
+		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
+
+		sut.With(directoryDescription);
+		
+		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
+		await That(fileSystem.Directory.Exists(directoryPath)).IsTrue();
+		await That(fileSystem.File.Exists(filePath)).IsTrue();
+	}
+
+	[Theory]
+	[AutoData]
 	public async Task WithFile_ExistingDirectory_ShouldThrowTestingException(string path)
 	{
 		MockFileSystem fileSystem = new();
