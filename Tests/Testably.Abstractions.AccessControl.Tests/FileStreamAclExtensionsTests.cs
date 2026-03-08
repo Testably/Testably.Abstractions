@@ -4,7 +4,7 @@ using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-[FileSystemTests(RequiredOperatingSystem = SimulationMode.Windows)]
+[WindowsOnlyFileSystemTests]
 public class FileStreamAclExtensionsTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	[Test]

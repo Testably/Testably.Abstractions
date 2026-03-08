@@ -1,12 +1,45 @@
 using System.Collections.Generic;
 using System.Security.AccessControl;
+using Testably.Abstractions.AccessControl.Tests.TestHelpers;
 using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-[FileSystemTests(RequiredOperatingSystem = SimulationMode.Windows)]
+[WindowsOnlyFileSystemTests]
 public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
+	#pragma warning disable MA0062
+	[Flags]
+	public enum BaseTypes
+	{
+		Directory = 1,
+		DirectoryInfo = 2,
+		File = 4,
+		FileInfo = 8,
+		FileStream = 16,
+		None = 0,
+		All = ~None,
+	}
+	#pragma warning restore MA0062
+
+	public enum MethodType
+	{
+		Create,
+		GetAccessControl,
+		SetAccessControl,
+	}
+
+	#pragma warning disable MA0018 // Do not declare static members on generic types
+	public static IEnumerable<(Action<IFileSystem, string>, BaseTypes, MethodType)>
+		GetFileCallbacks()
+	{
+		foreach ((BaseTypes BaseType, MethodType MethodType, Action<IFileSystem, string> Callback)
+			item in GetFileCallbackTestParameters())
+		{
+			yield return (item.Callback, item.BaseType, item.MethodType);
+		}
+	}
+	#pragma warning restore MA0018 // Do not declare static members on generic types
 	[Test]
 	[MethodDataSource(nameof(GetFileCallbacks))]
 	public async Task Operations_WhenPathIsEmpty_ShouldThrowArgumentException(
@@ -36,23 +69,12 @@ public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(te
 	public async Task Operations_WhenPathIsWhiteSpace_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		await That(() => callback.Invoke(FileSystem, "  "))
 			.Throws<ArgumentException>().WithHResult(-2147024809)
 			.Because($"\n{exceptionType} on {baseType}\n was called with a whitespace path");
 	}
-
-	#region Helpers
-
-	#pragma warning disable MA0018 // Do not declare static members on generic types
-	public static IEnumerable<(Action<IFileSystem, string>, BaseTypes, MethodType)> GetFileCallbacks()
-	{
-		foreach ((BaseTypes BaseType, MethodType MethodType, Action<IFileSystem, string> Callback)
-			item in GetFileCallbackTestParameters())
-		{
-			yield return (item.Callback, item.BaseType, item.MethodType);
-		}
-	}
-	#pragma warning restore MA0018 // Do not declare static members on generic types
 
 	private static
 		IEnumerable<(
@@ -116,28 +138,5 @@ public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(te
 			(fileSystem, path)
 				=> fileSystem.FileInfo.New(path).SetAccessControl(new FileSecurity()));
 		#pragma warning restore CA1416
-	}
-
-	#endregion
-
-	#pragma warning disable MA0062
-	[Flags]
-	public enum BaseTypes
-	{
-		Directory = 1,
-		DirectoryInfo = 2,
-		File = 4,
-		FileInfo = 8,
-		FileStream = 16,
-		None = 0,
-		All = ~None,
-	}
-	#pragma warning restore MA0062
-
-	public enum MethodType
-	{
-		Create,
-		GetAccessControl,
-		SetAccessControl,
 	}
 }

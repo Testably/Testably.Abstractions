@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Testably.Abstractions.Testing;
 using TUnit.Core.Interfaces;
+#if !NETFRAMEWORK
+using Testably.Abstractions.Testing;
+#endif
 
 namespace Testably.Abstractions.TestHelpers;
 
@@ -11,14 +13,6 @@ namespace Testably.Abstractions.TestHelpers;
 public class FileSystemTestsAttribute : TypedDataSourceAttribute<FileSystemTestData>,
 	ITestDiscoveryEventReceiver
 {
-	/// <summary>
-	///     If set to a specific operating system, tests are only created for this operating system.
-	/// </summary>
-	/// <remarks>
-	///     Use <see cref="SimulationMode.Native" /> (default value) to run the tests on all operating systems.
-	/// </remarks>
-	public SimulationMode RequiredOperatingSystem { get; set; } = SimulationMode.Native;
-
 #if NET8_0_OR_GREATER
 	private static readonly ValueTask _completedTask = ValueTask.CompletedTask;
 #else
@@ -49,44 +43,21 @@ public class FileSystemTestsAttribute : TypedDataSourceAttribute<FileSystemTestD
 		DataGeneratorMetadata dataGeneratorMetadata)
 	{
 		await Task.CompletedTask;
-		bool isMatchingPlatform =
-			RequiredOperatingSystem switch
-			{
-				SimulationMode.Linux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux),
-				SimulationMode.MacOS => RuntimeInformation.IsOSPlatform(OSPlatform.OSX),
-				SimulationMode.Windows => RuntimeInformation.IsOSPlatform(OSPlatform.Windows),
-				_ => true,
-			};
-
-		if (!isMatchingPlatform)
-		{
-			yield break;
-		}
-
 		yield return () => Task.FromResult<FileSystemTestData>(
 			new FileSystemTestData.Mocked("MockFileSystem"));
 
 #if !NETFRAMEWORK
-		if (RequiredOperatingSystem is SimulationMode.Native or SimulationMode.Linux)
-		{
-			yield return () => Task.FromResult<FileSystemTestData>(
-				new FileSystemTestData.Mocked(SimulationMode.Linux, OSPlatform.Linux,
-					"LinuxFileSystem"));
-		}
+		yield return () => Task.FromResult<FileSystemTestData>(
+			new FileSystemTestData.Mocked(SimulationMode.Linux, OSPlatform.Linux,
+				"LinuxFileSystem"));
 
-		if (RequiredOperatingSystem is SimulationMode.Native or SimulationMode.MacOS)
-		{
-			yield return () => Task.FromResult<FileSystemTestData>(
-				new FileSystemTestData.Mocked(SimulationMode.MacOS, OSPlatform.OSX,
-					"MacFileSystem"));
-		}
+		yield return () => Task.FromResult<FileSystemTestData>(
+			new FileSystemTestData.Mocked(SimulationMode.MacOS, OSPlatform.OSX,
+				"MacFileSystem"));
 
-		if (RequiredOperatingSystem is SimulationMode.Native or SimulationMode.Windows)
-		{
-			yield return () => Task.FromResult<FileSystemTestData>(
-				new FileSystemTestData.Mocked(SimulationMode.Windows, OSPlatform.Windows,
-					"WindowsFileSystem"));
-		}
+		yield return () => Task.FromResult<FileSystemTestData>(
+			new FileSystemTestData.Mocked(SimulationMode.Windows, OSPlatform.Windows,
+				"WindowsFileSystem"));
 #endif
 
 #if DEBUG
