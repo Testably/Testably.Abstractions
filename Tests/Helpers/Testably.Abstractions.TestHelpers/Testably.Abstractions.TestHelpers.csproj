@@ -10,9 +10,6 @@
 		<PackageReference Include="AutoFixture"/>
 		<PackageReference Include="Testably.Abstractions"/>
 		<PackageReference Include="Testably.Abstractions.Interface"/>
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json"/>
 	</ItemGroup>
 

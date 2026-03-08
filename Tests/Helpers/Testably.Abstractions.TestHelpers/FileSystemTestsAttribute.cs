@@ -58,11 +58,13 @@ public class FileSystemTestsAttribute : TypedDataSourceAttribute<FileSystemTestD
 				_ => true,
 			};
 
-		if (isMatchingPlatform)
+		if (!isMatchingPlatform)
 		{
-			yield return () => Task.FromResult<FileSystemTestData>(
-				new FileSystemTestData.Mocked("MockFileSystem"));
+			yield break;
 		}
+
+		yield return () => Task.FromResult<FileSystemTestData>(
+			new FileSystemTestData.Mocked("MockFileSystem"));
 
 #if !NETFRAMEWORK
 		if (RequiredOperatingSystem is SimulationMode.Native or SimulationMode.Linux)
@@ -88,11 +90,9 @@ public class FileSystemTestsAttribute : TypedDataSourceAttribute<FileSystemTestD
 #endif
 
 #if DEBUG
-		if (isMatchingPlatform &&
-		    Settings.RealFileSystemTests == Settings.TestSettingStatus.AlwaysEnabled)
+		if (Settings.RealFileSystemTests == Settings.TestSettingStatus.AlwaysEnabled)
 #else
-		if (isMatchingPlatform &&
-		    Settings.RealFileSystemTests != Settings.TestSettingStatus.AlwaysDisabled)
+		if (Settings.RealFileSystemTests != Settings.TestSettingStatus.AlwaysDisabled)
 #endif
 		{
 			yield return () => Task.FromResult<FileSystemTestData>(
