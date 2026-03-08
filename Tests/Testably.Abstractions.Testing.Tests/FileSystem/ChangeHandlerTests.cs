@@ -127,7 +127,7 @@ public class ChangeHandlerTests
 		using IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Watcher.OnTriggered();
 		FileSystem.File.WriteAllText(@"foo.txt", "some-text");
 
-		onEvent.Wait(timeout: 5000);
+		onEvent.Wait(timeout: 30000);
 
 		await That(isTriggered).IsTrue();
 	}

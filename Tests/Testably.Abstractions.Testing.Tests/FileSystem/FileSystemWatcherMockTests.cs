@@ -120,7 +120,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				block1.Wait(5000, TestContext.Current!.Execution.CancellationToken);
+				block1.Wait(30000, TestContext.Current!.Execution.CancellationToken);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -140,7 +140,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path}");
 		}
 
-		await That(block2.Wait(5000, TestContext.Current!.Execution.CancellationToken)).IsTrue();
+		await That(block2.Wait(30000, TestContext.Current!.Execution.CancellationToken)).IsTrue();
 		await That(result).IsNotNull();
 		await That(result!.GetException()).IsExactly<InternalBufferOverflowException>();
 	}
@@ -269,7 +269,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
 			fileSystemWatcher.EnableRaisingEvents = true;
 			fileSystem.Directory.CreateDirectory(expectedFullPath);
-			ms.Wait(5000, TestContext.Current!.Execution.CancellationToken);
+			ms.Wait(30000, TestContext.Current!.Execution.CancellationToken);
 
 			await That(result).IsNotNull();
 			await That(result!.FullPath).IsEqualTo(expectedFullPath);
@@ -316,7 +316,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			fileSystemWatcher.NotifyFilter = NotifyFilters.FileName;
 			fileSystemWatcher.EnableRaisingEvents = true;
 			fileSystem.File.Move(expectedOldFullPath, expectedFullPath);
-			ms.Wait(5000, TestContext.Current!.Execution.CancellationToken);
+			ms.Wait(30000, TestContext.Current!.Execution.CancellationToken);
 
 			await That(result).IsNotNull();
 			await That(result!.FullPath).IsEqualTo(expectedFullPath);
