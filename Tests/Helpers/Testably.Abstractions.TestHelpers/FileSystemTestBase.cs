@@ -68,9 +68,10 @@ public abstract class FileSystemTestBase : IDisposable
 	#region IDisposable Members
 
 	/// <inheritdoc />
-	public virtual void Dispose()
+	public void Dispose()
 	{
-		_directoryCleaner.Dispose();
+		Dispose(true);
+		GC.SuppressFinalize(this);
 	}
 
 	#endregion
@@ -82,7 +83,7 @@ public abstract class FileSystemTestBase : IDisposable
 	///     (optional) A condition that must be <see langword="true" /> for the test to be skipped on the
 	///     real file system.
 	/// </param>
-	public void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+	public static void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
 	{
 #if DEBUG
 		Skip.If(Settings.BrittleTests == Settings.TestSettingStatus.AlwaysDisabled,
@@ -96,7 +97,7 @@ public abstract class FileSystemTestBase : IDisposable
 	/// <summary>
 	///     Specifies, if long-running tests should be skipped on the real file system.
 	/// </summary>
-	public void SkipIfLongRunningTestsShouldBeSkipped()
+	public static void SkipIfLongRunningTestsShouldBeSkipped()
 	{
 #if DEBUG
 		Skip.If(Settings.LongRunningTests == Settings.TestSettingStatus.AlwaysDisabled,
@@ -105,5 +106,13 @@ public abstract class FileSystemTestBase : IDisposable
 		Skip.If(Settings.LongRunningTests != Settings.TestSettingStatus.AlwaysEnabled,
 			$"Long-running tests are {Settings.LongRunningTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
 #endif
+	}
+
+	protected virtual void Dispose(bool disposing)
+	{
+		if (disposing)
+		{
+			_directoryCleaner.Dispose();
+		}
 	}
 }

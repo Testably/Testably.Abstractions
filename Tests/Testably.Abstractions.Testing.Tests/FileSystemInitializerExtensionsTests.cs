@@ -392,7 +392,7 @@ public class FileSystemInitializerExtensionsTests
 
 	#region Helpers
 
-	private void SkipIfRealFileSystemShouldBeSkipped()
+	private static void SkipIfRealFileSystemShouldBeSkipped()
 	{
 #if DEBUG
 		Skip.If(Settings.RealFileSystemTests == Settings.TestSettingStatus.AlwaysDisabled,
