@@ -5,8 +5,8 @@ namespace Testably.Abstractions.Testing.Tests.Statistics;
 
 public sealed class ParameterDescriptionTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FromOutParameter_ShouldSetIsOutParameterToTrue(int value)
 	{
 		ParameterDescription sut = ParameterDescription.FromOutParameter(value);
@@ -14,8 +14,8 @@ public sealed class ParameterDescriptionTests
 		await That(sut.IsOutParameter).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FromParameter_ShouldSetIsOutParameterToFalse(int value)
 	{
 		ParameterDescription sut = ParameterDescription.FromParameter(value);
@@ -24,8 +24,8 @@ public sealed class ParameterDescriptionTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FromParameter_WithReadOnlySpan_ShouldSetIsOutParameterToFalse(string buffer)
 	{
 		ReadOnlySpan<char> value = buffer.AsSpan();
@@ -37,8 +37,8 @@ public sealed class ParameterDescriptionTests
 #endif
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FromParameter_WithSpan_ShouldSetIsOutParameterToFalse(int[] buffer)
 	{
 		Span<int> value = buffer.AsSpan();
@@ -49,9 +49,9 @@ public sealed class ParameterDescriptionTests
 	}
 #endif
 
-	[Theory]
-	[InlineAutoData(true)]
-	[InlineAutoData(false)]
+	[Test]
+	[AutoArguments(true)]
+	[AutoArguments(false)]
 	public async Task Is_WithComparer_ShouldUseComparerResult(bool comparerResult, string value)
 	{
 		ParameterDescription sut = ParameterDescription.FromParameter(value);
@@ -61,9 +61,9 @@ public sealed class ParameterDescriptionTests
 		await That(result).IsEqualTo(comparerResult);
 	}
 
-	[Theory]
-	[InlineAutoData(true)]
-	[InlineAutoData(false)]
+	[Test]
+	[AutoArguments(true)]
+	[AutoArguments(false)]
 	public async Task Is_WithComparer_WithIncompatibleType_ShouldReturnFalse(bool comparerResult,
 		string value)
 	{
@@ -74,8 +74,8 @@ public sealed class ParameterDescriptionTests
 		await That(result).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Is_WithFromOutParameter_ShouldCheckForMatchingValue(int value)
 	{
 		ParameterDescription sut = ParameterDescription.FromOutParameter(value);
@@ -85,8 +85,8 @@ public sealed class ParameterDescriptionTests
 		await That(sut.Is("foo")).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Is_WithFromParameter_ShouldCheckForMatchingValue(string value)
 	{
 		ParameterDescription sut = ParameterDescription.FromParameter(value);
@@ -96,8 +96,8 @@ public sealed class ParameterDescriptionTests
 		await That(sut.Is(42)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ToString_ShouldReturnValue(int value)
 	{
 		ParameterDescription sut = ParameterDescription.FromParameter(value);
@@ -108,8 +108,8 @@ public sealed class ParameterDescriptionTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ToString_WithReadOnlySpan_ShouldSetIsOutParameterToFalse(string buffer)
 	{
 		ReadOnlySpan<char> value = buffer.AsSpan();
@@ -123,8 +123,8 @@ public sealed class ParameterDescriptionTests
 #endif
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ToString_WithSpan_ShouldSetIsOutParameterToFalse(int[] buffer)
 	{
 		Span<int> value = buffer.AsSpan();
@@ -137,8 +137,8 @@ public sealed class ParameterDescriptionTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ToString_WithStringValue_ShouldReturnValueEnclosedInQuotationMarks(
 		string value)
 	{

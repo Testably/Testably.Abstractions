@@ -5,8 +5,8 @@ namespace Testably.Abstractions.Testing.Tests.Storage;
 
 public class NullContainerTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendBytes_ShouldReturnEmptyArray(byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
@@ -17,7 +17,7 @@ public class NullContainerTests
 		await That(sut.GetBytes()).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ClearBytes_ShouldReturnEmptyArray()
 	{
 		MockFileSystem fileSystem = new();
@@ -28,7 +28,7 @@ public class NullContainerTests
 		await That(sut.GetBytes()).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Constructor_ShouldSetFileAndTimeSystem()
 	{
 		MockFileSystem fileSystem = new();
@@ -39,7 +39,7 @@ public class NullContainerTests
 		await That(sut.TimeSystem).IsSameAs(fileSystem.TimeSystem);
 	}
 
-	[Fact]
+	[Test]
 	public async Task CreationTime_WithUnspecifiedKind_ShouldReturnNullTime()
 	{
 		MockFileSystem fileSystem = new();
@@ -50,7 +50,7 @@ public class NullContainerTests
 		await That(result).IsEqualTo(new DateTime(1601, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Decrypt_ShouldReturnEmptyArray()
 	{
 		MockFileSystem fileSystem = new();
@@ -61,7 +61,7 @@ public class NullContainerTests
 		await That(sut.GetBytes()).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Encrypt_ShouldReturnEmptyArray()
 	{
 		MockFileSystem fileSystem = new();
@@ -72,7 +72,7 @@ public class NullContainerTests
 		await That(sut.GetBytes()).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetBytes_ShouldReturnEmptyArray()
 	{
 		MockFileSystem fileSystem = new();
@@ -81,8 +81,8 @@ public class NullContainerTests
 		await That(sut.GetBytes()).IsEmpty();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task LinkTarget_ShouldAlwaysReturnNull(string linkTarget)
 	{
 		MockFileSystem fileSystem = new();
@@ -94,8 +94,8 @@ public class NullContainerTests
 		await That(sut.LinkTarget).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task RequestAccess_Dispose_Twice_ShouldDoNothing(FileAccess access,
 		FileShare share)
 	{
@@ -113,8 +113,8 @@ public class NullContainerTests
 		await That(exception).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task RequestAccess_ShouldReturnNullObject(FileAccess access, FileShare share,
 		bool deleteAccess)
 	{
@@ -128,7 +128,7 @@ public class NullContainerTests
 		await That(result.DeleteAccess).IsEqualTo(deleteAccess);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Type_ShouldBeDirectoryOrFile()
 	{
 		MockFileSystem fileSystem = new();
@@ -137,8 +137,8 @@ public class NullContainerTests
 		await That(sut.Type).IsEqualTo(FileSystemTypes.DirectoryOrFile);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteBytes_ShouldReturnEmptyArray(byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();

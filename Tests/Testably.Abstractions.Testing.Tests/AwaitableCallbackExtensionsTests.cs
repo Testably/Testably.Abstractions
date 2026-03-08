@@ -10,8 +10,8 @@ public class AwaitableCallbackExtensionsTests
 #if NET6_0_OR_GREATER
 	public sealed class ToAsyncEnumerableTests
 	{
-		[Fact]
-		public async Task ShouldReturnAllEvents()
+		[Test]
+		public async Task ShouldReturnAllEvents(CancellationToken cancellationToken)
 		{
 			MockFileSystem fileSystem = new();
 			IAwaitableCallback<ChangeDescription> sut = fileSystem.Notify.OnEvent();
@@ -22,9 +22,9 @@ public class AwaitableCallbackExtensionsTests
 			fileSystem.Directory.Delete("Test");
 
 			ChangeDescription[] results = await sut
-				.ToAsyncEnumerable(cancellationToken: TestContext.Current.CancellationToken)
+				.ToAsyncEnumerable(cancellationToken: cancellationToken)
 				.Take(6)
-				.ToArrayAsync(cancellationToken: TestContext.Current.CancellationToken);
+				.ToArrayAsync(cancellationToken: cancellationToken);
 
 			await That(results[0]).IsEquivalentTo(new
 			{
@@ -52,8 +52,8 @@ public class AwaitableCallbackExtensionsTests
 			});
 		}
 
-		[Fact]
-		public async Task WithCancelledToken_ShouldAbort()
+		[Test]
+		public async Task WithCancelledToken_ShouldAbort(CancellationToken cancellationToken)
 		{
 			MockFileSystem fileSystem = new();
 			IAwaitableCallback<ChangeDescription> sut = fileSystem.Notify
@@ -66,24 +66,24 @@ public class AwaitableCallbackExtensionsTests
 				for (int i = 0; i < 10; i++)
 				{
 					fileSystem.Directory.CreateDirectory($"Test{i}");
-					await Task.Delay(100, TestContext.Current.CancellationToken);
+					await Task.Delay(100, cancellationToken);
 					if (i == 5)
 					{
 						// ReSharper disable once AccessToDisposedClosure
 						cts.Cancel();
 					}
 				}
-			}, TestContext.Current.CancellationToken);
+			}, cancellationToken);
 
 			ChangeDescription[] results = await sut.ToAsyncEnumerable(cancellationToken: token)
 				.Take(10)
-				.ToArrayAsync(cancellationToken: TestContext.Current.CancellationToken);
+				.ToArrayAsync(cancellationToken: cancellationToken);
 
 			await That(results.Length).IsEqualTo(6);
 		}
 
-		[Fact]
-		public async Task WithFilter_ShouldOnlyReturnMatchingEvents()
+		[Test]
+		public async Task WithFilter_ShouldOnlyReturnMatchingEvents(CancellationToken cancellationToken)
 		{
 			MockFileSystem fileSystem = new();
 			IAwaitableCallback<ChangeDescription> sut = fileSystem.Notify
@@ -95,9 +95,9 @@ public class AwaitableCallbackExtensionsTests
 			fileSystem.Directory.Delete("Test");
 
 			ChangeDescription[] results = await sut
-				.ToAsyncEnumerable(cancellationToken: TestContext.Current.CancellationToken)
+				.ToAsyncEnumerable(cancellationToken: cancellationToken)
 				.Take(2)
-				.ToArrayAsync(cancellationToken: TestContext.Current.CancellationToken);
+				.ToArrayAsync(cancellationToken: cancellationToken);
 
 			await That(results[0]).IsEquivalentTo(new
 			{
@@ -113,8 +113,8 @@ public class AwaitableCallbackExtensionsTests
 			});
 		}
 
-		[Fact]
-		public async Task WithIntTimeout_ShouldAbortAfterwards()
+		[Test]
+		public async Task WithIntTimeout_ShouldAbortAfterwards(CancellationToken cancellationToken)
 		{
 			MockFileSystem fileSystem = new();
 			IAwaitableCallback<ChangeDescription> sut = fileSystem.Notify
@@ -125,20 +125,20 @@ public class AwaitableCallbackExtensionsTests
 				for (int i = 0; i < 10; i++)
 				{
 					fileSystem.Directory.CreateDirectory($"Test{i}");
-					await Task.Delay(100, TestContext.Current.CancellationToken);
+					await Task.Delay(100, cancellationToken);
 				}
-			}, TestContext.Current.CancellationToken);
+			}, cancellationToken);
 
 			ChangeDescription[] results = await sut
-				.ToAsyncEnumerable(150, cancellationToken: TestContext.Current.CancellationToken)
+				.ToAsyncEnumerable(150, cancellationToken: cancellationToken)
 				.Take(10)
-				.ToArrayAsync(cancellationToken: TestContext.Current.CancellationToken);
+				.ToArrayAsync(cancellationToken: cancellationToken);
 
 			await That(results.Length).IsLessThan(9);
 		}
 
-		[Fact]
-		public async Task WithTimeout_ShouldAbortAfterwards()
+		[Test]
+		public async Task WithTimeout_ShouldAbortAfterwards(CancellationToken cancellationToken)
 		{
 			MockFileSystem fileSystem = new();
 			IAwaitableCallback<ChangeDescription> sut = fileSystem.Notify
@@ -149,15 +149,15 @@ public class AwaitableCallbackExtensionsTests
 				for (int i = 0; i < 10; i++)
 				{
 					fileSystem.Directory.CreateDirectory($"Test{i}");
-					await Task.Delay(100, TestContext.Current.CancellationToken);
+					await Task.Delay(100, cancellationToken);
 				}
-			}, TestContext.Current.CancellationToken);
+			}, cancellationToken);
 
 			ChangeDescription[] results = await sut
 				.ToAsyncEnumerable(TimeSpan.FromMilliseconds(150),
-					cancellationToken: TestContext.Current.CancellationToken)
+					cancellationToken: cancellationToken)
 				.Take(10)
-				.ToArrayAsync(cancellationToken: TestContext.Current.CancellationToken);
+				.ToArrayAsync(cancellationToken: cancellationToken);
 
 			await That(results.Length).IsLessThan(9);
 		}

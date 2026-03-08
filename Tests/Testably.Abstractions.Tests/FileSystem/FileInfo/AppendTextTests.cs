@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
-public partial class AppendTextTests
+public class AppendTextTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendText_MissingFile_ShouldCreateFile(
 		string path, string appendText)
 	{
@@ -21,8 +21,8 @@ public partial class AppendTextTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(appendText);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendText_ShouldAddTextToExistingFile(
 		string path, string contents, string appendText)
 	{

@@ -2,16 +2,16 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class IsPathFullyQualifiedTests
+public class IsPathFullyQualifiedTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[InlineData("C", false, TestOS.Windows)]
-	[InlineData("//", true, TestOS.All)]
-	[InlineData("/Foo", true, TestOS.Linux | TestOS.Mac)]
-	[InlineData("/Foo", false, TestOS.Windows)]
-	[InlineData(@"\\", true, TestOS.Windows)]
-	[InlineData("/?", true, TestOS.Windows)]
-	[InlineData(@"\?", true, TestOS.Windows)]
+	[Test]
+	[Arguments("C", false, TestOS.Windows)]
+	[Arguments("//", true, TestOS.All)]
+	[Arguments("/Foo", true, TestOS.Linux | TestOS.Mac)]
+	[Arguments("/Foo", false, TestOS.Windows)]
+	[Arguments(@"\\", true, TestOS.Windows)]
+	[Arguments("/?", true, TestOS.Windows)]
+	[Arguments(@"\?", true, TestOS.Windows)]
 	public async Task IsPathFullyQualified_EdgeCases_ShouldReturnExpectedValue(
 		string path, bool expected, TestOS operatingSystem)
 	{
@@ -23,8 +23,8 @@ public partial class IsPathFullyQualifiedTests
 		await That(result).IsEqualTo(expected);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IsPathFullyQualified_PrefixedRoot_ShouldReturnTrue(
 		string directory)
 	{
@@ -35,8 +35,8 @@ public partial class IsPathFullyQualifiedTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IsPathFullyQualified_Span_PrefixedRoot_ShouldReturnTrue(
 		string directory)
 	{
@@ -48,8 +48,8 @@ public partial class IsPathFullyQualifiedTests
 #endif
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IsPathFullyQualified_Span_WithoutPrefixedRoot_ShouldReturnFalse(
 		string path)
 	{
@@ -59,8 +59,8 @@ public partial class IsPathFullyQualifiedTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IsPathFullyQualified_WithoutPrefixedRoot_ShouldReturnFalse(
 		string path)
 	{

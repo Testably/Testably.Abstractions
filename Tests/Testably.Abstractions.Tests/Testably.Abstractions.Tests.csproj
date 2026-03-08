@@ -4,19 +4,9 @@
 		<PackageReference Include="Testably.Abstractions.Interface"/>
 		<ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj"/>
 		<ProjectReference Include="..\Helpers\Testably.Abstractions.TestHelpers\Testably.Abstractions.TestHelpers.csproj"/>
-		<ProjectReference Include="..\Helpers\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj" OutputItemType="Analyzer"/>
 	</ItemGroup>
 
-	<PropertyGroup>
-		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-		<GeneratedFolder>Generated</GeneratedFolder>
-		<CompilerGeneratedFilesOutputPath>$(GeneratedFolder)\$(TargetFramework)</CompilerGeneratedFilesOutputPath>
-	</PropertyGroup>
-
 	<ItemGroup>
-		<Compile Remove="$(GeneratedFolder)/**/*.cs"/>
-		<Content Include="$(CompilerGeneratedFilesOutputPath)/**"/>
-		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
 		<!-- Implicitely added from Testably.Abstractions -->
 		<PackageReference Remove="Nullable" />
 	</ItemGroup>

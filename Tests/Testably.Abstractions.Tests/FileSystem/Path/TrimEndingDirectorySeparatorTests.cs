@@ -2,10 +2,10 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class TrimEndingDirectorySeparatorTests
+public class TrimEndingDirectorySeparatorTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task TrimEndingDirectorySeparator_DirectoryChar_ShouldTrim(
 		string directory)
 	{
@@ -16,7 +16,7 @@ public partial class TrimEndingDirectorySeparatorTests
 		await That(result).IsEqualTo(directory);
 	}
 
-	[Fact]
+	[Test]
 	public async Task TrimEndingDirectorySeparator_EmptyString_ShouldReturnEmptyString()
 	{
 		string result = FileSystem.Path.TrimEndingDirectorySeparator(string.Empty);
@@ -24,7 +24,7 @@ public partial class TrimEndingDirectorySeparatorTests
 		await That(result).IsEqualTo(string.Empty);
 	}
 
-	[Fact]
+	[Test]
 	public async Task TrimEndingDirectorySeparator_Root_ShouldReturnUnchanged()
 	{
 		string path = FileTestHelper.RootDrive(Test);
@@ -34,8 +34,8 @@ public partial class TrimEndingDirectorySeparatorTests
 		await That(result).IsEqualTo(path);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task TrimEndingDirectorySeparator_Span_DirectoryChar_ShouldTrim(
 		string directory)
 	{
@@ -47,7 +47,7 @@ public partial class TrimEndingDirectorySeparatorTests
 		await That(result.ToString()).IsEqualTo(directory);
 	}
 
-	[Fact]
+	[Test]
 	public async Task TrimEndingDirectorySeparator_Span_Root_ShouldReturnUnchanged()
 	{
 		string path = FileTestHelper.RootDrive(Test);
@@ -58,8 +58,8 @@ public partial class TrimEndingDirectorySeparatorTests
 		await That(result.ToString()).IsEqualTo(path);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		TrimEndingDirectorySeparator_Span_WithoutDirectoryChar_ShouldReturnUnchanged(
 			string path)
@@ -70,8 +70,8 @@ public partial class TrimEndingDirectorySeparatorTests
 		await That(result.ToString()).IsEqualTo(path);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task TrimEndingDirectorySeparator_WithoutDirectoryChar_ShouldReturnUnchanged(
 		string path)
 	{

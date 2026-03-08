@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Compression.Tests.Internal;
 
 public sealed class ExecuteTests
 {
-	[Fact]
+	[Test]
 	public async Task
 		WhenRealFileSystem_MockFileSystem_WithActionCallback_ShouldExecuteOnMockFileSystem()
 	{
@@ -25,7 +25,7 @@ public sealed class ExecuteTests
 		await That(onMockFileSystemExecuted).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		WhenRealFileSystem_MockFileSystem_WithFuncCallback_ShouldExecuteOnMockFileSystem()
 	{
@@ -46,7 +46,7 @@ public sealed class ExecuteTests
 		await That(onMockFileSystemExecuted).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		WhenRealFileSystem_RealFileSystem_WithActionCallback_ShouldExecuteOnRealFileSystem()
 	{
@@ -67,7 +67,7 @@ public sealed class ExecuteTests
 		await That(onMockFileSystemExecuted).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		WhenRealFileSystem_RealFileSystem_WithFuncCallback_ShouldExecuteOnRealFileSystem()
 	{
@@ -88,7 +88,7 @@ public sealed class ExecuteTests
 		await That(onMockFileSystemExecuted).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		WhenRealFileSystemAsync_MockFileSystem_WithActionCallback_ShouldExecuteOnMockFileSystem()
 	{
@@ -110,7 +110,7 @@ public sealed class ExecuteTests
 		await That(onMockFileSystemExecuted).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		WhenRealFileSystemAsync_MockFileSystem_WithFuncCallback_ShouldExecuteOnMockFileSystem()
 	{
@@ -132,7 +132,7 @@ public sealed class ExecuteTests
 		await That(onMockFileSystemExecuted).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		WhenRealFileSystemAsync_RealFileSystem_WithActionCallback_ShouldExecuteOnRealFileSystem()
 	{
@@ -154,7 +154,7 @@ public sealed class ExecuteTests
 		await That(onMockFileSystemExecuted).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		WhenRealFileSystemAsync_RealFileSystem_WithFuncCallback_ShouldExecuteOnRealFileSystem()
 	{

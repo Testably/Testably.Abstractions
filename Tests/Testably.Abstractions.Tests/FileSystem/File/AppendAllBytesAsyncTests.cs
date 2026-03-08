@@ -6,10 +6,10 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 
 // ReSharper disable MethodHasAsyncOverload
 [FileSystemTests]
-public partial class AppendAllBytesAsyncTests
+public class AppendAllBytesAsyncTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, byte[] bytes)
 	{
@@ -22,23 +22,23 @@ public partial class AppendAllBytesAsyncTests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytesAsync_ExistingFile_ShouldAppendLinesToFile(
 		string path, byte[] previousBytes, byte[] bytes)
 	{
 		await FileSystem.File.AppendAllBytesAsync(path, previousBytes,
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		await FileSystem.File.AppendAllBytesAsync(path, bytes,
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([..previousBytes, ..bytes]);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytesAsync_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingPath, string fileName, byte[] bytes)
 	{
@@ -47,26 +47,26 @@ public partial class AppendAllBytesAsyncTests
 		async Task Act()
 		{
 			await FileSystem.File.AppendAllBytesAsync(filePath, bytes,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 		}
 
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytesAsync_MissingFile_ShouldCreateFile(
 		string path, byte[] bytes)
 	{
 		await FileSystem.File.AppendAllBytesAsync(path, bytes,
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytesAsync_ReadOnlyMemory_Cancelled_ShouldThrowTaskCanceledException(
 		string path, byte[] bytes)
 	{
@@ -79,23 +79,23 @@ public partial class AppendAllBytesAsyncTests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytesAsync_ReadOnlyMemory_ExistingFile_ShouldAppendLinesToFile(
 		string path, byte[] previousBytes, byte[] bytes)
 	{
 		await FileSystem.File.AppendAllBytesAsync(path, previousBytes,
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		await FileSystem.File.AppendAllBytesAsync(path, bytes.AsMemory(),
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([..previousBytes, ..bytes]);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		AppendAllBytesAsync_ReadOnlyMemory_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string missingPath, string fileName, byte[] bytes)
@@ -105,26 +105,26 @@ public partial class AppendAllBytesAsyncTests
 		async Task Act()
 		{
 			await FileSystem.File.AppendAllBytesAsync(filePath, bytes.AsMemory(),
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 		}
 
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytesAsync_ReadOnlyMemory_MissingFile_ShouldCreateFile(
 		string path, byte[] bytes)
 	{
 		await FileSystem.File.AppendAllBytesAsync(path, bytes.AsMemory(),
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		AppendAllBytesAsync_ReadOnlyMemory_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path, byte[] bytes)
@@ -134,7 +134,7 @@ public partial class AppendAllBytesAsyncTests
 		async Task Act()
 		{
 			await FileSystem.File.AppendAllBytesAsync(path, bytes.AsMemory(),
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
@@ -142,8 +142,8 @@ public partial class AppendAllBytesAsyncTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		AppendAllBytesAsync_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path, byte[] bytes)
@@ -153,7 +153,7 @@ public partial class AppendAllBytesAsyncTests
 		async Task Act()
 		{
 			await FileSystem.File.AppendAllBytesAsync(path, bytes,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);

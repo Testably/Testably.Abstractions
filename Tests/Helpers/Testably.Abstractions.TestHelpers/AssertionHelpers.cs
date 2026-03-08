@@ -1,12 +1,13 @@
-﻿using aweXpect.Core;
+﻿#if NET8_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
+using aweXpect.Core;
 using aweXpect.Core.Constraints;
 using aweXpect.Core.Sources;
 using aweXpect.Delegates;
 using aweXpect.Formatting;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using System.Text;
 using static aweXpect.Delegates.ThatDelegate;
 
@@ -15,16 +16,20 @@ namespace Testably.Abstractions.TestHelpers;
 public static class AssertionHelpers
 {
 	/// <summary>
-	///     Verifies that the <paramref name="delegate"/> throws either a <see cref="FileNotFoundException"/> or
-	///     a <see cref="DirectoryNotFoundException"/> with their corresponding HResult values.
+	///     Verifies that the <paramref name="delegate" /> throws either a <see cref="FileNotFoundException" /> or
+	///     a <see cref="DirectoryNotFoundException" /> with their corresponding HResult values.
 	/// </summary>
-	public static ThatDelegateThrows<Exception> ThrowsAFileOrDirectoryNotFoundException(this ThatDelegate @delegate)
+	public static ThatDelegateThrows<Exception> ThrowsAFileOrDirectoryNotFoundException(
+		this ThatDelegate @delegate)
 	{
-		var throwOptions = new ThatDelegate.ThrowsOption();
+		ThrowsOption? throwOptions = new();
 		return new ThatDelegateThrows<Exception>(
-			@delegate.ExpectationBuilder.AddConstraint((it, grammars) => new DelegateIsNotNullWithinTimeoutConstraint(it, grammars, throwOptions))
+			@delegate.ExpectationBuilder.AddConstraint((it, grammars)
+					=> new DelegateIsNotNullWithinTimeoutConstraint(it, grammars, throwOptions))
 				.ForWhich<DelegateValue, Exception?>(d => d.Exception)
-				.AddConstraint((it, grammars) => new ThrowsAFileOrDirectoryNotFoundExceptionConstraint(it, grammars, throwOptions))
+				.AddConstraint((it, grammars)
+					=> new ThrowsAFileOrDirectoryNotFoundExceptionConstraint(it, grammars,
+						throwOptions))
 				.And(" "), throwOptions);
 	}
 
@@ -37,6 +42,14 @@ public static class AssertionHelpers
 	{
 		private DelegateValue? _actual;
 
+		#region IValueConstraint<DelegateValue> Members
+
+		public override void AppendExpectation(StringBuilder stringBuilder,
+			string? indentation = null)
+		{
+			// Do nothing
+		}
+
 		public ConstraintResult IsMetBy(DelegateValue value)
 		{
 			_actual = value;
@@ -47,7 +60,7 @@ public static class AssertionHelpers
 			}
 
 			if (options.ExecutionTimeOptions is not null &&
-				!options.ExecutionTimeOptions.IsWithinLimit(value.Duration))
+			    !options.ExecutionTimeOptions.IsWithinLimit(value.Duration))
 			{
 				Outcome = Outcome.Failure;
 				return this;
@@ -57,10 +70,7 @@ public static class AssertionHelpers
 			return this;
 		}
 
-		public override void AppendExpectation(StringBuilder stringBuilder, string? indentation = null)
-		{
-			// Do nothing
-		}
+		#endregion
 
 		public override void AppendResult(StringBuilder stringBuilder, string? indentation = null)
 		{
@@ -75,24 +85,53 @@ public static class AssertionHelpers
 			}
 		}
 
-		public override bool TryGetValue<TValue>([NotNullWhen(true)] out TValue? value) where TValue : default
+		public override ConstraintResult Negate()
+			=> this;
+
+#if NET8_0_OR_GREATER
+		public override bool TryGetValue<TValue>([NotNullWhen(true)] out TValue? value)
+			where TValue : default
+#else
+		#pragma warning disable CS8765
+		public override bool TryGetValue<TValue>(out TValue? value) where TValue : default
+		#pragma warning restore CS8765
+#endif
 		{
 			value = default;
 			return false;
 		}
-
-		public override ConstraintResult Negate()
-			=> this;
 	}
 
 	private sealed class ThrowsAFileOrDirectoryNotFoundExceptionConstraint(
 		string it,
 		ExpectationGrammars grammars,
-		ThatDelegate.ThrowsOption throwOptions)
+		ThrowsOption throwOptions)
 		: ConstraintResult(grammars),
 			IValueConstraint<Exception?>
 	{
 		private Exception? _actual;
+
+		#region IValueConstraint<Exception?> Members
+
+		public override void AppendExpectation(StringBuilder stringBuilder,
+			string? indentation = null)
+		{
+			if (!throwOptions.DoCheckThrow)
+			{
+				stringBuilder.Append("does not throw any exception");
+			}
+			else
+			{
+				stringBuilder.Append(
+					"throws a FileNotFoundException or a DirectoryNotFoundException with correct HResult");
+			}
+
+			if (throwOptions.ExecutionTimeOptions is not null)
+			{
+				stringBuilder.Append(' ');
+				throwOptions.ExecutionTimeOptions.AppendTo(stringBuilder, "in ");
+			}
+		}
 
 		/// <inheritdoc />
 		public ConstraintResult IsMetBy(Exception? value)
@@ -111,8 +150,10 @@ public static class AssertionHelpers
 				FurtherProcessingStrategy = FurtherProcessingStrategy.IgnoreResult;
 			}
 
-			if (value is FileNotFoundException fileNotFoundException && fileNotFoundException.HResult == -2147024894 ||
-				value is DirectoryNotFoundException directoryNotFoundException && directoryNotFoundException.HResult == -2147024893)
+			if ((value is FileNotFoundException fileNotFoundException &&
+			     fileNotFoundException.HResult == -2147024894) ||
+			    (value is DirectoryNotFoundException directoryNotFoundException &&
+			     directoryNotFoundException.HResult == -2147024893))
 			{
 				Outcome = Outcome.Success;
 				return this;
@@ -122,23 +163,7 @@ public static class AssertionHelpers
 			return this;
 		}
 
-		public override void AppendExpectation(StringBuilder stringBuilder, string? indentation = null)
-		{
-			if (!throwOptions.DoCheckThrow)
-			{
-				stringBuilder.Append("does not throw any exception");
-			}
-			else
-			{
-				stringBuilder.Append("throws a FileNotFoundException or a DirectoryNotFoundException with correct HResult");
-			}
-
-			if (throwOptions.ExecutionTimeOptions is not null)
-			{
-				stringBuilder.Append(' ');
-				throwOptions.ExecutionTimeOptions.AppendTo(stringBuilder, "in ");
-			}
-		}
+		#endregion
 
 		public override void AppendResult(StringBuilder stringBuilder, string? indentation = null)
 		{
@@ -153,7 +178,20 @@ public static class AssertionHelpers
 			}
 		}
 
-		public override bool TryGetValue<TValue>([NotNullWhen(true)] out TValue? value) where TValue : default
+		public override ConstraintResult Negate()
+		{
+			throwOptions.DoCheckThrow = !throwOptions.DoCheckThrow;
+			return this;
+		}
+
+#if NET8_0_OR_GREATER
+		public override bool TryGetValue<TValue>([NotNullWhen(true)] out TValue? value)
+			where TValue : default
+#else
+		#pragma warning disable CS8765
+		public override bool TryGetValue<TValue>(out TValue? value) where TValue : default
+		#pragma warning restore CS8765
+#endif
 		{
 			if (_actual is TValue typedValue)
 			{
@@ -163,12 +201,6 @@ public static class AssertionHelpers
 
 			value = default;
 			return typeof(TValue).IsAssignableFrom(typeof(DirectoryNotFoundException));
-		}
-
-		public override ConstraintResult Negate()
-		{
-			throwOptions.DoCheckThrow = !throwOptions.DoCheckThrow;
-			return this;
 		}
 
 		private static string FormatForMessage(Exception exception)
@@ -181,7 +213,6 @@ public static class AssertionHelpers
 
 			return message;
 
-			[return: NotNullIfNotNull(nameof(value))]
 			static string? Indent(string? value, string? indentation = "  ",
 				bool indentFirstLine = true)
 			{
@@ -196,13 +227,17 @@ public static class AssertionHelpers
 				}
 
 				return (indentFirstLine ? indentation : "")
-					   + value.Replace("\n", $"\n{indentation}");
+				       + value.Replace("\n", $"\n{indentation}");
 			}
 
 			static string PrependAOrAn(string value)
 			{
 				char[] vocals = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U',];
+#if NET8_0_OR_GREATER
 				if (value.Length > 0 && vocals.Contains(value[0]))
+#else
+				if (value.Length > 0 && vocals.Contains($"{value[0]}", StringComparison.Ordinal))
+#endif
 				{
 					return $"an {value}";
 				}

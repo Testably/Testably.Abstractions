@@ -5,8 +5,8 @@ namespace Testably.Abstractions.Tests.Internal;
 
 public class FileSystemExtensibilityTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path", "my-key")]
 	public async Task RetrieveMetadata_IncorrectType_ShouldReturnNull(string path, string key)
 	{
 		FileInfo value = new(path);
@@ -20,8 +20,8 @@ public class FileSystemExtensibilityTests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path", "my-key")]
 	public async Task RetrieveMetadata_WithoutStoringBefore_ShouldReturnDefault(string path,
 		string key)
 	{
@@ -34,8 +34,8 @@ public class FileSystemExtensibilityTests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path", "my-key", "my-value")]
 	public async Task StoreMetadata_ShouldMakeValueRetrievable(string path, string key,
 		object value)
 	{
@@ -49,8 +49,8 @@ public class FileSystemExtensibilityTests
 		await That(result).IsEqualTo(value);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path")]
 	public async Task TryGetWrappedInstance_IncorrectType_ShouldReturnNull(string path)
 	{
 		RealFileSystem fileSystem = new();
@@ -63,8 +63,8 @@ public class FileSystemExtensibilityTests
 		await That(fileInfo).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path")]
 	public async Task TryGetWrappedInstance_ShouldReturnWrappedInstance(string path)
 	{
 		RealFileSystem fileSystem = new();

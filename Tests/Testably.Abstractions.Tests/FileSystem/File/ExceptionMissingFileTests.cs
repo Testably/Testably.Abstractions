@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class ExceptionMissingFileTests
+public class ExceptionMissingFileTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks), (int)MissingFileTestCases.DirectoryMissing)]
+	[Test]
+	[MethodDataSource(nameof(GetDirectoryMissingCallbacks))]
 	public async Task Operations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
 		Expression<Action<IFile, string>> callback, Func<Test, bool> skipTest)
 	{
@@ -40,8 +40,8 @@ public partial class ExceptionMissingFileTests
 		}
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks), (int)MissingFileTestCases.FileMissing)]
+	[Test]
+	[MethodDataSource(nameof(GetFileMissingCallbacks))]
 	public async Task Operations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
 		Expression<Action<IFile, string>> callback, Func<Test, bool> skipTest)
 	{
@@ -69,22 +69,25 @@ public partial class ExceptionMissingFileTests
 
 	#region Helpers
 
-	#pragma warning disable MA0018
-	public static TheoryData<Expression<Action<IFile, string>>, Func<Test, bool>> GetFileCallbacks(
+	public static IEnumerable<(Expression<Action<IFile, string>>, Func<Test, bool>)>
+		GetFileMissingCallbacks()
+		=> GetFileCallbacks((int)MissingFileTestCases.FileMissing);
+
+	public static IEnumerable<(Expression<Action<IFile, string>>, Func<Test, bool>)>
+		GetDirectoryMissingCallbacks()
+		=> GetFileCallbacks((int)MissingFileTestCases.DirectoryMissing);
+	
+	private static IEnumerable<(Expression<Action<IFile, string>>, Func<Test, bool>)> GetFileCallbacks(
 		int testCases)
 	{
-		TheoryData<Expression<Action<IFile, string>>, Func<Test, bool>> theoryData = new();
 		foreach ((MissingFileTestCases TestCase, ExpectedExceptionType ExceptionType,
 			Expression<Action<IFile, string>> Callback, Func<Test, bool>? SkipTest) item in
 			GetFileCallbackTestParameters()
 				.Where(item => (item.TestCase & (MissingFileTestCases)testCases) != 0))
 		{
-			theoryData.Add(item.Callback, item.SkipTest ?? (_ => false));
+			yield return(item.Callback, item.SkipTest ?? (_ => false));
 		}
-
-		return theoryData;
 	}
-	#pragma warning restore MA0018
 
 	private static IEnumerable<(MissingFileTestCases TestCase, ExpectedExceptionType ExceptionType,
 			Expression<Action<IFile, string>> Callback, Func<Test, bool>? SkipTest)>

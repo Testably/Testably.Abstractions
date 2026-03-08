@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public class FileSystemWatcherStatisticsTests
 {
-	[Fact]
+	[Test]
 	public async Task Method_BeginInit_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -23,7 +23,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsMethodCall(nameof(IFileSystemWatcher.BeginInit));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_EndInit_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -37,7 +37,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsMethodCall(nameof(IFileSystemWatcher.EndInit));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_WaitForChanged_WatcherChangeTypes_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -67,7 +67,7 @@ public class FileSystemWatcherStatisticsTests
 				timeout);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_WaitForChanged_WatcherChangeTypes_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -96,7 +96,7 @@ public class FileSystemWatcherStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_NET_7_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task Method_WaitForChanged_WatcherChangeTypes_TimeSpan_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -127,7 +127,7 @@ public class FileSystemWatcherStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Property_EnableRaisingEvents_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -140,7 +140,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileSystemWatcher.EnableRaisingEvents));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_EnableRaisingEvents_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -154,7 +154,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileSystemWatcher.EnableRaisingEvents));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_Filter_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -167,7 +167,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileSystemWatcher.Filter));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_Filter_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -182,7 +182,7 @@ public class FileSystemWatcherStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-	[Fact]
+	[Test]
 	public async Task Property_Filters_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -196,7 +196,7 @@ public class FileSystemWatcherStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Property_IncludeSubdirectories_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -209,7 +209,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileSystemWatcher.IncludeSubdirectories));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_IncludeSubdirectories_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -223,7 +223,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileSystemWatcher.IncludeSubdirectories));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_InternalBufferSize_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -236,7 +236,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileSystemWatcher.InternalBufferSize));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_InternalBufferSize_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -250,7 +250,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileSystemWatcher.InternalBufferSize));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_NotifyFilter_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -263,7 +263,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileSystemWatcher.NotifyFilter));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_NotifyFilter_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -277,7 +277,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileSystemWatcher.NotifyFilter));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_Path_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -290,7 +290,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileSystemWatcher.Path));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_Path_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -304,7 +304,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileSystemWatcher.Path));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_Site_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -317,7 +317,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileSystemWatcher.Site));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_Site_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -331,7 +331,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileSystemWatcher.Site));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_SynchronizingObject_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -344,7 +344,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileSystemWatcher.SynchronizingObject));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_SynchronizingObject_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -358,7 +358,7 @@ public class FileSystemWatcherStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileSystemWatcher.SynchronizingObject));
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldBeFileSystemWatcherWithPath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.FileSystemWatcher[@"\\some\path"];

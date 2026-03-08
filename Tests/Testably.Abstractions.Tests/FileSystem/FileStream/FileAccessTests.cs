@@ -5,18 +5,18 @@ using System.Text;
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
 [FileSystemTests]
-public partial class FileAccessTests
+public class FileAccessTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[InlineAutoData(FileAccess.Read, FileShare.Read,
+	[Test]
+	[AutoArguments(FileAccess.Read, FileShare.Read,
 		FileAccess.ReadWrite, FileShare.Read)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.Read,
+	[AutoArguments(FileAccess.ReadWrite, FileShare.Read,
 		FileAccess.Read, FileShare.Read)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite,
+	[AutoArguments(FileAccess.ReadWrite, FileShare.ReadWrite,
 		FileAccess.ReadWrite, FileShare.Read)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite,
+	[AutoArguments(FileAccess.ReadWrite, FileShare.ReadWrite,
 		FileAccess.ReadWrite, FileShare.Write)]
-	[InlineAutoData(FileAccess.Read, FileShare.Read,
+	[AutoArguments(FileAccess.Read, FileShare.Read,
 		FileAccess.ReadWrite, FileShare.ReadWrite)]
 	public async Task FileAccess_ConcurrentAccessWithInvalidScenarios_ShouldThrowIOException(
 		FileAccess access1, FileShare share1,
@@ -49,9 +49,9 @@ public partial class FileAccessTests
 		}
 	}
 
-	[Theory]
-	[InlineAutoData(FileAccess.Read, FileShare.Read, FileAccess.Read, FileShare.Read)]
-	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite, FileAccess.ReadWrite,
+	[Test]
+	[AutoArguments(FileAccess.Read, FileShare.Read, FileAccess.Read, FileShare.Read)]
+	[AutoArguments(FileAccess.Read, FileShare.ReadWrite, FileAccess.ReadWrite,
 		FileShare.Read)]
 	public async Task FileAccess_ConcurrentReadAccessWithValidScenarios_ShouldNotThrowException(
 		FileAccess access1, FileShare share1,
@@ -74,9 +74,9 @@ public partial class FileAccessTests
 		await That(result2).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[InlineAutoData(FileAccess.Write, FileShare.Write, FileAccess.Write, FileShare.Write)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite, FileAccess.ReadWrite,
+	[Test]
+	[AutoArguments(FileAccess.Write, FileShare.Write, FileAccess.Write, FileShare.Write)]
+	[AutoArguments(FileAccess.ReadWrite, FileShare.ReadWrite, FileAccess.ReadWrite,
 		FileShare.ReadWrite)]
 	public async Task FileAccess_ConcurrentWriteAccessWithValidScenarios_ShouldNotThrowException(
 		FileAccess access1, FileShare share1,
@@ -104,8 +104,8 @@ public partial class FileAccessTests
 		await That(result).IsEqualTo(contents2);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FileAccess_ReadAfterFirstAppend_ShouldContainBothContents(
 		string path, string contents1, string contents2)
 	{
@@ -130,8 +130,8 @@ public partial class FileAccessTests
 		await That(result).IsEqualTo(contents1 + contents2);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FileAccess_ReadBeforeFirstAppend_ShouldOnlyContainSecondContent(
 		string path, string contents1, string contents2)
 	{
@@ -156,8 +156,8 @@ public partial class FileAccessTests
 		await That(result).IsEqualTo(contents2);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FileAccess_ReadWhileWriteLockActive_ShouldThrowIOException(
 		string path, string contents)
 	{
@@ -183,8 +183,8 @@ public partial class FileAccessTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task MultipleParallelReads_ShouldBeAllowed(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -200,15 +200,15 @@ public partial class FileAccessTests
 
 		while (!wait.IsCompleted)
 		{
-			await Task.Delay(10, TestContext.Current.CancellationToken);
+			await Task.Delay(10, CancellationToken);
 		}
 
 		await That(results).HasCount(100);
 		await That(results).All().AreEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Read_ShouldCreateValidFileStream(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents, Encoding.UTF8);
@@ -219,8 +219,8 @@ public partial class FileAccessTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Write_ShouldCreateValidFileStream(string path, string contents)
 	{
 		FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.CreateNew);

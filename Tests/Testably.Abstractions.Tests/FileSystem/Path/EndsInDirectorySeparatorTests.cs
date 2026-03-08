@@ -2,9 +2,9 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class EndsInDirectorySeparatorTests
+public class EndsInDirectorySeparatorTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task EndsInDirectorySeparator_Empty_ShouldReturnExpectedResult()
 	{
 		bool result = FileSystem.Path.EndsInDirectorySeparator(string.Empty);
@@ -12,7 +12,7 @@ public partial class EndsInDirectorySeparatorTests
 		await That(result).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task EndsInDirectorySeparator_Null_ShouldReturnExpectedResult()
 	{
 		bool result = FileSystem.Path.EndsInDirectorySeparator(null!);
@@ -20,7 +20,7 @@ public partial class EndsInDirectorySeparatorTests
 		await That(result).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task EndsInDirectorySeparator_Span_Empty_ShouldReturnExpectedResult()
 	{
 		bool result = FileSystem.Path.EndsInDirectorySeparator(string.Empty.AsSpan());
@@ -28,9 +28,9 @@ public partial class EndsInDirectorySeparatorTests
 		await That(result).IsFalse();
 	}
 
-	[Theory]
-	[InlineAutoData('.')]
-	[InlineAutoData('a')]
+	[Test]
+	[AutoArguments('.')]
+	[AutoArguments('a')]
 	public async Task EndsInDirectorySeparator_Span_WithoutTrailingDirectorySeparator_ShouldReturnFalse(
 			char lastCharacter, string path)
 	{
@@ -41,8 +41,8 @@ public partial class EndsInDirectorySeparatorTests
 		await That(result).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EndsInDirectorySeparator_Span_WithTrailingAltDirectorySeparator_ShouldReturnTrue(
 			string path)
 	{
@@ -53,8 +53,8 @@ public partial class EndsInDirectorySeparatorTests
 		await That(result).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EndsInDirectorySeparator_Span_WithTrailingDirectorySeparator_ShouldReturnTrue(
 			string path)
 	{
@@ -65,9 +65,9 @@ public partial class EndsInDirectorySeparatorTests
 		await That(result).IsTrue();
 	}
 
-	[Theory]
-	[InlineAutoData('.')]
-	[InlineAutoData('a')]
+	[Test]
+	[AutoArguments('.')]
+	[AutoArguments('a')]
 	public async Task EndsInDirectorySeparator_WithoutTrailingDirectorySeparator_ShouldReturnFalse(
 			char lastCharacter, string path)
 	{
@@ -78,8 +78,8 @@ public partial class EndsInDirectorySeparatorTests
 		await That(result).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EndsInDirectorySeparator_WithTrailingAltDirectorySeparator_ShouldReturnTrue(
 		string path)
 	{
@@ -90,8 +90,8 @@ public partial class EndsInDirectorySeparatorTests
 		await That(result).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EndsInDirectorySeparator_WithTrailingDirectorySeparator_ShouldReturnTrue(
 		string path)
 	{

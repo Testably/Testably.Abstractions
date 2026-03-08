@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class OpenTextTests
+public class OpenTextTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task OpenText_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
@@ -20,8 +20,8 @@ public partial class OpenTextTests
 			.WithHResult(-2147024894);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task OpenText_ShouldReturnFileContent(
 		string path, string contents)
 	{

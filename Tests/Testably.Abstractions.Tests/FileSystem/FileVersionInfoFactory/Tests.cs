@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileVersionInfoFactory;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetVersionInfo_ArbitraryFile_ShouldHaveFileNameSet(string fileName)
 	{
 		string filePath = FileSystem.Path.GetFullPath(fileName);
@@ -22,8 +22,8 @@ public partial class Tests
 		await That(result.FileName).IsEqualTo(filePath);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetVersionInfo_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{

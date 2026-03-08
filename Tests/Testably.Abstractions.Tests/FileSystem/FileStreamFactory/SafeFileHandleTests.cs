@@ -7,10 +7,10 @@ using Testably.Abstractions.Testing.FileSystem;
 namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;
 
 [FileSystemTests]
-public partial class SafeFileHandleTests
+public class SafeFileHandleTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_SafeFileHandle_InvalidHandle_ShouldThrowArgumentException(
 		string filename)
 	{
@@ -27,8 +27,8 @@ public partial class SafeFileHandleTests
 			.WithParamName("handle");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_SafeFileHandle_InvalidHandle_WithBufferSize_ShouldThrowArgumentException(
 		string filename)
 	{
@@ -45,8 +45,8 @@ public partial class SafeFileHandleTests
 			.WithParamName("handle");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		New_SafeFileHandle_InvalidHandle_WithBufferSizeAndAsync_ShouldThrowArgumentException(
 			string filename)
@@ -64,8 +64,8 @@ public partial class SafeFileHandleTests
 			.WithParamName("handle");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_SafeFileHandle_Valid_ShouldCreateWritableStream(
 		string filename, string contents)
 	{
@@ -98,8 +98,8 @@ public partial class SafeFileHandleTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_SafeFileHandle_Valid_WithBufferSize_ShouldCreateWritableStream(
 		string filename, string contents)
 	{
@@ -133,8 +133,8 @@ public partial class SafeFileHandleTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		New_SafeFileHandle_Valid_WithBufferSizeAndAsync_ShouldCreateWritableStream(
 			string filename, string contents)

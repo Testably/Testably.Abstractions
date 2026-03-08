@@ -4,10 +4,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
 [FileSystemTests]
-public partial class CreateAsSymbolicLinkTests
+public class CreateAsSymbolicLinkTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateAsSymbolicLink_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
 	{
@@ -20,8 +20,8 @@ public partial class CreateAsSymbolicLinkTests
 			.HasFlag(FileAttributes.ReparsePoint);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
 	{

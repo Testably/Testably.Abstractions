@@ -1,9 +1,9 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class GetFileNameTests
+public class GetFileNameTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task GetFileName_EmptyString_ShouldReturnEmptyString()
 	{
 		string result = FileSystem.Path.GetFileName(string.Empty);
@@ -11,7 +11,7 @@ public partial class GetFileNameTests
 		await That(result).IsEqualTo(string.Empty);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetFileName_Null_ShouldReturnNull()
 	{
 		string? result = FileSystem.Path.GetFileName(null);
@@ -19,8 +19,8 @@ public partial class GetFileNameTests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFileName_ShouldReturnFilename(string directory, string filename,
 		string extension)
 	{
@@ -33,8 +33,8 @@ public partial class GetFileNameTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFileName_Span_ShouldReturnDirectory(
 		string directory, string filename,
 		string extension)
@@ -48,11 +48,11 @@ public partial class GetFileNameTests
 	}
 #endif
 
-	[Theory]
-	[InlineData("foo/", "", TestOS.All)]
-	[InlineData("bar\\", "", TestOS.Windows)]
-	[InlineData("/foo", "foo", TestOS.All)]
-	[InlineData("\\bar", "bar", TestOS.Windows)]
+	[Test]
+	[Arguments("foo/", "", TestOS.All)]
+	[Arguments("bar\\", "", TestOS.Windows)]
+	[Arguments("/foo", "foo", TestOS.All)]
+	[Arguments("\\bar", "bar", TestOS.Windows)]
 	public async Task GetFileName_SpecialCases_ShouldReturnExpectedResult(
 		string? path, string? expected, TestOS operatingSystem)
 	{
@@ -63,8 +63,8 @@ public partial class GetFileNameTests
 		await That(result).IsEqualTo(expected);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFileName_WithoutDirectory_ShouldReturnFilename(string filename)
 	{
 		string result = FileSystem.Path.GetFileName(filename);

@@ -6,8 +6,8 @@ namespace Testably.Abstractions.Testing.Tests.Storage;
 
 public class InMemoryLocationTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Equals_AsObject_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
 		string path1, string path2)
 	{
@@ -20,8 +20,8 @@ public class InMemoryLocationTests
 		await That(result).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Equals_ForDummyLocation_ShouldCompareFullPath(
 		string path)
 	{
@@ -34,8 +34,8 @@ public class InMemoryLocationTests
 		await That(result).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Equals_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
 		string path)
 	{
@@ -51,8 +51,8 @@ public class InMemoryLocationTests
 		await That(result).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Equals_Null_ShouldReturnFalse(string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(new MockFileSystem(), null, path);
@@ -62,8 +62,8 @@ public class InMemoryLocationTests
 		await That(result).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Equals_Object_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
 		string path)
 	{
@@ -79,8 +79,8 @@ public class InMemoryLocationTests
 		await That(result).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Equals_Object_Null_ShouldReturnFalse(string path)
 	{
 		object location = InMemoryLocation.New(new MockFileSystem(), null, path);
@@ -90,8 +90,8 @@ public class InMemoryLocationTests
 		await That(result).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Equals_Object_SameInstance_ShouldReturnTrue(string path)
 	{
 		object location = InMemoryLocation.New(new MockFileSystem(), null, path);
@@ -102,8 +102,8 @@ public class InMemoryLocationTests
 		await That(result).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Equals_SameInstance_ShouldReturnTrue(string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(new MockFileSystem(), null, path);
@@ -113,7 +113,7 @@ public class InMemoryLocationTests
 		await That(result).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetParent_Root_ShouldReturnNull()
 	{
 		MockFileSystem fileSystem = new();
@@ -125,7 +125,7 @@ public class InMemoryLocationTests
 		await That(result).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_EmptyPath_ShouldThrowArgumentException()
 	{
 		void Act()
@@ -136,8 +136,8 @@ public class InMemoryLocationTests
 		await That(Act).ThrowsExactly<ArgumentException>().WithHResult(-2147024809);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ToString_ShouldReturnPath(string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(new MockFileSystem(), null, path);

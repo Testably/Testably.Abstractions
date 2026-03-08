@@ -2,8 +2,8 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public partial class NotificationHandlerExtensionsTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithExecuteWhileWaiting_OnChanged_File_OtherEvent_ShouldNotTrigger(
 		string path)
 	{
@@ -24,8 +24,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithExecuteWhileWaiting_OnChanged_File_ShouldConsiderBasePath(string path1,
 		string path2)
 	{
@@ -48,13 +48,13 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[InlineData(".", "foo", "f*o", true)]
-	[InlineData(".", "foo", "*fo", false)]
-	[InlineData("bar", "foo", "f*o", true)]
-	[InlineData("bar", "foo", "baz/f*o", false)]
-	[InlineData("bar", "foo", "/f*o", false)]
-	[InlineData("bar", "foo", "**/f*o", true)]
+	[Test]
+	[Arguments(".", "foo", "f*o", true)]
+	[Arguments(".", "foo", "*fo", false)]
+	[Arguments("bar", "foo", "f*o", true)]
+	[Arguments("bar", "foo", "baz/f*o", false)]
+	[Arguments("bar", "foo", "/f*o", false)]
+	[Arguments("bar", "foo", "**/f*o", true)]
 	public async Task WithExecuteWhileWaiting_OnChanged_File_ShouldConsiderGlobPattern(
 		string directoryPath, string fileName, string globPattern, bool expectedResult)
 	{
@@ -86,8 +86,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithExecuteWhileWaiting_OnChanged_File_ShouldNotifyWhenFileIsChanged(
 		string path)
 	{
@@ -105,9 +105,9 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsTrue();
 	}
 
-	[Theory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
+	[Test]
+	[AutoArguments(false)]
+	[AutoArguments(true)]
 	public async Task WithExecuteWhileWaiting_OnChanged_File_ShouldUsePredicate(bool expectedResult,
 		string path)
 	{
@@ -138,8 +138,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithExecuteWhileWaiting_OnCreated_Directory_OtherEvent_ShouldNotTrigger(
 		string path)
 	{
@@ -161,8 +161,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithExecuteWhileWaiting_OnCreated_Directory_ShouldConsiderBasePath(
 		string path1, string path2)
 	{
@@ -183,13 +183,13 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[InlineData(".", "foo", "f*o", true)]
-	[InlineData(".", "foo", "*fo", false)]
-	[InlineData("bar", "foo", "f*o", true)]
-	[InlineData("bar", "foo", "baz/f*o", false)]
-	[InlineData("bar", "foo", "/f*o", false)]
-	[InlineData("bar", "foo", "**/f*o", true)]
+	[Test]
+	[Arguments(".", "foo", "f*o", true)]
+	[Arguments(".", "foo", "*fo", false)]
+	[Arguments("bar", "foo", "f*o", true)]
+	[Arguments("bar", "foo", "baz/f*o", false)]
+	[Arguments("bar", "foo", "/f*o", false)]
+	[Arguments("bar", "foo", "**/f*o", true)]
 	public async Task WithExecuteWhileWaiting_OnCreated_Directory_ShouldConsiderGlobPattern(
 		string directoryPath, string fileName, string globPattern, bool expectedResult)
 	{
@@ -221,8 +221,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WithExecuteWhileWaiting_OnCreated_Directory_ShouldNotifyWhenDirectoryIsCreated(string path)
 	{
@@ -239,9 +239,9 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsTrue();
 	}
 
-	[Theory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
+	[Test]
+	[AutoArguments(false)]
+	[AutoArguments(true)]
 	public async Task WithExecuteWhileWaiting_OnCreated_Directory_ShouldUsePredicate(
 		bool expectedResult, string path)
 	{
@@ -271,8 +271,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithExecuteWhileWaiting_OnCreated_File_OtherEvent_ShouldNotTrigger(
 		string path)
 	{
@@ -294,8 +294,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithExecuteWhileWaiting_OnCreated_File_ShouldConsiderBasePath(string path1,
 		string path2)
 	{
@@ -316,13 +316,13 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[InlineData(".", "foo", "f*o", true)]
-	[InlineData(".", "foo", "*fo", false)]
-	[InlineData("bar", "foo", "f*o", true)]
-	[InlineData("bar", "foo", "baz/f*o", false)]
-	[InlineData("bar", "foo", "/f*o", false)]
-	[InlineData("bar", "foo", "**/f*o", true)]
+	[Test]
+	[Arguments(".", "foo", "f*o", true)]
+	[Arguments(".", "foo", "*fo", false)]
+	[Arguments("bar", "foo", "f*o", true)]
+	[Arguments("bar", "foo", "baz/f*o", false)]
+	[Arguments("bar", "foo", "/f*o", false)]
+	[Arguments("bar", "foo", "**/f*o", true)]
 	public async Task WithExecuteWhileWaiting_OnCreated_File_ShouldConsiderGlobPattern(
 		string directoryPath, string fileName, string globPattern, bool expectedResult)
 	{
@@ -354,8 +354,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithExecuteWhileWaiting_OnCreated_File_ShouldNotifyWhenFileIsCreated(
 		string path)
 	{
@@ -372,9 +372,9 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsTrue();
 	}
 
-	[Theory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
+	[Test]
+	[AutoArguments(false)]
+	[AutoArguments(true)]
 	public async Task WithExecuteWhileWaiting_OnCreated_File_ShouldUsePredicate(bool expectedResult,
 		string path)
 	{
@@ -404,8 +404,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithExecuteWhileWaiting_OnDeleted_Directory_OtherEvent_ShouldNotTrigger(
 		string path)
 	{
@@ -426,8 +426,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithExecuteWhileWaiting_OnDeleted_Directory_ShouldConsiderBasePath(
 		string path1, string path2)
 	{
@@ -450,13 +450,13 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[InlineData(".", "foo", "f*o", true)]
-	[InlineData(".", "foo", "*fo", false)]
-	[InlineData("bar", "foo", "f*o", true)]
-	[InlineData("bar", "foo", "baz/f*o", false)]
-	[InlineData("bar", "foo", "/f*o", false)]
-	[InlineData("bar", "foo", "**/f*o", true)]
+	[Test]
+	[Arguments(".", "foo", "f*o", true)]
+	[Arguments(".", "foo", "*fo", false)]
+	[Arguments("bar", "foo", "f*o", true)]
+	[Arguments("bar", "foo", "baz/f*o", false)]
+	[Arguments("bar", "foo", "/f*o", false)]
+	[Arguments("bar", "foo", "**/f*o", true)]
 	public async Task WithExecuteWhileWaiting_OnDeleted_Directory_ShouldConsiderGlobPattern(
 		string basePath, string directoryName, string globPattern, bool expectedResult)
 	{
@@ -489,8 +489,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WithExecuteWhileWaiting_OnDeleted_Directory_ShouldNotifyWhenDirectoryIsDeleted(string path)
 	{
@@ -508,9 +508,9 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsTrue();
 	}
 
-	[Theory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
+	[Test]
+	[AutoArguments(false)]
+	[AutoArguments(true)]
 	public async Task WithExecuteWhileWaiting_OnDeleted_Directory_ShouldUsePredicate(
 		bool expectedResult, string path)
 	{
@@ -541,8 +541,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithExecuteWhileWaiting_OnDeleted_File_OtherEvent_ShouldNotTrigger(
 		string path)
 	{
@@ -563,8 +563,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithExecuteWhileWaiting_OnDeleted_File_ShouldConsiderBasePath(string path1,
 		string path2)
 	{
@@ -587,13 +587,13 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsFalse();
 	}
 
-	[Theory]
-	[InlineData(".", "foo", "f*o", true)]
-	[InlineData(".", "foo", "*fo", false)]
-	[InlineData("bar", "foo", "f*o", true)]
-	[InlineData("bar", "foo", "baz/f*o", false)]
-	[InlineData("bar", "foo", "/f*o", false)]
-	[InlineData("bar", "foo", "**/f*o", true)]
+	[Test]
+	[Arguments(".", "foo", "f*o", true)]
+	[Arguments(".", "foo", "*fo", false)]
+	[Arguments("bar", "foo", "f*o", true)]
+	[Arguments("bar", "foo", "baz/f*o", false)]
+	[Arguments("bar", "foo", "/f*o", false)]
+	[Arguments("bar", "foo", "**/f*o", true)]
 	public async Task WithExecuteWhileWaiting_OnDeleted_File_ShouldConsiderGlobPattern(
 		string directoryPath, string fileName, string globPattern, bool expectedResult)
 	{
@@ -626,8 +626,8 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WithExecuteWhileWaiting_OnDeleted_File_ShouldNotifyWhenFileIsDeleted(
 		string path)
 	{
@@ -645,9 +645,9 @@ public partial class NotificationHandlerExtensionsTests
 		await That(isNotified).IsTrue();
 	}
 
-	[Theory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
+	[Test]
+	[AutoArguments(false)]
+	[AutoArguments(true)]
 	public async Task WithExecuteWhileWaiting_OnDeleted_File_ShouldUsePredicate(bool expectedResult,
 		string path)
 	{

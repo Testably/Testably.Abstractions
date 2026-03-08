@@ -5,10 +5,10 @@ using System.Text;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class AppendAllTextTests
+public class AppendAllTextTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_ExistingFile_ShouldAppendLinesToFile(
 		string path, string previousContents, string contents)
 	{
@@ -20,8 +20,8 @@ public partial class AppendAllTextTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(previousContents + contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingPath, string fileName, string contents)
 	{
@@ -35,8 +35,8 @@ public partial class AppendAllTextTests
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_MissingFile_ShouldCreateFile(
 		string path, string contents)
 	{
@@ -46,8 +46,8 @@ public partial class AppendAllTextTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_MissingFile_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
@@ -59,8 +59,8 @@ public partial class AppendAllTextTests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(expectedBytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_ShouldAdjustTimes(string path, string contents)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -92,8 +92,8 @@ public partial class AppendAllTextTests
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_ShouldNotEndWithNewline(string path)
 	{
 		string contents = "foo";
@@ -104,8 +104,8 @@ public partial class AppendAllTextTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		AppendAllText_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path)
@@ -123,8 +123,8 @@ public partial class AppendAllTextTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_WhenFileIsHidden_ShouldNotThrowException(
 		string path, string contents)
 	{
@@ -139,8 +139,8 @@ public partial class AppendAllTextTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Theory]
-	[ClassData(typeof(TestDataGetEncodingDifference))]
+	[Test]
+	[MethodDataSource(typeof(TestData), nameof(TestData.GetEncodingDifference))]
 	public async Task AppendAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding)
 	{
@@ -152,8 +152,8 @@ public partial class AppendAllTextTests
 		await That(result).IsNotEqualTo([contents]);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_WithoutEncoding_ShouldUseUtf8(
 		string path)
 	{
@@ -166,8 +166,8 @@ public partial class AppendAllTextTests
 	}
 
 #if FEATURE_FILE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_Span_ExistingFile_ShouldAppendLinesToFile(
 		string path, string previousContents, string contents)
 	{
@@ -179,8 +179,8 @@ public partial class AppendAllTextTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(previousContents + contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_Span_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingPath, string fileName, string contents)
 	{
@@ -194,8 +194,8 @@ public partial class AppendAllTextTests
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_Span_MissingFile_ShouldCreateFile(
 		string path, string contents)
 	{
@@ -205,8 +205,8 @@ public partial class AppendAllTextTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_Span_MissingFile_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
@@ -218,8 +218,8 @@ public partial class AppendAllTextTests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(expectedBytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_Span_ShouldAdjustTimes(string path, string contents)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -251,8 +251,8 @@ public partial class AppendAllTextTests
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_Span_ShouldNotEndWithNewline(string path)
 	{
 		string contents = "foo";
@@ -263,8 +263,8 @@ public partial class AppendAllTextTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		AppendAllText_Span_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path)
@@ -281,8 +281,8 @@ public partial class AppendAllTextTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_Span_WhenFileIsHidden_ShouldNotThrowException(
 		string path, string contents)
 	{
@@ -297,8 +297,8 @@ public partial class AppendAllTextTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Theory]
-	[ClassData(typeof(TestDataGetEncodingDifference))]
+	[Test]
+	[MethodDataSource(typeof(TestData), nameof(TestData.GetEncodingDifference))]
 	public async Task AppendAllText_Span_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding)
 	{
@@ -310,8 +310,8 @@ public partial class AppendAllTextTests
 		await That(result).IsNotEqualTo([contents]);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllText_Span_WithoutEncoding_ShouldUseUtf8(
 		string path)
 	{

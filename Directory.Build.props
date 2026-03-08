@@ -6,7 +6,7 @@
 		<RepositoryUrl>https://github.com/Testably/Testably.Abstractions.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
-	
+
 	<PropertyGroup>
 		<AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)/strongname.snk</AssemblyOriginatorKeyFile>
 		<SignAssembly>True</SignAssembly>

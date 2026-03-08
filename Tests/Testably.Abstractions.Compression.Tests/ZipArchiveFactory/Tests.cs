@@ -1,13 +1,14 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
 using System.Text;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveFactory;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task New_ShouldOpenWithReadMode()
 	{
 		FileSystem.Initialize()
@@ -25,7 +26,7 @@ public partial class Tests
 		await That(archive.Entries).HasCount().EqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_UpdateMode_ReadOnlyStream_ShouldThrowArgumentException()
 	{
 		FileSystem.Initialize()
@@ -46,7 +47,7 @@ public partial class Tests
 			.WithHResult(-2147024809);
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_UpdateMode_ShouldOpenArchive()
 	{
 		FileSystem.Initialize()
@@ -65,9 +66,9 @@ public partial class Tests
 		await That(archive.Entries).HasCount().EqualTo(1);
 	}
 
-	[Theory]
-	[InlineData(true)]
-	[InlineData(false)]
+	[Test]
+	[Arguments(true)]
+	[Arguments(false)]
 	public async Task New_WhenLeaveOpen_ShouldDisposeStreamWhenDisposingArchive(bool leaveOpen)
 	{
 		FileSystem.Initialize()
@@ -88,8 +89,8 @@ public partial class Tests
 		await That(Act).Throws<ObjectDisposedException>().OnlyIf(!leaveOpen);
 	}
 
-	[Theory]
-	[MemberData(nameof(EntryNameEncoding))]
+	[Test]
+	[MethodDataSource(nameof(EntryNameEncoding))]
 	public async Task New_WithEntryNameEncoding_ShouldUseEncoding(
 		string entryName, Encoding encoding, bool encodedCorrectly)
 	{
@@ -119,23 +120,12 @@ public partial class Tests
 
 	#region Helpers
 
-	#pragma warning disable MA0018
-	public static TheoryData<string, Encoding, bool> EntryNameEncoding()
+	public static IEnumerable<Func<(string, Encoding, bool)>> EntryNameEncoding()
 	{
 		// ReSharper disable StringLiteralTypo
-		TheoryData<string, Encoding, bool> theoryData = new()
-		{
-			{
-				"Dans mes rêves.mp3", Encoding.Default, true
-			},
-			{
-				"Dans mes rêves.mp3", Encoding.ASCII, false
-			},
-		};
-		// ReSharper restore StringLiteralTypo
-		return theoryData;
+		yield return () => ("Dans mes rêves.mp3", Encoding.Default, true);
+		yield return () => ("Dans mes rêves.mp3", Encoding.ASCII, false);
 	}
-	#pragma warning restore MA0018
 
 	#endregion
 }

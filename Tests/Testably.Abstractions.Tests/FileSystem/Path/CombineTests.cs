@@ -1,10 +1,10 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class CombineTests
+public class CombineTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_2Paths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string path)
 	{
@@ -15,8 +15,8 @@ public partial class CombineTests
 		await That(result2).IsEqualTo(path);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_2Paths_OneNull_ShouldThrowArgumentNullException(string pathA)
 	{
 		void Act1() =>
@@ -31,8 +31,8 @@ public partial class CombineTests
 			.WithHResult(-2147467261);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_2Paths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2)
 	{
@@ -44,14 +44,14 @@ public partial class CombineTests
 		await That(result).IsEqualTo(path2);
 	}
 
-	[Theory]
-	[InlineData("", "", "")]
-	[InlineData("/foo/", "/bar/", "/bar/")]
-	[InlineData("foo/", "/bar", "/bar")]
-	[InlineData("foo/", "bar", "foo/bar")]
-	[InlineData("foo", "/bar", "/bar")]
-	[InlineData("foo", "bar", "foo/bar")]
-	[InlineData("/foo", "bar/", "/foo/bar/")]
+	[Test]
+	[Arguments("", "", "")]
+	[Arguments("/foo/", "/bar/", "/bar/")]
+	[Arguments("foo/", "/bar", "/bar")]
+	[Arguments("foo/", "bar", "foo/bar")]
+	[Arguments("foo", "/bar", "/bar")]
+	[Arguments("foo", "bar", "foo/bar")]
+	[Arguments("/foo", "bar/", "/foo/bar/")]
 	public async Task Combine_2Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string expectedResult)
 	{
@@ -64,10 +64,10 @@ public partial class CombineTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[InlineAutoData]
-	[InlineAutoData(" ")]
-	[InlineAutoData("foo", " ")]
+	[Test]
+	[AutoArguments]
+	[AutoArguments(" ")]
+	[AutoArguments("foo", " ")]
 	public async Task Combine_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2)
 	{
@@ -79,8 +79,8 @@ public partial class CombineTests
 		await That(result).IsEqualTo(expectedPath);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_3Paths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string pathA, string pathB)
 	{
@@ -95,8 +95,8 @@ public partial class CombineTests
 		await That(result3).IsEqualTo(expectedPath);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_3Paths_OneNull_ShouldThrowArgumentNullException(string pathA,
 		string pathB)
 	{
@@ -117,8 +117,8 @@ public partial class CombineTests
 			.WithHResult(-2147467261);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_3Paths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3)
 	{
@@ -131,15 +131,15 @@ public partial class CombineTests
 		await That(result).IsEqualTo(path3);
 	}
 
-	[Theory]
-	[InlineData("", "", "", "")]
-	[InlineData("/foo/", "/bar/", "/baz/", "/baz/")]
-	[InlineData("foo/", "/bar/", "/baz", "/baz")]
-	[InlineData("foo/", "bar", "/baz", "/baz")]
-	[InlineData("foo", "/bar", "/baz", "/baz")]
-	[InlineData("foo", "/bar/", "baz", "/bar/baz")]
-	[InlineData("foo", "bar", "baz", "foo/bar/baz")]
-	[InlineData("/foo", "bar", "baz/", "/foo/bar/baz/")]
+	[Test]
+	[Arguments("", "", "", "")]
+	[Arguments("/foo/", "/bar/", "/baz/", "/baz/")]
+	[Arguments("foo/", "/bar/", "/baz", "/baz")]
+	[Arguments("foo/", "bar", "/baz", "/baz")]
+	[Arguments("foo", "/bar", "/baz", "/baz")]
+	[Arguments("foo", "/bar/", "baz", "/bar/baz")]
+	[Arguments("foo", "bar", "baz", "foo/bar/baz")]
+	[Arguments("/foo", "bar", "baz/", "/foo/bar/baz/")]
 	public async Task Combine_3Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string expectedResult)
 	{
@@ -153,11 +153,11 @@ public partial class CombineTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[InlineAutoData]
-	[InlineAutoData(" ")]
-	[InlineAutoData("foo", " ")]
-	[InlineAutoData("foo", "bar", " ")]
+	[Test]
+	[AutoArguments]
+	[AutoArguments(" ")]
+	[AutoArguments("foo", " ")]
+	[AutoArguments("foo", "bar", " ")]
 	public async Task Combine_3Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3)
 	{
@@ -170,8 +170,8 @@ public partial class CombineTests
 		await That(result).IsEqualTo(expectedPath);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_4Paths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string pathA, string pathB, string pathC)
 	{
@@ -188,8 +188,8 @@ public partial class CombineTests
 		await That(result4).IsEqualTo(expectedPath);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_4Paths_OneNull_ShouldThrowArgumentNullException(string pathA,
 		string pathB,
 		string pathC)
@@ -216,8 +216,8 @@ public partial class CombineTests
 			.WithHResult(-2147467261);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_4Paths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3, string path4)
 	{
@@ -231,15 +231,15 @@ public partial class CombineTests
 		await That(result).IsEqualTo(path4);
 	}
 
-	[Theory]
-	[InlineData("", "", "", "", "")]
-	[InlineData("/foo/", "/bar/", "/baz/", "/muh/", "/muh/")]
-	[InlineData("foo/", "/bar/", "/baz/", "/muh", "/muh")]
-	[InlineData("foo/", "bar", "/baz", "/muh", "/muh")]
-	[InlineData("foo", "/bar", "/baz", "/muh", "/muh")]
-	[InlineData("foo", "/bar/", "baz/", "muh", "/bar/baz/muh")]
-	[InlineData("foo", "bar", "baz", "muh", "foo/bar/baz/muh")]
-	[InlineData("/foo", "bar", "baz", "muh/", "/foo/bar/baz/muh/")]
+	[Test]
+	[Arguments("", "", "", "", "")]
+	[Arguments("/foo/", "/bar/", "/baz/", "/muh/", "/muh/")]
+	[Arguments("foo/", "/bar/", "/baz/", "/muh", "/muh")]
+	[Arguments("foo/", "bar", "/baz", "/muh", "/muh")]
+	[Arguments("foo", "/bar", "/baz", "/muh", "/muh")]
+	[Arguments("foo", "/bar/", "baz/", "muh", "/bar/baz/muh")]
+	[Arguments("foo", "bar", "baz", "muh", "foo/bar/baz/muh")]
+	[Arguments("/foo", "bar", "baz", "muh/", "/foo/bar/baz/muh/")]
 	public async Task Combine_4Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string path4, string expectedResult)
 	{
@@ -254,12 +254,12 @@ public partial class CombineTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[InlineAutoData]
-	[InlineAutoData(" ")]
-	[InlineAutoData("foo", " ")]
-	[InlineAutoData("foo", "bar", " ")]
-	[InlineAutoData("foo", "bar", "baz", " ")]
+	[Test]
+	[AutoArguments]
+	[AutoArguments(" ")]
+	[AutoArguments("foo", " ")]
+	[AutoArguments("foo", "bar", " ")]
+	[AutoArguments("foo", "bar", "baz", " ")]
 	public async Task Combine_4Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4)
 	{
@@ -273,7 +273,7 @@ public partial class CombineTests
 		await That(result).IsEqualTo(expectedPath);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Combine_ParamPaths_Null_ShouldThrowArgumentNullException()
 	{
 		void Act() =>
@@ -283,8 +283,8 @@ public partial class CombineTests
 			.WithHResult(-2147467261);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_ParamPaths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string path1, string path2, string path3, string path4)
 	{
@@ -308,8 +308,8 @@ public partial class CombineTests
 		await That(result5).IsEqualTo(expectedPath);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_ParamPaths_OneNull_ShouldThrowArgumentNullException(
 		string pathA, string pathB, string pathC, string pathD)
 	{
@@ -340,8 +340,8 @@ public partial class CombineTests
 			.WithHResult(-2147467261);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_ParamPaths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3, string path4, string path5)
 	{
@@ -356,15 +356,15 @@ public partial class CombineTests
 		await That(result).IsEqualTo(path5);
 	}
 
-	[Theory]
-	[InlineData("", "", "", "", "", "")]
-	[InlineData("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/maeh/")]
-	[InlineData("foo/", "/bar/", "/baz/", "/muh", "/maeh", "/maeh")]
-	[InlineData("foo/", "bar", "/baz", "/muh", "/maeh", "/maeh")]
-	[InlineData("foo", "/bar", "/baz", "/muh", "/maeh", "/maeh")]
-	[InlineData("foo", "/bar/", "baz/", "muh/", "maeh", "/bar/baz/muh/maeh")]
-	[InlineData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
-	[InlineData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
+	[Test]
+	[Arguments("", "", "", "", "", "")]
+	[Arguments("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/maeh/")]
+	[Arguments("foo/", "/bar/", "/baz/", "/muh", "/maeh", "/maeh")]
+	[Arguments("foo/", "bar", "/baz", "/muh", "/maeh", "/maeh")]
+	[Arguments("foo", "/bar", "/baz", "/muh", "/maeh", "/maeh")]
+	[Arguments("foo", "/bar/", "baz/", "muh/", "maeh", "/bar/baz/muh/maeh")]
+	[Arguments("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
+	[Arguments("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
 	public async Task Combine_ParamPaths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string path4, string path5, string expectedResult)
 	{
@@ -380,13 +380,13 @@ public partial class CombineTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[InlineAutoData]
-	[InlineAutoData(" ")]
-	[InlineAutoData("foo", " ")]
-	[InlineAutoData("foo", "bar", " ")]
-	[InlineAutoData("foo", "bar", "baz", " ")]
-	[InlineAutoData("foo", "bar", "baz", "muh", " ")]
+	[Test]
+	[AutoArguments]
+	[AutoArguments(" ")]
+	[AutoArguments("foo", " ")]
+	[AutoArguments("foo", "bar", " ")]
+	[AutoArguments("foo", "bar", "baz", " ")]
+	[AutoArguments("foo", "bar", "baz", "muh", " ")]
 	public async Task Combine_ParamPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4, string path5)
 	{
@@ -402,8 +402,8 @@ public partial class CombineTests
 	}
 
 #if FEATURE_PATH_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_ReadOnlySpanPaths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string path1, string path2, string path3, string path4)
 	{
@@ -427,8 +427,8 @@ public partial class CombineTests
 		await That(result5).IsEqualTo(expectedPath);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_ReadOnlySpanPaths_OneNull_ShouldThrowArgumentNullException(
 		string pathA, string pathB, string pathC, string pathD)
 	{
@@ -450,8 +450,8 @@ public partial class CombineTests
 		await That(Act5).Throws<ArgumentNullException>().WithParamName("paths").And.WithHResult(-2147467261);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Combine_ReadOnlySpanPaths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3, string path4, string path5)
 	{
@@ -466,15 +466,15 @@ public partial class CombineTests
 		await That(result).IsEqualTo(path5);
 	}
 
-	[Theory]
-	[InlineData("", "", "", "", "", "")]
-	[InlineData("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/maeh/")]
-	[InlineData("foo/", "/bar/", "/baz/", "/muh", "/maeh", "/maeh")]
-	[InlineData("foo/", "bar", "/baz", "/muh", "/maeh", "/maeh")]
-	[InlineData("foo", "/bar", "/baz", "/muh", "/maeh", "/maeh")]
-	[InlineData("foo", "/bar/", "baz/", "muh/", "maeh", "/bar/baz/muh/maeh")]
-	[InlineData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
-	[InlineData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
+	[Test]
+	[Arguments("", "", "", "", "", "")]
+	[Arguments("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/maeh/")]
+	[Arguments("foo/", "/bar/", "/baz/", "/muh", "/maeh", "/maeh")]
+	[Arguments("foo/", "bar", "/baz", "/muh", "/maeh", "/maeh")]
+	[Arguments("foo", "/bar", "/baz", "/muh", "/maeh", "/maeh")]
+	[Arguments("foo", "/bar/", "baz/", "muh/", "maeh", "/bar/baz/muh/maeh")]
+	[Arguments("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
+	[Arguments("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
 	public async Task Combine_ReadOnlySpanPaths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string path4, string path5, string expectedResult)
 	{
@@ -490,13 +490,13 @@ public partial class CombineTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Theory]
-	[InlineAutoData]
-	[InlineAutoData(" ")]
-	[InlineAutoData("foo", " ")]
-	[InlineAutoData("foo", "bar", " ")]
-	[InlineAutoData("foo", "bar", "baz", " ")]
-	[InlineAutoData("foo", "bar", "baz", "muh", " ")]
+	[Test]
+	[AutoArguments]
+	[AutoArguments(" ")]
+	[AutoArguments("foo", " ")]
+	[AutoArguments("foo", "bar", " ")]
+	[AutoArguments("foo", "bar", "baz", " ")]
+	[AutoArguments("foo", "bar", "baz", "muh", " ")]
 	public async Task Combine_ReadOnlySpanPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4, string path5)
 	{

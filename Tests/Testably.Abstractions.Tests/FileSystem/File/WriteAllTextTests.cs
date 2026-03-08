@@ -5,10 +5,10 @@ using Testably.Abstractions.Testing.FileSystem;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class WriteAllTextTests
+public class WriteAllTextTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directory, string path)
 	{
@@ -24,8 +24,8 @@ public partial class WriteAllTextTests
 			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(fullPath)}'");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
 	{
@@ -37,8 +37,8 @@ public partial class WriteAllTextTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_ShouldAdjustTimes(string path, string contents)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -70,8 +70,8 @@ public partial class WriteAllTextTests
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
@@ -83,8 +83,8 @@ public partial class WriteAllTextTests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(expectedBytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_ShouldCreateFileWithText(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -93,8 +93,8 @@ public partial class WriteAllTextTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_SpecialCharacters_ShouldReturnSameText(string path)
 	{
 		char[] specialCharacters =
@@ -119,8 +119,8 @@ public partial class WriteAllTextTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_WhenContentIsNull_ShouldNotThrowException(string path)
 	{
 		void Act()
@@ -131,8 +131,8 @@ public partial class WriteAllTextTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllText_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path)
@@ -149,8 +149,8 @@ public partial class WriteAllTextTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllText_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string path, string contents)
@@ -168,7 +168,7 @@ public partial class WriteAllTextTests
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		WriteAllText_WithoutAccessRightsToParentDirectory_ShouldThrowUnauthorizedAccessException()
 	{
@@ -196,8 +196,8 @@ public partial class WriteAllTextTests
 			.WithMessage($"Access to the path '{path}' is denied.");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_WithoutEncoding_ShouldUseUtf8(
 		string path)
 	{
@@ -210,8 +210,8 @@ public partial class WriteAllTextTests
 	}
 
 #if FEATURE_FILE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_Span_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directory, string path)
 	{
@@ -227,8 +227,8 @@ public partial class WriteAllTextTests
 			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(fullPath)}'");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_Span_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
 	{
@@ -240,8 +240,8 @@ public partial class WriteAllTextTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_Span_ShouldAdjustTimes(string path, string contents)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -273,8 +273,8 @@ public partial class WriteAllTextTests
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_Span_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
@@ -286,8 +286,8 @@ public partial class WriteAllTextTests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(expectedBytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_Span_ShouldCreateFileWithText(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents.AsSpan());
@@ -296,8 +296,8 @@ public partial class WriteAllTextTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_Span_SpecialCharacters_ShouldReturnSameText(string path)
 	{
 		char[] specialCharacters =
@@ -322,8 +322,8 @@ public partial class WriteAllTextTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllText_Span_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path)
@@ -340,8 +340,8 @@ public partial class WriteAllTextTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllText_Span_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string path, string contents)
@@ -359,8 +359,8 @@ public partial class WriteAllTextTests
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_Span_WithoutEncoding_ShouldUseUtf8(
 		string path)
 	{

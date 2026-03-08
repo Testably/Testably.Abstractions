@@ -4,10 +4,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
 [FileSystemTests]
-public partial class UnixFileModeTests
+public class UnixFileModeTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task UnixFileMode_MissingFile_ShouldBeInitializedToMinusOne(
 		string path)
 	{
@@ -17,8 +17,8 @@ public partial class UnixFileModeTests
 		await That(fileSystemInfo.UnixFileMode).IsEqualTo(expected);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task UnixFileMode_SetterShouldThrowPlatformNotSupportedException_OnWindows(
 		string path, UnixFileMode unixFileMode)
 	{
@@ -36,8 +36,8 @@ public partial class UnixFileModeTests
 		await That(Act).Throws<PlatformNotSupportedException>().WithHResult(-2146233031);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task UnixFileMode_ShouldBeInitializedCorrectly(
 		string path)
 	{
@@ -53,8 +53,8 @@ public partial class UnixFileModeTests
 		await That(fileSystemInfo.UnixFileMode).IsEqualTo(expected);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task UnixFileMode_ShouldBeSettableOnLinux(
 		string path, UnixFileMode unixFileMode)
 	{

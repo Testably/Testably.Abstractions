@@ -5,7 +5,7 @@ using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
-[Collection(nameof(IDirectoryCleaner))]
+[NotInParallel(nameof(IDirectoryCleaner))]
 public class DirectoryCleanerTests
 {
 	#region Test Setup
@@ -17,8 +17,8 @@ public class DirectoryCleanerTests
 
 	#endregion
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Dispose_PermanentFailure_ShouldNotThrowException(
 		Exception exception)
 	{
@@ -56,7 +56,7 @@ public class DirectoryCleanerTests
 		await That(receivedLogs).DoesNotContain("Cleanup was successful :-)");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Dispose_ShouldForceDeleteCurrentDirectory()
 	{
 		MockFileSystem sut = new();
@@ -70,7 +70,7 @@ public class DirectoryCleanerTests
 		await That(receivedLogs).Contains("Cleanup was successful :-)");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Dispose_ShouldResetCurrentDirectory()
 	{
 		MockFileSystem sut = new();
@@ -81,8 +81,8 @@ public class DirectoryCleanerTests
 		await That(sut.Directory.GetCurrentDirectory()).IsNotEqualTo(currentDirectory);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Dispose_TemporaryFailure_ShouldRetryAgain(
 		Exception exception)
 	{
@@ -103,7 +103,7 @@ public class DirectoryCleanerTests
 		await That(sut.Directory.Exists(currentDirectory)).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task InitializeBasePath_ShouldCreateDirectoryAndLogBasePath()
 	{
 		MockFileSystem sut = new();

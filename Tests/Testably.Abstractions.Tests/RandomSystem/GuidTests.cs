@@ -10,10 +10,10 @@ using System.Globalization;
 namespace Testably.Abstractions.Tests.RandomSystem;
 
 [RandomSystemTests]
-public partial class GuidTests
+public class GuidTests(RandomSystemTestData testData) : RandomSystemTestBase(testData)
 {
 #if FEATURE_GUID_V7
-	[Fact]
+	[Test]
 	public async Task CreateVersion7_ShouldBeThreadSafeAndReturnUniqueItems()
 	{
 		ConcurrentBag<Guid> results = [];
@@ -28,7 +28,7 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_V7
-	[Fact]
+	[Test]
 	public async Task CreateVersion7_WithOffset_ShouldBeThreadSafeAndReturnUniqueItems()
 	{
 		ConcurrentBag<Guid> results = [];
@@ -41,13 +41,13 @@ public partial class GuidTests
 		await That(results).AreAllUnique();
 	}
 #endif
-	[Fact]
+	[Test]
 	public async Task Empty_ShouldReturnEmptyGuid()
 	{
 		await That(RandomSystem.Guid.Empty).IsEqualTo(Guid.Empty);
 	}
 
-	[Fact]
+	[Test]
 	public async Task NewGuid_ShouldBeThreadSafeAndReturnUniqueItems()
 	{
 		ConcurrentBag<Guid> results = [];
@@ -61,10 +61,11 @@ public partial class GuidTests
 	}
 
 #if FEATURE_GUID_PARSE
-	[Theory]
-	[AutoData]
-	public async Task Parse_SpanArray_ShouldReturnCorrectGuid(Guid guid)
+	[Test]
+	public async Task Parse_SpanArray_ShouldReturnCorrectGuid()
 	{
+		Guid guid = Guid.NewGuid();
+		
 		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
 
 		#pragma warning disable MA0011
@@ -76,10 +77,11 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[Theory]
-	[AutoData]
-	public async Task Parse_String_ShouldReturnCorrectGuid(Guid guid)
+	[Test]
+	public async Task Parse_String_ShouldReturnCorrectGuid()
 	{
+		Guid guid = Guid.NewGuid();
+
 		string serializedGuid = guid.ToString();
 
 		#pragma warning disable MA0011
@@ -91,10 +93,11 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE_UTF8
-	[Theory]
-	[AutoData]
-	public async Task Parse_UTF8_ShouldReturnCorrectGuid(Guid guid)
+	[Test]
+	public async Task Parse_UTF8_ShouldReturnCorrectGuid()
 	{
+		Guid guid = Guid.NewGuid();
+
 		byte[] bytes = Encoding.UTF8.GetBytes(guid.ToString());
 
 		#pragma warning disable MA0011
@@ -106,10 +109,11 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE_UTF8
-	[Theory]
-	[AutoData]
-	public async Task Parse_UTF8_WithFormatProvider_ShouldReturnCorrectGuid(Guid guid)
+	[Test]
+	public async Task Parse_UTF8_WithFormatProvider_ShouldReturnCorrectGuid()
 	{
+		Guid guid = Guid.NewGuid();
+
 		byte[] bytes = Encoding.UTF8.GetBytes(guid.ToString());
 
 		#pragma warning disable MA0011
@@ -121,10 +125,11 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_FORMATPROVIDER
-	[Theory]
-	[AutoData]
-	public async Task Parse_WithFormatProvider_SpanArray_ShouldReturnCorrectGuid(Guid guid)
+	[Test]
+	public async Task Parse_WithFormatProvider_SpanArray_ShouldReturnCorrectGuid()
 	{
+		Guid guid = Guid.NewGuid();
+
 		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
 
 		Guid result = RandomSystem.Guid.Parse(serializedGuid, CultureInfo.InvariantCulture);
@@ -134,10 +139,11 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_FORMATPROVIDER
-	[Theory]
-	[AutoData]
-	public async Task Parse_WithFormatProvider_String_ShouldReturnCorrectGuid(Guid guid)
+	[Test]
+	public async Task Parse_WithFormatProvider_String_ShouldReturnCorrectGuid()
 	{
+		Guid guid = Guid.NewGuid();
+
 		string serializedGuid = guid.ToString();
 
 		Guid result = RandomSystem.Guid.Parse(serializedGuid, CultureInfo.InvariantCulture);
@@ -147,8 +153,8 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[Theory]
-	[MemberAutoData(nameof(GuidFormats))]
+	[Test]
+	[MethodDataSource(nameof(GuidFormats))]
 	public async Task ParseExact_SpanArray_ShouldReturnCorrectGuid(
 		string format, Guid guid)
 	{
@@ -161,8 +167,8 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[Theory]
-	[MemberAutoData(nameof(GuidFormats))]
+	[Test]
+	[MethodDataSource(nameof(GuidFormats))]
 	public async Task ParseExact_String_ShouldReturnCorrectGuid(string format, Guid guid)
 	{
 		string serializedGuid = guid.ToString(format);
@@ -174,10 +180,11 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[Theory]
-	[AutoData]
-	public async Task TryParse_SpanArray_ShouldReturnTrue(Guid guid)
+	[Test]
+	public async Task TryParse_SpanArray_ShouldReturnTrue()
 	{
+		Guid guid = Guid.NewGuid();
+
 		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
 
 		#pragma warning disable MA0011
@@ -190,10 +197,11 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_FORMATPROVIDER
-	[Theory]
-	[AutoData]
-	public async Task TryParse_SpanArray_WithFormatProvider_ShouldReturnTrue(Guid guid)
+	[Test]
+	public async Task TryParse_SpanArray_WithFormatProvider_ShouldReturnTrue()
 	{
+		Guid guid = Guid.NewGuid();
+
 		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
 
 		bool result = RandomSystem.Guid.TryParse(serializedGuid, CultureInfo.InvariantCulture,
@@ -205,10 +213,11 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[Theory]
-	[AutoData]
-	public async Task TryParse_String_ShouldReturnTrue(Guid guid)
+	[Test]
+	public async Task TryParse_String_ShouldReturnTrue()
 	{
+		Guid guid = Guid.NewGuid();
+
 		string serializedGuid = guid.ToString();
 
 		#pragma warning disable MA0011
@@ -221,10 +230,11 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_FORMATPROVIDER
-	[Theory]
-	[AutoData]
-	public async Task TryParse_String_WithFormatProvider_ShouldReturnTrue(Guid guid)
+	[Test]
+	public async Task TryParse_String_WithFormatProvider_ShouldReturnTrue()
 	{
+		Guid guid = Guid.NewGuid();
+
 		string serializedGuid = guid.ToString();
 
 		bool result = RandomSystem.Guid.TryParse(serializedGuid, CultureInfo.InvariantCulture,
@@ -236,10 +246,11 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE_UTF8
-	[Theory]
-	[AutoData]
-	public async Task TryParse_UTF8_ShouldReturnTrue(Guid guid)
+	[Test]
+	public async Task TryParse_UTF8_ShouldReturnTrue()
 	{
+		Guid guid = Guid.NewGuid();
+
 		byte[] bytes = Encoding.UTF8.GetBytes(guid.ToString());
 
 		#pragma warning disable MA0011
@@ -252,10 +263,11 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE_UTF8
-	[Theory]
-	[AutoData]
-	public async Task TryParse_UTF8_WithFormatProvider_ShouldReturnTrue(Guid guid)
+	[Test]
+	public async Task TryParse_UTF8_WithFormatProvider_ShouldReturnTrue()
 	{
+		Guid guid = Guid.NewGuid();
+
 		byte[] bytes = Encoding.UTF8.GetBytes(guid.ToString());
 
 		bool result = RandomSystem.Guid.TryParse(bytes, CultureInfo.InvariantCulture,
@@ -267,8 +279,8 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[Theory]
-	[MemberAutoData(nameof(GuidFormats))]
+	[Test]
+	[MethodDataSource(nameof(GuidFormats))]
 	public async Task TryParseExact_SpanArray_ShouldReturnTrue(string format, Guid guid)
 	{
 		ReadOnlySpan<char> serializedGuid = guid.ToString(format).AsSpan();
@@ -283,8 +295,8 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[Theory]
-	[MemberAutoData(nameof(GuidFormats))]
+	[Test]
+	[MethodDataSource(nameof(GuidFormats))]
 	public async Task TryParseExact_String_ShouldReturnTrue(string format, Guid guid)
 	{
 		string serializedGuid = guid.ToString(format);
@@ -302,13 +314,13 @@ public partial class GuidTests
 
 #if FEATURE_GUID_PARSE
 	#pragma warning disable MA0018
-	public static IEnumerable<object[]> GuidFormats()
+	public static IEnumerable<(string, Guid)> GuidFormats()
 	{
-		yield return ["N"];
-		yield return ["D"];
-		yield return ["B"];
-		yield return ["P"];
-		yield return ["X"];
+		yield return ("N", Guid.NewGuid());
+		yield return ("D", Guid.NewGuid());
+		yield return ("B", Guid.NewGuid());
+		yield return ("P", Guid.NewGuid());
+		yield return ("X", Guid.NewGuid());
 	}
 	#pragma warning restore MA0018
 #endif

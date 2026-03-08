@@ -5,11 +5,11 @@ namespace Testably.Abstractions.Testing.Tests.FileSystem;
 public sealed class PathMockTests
 {
 #if CAN_SIMULATE_OTHER_OS
-	[Theory]
-	[InlineAutoData(SimulationMode.Native)]
-	[InlineAutoData(SimulationMode.Linux)]
-	[InlineAutoData(SimulationMode.MacOS)]
-	[InlineAutoData(SimulationMode.Windows)]
+	[Test]
+	[AutoArguments(SimulationMode.Native)]
+	[AutoArguments(SimulationMode.Linux)]
+	[AutoArguments(SimulationMode.MacOS)]
+	[AutoArguments(SimulationMode.Windows)]
 	public async Task GetTempFileName_WithCollisions_ShouldThrowIOException(
 		SimulationMode simulationMode, int fixedRandomValue)
 	{
@@ -31,8 +31,8 @@ public sealed class PathMockTests
 		await That(fileSystem.File.Exists(result)).IsTrue();
 	}
 #else
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetTempFileName_WithCollisions_ShouldThrowIOException(
 		int fixedRandomValue)
 	{

@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
-public partial class LengthTests
+public class LengthTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Length_MissingDirectory_ShouldThrowFileNotFoundException(
 		string missingDirectory, string fileName)
 	{
@@ -25,8 +25,8 @@ public partial class LengthTests
 				: $"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Length_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
@@ -43,8 +43,8 @@ public partial class LengthTests
 				: $"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Length_PathIsDirectory_ShouldThrowFileNotFoundException(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -62,8 +62,8 @@ public partial class LengthTests
 				: $"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Length_WhenFileExists_ShouldBeSetCorrectly(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
@@ -74,8 +74,8 @@ public partial class LengthTests
 		await That(result).IsEqualTo(bytes.Length);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Length_WhenFileIsCreated_ShouldBeSetCorrectly(string path, byte[] bytes)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
@@ -87,8 +87,8 @@ public partial class LengthTests
 		await That(result).IsEqualTo(bytes.Length);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Length_WhenFileIsCreatedAfterAccessed_ShouldBeSetCorrectly(
 		string path, byte[] bytes)
 	{
@@ -107,8 +107,8 @@ public partial class LengthTests
 		await That(result).IsEqualTo(bytes.Length);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		Length_WhenFileIsCreatedAfterLengthAccessed_ShouldThrowFileNotFoundExceptionAgain(
 			string path, byte[] bytes)

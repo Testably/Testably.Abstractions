@@ -49,7 +49,7 @@ private string GetFileContent()
 
 Then you test your class with the mocked types in `Testably.Abstractions.Testing`:
 ```csharp
-[Fact]
+[Test]
 public void StoreData_ShouldWriteValidFile()
 {
     IFileSystem fileSystem = new MockFileSystem();

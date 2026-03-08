@@ -4,10 +4,10 @@ using System.Text;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class WriteAllBytesTests
+public class WriteAllBytesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllBytes_PreviousFile_ShouldOverwriteFileWithBytes(
 		string path, byte[] bytes)
 	{
@@ -19,8 +19,8 @@ public partial class WriteAllBytesTests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllBytes_ShouldCreateFileWithBytes(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
@@ -29,8 +29,8 @@ public partial class WriteAllBytesTests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllBytes_WhenBytesAreNull_ShouldThrowArgumentNullException(string path)
 	{
 		void Act()
@@ -41,8 +41,8 @@ public partial class WriteAllBytesTests
 		await That(Act).Throws<ArgumentNullException>().WithParamName("bytes");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllBytes_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path, byte[] bytes)
@@ -59,8 +59,8 @@ public partial class WriteAllBytesTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllBytes_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string path, byte[] bytes)
@@ -79,8 +79,8 @@ public partial class WriteAllBytesTests
 	}
 
 #if FEATURE_FILE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllBytes_Span_PreviousFile_ShouldOverwriteFileWithBytes(
 		string path, byte[] bytes)
 	{
@@ -92,8 +92,8 @@ public partial class WriteAllBytesTests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllBytes_Span_ShouldCreateFileWithBytes(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes.AsSpan());
@@ -102,8 +102,8 @@ public partial class WriteAllBytesTests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllBytes_Span_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path, byte[] bytes)
@@ -120,8 +120,8 @@ public partial class WriteAllBytesTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllBytes_Span_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 		string path, byte[] bytes)
 	{

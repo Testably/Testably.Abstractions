@@ -1,19 +1,16 @@
-﻿using AutoFixture.Xunit3;
-using System.IO;
+﻿using System.IO;
 using System.Security.AccessControl;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
 using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-[FileSystemTests]
-public partial class DirectoryInfoAclExtensionsTests
+[WindowsOnlyFileSystemTests]
+public class DirectoryInfoAclExtensionsTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task Create_NullDirectorySecurity_ShouldThrowArgumentNullException()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		FileSystem.Directory.CreateDirectory("foo");
 
 		#pragma warning disable CA1416
@@ -24,13 +21,11 @@ public partial class DirectoryInfoAclExtensionsTests
 			.WithParamName("directorySecurity");
 	}
 
-	[Theory]
-	[InlineData("foo")]
-	[InlineData("foo\\bar")]
+	[Test]
+	[Arguments("foo")]
+	[Arguments("foo\\bar")]
 	public async Task Create_ShouldChangeAccessControl(string path)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		#pragma warning disable CA1416
 		DirectorySecurity directorySecurity = FileSystem.CreateDirectorySecurity();
 
@@ -42,10 +37,9 @@ public partial class DirectoryInfoAclExtensionsTests
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetAccessControl_MissingDirectory_ShouldThrowDirectoryNotFoundException()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("foo");
 
 		#pragma warning disable CA1416
@@ -56,11 +50,9 @@ public partial class DirectoryInfoAclExtensionsTests
 			.WithHResult(-2147024893);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		FileSystem.Directory.CreateDirectory("foo");
 
 		#pragma warning disable CA1416
@@ -71,10 +63,9 @@ public partial class DirectoryInfoAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetAccessControl_ShouldReturnSetResult()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
 
 		FileSystem.Directory.CreateDirectory("foo");
@@ -92,11 +83,10 @@ public partial class DirectoryInfoAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		GetAccessControl_WithAccessControlSections_MissingDirectory_ShouldThrowDirectoryNotFoundException()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("foo");
 
 		#pragma warning disable CA1416
@@ -107,11 +97,10 @@ public partial class DirectoryInfoAclExtensionsTests
 			.WithHResult(-2147024893);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Directory.CreateDirectory("foo");
@@ -124,10 +113,9 @@ public partial class DirectoryInfoAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
 
 		FileSystem.Directory.CreateDirectory("foo");
@@ -145,11 +133,9 @@ public partial class DirectoryInfoAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[Fact]
+	[Test]
 	public async Task SetAccessControl_ShouldChangeAccessControl()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		FileSystem.Directory.CreateDirectory("foo");
 		#pragma warning disable CA1416
 		DirectorySecurity originalAccessControl = FileSystem.CreateDirectorySecurity();
@@ -164,15 +150,14 @@ public partial class DirectoryInfoAclExtensionsTests
 			.IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetAccessControl_ShouldNotUpdateTimes(string path)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Directory.CreateDirectory(path);
-		await TimeSystem.Task.Delay(3000, TestContext.Current.CancellationToken);
+		await TimeSystem.Task.Delay(3000, CancellationToken);
 		DateTime previousCreationTimeUtc = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime previousLastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc(path);
 		DateTime previousLastWriteTimeUtc = FileSystem.File.GetLastWriteTimeUtc(path);

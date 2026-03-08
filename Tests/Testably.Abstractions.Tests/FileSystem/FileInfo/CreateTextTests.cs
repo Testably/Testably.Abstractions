@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
-public partial class CreateTextTests
+public class CreateTextTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateText_MissingFile_ShouldCreateFile(
 		string path, string appendText)
 	{
@@ -22,8 +22,8 @@ public partial class CreateTextTests
 	}
 
 #if NET8_0_OR_GREATER
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateText_ShouldRefreshExistsCache(
 		string path, string appendText)
 	{
@@ -39,8 +39,8 @@ public partial class CreateTextTests
 		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 #else
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateText_ShouldNotRefreshExistsCache(
 		string path, string appendText)
 	{
@@ -57,8 +57,8 @@ public partial class CreateTextTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateText_ShouldReplaceTextInExistingFile(
 		string path, string contents, string appendText)
 	{

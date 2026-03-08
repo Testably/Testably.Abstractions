@@ -4,8 +4,8 @@ namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
 public class FileDescriptionTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Constructor_WithBytes_ShouldSetBytes(byte[] bytes)
 	{
 		FileDescription sut = new("foo", bytes);
@@ -14,8 +14,8 @@ public class FileDescriptionTests
 		await That(sut.Bytes).IsEqualTo(bytes).InAnyOrder();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Constructor_WithContent_ShouldSetContent(string content)
 	{
 		FileDescription sut = new("foo", content);
@@ -24,7 +24,7 @@ public class FileDescriptionTests
 		await That(sut.Bytes).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Index_AccessShouldThrowTestingException()
 	{
 		FileDescription sut = new("foo");

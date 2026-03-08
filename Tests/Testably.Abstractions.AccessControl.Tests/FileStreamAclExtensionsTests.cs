@@ -4,14 +4,12 @@ using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-[FileSystemTests]
-public partial class FileStreamAclExtensionsTests
+[WindowsOnlyFileSystemTests]
+public class FileStreamAclExtensionsTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		FileSystemStream fileStream = FileSystem.File.Create("foo");
 
 		#pragma warning disable CA1416
@@ -21,11 +19,9 @@ public partial class FileStreamAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[Fact]
+	[Test]
 	public async Task SetAccessControl_ShouldChangeAccessControl()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		FileSystemStream fileStream = FileSystem.File.Create("foo");
 		#pragma warning disable CA1416
 		FileSecurity originalAccessControl = FileSystem.CreateFileSecurity();

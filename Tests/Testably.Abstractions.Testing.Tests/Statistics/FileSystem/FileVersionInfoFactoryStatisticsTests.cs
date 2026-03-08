@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public class FileVersionInfoFactoryStatisticsTests
 {
-	[Fact]
+	[Test]
 	public async Task Method_GetVersionInfo_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();

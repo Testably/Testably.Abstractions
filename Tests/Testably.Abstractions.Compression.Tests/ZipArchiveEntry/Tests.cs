@@ -6,9 +6,9 @@ using Skip = Testably.Abstractions.TestHelpers.Skip;
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task Archive_ShouldBeSetToArchive()
 	{
 		FileSystem.Initialize()
@@ -28,7 +28,7 @@ public partial class Tests
 	}
 
 #if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
-	[Fact]
+	[Test]
 	public async Task Comment_ShouldBeInitializedEmpty()
 	{
 		FileSystem.Initialize()
@@ -48,8 +48,8 @@ public partial class Tests
 #endif
 
 #if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Comment_ShouldBeSettable(string comment)
 	{
 		FileSystem.Initialize()
@@ -70,7 +70,7 @@ public partial class Tests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task CompressedLength_WithNoCompression_ShouldBeFileLength()
 	{
 		Skip.If(Test.IsNetFramework, "Test is brittle on .NET Framework.");
@@ -91,7 +91,7 @@ public partial class Tests
 			.For(x => x.CompressedLength, l => l.IsEqualTo(9));
 	}
 
-	[Fact]
+	[Test]
 	public async Task CompressedLength_WithOptimalCompressionLevel_ShouldBeLessThanFileLength()
 	{
 		FileSystem.Initialize()
@@ -111,7 +111,7 @@ public partial class Tests
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED
-	[Fact]
+	[Test]
 	public async Task Crc32_ShouldBeCalculatedFromTheFileContent()
 	{
 		FileSystem.Initialize()
@@ -133,7 +133,7 @@ public partial class Tests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Delete_ReadMode_ShouldThrowNotSupportedException()
 	{
 		FileSystem.Initialize()
@@ -154,7 +154,7 @@ public partial class Tests
 		await That(Act).Throws<NotSupportedException>();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Delete_ShouldRemoveEntryFromArchive()
 	{
 		FileSystem.Initialize()
@@ -176,8 +176,8 @@ public partial class Tests
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExternalAttributes_ShouldBeSettable(int externalAttributes)
 	{
 		FileSystem.Initialize()
@@ -201,7 +201,7 @@ public partial class Tests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task FileSystemExtension_ShouldBeSet()
 	{
 		FileSystem.Initialize()
@@ -220,7 +220,7 @@ public partial class Tests
 		await That(entry.FileSystem).IsEqualTo(FileSystem);
 	}
 
-	[Fact]
+	[Test]
 	public async Task FullName_ShouldIncludeDirectory()
 	{
 		FileSystem.Initialize()
@@ -240,8 +240,8 @@ public partial class Tests
 		await That(entry.Name).IsEqualTo("foo.txt");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task LastWriteTime_ReadOnlyArchive_ShouldThrowNotSupportedException(
 		DateTime lastWriteTime)
 	{
@@ -267,8 +267,8 @@ public partial class Tests
 		await That(Act).Throws<NotSupportedException>();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task LastWriteTime_ShouldBeSettable(DateTime lastWriteTime)
 	{
 		FileSystem.Initialize()
@@ -292,7 +292,7 @@ public partial class Tests
 		await That(entry2.LastWriteTime.DateTime).IsNotEqualTo(lastWriteTime);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Open_ShouldBeSetToFileName()
 	{
 		FileSystem.Initialize()
@@ -314,7 +314,7 @@ public partial class Tests
 	}
 
 #if FEATURE_COMPRESSION_ASYNC
-	[Fact]
+	[Test]
 	public async Task OpenAsync_ShouldBeSetToFileName()
 	{
 		FileSystem.Initialize()
@@ -330,13 +330,13 @@ public partial class Tests
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
 		IZipArchiveEntry entry = archive.Entries.Single();
 
-		Stream resultStream = await entry.OpenAsync(TestContext.Current.CancellationToken);
+		Stream resultStream = await entry.OpenAsync(CancellationToken);
 
 		await That(resultStream).HasLength().EqualTo("FooFooFoo".Length);
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldBeSetToFileName()
 	{
 		FileSystem.Initialize()

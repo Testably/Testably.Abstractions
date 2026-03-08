@@ -1,9 +1,9 @@
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 [TimeSystemTests]
-public partial class ThreadTests
+public class ThreadTests(TimeSystemTestData testData) : TimeSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task Sleep_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
 		void Act() => TimeSystem.Thread.Sleep(-2);
@@ -11,7 +11,7 @@ public partial class ThreadTests
 		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Sleep_Milliseconds_ShouldSleepForSpecifiedMilliseconds()
 	{
 		int millisecondsTimeout = 100;
@@ -24,7 +24,7 @@ public partial class ThreadTests
 			.IsOnOrAfter(before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
 	}
 
-	[Fact]
+	[Test]
 	public async Task Sleep_Timespan_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
 		void Act() =>
@@ -33,7 +33,7 @@ public partial class ThreadTests
 		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Sleep_Timespan_ShouldSleepForSpecifiedMilliseconds()
 	{
 		TimeSpan timeout = TimeSpan.FromMilliseconds(100);

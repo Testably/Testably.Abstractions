@@ -5,6 +5,7 @@ using System.Security.AccessControl;
 
 namespace Testably.Abstractions.Parity.Tests;
 
+[InheritsTests]
 public class Net48ParityTests : ParityTests
 {
 	/// <summary>
@@ -12,8 +13,8 @@ public class Net48ParityTests : ParityTests
 	///     <para />
 	///     As we only support .NET Standard 2.0 these are blacklisted.
 	/// </summary>
-	public Net48ParityTests(ITestOutputHelper testOutputHelper)
-		: base(new TestHelpers.Parity(), testOutputHelper)
+	public Net48ParityTests()
+		: base(new TestHelpers.Parity())
 	{
 		#region Directory
 

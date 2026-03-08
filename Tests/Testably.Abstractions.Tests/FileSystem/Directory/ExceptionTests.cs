@@ -6,10 +6,26 @@ using System.Linq.Expressions;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class ExceptionTests
+public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[MemberData(nameof(GetDirectoryCallbacks), "Illegal\tCharacter?InPath")]
+	public static IEnumerable<(Expression<Action<IDirectory>>, string, bool, Func<Test, bool>)>
+		GetDirectoryCallbacksWithEmptyPath()
+		=> GetDirectoryCallbacks("");
+
+	public static IEnumerable<(Expression<Action<IDirectory>>, string, bool, Func<Test, bool>)>
+		GetDirectoryCallbacksWithIllegalPathCharacters()
+		=> GetDirectoryCallbacks("Illegal\tCharacter?InPath");
+
+	public static IEnumerable<(Expression<Action<IDirectory>>, string, bool, Func<Test, bool>)>
+		GetDirectoryCallbacksWithNullPath()
+		=> GetDirectoryCallbacks(null);
+
+	public static IEnumerable<(Expression<Action<IDirectory>>, string, bool, Func<Test, bool>)>
+		GetDirectoryCallbacksWithWhitespacePath()
+		=> GetDirectoryCallbacks("  ");
+
+	[Test]
+	[MethodDataSource(nameof(GetDirectoryCallbacksWithIllegalPathCharacters))]
 	public async Task
 		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IDirectory>> callback, string paramName,
@@ -50,8 +66,8 @@ public partial class ExceptionTests
 		}
 	}
 
-	[Theory]
-	[MemberData(nameof(GetDirectoryCallbacks), "")]
+	[Test]
+	[MethodDataSource(nameof(GetDirectoryCallbacksWithEmptyPath))]
 	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDirectory>> callback, string paramName, bool ignoreParamCheck,
 		Func<Test, bool> skipTest)
@@ -70,8 +86,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetDirectoryCallbacks), (string?)null)]
+	[Test]
+	[MethodDataSource(nameof(GetDirectoryCallbacksWithNullPath))]
 	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDirectory>> callback, string paramName, bool ignoreParamCheck,
 		Func<Test, bool> skipTest)
@@ -89,8 +105,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetDirectoryCallbacks), "  ")]
+	[Test]
+	[MethodDataSource(nameof(GetDirectoryCallbacksWithWhitespacePath))]
 	public async Task Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IDirectory>> callback, string paramName, bool ignoreParamCheck,
 		Func<Test, bool> skipTest)
@@ -111,29 +127,21 @@ public partial class ExceptionTests
 				$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	#region Helpers
-
-	#pragma warning disable MA0018
-	public static TheoryData<Expression<Action<IDirectory>>, string, bool, Func<Test, bool>>
+	private static IEnumerable<(Expression<Action<IDirectory>>, string, bool, Func<Test, bool>)>
 		GetDirectoryCallbacks(string? path)
 	{
-		TheoryData<Expression<Action<IDirectory>>, string, bool, Func<Test, bool>> theoryData =
-			new();
 		foreach ((ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IDirectory>> Callback, Func<Test, bool>? SkipTest) item in
 			GetDirectoryCallbackTestParameters(path!)
 				.Where(item => item.TestType.HasFlag(path.ToTestType())))
 		{
-			theoryData.Add(
+			yield return (
 				item.Callback,
 				item.ParamName,
 				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck),
 				item.SkipTest ?? (_ => false));
 		}
-
-		return theoryData;
 	}
-	#pragma warning restore MA0018
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IDirectory>> Callback, Func<Test, bool>? SkipTest)>
@@ -345,6 +353,4 @@ public partial class ExceptionTests
 				=> directory.SetLastWriteTimeUtc(value, DateTime.Now),
 			null);
 	}
-
-	#endregion
 }

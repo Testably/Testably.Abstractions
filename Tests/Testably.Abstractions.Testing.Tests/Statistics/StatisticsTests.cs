@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics;
 
 public sealed partial class StatisticsTests
 {
-	[Fact]
+	[Test]
 	public async Task FileSystem_Initialize_ShouldNotRegisterStatistics()
 	{
 		MockFileSystem sut = new();
@@ -23,36 +23,36 @@ public sealed partial class StatisticsTests
 		await That(sut.Statistics.File.Methods).IsEmpty();
 	}
 
-	[Theory]
-	[InlineData(nameof(MockFileSystem.Directory), false,
+	[Test]
+	[Arguments(nameof(MockFileSystem.Directory), false,
 		typeof(IDirectory), typeof(DirectoryStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.DirectoryInfo), false,
+	[Arguments(nameof(MockFileSystem.DirectoryInfo), false,
 		typeof(IDirectoryInfoFactory), typeof(DirectoryInfoFactoryStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.DirectoryInfo), true,
+	[Arguments(nameof(MockFileSystem.DirectoryInfo), true,
 		typeof(IDirectoryInfo), typeof(DirectoryInfoStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.DriveInfo), false,
+	[Arguments(nameof(MockFileSystem.DriveInfo), false,
 		typeof(IDriveInfoFactory), typeof(DriveInfoFactoryStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.DriveInfo), true,
+	[Arguments(nameof(MockFileSystem.DriveInfo), true,
 		typeof(IDriveInfo), typeof(DriveInfoStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.File), false,
+	[Arguments(nameof(MockFileSystem.File), false,
 		typeof(IFile), typeof(FileStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.FileInfo), false,
+	[Arguments(nameof(MockFileSystem.FileInfo), false,
 		typeof(IFileInfoFactory), typeof(FileInfoFactoryStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.FileInfo), true,
+	[Arguments(nameof(MockFileSystem.FileInfo), true,
 		typeof(IFileInfo), typeof(FileInfoStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.FileStream), false,
+	[Arguments(nameof(MockFileSystem.FileStream), false,
 		typeof(IFileStreamFactory), typeof(FileStreamFactoryStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.FileStream), true,
+	[Arguments(nameof(MockFileSystem.FileStream), true,
 		typeof(FileSystemStream), typeof(FileStreamStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.FileSystemWatcher), false,
+	[Arguments(nameof(MockFileSystem.FileSystemWatcher), false,
 		typeof(IFileSystemWatcherFactory), typeof(FileSystemWatcherFactoryStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.FileSystemWatcher), true,
+	[Arguments(nameof(MockFileSystem.FileSystemWatcher), true,
 		typeof(IFileSystemWatcher), typeof(FileSystemWatcherStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.FileVersionInfo), false,
+	[Arguments(nameof(MockFileSystem.FileVersionInfo), false,
 		typeof(IFileVersionInfoFactory), typeof(FileVersionInfoFactoryStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.FileVersionInfo), true,
+	[Arguments(nameof(MockFileSystem.FileVersionInfo), true,
 		typeof(IFileVersionInfo), typeof(FileVersionInfoStatisticsTests))]
-	[InlineData(nameof(MockFileSystem.Path), false,
+	[Arguments(nameof(MockFileSystem.Path), false,
 		typeof(IPath), typeof(FileSystem.PathStatisticsTests))]
 	public async Task ShouldHaveTestedAllFileSystemMethods(string className, bool requireInstance,
 		Type mockType, Type testType)
@@ -63,7 +63,7 @@ public sealed partial class StatisticsTests
 		await That(result).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Statistics_ShouldIncrementCallOrder()
 	{
 		MockFileSystem sut = new();
@@ -83,7 +83,7 @@ public sealed partial class StatisticsTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task Statistics_ShouldKeepCallOrder()
 	{
 		MockFileSystem sut = new();
@@ -106,7 +106,7 @@ public sealed partial class StatisticsTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task Statistics_ShouldSupportParallelCalls()
 	{
 		int parallelTasks = 100;
@@ -122,7 +122,7 @@ public sealed partial class StatisticsTests
 			tasks[taskId] = Task.Run(() =>
 			{
 				sut.Directory.CreateDirectory(directories[taskId]);
-			}, TestContext.Current.CancellationToken);
+			}, TestContext.Current!.Execution.CancellationToken);
 		}
 
 		await Task.WhenAll(tasks);
@@ -140,7 +140,7 @@ public sealed partial class StatisticsTests
 			.IsEqualTo(Enumerable.Range(1, directories.Length)).InAnyOrder();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Statistics_ShouldUseGlobalIncrement()
 	{
 		MockFileSystem sut = new();

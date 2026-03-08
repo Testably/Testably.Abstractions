@@ -6,17 +6,14 @@ using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-[FileSystemTests]
-public partial class ExceptionMissingFileTests
+[WindowsOnlyFileSystemTests]
+public class ExceptionMissingFileTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks),
-		(int)(BaseTypes.Directory | BaseTypes.DirectoryInfo))]
+	[Test]
+	[MethodDataSource(nameof(GetDirectoryCallbacks))]
 	public async Task DirectoryOperations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		string path = FileSystem.Path.Combine("missing-directory", "file.txt");
 
 		Exception? exception = Record.Exception(() =>
@@ -44,14 +41,11 @@ public partial class ExceptionMissingFileTests
 		}
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks),
-		(int)(BaseTypes.Directory | BaseTypes.DirectoryInfo))]
+	[Test]
+	[MethodDataSource(nameof(GetDirectoryCallbacks))]
 	public async Task DirectoryOperations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		string path = "missing-file.txt";
 
 		Exception? exception = Record.Exception(() =>
@@ -79,14 +73,11 @@ public partial class ExceptionMissingFileTests
 		}
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks),
-		(int)(BaseTypes.File | BaseTypes.FileInfo | BaseTypes.FileStream))]
+	[Test]
+	[MethodDataSource(nameof(GetFileCallbacks))]
 	public async Task FileOperations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		string path = FileSystem.Path.Combine("missing-directory", "file.txt");
 
 		Exception? exception = Record.Exception(() =>
@@ -115,14 +106,11 @@ public partial class ExceptionMissingFileTests
 		}
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks),
-		(int)(BaseTypes.File | BaseTypes.FileInfo | BaseTypes.FileStream))]
+	[Test]
+	[MethodDataSource(nameof(GetFileCallbacks))]
 	public async Task FileOperations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		string path = "missing-file.txt";
 
 		Exception? exception = Record.Exception(() =>
@@ -152,21 +140,21 @@ public partial class ExceptionMissingFileTests
 
 	#region Helpers
 
-	#pragma warning disable MA0018 // Do not declare static members on generic types
-	public static TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> GetFileCallbacks(
+	public static IEnumerable<(Action<IFileSystem, string>, BaseTypes, MethodType)>
+		GetFileCallbacks()
+		=> GetCallbacks((int)(BaseTypes.File | BaseTypes.FileInfo | BaseTypes.FileStream));
+	public static IEnumerable<(Action<IFileSystem, string>, BaseTypes, MethodType)> GetDirectoryCallbacks()
+		=> GetCallbacks((int)(BaseTypes.Directory | BaseTypes.DirectoryInfo));
+	private static IEnumerable<(Action<IFileSystem, string>, BaseTypes, MethodType)> GetCallbacks(
 		int baseType)
 	{
-		TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> theoryData = new();
 		foreach ((BaseTypes BaseType, MethodType MethodType, Action<IFileSystem, string> Callback)
 			item in GetFileCallbackTestParameters()
 				.Where(item => (item.BaseType & (BaseTypes)baseType) > 0))
 		{
-			theoryData.Add(item.Callback, item.BaseType, item.MethodType);
+			yield return (item.Callback, item.BaseType, item.MethodType);
 		}
-
-		return theoryData;
 	}
-	#pragma warning restore MA0018 // Do not declare static members on generic types
 
 	private static
 		IEnumerable<(

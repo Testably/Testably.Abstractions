@@ -5,10 +5,26 @@ using System.Linq.Expressions;
 namespace Testably.Abstractions.Tests.FileSystem.FileVersionInfoFactory;
 
 [FileSystemTests]
-public partial class ExceptionTests
+public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), "")]
+	public static IEnumerable<(Expression<Action<IFileVersionInfoFactory>>, string, bool)>
+		GetFileVersionInfoFactoryCallbacksWithEmptyPath()
+		=> GetFileVersionInfoFactoryCallbacks("");
+
+	public static IEnumerable<(Expression<Action<IFileVersionInfoFactory>>, string, bool)>
+		GetFileVersionInfoFactoryCallbacksWithIllegalPathCharacters()
+		=> GetFileVersionInfoFactoryCallbacks("Illegal\tCharacter?InPath");
+
+	public static IEnumerable<(Expression<Action<IFileVersionInfoFactory>>, string, bool)>
+		GetFileVersionInfoFactoryCallbacksWithNullPath()
+		=> GetFileVersionInfoFactoryCallbacks(null);
+
+	public static IEnumerable<(Expression<Action<IFileVersionInfoFactory>>, string, bool)>
+		GetFileVersionInfoFactoryCallbacksWithWhitespacePath()
+		=> GetFileVersionInfoFactoryCallbacks("  ");
+
+	[Test]
+	[MethodDataSource(nameof(GetFileVersionInfoFactoryCallbacksWithEmptyPath))]
 	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -25,8 +41,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), (string?)null)]
+	[Test]
+	[MethodDataSource(nameof(GetFileVersionInfoFactoryCallbacksWithNullPath))]
 	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -42,8 +58,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), "  ")]
+	[Test]
+	[MethodDataSource(nameof(GetFileVersionInfoFactoryCallbacksWithWhitespacePath))]
 	public async Task Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -65,23 +81,20 @@ public partial class ExceptionTests
 	#region Helpers
 
 	#pragma warning disable MA0018
-	public static TheoryData<Expression<Action<IFileVersionInfoFactory>>, string, bool>
+	private static IEnumerable<(Expression<Action<IFileVersionInfoFactory>>, string, bool)>
 		GetFileVersionInfoFactoryCallbacks(string? path)
 	{
-		TheoryData<Expression<Action<IFileVersionInfoFactory>>, string, bool> theoryData = new();
 		foreach ((ExceptionTestHelper.TestTypes TestType,
 			string ParamName,
 			Expression<Action<IFileVersionInfoFactory>> Callback) item in
 			GetFileVersionInfoFactoryCallbackTestParameters(path!)
 				.Where(item => item.TestType.HasFlag(path.ToTestType())))
 		{
-			theoryData.Add(
+			yield return (
 				item.Callback,
 				item.ParamName,
 				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck));
 		}
-
-		return theoryData;
 	}
 	#pragma warning restore MA0018
 

@@ -5,10 +5,10 @@ using System.Text;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class ReadAllTextTests
+public class ReadAllTextTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllText_FilenameNotOnWindows_ShouldBeCaseSensitive(
 		string path, string contents1, string contents2)
 	{
@@ -23,8 +23,8 @@ public partial class ReadAllTextTests
 		await That(result).IsEqualTo(contents2);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllText_FilenameOnWindows_ShouldBeCaseInsensitive(
 		string path, string contents)
 	{
@@ -38,8 +38,8 @@ public partial class ReadAllTextTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllText_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		void Act()
@@ -52,8 +52,8 @@ public partial class ReadAllTextTests
 			.WithMessage($"*'{FileSystem.Path.GetFullPath(path)}'*").AsWildcard();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllText_ShouldAdjustTimes(string path, string contents)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
@@ -88,8 +88,8 @@ public partial class ReadAllTextTests
 			.Within(TimeComparison.Tolerance);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllText_ShouldTolerateAltDirectorySeparatorChar(
 		string contents, string directory, string fileName)
 	{
@@ -103,8 +103,8 @@ public partial class ReadAllTextTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[ClassData(typeof(TestDataGetEncodingDifference))]
+	[Test]
+	[MethodDataSource(typeof(TestData), nameof(TestData.GetEncodingDifference))]
 	public async Task ReadAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding)
 	{
@@ -117,8 +117,8 @@ public partial class ReadAllTextTests
 			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetEncodingsForReadAllText))]
+	[Test]
+	[MethodDataSource(typeof(TestData), nameof(TestData.GetEncodingsForReadAllText))]
 	public async Task ReadAllText_WithoutReadEncoding_ShouldReturnWrittenText(
 		Encoding writeEncoding)
 	{
@@ -133,8 +133,8 @@ public partial class ReadAllTextTests
 				$"{contents} should not be different when no read encoding is used for write encoding: {writeEncoding}.");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllText_WithStarCharacter_ShouldThrowException(
 		string path, string contents)
 	{
@@ -147,20 +147,4 @@ public partial class ReadAllTextTests
 
 		await That(Act).ThrowsException();
 	}
-
-	#region Helpers
-
-	#pragma warning disable MA0018
-	public static TheoryData<Encoding> GetEncodingsForReadAllText()
-		=> new()
-		{
-			(Encoding)new UTF32Encoding(false, true, true),
-			// big endian
-			(Encoding)new UTF32Encoding(true, true, true),
-			(Encoding)new UTF8Encoding(true, true),
-			(Encoding)new ASCIIEncoding(),
-		};
-	#pragma warning restore MA0018
-
-	#endregion
 }

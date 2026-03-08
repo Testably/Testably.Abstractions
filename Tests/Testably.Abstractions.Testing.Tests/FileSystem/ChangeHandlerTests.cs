@@ -1,10 +1,11 @@
 using aweXpect.Synchronous;
+using System.Collections.Generic;
 using System.IO;
 using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
-public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
+public class ChangeHandlerTests
 {
 	#region Test Setup
 
@@ -12,8 +13,8 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 
 	#endregion
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateDirectory_CustomException_ShouldNotCreateDirectory(
 		string path, Exception exceptionToThrow)
 	{
@@ -31,8 +32,8 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		await That(exception).IsEqualTo(exceptionToThrow);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateDirectory_CustomException_ShouldOnlyTriggerChangeOccurring(
 		string path, Exception exceptionToThrow)
 	{
@@ -47,8 +48,8 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		await That(receivedPath!).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateDirectory_WithParentDirectories_ShouldTriggerNotificationForEachDirectory(
 			string path1, string path2, string path3)
@@ -60,7 +61,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		using IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Notify
 			.OnEvent(c =>
 				{
-					testOutputHelper.WriteLine($"Received event {c}");
+					Console.WriteLine($"Received event {c}");
 					eventCount++;
 				},
 				c => c.ChangeType == WatcherChangeTypes.Created);
@@ -71,8 +72,8 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		await That(eventCount).IsEqualTo(3);
 	}
 
-	[Theory]
-	[MemberData(nameof(NotificationTriggeringMethods))]
+	[Test]
+	[MethodDataSource(nameof(NotificationTriggeringMethods))]
 	public async Task ExecuteCallback_ShouldTriggerNotification(
 		Action<IFileSystem, string>? initialization,
 		Action<IFileSystem, string> callback,
@@ -96,7 +97,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		await That(receivedPath).IsEqualTo(FileSystem.Path.GetFullPath(path));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Watcher_ShouldNotTriggerWhenFileSystemWatcherDoesNotMatch()
 	{
 		FileSystem.Directory.CreateDirectory("bar");
@@ -114,7 +115,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		await That(Act).Throws<TimeoutException>();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Watcher_ShouldTriggerWhenFileSystemWatcherSendsNotification()
 	{
 		bool isTriggered = false;
@@ -126,7 +127,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		using IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Watcher.OnTriggered();
 		FileSystem.File.WriteAllText(@"foo.txt", "some-text");
 
-		onEvent.Wait(timeout: 5000);
+		onEvent.Wait(timeout: 30000);
 
 		await That(isTriggered).IsTrue();
 	}
@@ -134,37 +135,21 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 	#region Helpers
 
 	public static
-		TheoryData<
+		IEnumerable<(
 			Action<IFileSystem, string>?,
 			Action<IFileSystem, string>,
 			WatcherChangeTypes,
 			FileSystemTypes,
-			string> NotificationTriggeringMethods()
+			string)> NotificationTriggeringMethods()
 	{
-		return new TheoryData<
-			Action<IFileSystem, string>?,
-			Action<IFileSystem, string>,
-			WatcherChangeTypes,
-			FileSystemTypes,
-			string>
-		{
-			{
-				null, (f, p) => f.Directory.CreateDirectory(p), WatcherChangeTypes.Created,
-				FileSystemTypes.Directory, $"path_{Guid.NewGuid()}"
-			},
-			{
-				(f, p) => f.Directory.CreateDirectory(p), (f, p) => f.Directory.Delete(p),
-				WatcherChangeTypes.Deleted, FileSystemTypes.Directory, $"path_{Guid.NewGuid()}"
-			},
-			{
-				null, (f, p) => f.File.WriteAllText(p, null), WatcherChangeTypes.Created,
-				FileSystemTypes.File, $"path_{Guid.NewGuid()}"
-			},
-			{
-				(f, p) => f.File.WriteAllText(p, null), (f, p) => f.File.Delete(p),
-				WatcherChangeTypes.Deleted, FileSystemTypes.File, $"path_{Guid.NewGuid()}"
-			},
-		};
+		yield return (null, (f, p) => f.Directory.CreateDirectory(p), WatcherChangeTypes.Created,
+			FileSystemTypes.Directory, $"path_{Guid.NewGuid()}");
+		yield return ((f, p) => f.Directory.CreateDirectory(p), (f, p) => f.Directory.Delete(p),
+				WatcherChangeTypes.Deleted, FileSystemTypes.Directory, $"path_{Guid.NewGuid()}");
+		yield return (null, (f, p) => f.File.WriteAllText(p, null), WatcherChangeTypes.Created,
+				FileSystemTypes.File, $"path_{Guid.NewGuid()}");
+		yield return ((f, p) => f.File.WriteAllText(p, null), (f, p) => f.File.Delete(p),
+			WatcherChangeTypes.Deleted, FileSystemTypes.File, $"path_{Guid.NewGuid()}");
 	}
 
 	#endregion

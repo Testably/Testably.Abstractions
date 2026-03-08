@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class SetAttributesTests
+public class SetAttributesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetAttributes_Directory_ShouldRemainFile(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -17,9 +17,9 @@ public partial class SetAttributesTests
 		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
-	[Theory]
-	[InlineAutoData(FileAttributes.ReadOnly)]
-	[InlineAutoData(FileAttributes.Normal)]
+	[Test]
+	[AutoArguments(FileAttributes.ReadOnly)]
+	[AutoArguments(FileAttributes.Normal)]
 	public async Task SetAttributes_ShouldNotAdjustTimes(FileAttributes attributes, string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();

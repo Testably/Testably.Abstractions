@@ -1,10 +1,12 @@
+using System.Collections.Generic;
+
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class IsPathRootedTests
+public class IsPathRootedTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[MemberData(nameof(TestData))]
+	[Test]
+	[MethodDataSource(nameof(TestData))]
 	public async Task IsPathRooted_ShouldReturnDefaultValue(string path, TestOS isRootedOn)
 	{
 		bool result = FileSystem.Path.IsPathRooted(path);
@@ -13,8 +15,8 @@ public partial class IsPathRootedTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[MemberData(nameof(TestData))]
+	[Test]
+	[MethodDataSource(nameof(TestData))]
 	public async Task IsPathRooted_Span_ShouldReturnDefaultValue(string path, TestOS isRootedOn)
 	{
 		bool result = FileSystem.Path.IsPathRooted(path.AsSpan());
@@ -25,53 +27,22 @@ public partial class IsPathRootedTests
 
 	#region Helpers
 
-	public static TheoryData<string, TestOS> TestData()
+	public static IEnumerable<(string, TestOS)> TestData()
 	{
-		return new TheoryData<string, TestOS>
-		{
-			{
-				"", TestOS.None
-			},
-			{
-				"/", TestOS.All
-			},
-			{
-				@"\", TestOS.Windows | TestOS.Framework
-			},
-			{
-				"/foo", TestOS.All
-			},
-			{
-				@"\foo", TestOS.Windows | TestOS.Framework
-			},
-			{
-				"foo/bar", TestOS.None
-			},
-			{
-				"a:", TestOS.Windows | TestOS.Framework
-			},
-			{
-				"z:", TestOS.Windows | TestOS.Framework
-			},
-			{
-				"A:", TestOS.Windows | TestOS.Framework
-			},
-			{
-				"Z:", TestOS.Windows | TestOS.Framework
-			},
-			{
-				"@:", TestOS.Framework
-			},
-			{
-				"[:", TestOS.Framework
-			},
-			{
-				"`:", TestOS.Framework
-			},
-			{
-				"{:", TestOS.Framework
-			},
-		};
+		yield return ("", TestOS.None);
+		yield return ("/", TestOS.All);
+		yield return (@"\", TestOS.Windows | TestOS.Framework);
+		yield return ("/foo", TestOS.All);
+		yield return (@"\foo", TestOS.Windows | TestOS.Framework);
+		yield return ("foo/bar", TestOS.None);
+		yield return ("a:", TestOS.Windows | TestOS.Framework);
+		yield return ("z:", TestOS.Windows | TestOS.Framework);
+		yield return ("A:", TestOS.Windows | TestOS.Framework);
+		yield return ("Z:", TestOS.Windows | TestOS.Framework);
+		yield return ("@:", TestOS.Framework);
+		yield return ("[:", TestOS.Framework);
+		yield return ("`:", TestOS.Framework);
+		yield return ("{:", TestOS.Framework);
 	}
 
 	#endregion

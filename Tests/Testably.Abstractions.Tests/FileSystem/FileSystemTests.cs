@@ -1,9 +1,9 @@
 namespace Testably.Abstractions.Tests.FileSystem;
 
 [FileSystemTests]
-public partial class FileSystemTests
+public partial class FileSystemTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task Paths_UnderWindows_ShouldUseNormalSlashAndBackslashInterchangeable()
 	{
 		Skip.IfNot(Test.RunsOnWindows);

@@ -4,7 +4,7 @@ using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Tests.Internal;
 
-[Collection("RealFileSystemTests")]
+[NotInParallel(nameof(RealFileSystem))]
 public sealed class FileStreamWrapperTests : IDisposable
 {
 	#region Test Setup
@@ -13,13 +13,13 @@ public sealed class FileStreamWrapperTests : IDisposable
 
 	private readonly IDirectoryCleaner _directoryCleaner;
 
-	public FileStreamWrapperTests(ITestOutputHelper testOutputHelper)
+	public FileStreamWrapperTests()
 	{
 		FileSystem = new RealFileSystem();
 		_directoryCleaner = FileSystem
 			.SetCurrentDirectoryToEmptyTemporaryDirectory(
 				$"Testably.Abstractions.Tests.Internal{FileSystem.Path.DirectorySeparatorChar}FileStreamWrapperTests-",
-				testOutputHelper.WriteLine);
+				Console.WriteLine);
 	}
 
 	/// <inheritdoc cref="IDisposable.Dispose()" />
@@ -28,8 +28,8 @@ public sealed class FileStreamWrapperTests : IDisposable
 
 	#endregion
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path", "my-key", "my-value")]
 	public async Task RetrieveMetadata_ShouldReturnStoredValue(string path, string key,
 		object value)
 	{
@@ -44,8 +44,8 @@ public sealed class FileStreamWrapperTests : IDisposable
 		await That(result).IsEqualTo(value);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path")]
 	public async Task TryGetWrappedInstance_ShouldReturnWrappedInstance(string path)
 	{
 		using FileSystemStream sut = FileSystem.FileStream.New(path, FileMode.OpenOrCreate);

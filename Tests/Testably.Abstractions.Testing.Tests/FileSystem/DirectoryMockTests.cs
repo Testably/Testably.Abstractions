@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public class DirectoryMockTests
 {
-	[Fact]
+	[Test]
 	public async Task
 		EnumerateDirectories_UnauthorizedParentAccess_ShouldThrowUnauthorizedAccessExceptionImmediately()
 	{
@@ -25,7 +25,7 @@ public class DirectoryMockTests
 			.WithHResult(-2147024891);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		EnumerateFiles_UnauthorizedParentAccess_ShouldThrowUnauthorizedAccessExceptionImmediately()
 	{
@@ -46,7 +46,7 @@ public class DirectoryMockTests
 			.WithHResult(-2147024891);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		EnumerateFileSystemEntries_UnauthorizedParentAccess_ShouldThrowUnauthorizedAccessExceptionImmediately()
 	{

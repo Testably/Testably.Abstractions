@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 [FileSystemTests]
-public partial class CreateSubdirectoryTests
+public class CreateSubdirectoryTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateSubdirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(
 		string name)
 	{
@@ -22,8 +22,8 @@ public partial class CreateSubdirectoryTests
 		await That(FileSystem.Directory.Exists(name)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateSubdirectory_MissingParent_ShouldCreateDirectory(
 		string path, string subdirectory)
 	{
@@ -37,8 +37,8 @@ public partial class CreateSubdirectoryTests
 		await That(FileSystem.Directory.Exists(result.FullName)).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateSubdirectory_ShouldCreateDirectory(string path, string subdirectory)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);

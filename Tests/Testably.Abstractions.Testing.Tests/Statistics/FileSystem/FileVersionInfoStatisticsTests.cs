@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public class FileVersionInfoStatisticsTests
 {
-	[Fact]
+	[Test]
 	public async Task Property_Comments_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -17,7 +17,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.Comments));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_CompanyName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -29,7 +29,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.CompanyName));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_FileBuildPart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -41,7 +41,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.FileBuildPart));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_FileDescription_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -53,7 +53,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.FileDescription));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_FileMajorPart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -65,7 +65,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.FileMajorPart));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_FileMinorPart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -77,7 +77,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.FileMinorPart));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_FileName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -89,7 +89,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.FileName));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_FilePrivatePart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -101,7 +101,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.FilePrivatePart));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_FileVersion_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -113,7 +113,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.FileVersion));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_InternalName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -125,7 +125,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.InternalName));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_IsDebug_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -137,7 +137,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.IsDebug));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_IsPatched_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -149,7 +149,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.IsPatched));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_IsPreRelease_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -161,7 +161,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.IsPreRelease));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_IsPrivateBuild_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -173,7 +173,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.IsPrivateBuild));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_IsSpecialBuild_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -185,7 +185,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.IsSpecialBuild));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_Language_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -197,7 +197,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.Language));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_LegalCopyright_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -209,7 +209,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.LegalCopyright));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_LegalTrademarks_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -221,7 +221,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.LegalTrademarks));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_OriginalFilename_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -233,7 +233,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.OriginalFilename));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_PrivateBuild_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -245,7 +245,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.PrivateBuild));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_ProductBuildPart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -257,7 +257,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.ProductBuildPart));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_ProductMajorPart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -269,7 +269,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.ProductMajorPart));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_ProductMinorPart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -281,7 +281,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.ProductMinorPart));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_ProductName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -293,7 +293,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.ProductName));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_ProductPrivatePart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -305,7 +305,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.ProductPrivatePart));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_ProductVersion_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -317,7 +317,7 @@ public class FileVersionInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileVersionInfo.ProductVersion));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_SpecialBuild_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();

@@ -4,10 +4,10 @@ using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 [TimeSystemTests]
-public partial class TimeFactoryTests
+public class TimeFactoryTests(TimeSystemTestData testData) : TimeSystemTestBase(testData)
 {
 #if FEATURE_TIMER_COUNT
-	[Fact]
+	[Test]
 	public async Task ActiveCount_ShouldBeIncrementedWhenCreatingANewTimer()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ => { });
@@ -16,7 +16,7 @@ public partial class TimeFactoryTests
 #endif
 
 #if FEATURE_TIMER_COUNT
-	[Fact]
+	[Test]
 	public async Task ActiveCount_ShouldBeResetWhenDisposingATimer()
 	{
 		const int timersPerThread = 64;
@@ -78,9 +78,9 @@ public partial class TimeFactoryTests
 	}
 #endif
 
-	[Theory]
-	[InlineData(-2)]
-	[InlineData(-500)]
+	[Test]
+	[Arguments(-2)]
+	[Arguments(-500)]
 	public async Task New_InvalidDueTime_ShouldThrowArgumentOutOfRangeException(int dueTime)
 	{
 		void Act()
@@ -94,9 +94,9 @@ public partial class TimeFactoryTests
 			.WithParamName(nameof(dueTime));
 	}
 
-	[Theory]
-	[InlineData(-2)]
-	[InlineData(-500)]
+	[Test]
+	[Arguments(-2)]
+	[Arguments(-500)]
 	public async Task New_InvalidPeriod_ShouldThrowArgumentOutOfRangeException(int period)
 	{
 		void Act()
@@ -110,7 +110,7 @@ public partial class TimeFactoryTests
 			.WithParamName(nameof(period));
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_WithPeriod_ShouldStartTimer()
 	{
 		int count = 0;
@@ -132,11 +132,11 @@ public partial class TimeFactoryTests
 			}
 		}, null, 0, 50);
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		await That(count).IsGreaterThanOrEqualTo(2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_WithDueTime_ShouldStartTimerOnce()
 	{
 		int count = 0;
@@ -155,12 +155,12 @@ public partial class TimeFactoryTests
 			}
 		}, null, 5, 0);
 
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
-		await Task.Delay(100, TestContext.Current.CancellationToken);
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
+		await Task.Delay(100, CancellationToken);
 		await That(count).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_WithoutPeriod_ShouldNotStartTimer()
 	{
 		using ManualResetEventSlim ms = new();
@@ -177,6 +177,6 @@ public partial class TimeFactoryTests
 			}
 		});
 
-		await That(ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(EnsureTimeout, CancellationToken)).IsFalse();
 	}
 }

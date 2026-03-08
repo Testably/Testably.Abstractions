@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class GetRandomFileNameTests
+public class GetRandomFileNameTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task GetRandomFileName_ShouldMatch8Dot3Pattern()
 	{
 		string result = FileSystem.Path.GetRandomFileName();
@@ -13,7 +13,7 @@ public partial class GetRandomFileNameTests
 		await That(result).IsEqualTo("????????.???").AsWildcard();
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetRandomFileName_ShouldReturnRandomFileNameWithExtension()
 	{
 		string result = FileSystem.Path.GetRandomFileName();
@@ -25,7 +25,7 @@ public partial class GetRandomFileNameTests
 		await That(FileSystem.Path.GetFileNameWithoutExtension(result)).IsNotEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetRandomFileName_ShouldReturnRandomStrings()
 	{
 		ConcurrentBag<string> results = [];

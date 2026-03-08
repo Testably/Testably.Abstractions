@@ -1,9 +1,9 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class GetTempPathTests
+public class GetTempPathTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task GetTempPath_Linux_ShouldBeTmp()
 	{
 		Skip.IfNot(Test.RunsOnLinux);
@@ -13,7 +13,7 @@ public partial class GetTempPathTests
 		await That(result).IsEqualTo("/tmp/");
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetTempPath_MacOs_ShouldBeTmp()
 	{
 		Skip.IfNot(Test.RunsOnMac);
@@ -23,7 +23,7 @@ public partial class GetTempPathTests
 		await That(result).IsEqualTo("/var/folders/??/*/T/").AsWildcard();
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetTempPath_ShouldEndWithDirectorySeparator()
 	{
 		string directorySeparator = FileSystem.Path.DirectorySeparatorChar.ToString();
@@ -33,7 +33,7 @@ public partial class GetTempPathTests
 		await That(result).EndsWith(directorySeparator);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetTempPath_ShouldRemainTheSame()
 	{
 		string result1 = FileSystem.Path.GetTempPath();
@@ -42,7 +42,7 @@ public partial class GetTempPathTests
 		await That(result1).IsEqualTo(result2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetTempPath_Windows_ShouldBeOnDriveC()
 	{
 		Skip.IfNot(Test.RunsOnWindows);

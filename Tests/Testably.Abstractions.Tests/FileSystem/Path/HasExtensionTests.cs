@@ -1,9 +1,9 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class HasExtensionTests
+public class HasExtensionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task HasExtension_Null_ShouldReturnFalse()
 	{
 		bool result = FileSystem.Path.HasExtension(null);
@@ -11,12 +11,12 @@ public partial class HasExtensionTests
 		await That(result).IsFalse();
 	}
 
-	[Theory]
-	[InlineAutoData("abc.", false)]
-	[InlineAutoData(".foo", true)]
-	[InlineAutoData(".abc.xyz", true)]
-	[InlineAutoData("foo", false)]
-	[InlineAutoData(".", false)]
+	[Test]
+	[AutoArguments("abc.", false)]
+	[AutoArguments(".foo", true)]
+	[AutoArguments(".abc.xyz", true)]
+	[AutoArguments("foo", false)]
+	[AutoArguments(".", false)]
 	public async Task HasExtension_ShouldReturnExpectedResult(
 		string suffix, bool expectedResult, string filename)
 	{
@@ -28,12 +28,12 @@ public partial class HasExtensionTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[InlineAutoData("abc.", false)]
-	[InlineAutoData(".foo", true)]
-	[InlineAutoData(".abc.xyz", true)]
-	[InlineAutoData("foo", false)]
-	[InlineAutoData(".", false)]
+	[Test]
+	[AutoArguments("abc.", false)]
+	[AutoArguments(".foo", true)]
+	[AutoArguments(".abc.xyz", true)]
+	[AutoArguments("foo", false)]
+	[AutoArguments(".", false)]
 	public async Task HasExtension_Span_ShouldReturnExpectedResult(
 		string suffix, bool expectedResult, string filename)
 	{

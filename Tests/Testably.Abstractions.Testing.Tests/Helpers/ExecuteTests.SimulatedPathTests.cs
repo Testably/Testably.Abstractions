@@ -5,10 +5,10 @@ public sealed partial class ExecuteTests
 #if CAN_SIMULATE_OTHER_OS
 	public sealed class SimulatedPathTests
 	{
-		[Theory]
-		[InlineData(SimulationMode.Linux)]
-		[InlineData(SimulationMode.MacOS)]
-		[InlineData(SimulationMode.Windows)]
+		[Test]
+		[Arguments(SimulationMode.Linux)]
+		[Arguments(SimulationMode.MacOS)]
+		[Arguments(SimulationMode.Windows)]
 		public async Task FileSystem_ShouldBeMockFileSystem(SimulationMode simulationMode)
 		{
 			MockFileSystem sut = new(o => o.SimulatingOperatingSystem(simulationMode));

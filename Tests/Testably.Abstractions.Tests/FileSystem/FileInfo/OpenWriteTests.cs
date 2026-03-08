@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
-public partial class OpenWriteTests
+public class OpenWriteTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task OpenWrite_MissingFile_ShouldCreateFile(string path)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
@@ -16,8 +16,8 @@ public partial class OpenWriteTests
 		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task OpenWrite_ShouldUseWriteAccessAndNoneShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);

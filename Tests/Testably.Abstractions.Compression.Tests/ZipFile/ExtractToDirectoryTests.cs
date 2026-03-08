@@ -8,9 +8,9 @@ using Testably.Abstractions.Compression.Tests.TestHelpers;
 namespace Testably.Abstractions.Compression.Tests.ZipFile;
 
 [FileSystemTests]
-public partial class ExtractToDirectoryTests
+public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task ExtractToDirectory_MissingDestinationDirectory_ShouldCreateDirectory()
 	{
 		FileSystem.Initialize()
@@ -25,7 +25,7 @@ public partial class ExtractToDirectoryTests
 			.WithContent().SameAs("foo/test.txt");
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		ExtractToDirectory_MissingSourceFileName_ShouldThrowArgumentNullException()
 	{
@@ -41,7 +41,7 @@ public partial class ExtractToDirectoryTests
 			.WithMessage($"*'{FileSystem.Path.GetFullPath(sourceArchiveFileName)}*").AsWildcard();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		ExtractToDirectory_NullAsSourceFileName_ShouldThrowArgumentNullException()
 	{
@@ -58,8 +58,8 @@ public partial class ExtractToDirectoryTests
 	}
 
 #if FEATURE_COMPRESSION_OVERWRITE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectory_Overwrite_ShouldOverwriteFile(
 		string contents)
 	{
@@ -81,8 +81,8 @@ public partial class ExtractToDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_OVERWRITE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectory_WithEncoding_Overwrite_ShouldOverwriteFile(
 		string contents,
 		Encoding encoding)
@@ -104,8 +104,8 @@ public partial class ExtractToDirectoryTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectory_WithEncoding_ShouldZipDirectoryContent(
 		Encoding encoding)
 	{
@@ -123,8 +123,8 @@ public partial class ExtractToDirectoryTests
 			.WithContent().SameAs(FileSystem.Path.Combine("foo", "test.txt"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectory_WithoutOverwriteAndExistingFile_ShouldOverwriteFile(
 		string contents)
 	{
@@ -152,7 +152,7 @@ public partial class ExtractToDirectoryTests
 	}
 
 #if FEATURE_COMPRESSION_STREAM
-	[Fact]
+	[Test]
 	public async Task
 		ExtractToDirectory_WithStream_MissingDestinationDirectory_ShouldCreateDirectory()
 	{
@@ -171,7 +171,7 @@ public partial class ExtractToDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Fact]
+	[Test]
 	public async Task
 		ExtractToDirectory_WithStream_NotReadable_ShouldThrowArgumentNullException()
 	{
@@ -191,7 +191,7 @@ public partial class ExtractToDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Fact]
+	[Test]
 	public async Task
 		ExtractToDirectory_WithStream_Null_ShouldThrowArgumentNullException()
 	{
@@ -209,8 +209,8 @@ public partial class ExtractToDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectory_WithStream_Overwrite_ShouldOverwriteFile(
 		string contents)
 	{
@@ -233,8 +233,8 @@ public partial class ExtractToDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectory_WithStream_WithEncoding_Overwrite_ShouldOverwriteFile(
 		string contents,
 		Encoding encoding)
@@ -258,8 +258,8 @@ public partial class ExtractToDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectory_WithStream_WithEncoding_ShouldZipDirectoryContent(
 		Encoding encoding)
 	{
@@ -280,8 +280,8 @@ public partial class ExtractToDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		ExtractToDirectory_WithStream_WithoutOverwriteAndExistingFile_ShouldOverwriteFile(
 			string contents)
@@ -313,7 +313,7 @@ public partial class ExtractToDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Fact]
+	[Test]
 	public async Task ExtractToDirectory_WithWriteOnlyStream_ShouldThrowArgumentException()
 	{
 		FileSystem.Initialize()

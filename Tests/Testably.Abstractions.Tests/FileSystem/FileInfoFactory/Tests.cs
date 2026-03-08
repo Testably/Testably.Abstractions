@@ -3,11 +3,11 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfoFactory;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[InlineData(259)]
-	[InlineData(260)]
+	[Test]
+	[Arguments(259)]
+	[Arguments(260)]
 	public async Task New_PathTooLong_ShouldThrowPathTooLongException_OnNetFramework(
 		int maxLength)
 	{
@@ -29,8 +29,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_ShouldCreateNewFileInfoFromPath(string path)
 	{
 		IFileInfo result = FileSystem.FileInfo.New(path);
@@ -39,8 +39,8 @@ public partial class Tests
 		await That(result.Exists).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_ShouldOpenWithExistingContent(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -52,8 +52,8 @@ public partial class Tests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_ShouldSetLength(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
@@ -69,8 +69,8 @@ public partial class Tests
 		await That(result).IsEqualTo(bytes.Length);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_WithTrailingDirectorySeparatorChar_ShouldHaveEmptyName(string path)
 	{
 		IFileInfo result =
@@ -79,7 +79,7 @@ public partial class Tests
 		await That(result.Name).IsEqualTo(string.Empty);
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_WithUnicodeWhitespace_ShouldNotThrow()
 	{
 		void Act()
@@ -97,7 +97,7 @@ public partial class Tests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_WithWhitespace_ShouldThrowOnlyOnWindows()
 	{
 		void Act()
@@ -115,7 +115,7 @@ public partial class Tests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task Wrap_Null_ShouldReturnNull()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
@@ -126,8 +126,8 @@ public partial class Tests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Wrap_ShouldWrapFromFileInfo(string path)
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
@@ -141,8 +141,8 @@ public partial class Tests
 		await That(result.Exists).IsEqualTo(fileInfo.Exists);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException(string path)
 	{
 		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&

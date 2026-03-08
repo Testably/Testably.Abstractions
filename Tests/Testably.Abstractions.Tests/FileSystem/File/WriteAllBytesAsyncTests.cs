@@ -8,10 +8,10 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 
 // ReSharper disable MethodHasAsyncOverload
 [FileSystemTests]
-public partial class WriteAllBytesAsyncTests
+public class WriteAllBytesAsyncTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllBytesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, byte[] bytes)
 	{
@@ -24,45 +24,45 @@ public partial class WriteAllBytesAsyncTests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllBytesAsync_PreviousFile_ShouldOverwriteFileWithBytes(
 		string path, byte[] bytes)
 	{
-		await FileSystem.File.WriteAllBytesAsync(path, Encoding.UTF8.GetBytes("foo"), TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllBytesAsync(path, Encoding.UTF8.GetBytes("foo"), CancellationToken);
 
-		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllBytesAsync_ShouldCreateFileWithBytes(
 		string path, byte[] bytes)
 	{
-		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllBytesAsync_WhenBytesAreNull_ShouldThrowArgumentNullException(
 		string path)
 	{
 		async Task Act()
 		{
-			await FileSystem.File.WriteAllBytesAsync(path, null!, TestContext.Current.CancellationToken);
+			await FileSystem.File.WriteAllBytesAsync(path, null!, CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>().WithParamName("bytes");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllBytesAsync_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path, byte[] bytes)
@@ -71,7 +71,7 @@ public partial class WriteAllBytesAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
+			await FileSystem.File.WriteAllBytesAsync(path, bytes, CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
@@ -79,28 +79,28 @@ public partial class WriteAllBytesAsyncTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllTextAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string path, byte[] bytes)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		await FileSystem.File.WriteAllTextAsync(path, "", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, "", CancellationToken);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
 		async Task Act()
 		{
-			await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
+			await FileSystem.File.WriteAllBytesAsync(path, bytes, CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 	
 #if FEATURE_FILE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllBytesAsync_ReadOnlyMemory_Cancelled_ShouldThrowTaskCanceledException(
 		string path, byte[] bytes)
 	{
@@ -113,32 +113,32 @@ public partial class WriteAllBytesAsyncTests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllBytesAsync_ReadOnlyMemory_PreviousFile_ShouldOverwriteFileWithBytes(
 		string path, byte[] bytes)
 	{
-		await FileSystem.File.WriteAllBytesAsync(path, Encoding.UTF8.GetBytes("foo"), TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllBytesAsync(path, Encoding.UTF8.GetBytes("foo"), CancellationToken);
 
-		await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllBytesAsync_ReadOnlyMemory_ShouldCreateFileWithBytes(
 		string path, byte[] bytes)
 	{
-		await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), CancellationToken);
 
 		await That(FileSystem.File.Exists(path)).IsTrue();
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllBytesAsync_ReadOnlyMemory_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path, byte[] bytes)
@@ -147,7 +147,7 @@ public partial class WriteAllBytesAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
+			await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
@@ -155,20 +155,20 @@ public partial class WriteAllBytesAsyncTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllTextAsync_ReadOnlyMemory_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string path, byte[] bytes)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		await FileSystem.File.WriteAllTextAsync(path, "", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, "", CancellationToken);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
 		async Task Act()
 		{
-			await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
+			await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);

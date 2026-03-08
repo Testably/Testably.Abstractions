@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public class RandomSystemExtensionsTests
 {
-	[Fact]
+	[Test]
 	public async Task GenerateRandomFileExtension_ShouldNotStartWithDotOrReturnEmptyString()
 	{
 		MockRandomSystem randomSystem = new(
@@ -34,7 +34,7 @@ public class RandomSystemExtensionsTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task GenerateRandomFileName_ShouldGenerateEdgeCases()
 	{
 		MockRandomSystem randomSystem = new(

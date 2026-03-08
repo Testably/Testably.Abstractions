@@ -1,9 +1,9 @@
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 [FileSystemTests]
-public partial class PathTests
+public class PathTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task Path_Empty_ShouldNotThrowException()
 	{
 		using IFileSystemWatcher fileSystemWatcher =
@@ -18,7 +18,7 @@ public partial class PathTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Path_Null_ShouldNotThrowException()
 	{
 		using IFileSystemWatcher fileSystemWatcher =
@@ -33,8 +33,8 @@ public partial class PathTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
 	{
 		using IFileSystemWatcher fileSystemWatcher =
@@ -51,7 +51,7 @@ public partial class PathTests
 			.WithMessageContaining(path);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Path_Whitespace_ShouldThrowArgumentException()
 	{
 		using IFileSystemWatcher fileSystemWatcher =

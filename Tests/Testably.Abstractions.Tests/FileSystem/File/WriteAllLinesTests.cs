@@ -5,10 +5,10 @@ using System.Text;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class WriteAllLinesTests
+public class WriteAllLinesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllLines_Enumerable_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string[] contents)
 	{
@@ -20,8 +20,8 @@ public partial class WriteAllLinesTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllLines_Enumerable_ShouldCreateFileWithText(
 		string path, string[] contents)
 	{
@@ -31,8 +31,8 @@ public partial class WriteAllLinesTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllLines_Enumerable_WithEncoding_ShouldCreateFileWithText(
 		Encoding encoding, string path, string[] contents)
 	{
@@ -42,8 +42,8 @@ public partial class WriteAllLinesTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllLines_Enumerable_WithoutEncoding_ShouldUseUtf8(
 		string path)
 	{
@@ -55,8 +55,8 @@ public partial class WriteAllLinesTests
 		await That(bytes.Length).IsEqualTo(6 + Environment.NewLine.Length);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllLines_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string[] contents)
 	{
@@ -68,8 +68,8 @@ public partial class WriteAllLinesTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllLines_ShouldCreateFileWithText(string path, string[] contents)
 	{
 		FileSystem.File.WriteAllLines(path, contents);
@@ -78,8 +78,8 @@ public partial class WriteAllLinesTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllLines_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path, string[] contents)
@@ -96,8 +96,8 @@ public partial class WriteAllLinesTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllLines_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string path, string[] contents)
@@ -115,8 +115,8 @@ public partial class WriteAllLinesTests
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllLines_WithEncoding_ShouldCreateFileWithText(
 		Encoding encoding, string path, string[] contents)
 	{
@@ -126,8 +126,8 @@ public partial class WriteAllLinesTests
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllLines_WithoutEncoding_ShouldUseUtf8(
 		string path)
 	{

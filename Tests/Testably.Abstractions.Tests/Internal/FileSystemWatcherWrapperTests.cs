@@ -2,7 +2,7 @@
 
 public class FileSystemWatcherWrapperTests
 {
-	[Fact]
+	[Test]
 	public async Task FromFileSystemWatcher_Null_ShouldReturnNull()
 	{
 		RealFileSystem fileSystem = new();

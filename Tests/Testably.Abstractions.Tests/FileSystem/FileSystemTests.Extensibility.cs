@@ -4,8 +4,8 @@ namespace Testably.Abstractions.Tests.FileSystem;
 
 public partial class FileSystemTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("foo")]
 	public async Task
 		Extensibility_HasWrappedInstance_WithCorrectType_ShouldReturnTrueOnRealFileSystem(
 			string name)
@@ -27,8 +27,8 @@ public partial class FileSystemTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("foo")]
 	public async Task Extensibility_HasWrappedInstance_WithIncorrectType_ShouldReturnAlwaysFalse(
 		string name)
 	{
@@ -43,11 +43,12 @@ public partial class FileSystemTests
 		await That(directoryInfo).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("foo")]
 	public async Task Extensibility_RetrieveMetadata_CorrectKeyAndType_ShouldReturnStoredValue(
-		string name, DateTime time)
+		string name)
 	{
+		var time = DateTime.Now.AddHours(42);
 		IFileInfo entity = FileSystem.FileInfo.New(name);
 		IFileSystemExtensibility sut = entity as IFileSystemExtensibility
 		                               ?? throw new NotSupportedException(
@@ -59,8 +60,8 @@ public partial class FileSystemTests
 		await That(result).IsEqualTo(time);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("foo")]
 	public async Task Extensibility_RetrieveMetadata_DifferentKey_ShouldReturnNull(
 		string name)
 	{
@@ -75,8 +76,8 @@ public partial class FileSystemTests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("foo")]
 	public async Task Extensibility_RetrieveMetadata_DifferentType_ShouldReturnNull(
 		string name)
 	{
@@ -91,8 +92,8 @@ public partial class FileSystemTests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("foo")]
 	public async Task Extensibility_RetrieveMetadata_NotRegisteredKey_ShouldReturnNull(
 		string name)
 	{

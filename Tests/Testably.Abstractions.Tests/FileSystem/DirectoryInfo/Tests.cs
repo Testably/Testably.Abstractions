@@ -3,11 +3,11 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[InlineData("foo")]
-	[InlineData("foo/")]
+	[Test]
+	[Arguments("foo")]
+	[Arguments("foo/")]
 	public async Task Extension_ShouldReturnEmptyString(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -17,10 +17,10 @@ public partial class Tests
 		await That(result).IsEmpty();
 	}
 
-	[Theory]
-	[InlineData(@"/temp\\folder")]
-	[InlineData("/temp/folder")]
-	[InlineData(@"/temp/\\/folder")]
+	[Test]
+	[Arguments(@"/temp\\folder")]
+	[Arguments("/temp/folder")]
+	[Arguments(@"/temp/\\/folder")]
 	public async Task FullName_ShouldNotNormalizePathOnLinux(string path)
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -30,9 +30,9 @@ public partial class Tests
 		await That(sut.FullName).IsEqualTo(path);
 	}
 
-	[Theory]
-	[InlineData("foo")]
-	[InlineData("foo/")]
+	[Test]
+	[Arguments("foo")]
+	[Arguments("foo/")]
 	public async Task FullName_ShouldReturnFullPath(string path)
 	{
 		string expectedPath = FileSystem.Path.GetFullPath(path);
@@ -41,12 +41,12 @@ public partial class Tests
 		await That(sut.FullName).IsEqualTo(expectedPath);
 	}
 
-	[Theory]
-	[InlineData(@"\\unc\folder", @"\\unc\folder")]
-	[InlineData(@"\\unc/folder\\foo", @"\\unc\folder\foo")]
-	[InlineData(@"c:\temp\\folder", @"c:\temp\folder")]
-	[InlineData(@"c:\temp//folder", @"c:\temp\folder")]
-	[InlineData(@"c:\temp//\\///folder", @"c:\temp\folder")]
+	[Test]
+	[Arguments(@"\\unc\folder", @"\\unc\folder")]
+	[Arguments(@"\\unc/folder\\foo", @"\\unc\folder\foo")]
+	[Arguments(@"c:\temp\\folder", @"c:\temp\folder")]
+	[Arguments(@"c:\temp//folder", @"c:\temp\folder")]
+	[Arguments(@"c:\temp//\\///folder", @"c:\temp\folder")]
 	public async Task FullName_ShouldReturnNormalizedPath_OnWindows(
 		string path, string expectedPath)
 	{
@@ -57,8 +57,8 @@ public partial class Tests
 		await That(sut.FullName).IsEqualTo(expectedPath);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FullName_ShouldTrimTrailingSpaces_OnWindows(string path)
 	{
 		path = FileSystem.Path.GetFullPath(path);
@@ -76,8 +76,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		MissingFile_Attributes_ShouldAlwaysBeNegativeOne_AndSetterShouldThrowFileNotFoundException(
 			FileAttributes fileAttributes)
@@ -94,8 +94,8 @@ public partial class Tests
 		await That(sut.Attributes).IsEqualTo((FileAttributes)(-1));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		MissingFile_CreationTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime creationTime)
@@ -120,8 +120,8 @@ public partial class Tests
 		await That(sut.CreationTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		MissingFile_CreationTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime creationTimeUtc)
@@ -146,8 +146,8 @@ public partial class Tests
 		await That(sut.CreationTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		MissingFile_LastAccessTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime lastAccessTime)
@@ -172,8 +172,8 @@ public partial class Tests
 		await That(sut.LastAccessTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		MissingFile_LastAccessTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime lastAccessTimeUtc)
@@ -198,8 +198,8 @@ public partial class Tests
 		await That(sut.LastAccessTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		MissingFile_LastWriteTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime lastWriteTime)
@@ -224,8 +224,8 @@ public partial class Tests
 		await That(sut.LastWriteTime).IsEqualTo(FileTestHelper.NullTime.ToLocalTime());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		MissingFile_LastWriteTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 			DateTime lastWriteTimeUtc)
@@ -250,8 +250,8 @@ public partial class Tests
 		await That(sut.LastWriteTimeUtc).IsEqualTo(FileTestHelper.NullTime.ToUniversalTime());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Name_ShouldTrimTrailingSpaces_OnWindows(string path)
 	{
 		string pathWithSpaces = path + "  ";
@@ -268,8 +268,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Parent_ArbitraryPaths_ShouldNotBeNull(string path1,
 		string path2,
 		string path3)
@@ -283,7 +283,7 @@ public partial class Tests
 		await That(sut.Parent!.Exists).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Parent_Root_ShouldBeNull()
 	{
 		IDirectoryInfo sut =
@@ -292,9 +292,9 @@ public partial class Tests
 		await That(sut.Parent).IsNull();
 	}
 
-	[Theory]
-	[InlineAutoData("./foo/bar", "foo")]
-	[InlineAutoData("./foo", ".")]
+	[Test]
+	[AutoArguments("./foo/bar", "foo")]
+	[AutoArguments("./foo", ".")]
 	public async Task Parent_ToString_ShouldBeAbsolutePathOnNetCore(
 		string path, string expectedParent)
 	{
@@ -317,9 +317,9 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[InlineAutoData("./foo/bar", "foo")]
-	[InlineAutoData("./foo", "bar", "bar")]
+	[Test]
+	[AutoArguments("./foo/bar", "foo")]
+	[AutoArguments("./foo", "bar", "bar")]
 	public async Task Parent_ToString_ShouldBeDirectoryNameOnNetFramework(
 		string path, string expectedParent, string directory)
 	{
@@ -342,8 +342,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Parent_WithTrailingDirectorySeparator_ShouldReturnCorrectParent(string path1,
 		string path2)
 	{
@@ -357,7 +357,7 @@ public partial class Tests
 		await That(sut.Parent!.FullName).IsEqualTo(expectedParent);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Root_Name_ShouldBeCorrect()
 	{
 		string rootName = FileTestHelper.RootDrive(Test);
@@ -368,8 +368,8 @@ public partial class Tests
 		await That(sut.Name).IsEqualTo(rootName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Root_ShouldExist(string path)
 	{
 		string expectedRoot = FileTestHelper.RootDrive(Test);
@@ -379,10 +379,10 @@ public partial class Tests
 		await That(result.Root.FullName).IsEqualTo(expectedRoot);
 	}
 
-	[Theory]
-	[InlineData("/foo")]
-	[InlineData("./foo")]
-	[InlineData("foo")]
+	[Test]
+	[Arguments("/foo")]
+	[Arguments("./foo")]
+	[Arguments("foo")]
 	public async Task ToString_ShouldReturnProvidedPath(string path)
 	{
 		IDirectoryInfo directoryInfo = FileSystem.DirectoryInfo.New(path);

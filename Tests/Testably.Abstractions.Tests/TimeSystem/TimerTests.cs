@@ -4,8 +4,9 @@ using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
+#pragma warning disable TUnit0031
 [TimeSystemTests]
-public partial class TimerTests
+public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testData)
 {
 	#region Test Setup
 
@@ -14,7 +15,7 @@ public partial class TimerTests
 	#endregion
 
 #if NET8_0_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task Change_DisposedTimer_ShouldReturnFalse()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -35,7 +36,7 @@ public partial class TimerTests
 #endif
 
 #if !NET8_0_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task Change_DisposedTimer_ShouldThrowObjectDisposedException()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -54,7 +55,7 @@ public partial class TimerTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Change_Infinite_ShouldBeValidDueTime()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -70,7 +71,7 @@ public partial class TimerTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Change_Infinite_ShouldBeValidPeriod()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -86,9 +87,9 @@ public partial class TimerTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Theory]
-	[InlineData(-2)]
-	[InlineData(-500)]
+	[Test]
+	[Arguments(-2)]
+	[Arguments(-500)]
 	public async Task Change_InvalidDueTime_ShouldThrowArgumentOutOfRangeException(int dueTime)
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -105,9 +106,9 @@ public partial class TimerTests
 			.WithParamName(nameof(dueTime));
 	}
 
-	[Theory]
-	[InlineData(-2)]
-	[InlineData(-500)]
+	[Test]
+	[Arguments(-2)]
+	[Arguments(-500)]
 	public async Task Change_InvalidPeriod_ShouldThrowArgumentOutOfRangeException(int period)
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -124,7 +125,7 @@ public partial class TimerTests
 			.WithParamName(nameof(period));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Change_SameValues_WithInt_ShouldReturnTrue()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -136,7 +137,7 @@ public partial class TimerTests
 		await That(result).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Change_SameValues_WithLong_ShouldReturnTrue()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -148,7 +149,7 @@ public partial class TimerTests
 		await That(result).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Change_SameValues_WithTimeSpan_ShouldReturnTrue()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -160,7 +161,8 @@ public partial class TimerTests
 		await That(result).IsTrue();
 	}
 
-	[Fact(Skip = "Temporarily skip brittle tests")]
+	[Test]
+	[Skip("Temporarily skip brittle tests")]
 	public async Task Change_WithInt_ShouldResetTimer()
 	{
 		SkipIfBrittleTestsShouldBeSkipped();
@@ -183,25 +185,25 @@ public partial class TimerTests
 						ms1.Set();
 						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						await That(ms2.Wait(ExpectSuccess, TestContext.Current.CancellationToken))
+						await That(ms2.Wait(ExpectSuccess, CancellationToken))
 							.IsTrue();
 						if (triggerTimes.Count > 3)
 						{
-							// ReSharper disable once AccessToDisposedClosure
+							// ReSharper disable once CancellationToken
 							ms3.Set();
 						}
 
-						await Task.Delay(10, TestContext.Current.CancellationToken);
+						await Task.Delay(10, CancellationToken);
 					}
 					catch (ObjectDisposedException)
 					{
 						// Ignore any ObjectDisposedException
 					}
 				},
-				null, 0 * TimerMultiplier, 200 * TimerMultiplier))
+				null, (long)(0 * TimerMultiplier), 200 * TimerMultiplier))
 			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
-			await That(ms1.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+			await That(ms1.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
@@ -218,7 +220,7 @@ public partial class TimerTests
 			}, null, 100 * TimerMultiplier, 0 * TimerMultiplier);
 
 			await That(ms3.Wait(ExpectSuccess * TimerMultiplier,
-				TestContext.Current.CancellationToken)).IsTrue();
+				CancellationToken)).IsTrue();
 		}
 
 		if (triggerTimes[0] < 30 * TimerMultiplier)
@@ -234,7 +236,8 @@ public partial class TimerTests
 		}
 	}
 
-	[Fact(Skip = "Temporarily skip brittle tests")]
+	[Test]
+	[Skip("Temporarily skip brittle tests")]
 	public async Task Change_WithLong_ShouldResetTimer()
 	{
 		SkipIfBrittleTestsShouldBeSkipped();
@@ -257,7 +260,7 @@ public partial class TimerTests
 						ms1.Set();
 						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						await That(ms2.Wait(ExpectSuccess, TestContext.Current.CancellationToken))
+						await That(ms2.Wait(ExpectSuccess, CancellationToken))
 							.IsTrue();
 						if (triggerTimes.Count > 3)
 						{
@@ -265,7 +268,7 @@ public partial class TimerTests
 							ms3.Set();
 						}
 
-						await Task.Delay(10, TestContext.Current.CancellationToken);
+						await Task.Delay(10, CancellationToken);
 					}
 					catch (ObjectDisposedException)
 					{
@@ -275,7 +278,7 @@ public partial class TimerTests
 				null, 0L * TimerMultiplier, 200L * TimerMultiplier))
 			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
-			await That(ms1.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+			await That(ms1.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
@@ -291,7 +294,7 @@ public partial class TimerTests
 				}
 			}, null, 100L * TimerMultiplier, 0L * TimerMultiplier);
 
-			await That(ms3.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+			await That(ms3.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		}
 
 		if (triggerTimes[0] < 30 * TimerMultiplier)
@@ -307,7 +310,8 @@ public partial class TimerTests
 		}
 	}
 
-	[Fact(Skip = "Temporarily skip brittle tests")]
+	[Test]
+	[Skip("Temporarily skip brittle tests")]
 	public async Task Change_WithTimeSpan_ShouldResetTimer()
 	{
 		SkipIfBrittleTestsShouldBeSkipped();
@@ -330,7 +334,7 @@ public partial class TimerTests
 						ms1.Set();
 						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						await That(ms2.Wait(ExpectSuccess, TestContext.Current.CancellationToken))
+						await That(ms2.Wait(ExpectSuccess, CancellationToken))
 							.IsTrue();
 						if (triggerTimes.Count > 3)
 						{
@@ -338,17 +342,18 @@ public partial class TimerTests
 							ms3.Set();
 						}
 
-						await Task.Delay(10, TestContext.Current.CancellationToken);
+						await Task.Delay(10, CancellationToken);
 					}
 					catch (ObjectDisposedException)
 					{
 						// Ignore any ObjectDisposedException
 					}
 				}, null, TimeSpan.FromMilliseconds(TimerMultiplier),
+				#pragma warning restore TUnit0031
 				TimeSpan.FromMilliseconds(200 * TimerMultiplier)))
 			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
-			await That(ms1.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+			await That(ms1.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 				{
 					// ReSharper disable once AccessToDisposedClosure
@@ -366,7 +371,7 @@ public partial class TimerTests
 				}, null, TimeSpan.FromMilliseconds(100 * TimerMultiplier),
 				TimeSpan.FromMilliseconds(TimerMultiplier));
 
-			await That(ms3.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+			await That(ms3.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		}
 
 		if (triggerTimes[0] < 30 * TimerMultiplier)
@@ -382,7 +387,7 @@ public partial class TimerTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task Dispose_WithManualResetEventWaitHandle_ShouldBeSet()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -407,7 +412,7 @@ public partial class TimerTests
 #endif
 	}
 
-	[Fact]
+	[Test]
 	public async Task Dispose_WithMutexWaitHandle_ShouldBeSet()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -432,7 +437,7 @@ public partial class TimerTests
 #endif
 	}
 
-	[Fact]
+	[Test]
 	public async Task Dispose_WithSemaphoreWaitHandle_ShouldBeSet()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -457,7 +462,7 @@ public partial class TimerTests
 #endif
 	}
 
-	[Fact]
+	[Test]
 	public async Task Dispose_WithWaitHandleCalledTwice_ShouldReturnFalse()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -472,7 +477,7 @@ public partial class TimerTests
 	}
 
 #if FEATURE_ASYNC_DISPOSABLE
-	[Fact]
+	[Test]
 	public async Task DisposeAsync_ShouldDisposeTimer()
 	{
 		await using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -495,3 +500,4 @@ public partial class TimerTests
 	}
 #endif
 }
+#pragma warning restore TUnit0031

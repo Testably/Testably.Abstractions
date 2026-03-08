@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class CopyTests
+public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Copy_CaseOnlyChange_ShouldThrowIOException_ExceptOnLinux(
 		string name, string contents)
 	{
@@ -32,8 +32,8 @@ public partial class CopyTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		Copy_DestinationDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException(
 			string source)
@@ -50,8 +50,8 @@ public partial class CopyTests
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Copy_DestinationExists_ShouldThrowIOException_AndNotCopyFile(
 		string sourceName,
 		string destinationName,
@@ -75,8 +75,8 @@ public partial class CopyTests
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Copy_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
 		string destinationName,
@@ -95,10 +95,10 @@ public partial class CopyTests
 	}
 #endif
 
-	[Theory]
-	[InlineData(@"0:\something\demo.txt", @"C:\elsewhere\demo.txt")]
-	[InlineData(@"C:\something\demo.txt", @"^:\elsewhere\demo.txt")]
-	[InlineData(@"C:\something\demo.txt", @"C:\elsewhere:\demo.txt")]
+	[Test]
+	[Arguments(@"0:\something\demo.txt", @"C:\elsewhere\demo.txt")]
+	[Arguments(@"C:\something\demo.txt", @"^:\elsewhere\demo.txt")]
+	[Arguments(@"C:\something\demo.txt", @"C:\elsewhere:\demo.txt")]
 	public async Task
 		Copy_InvalidDriveName_ShouldThrowNotSupportedException(
 			string source, string destination)
@@ -113,8 +113,8 @@ public partial class CopyTests
 		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
-	[Theory]
-	[InlineData(@"C::\something\demo.txt", @"C:\elsewhere\demo.txt")]
+	[Test]
+	[Arguments(@"C::\something\demo.txt", @"C:\elsewhere\demo.txt")]
 	public async Task
 		Copy_InvalidPath_ShouldThrowCorrectException(
 			string source, string destination)
@@ -139,8 +139,8 @@ public partial class CopyTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Copy_ReadOnly_ShouldCopyFile(
 		string sourceName, string destinationName, string contents)
 	{
@@ -156,8 +156,8 @@ public partial class CopyTests
 		await That(FileSystem.File.GetAttributes(destinationName)).HasFlag(FileAttributes.ReadOnly);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Copy_ShouldAdjustTimes(
 		string source, string destination)
 	{
@@ -223,8 +223,8 @@ public partial class CopyTests
 			.Within(TimeComparison.Tolerance);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Copy_ShouldCloneBinaryContent(
 		string source, string destination, byte[] original)
 	{
@@ -247,8 +247,8 @@ public partial class CopyTests
 			.IsNotEqualTo(FileSystem.File.ReadAllBytes(source));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Copy_ShouldCloneTextContent(
 		string source, string destination, string contents)
 	{
@@ -269,8 +269,8 @@ public partial class CopyTests
 			.IsNotEqualTo(FileSystem.File.ReadAllText(destination));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Copy_ShouldCopyFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{
@@ -287,13 +287,13 @@ public partial class CopyTests
 		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[InlineAutoData(FileAccess.Read, FileShare.Read)]
-	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.Read)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite)]
-	[InlineAutoData(FileAccess.Write, FileShare.Read)]
-	[InlineAutoData(FileAccess.Write, FileShare.ReadWrite)]
+	[Test]
+	[AutoArguments(FileAccess.Read, FileShare.Read)]
+	[AutoArguments(FileAccess.Read, FileShare.ReadWrite)]
+	[AutoArguments(FileAccess.ReadWrite, FileShare.Read)]
+	[AutoArguments(FileAccess.ReadWrite, FileShare.ReadWrite)]
+	[AutoArguments(FileAccess.Write, FileShare.Read)]
+	[AutoArguments(FileAccess.Write, FileShare.ReadWrite)]
 	public async Task Copy_SourceAccessedWithReadShare_ShouldNotThrow(
 		FileAccess fileAccess,
 		FileShare fileShare,
@@ -313,10 +313,10 @@ public partial class CopyTests
 		await That(FileSystem.File.ReadAllText(destinationPath)).IsEqualTo(sourceContents);
 	}
 
-	[Theory]
-	[InlineAutoData(FileAccess.Read)]
-	[InlineAutoData(FileAccess.ReadWrite)]
-	[InlineAutoData(FileAccess.Write)]
+	[Test]
+	[AutoArguments(FileAccess.Read)]
+	[AutoArguments(FileAccess.ReadWrite)]
+	[AutoArguments(FileAccess.Write)]
 	public async Task Copy_SourceAccessedWithWriteShare_ShouldNotThrowOnLinuxOrMac(
 		FileAccess fileAccess,
 		string sourcePath,
@@ -337,8 +337,8 @@ public partial class CopyTests
 		await That(FileSystem.File.ReadAllText(destinationPath)).IsEqualTo(sourceContents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Copy_SourceDirectoryMissing_ShouldThrowDirectoryNotFoundException(
 		string missingDirectory,
 		string sourceName,
@@ -359,8 +359,8 @@ public partial class CopyTests
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Copy_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
 		string sourceName,
 		string destinationName)
@@ -381,9 +381,9 @@ public partial class CopyTests
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 
-	[Theory]
-	[InlineAutoData(FileShare.None)]
-	[InlineAutoData(FileShare.Write)]
+	[Test]
+	[AutoArguments(FileShare.None)]
+	[AutoArguments(FileShare.Write)]
 	public async Task Copy_SourceLocked_ShouldThrowIOException(
 		FileShare fileShare,
 		string sourceName,
@@ -414,8 +414,8 @@ public partial class CopyTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Copy_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
 		string destinationName)

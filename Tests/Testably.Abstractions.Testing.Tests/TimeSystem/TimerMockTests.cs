@@ -5,12 +5,12 @@ using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
 // ReSharper disable UseAwaitUsing
-public class TimerMockTests(ITestOutputHelper testOutputHelper)
+public class TimerMockTests
 {
-	[Theory]
-	[InlineData(-1)]
-	[InlineData(0)]
-	[InlineData(2000)]
+	[Test]
+	[Arguments(-1)]
+	[Arguments(0)]
+	[Arguments(2000)]
 	public async Task Change_ValidDueTimeValue_ShouldNotThrowException(int dueTime)
 	{
 		MockTimeSystem timeSystem = new();
@@ -27,10 +27,10 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		await That(exception).IsNull();
 	}
 
-	[Theory]
-	[InlineData(-1)]
-	[InlineData(0)]
-	[InlineData(2000)]
+	[Test]
+	[Arguments(-1)]
+	[Arguments(0)]
+	[Arguments(2000)]
 	public async Task Change_ValidPeriodValue_ShouldNotThrowException(int period)
 	{
 		MockTimeSystem timeSystem = new();
@@ -47,7 +47,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		await That(exception).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Dispose_ShouldDisposeTimer()
 	{
 		MockTimeSystem timeSystem = new();
@@ -74,7 +74,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 #endif
 	}
 
-	[Fact]
+	[Test]
 	public async Task Dispose_WithUnknownWaitHandle_ShouldThrowNotSupportedException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -96,7 +96,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 	}
 
 #if FEATURE_ASYNC_DISPOSABLE
-	[Fact]
+	[Test]
 	public async Task DisposeAsync_ShouldDisposeTimer()
 	{
 		MockTimeSystem timeSystem = new();
@@ -120,7 +120,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Exception_WhenSwallowExceptionsIsNotSet_ShouldStopTimer()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
@@ -143,12 +143,12 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 			timeSystem.TimerHandler[0].Wait();
 		});
 
-		await Task.Delay(10, TestContext.Current.CancellationToken);
+		await Task.Delay(10, TestContext.Current!.Execution.CancellationToken);
 		await That(exception).IsEqualTo(expectedException);
 		await That(count).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Exception_WhenSwallowExceptionsIsNotSet_ShouldThrowExceptionOnWait()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
@@ -167,7 +167,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		await That(exception).IsEqualTo(expectedException);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Exception_WhenSwallowExceptionsIsSet_ShouldContinueTimerExecution()
 	{
 		MockTimeSystem timeSystem = new();
@@ -197,12 +197,12 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 			}
 		}, null, 0, 20);
 
-		await That(ms.Wait(10000, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(10000, TestContext.Current!.Execution.CancellationToken)).IsTrue();
 
 		await That(count).IsGreaterThanOrEqualTo(3);
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_WithStartOnMockWaitMode_ShouldOnlyStartWhenCallingWait()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
@@ -212,13 +212,13 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		int count = 0;
 		using ITimer timer = timeSystem.Timer.New(_ => count++, null, 0, 100);
 
-		await Task.Delay(10, TestContext.Current.CancellationToken);
+		await Task.Delay(10, TestContext.Current!.Execution.CancellationToken);
 		await That(count).IsEqualTo(0);
 		timerHandler[0].Wait();
 		await That(count).IsGreaterThan(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Wait_Infinite_ShouldBeValidTimeout()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
@@ -237,7 +237,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		await That(exception).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Wait_InvalidExecutionCount_ShouldThrowArgumentOutOfRangeException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -255,7 +255,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 			.WithMessage("Execution count must be greater than zero.").AsPrefix();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Wait_InvalidTimeout_ShouldThrowArgumentOutOfRangeException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -271,7 +271,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>().WithParamName("timeout");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Wait_TimeoutExpired_ShouldThrowTimeoutException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -285,7 +285,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 			try
 			{
 				count++;
-				ms.Wait(TestContext.Current.CancellationToken);
+				ms.Wait(TestContext.Current!.Execution.CancellationToken);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -303,7 +303,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		await That(count).IsGreaterThan(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Wait_Twice_ShouldContinueExecutionsAfterFirstWait()
 	{
 		int executionCount = 10;
@@ -315,24 +315,24 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 			count++;
-			testOutputHelper.WriteLine($"Execute: {count}");
+			Console.WriteLine($"Execute: {count}");
 		}, null, 0, 100);
 
-		testOutputHelper.WriteLine($"Waiting {executionCount} times...");
+		Console.WriteLine($"Waiting {executionCount} times...");
 		timerHandler[0].Wait(executionCount, callback: _ =>
-			testOutputHelper.WriteLine("Waiting completed."));
-		testOutputHelper.WriteLine($"Waiting {executionCount} times...");
+			Console.WriteLine("Waiting completed."));
+		Console.WriteLine($"Waiting {executionCount} times...");
 		timerHandler[0].Wait(executionCount, callback: t =>
 		{
-			testOutputHelper.WriteLine("Waiting completed.");
-			testOutputHelper.WriteLine("Disposing...");
+			Console.WriteLine("Waiting completed.");
+			Console.WriteLine("Disposing...");
 			t.Dispose();
-			testOutputHelper.WriteLine("Disposed.");
+			Console.WriteLine("Disposed.");
 		}, timeout: 10000);
 		await That(count).IsGreaterThanOrEqualTo(2 * executionCount);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Wait_WithExecutionCount_ShouldWaitForSpecifiedNumberOfExecutions()
 	{
 		int executionCount = 10;
@@ -344,19 +344,19 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 			count++;
-			testOutputHelper.WriteLine($"Execute: {count}");
+			Console.WriteLine($"Execute: {count}");
 		}, null, 0, 100);
 
 		await That(count).IsEqualTo(0);
 		timerHandler[0].Wait(executionCount, callback: t =>
 		{
-			testOutputHelper.WriteLine("Disposing...");
+			Console.WriteLine("Disposing...");
 			t.Dispose();
-			testOutputHelper.WriteLine("Disposed.");
+			Console.WriteLine("Disposed.");
 		}, timeout: 10000);
-		testOutputHelper.WriteLine("Waiting 100ms...");
-		await Task.Delay(1000, TestContext.Current.CancellationToken);
-		testOutputHelper.WriteLine("Waiting completed.");
+		Console.WriteLine("Waiting 100ms...");
+		await Task.Delay(1000, TestContext.Current!.Execution.CancellationToken);
+		Console.WriteLine("Waiting completed.");
 		await That(count).IsEqualTo(executionCount);
 	}
 

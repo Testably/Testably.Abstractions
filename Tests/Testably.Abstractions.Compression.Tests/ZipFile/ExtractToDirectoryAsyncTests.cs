@@ -9,9 +9,9 @@ using Testably.Abstractions.Compression.Tests.TestHelpers;
 namespace Testably.Abstractions.Compression.Tests.ZipFile;
 
 [FileSystemTests]
-public partial class ExtractToDirectoryAsyncAsyncTests
+public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task ExtractToDirectoryAsync_MissingDestinationDirectory_ShouldCreateDirectory()
 	{
 		FileSystem.Initialize()
@@ -21,13 +21,13 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
 
 		await FileSystem.ZipFile().ExtractToDirectoryAsync("destination.zip", "bar",
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		await That(FileSystem).HasFile("bar/test.txt")
 			.WithContent().SameAs("foo/test.txt");
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		ExtractToDirectoryAsync_MissingSourceFileName_ShouldThrowArgumentNullException()
 	{
@@ -37,14 +37,14 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 		async Task Act()
 		{
 			await FileSystem.ZipFile().ExtractToDirectoryAsync(sourceArchiveFileName, "bar",
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 		}
 
 		await That(Act).Throws<FileNotFoundException>()
 			.WithMessage($"*'{FileSystem.Path.GetFullPath(sourceArchiveFileName)}*").AsWildcard();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		ExtractToDirectoryAsync_NullAsSourceFileName_ShouldThrowArgumentNullException()
 	{
@@ -53,15 +53,15 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(sourceArchiveFileName, "bar", TestContext.Current.CancellationToken);
+			await FileSystem.ZipFile().ExtractToDirectoryAsync(sourceArchiveFileName, "bar", CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName("sourceArchiveFileName");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectoryAsync_Overwrite_ShouldOverwriteFile(
 		string contents)
 	{
@@ -76,14 +76,14 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
 
 		await FileSystem.ZipFile().ExtractToDirectoryAsync("destination.zip", "bar", true,
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectoryAsync_WithEncoding_Overwrite_ShouldOverwriteFile(
 		string contents,
 		Encoding encoding)
@@ -99,14 +99,14 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
 
 		await FileSystem.ZipFile().ExtractToDirectoryAsync("destination.zip", "bar", encoding, true,
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectoryAsync_WithEncoding_ShouldZipDirectoryContent(
 		Encoding encoding)
 	{
@@ -119,14 +119,14 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 			CompressionLevel.Fastest, false, encoding);
 
 		await FileSystem.ZipFile().ExtractToDirectoryAsync("destination.zip", "bar", encoding,
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent().SameAs(FileSystem.Path.Combine("foo", "test.txt"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectoryAsync_WithoutOverwriteAndExistingFile_ShouldOverwriteFile(
 		string contents)
 	{
@@ -144,7 +144,7 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().ExtractToDirectoryAsync("destination.zip", "bar", TestContext.Current.CancellationToken);
+			await FileSystem.ZipFile().ExtractToDirectoryAsync("destination.zip", "bar", CancellationToken);
 		}
 
 		await That(Act).Throws<IOException>()
@@ -153,7 +153,7 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 			.IsNotEqualTo(contents);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		ExtractToDirectoryAsync_WithStream_MissingDestinationDirectory_ShouldCreateDirectory()
 	{
@@ -165,13 +165,13 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
 
 		await FileSystem.ZipFile()
-			.ExtractToDirectoryAsync(stream, "bar", TestContext.Current.CancellationToken);
+			.ExtractToDirectoryAsync(stream, "bar", CancellationToken);
 
 		await That(FileSystem).HasFile("bar/test.txt")
 			.WithContent().SameAs("foo/test.txt");
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		ExtractToDirectoryAsync_WithStream_NotReadable_ShouldThrowArgumentNullException()
 	{
@@ -180,7 +180,7 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(source, "bar", TestContext.Current.CancellationToken);
+			await FileSystem.ZipFile().ExtractToDirectoryAsync(source, "bar", CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentException>()
@@ -189,7 +189,7 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 			.WithHResult(-2147024809);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		ExtractToDirectoryAsync_WithStream_Null_ShouldThrowArgumentNullException()
 	{
@@ -198,15 +198,15 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(source, "bar", TestContext.Current.CancellationToken);
+			await FileSystem.ZipFile().ExtractToDirectoryAsync(source, "bar", CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName("source");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectoryAsync_WithStream_Overwrite_ShouldOverwriteFile(
 		string contents)
 	{
@@ -222,14 +222,14 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
 
 		await FileSystem.ZipFile()
-			.ExtractToDirectoryAsync(stream, "bar", true, TestContext.Current.CancellationToken);
+			.ExtractToDirectoryAsync(stream, "bar", true, CancellationToken);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectoryAsync_WithStream_WithEncoding_Overwrite_ShouldOverwriteFile(
 		string contents,
 		Encoding encoding)
@@ -246,14 +246,14 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
 
 		await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar", encoding, true,
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ExtractToDirectoryAsync_WithStream_WithEncoding_ShouldZipDirectoryContent(
 		Encoding encoding)
 	{
@@ -267,14 +267,14 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 			CompressionLevel.Fastest, false, encoding);
 
 		await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar", encoding,
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent().SameAs(FileSystem.Path.Combine("foo", "test.txt"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		ExtractToDirectoryAsync_WithStream_WithoutOverwriteAndExistingFile_ShouldOverwriteFile(
 			string contents)
@@ -295,7 +295,7 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 		async Task Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar", TestContext.Current.CancellationToken);
+			await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar", CancellationToken);
 		}
 
 		await That(Act).Throws<IOException>()
@@ -304,7 +304,7 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 			.IsNotEqualTo(contents);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ExtractToDirectoryAsync_WithWriteOnlyStream_ShouldThrowArgumentException()
 	{
 		FileSystem.Initialize()
@@ -319,7 +319,7 @@ public partial class ExtractToDirectoryAsyncAsyncTests
 		async Task Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar", TestContext.Current.CancellationToken);
+			await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar", CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentException>()

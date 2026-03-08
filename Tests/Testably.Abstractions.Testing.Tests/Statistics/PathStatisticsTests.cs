@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics;
 
 public sealed class PathStatisticsTests
 {
-	[Fact]
+	[Test]
 	public async Task Key_AbsoluteAndRelativePathsShouldMatch()
 	{
 		MockFileSystem fileSystem = new();
@@ -17,7 +17,7 @@ public sealed class PathStatisticsTests
 		await That(absolutPath).IsEqualTo(relativePath);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Key_DifferentDrives_ShouldBeConsideredDifferent()
 	{
 		MockFileSystem fileSystem = new();
@@ -29,7 +29,7 @@ public sealed class PathStatisticsTests
 		await That(result1).IsNotEqualTo(result2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Key_DifferentUncRootPaths_ShouldBeConsideredDifferent()
 	{
 		MockFileSystem fileSystem = new();
@@ -41,7 +41,7 @@ public sealed class PathStatisticsTests
 		await That(result1).IsNotEqualTo(result2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Key_NullShouldBeSameAsEmptyKey()
 	{
 		MockFileSystem fileSystem = new();
@@ -53,7 +53,7 @@ public sealed class PathStatisticsTests
 		await That(nullKey).IsEqualTo(emptyKey);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Key_ShouldSimplifyRelativePaths()
 	{
 		MockFileSystem fileSystem = new(o => o.UseCurrentDirectory());
@@ -66,9 +66,9 @@ public sealed class PathStatisticsTests
 		await That(absolutPath).IsEqualTo(relativePath);
 	}
 
-	[Theory]
-	[InlineData("/")]
-	[InlineData("\\")]
+	[Test]
+	[Arguments("/")]
+	[Arguments("\\")]
 	public async Task Key_WithDrives_ShouldIgnoreTrailingSeparator(string separator)
 	{
 		const string key = @"C:";
@@ -81,9 +81,9 @@ public sealed class PathStatisticsTests
 		await That(result1).IsEqualTo(result2);
 	}
 
-	[Theory]
-	[InlineData("/")]
-	[InlineData("\\")]
+	[Test]
+	[Arguments("/")]
+	[Arguments("\\")]
 	public async Task Key_WithFolderInDrives_ShouldIgnoreTrailingSeparator(string separator)
 	{
 		const string key = @"C:\foo";
@@ -96,9 +96,9 @@ public sealed class PathStatisticsTests
 		await That(result1).IsEqualTo(result2);
 	}
 
-	[Theory]
-	[InlineData("/")]
-	[InlineData("\\")]
+	[Test]
+	[Arguments("/")]
+	[Arguments("\\")]
 	public async Task Key_WithFolderInUncRootPaths_ShouldIgnoreTrailingSeparator(string separator)
 	{
 		const string key = @"\\server1\foo";
@@ -111,7 +111,7 @@ public sealed class PathStatisticsTests
 		await That(result1).IsEqualTo(result2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Key_WithNull_ShouldNotThrow()
 	{
 		MockFileSystem fileSystem = new();

@@ -13,7 +13,7 @@ public class DefaultSafeFileHandleStrategyTests
 
 	#endregion
 
-	[Fact]
+	[Test]
 	public async Task Constructor_NullCallback_ShouldThrowArgumentNullException()
 	{
 		void Act()
@@ -24,7 +24,7 @@ public class DefaultSafeFileHandleStrategyTests
 		await That(Act).ThrowsExactly<ArgumentNullException>().WithParamName("callback");
 	}
 
-	[Fact]
+	[Test]
 	public async Task MapSafeFileHandle_ShouldReturnExpectedValue()
 	{
 		SafeFileHandle fooSafeFileHandle = new();

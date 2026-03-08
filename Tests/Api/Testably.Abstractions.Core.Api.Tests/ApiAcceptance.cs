@@ -1,5 +1,6 @@
-﻿using NUnit.Framework;
+﻿using aweXpect;
 using System;
+using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Core.Api.Tests;
 
@@ -8,9 +9,9 @@ public sealed class ApiAcceptance
 	/// <summary>
 	///     Execute this test to update the expected public API to the current API surface.
 	/// </summary>
-	[TestCase]
+	[Test]
 	[Explicit]
-	public void AcceptApiChanges()
+	public async Task AcceptApiChanges()
 	{
 		string[] assemblyNames =
 		[
@@ -28,6 +29,6 @@ public sealed class ApiAcceptance
 			}
 		}
 
-		Assert.That(assemblyNames, Is.Not.Empty);
+		await Expect.That(assemblyNames).IsNotEmpty();
 	}
 }

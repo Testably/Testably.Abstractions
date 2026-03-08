@@ -8,10 +8,10 @@ using System.Text;
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CanSeek_ShouldReturnTrue(
 		string path, string contents)
 	{
@@ -22,8 +22,8 @@ public partial class Tests
 		await That(stream.CanSeek).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CanTimeout_ShouldReturnFalse(
 		string path, string contents)
 	{
@@ -34,8 +34,8 @@ public partial class Tests
 		await That(stream.CanTimeout).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Close_CalledMultipleTimes_ShouldNotThrow(
 		string path, string contents)
 	{
@@ -52,8 +52,8 @@ public partial class Tests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Extensibility_ShouldWrapFileStreamOnRealFileSystem(
 		string path)
 	{
@@ -75,8 +75,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Flush_ShouldNotChangePosition(
 		string path, byte[] bytes)
 	{
@@ -90,8 +90,8 @@ public partial class Tests
 		await That(stream.Position).IsEqualTo(2);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Flush_ShouldNotUpdateFileContentWhenAlreadyFlushed(
 		string path, byte[] bytes1, byte[] bytes2)
 	{
@@ -118,9 +118,9 @@ public partial class Tests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes2);
 	}
 
-	[Theory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
+	[Test]
+	[AutoArguments(false)]
+	[AutoArguments(true)]
 	public async Task Flush_WriteToDisk_ShouldNotChangePosition(
 		bool flushToDisk, string path, byte[] bytes)
 	{
@@ -134,8 +134,8 @@ public partial class Tests
 		await That(stream.Position).IsEqualTo(2);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FlushAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
 	{
@@ -152,8 +152,8 @@ public partial class Tests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task FlushAsync_ShouldNotChangePosition(
 		string path, byte[] bytes)
 	{
@@ -163,13 +163,13 @@ public partial class Tests
 		stream.Seek(2, SeekOrigin.Begin);
 		await That(stream.Position).IsEqualTo(2);
 
-		await stream.FlushAsync(TestContext.Current.CancellationToken);
+		await stream.FlushAsync(CancellationToken);
 
 		await That(stream.Position).IsEqualTo(2);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Name_ShouldReturnFullPath(string path)
 	{
 		string expectedName = FileSystem.Path.GetFullPath(path);
@@ -178,8 +178,8 @@ public partial class Tests
 		await That(stream.Name).IsEqualTo(expectedName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Position_ShouldChangeWhenReading(
 		string path, string contents)
 	{
@@ -193,8 +193,8 @@ public partial class Tests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Position_ShouldNotChangeSharedBufferStreamsWhenWriting(
 		string path, string contents, string changedContents)
 	{
@@ -222,8 +222,8 @@ public partial class Tests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Seek_Begin_ShouldSetAbsolutePositionFromBegin(
 		string path, string contents)
 	{
@@ -236,8 +236,8 @@ public partial class Tests
 		await That(stream.Position).IsEqualTo(4);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Seek_Current_ShouldSetRelativePosition(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -253,8 +253,8 @@ public partial class Tests
 		await That(stream.Position).IsEqualTo(6);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Seek_End_ShouldSetAbsolutePositionFromEnd(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -266,8 +266,8 @@ public partial class Tests
 		await That(stream.Position).IsEqualTo(contents.Length - 4);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLength(string path, int length)
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
@@ -277,8 +277,8 @@ public partial class Tests
 		await That(stream.Length).IsEqualTo(length);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLength_ReadOnlyStream_ShouldThrowNotSupportedException(
 		string path, int length)
 	{

@@ -5,11 +5,26 @@ using System.Linq.Expressions;
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfoFactory;
 
 [FileSystemTests]
-public partial class ExceptionTests
+public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks),
-		"Illegal\tCharacter?InPath")]
+	public static IEnumerable<(Expression<Action<IDirectoryInfoFactory>>, string, bool)>
+		GetDirectoryInfoFactoryCallbacksWithEmptyPath()
+		=> GetDirectoryInfoFactoryCallbacks("");
+
+	public static IEnumerable<(Expression<Action<IDirectoryInfoFactory>>, string, bool)>
+		GetDirectoryInfoFactoryCallbacksWithIllegalPathCharacters()
+		=> GetDirectoryInfoFactoryCallbacks("Illegal\tCharacter?InPath");
+
+	public static IEnumerable<(Expression<Action<IDirectoryInfoFactory>>, string, bool)>
+		GetDirectoryInfoFactoryCallbacksWithNullPath()
+		=> GetDirectoryInfoFactoryCallbacks(null);
+
+	public static IEnumerable<(Expression<Action<IDirectoryInfoFactory>>, string, bool)>
+		GetDirectoryInfoFactoryCallbacksWithWhitespacePath()
+		=> GetDirectoryInfoFactoryCallbacks("  ");
+	
+	[Test]
+	[MethodDataSource(nameof(GetDirectoryInfoFactoryCallbacksWithIllegalPathCharacters))]
 	public async Task
 		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowArgumentException_OnNetFramework(
 			Expression<Action<IDirectoryInfoFactory>> callback, string paramName,
@@ -35,8 +50,8 @@ public partial class ExceptionTests
 		}
 	}
 
-	[Theory]
-	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), "")]
+	[Test]
+	[MethodDataSource(nameof(GetDirectoryInfoFactoryCallbacksWithEmptyPath))]
 	public async Task Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDirectoryInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -53,8 +68,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), (string?)null)]
+	[Test]
+	[MethodDataSource(nameof(GetDirectoryInfoFactoryCallbacksWithNullPath))]
 	public async Task Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDirectoryInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -70,8 +85,8 @@ public partial class ExceptionTests
 				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), "  ")]
+	[Test]
+	[MethodDataSource(nameof(GetDirectoryInfoFactoryCallbacksWithWhitespacePath))]
 	public async Task Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IDirectoryInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -92,23 +107,20 @@ public partial class ExceptionTests
 
 	#region Helpers
 
-	public static TheoryData<Expression<Action<IDirectoryInfoFactory>>, string, bool>
+	private static IEnumerable<(Expression<Action<IDirectoryInfoFactory>>, string, bool)>
 		GetDirectoryInfoFactoryCallbacks(string? path)
 	{
-		TheoryData<Expression<Action<IDirectoryInfoFactory>>, string, bool> theoryData = [];
 		foreach ((ExceptionTestHelper.TestTypes TestType,
 				string ParamName,
 				Expression<Action<IDirectoryInfoFactory>> Callback) in
 			GetDirectoryInfoFactoryCallbackTestParameters(path!)
 				.Where(item => item.TestType.HasFlag(path.ToTestType())))
 		{
-			theoryData.Add(
+			yield return (
 				Callback,
 				ParamName,
 				TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck));
 		}
-
-		return theoryData;
 	}
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,

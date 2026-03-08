@@ -6,10 +6,10 @@ using Testably.Abstractions.Testing.Initializer;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class EnumerateFilesTests
+public class EnumerateFilesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateFiles_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
@@ -25,8 +25,8 @@ public partial class EnumerateFilesTests
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateFiles_MissingDirectory_ShouldThrowDirectoryNotFoundExceptionImmediately(
 			string path)
@@ -42,8 +42,8 @@ public partial class EnumerateFilesTests
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		EnumerateFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
 			string path)
@@ -64,8 +64,8 @@ public partial class EnumerateFilesTests
 		await That(result).Contains(initialized[2].FullName);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
 		string path)
 	{
@@ -84,20 +84,20 @@ public partial class EnumerateFilesTests
 		await That(result).Contains(initialized[2].ToString());
 	}
 
-	[Theory]
+	[Test]
 #if NETFRAMEWORK
-	[InlineAutoData(false, "")]
+	[AutoArguments(false, "")]
 #else
-	[InlineAutoData(true, "")]
+	[AutoArguments(true, "")]
 #endif
-	[InlineAutoData(true, "*")]
-	[InlineAutoData(true, ".")]
-	[InlineAutoData(true, "*.*")]
-	[InlineData(true, "a*c", "abc")]
-	[InlineData(true, "ab*c", "abc")]
-	[InlineData(true, "abc?", "abc")]
-	[InlineData(false, "ab?c", "abc")]
-	[InlineData(false, "ac", "abc")]
+	[AutoArguments(true, "*")]
+	[AutoArguments(true, ".")]
+	[AutoArguments(true, "*.*")]
+	[Arguments(true, "a*c", "abc")]
+	[Arguments(true, "ab*c", "abc")]
+	[Arguments(true, "abc?", "abc")]
+	[Arguments(false, "ab?c", "abc")]
+	[Arguments(false, "ac", "abc")]
 	public async Task EnumerateFiles_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
@@ -117,16 +117,16 @@ public partial class EnumerateFilesTests
 		}
 	}
 
-	[Theory]
-	[InlineAutoData(true, "*.xls", ".xls")]
-	[InlineAutoData(false, "*.x", ".xls")]
+	[Test]
+	[AutoArguments(true, "*.xls", ".xls")]
+	[AutoArguments(false, "*.x", ".xls")]
 #if NETFRAMEWORK
-	[InlineAutoData(true, "*.xls", ".xlsx")]
+	[AutoArguments(true, "*.xls", ".xlsx")]
 #else
-	[InlineAutoData(false, "*.xls", ".xlsx")]
+	[AutoArguments(false, "*.xls", ".xlsx")]
 #endif
-	[InlineAutoData(false, "foo.x", ".xls", "foo")]
-	[InlineAutoData(false, "?.xls", ".xlsx", "a")]
+	[AutoArguments(false, "foo.x", ".xls", "foo")]
+	[AutoArguments(false, "?.xls", ".xlsx", "a")]
 	public async Task EnumerateFiles_SearchPattern_WithFileExtension_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string extension,
 		string fileNameWithoutExtension)
@@ -149,8 +149,8 @@ public partial class EnumerateFilesTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateFiles_WithEnumerationOptions_ShouldConsiderAttributesToSkip(
 			string path)
 	{
@@ -174,9 +174,9 @@ public partial class EnumerateFilesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[InlineAutoData(MatchCasing.CaseInsensitive)]
-	[InlineAutoData(MatchCasing.CaseSensitive)]
+	[Test]
+	[AutoArguments(MatchCasing.CaseInsensitive)]
+	[AutoArguments(MatchCasing.CaseSensitive)]
 	public async Task EnumerateFiles_WithEnumerationOptions_ShouldConsiderMatchCasing(
 			MatchCasing matchCasing,
 			string path)
@@ -203,9 +203,9 @@ public partial class EnumerateFilesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[InlineAutoData(MatchType.Simple)]
-	[InlineAutoData(MatchType.Win32)]
+	[Test]
+	[AutoArguments(MatchType.Simple)]
+	[AutoArguments(MatchType.Win32)]
 	public async Task EnumerateFiles_WithEnumerationOptions_ShouldConsiderMatchType(
 			MatchType matchType,
 			string path)
@@ -231,12 +231,12 @@ public partial class EnumerateFilesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[InlineAutoData(true, 0)]
-	[InlineAutoData(true, 1)]
-	[InlineAutoData(true, 2)]
-	[InlineAutoData(true, 3)]
-	[InlineAutoData(false, 2)]
+	[Test]
+	[AutoArguments(true, 0)]
+	[AutoArguments(true, 1)]
+	[AutoArguments(true, 2)]
+	[AutoArguments(true, 3)]
+	[AutoArguments(false, 2)]
 	public async Task EnumerateFiles_WithEnumerationOptions_ShouldConsiderMaxRecursionDepthWhenRecurseSubdirectoriesIsSet(
 			bool recurseSubdirectories,
 			int maxRecursionDepth,
@@ -288,9 +288,9 @@ public partial class EnumerateFilesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[InlineAutoData(true)]
-	[InlineAutoData(false)]
+	[Test]
+	[AutoArguments(true)]
+	[AutoArguments(false)]
 	public async Task EnumerateFiles_WithEnumerationOptions_ShouldConsiderRecurseSubdirectories(
 			bool recurseSubdirectories,
 			string path)
@@ -318,9 +318,9 @@ public partial class EnumerateFilesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[Theory]
-	[InlineAutoData(true)]
-	[InlineAutoData(false)]
+	[Test]
+	[AutoArguments(true)]
+	[AutoArguments(false)]
 	public async Task EnumerateFiles_WithEnumerationOptions_ShouldIgnoreReturnSpecialDirectories(
 			bool returnSpecialDirectories,
 			string path)
@@ -342,8 +342,8 @@ public partial class EnumerateFilesTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateFiles_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
@@ -362,8 +362,8 @@ public partial class EnumerateFilesTests
 				Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
 		string path)
 	{
@@ -384,8 +384,8 @@ public partial class EnumerateFilesTests
 		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task EnumerateFiles_WithSearchPattern_ShouldReturnMatchingFiles(
 		string path)
 	{
@@ -406,7 +406,7 @@ public partial class EnumerateFilesTests
 		await That(result).DoesNotContain(initialized[3].ToString());
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		EnumerateFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
 	{

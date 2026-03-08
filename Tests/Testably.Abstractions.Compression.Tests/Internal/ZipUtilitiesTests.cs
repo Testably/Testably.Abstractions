@@ -6,8 +6,8 @@ namespace Testably.Abstractions.Compression.Tests.Internal;
 
 public sealed class ZipUtilitiesTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments(new byte[]{0x1, 0x2, 0x3})]
 	public async Task ExtractRelativeToDirectory_FileWithTrailingSlash_ShouldThrowIOException(
 		byte[] bytes)
 	{
@@ -25,7 +25,7 @@ public sealed class ZipUtilitiesTests
 			.AsWildcard();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ExtractRelativeToDirectory_WithSubdirectory_ShouldCreateSubdirectory()
 	{
 		MockFileSystem fileSystem = new();

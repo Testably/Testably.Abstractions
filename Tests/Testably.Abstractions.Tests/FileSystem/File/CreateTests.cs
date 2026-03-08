@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class CreateTests
+public class CreateTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Create_ExistingFile_ShouldBeOverwritten(
 		string path, string originalContent, string newContent)
 	{
@@ -22,8 +22,8 @@ public partial class CreateTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(newContent);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Create_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingDirectory, string fileName)
 	{
@@ -37,8 +37,8 @@ public partial class CreateTests
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Create_MissingFile_ShouldCreateFile(string path)
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
@@ -46,8 +46,8 @@ public partial class CreateTests
 		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Create_ReadOnlyFile_ShouldThrowUnauthorizedAccessException(
 		string path, string content)
 	{
@@ -62,8 +62,8 @@ public partial class CreateTests
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Create_ShouldUseReadWriteAccessAndNoneShare(string path)
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
@@ -76,8 +76,8 @@ public partial class CreateTests
 		await That(stream.CanTimeout).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Create_WithBufferSize_ShouldUseReadWriteAccessAndNoneShare(
 		string path, int bufferSize)
 	{
@@ -90,8 +90,8 @@ public partial class CreateTests
 		await That(FileTestHelper.CheckFileShare(FileSystem, path)).IsEqualTo(FileShare.None);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Create_WithBufferSizeAndFileOptions_ShouldUseReadWriteAccessAndNoneShare(
 		string path, int bufferSize)
 	{

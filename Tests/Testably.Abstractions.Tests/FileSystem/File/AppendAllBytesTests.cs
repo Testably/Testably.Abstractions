@@ -4,10 +4,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class AppendAllBytesTests
+public class AppendAllBytesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytes_ExistingFile_ShouldAppendLinesToFile(
 		string path, byte[] previousBytes, byte[] bytes)
 	{
@@ -19,8 +19,8 @@ public partial class AppendAllBytesTests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([..previousBytes, ..bytes]);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytes_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingPath, string fileName, byte[] bytes)
 	{
@@ -33,8 +33,8 @@ public partial class AppendAllBytesTests
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytes_MissingFile_ShouldCreateFile(
 		string path, byte[] bytes)
 	{
@@ -44,8 +44,8 @@ public partial class AppendAllBytesTests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytes_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -75,8 +75,8 @@ public partial class AppendAllBytesTests
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytes_Span_ExistingFile_ShouldAppendLinesToFile(
 		string path, byte[] previousBytes, byte[] bytes)
 	{
@@ -88,8 +88,8 @@ public partial class AppendAllBytesTests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([..previousBytes, ..bytes]);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytes_Span_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingPath, string fileName, byte[] bytes)
 	{
@@ -102,8 +102,8 @@ public partial class AppendAllBytesTests
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytes_Span_MissingFile_ShouldCreateFile(
 		string path, byte[] bytes)
 	{
@@ -113,8 +113,8 @@ public partial class AppendAllBytesTests
 		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytes_Span_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -144,8 +144,8 @@ public partial class AppendAllBytesTests
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		AppendAllBytes_Span_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path)
@@ -162,8 +162,8 @@ public partial class AppendAllBytesTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytes_Span_WhenFileIsHidden_ShouldNotThrowException(
 		string path, byte[] bytes)
 	{
@@ -178,8 +178,8 @@ public partial class AppendAllBytesTests
 		await That(Act).DoesNotThrow();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		AppendAllBytes_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path)
@@ -196,8 +196,8 @@ public partial class AppendAllBytesTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task AppendAllBytes_WhenFileIsHidden_ShouldNotThrowException(
 		string path, byte[] bytes)
 	{

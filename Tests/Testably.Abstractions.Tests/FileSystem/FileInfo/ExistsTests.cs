@@ -1,10 +1,10 @@
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 [FileSystemTests]
-public partial class ExistsTests
+public class ExistsTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_Directory_ShouldReturnFalse(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -13,11 +13,11 @@ public partial class ExistsTests
 		await That(sut.Exists).IsFalse();
 	}
 
-	[Theory]
-	[InlineData("foo", "foo.")]
-	[InlineData("foo.", "foo")]
-	[InlineData("foo", "foo..")]
-	[InlineData("foo..", "foo")]
+	[Test]
+	[Arguments("foo", "foo.")]
+	[Arguments("foo.", "foo")]
+	[Arguments("foo", "foo..")]
+	[Arguments("foo..", "foo")]
 	public async Task Exists_ShouldIgnoreTrailingDot_OnWindows(string path1, string path2)
 	{
 		FileSystem.File.WriteAllText(path1, "some text");
@@ -26,8 +26,8 @@ public partial class ExistsTests
 		await That(sut.Exists).IsEqualTo(Test.RunsOnWindows);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_ShouldReturnCachedValueUntilRefresh(string path)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);

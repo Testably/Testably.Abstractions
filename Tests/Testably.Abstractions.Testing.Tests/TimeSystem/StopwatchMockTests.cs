@@ -4,17 +4,17 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
 public class StopwatchMockTests
 {
-	[Theory]
-	[InlineData(0)]
-	[InlineData(1)]
-	[InlineData(15)]
-	[InlineData(1234567890)]
+	[Test]
+	[Arguments(0)]
+	[Arguments(1)]
+	[Arguments(15)]
+	[Arguments(1234567890)]
 	public async Task ShouldSupportTicksPrecision(long delayTicks)
 	{
 		MockTimeSystem timeSystem = new();
 		IStopwatch stopwatch = timeSystem.Stopwatch.StartNew();
 		await timeSystem.Task.Delay(TimeSpan.FromTicks(delayTicks),
-			TestContext.Current.CancellationToken);
+			TestContext.Current!.Execution.CancellationToken);
 
 		long elapsedTicks = stopwatch.ElapsedTicks;
 

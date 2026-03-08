@@ -2,14 +2,14 @@
 
 public sealed class FileVersionInfoFactoryMockTests
 {
-	[Theory]
-	[InlineData(".", "foo", "*", true)]
-	[InlineData(".", "foo", "f*o", true)]
-	[InlineData(".", "foo", "*fo", false)]
-	[InlineData("bar", "foo", "f*o", true)]
-	[InlineData("bar", "foo", "baz/f*o", false)]
-	[InlineData("bar", "foo", "/f*o", false)]
-	[InlineData("bar", "foo", "**/f*o", true)]
+	[Test]
+	[Arguments(".", "foo", "*", true)]
+	[Arguments(".", "foo", "f*o", true)]
+	[Arguments(".", "foo", "*fo", false)]
+	[Arguments("bar", "foo", "f*o", true)]
+	[Arguments("bar", "foo", "baz/f*o", false)]
+	[Arguments("bar", "foo", "/f*o", false)]
+	[Arguments("bar", "foo", "**/f*o", true)]
 	public async Task ShouldSupportGlobPattern(
 		string baseDirectory, string fileName, string globPattern, bool expectMatch)
 	{
@@ -25,8 +25,8 @@ public sealed class FileVersionInfoFactoryMockTests
 		await That(result.Comments).IsEqualTo(expected);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WhenRegistered_ShouldReturnFileVersionInfoWithRegisteredValues(
 		string comments)
 	{
@@ -39,8 +39,8 @@ public sealed class FileVersionInfoFactoryMockTests
 		await That(result.Comments).IsEqualTo(comments);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WhenRegisteredUnderDifferentName_ShouldReturnDefaultValues(
 		string comments)
 	{

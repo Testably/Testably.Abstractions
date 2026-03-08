@@ -1,9 +1,9 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
-public partial class GetExtensionTests
+public class GetExtensionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task GetExtension_Empty_ShouldReturnEmpty()
 	{
 		string? result = FileSystem.Path.GetExtension(string.Empty);
@@ -11,7 +11,7 @@ public partial class GetExtensionTests
 		await That(result).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetExtension_Null_ShouldReturnNull()
 	{
 		string? result = FileSystem.Path.GetExtension(null);
@@ -19,8 +19,8 @@ public partial class GetExtensionTests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetExtension_ShouldReturnExtensionWithLeadingDot(
 		string directory, string filename, string extension)
 	{
@@ -33,8 +33,8 @@ public partial class GetExtensionTests
 	}
 
 #if FEATURE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetExtension_Span_ShouldReturnExtensionWithLeadingDot(
 		string directory, string filename, string extension)
 	{
@@ -47,8 +47,8 @@ public partial class GetExtensionTests
 	}
 #endif
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetExtension_StartingDot_ShouldReturnCompleteFileName(
 		string directory, string filename)
 	{
@@ -59,8 +59,8 @@ public partial class GetExtensionTests
 		await That(result).IsEqualTo("." + filename);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetExtension_TrailingDot_ShouldReturnEmptyString(
 		string directory, string filename)
 	{

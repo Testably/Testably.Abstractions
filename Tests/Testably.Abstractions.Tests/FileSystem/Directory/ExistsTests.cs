@@ -1,11 +1,11 @@
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class ExistsTests
+public class ExistsTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[InlineData("foo")]
-	[InlineData("foo/")]
+	[Test]
+	[Arguments("foo")]
+	[Arguments("foo/")]
 	public async Task Exists_ExistingDirectory_ShouldReturnTrue(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -15,8 +15,8 @@ public partial class ExistsTests
 		await That(result).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Exists_File_ShouldReturnFalse(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -26,7 +26,7 @@ public partial class ExistsTests
 		await That(result).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Exists_ForwardSlash_ShouldReturnTrue()
 	{
 		FileSystem.InitializeIn("/");
@@ -36,7 +36,7 @@ public partial class ExistsTests
 		await That(result).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Exists_ForwardSlashWithDirectory_ShouldReturnTrue()
 	{
 		FileSystem.Directory.CreateDirectory("/tmp");
@@ -46,10 +46,10 @@ public partial class ExistsTests
 		await That(result).IsTrue();
 	}
 
-	[Theory]
-	[InlineData(@"\\s")]
-	[InlineData("<")]
-	[InlineData("\t")]
+	[Test]
+	[Arguments(@"\\s")]
+	[Arguments("<")]
+	[Arguments("\t")]
 	public async Task Exists_IllegalPath_ShouldReturnFalse(string path)
 	{
 		Skip.If(Test.IsNetFramework);
@@ -59,9 +59,9 @@ public partial class ExistsTests
 		await That(result).IsFalse();
 	}
 
-	[Theory]
-	[InlineData("foo")]
-	[InlineData("foo/")]
+	[Test]
+	[Arguments("foo")]
+	[Arguments("foo/")]
 	public async Task Exists_MissingDirectory_ShouldReturnFalse(string path)
 	{
 		bool result = FileSystem.Directory.Exists(path);
@@ -69,7 +69,7 @@ public partial class ExistsTests
 		await That(result).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Exists_Null_ShouldReturnFalse()
 	{
 		bool result = FileSystem.Directory.Exists(null);
@@ -77,7 +77,7 @@ public partial class ExistsTests
 		await That(result).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Exists_Whitespace_ShouldReturnFalse()
 	{
 		bool result = FileSystem.Directory.Exists("  ");

@@ -1,42 +1,71 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.AccessControl;
+using Testably.Abstractions.AccessControl.Tests.TestHelpers;
 using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-[FileSystemTests]
-public partial class ExceptionTests
+[WindowsOnlyFileSystemTests]
+public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks),
-		(int)BaseTypes.All)]
+	#pragma warning disable MA0062
+	[Flags]
+	public enum BaseTypes
+	{
+		Directory = 1,
+		DirectoryInfo = 2,
+		File = 4,
+		FileInfo = 8,
+		FileStream = 16,
+		None = 0,
+		All = ~None,
+	}
+	#pragma warning restore MA0062
+
+	public enum MethodType
+	{
+		Create,
+		GetAccessControl,
+		SetAccessControl,
+	}
+
+	#pragma warning disable MA0018 // Do not declare static members on generic types
+	public static IEnumerable<(Action<IFileSystem, string>, BaseTypes, MethodType)>
+		GetFileCallbacks()
+	{
+		foreach ((BaseTypes BaseType, MethodType MethodType, Action<IFileSystem, string> Callback)
+			item in GetFileCallbackTestParameters())
+		{
+			yield return (item.Callback, item.BaseType, item.MethodType);
+		}
+	}
+	#pragma warning restore MA0018 // Do not declare static members on generic types
+	[Test]
+	[MethodDataSource(nameof(GetFileCallbacks))]
 	public async Task Operations_WhenPathIsEmpty_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
-		Skip.IfNot(Test.RunsOnWindows || exceptionType == MethodType.GetAccessControl);
+		Skip.IfNot(exceptionType == MethodType.GetAccessControl);
 
 		await That(() => callback.Invoke(FileSystem, ""))
 			.Throws<ArgumentException>().WithHResult(-2147024809)
 			.Because($"\n{exceptionType} on {baseType}\n was called with an empty path");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks),
-		(int)BaseTypes.All)]
+	[Test]
+	[MethodDataSource(nameof(GetFileCallbacks))]
 	public async Task Operations_WhenPathIsNull_ShouldThrowArgumentNullException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
-		Skip.IfNot(Test.RunsOnWindows || exceptionType == MethodType.GetAccessControl);
+		Skip.IfNot(exceptionType == MethodType.GetAccessControl);
 
 		await That(() => callback.Invoke(FileSystem, null!))
 			.Throws<ArgumentNullException>()
 			.Because($"\n{exceptionType} on {baseType}\n was called with a null path");
 	}
 
-	[Theory]
-	[MemberData(nameof(GetFileCallbacks),
-		(int)BaseTypes.All)]
+	[Test]
+	[MethodDataSource(nameof(GetFileCallbacks))]
 	public async Task Operations_WhenPathIsWhiteSpace_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
@@ -46,24 +75,6 @@ public partial class ExceptionTests
 			.Throws<ArgumentException>().WithHResult(-2147024809)
 			.Because($"\n{exceptionType} on {baseType}\n was called with a whitespace path");
 	}
-
-	#region Helpers
-
-	#pragma warning disable MA0018 // Do not declare static members on generic types
-	public static TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> GetFileCallbacks(
-		int baseType)
-	{
-		TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> theoryData = new();
-		foreach ((BaseTypes BaseType, MethodType MethodType, Action<IFileSystem, string> Callback)
-			item in GetFileCallbackTestParameters()
-				.Where(item => (item.BaseType & (BaseTypes)baseType) > 0))
-		{
-			theoryData.Add(item.Callback, item.BaseType, item.MethodType);
-		}
-
-		return theoryData;
-	}
-	#pragma warning restore MA0018 // Do not declare static members on generic types
 
 	private static
 		IEnumerable<(
@@ -127,28 +138,5 @@ public partial class ExceptionTests
 			(fileSystem, path)
 				=> fileSystem.FileInfo.New(path).SetAccessControl(new FileSecurity()));
 		#pragma warning restore CA1416
-	}
-
-	#endregion
-
-	#pragma warning disable MA0062
-	[Flags]
-	public enum BaseTypes
-	{
-		Directory = 1,
-		DirectoryInfo = 2,
-		File = 4,
-		FileInfo = 8,
-		FileStream = 16,
-		None = 0,
-		All = ~None,
-	}
-	#pragma warning restore MA0062
-
-	public enum MethodType
-	{
-		Create,
-		GetAccessControl,
-		SetAccessControl,
 	}
 }

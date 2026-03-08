@@ -1,5 +1,4 @@
 #if FEATURE_FILESYSTEM_ASYNC
-using NSubstitute.ExceptionExtensions;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,10 +6,10 @@ using System.Threading.Tasks;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class ReadAllBytesAsyncTests
+public class ReadAllBytesAsyncTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllBytesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
 	{
@@ -23,28 +22,28 @@ public partial class ReadAllBytesAsyncTests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllBytesAsync_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
 		async Task Act() =>
-			await FileSystem.File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken);
+			await FileSystem.File.ReadAllBytesAsync(path, CancellationToken);
 
 		await That(Act).Throws<FileNotFoundException>()
 			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
 			.WithHResult(-2147024894);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllBytesAsync_ShouldReturnWrittenBytes(
 		byte[] bytes, string path)
 	{
-		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, CancellationToken);
 
 		byte[] result =
- await FileSystem.File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken);
+ await FileSystem.File.ReadAllBytesAsync(path, CancellationToken);
 
 		await That(result).IsEqualTo(bytes).InAnyOrder();
 	}

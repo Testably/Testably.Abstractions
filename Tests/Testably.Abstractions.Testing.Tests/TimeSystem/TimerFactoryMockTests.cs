@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
 public class TimerFactoryMockTests
 {
-	[Fact]
+	[Test]
 	public async Task New_WithoutPeriod_ShouldStillBeRegistered()
 	{
 		MockTimeSystem timeSystem = new();
@@ -24,11 +24,11 @@ public class TimerFactoryMockTests
 			}
 		});
 
-		await That(ms.Wait(300, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(300, TestContext.Current!.Execution.CancellationToken)).IsFalse();
 		await That(timeSystem.TimerHandler[0]).IsEqualTo(timer);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Wrap_ShouldThrowNotSupportedException()
 	{
 		MockTimeSystem timeSystem = new();

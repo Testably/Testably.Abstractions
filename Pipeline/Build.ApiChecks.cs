@@ -25,14 +25,13 @@ partial class Build
 			};
 
 			DotNetTest(s => s
-					.SetConfiguration(Configuration)
-					.SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
-					.SetResultsDirectory(TestResultsDirectory)
-					.CombineWith(
-						projects,
-						(settings, project) => settings
-							.SetProjectFile(project)
-							.AddLoggers($"trx;LogFileName={project.Name}.trx")),
-				completeOnFailure: true);
+				.SetConfiguration(Configuration)
+				.SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
+				.SetResultsDirectory(TestResultsDirectory)
+				.CombineWith(
+					projects,
+					(settings, project) => settings
+						.AddProcessAdditionalArguments(
+							$"--project \"{project.Path}\" -- --report-trx")));
 		});
 }

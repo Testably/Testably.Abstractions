@@ -4,10 +4,10 @@ using System.Linq;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class ReadAllBytesTests
+public class ReadAllBytesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllBytes_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		void Act()
@@ -20,8 +20,8 @@ public partial class ReadAllBytesTests
 			.WithMessage($"*'{FileSystem.Path.GetFullPath(path)}'*").AsWildcard();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllBytes_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
@@ -56,8 +56,8 @@ public partial class ReadAllBytesTests
 			.Within(TimeComparison.Tolerance);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllBytes_ShouldNotGetAReferenceToFileContent(
 		string path, byte[] bytes)
 	{
@@ -71,8 +71,8 @@ public partial class ReadAllBytesTests
 		await That(result).IsEqualTo(bytes).InAnyOrder();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllBytes_ShouldReturnWrittenBytes(
 		byte[] bytes, string path)
 	{
@@ -83,8 +83,8 @@ public partial class ReadAllBytesTests
 		await That(result).IsEqualTo(bytes).InAnyOrder();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllBytes_ShouldTolerateAltDirectorySeparatorChar(
 		byte[] bytes, string directory, string fileName)
 	{

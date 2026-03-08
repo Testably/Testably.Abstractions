@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public class PathHelperTests
 {
-	[Fact]
+	[Test]
 	public async Task
 		EnsureValidFormat_WithWhiteSpaceAndIncludeIsEmptyCheck_ShouldThrowArgumentException()
 	{
@@ -20,8 +20,8 @@ public class PathHelperTests
 		await That(Act).ThrowsExactly<ArgumentException>().WithHResult(-2147024809);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetFullPathOrWhiteSpace_NormalPath_ShouldReturnFullPath(string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -33,7 +33,7 @@ public class PathHelperTests
 		await That(result).IsEqualTo(expectedPath);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetFullPathOrWhiteSpace_Null_ShouldReturnEmptyString()
 	{
 		MockFileSystem fileSystem = new();
@@ -44,9 +44,9 @@ public class PathHelperTests
 		await That(result).IsEqualTo("");
 	}
 
-	[Theory]
-	[InlineData("  ")]
-	[InlineData("\t")]
+	[Test]
+	[Arguments("  ")]
+	[Arguments("\t")]
 	public async Task GetFullPathOrWhiteSpace_WhiteSpace_ShouldReturnPath(string path)
 	{
 		MockFileSystem fileSystem = new();
@@ -56,8 +56,8 @@ public class PathHelperTests
 		await That(result).IsEqualTo(path);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IsUncPath_AltDirectorySeparatorChar_ShouldReturnTrue(string path)
 	{
 		string prefix = new(Path.AltDirectorySeparatorChar, 2);
@@ -68,8 +68,8 @@ public class PathHelperTests
 		await That(result).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IsUncPath_DirectorySeparatorChar_ShouldReturnTrue(string path)
 	{
 		string prefix = new(Path.DirectorySeparatorChar, 2);
@@ -80,8 +80,8 @@ public class PathHelperTests
 		await That(result).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IsUncPath_MixedDirectorySeparatorChars_ShouldReturnFalse(string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows,
@@ -94,7 +94,7 @@ public class PathHelperTests
 		await That(result).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task IsUncPath_Null_ShouldReturnFalse()
 	{
 		string? path = null;
@@ -104,7 +104,7 @@ public class PathHelperTests
 		await That(result).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		ThrowCommonExceptionsIfPathIsInvalid_StartWithNull_ShouldThrowArgumentException()
 	{
@@ -119,10 +119,10 @@ public class PathHelperTests
 	}
 
 #if CAN_SIMULATE_OTHER_OS
-	[Theory]
-	[InlineData('|')]
-	[InlineData((char)1)]
-	[InlineData((char)31)]
+	[Test]
+	[Arguments('|')]
+	[Arguments((char)1)]
+	[Arguments((char)31)]
 	public async Task ThrowCommonExceptionsIfPathIsInvalid_WithInvalidCharacters(
 		char invalidChar)
 	{
@@ -139,7 +139,7 @@ public class PathHelperTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task
 		ThrowCommonExceptionsIfPathToTargetIsInvalid_NullCharacter_ShouldThrowArgumentException()
 	{

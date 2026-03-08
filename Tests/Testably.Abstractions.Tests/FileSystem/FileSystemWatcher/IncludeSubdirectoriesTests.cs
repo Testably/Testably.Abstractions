@@ -4,10 +4,10 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 [FileSystemTests]
-public partial class IncludeSubdirectoriesTests
+public class IncludeSubdirectoriesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IncludeSubdirectories_SetToFalse_ShouldNotTriggerNotification(
 		string baseDirectory,
 		string path
@@ -37,13 +37,13 @@ public partial class IncludeSubdirectoriesTests
 		fileSystemWatcher.IncludeSubdirectories = false;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(FileSystem.Path.Combine(baseDirectory, path));
-		await That(ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsFalse();
 
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IncludeSubdirectories_SetToTrue_ShouldOnlyTriggerNotificationOnSubdirectories(
 		string baseDirectory,
 		string subdirectoryName,
@@ -77,13 +77,13 @@ public partial class IncludeSubdirectoriesTests
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(otherDirectory);
-		await That(ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsFalse();
 
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task IncludeSubdirectories_SetToTrue_ShouldTriggerNotificationOnSubdirectories(
 		string baseDirectory,
 		string subdirectoryName
@@ -114,7 +114,7 @@ public partial class IncludeSubdirectoriesTests
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(subdirectoryPath);
-		await That(ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken)).IsTrue();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 
 		await That(result).IsNotNull();
 		await That(result!.FullPath).IsEqualTo(FileSystem.Path.GetFullPath(subdirectoryPath));
@@ -122,9 +122,9 @@ public partial class IncludeSubdirectoriesTests
 		await That(result!.ChangeType).IsEqualTo(WatcherChangeTypes.Deleted);
 	}
 
-	[Theory]
-	[InlineAutoData(true)]
-	[InlineAutoData(false)]
+	[Test]
+	[AutoArguments(true)]
+	[AutoArguments(false)]
 	public async Task IncludeSubdirectories_SetToTrue_Created_ArgsNameShouldContainRelativePath(
 		bool watchRootedPath,
 		string baseDirectory,
@@ -179,16 +179,16 @@ public partial class IncludeSubdirectoriesTests
 		
 		// Assert
 
-		await That(createdMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
+		await That(createdMre.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 
 		await That(createdArgs).IsNotNull().And
 			.Satisfies(args => string.Equals(args?.Name, expectedFileName, StringComparison.Ordinal)
 			);
 	}
 
-	[Theory]
-	[InlineAutoData(true)]
-	[InlineAutoData(false)]
+	[Test]
+	[AutoArguments(true)]
+	[AutoArguments(false)]
 	public async Task IncludeSubdirectories_SetToTrue_Changed_ArgsNameShouldContainRelativePath(
 		bool watchRootedPath,
 		string baseDirectory,
@@ -250,16 +250,16 @@ public partial class IncludeSubdirectoriesTests
 		
 		// Assert
 
-		await That(changedMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
+		await That(changedMre.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 
 		await That(changedArgs).IsNotNull().And
 			.Satisfies(args => string.Equals(args?.Name, expectedFileName, StringComparison.Ordinal)
 			);
 	}
 
-	[Theory]
-	[InlineAutoData(true)]
-	[InlineAutoData(false)]
+	[Test]
+	[AutoArguments(true)]
+	[AutoArguments(false)]
 	public async Task IncludeSubdirectories_SetToTrue_Renamed_ArgsNameShouldContainRelativePath(
 		bool watchRootedPath,
 		string baseDirectory,
@@ -319,7 +319,7 @@ public partial class IncludeSubdirectoriesTests
 		
 		// Assert
 
-		await That(renamedMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
+		await That(renamedMre.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 
 		await That(renamedArgs).IsNotNull().And
 			.Satisfies(args => string.Equals(
@@ -331,9 +331,9 @@ public partial class IncludeSubdirectoriesTests
 			);
 	}
 
-	[Theory]
-	[InlineAutoData(true)]
-	[InlineAutoData(false)]
+	[Test]
+	[AutoArguments(true)]
+	[AutoArguments(false)]
 	public async Task IncludeSubdirectories_SetToTrue_Deleted_ArgsNameShouldContainRelativePath(
 		bool watchRootedPath,
 		string baseDirectory,
@@ -389,7 +389,7 @@ public partial class IncludeSubdirectoriesTests
 		
 		// Assert
 
-		await That(deletedMre.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
+		await That(deletedMre.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 
 		await That(deletedArgs).IsNotNull().And.Satisfies(args => string.Equals(
 			                                                  args?.Name, expectedFileName,

@@ -5,12 +5,12 @@ using System.Text;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class SearchFilterTests
+public class SearchFilterTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[InlineAutoData("../", 4)]
-	[InlineAutoData("../*", 4)]
-	[InlineAutoData("../a*", 2)]
+	[Test]
+	[AutoArguments("../", 4)]
+	[AutoArguments("../*", 4)]
+	[AutoArguments("../a*", 2)]
 	public async Task
 		SearchPattern_Containing1InstanceOfTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
 			string searchPattern, int expectedMatchingFiles)
@@ -30,10 +30,10 @@ public partial class SearchFilterTests
 		await That(result).Contains(FileSystem.Path.Combine(".", "..", "xyz", "a.test"));
 	}
 
-	[Theory]
-	[InlineAutoData("../../", 5)]
-	[InlineAutoData("../../*", 5)]
-	[InlineAutoData("../../a*", 2)]
+	[Test]
+	[AutoArguments("../../", 5)]
+	[AutoArguments("../../*", 5)]
+	[AutoArguments("../../a*", 2)]
 	public async Task
 		SearchPattern_Containing2InstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
 			string searchPattern, int expectedMatchingFiles)
@@ -59,10 +59,10 @@ public partial class SearchFilterTests
 		await That(result).Contains(FileSystem.Path.Combine(".", "../..", "bar", "xyz", "a.test"));
 	}
 
-	[Theory]
-	[InlineAutoData("../../../", 6)]
-	[InlineAutoData("../../../*", 6)]
-	[InlineAutoData("../../../a*", 2)]
+	[Test]
+	[AutoArguments("../../../", 6)]
+	[AutoArguments("../../../*", 6)]
+	[AutoArguments("../../../a*", 2)]
 	public async Task
 		SearchPattern_Containing3InstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
 			string searchPattern, int expectedMatchingFiles)
@@ -91,7 +91,7 @@ public partial class SearchFilterTests
 			.Contains(FileSystem.Path.Combine(".", "../../..", "foo", "bar", "xyz", "a.test"));
 	}
 
-	[Fact]
+	[Test]
 	public async Task SearchPattern_ContainingAsterisk_ShouldReturnMatchingFiles()
 	{
 		FileSystem.Initialize()
@@ -108,7 +108,7 @@ public partial class SearchFilterTests
 		await That(result).Contains(FileSystem.Path.Combine(".", "another.test"));
 	}
 
-	[Fact]
+	[Test]
 	public async Task SearchPattern_ContainingQuestionMark_ShouldReturnMatchingFiles()
 	{
 		FileSystem.Initialize()
@@ -124,7 +124,7 @@ public partial class SearchFilterTests
 		await That(result[0]).IsEqualTo(FileSystem.Path.Combine(".", "a-test"));
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		SearchPattern_ContainingTooManyInstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldThrowUnauthorizedAccessException()
 	{
@@ -158,10 +158,10 @@ public partial class SearchFilterTests
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
-	[Theory]
-	[InlineAutoData("../", 4)]
-	[InlineAutoData("../*", 4)]
-	[InlineAutoData("../a*", 2)]
+	[Test]
+	[Arguments("../", 4, "my-path")]
+	[Arguments("../*", 4, "my-path")]
+	[Arguments("../a*", 2, "my-path")]
 	public async Task SearchPattern_ContainingTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(
 		string searchPattern, int expectedMatchingFiles, string path)
 	{
@@ -179,11 +179,11 @@ public partial class SearchFilterTests
 		await That(result).Contains(FileSystem.Path.Combine(".", "..", path, "a.test"));
 	}
 
-	[Theory]
-	[InlineAutoData("../")]
-	[InlineAutoData("../*")]
-	[InlineAutoData("../a*")]
-	[InlineAutoData("*t..")]
+	[Test]
+	[AutoArguments("../")]
+	[AutoArguments("../*")]
+	[AutoArguments("../a*")]
+	[AutoArguments("*t..")]
 	public async Task
 		SearchPattern_ContainingTwoDotsAndDirectorySeparator_ShouldThrowArgumentException_OnNetFramework(
 			string searchPattern, string path)
@@ -201,7 +201,7 @@ public partial class SearchFilterTests
 		await That(Act).Throws<ArgumentException>().WithHResult(-2147024809);
 	}
 
-	[Fact]
+	[Test]
 	public async Task SearchPattern_ContainingWithTwoDots_ShouldContainMatchingFiles()
 	{
 		FileSystem.Initialize()
@@ -215,7 +215,7 @@ public partial class SearchFilterTests
 		await That(result.Length).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task SearchPattern_EndingWithTwoDots_ShouldNotMatchAnyFile()
 	{
 		Skip.If(Test.IsNetFramework);
@@ -239,7 +239,7 @@ public partial class SearchFilterTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task SearchPattern_Extension_ShouldReturnAllFilesWithTheExtension()
 	{
 		FileSystem.Initialize()
@@ -257,7 +257,7 @@ public partial class SearchFilterTests
 		await That(result.Length).IsEqualTo(3);
 	}
 
-	[Fact]
+	[Test]
 	public async Task SearchPattern_Null_ShouldThrowArgumentNullException()
 	{
 		FileSystem.Initialize();
@@ -271,7 +271,7 @@ public partial class SearchFilterTests
 		await That(Act).Throws<ArgumentNullException>().WithParamName("searchPattern");
 	}
 
-	[Fact]
+	[Test]
 	public async Task SearchPattern_StarDot_ShouldReturnFilesWithoutExtension()
 	{
 		FileSystem.Initialize()
@@ -294,15 +294,15 @@ public partial class SearchFilterTests
 		}
 	}
 
-	[Theory]
+	[Test]
 #if NETFRAMEWORK
-	[InlineAutoData(false, "")]
+	[AutoArguments(false, "")]
 #else
-	[InlineAutoData(true, "")]
+	[AutoArguments(true, "")]
 #endif
-	[InlineAutoData(true, "*")]
-	[InlineAutoData(true, ".")]
-	[InlineAutoData(true, "*.*")]
+	[AutoArguments(true, "*")]
+	[AutoArguments(true, ".")]
+	[AutoArguments(true, "*.*")]
 	public async Task SearchPattern_WildCard_ShouldReturnFile(
 		bool expectToBeFound, string searchPattern, string path)
 	{

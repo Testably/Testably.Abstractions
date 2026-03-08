@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
@@ -6,17 +7,16 @@ public class TimeSystemExtensibilityTests
 {
 	#region Test Setup
 
-	public static TheoryData<ITimeSystem> GetTimeSystems
-		=> new()
-		{
-			(ITimeSystem)new RealTimeSystem(),
-			(ITimeSystem)new MockTimeSystem(),
-		};
+	public static IEnumerable<Func<ITimeSystem>> GetTimeSystems()
+	{
+		yield return () => new RealTimeSystem();
+		yield return () => new MockTimeSystem();
+	}
 
 	#endregion
 
-	[Theory]
-	[MemberData(nameof(GetTimeSystems))]
+	[Test]
+	[MethodDataSource(nameof(GetTimeSystems))]
 	public async Task DateTime_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
 		IDateTime sut = timeSystem.DateTime;
@@ -26,8 +26,8 @@ public class TimeSystemExtensibilityTests
 		await That(result).IsEqualTo(timeSystem);
 	}
 
-	[Theory]
-	[MemberData(nameof(GetTimeSystems))]
+	[Test]
+	[MethodDataSource(nameof(GetTimeSystems))]
 	public async Task Task_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
 		ITask sut = timeSystem.Task;
@@ -37,8 +37,8 @@ public class TimeSystemExtensibilityTests
 		await That(result).IsEqualTo(timeSystem);
 	}
 
-	[Theory]
-	[MemberData(nameof(GetTimeSystems))]
+	[Test]
+	[MethodDataSource(nameof(GetTimeSystems))]
 	public async Task Thread_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
 		IThread sut = timeSystem.Thread;
@@ -48,8 +48,8 @@ public class TimeSystemExtensibilityTests
 		await That(result).IsEqualTo(timeSystem);
 	}
 
-	[Theory]
-	[MemberData(nameof(GetTimeSystems))]
+	[Test]
+	[MethodDataSource(nameof(GetTimeSystems))]
 	public async Task Timer_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
 		using ITimer sut = timeSystem.Timer.New(_ => { });
@@ -59,8 +59,8 @@ public class TimeSystemExtensibilityTests
 		await That(result).IsEqualTo(timeSystem);
 	}
 
-	[Theory]
-	[MemberData(nameof(GetTimeSystems))]
+	[Test]
+	[MethodDataSource(nameof(GetTimeSystems))]
 	public async Task TimerFactory_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
 		ITimerFactory sut = timeSystem.Timer;

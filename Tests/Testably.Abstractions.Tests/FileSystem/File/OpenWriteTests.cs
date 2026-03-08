@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class OpenWriteTests
+public class OpenWriteTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task OpenWrite_MissingFile_ShouldCreateFile(string path)
 	{
 		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
@@ -14,8 +14,8 @@ public partial class OpenWriteTests
 		await That(FileSystem.File.Exists(path)).IsTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task OpenWrite_ShouldOverwriteExistingFile(string path, string previousContent)
 	{
 		FileSystem.File.WriteAllText(path, previousContent);
@@ -32,8 +32,8 @@ public partial class OpenWriteTests
 		await That(result.Length).IsEqualTo(previousContent.Length);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task OpenWrite_ShouldUseWriteAccessAndNoneShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -48,8 +48,8 @@ public partial class OpenWriteTests
 		await That(stream.CanTimeout).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task OpenWrite_StreamShouldNotThrowExceptionWhenReading(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);

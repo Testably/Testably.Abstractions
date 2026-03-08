@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public class FilePlatformIndependenceExtensionsTests
 {
-	[Fact]
+	[Test]
 	public async Task NormalizePath_Null_ShouldReturnNull()
 	{
 		string? path = null;
@@ -15,8 +15,8 @@ public class FilePlatformIndependenceExtensionsTests
 		await That(path).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NormalizePath_Unix_RootedPath_ShouldRemoveDriveInfo(string part1)
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -30,8 +30,8 @@ public class FilePlatformIndependenceExtensionsTests
 		await That(path).IsEqualTo(expectedPath);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NormalizePath_Unix_ShouldReplaceAltDirectorySeparatorChar(
 		string part1, string part2)
 	{
@@ -52,8 +52,8 @@ public class FilePlatformIndependenceExtensionsTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task NormalizePath_Windows_ShouldAlsoKeepAltDirectorySeparatorChar(
 		string part1, string part2)
 	{
@@ -73,7 +73,7 @@ public class FilePlatformIndependenceExtensionsTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task PrefixRoot_Null_ShouldReturnNull()
 	{
 		string? path = null;
@@ -83,8 +83,8 @@ public class FilePlatformIndependenceExtensionsTests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task PrefixRoot_RootedPath_ShouldReturnPath(string path)
 	{
 		path = path.PrefixRoot(new MockFileSystem());
@@ -94,8 +94,8 @@ public class FilePlatformIndependenceExtensionsTests
 		await That(result).IsEqualTo(path);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task PrefixRoot_UnRootedPath_ShouldPrefixRoot(string path)
 	{
 		string result = path.PrefixRoot(new MockFileSystem());

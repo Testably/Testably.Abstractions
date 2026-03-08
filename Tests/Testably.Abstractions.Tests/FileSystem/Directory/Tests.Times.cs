@@ -4,8 +4,8 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 public partial class Tests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetCreationTime_PathNotFound_ShouldReturnNullTime(string path)
 	{
 		DateTime expectedTime = FileTestHelper.NullTime.ToLocalTime();
@@ -15,8 +15,8 @@ public partial class Tests
 		await That(result).IsEqualTo(expectedTime);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetCreationTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
 	{
 		DateTime expectedTime = FileTestHelper.NullTime.ToUniversalTime();
@@ -26,8 +26,8 @@ public partial class Tests
 		await That(result).IsEqualTo(expectedTime);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetLastAccessTime_PathNotFound_ShouldReturnNullTime(string path)
 	{
 		DateTime expectedTime = FileTestHelper.NullTime.ToLocalTime();
@@ -37,8 +37,8 @@ public partial class Tests
 		await That(result).IsEqualTo(expectedTime);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetLastAccessTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
 	{
 		DateTime expectedTime = FileTestHelper.NullTime.ToUniversalTime();
@@ -48,8 +48,8 @@ public partial class Tests
 		await That(result).IsEqualTo(expectedTime);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetLastWriteTime_PathNotFound_ShouldReturnNullTime(string path)
 	{
 		DateTime expectedTime = FileTestHelper.NullTime.ToLocalTime();
@@ -59,8 +59,8 @@ public partial class Tests
 		await That(result).IsEqualTo(expectedTime);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetLastWriteTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
 	{
 		DateTime expectedTime = FileTestHelper.NullTime.ToUniversalTime();
@@ -70,8 +70,8 @@ public partial class Tests
 		await That(result).IsEqualTo(expectedTime);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task LastAccessTime_CreateSubDirectory_ShouldUpdateLastAccessAndLastWriteTime(
 		string path, string subPath)
 	{
@@ -101,8 +101,8 @@ public partial class Tests
 			.Within(TimeComparison.Tolerance);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task LastAccessTime_ShouldBeSet(string path)
 	{
 		DateTime start = TimeSystem.DateTime.Now;
@@ -115,8 +115,8 @@ public partial class Tests
 		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task LastAccessTimeUtc_ShouldBeSet(string path)
 	{
 		DateTime start = TimeSystem.DateTime.UtcNow;
@@ -129,8 +129,8 @@ public partial class Tests
 		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task LastWriteTime_ShouldBeSet(string path)
 	{
 		DateTime start = TimeSystem.DateTime.Now;
@@ -143,8 +143,8 @@ public partial class Tests
 		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task LastWriteTimeUtc_ShouldBeSet(string path)
 	{
 		DateTime start = TimeSystem.DateTime.UtcNow;
@@ -157,8 +157,8 @@ public partial class Tests
 		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetCreationTime_PathNotFound_ShouldThrowCorrectException(
 		string path, DateTime creationTime)
 	{
@@ -181,8 +181,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetCreationTime_ShouldChangeCreationTime(
 		string path, DateTime creationTime)
 	{
@@ -198,8 +198,8 @@ public partial class Tests
 		await That(FileSystem.Directory.GetCreationTimeUtc(path)).IsEqualTo(expectedTime);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetCreationTime_Unspecified_ShouldChangeCreationTime(
 		string path, DateTime creationTime)
 	{
@@ -218,8 +218,8 @@ public partial class Tests
 			.IsNotEqualTo(DateTimeKind.Unspecified);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetCreationTimeUtc_PathNotFound_ShouldThrowCorrectException(
 		string path, DateTime creationTime)
 	{
@@ -242,8 +242,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetCreationTimeUtc_ShouldChangeCreationTime(
 		string path, DateTime creationTime)
 	{
@@ -259,8 +259,8 @@ public partial class Tests
 		await That(FileSystem.Directory.GetCreationTime(path)).IsEqualTo(expectedTime);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetCreationTimeUtc_Unspecified_ShouldChangeCreationTime(
 		string path, DateTime creationTime)
 	{
@@ -279,8 +279,8 @@ public partial class Tests
 			.IsNotEqualTo(DateTimeKind.Unspecified);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastAccessTime_PathNotFound_ShouldThrowCorrectException(
 		string path, DateTime lastAccessTime)
 	{
@@ -303,8 +303,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastAccessTime_ShouldChangeLastAccessTime(
 		string path, DateTime lastAccessTime)
 	{
@@ -317,8 +317,8 @@ public partial class Tests
 		await That(FileSystem.Directory.GetLastAccessTimeUtc(path)).IsEqualTo(expectedTime);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastAccessTime_Unspecified_ShouldChangeLastAccessTime(
 		string path, DateTime lastAccessTime)
 	{
@@ -334,8 +334,8 @@ public partial class Tests
 			.IsNotEqualTo(DateTimeKind.Unspecified);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastAccessTimeUtc_PathNotFound_ShouldThrowCorrectException(
 		string path, DateTime lastAccessTime)
 	{
@@ -358,8 +358,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastAccessTimeUtc_ShouldChangeLastAccessTime(
 		string path, DateTime lastAccessTime)
 	{
@@ -372,8 +372,8 @@ public partial class Tests
 		await That(FileSystem.Directory.GetLastAccessTime(path)).IsEqualTo(expectedTime);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastAccessTimeUtc_Unspecified_ShouldChangeLastAccessTime(
 		string path, DateTime lastAccessTime)
 	{
@@ -389,8 +389,8 @@ public partial class Tests
 			.IsNotEqualTo(DateTimeKind.Unspecified);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastWriteTime_PathNotFound_ShouldThrowCorrectException(
 		string path, DateTime lastWriteTime)
 	{
@@ -413,8 +413,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastWriteTime_ShouldChangeLastWriteTime(
 		string path, DateTime lastWriteTime)
 	{
@@ -427,8 +427,8 @@ public partial class Tests
 		await That(FileSystem.Directory.GetLastWriteTimeUtc(path)).IsEqualTo(expectedTime);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastWriteTime_Unspecified_ShouldChangeLastWriteTime(
 		string path, DateTime lastWriteTime)
 	{
@@ -444,8 +444,8 @@ public partial class Tests
 			.IsNotEqualTo(DateTimeKind.Unspecified);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastWriteTimeUtc_PathNotFound_ShouldThrowCorrectException(
 		string path, DateTime lastWriteTime)
 	{
@@ -468,8 +468,8 @@ public partial class Tests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastWriteTimeUtc_ShouldChangeLastWriteTime(
 		string path, DateTime lastWriteTime)
 	{
@@ -482,8 +482,8 @@ public partial class Tests
 		await That(FileSystem.Directory.GetLastWriteTime(path)).IsEqualTo(expectedTime);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetLastWriteTimeUtc_Unspecified_ShouldChangeLastWriteTime(
 		string path, DateTime lastWriteTime)
 	{

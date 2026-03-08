@@ -1,0 +1,67 @@
+using System;
+using System.Threading;
+
+namespace Testably.Abstractions.TestHelpers;
+
+[Retry(1)]
+public abstract class TimeSystemTestBase
+{
+	/// <summary>
+	///     The delay in milliseconds when wanting to ensure a timeout in the test.
+	/// </summary>
+	public const int EnsureTimeout = 500;
+
+	/// <summary>
+	///     The delay in milliseconds when expecting a success in the test.
+	/// </summary>
+	public const int ExpectSuccess = 30000;
+
+	/// <summary>
+	///     The delay in milliseconds when expecting a timeout in the test.
+	/// </summary>
+	public const int ExpectTimeout = 30;
+
+	/// <summary>
+	///     The UTC time when the time system was created.
+	/// </summary>
+	public DateTime BeforeTime { get; set; }
+
+	/// <summary>
+	///     A cancellation token that can be used to cancel the test execution when it takes too long.
+	/// </summary>
+	public CancellationToken CancellationToken { get; }
+
+	/// <summary>
+	///     The time system to test.
+	/// </summary>
+	public ITimeSystem TimeSystem { get; }
+
+	protected TimeSystemTestBase(TimeSystemTestData testData)
+	{
+		BeforeTime = testData.Now;
+		TimeSystem = testData.TimeSystem;
+		CancellationToken = TestContext.Current!.Execution.CancellationToken;
+	}
+
+	/// <summary>
+	///     Specifies, if brittle tests should be skipped on the real time system.
+	/// </summary>
+	/// <param name="condition">
+	///     (optional) A condition that must be <see langword="true" /> for the test to be skipped on the
+	///     real time system.
+	/// </param>
+	public void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+	{
+		if (TimeSystem is RealTimeSystem)
+		{
+#if DEBUG
+			aweXpect.Skip.When(
+				condition && Settings.BrittleTests == Settings.TestSettingStatus.AlwaysDisabled,
+				$"Brittle tests are {Settings.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
+#else
+			aweXpect.Skip.When(condition && Settings.BrittleTests != Settings.TestSettingStatus.AlwaysEnabled,
+				$"Brittle tests are {Settings.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
+#endif
+		}
+	}
+}

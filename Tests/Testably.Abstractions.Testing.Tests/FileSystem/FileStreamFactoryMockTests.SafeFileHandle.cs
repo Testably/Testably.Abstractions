@@ -8,8 +8,8 @@ namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public sealed partial class FileStreamFactoryMockTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public void MissingFile_ShouldThrowFileNotFoundException(
 		string path, string contents)
 	{
@@ -33,8 +33,8 @@ public sealed partial class FileStreamFactoryMockTests
 			.Which.Message.Should().Contain($"'{MockFileSystem.Path.GetFullPath(path)}'");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public void UnregisteredFileHandle_ShouldThrowNotSupportedException(
 		string path, string contents)
 	{
@@ -55,8 +55,8 @@ public sealed partial class FileStreamFactoryMockTests
 			                                nameof(MockFileSystem.WithSafeFileHandleStrategy));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public void UnregisteredFileHandle_WithBufferSize_ShouldThrowNotSupportedException(
 		string path, string contents, int bufferSize)
 	{
@@ -77,8 +77,8 @@ public sealed partial class FileStreamFactoryMockTests
 			                                nameof(MockFileSystem.WithSafeFileHandleStrategy));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public void
 		UnregisteredFileHandle_WithBufferSizeAndIsAsync_ShouldThrowNotSupportedException(
 			string path, string contents, int bufferSize, bool isAsync)

@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class CreateTextTests
+public class CreateTextTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateText_MissingFile_ShouldCreateFile(
 		string path, string appendText)
 	{
@@ -19,8 +19,8 @@ public partial class CreateTextTests
 		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(appendText);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateText_ShouldReplaceTextInExistingFile(
 		string path, string contents, string appendText)
 	{

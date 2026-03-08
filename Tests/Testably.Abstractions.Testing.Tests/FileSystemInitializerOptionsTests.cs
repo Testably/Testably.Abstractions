@@ -2,7 +2,7 @@
 
 public sealed class FileSystemInitializerOptionsTests
 {
-	[Fact]
+	[Test]
 	public async Task InitializeTempDirectory_ShouldBeInitializedToTrue()
 	{
 		FileSystemInitializerOptions sut = new();

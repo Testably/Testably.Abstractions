@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
 public class StopwatchFactoryMockTests
 {
-	[Fact]
+	[Test]
 	public async Task Wrap_ShouldThrowNotSupportedException()
 	{
 		MockTimeSystem timeSystem = new();

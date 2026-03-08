@@ -4,10 +4,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class UnixFileModeTests
+public class UnixFileModeTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetUnixFileMode_ShouldBeInitializedCorrectly(
 		string path)
 	{
@@ -26,8 +26,8 @@ public partial class UnixFileModeTests
 		await That(result).IsEqualTo(expected);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task GetUnixFileMode_ShouldThrowPlatformNotSupportedException_OnWindows(
 		string path)
 	{
@@ -43,8 +43,8 @@ public partial class UnixFileModeTests
 		await That(Act).Throws<PlatformNotSupportedException>().WithHResult(-2146233031);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ReadAllText_WhenUnixFileModeIsNone_ShouldThrowUnauthorizedAccessException(
 		string path)
 	{
@@ -66,8 +66,8 @@ public partial class UnixFileModeTests
 			.WithMessage($"Access to the path '*/{path}' is denied.").AsWildcard();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetUnixFileMode_MissingFile_ShouldThrowFileNotFoundException(
 		string path, UnixFileMode unixFileMode)
 	{
@@ -83,8 +83,8 @@ public partial class UnixFileModeTests
 		await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetUnixFileMode_ShouldBeSettableOnLinux(
 		string path, UnixFileMode unixFileMode)
 	{
@@ -100,8 +100,8 @@ public partial class UnixFileModeTests
 		await That(result).IsEqualTo(unixFileMode);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task SetUnixFileMode_ShouldThrowPlatformNotSupportedException_OnWindows(
 		string path, UnixFileMode mode)
 	{
@@ -117,8 +117,8 @@ public partial class UnixFileModeTests
 		await That(Act).Throws<PlatformNotSupportedException>().WithHResult(-2146233031);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllText_WhenUnixFileModeIsNone_ShouldThrowUnauthorizedAccessException(
 		string path)
 	{

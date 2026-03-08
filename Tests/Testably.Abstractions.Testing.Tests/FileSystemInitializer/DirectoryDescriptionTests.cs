@@ -5,8 +5,8 @@ namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
 public class DirectoryDescriptionTests
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Children_ShouldBeSortedAlphabetically(string[] childNames)
 	{
 		DirectoryDescription sut = new("foo",
@@ -19,7 +19,7 @@ public class DirectoryDescriptionTests
 			.Using(StringComparer.Ordinal);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Index_AccessToMissingChildShouldThrowTestingException()
 	{
 		DirectoryDescription sut = new("foo");
@@ -32,7 +32,7 @@ public class DirectoryDescriptionTests
 		await That(Act).ThrowsExactly<TestingException>().WithMessage("*'bar'*").AsWildcard();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Index_ShouldGiveAccessToExistingChildDirectory()
 	{
 		DirectoryDescription child = new("bar");
@@ -43,7 +43,7 @@ public class DirectoryDescriptionTests
 		await That(result).IsSameAs(child);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Index_ShouldGiveAccessToNestedChildren()
 	{
 		FileDescription child3 = new("child3", "some-content");

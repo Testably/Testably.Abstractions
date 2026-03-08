@@ -6,13 +6,13 @@ using System.Linq;
 namespace Testably.Abstractions.Tests.RandomSystem;
 
 [RandomSystemTests]
-public partial class RandomTests
+public class RandomTests(RandomSystemTestData testData) : RandomSystemTestBase(testData)
 {
 #if FEATURE_RANDOM_STRINGS
-	[Theory]
-	[InlineData(2)]
-	[InlineData(100)]
-	[InlineData(1000)]
+	[Test]
+	[Arguments(2)]
+	[Arguments(100)]
+	[Arguments(1000)]
 	public async Task GetHexString_ShouldHaveExpectedLength(int length)
 	{
 		string result = RandomSystem.Random.Shared.GetHexString(length);
@@ -22,7 +22,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_STRINGS
-	[Fact]
+	[Test]
 	public async Task GetHexString_ShouldOnlyContainHexadecimalCharacters()
 	{
 		char[] hexadecimalCharacters = "0123456789ABCDEF".ToCharArray();
@@ -34,7 +34,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_STRINGS
-	[Fact]
+	[Test]
 	public async Task GetHexString_WithDestinationSpan_ShouldOnlyContainHexadecimalCharacters()
 	{
 		char[] buffer = new char[10000];
@@ -49,7 +49,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_STRINGS
-	[Fact]
+	[Test]
 	public async Task
 		GetHexString_WithDestinationSpan_WithLowercase_ShouldOnlyContainLowercaseHexadecimalCharacters()
 	{
@@ -65,7 +65,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_STRINGS
-	[Fact]
+	[Test]
 	public async Task GetHexString_WithLowercase_ShouldOnlyContainLowercaseHexadecimalCharacters()
 	{
 		char[] hexadecimalCharacters = "0123456789abcdef".ToCharArray();
@@ -77,7 +77,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ITEMS
-	[Fact]
+	[Test]
 	public async Task GetItems_Array_EmptyChoices_ShouldThrowArgumentNullException()
 	{
 		int[] choices = Array.Empty<int>();
@@ -95,7 +95,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ITEMS
-	[Fact]
+	[Test]
 	public async Task GetItems_Array_LengthLargerThanChoices_ShouldIncludeDuplicateValues()
 	{
 		int[] choices = Enumerable.Range(1, 10).ToArray();
@@ -108,9 +108,9 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ITEMS
-	[Theory]
-	[InlineData(-1)]
-	[InlineData(-200)]
+	[Test]
+	[Arguments(-1)]
+	[Arguments(-200)]
 	public async Task GetItems_Array_NegativeLength_ShouldThrowArgumentOutOfRangeException(
 		int length)
 	{
@@ -128,7 +128,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ITEMS
-	[Fact]
+	[Test]
 	public async Task GetItems_Array_NullChoices_ShouldThrowArgumentNullException()
 	{
 		int[] choices = null!;
@@ -143,7 +143,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ITEMS
-	[Fact]
+	[Test]
 	public async Task GetItems_Array_ShouldSelectRandomElements()
 	{
 		int[] choices = Enumerable.Range(1, 100).ToArray();
@@ -156,7 +156,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ITEMS
-	[Fact]
+	[Test]
 	public async Task GetItems_ReadOnlySpan_LengthLargerThanChoices_ShouldIncludeDuplicateValues()
 	{
 		ReadOnlySpan<int> choices = Enumerable.Range(1, 10).ToArray().AsSpan();
@@ -169,7 +169,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ITEMS
-	[Fact]
+	[Test]
 	public async Task GetItems_ReadOnlySpan_ShouldSelectRandomElements()
 	{
 		ReadOnlySpan<int> choices = Enumerable.Range(1, 100).ToArray().AsSpan();
@@ -182,7 +182,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ITEMS
-	[Fact]
+	[Test]
 	public async Task
 		GetItems_SpanDestination_LengthLargerThanChoices_ShouldIncludeDuplicateValues()
 	{
@@ -199,7 +199,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ITEMS
-	[Fact]
+	[Test]
 	public async Task GetItems_SpanDestination_ShouldSelectRandomElements()
 	{
 		int[] buffer = new int[10];
@@ -215,10 +215,10 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_STRINGS
-	[Theory]
-	[InlineData(2)]
-	[InlineData(100)]
-	[InlineData(1000)]
+	[Test]
+	[Arguments(2)]
+	[Arguments(100)]
+	[Arguments(1000)]
 	public async Task GetString_ShouldHaveExpectedLength(int length)
 	{
 		ReadOnlySpan<char> choices = "abcde".ToCharArray();
@@ -230,10 +230,11 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_STRINGS
-	[Theory]
-	[AutoData]
-	public async Task GetString_ShouldOnlyContainProvidedCharacters(char[] chars)
+	[Test]
+	[Arguments("foo")]
+	public async Task GetString_ShouldOnlyContainProvidedCharacters(string value)
 	{
+		char[] chars = value.ToCharArray();
 		ReadOnlySpan<char> choices = chars;
 
 		string result = RandomSystem.Random.Shared.GetString(choices, 100);
@@ -242,7 +243,7 @@ public partial class RandomTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Next_MaxValue_ShouldOnlyReturnValidValues()
 	{
 		int maxValue = 10;
@@ -256,7 +257,7 @@ public partial class RandomTests
 		await That(results).All().Satisfy(r => r < maxValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Next_MinAndMaxValue_ShouldOnlyReturnValidValues()
 	{
 		int minValue = 10;
@@ -271,7 +272,7 @@ public partial class RandomTests
 		await That(results).All().Satisfy(r => r >= minValue && r < maxValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Next_ShouldBeThreadSafe()
 	{
 		ConcurrentBag<int> results = [];
@@ -284,7 +285,7 @@ public partial class RandomTests
 		await That(results).AreAllUnique();
 	}
 
-	[Fact]
+	[Test]
 	public async Task NextBytes_ShouldBeThreadSafe()
 	{
 		ConcurrentBag<byte[]> results = [];
@@ -300,7 +301,7 @@ public partial class RandomTests
 	}
 
 #if FEATURE_SPAN
-	[Fact]
+	[Test]
 	public async Task NextBytes_Span_ShouldBeThreadSafe()
 	{
 		ConcurrentBag<byte[]> results = [];
@@ -316,7 +317,7 @@ public partial class RandomTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task NextDouble_ShouldBeThreadSafe()
 	{
 		ConcurrentBag<double> results = [];
@@ -330,7 +331,7 @@ public partial class RandomTests
 	}
 
 #if FEATURE_RANDOM_ADVANCED
-	[Fact]
+	[Test]
 	public async Task NextInt64_MaxValue_ShouldOnlyReturnValidValues()
 	{
 		long maxValue = 10;
@@ -346,7 +347,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
-	[Fact]
+	[Test]
 	public async Task NextInt64_MinAndMaxValue_ShouldOnlyReturnValidValues()
 	{
 		long minValue = 10;
@@ -363,7 +364,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
-	[Fact]
+	[Test]
 	public async Task NextInt64_ShouldBeThreadSafe()
 	{
 		ConcurrentBag<long> results = [];
@@ -378,7 +379,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
-	[Fact]
+	[Test]
 	public async Task NextSingle_ShouldBeThreadSafe()
 	{
 		ConcurrentBag<float> results = [];
@@ -393,7 +394,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ITEMS
-	[Fact]
+	[Test]
 	public async Task Shuffle_Array_Null_ShouldThrowArgumentNullException()
 	{
 		int[] values = null!;
@@ -408,7 +409,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ITEMS
-	[Fact]
+	[Test]
 	public async Task Shuffle_Array_ShouldShuffleItemsInPlace()
 	{
 		int[] originalValues = Enumerable.Range(1, 100).ToArray();
@@ -423,7 +424,7 @@ public partial class RandomTests
 #endif
 
 #if FEATURE_RANDOM_ITEMS
-	[Fact]
+	[Test]
 	public async Task Shuffle_Span_ShouldShuffleItemsInPlace()
 	{
 		int[] originalValues = Enumerable.Range(1, 100).ToArray();

@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public class MockFileSystemExtensionsTests
 {
-	[Fact]
+	[Test]
 	public async Task GetDefaultDrive_WithoutDrives_ShouldThrowInvalidOperationException()
 	{
 		MockFileSystem fileSystem = new();

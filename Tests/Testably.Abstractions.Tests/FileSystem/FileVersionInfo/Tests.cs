@@ -1,10 +1,10 @@
 namespace Testably.Abstractions.Tests.FileSystem.FileVersionInfo;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ToString_ShouldReturnProvidedPath(string fileName)
 	{
 		FileSystem.File.WriteAllText(fileName, "");

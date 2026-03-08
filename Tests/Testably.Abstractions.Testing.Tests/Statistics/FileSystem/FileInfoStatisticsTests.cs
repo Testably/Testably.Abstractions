@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public class FileInfoStatisticsTests
 {
-	[Fact]
+	[Test]
 	public async Task Method_AppendText_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -18,7 +18,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsMethodCall(nameof(IFileInfo.AppendText));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_CopyTo_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -34,7 +34,7 @@ public class FileInfoStatisticsTests
 				destFileName, overwrite);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_CopyTo_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -49,7 +49,7 @@ public class FileInfoStatisticsTests
 				destFileName);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Create_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -62,7 +62,7 @@ public class FileInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[Fact]
+	[Test]
 	public async Task Method_CreateAsSymbolicLink_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -77,7 +77,7 @@ public class FileInfoStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_CreateText_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -89,7 +89,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsMethodCall(nameof(IFileInfo.CreateText));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Decrypt_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnWindows);
@@ -105,7 +105,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsMethodCall(nameof(IFileInfo.Decrypt));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Delete_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -118,7 +118,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsMethodCall(nameof(IFileInfo.Delete));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Encrypt_ShouldRegisterCall()
 	{
 		Skip.If(!Test.RunsOnWindows);
@@ -135,7 +135,7 @@ public class FileInfoStatisticsTests
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
-	[Fact]
+	[Test]
 	public async Task Method_MoveTo_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -152,7 +152,7 @@ public class FileInfoStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_MoveTo_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -167,7 +167,7 @@ public class FileInfoStatisticsTests
 				destFileName);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Open_FileMode_FileAccess_FileShare_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -183,7 +183,7 @@ public class FileInfoStatisticsTests
 				mode, access, share);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Open_FileMode_FileAccess_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -198,7 +198,7 @@ public class FileInfoStatisticsTests
 				mode, access);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Open_FileMode_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -213,7 +213,7 @@ public class FileInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
-	[Fact]
+	[Test]
 	public async Task Method_Open_FileStreamOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -229,7 +229,7 @@ public class FileInfoStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Method_OpenRead_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -242,7 +242,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsMethodCall(nameof(IFileInfo.OpenRead));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_OpenText_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -255,7 +255,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsMethodCall(nameof(IFileInfo.OpenText));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_OpenWrite_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -267,7 +267,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsMethodCall(nameof(IFileInfo.OpenWrite));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Refresh_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -279,7 +279,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsMethodCall(nameof(IFileInfo.Refresh));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Replace_String_String_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -297,7 +297,7 @@ public class FileInfoStatisticsTests
 				destinationFileName, destinationBackupFileName, ignoreMetadataErrors);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method_Replace_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -314,7 +314,7 @@ public class FileInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[Fact]
+	[Test]
 	public async Task Method_ResolveLinkTarget_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -330,7 +330,7 @@ public class FileInfoStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Property_Attributes_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -343,7 +343,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.Attributes));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_Attributes_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -357,7 +357,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileInfo.Attributes));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_CreationTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -370,7 +370,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.CreationTime));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_CreationTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -384,7 +384,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileInfo.CreationTime));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_CreationTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -397,7 +397,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.CreationTimeUtc));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_CreationTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -411,7 +411,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileInfo.CreationTimeUtc));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_Directory_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -424,7 +424,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.Directory));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_DirectoryName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -437,7 +437,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.DirectoryName));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_Exists_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -450,7 +450,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.Exists));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_Extension_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -463,7 +463,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.Extension));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_FullName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -476,7 +476,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.FullName));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_IsReadOnly_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -489,7 +489,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.IsReadOnly));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_IsReadOnly_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -503,7 +503,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileInfo.IsReadOnly));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_LastAccessTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -516,7 +516,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.LastAccessTime));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_LastAccessTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -530,7 +530,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileInfo.LastAccessTime));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_LastAccessTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -543,7 +543,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.LastAccessTimeUtc));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_LastAccessTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -557,7 +557,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileInfo.LastAccessTimeUtc));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_LastWriteTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -570,7 +570,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.LastWriteTime));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_LastWriteTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -584,7 +584,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileInfo.LastWriteTime));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_LastWriteTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -597,7 +597,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertyGetAccess(nameof(IFileInfo.LastWriteTimeUtc));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_LastWriteTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -611,7 +611,7 @@ public class FileInfoStatisticsTests
 			.OnlyContainsPropertySetAccess(nameof(IFileInfo.LastWriteTimeUtc));
 	}
 
-	[Fact]
+	[Test]
 	public async Task Property_Length_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -625,7 +625,7 @@ public class FileInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[Fact]
+	[Test]
 	public async Task Property_LinkTarget_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -639,7 +639,7 @@ public class FileInfoStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task Property_Name_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -653,7 +653,7 @@ public class FileInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-	[Fact]
+	[Test]
 	public async Task Property_UnixFileMode_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -668,7 +668,7 @@ public class FileInfoStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-	[Fact]
+	[Test]
 	public async Task Property_UnixFileMode_Set_ShouldRegisterPropertyAccess()
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -687,7 +687,7 @@ public class FileInfoStatisticsTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldBeFileInfoWithPath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.FileInfo[@"\\some\path"];

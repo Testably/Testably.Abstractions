@@ -6,11 +6,11 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 public partial class MoveTests
 {
-	[Theory]
-	[InlineData(true, "nested")]
-	[InlineData(false, "nested")]
-	[InlineData(true, "nested", "deep")]
-	[InlineData(false, "nested", "deep")]
+	[Test]
+	[Arguments(true, "nested")]
+	[Arguments(false, "nested")]
+	[Arguments(true, "nested", "deep")]
+	[Arguments(false, "nested", "deep")]
 	public async Task Windows_MoveOutsideToNested_ShouldInvokeCreatedAndChanged(
 		bool includeSubdirectories,
 		params string[] paths
@@ -59,11 +59,11 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+		await That(createdMs.Wait(ExpectTimeout, CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
-		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
-		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(deletedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
+		await That(renamedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 
 		await ThatIsSingleOrEmpty(createdBag, !includeSubdirectories);
 
@@ -80,11 +80,11 @@ public partial class MoveTests
 		}
 	}
 
-	[Theory]
-	[InlineData(true, "nested")]
-	[InlineData(false, "nested")]
-	[InlineData(true, "nested", "deep")]
-	[InlineData(false, "nested", "deep")]
+	[Test]
+	[Arguments(true, "nested")]
+	[Arguments(false, "nested")]
+	[Arguments(true, "nested", "deep")]
+	[Arguments(false, "nested", "deep")]
 	public async Task Windows_MoveInsideToNested_ShouldInvokeDeletedCreatedAndChanged(
 		bool includeSubdirectories,
 		params string[] paths
@@ -133,12 +133,12 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
+		await That(deletedMs.Wait(ExpectTimeout, CancellationToken)).IsTrue();
 
-		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+		await That(createdMs.Wait(ExpectTimeout, CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
-		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(renamedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 
 		await That(deletedBag).HasSingle();
 
@@ -166,11 +166,11 @@ public partial class MoveTests
 		}
 	}
 
-	[Theory]
-	[InlineData(true)]
-	[InlineData(false)]
-	[InlineData(true, "deep")]
-	[InlineData(false, "deep")]
+	[Test]
+	[Arguments(true)]
+	[Arguments(false)]
+	[Arguments(true, "deep")]
+	[Arguments(false, "deep")]
 	public async Task Windows_MoveNestedTo_ShouldInvokeDeletedCreatedAndChanged(
 		bool includeSubdirectories,
 		string? path = null
@@ -229,13 +229,13 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+		await That(createdMs.Wait(ExpectTimeout, CancellationToken))
 			.IsEqualTo(isCreated);
 
-		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+		await That(deletedMs.Wait(ExpectTimeout, CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
-		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(renamedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 
 		await ThatIsSingleOrEmpty(createdBag, !isCreated);
 		await ThatIsSingleOrEmpty(deletedBag, !includeSubdirectories);
@@ -265,11 +265,11 @@ public partial class MoveTests
 		}
 	}
 
-	[Theory]
-	[InlineData(true)]
-	[InlineData(false)]
-	[InlineData(true, "nested")]
-	[InlineData(false, "nested")]
+	[Test]
+	[Arguments(true)]
+	[Arguments(false)]
+	[Arguments(true, "nested")]
+	[Arguments(false, "nested")]
 	public async Task Windows_MoveDeepNestedTo_ShouldInvokeDeletedCreatedAndChanged(
 		bool includeSubdirectories,
 		string? path = null
@@ -333,13 +333,13 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+		await That(createdMs.Wait(ExpectTimeout, CancellationToken))
 			.IsEqualTo(isCreated);
 
-		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+		await That(deletedMs.Wait(ExpectTimeout, CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
-		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(renamedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 
 		await ThatIsSingleOrEmpty(createdBag, !isCreated);
 		await ThatIsSingleOrEmpty(deletedBag, !includeSubdirectories);

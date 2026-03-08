@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Tests.Internal;
 
 public class FileSystemInfoWrapperTests
 {
-	[Fact]
+	[Test]
 	public async Task FromFileSystemInfo_Null_ShouldReturnNull()
 	{
 		RealFileSystem fileSystem = new();
@@ -15,8 +15,8 @@ public class FileSystemInfoWrapperTests
 		await That(result).IsNull();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path")]
 	public async Task FromFileSystemInfo_WithDirectoryInfo_ShouldReturnDirectoryInfoWrapper(
 		string path)
 	{
@@ -28,8 +28,8 @@ public class FileSystemInfoWrapperTests
 		await That(result).IsExactly<DirectoryInfoWrapper>();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments("my-path")]
 	public async Task FromFileSystemInfo_WithFileInfo_ShouldReturnFileInfoWrapper(string path)
 	{
 		RealFileSystem fileSystem = new();

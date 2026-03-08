@@ -3,9 +3,9 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcherFactory;
 
 [FileSystemTests]
-public partial class Tests
+public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task New_ShouldInitializeWithDefaultValues()
 	{
 		using IFileSystemWatcher result =
@@ -25,8 +25,8 @@ public partial class Tests
 		await That(result.EnableRaisingEvents).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_WithPath_ShouldInitializeWithDefaultValues(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -47,8 +47,8 @@ public partial class Tests
 		await That(result.EnableRaisingEvents).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task New_WithPathAndFilter_ShouldInitializeWithDefaultValues(
 		string path, string filter)
 	{
@@ -66,7 +66,7 @@ public partial class Tests
 		await That(result.EnableRaisingEvents).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Wrap_Null_ShouldReturnNull()
 	{
 		using IFileSystemWatcher? result = FileSystem.FileSystemWatcher.Wrap(null);

@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Tests.Storage;
 
 public sealed class LocationExtensionsTests
 {
-	[Fact]
+	[Test]
 	public async Task
 		ThrowExceptionIfNotFound_MissingDirectory_ShouldThrowDirectoryNotFoundException()
 	{
@@ -20,8 +20,8 @@ public sealed class LocationExtensionsTests
 		await That(exception).IsExactly<DirectoryNotFoundException>();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		ThrowExceptionIfNotFound_MissingDirectory_WithCustomCallback_ShouldThrowExceptionFromCallback(
 			Exception expectedException)
@@ -38,7 +38,7 @@ public sealed class LocationExtensionsTests
 		await That(exception).IsSameAs(expectedException);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ThrowExceptionIfNotFound_MissingFile_ShouldThrowFileNotFoundException()
 	{
 		MockFileSystem fileSystem = new();
@@ -52,8 +52,8 @@ public sealed class LocationExtensionsTests
 		await That(exception).IsExactly<FileNotFoundException>();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		ThrowExceptionIfNotFound_MissingFile_WithCustomCallback_ShouldThrowExceptionFromCallback(
 			Exception expectedException)
@@ -69,8 +69,8 @@ public sealed class LocationExtensionsTests
 		await That(exception).IsSameAs(expectedException);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ThrowIfNotFound_MissingDirectory_ShouldExecuteFileNotFoundAction(
 		Exception expectedException)
 	{
@@ -86,8 +86,8 @@ public sealed class LocationExtensionsTests
 		await That(exception).IsSameAs(expectedException);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ThrowIfNotFound_MissingFile_ShouldExecuteFileNotFoundAction(
 		Exception expectedException)
 	{
@@ -102,8 +102,8 @@ public sealed class LocationExtensionsTests
 		await That(exception).IsSameAs(expectedException);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task ThrowIfNotFound_Null_ShouldExecuteFileNotFoundAction(
 		Exception expectedException)
 	{

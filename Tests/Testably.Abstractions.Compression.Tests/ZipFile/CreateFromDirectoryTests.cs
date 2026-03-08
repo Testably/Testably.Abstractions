@@ -1,4 +1,5 @@
-﻿using System.IO.Compression;
+﻿using System.Collections.Generic;
+using System.IO.Compression;
 using System.Text;
 #if FEATURE_COMPRESSION_STREAM
 using System.IO;
@@ -8,10 +9,10 @@ using Testably.Abstractions.Compression.Tests.TestHelpers;
 namespace Testably.Abstractions.Compression.Tests.ZipFile;
 
 [FileSystemTests]
-public partial class CreateFromDirectoryTests
+public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateFromDirectory_EmptyDirectory_ShouldBeIncluded(
 			CompressionLevel compressionLevel)
@@ -30,8 +31,8 @@ public partial class CreateFromDirectoryTests
 			.Which.For(x => x.FullName, f => f.IsEqualTo("bar/"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateFromDirectory_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
 		CompressionLevel compressionLevel)
 	{
@@ -47,8 +48,8 @@ public partial class CreateFromDirectoryTests
 		await That(archive.Entries).IsEmpty();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateFromDirectory_EmptySource_IncludeBaseDirectory_ShouldPrependDirectoryName(
 			CompressionLevel compressionLevel)
@@ -66,8 +67,8 @@ public partial class CreateFromDirectoryTests
 			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/"));
 	}
 
-	[Theory]
-	[MemberData(nameof(EntryNameEncoding))]
+	[Test]
+	[MethodDataSource(nameof(EntryNameEncoding))]
 	public async Task CreateFromDirectory_EntryNameEncoding_ShouldUseEncoding(
 		string entryName, Encoding encoding, bool encodedCorrectly)
 	{
@@ -93,8 +94,8 @@ public partial class CreateFromDirectoryTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateFromDirectory_IncludeBaseDirectory_ShouldPrependDirectoryName(
 		CompressionLevel compressionLevel)
 	{
@@ -113,8 +114,8 @@ public partial class CreateFromDirectoryTests
 	}
 
 #if FEATURE_COMPRESSION_OVERWRITE
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateFromDirectory_Overwrite_WithEncoding_ShouldOverwriteFile(
 		string contents, Encoding encoding)
 	{
@@ -137,7 +138,7 @@ public partial class CreateFromDirectoryTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task CreateFromDirectory_ShouldZipDirectoryContent()
 	{
 		FileSystem.Initialize()
@@ -155,7 +156,7 @@ public partial class CreateFromDirectoryTests
 	}
 
 #if FEATURE_COMPRESSION_STREAM
-	[Fact]
+	[Test]
 	public async Task CreateFromDirectory_WithReadOnlyStream_ShouldThrowArgumentException()
 	{
 		FileSystem.Initialize()
@@ -179,8 +180,8 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateFromDirectory_WithStream_EmptyDirectory_ShouldBeIncluded(
 			CompressionLevel compressionLevel)
@@ -201,8 +202,8 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateFromDirectory_WithStream_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
 			CompressionLevel compressionLevel)
@@ -221,8 +222,8 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateFromDirectory_WithStream_EmptySource_IncludeBaseDirectory_ShouldPrependDirectoryName(
 			CompressionLevel compressionLevel)
@@ -242,8 +243,8 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Theory]
-	[MemberData(nameof(EntryNameEncoding))]
+	[Test]
+	[MethodDataSource(nameof(EntryNameEncoding))]
 	public async Task CreateFromDirectory_WithStream_EntryNameEncoding_ShouldUseEncoding(
 		string entryName, Encoding encoding, bool encodedCorrectly)
 	{
@@ -271,8 +272,8 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateFromDirectory_WithStream_IncludeBaseDirectory_ShouldPrependDirectoryName(
 			CompressionLevel compressionLevel)
@@ -293,7 +294,7 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Fact]
+	[Test]
 	public async Task
 		CreateFromDirectory_WithStream_NotWritable_ShouldThrowArgumentException()
 	{
@@ -312,7 +313,7 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Fact]
+	[Test]
 	public async Task
 		CreateFromDirectory_WithStream_Null_ShouldThrowArgumentNullException()
 	{
@@ -329,8 +330,8 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateFromDirectory_WithStream_Overwrite_WithEncoding_ShouldOverwriteFile(
 		string contents, Encoding encoding)
 	{
@@ -355,7 +356,7 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[Fact]
+	[Test]
 	public async Task CreateFromDirectory_WithStream_ShouldZipDirectoryContent()
 	{
 		FileSystem.Initialize()
@@ -374,7 +375,7 @@ public partial class CreateFromDirectoryTests
 	}
 #endif
 
-	[Fact]
+	[Test]
 	public async Task ShouldNotLock()
 	{
 		string directory = "ToBeZipped";
@@ -391,23 +392,12 @@ public partial class CreateFromDirectoryTests
 
 	#region Helpers
 
-	#pragma warning disable MA0018
-	public static TheoryData<string, Encoding, bool> EntryNameEncoding()
+	public static IEnumerable<Func<(string, Encoding, bool)>> EntryNameEncoding()
 	{
 		// ReSharper disable StringLiteralTypo
-		TheoryData<string, Encoding, bool> theoryData = new()
-		{
-			{
-				"Dans mes rêves.mp3", Encoding.Default, true
-			},
-			{
-				"Dans mes rêves.mp3", Encoding.ASCII, false
-			},
-		};
-		// ReSharper restore StringLiteralTypo
-		return theoryData;
+		yield return () => ("Dans mes rêves.mp3", Encoding.Default, true);
+		yield return () => ("Dans mes rêves.mp3", Encoding.ASCII, false);
 	}
-	#pragma warning restore MA0018
 
 	#endregion
 }

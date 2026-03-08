@@ -1,4 +1,5 @@
 ﻿#if FEATURE_COMPRESSION_ASYNC
+using System.Collections.Generic;
 using System.IO.Compression;
 using System.Text;
 #if FEATURE_COMPRESSION_STREAM
@@ -9,10 +10,10 @@ using Testably.Abstractions.Compression.Tests.TestHelpers;
 namespace Testably.Abstractions.Compression.Tests.ZipFile;
 
 [FileSystemTests]
-public partial class CreateFromDirectoryAsyncTests
+public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateFromDirectoryAsync_EmptyDirectory_ShouldBeIncluded(
 			CompressionLevel compressionLevel)
@@ -23,7 +24,7 @@ public partial class CreateFromDirectoryAsyncTests
 
 		await FileSystem.ZipFile()
 			.CreateFromDirectoryAsync("foo", "destination.zip", compressionLevel, false,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
@@ -32,8 +33,8 @@ public partial class CreateFromDirectoryAsyncTests
 			.Which.For(x => x.FullName, f => f.IsEqualTo("bar/"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateFromDirectoryAsync_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
 		CompressionLevel compressionLevel)
 	{
@@ -42,7 +43,7 @@ public partial class CreateFromDirectoryAsyncTests
 
 		await FileSystem.ZipFile()
 			.CreateFromDirectoryAsync("foo", "destination.zip", compressionLevel, false,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
@@ -50,8 +51,8 @@ public partial class CreateFromDirectoryAsyncTests
 		await That(archive.Entries).IsEmpty();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateFromDirectoryAsync_EmptySource_IncludeBaseDirectory_ShouldPrependDirectoryName(
 			CompressionLevel compressionLevel)
@@ -61,7 +62,7 @@ public partial class CreateFromDirectoryAsyncTests
 
 		await FileSystem.ZipFile()
 			.CreateFromDirectoryAsync("foo", "destination.zip", compressionLevel, true,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
@@ -70,8 +71,8 @@ public partial class CreateFromDirectoryAsyncTests
 			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/"));
 	}
 
-	[Theory]
-	[MemberData(nameof(EntryNameEncoding))]
+	[Test]
+	[MethodDataSource(nameof(EntryNameEncoding))]
 	public async Task CreateFromDirectoryAsync_EntryNameEncoding_ShouldUseEncoding(
 		string entryName, Encoding encoding, bool encodedCorrectly)
 	{
@@ -81,7 +82,7 @@ public partial class CreateFromDirectoryAsyncTests
 
 		await FileSystem.ZipFile()
 			.CreateFromDirectoryAsync("foo", "destination.zip", CompressionLevel.NoCompression,
-				false, encoding, TestContext.Current.CancellationToken);
+				false, encoding, CancellationToken);
 
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
@@ -97,8 +98,8 @@ public partial class CreateFromDirectoryAsyncTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateFromDirectoryAsync_IncludeBaseDirectory_ShouldPrependDirectoryName(
 		CompressionLevel compressionLevel)
 	{
@@ -108,7 +109,7 @@ public partial class CreateFromDirectoryAsyncTests
 
 		await FileSystem.ZipFile()
 			.CreateFromDirectoryAsync("foo", "destination.zip", compressionLevel, true,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
@@ -117,8 +118,8 @@ public partial class CreateFromDirectoryAsyncTests
 			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/test.txt"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task CreateFromDirectoryAsync_Overwrite_WithEncoding_ShouldOverwriteFile(
 		string contents, Encoding encoding)
 	{
@@ -131,7 +132,7 @@ public partial class CreateFromDirectoryAsyncTests
 			contents);
 
 		await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", "destination.zip",
-			CompressionLevel.Optimal, false, encoding, TestContext.Current.CancellationToken);
+			CompressionLevel.Optimal, false, encoding, CancellationToken);
 
 		IZipArchive archive = FileSystem.ZipFile()
 			.Open("destination.zip", ZipArchiveMode.Read, encoding);
@@ -140,7 +141,7 @@ public partial class CreateFromDirectoryAsyncTests
 			.Which.For(x => x.FullName, f => f.IsEqualTo("test.txt"));
 	}
 
-	[Fact]
+	[Test]
 	public async Task CreateFromDirectoryAsync_ShouldZipDirectoryContent()
 	{
 		FileSystem.Initialize()
@@ -150,7 +151,7 @@ public partial class CreateFromDirectoryAsyncTests
 					.WithFile("test.txt")));
 
 		await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", "destination.zip",
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "destination");
 
@@ -158,7 +159,7 @@ public partial class CreateFromDirectoryAsyncTests
 			.WithContent().SameAs("foo/bar/test.txt");
 	}
 
-	[Fact]
+	[Test]
 	public async Task CreateFromDirectoryAsync_WithReadOnlyStream_ShouldThrowArgumentException()
 	{
 		FileSystem.Initialize()
@@ -171,7 +172,7 @@ public partial class CreateFromDirectoryAsyncTests
 		async Task Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream, TestContext.Current.CancellationToken);
+			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream, CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentException>()
@@ -180,8 +181,8 @@ public partial class CreateFromDirectoryAsyncTests
 			.WithHResult(-2147024809);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateFromDirectoryAsync_WithStream_EmptyDirectory_ShouldBeIncluded(
 			CompressionLevel compressionLevel)
@@ -193,7 +194,7 @@ public partial class CreateFromDirectoryAsyncTests
 
 		await FileSystem.ZipFile()
 			.CreateFromDirectoryAsync("foo", stream, compressionLevel, false,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
@@ -201,8 +202,8 @@ public partial class CreateFromDirectoryAsyncTests
 			.Which.For(x => x.FullName, f => f.IsEqualTo("bar/"));
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateFromDirectoryAsync_WithStream_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
 			CompressionLevel compressionLevel)
@@ -213,15 +214,15 @@ public partial class CreateFromDirectoryAsyncTests
 
 		await FileSystem.ZipFile()
 			.CreateFromDirectoryAsync("foo", stream, compressionLevel, false,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries).IsEmpty();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateFromDirectoryAsync_WithStream_EmptySource_IncludeBaseDirectory_ShouldPrependDirectoryName(
 			CompressionLevel compressionLevel)
@@ -232,7 +233,7 @@ public partial class CreateFromDirectoryAsyncTests
 
 		await FileSystem.ZipFile()
 			.CreateFromDirectoryAsync("foo", stream, compressionLevel, true,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
@@ -240,8 +241,8 @@ public partial class CreateFromDirectoryAsyncTests
 			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/"));
 	}
 
-	[Theory]
-	[MemberData(nameof(EntryNameEncoding))]
+	[Test]
+	[MethodDataSource(nameof(EntryNameEncoding))]
 	public async Task CreateFromDirectoryAsync_WithStream_EntryNameEncoding_ShouldUseEncoding(
 		string entryName, Encoding encoding, bool encodedCorrectly)
 	{
@@ -252,7 +253,7 @@ public partial class CreateFromDirectoryAsyncTests
 
 		await FileSystem.ZipFile()
 			.CreateFromDirectoryAsync("foo", stream, CompressionLevel.NoCompression,
-				false, encoding, TestContext.Current.CancellationToken);
+				false, encoding, CancellationToken);
 
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
@@ -267,8 +268,8 @@ public partial class CreateFromDirectoryAsyncTests
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateFromDirectoryAsync_WithStream_IncludeBaseDirectory_ShouldPrependDirectoryName(
 			CompressionLevel compressionLevel)
@@ -280,7 +281,7 @@ public partial class CreateFromDirectoryAsyncTests
 
 		await FileSystem.ZipFile()
 			.CreateFromDirectoryAsync("foo", stream, compressionLevel, true,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
@@ -288,7 +289,7 @@ public partial class CreateFromDirectoryAsyncTests
 			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/test.txt"));
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		CreateFromDirectoryAsync_WithStream_NotWritable_ShouldThrowArgumentException()
 	{
@@ -296,7 +297,7 @@ public partial class CreateFromDirectoryAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream, TestContext.Current.CancellationToken);
+			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream, CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentException>()
@@ -305,7 +306,7 @@ public partial class CreateFromDirectoryAsyncTests
 			.WithHResult(-2147024809);
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		CreateFromDirectoryAsync_WithStream_Null_ShouldThrowArgumentNullException()
 	{
@@ -313,15 +314,15 @@ public partial class CreateFromDirectoryAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream, TestContext.Current.CancellationToken);
+			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream, CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName("destination");
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		CreateFromDirectoryAsync_WithStream_Overwrite_WithEncoding_ShouldOverwriteFile(
 			string contents, Encoding encoding)
@@ -336,7 +337,7 @@ public partial class CreateFromDirectoryAsyncTests
 		using MemoryStream stream = new();
 
 		await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream,
-			CompressionLevel.Optimal, false, encoding, TestContext.Current.CancellationToken);
+			CompressionLevel.Optimal, false, encoding, CancellationToken);
 
 		IZipArchive archive =
 			FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read, true, encoding);
@@ -345,7 +346,7 @@ public partial class CreateFromDirectoryAsyncTests
 			.Which.For(x => x.FullName, f => f.IsEqualTo("test.txt"));
 	}
 
-	[Fact]
+	[Test]
 	public async Task CreateFromDirectoryAsync_WithStream_ShouldZipDirectoryContent()
 	{
 		FileSystem.Initialize()
@@ -356,7 +357,7 @@ public partial class CreateFromDirectoryAsyncTests
 		using MemoryStream stream = new();
 
 		await FileSystem.ZipFile()
-			.CreateFromDirectoryAsync("foo", stream, TestContext.Current.CancellationToken);
+			.CreateFromDirectoryAsync("foo", stream, CancellationToken);
 
 		FileSystem.ZipFile().ExtractToDirectory(stream, "destination");
 
@@ -364,7 +365,7 @@ public partial class CreateFromDirectoryAsyncTests
 			.WithContent().SameAs("foo/bar/test.txt");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldNotLock()
 	{
 		string directory = "ToBeZipped";
@@ -375,30 +376,19 @@ public partial class CreateFromDirectoryAsyncTests
 		void Act() => FileSystem.Directory.Delete(directory, true);
 
 		await FileSystem.ZipFile()
-			.CreateFromDirectoryAsync(directory, archive, TestContext.Current.CancellationToken);
+			.CreateFromDirectoryAsync(directory, archive, CancellationToken);
 
 		await That(Act).DoesNotThrow();
 	}
 
 	#region Helpers
 
-	#pragma warning disable MA0018
-	public static TheoryData<string, Encoding, bool> EntryNameEncoding()
+	public static IEnumerable<Func<(string, Encoding, bool)>> EntryNameEncoding()
 	{
 		// ReSharper disable StringLiteralTypo
-		TheoryData<string, Encoding, bool> theoryData = new()
-		{
-			{
-				"Dans mes rêves.mp3", Encoding.Default, true
-			},
-			{
-				"Dans mes rêves.mp3", Encoding.ASCII, false
-			},
-		};
-		// ReSharper restore StringLiteralTypo
-		return theoryData;
+		yield return () => ("Dans mes rêves.mp3", Encoding.Default, true);
+		yield return () => ("Dans mes rêves.mp3", Encoding.ASCII, false);
 	}
-	#pragma warning restore MA0018
 
 	#endregion
 }

@@ -6,10 +6,10 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [FileSystemTests]
-public partial class WriteAllTextAsyncTests
+public class WriteAllTextAsyncTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllTextAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, string? contents)
 	{
@@ -22,8 +22,8 @@ public partial class WriteAllTextAsyncTests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllTextAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
 			string path, string? contents)
@@ -37,37 +37,37 @@ public partial class WriteAllTextAsyncTests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllTextAsync_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, "foo", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, "foo", CancellationToken);
 		await FileSystem.File.WriteAllTextAsync(path, contents,
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		string result =
-			await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
+			await FileSystem.File.ReadAllTextAsync(path, CancellationToken);
 
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllTextAsync_ShouldCreateFileWithText(
 		string path, string contents)
 	{
 		await FileSystem.File.WriteAllTextAsync(path, contents,
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		string result =
-			await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
+			await FileSystem.File.ReadAllTextAsync(path, CancellationToken);
 
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllTextAsync_SpecialCharacters_ShouldReturnSameText(
 		string path)
 	{
@@ -85,31 +85,31 @@ public partial class WriteAllTextAsyncTests
 		{
 			string contents = "_" + specialCharacter;
 			await FileSystem.File.WriteAllTextAsync(path, contents,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 
 			string result =
-				await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
+				await FileSystem.File.ReadAllTextAsync(path, CancellationToken);
 
 			await That(result).IsEqualTo(contents)
 				.Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllTextAsync_WhenContentIsNull_ShouldNotThrowException(string path)
 	{
 		async Task Act()
 		{
 			await FileSystem.File.WriteAllTextAsync(path, (string?)null,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 		}
 
 		await That(Act).DoesNotThrow();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllTextAsync_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path, string contents)
@@ -119,7 +119,7 @@ public partial class WriteAllTextAsyncTests
 		async Task Act()
 		{
 			await FileSystem.File.WriteAllTextAsync(path, contents,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
@@ -127,28 +127,28 @@ public partial class WriteAllTextAsyncTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllTextAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string path, string contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		await FileSystem.File.WriteAllTextAsync(path, "", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, "", CancellationToken);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
 		async Task Act()
 		{
 			await FileSystem.File.WriteAllTextAsync(path, contents,
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllTextAsync_WithoutEncoding_ShouldUseUtf8(
 		string path)
 	{
@@ -161,8 +161,8 @@ public partial class WriteAllTextAsyncTests
 	}
 
 #if FEATURE_FILE_SPAN
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllTextAsync_ReadOnlyMemory_Cancelled_ShouldThrowTaskCanceledException(
 		string path, string? contents)
 	{
@@ -175,8 +175,8 @@ public partial class WriteAllTextAsyncTests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllTextAsync_ReadOnlyMemory_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
 			string path, string? contents)
@@ -191,37 +191,37 @@ public partial class WriteAllTextAsyncTests
 		await That(Act).Throws<TaskCanceledException>().WithHResult(-2146233029);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllTextAsync_ReadOnlyMemory_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, "foo", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, "foo", CancellationToken);
 		await FileSystem.File.WriteAllTextAsync(path, contents.AsMemory(),
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		string result =
-			await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
+			await FileSystem.File.ReadAllTextAsync(path, CancellationToken);
 
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllTextAsync_ReadOnlyMemory_ShouldCreateFileWithText(
 		string path, string contents)
 	{
 		await FileSystem.File.WriteAllTextAsync(path, contents.AsMemory(),
-			TestContext.Current.CancellationToken);
+			CancellationToken);
 
 		string result =
-			await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
+			await FileSystem.File.ReadAllTextAsync(path, CancellationToken);
 
 		await That(result).IsEqualTo(contents);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllTextAsync_ReadOnlyMemory_SpecialCharacters_ShouldReturnSameText(
 		string path)
 	{
@@ -239,18 +239,18 @@ public partial class WriteAllTextAsyncTests
 		{
 			string contents = "_" + specialCharacter;
 			await FileSystem.File.WriteAllTextAsync(path, contents.AsMemory(),
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 
 			string result =
-				await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
+				await FileSystem.File.ReadAllTextAsync(path, CancellationToken);
 
 			await That(result).IsEqualTo(contents)
 				.Because($"{contents} should be encoded and decoded identical.");
 		}
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllTextAsync_ReadOnlyMemory_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 			string path, string contents)
@@ -260,7 +260,7 @@ public partial class WriteAllTextAsyncTests
 		async Task Act()
 		{
 			await FileSystem.File.WriteAllTextAsync(path, contents.AsMemory(),
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
@@ -268,28 +268,28 @@ public partial class WriteAllTextAsyncTests
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task
 		WriteAllTextAsync_ReadOnlyMemory_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string path, string contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		await FileSystem.File.WriteAllTextAsync(path, "", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, "", CancellationToken);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
 		async Task Act()
 		{
 			await FileSystem.File.WriteAllTextAsync(path, contents.AsMemory(),
-				TestContext.Current.CancellationToken);
+				CancellationToken);
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllTextAsync_ReadOnlyMemory_WithoutEncoding_ShouldUseUtf8(
 		string path)
 	{

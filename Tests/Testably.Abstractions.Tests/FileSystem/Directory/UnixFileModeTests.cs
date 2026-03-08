@@ -5,9 +5,9 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [FileSystemTests]
-public partial class UnixFileModeTests
+public class UnixFileModeTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task
 		CreateDirectory_WhenUnixFileModeOfParentIsNone_ShouldThrowUnauthorizedAccessException()
 	{
@@ -25,7 +25,7 @@ public partial class UnixFileModeTests
 			.WithMessage("Access to the path '*/parent/child' is denied.").AsWildcard();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		DeleteDirectory_WhenParentUnixFileModeIsNone_ShouldThrowUnauthorizedAccessException()
 	{
@@ -47,7 +47,7 @@ public partial class UnixFileModeTests
 			.WithMessage("Access to the path '*/parent/child' is denied.").AsWildcard();
 	}
 
-	[Fact]
+	[Test]
 	public async Task DeleteDirectory_WhenUnixFileModeIsNone_ShouldNotThrow()
 	{
 		Skip.If(Test.RunsOnWindows, "UnixFileMode is not supported on Windows");
@@ -63,7 +63,7 @@ public partial class UnixFileModeTests
 		await That(FileSystem.Directory.Exists("parent")).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		GetDirectories_WhenSubdirectoryHasUnixFileModeSetToNone_ShouldStillIncludeBothDirectories()
 	{
@@ -79,7 +79,7 @@ public partial class UnixFileModeTests
 		await That(result).HasCount(2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetDirectories_WhenUnixFileModeIsNone_ShouldThrowUnauthorizedAccessException()
 	{
 		Skip.If(Test.RunsOnWindows, "UnixFileMode is not supported on Windows");

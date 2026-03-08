@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public sealed class ExceptionFactoryTests
 {
-	[Fact]
+	[Test]
 	public async Task NotSupportedSafeFileHandle_ShouldMentionWithSafeFileHandleStrategy()
 	{
 		NotSupportedException sut = ExceptionFactory.NotSupportedSafeFileHandle();
@@ -12,7 +12,7 @@ public sealed class ExceptionFactoryTests
 		await That(sut.Message).Contains(nameof(MockFileSystem.WithSafeFileHandleStrategy));
 	}
 
-	[Fact]
+	[Test]
 	public async Task OperationNotSupportedOnThisPlatform_ShouldMentionPlatform()
 	{
 		PlatformNotSupportedException sut = ExceptionFactory.OperationNotSupportedOnThisPlatform();
@@ -20,9 +20,9 @@ public sealed class ExceptionFactoryTests
 		await That(sut.Message).Contains("platform");
 	}
 
-	[Theory]
-	[InlineAutoData(SimulationMode.Windows, false)]
-	[InlineAutoData(SimulationMode.Windows, true)]
+	[Test]
+	[AutoArguments(SimulationMode.Windows, false)]
+	[AutoArguments(SimulationMode.Windows, true)]
 	public async Task PathCannotBeEmpty_ShouldSetParamNameExceptOnNetFramework(
 		SimulationMode type, bool isNetFramework, string paramName)
 	{
@@ -43,7 +43,7 @@ public sealed class ExceptionFactoryTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task SearchPatternCannotContainTwoDots_ShouldMentionTwoDots()
 	{
 		ArgumentException sut = ExceptionFactory.SearchPatternCannotContainTwoDots();

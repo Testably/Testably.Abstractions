@@ -3,10 +3,10 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 [FileSystemTests]
-public partial class AttributesTests
+public class AttributesTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[AutoData]
+	[Test]
+	[AutoArguments]
 	public async Task Attributes_ClearAllAttributes_ShouldRemainDirectory(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -19,9 +19,9 @@ public partial class AttributesTests
 		await That(sut.Attributes).HasFlag(FileAttributes.Directory);
 	}
 
-	[Theory]
-	[InlineAutoData(FileAttributes.ReadOnly)]
-	[InlineAutoData(FileAttributes.Normal)]
+	[Test]
+	[AutoArguments(FileAttributes.ReadOnly)]
+	[AutoArguments(FileAttributes.Normal)]
 	public async Task Attributes_WhenFileIsExisting_SetterShouldChangeAttributesOnFileSystem(
 		FileAttributes attributes, string path)
 	{
@@ -35,7 +35,7 @@ public partial class AttributesTests
 		await That(sut2.Attributes).IsEqualTo(expectedAttributes);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException()
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("missing file");
@@ -48,7 +48,7 @@ public partial class AttributesTests
 		await That(Act).Throws<FileNotFoundException>().WithHResult(-2147024894);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Attributes_WhenFileIsMissing_ShouldReturnMinusOne()
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("missing file");

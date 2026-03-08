@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public sealed class FileSystemExtensibilityTests
 {
-	[Fact]
+	[Test]
 	public async Task ToString_Empty_ShouldBeEmptyArray()
 	{
 		FileSystemExtensibility extensibility = new();
@@ -14,7 +14,7 @@ public sealed class FileSystemExtensibilityTests
 		await That(result).IsEqualTo("[]");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_WithMetadata_Should()
 	{
 		FileSystemExtensibility extensibility = new();

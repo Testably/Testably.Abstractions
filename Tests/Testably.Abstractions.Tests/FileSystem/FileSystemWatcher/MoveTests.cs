@@ -6,11 +6,13 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 [FileSystemTests]
-public partial class MoveTests
+// TODO #956: Investigate, why these tests are not stable when run in parallel
+[NotInParallel(nameof(MoveTests))]
+public partial class MoveTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Theory]
-	[InlineData(true)]
-	[InlineData(false)]
+	[Test]
+	[Arguments(true)]
+	[Arguments(false)]
 	public async Task MoveOutsideToInside_ShouldInvokeCreated(bool includeSubdirectories)
 	{
 		// Arrange
@@ -49,10 +51,10 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsTrue();
+		await That(createdMs.Wait(ExpectTimeout, CancellationToken)).IsTrue();
 
-		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
-		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(deletedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
+		await That(renamedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 
 		await That(createdBag).HasSingle().Which
 			.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
@@ -62,13 +64,13 @@ public partial class MoveTests
 			.For(x => x.FullPath, it => it.IsEqualTo(insideTarget));
 	}
 
-	[Theory]
-	[InlineData(true)]
-	[InlineData(false)]
-	[InlineData(true, "nested")]
-	[InlineData(false, "nested")]
-	[InlineData(true, "nested", "deep")]
-	[InlineData(false, "nested", "deep")]
+	[Test]
+	[Arguments(true)]
+	[Arguments(false)]
+	[Arguments(true, "nested")]
+	[Arguments(false, "nested")]
+	[Arguments(true, "nested", "deep")]
+	[Arguments(false, "nested", "deep")]
 	public async Task MoveToOutside_ShouldInvokeDeleted(
 		bool includeSubdirectories,
 		params string[] paths
@@ -120,12 +122,12 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+		await That(deletedMs.Wait(ExpectTimeout, CancellationToken))
 			.IsEqualTo(shouldInvokeDeleted);
 
-		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(createdMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 
-		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(renamedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 
 		await ThatIsSingleOrEmpty(deletedBag, !shouldInvokeDeleted);
 
@@ -142,13 +144,13 @@ public partial class MoveTests
 		}
 	}
 
-	[Theory]
-	[InlineData(true)]
-	[InlineData(false)]
-	[InlineData(true, "nested")]
-	[InlineData(false, "nested")]
-	[InlineData(true, "nested", "deep")]
-	[InlineData(false, "nested", "deep")]
+	[Test]
+	[Arguments(true)]
+	[Arguments(false)]
+	[Arguments(true, "nested")]
+	[Arguments(false, "nested")]
+	[Arguments(true, "nested", "deep")]
+	[Arguments(false, "nested", "deep")]
 	public async Task MoveToSameDirectory_ShouldInvokeRenamed(
 		bool includeSubdirectories,
 		params string[] paths
@@ -204,12 +206,12 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(renamedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken))
+		await That(renamedMs.Wait(ExpectTimeout, CancellationToken))
 			.IsEqualTo(shouldInvokeRenamed);
 
-		await That(deletedMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(deletedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 
-		await That(createdMs.Wait(ExpectTimeout, TestContext.Current.CancellationToken)).IsFalse();
+		await That(createdMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 
 		await ThatIsSingleOrEmpty(renamedBag, !shouldInvokeRenamed);
 

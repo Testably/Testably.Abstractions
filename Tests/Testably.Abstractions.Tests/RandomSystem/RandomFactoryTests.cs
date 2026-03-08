@@ -4,9 +4,9 @@ using Testably.Abstractions.RandomSystem;
 namespace Testably.Abstractions.Tests.RandomSystem;
 
 [RandomSystemTests]
-public partial class RandomFactoryTests
+public class RandomFactoryTests(RandomSystemTestData testData) : RandomSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task New_Next_ShouldReturnDifferentValues()
 	{
 		List<int> results = [];
@@ -19,8 +19,8 @@ public partial class RandomFactoryTests
 		await That(results).AreAllUnique();
 	}
 
-	[Theory]
-	[AutoData]
+	[Test]
+	[Arguments(5)]
 	public async Task New_Next_WithSeed_ShouldReturnSameValue(int seed)
 	{
 		List<int> results = [];
@@ -33,7 +33,7 @@ public partial class RandomFactoryTests
 		await That(results).All().AreEqualTo(results[0]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task New_Shared_ShouldReturnDifferentValues()
 	{
 		List<int> results = [];
@@ -46,7 +46,7 @@ public partial class RandomFactoryTests
 		await That(results).AreAllUnique();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Shared_ShouldReturnSameReference()
 	{
 		IRandom shared1 = RandomSystem.Random.Shared;

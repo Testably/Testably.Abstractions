@@ -5,14 +5,12 @@ using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-[FileSystemTests]
-public partial class FileAclExtensionsTests
+[WindowsOnlyFileSystemTests]
+public class FileAclExtensionsTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
-	[Fact]
+	[Test]
 	public async Task GetAccessControl_MissingFile_ShouldThrowFileNotFoundException()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		void Act()
 		{
 			#pragma warning disable CA1416
@@ -24,11 +22,9 @@ public partial class FileAclExtensionsTests
 			.WithHResult(-2147024894);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		FileSystem.File.WriteAllText("foo", null);
 
 		#pragma warning disable CA1416
@@ -38,10 +34,9 @@ public partial class FileAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetAccessControl_ShouldReturnSetResult()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
 
 		FileSystem.File.WriteAllText("foo", null);
@@ -58,12 +53,10 @@ public partial class FileAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[Fact]
+	[Test]
 	public async Task
 		GetAccessControl_WithAccessControlSections_MissingFile_ShouldThrowFileNotFoundException()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		void Act()
 		{
 			#pragma warning disable CA1416
@@ -75,10 +68,9 @@ public partial class FileAclExtensionsTests
 			.WithHResult(-2147024894);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.File.WriteAllText("foo", null);
@@ -90,10 +82,9 @@ public partial class FileAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
 
 		FileSystem.File.WriteAllText("foo", null);
@@ -111,11 +102,9 @@ public partial class FileAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[Fact]
+	[Test]
 	public async Task SetAccessControl_ShouldChangeAccessControl()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		FileSystem.File.WriteAllText("foo", null);
 		#pragma warning disable CA1416
 		FileSecurity originalAccessControl = FileSystem.CreateFileSecurity();
