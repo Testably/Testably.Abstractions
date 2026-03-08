@@ -1,4 +1,5 @@
 ﻿using System;
+using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Initializer;
 
@@ -24,7 +25,9 @@ internal sealed class DirectoryInitializer<TFileSystem>
 	public IFileSystemDirectoryInitializer<TFileSystem> Initialized(
 		Action<IFileSystemInitializer<TFileSystem>> subdirectoryInitializer)
 	{
-		FileSystemInitializer<TFileSystem> initializer = new(this, Directory);
+		using IDisposable release = FileSystem.IgnoreStatistics();
+		FileSystemInitializer<TFileSystem> initializer =
+			new(this, FileSystem.Path.Combine(BasePath, Directory.Name));
 		subdirectoryInitializer.Invoke(initializer);
 		return this;
 	}
