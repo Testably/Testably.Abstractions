@@ -35,6 +35,7 @@ public sealed partial class StatisticsTests
 			Type testType)
 		{
 			#pragma warning disable MA0089 // Use an overload with char instead of string
+			#pragma warning disable MA0001 //Use an overload of 'Replace' that has a StringComparison parameter
 			string expectedName = $"Method_{methodInfo.Name}_{string.Join("_", methodInfo
 				.GetParameters()
 				.Select(x => FirstCharToUpperAsSpan(GetName(x.ParameterType, true)
@@ -43,6 +44,7 @@ public sealed partial class StatisticsTests
 					// ReSharper disable once StringLiteralTypo
 					.Replace("IEnumerablestring", "IEnumerableString")
 					.Replace("[]", "Array"))))}{(parameters.Length > 0 ? "_" : "")}ShouldRegisterCall";
+			#pragma warning restore MA0001
 			#pragma warning restore MA0089
 			if (testType.GetMethod(expectedName) != null)
 			{
