@@ -37,7 +37,7 @@ public class IncludeSubdirectoriesTests(FileSystemTestData testData) : FileSyste
 		fileSystemWatcher.IncludeSubdirectories = false;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(FileSystem.Path.Combine(baseDirectory, path));
-		await That(ms.Wait(ExpectTimeout, CancellationToken)).IsFalse();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsFalse();
 
 		await That(result).IsNull();
 	}
@@ -77,7 +77,7 @@ public class IncludeSubdirectoriesTests(FileSystemTestData testData) : FileSyste
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(otherDirectory);
-		await That(ms.Wait(ExpectTimeout, CancellationToken)).IsFalse();
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsFalse();
 
 		await That(result).IsNull();
 	}
@@ -179,7 +179,7 @@ public class IncludeSubdirectoriesTests(FileSystemTestData testData) : FileSyste
 		
 		// Assert
 
-		await That(createdMre.Wait(ExpectTimeout, CancellationToken)).IsTrue();
+		await That(createdMre.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 
 		await That(createdArgs).IsNotNull().And
 			.Satisfies(args => string.Equals(args?.Name, expectedFileName, StringComparison.Ordinal)
@@ -250,7 +250,7 @@ public class IncludeSubdirectoriesTests(FileSystemTestData testData) : FileSyste
 		
 		// Assert
 
-		await That(changedMre.Wait(ExpectTimeout, CancellationToken)).IsTrue();
+		await That(changedMre.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 
 		await That(changedArgs).IsNotNull().And
 			.Satisfies(args => string.Equals(args?.Name, expectedFileName, StringComparison.Ordinal)
@@ -319,7 +319,7 @@ public class IncludeSubdirectoriesTests(FileSystemTestData testData) : FileSyste
 		
 		// Assert
 
-		await That(renamedMre.Wait(ExpectTimeout, CancellationToken)).IsTrue();
+		await That(renamedMre.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 
 		await That(renamedArgs).IsNotNull().And
 			.Satisfies(args => string.Equals(
@@ -389,7 +389,7 @@ public class IncludeSubdirectoriesTests(FileSystemTestData testData) : FileSyste
 		
 		// Assert
 
-		await That(deletedMre.Wait(ExpectTimeout, CancellationToken)).IsTrue();
+		await That(deletedMre.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 
 		await That(deletedArgs).IsNotNull().And.Satisfies(args => string.Equals(
 			                                                  args?.Name, expectedFileName,

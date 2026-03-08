@@ -22,7 +22,7 @@ public static class Settings
 	/// <remarks>Per default, they are <see cref="TestSettingStatus.DisabledInDebugMode" />.</remarks>
 	public static TestSettingStatus RealFileSystemTests { get; set; }
 		= TestSettingStatus.DisabledInDebugMode;
-	
+
 	public enum TestSettingStatus
 	{
 		/// <summary>

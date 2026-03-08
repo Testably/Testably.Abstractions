@@ -5,14 +5,12 @@ using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-[FileSystemTests]
+[FileSystemTests(RequiredOperatingSystem = SimulationMode.Windows)]
 public class DirectoryInfoAclExtensionsTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	[Test]
 	public async Task Create_NullDirectorySecurity_ShouldThrowArgumentNullException()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		FileSystem.Directory.CreateDirectory("foo");
 
 		#pragma warning disable CA1416
@@ -28,8 +26,6 @@ public class DirectoryInfoAclExtensionsTests(FileSystemTestData testData) : File
 	[Arguments("foo\\bar")]
 	public async Task Create_ShouldChangeAccessControl(string path)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		#pragma warning disable CA1416
 		DirectorySecurity directorySecurity = FileSystem.CreateDirectorySecurity();
 
@@ -44,7 +40,6 @@ public class DirectoryInfoAclExtensionsTests(FileSystemTestData testData) : File
 	[Test]
 	public async Task GetAccessControl_MissingDirectory_ShouldThrowDirectoryNotFoundException()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("foo");
 
 		#pragma warning disable CA1416
@@ -58,8 +53,6 @@ public class DirectoryInfoAclExtensionsTests(FileSystemTestData testData) : File
 	[Test]
 	public async Task GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		FileSystem.Directory.CreateDirectory("foo");
 
 		#pragma warning disable CA1416
@@ -73,7 +66,6 @@ public class DirectoryInfoAclExtensionsTests(FileSystemTestData testData) : File
 	[Test]
 	public async Task GetAccessControl_ShouldReturnSetResult()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
 
 		FileSystem.Directory.CreateDirectory("foo");
@@ -95,7 +87,6 @@ public class DirectoryInfoAclExtensionsTests(FileSystemTestData testData) : File
 	public async Task
 		GetAccessControl_WithAccessControlSections_MissingDirectory_ShouldThrowDirectoryNotFoundException()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("foo");
 
 		#pragma warning disable CA1416
@@ -110,7 +101,6 @@ public class DirectoryInfoAclExtensionsTests(FileSystemTestData testData) : File
 	public async Task
 		GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Directory.CreateDirectory("foo");
@@ -126,7 +116,6 @@ public class DirectoryInfoAclExtensionsTests(FileSystemTestData testData) : File
 	[Test]
 	public async Task GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
 
 		FileSystem.Directory.CreateDirectory("foo");
@@ -147,8 +136,6 @@ public class DirectoryInfoAclExtensionsTests(FileSystemTestData testData) : File
 	[Test]
 	public async Task SetAccessControl_ShouldChangeAccessControl()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		FileSystem.Directory.CreateDirectory("foo");
 		#pragma warning disable CA1416
 		DirectorySecurity originalAccessControl = FileSystem.CreateDirectorySecurity();
@@ -167,7 +154,6 @@ public class DirectoryInfoAclExtensionsTests(FileSystemTestData testData) : File
 	[AutoArguments]
 	public async Task SetAccessControl_ShouldNotUpdateTimes(string path)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Directory.CreateDirectory(path);

@@ -1,7 +1,14 @@
-﻿namespace Testably.Abstractions.TestHelpers;
+﻿using System;
 
-public class TimeSystemTestData(ITimeSystem timeSystem)
+namespace Testably.Abstractions.TestHelpers;
+
+public class TimeSystemTestData(DateTime now, ITimeSystem timeSystem)
 {
+	/// <summary>
+	///     The current date and time when creating the time system.
+	/// </summary>
+	public DateTime Now { get; } = now;
+
 	/// <summary>
 	///     The time system to test.
 	/// </summary>

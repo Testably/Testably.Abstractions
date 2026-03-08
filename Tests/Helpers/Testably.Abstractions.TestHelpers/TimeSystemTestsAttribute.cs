@@ -13,9 +13,13 @@ public class TimeSystemTestsAttribute : TypedDataSourceAttribute<TimeSystemTestD
 		DataGeneratorMetadata dataGeneratorMetadata)
 	{
 		await Task.CompletedTask;
+		yield return () =>
+		{
+			DateTime now = DateTime.UtcNow;
+			return Task.FromResult(
+				new TimeSystemTestData(now, new MockTimeSystem(TimeProvider.Use(now))));
+		};
 		yield return () => Task.FromResult(
-			new TimeSystemTestData(new MockTimeSystem(TimeProvider.Now())));
-		yield return () => Task.FromResult(
-			new TimeSystemTestData(new RealTimeSystem()));
+			new TimeSystemTestData(DateTime.UtcNow, new RealTimeSystem()));
 	}
 }

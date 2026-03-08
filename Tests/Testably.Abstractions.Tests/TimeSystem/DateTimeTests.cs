@@ -29,12 +29,11 @@ public class DateTimeTests(TimeSystemTestData testData) : TimeSystemTestBase(tes
 		// Tests are brittle on the build system
 		TimeSpan tolerance = TimeSpan.FromMilliseconds(250);
 
-		DateTime before = DateTime.Now.Subtract(TimeSpan.FromSeconds(5));
 		DateTime result = TimeSystem.DateTime.Now;
 		DateTime after = DateTime.Now;
 
 		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
-		await That(result).IsBetween(before).And(after).Within(tolerance);
+		await That(result).IsBetween(BeforeTime.ToLocalTime()).And(after).Within(tolerance);
 	}
 
 	[Test]
@@ -68,11 +67,10 @@ public class DateTimeTests(TimeSystemTestData testData) : TimeSystemTestBase(tes
 		// Tests are brittle on the build system
 		TimeSpan tolerance = TimeSpan.FromMilliseconds(250);
 
-		DateTime before = DateTime.UtcNow.Subtract(TimeSpan.FromSeconds(5));
 		DateTime result = TimeSystem.DateTime.UtcNow;
 		DateTime after = DateTime.UtcNow;
 
 		await That(result.Kind).IsEqualTo(DateTimeKind.Utc);
-		await That(result).IsBetween(before).And(after).Within(tolerance);
+		await That(result).IsBetween(BeforeTime).And(after).Within(tolerance);
 	}
 }

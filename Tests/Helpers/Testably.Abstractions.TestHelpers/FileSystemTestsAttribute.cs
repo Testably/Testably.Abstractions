@@ -11,6 +11,20 @@ namespace Testably.Abstractions.TestHelpers;
 public class FileSystemTestsAttribute : TypedDataSourceAttribute<FileSystemTestData>,
 	ITestDiscoveryEventReceiver
 {
+	/// <summary>
+	///     If set to a specific operating system, tests are only created for this operating system.
+	/// </summary>
+	/// <remarks>
+	///     Use <see cref="SimulationMode.Native" /> (default value) to run the tests on all operating systems.
+	/// </remarks>
+	public SimulationMode RequiredOperatingSystem { get; set; } = SimulationMode.Native;
+
+#if NET8_0_OR_GREATER
+	private static readonly ValueTask _completedTask = ValueTask.CompletedTask;
+#else
+	private static readonly ValueTask _completedTask = new(Task.CompletedTask);
+#endif
+
 	#region ITestDiscoveryEventReceiver Members
 
 	/// <inheritdoc />
@@ -19,15 +33,14 @@ public class FileSystemTestsAttribute : TypedDataSourceAttribute<FileSystemTestD
 	/// <inheritdoc />
 	public ValueTask OnTestDiscovered(DiscoveredTestContext context)
 	{
-		if (context.TestContext.Metadata.TestDetails.TestClassArguments.Length > 0 && context.TestContext.Metadata.TestDetails.TestClassArguments[0] is FileSystemTestData.Real)
+		if (context.TestContext.Metadata.TestDetails.TestClassArguments.Length > 0 &&
+		    context.TestContext.Metadata.TestDetails.TestClassArguments[0] is FileSystemTestData
+			    .Real)
 		{
 			context.AddParallelConstraint(new NotInParallelConstraint(["RealFileSystem"]));
 		}
-#if NET8_0_OR_GREATER
-		return ValueTask.CompletedTask;
-#else
-		return new ValueTask(Task.CompletedTask);
-#endif
+
+		return _completedTask;
 	}
 
 	#endregion
@@ -36,25 +49,50 @@ public class FileSystemTestsAttribute : TypedDataSourceAttribute<FileSystemTestD
 		DataGeneratorMetadata dataGeneratorMetadata)
 	{
 		await Task.CompletedTask;
+		bool isMatchingPlatform =
+			RequiredOperatingSystem switch
+			{
+				SimulationMode.Linux => RuntimeInformation.IsOSPlatform(OSPlatform.Linux),
+				SimulationMode.MacOS => RuntimeInformation.IsOSPlatform(OSPlatform.OSX),
+				SimulationMode.Windows => RuntimeInformation.IsOSPlatform(OSPlatform.Windows),
+				_ => true,
+			};
 
-		yield return () => Task.FromResult<FileSystemTestData>(
-			new FileSystemTestData.Mocked("MockFileSystem"));
+		if (isMatchingPlatform)
+		{
+			yield return () => Task.FromResult<FileSystemTestData>(
+				new FileSystemTestData.Mocked("MockFileSystem"));
+		}
 
 #if !NETFRAMEWORK
-		yield return () => Task.FromResult<FileSystemTestData>(
-			new FileSystemTestData.Mocked(SimulationMode.Linux, OSPlatform.Linux,
-				"LinuxFileSystem"));
-		yield return () => Task.FromResult<FileSystemTestData>(
-			new FileSystemTestData.Mocked(SimulationMode.MacOS, OSPlatform.OSX, "MacFileSystem"));
-		yield return () => Task.FromResult<FileSystemTestData>(
-			new FileSystemTestData.Mocked(SimulationMode.Windows, OSPlatform.Windows,
-				"WindowsFileSystem"));
+		if (RequiredOperatingSystem is SimulationMode.Native or SimulationMode.Linux)
+		{
+			yield return () => Task.FromResult<FileSystemTestData>(
+				new FileSystemTestData.Mocked(SimulationMode.Linux, OSPlatform.Linux,
+					"LinuxFileSystem"));
+		}
+
+		if (RequiredOperatingSystem is SimulationMode.Native or SimulationMode.MacOS)
+		{
+			yield return () => Task.FromResult<FileSystemTestData>(
+				new FileSystemTestData.Mocked(SimulationMode.MacOS, OSPlatform.OSX,
+					"MacFileSystem"));
+		}
+
+		if (RequiredOperatingSystem is SimulationMode.Native or SimulationMode.Windows)
+		{
+			yield return () => Task.FromResult<FileSystemTestData>(
+				new FileSystemTestData.Mocked(SimulationMode.Windows, OSPlatform.Windows,
+					"WindowsFileSystem"));
+		}
 #endif
 
 #if DEBUG
-		if (Settings.RealFileSystemTests == Settings.TestSettingStatus.AlwaysEnabled)
+		if (isMatchingPlatform &&
+		    Settings.RealFileSystemTests == Settings.TestSettingStatus.AlwaysEnabled)
 #else
-		if (Settings.RealFileSystemTests != Settings.TestSettingStatus.AlwaysDisabled)
+		if (isMatchingPlatform &&
+		    Settings.RealFileSystemTests != Settings.TestSettingStatus.AlwaysDisabled)
 #endif
 		{
 			yield return () => Task.FromResult<FileSystemTestData>(

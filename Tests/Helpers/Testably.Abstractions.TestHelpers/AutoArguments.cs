@@ -40,7 +40,8 @@ public class AutoArgumentsAttribute : UntypedDataSourceGeneratorAttribute
 	}
 
 	/// <inheritdoc />
-	protected override IEnumerable<Func<object?[]?>> GenerateDataSources(DataGeneratorMetadata dataGeneratorMetadata)
+	protected override IEnumerable<Func<object?[]?>> GenerateDataSources(
+		DataGeneratorMetadata dataGeneratorMetadata)
 	{
 		if (dataGeneratorMetadata.TestInformation is not null)
 		{

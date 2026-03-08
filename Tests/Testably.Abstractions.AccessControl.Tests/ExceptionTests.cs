@@ -4,7 +4,7 @@ using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-[FileSystemTests]
+[FileSystemTests(RequiredOperatingSystem = SimulationMode.Windows)]
 public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	[Test]
@@ -12,7 +12,7 @@ public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(te
 	public async Task Operations_WhenPathIsEmpty_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
-		Skip.IfNot(Test.RunsOnWindows || exceptionType == MethodType.GetAccessControl);
+		Skip.IfNot(exceptionType == MethodType.GetAccessControl);
 
 		await That(() => callback.Invoke(FileSystem, ""))
 			.Throws<ArgumentException>().WithHResult(-2147024809)
@@ -24,7 +24,7 @@ public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(te
 	public async Task Operations_WhenPathIsNull_ShouldThrowArgumentNullException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
-		Skip.IfNot(Test.RunsOnWindows || exceptionType == MethodType.GetAccessControl);
+		Skip.IfNot(exceptionType == MethodType.GetAccessControl);
 
 		await That(() => callback.Invoke(FileSystem, null!))
 			.Throws<ArgumentNullException>()
@@ -36,8 +36,6 @@ public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(te
 	public async Task Operations_WhenPathIsWhiteSpace_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		await That(() => callback.Invoke(FileSystem, "  "))
 			.Throws<ArgumentException>().WithHResult(-2147024809)
 			.Because($"\n{exceptionType} on {baseType}\n was called with a whitespace path");

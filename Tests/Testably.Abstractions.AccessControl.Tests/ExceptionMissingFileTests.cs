@@ -6,7 +6,7 @@ using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-[FileSystemTests]
+[FileSystemTests(RequiredOperatingSystem = SimulationMode.Windows)]
 public class ExceptionMissingFileTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	[Test]
@@ -14,8 +14,6 @@ public class ExceptionMissingFileTests(FileSystemTestData testData) : FileSystem
 	public async Task DirectoryOperations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		string path = FileSystem.Path.Combine("missing-directory", "file.txt");
 
 		Exception? exception = Record.Exception(() =>
@@ -48,8 +46,6 @@ public class ExceptionMissingFileTests(FileSystemTestData testData) : FileSystem
 	public async Task DirectoryOperations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		string path = "missing-file.txt";
 
 		Exception? exception = Record.Exception(() =>
@@ -82,8 +78,6 @@ public class ExceptionMissingFileTests(FileSystemTestData testData) : FileSystem
 	public async Task FileOperations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		string path = FileSystem.Path.Combine("missing-directory", "file.txt");
 
 		Exception? exception = Record.Exception(() =>
@@ -117,8 +111,6 @@ public class ExceptionMissingFileTests(FileSystemTestData testData) : FileSystem
 	public async Task FileOperations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
-
 		string path = "missing-file.txt";
 
 		Exception? exception = Record.Exception(() =>

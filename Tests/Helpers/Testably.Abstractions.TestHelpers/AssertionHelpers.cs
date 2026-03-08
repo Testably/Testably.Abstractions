@@ -1,12 +1,12 @@
-﻿using aweXpect.Core;
+﻿#if NET8_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
+using aweXpect.Core;
 using aweXpect.Core.Constraints;
 using aweXpect.Core.Sources;
 using aweXpect.Delegates;
 using aweXpect.Formatting;
 using System;
-#if NET8_0_OR_GREATER
-using System.Diagnostics.CodeAnalysis;
-#endif
 using System.IO;
 using System.Text;
 using static aweXpect.Delegates.ThatDelegate;
