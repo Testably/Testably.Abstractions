@@ -31,9 +31,7 @@ public sealed class RealTimeSystem : ITimeSystem
 	public IDateTime DateTime { get; }
 
 #if FEATURE_PERIODIC_TIMER
-	/// <summary>
-	///     Abstractions for <see cref="System.Threading.PeriodicTimer" />.
-	/// </summary>
+	/// <inheritdoc cref="ITimeSystem.PeriodicTimer" />
 	public IPeriodicTimerFactory PeriodicTimer { get; }
 #endif
 

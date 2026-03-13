@@ -20,7 +20,7 @@ partial class Build : NukeBuild
 	///     <para />
 	///     Afterward, you can update the package reference in `Directory.Packages.props` and reset this flag.
 	/// </summary>
-	readonly BuildScope BuildScope = BuildScope.Default;
+	readonly BuildScope BuildScope = BuildScope.CoreOnly;
 	
 	[Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
 	readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
