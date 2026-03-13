@@ -2,6 +2,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.TimeSystem;
@@ -45,6 +46,11 @@ internal sealed class PeriodicTimerMock : IPeriodicTimer
 	/// <inheritdoc cref="IPeriodicTimer.WaitForNextTickAsync(CancellationToken)" />
 	public async ValueTask<bool> WaitForNextTickAsync(CancellationToken cancellationToken = new())
 	{
+		if (cancellationToken.IsCancellationRequested)
+		{
+			throw ExceptionFactory.TaskWasCanceled();
+		}
+
 		if (_isDisposed)
 		{
 			return false;
@@ -55,9 +61,13 @@ internal sealed class PeriodicTimerMock : IPeriodicTimer
 		if (nextTime > now)
 		{
 			_timeSystem.TimeProvider.AdvanceBy(nextTime - now);
+			_lastTime = nextTime;
+		}
+		else
+		{
+			_lastTime = now;
 		}
 
-		_lastTime = now;
 		await Task.Yield();
 		return true;
 	}
