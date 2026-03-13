@@ -45,12 +45,12 @@ public static class TimeProvider
 		return new Factory(onTimeChanged => new TimeProviderMock(onTimeChanged, time, "Fixed"));
 	}
 
-	internal class Factory(Func<Action<DateTime>, ITimeProvider> createCallback)
+	internal sealed class Factory(Func<Action<DateTime>, ITimeProvider> createCallback)
 		: ITimeProviderFactory
 	{
 		#region ITimeProviderFactory Members
 
-		/// <inheritdoc />
+		/// <inheritdoc cref="ITimeProviderFactory.Create(Action{DateTime})" />
 		public ITimeProvider Create(Action<DateTime> onTimeChanged)
 			=> createCallback(onTimeChanged);
 
