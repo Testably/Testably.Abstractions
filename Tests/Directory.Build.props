@@ -27,6 +27,7 @@
 	<ItemGroup>
 		<PackageReference Include="System.Net.Http"/>
 		<PackageReference Include="aweXpect"/>
+		<PackageReference Include="aweXpect.Chronology"/>
 		<PackageReference Include="aweXpect.Testably"/>
 		<PackageReference Include="aweXpect.Mockolate"/>
 		<PackageReference Include="Mockolate"/>

@@ -32,6 +32,9 @@ public sealed class MockTimeSystem : ITimeSystem
 	private readonly StopwatchFactoryMock _stopwatchFactoryMock;
 	private readonly TaskMock _taskMock;
 	private readonly ThreadMock _threadMock;
+#if FEATURE_PERIODIC_TIMER
+	private readonly PeriodicTimerFactoryMock _periodictimerFactoryMock;
+#endif
 	private readonly TimerFactoryMock _timerFactoryMock;
 
 	/// <summary>
@@ -59,6 +62,9 @@ public sealed class MockTimeSystem : ITimeSystem
 		_stopwatchFactoryMock = new StopwatchFactoryMock(this);
 		_threadMock = new ThreadMock(this, _callbackHandler);
 		_taskMock = new TaskMock(this, _callbackHandler);
+#if FEATURE_PERIODIC_TIMER
+		_periodictimerFactoryMock = new PeriodicTimerFactoryMock(this);
+#endif
 		_timerFactoryMock = new TimerFactoryMock(this);
 	}
 
@@ -67,6 +73,12 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <inheritdoc cref="ITimeSystem.DateTime" />
 	public IDateTime DateTime
 		=> _dateTimeMock;
+
+#if FEATURE_PERIODIC_TIMER
+	/// <inheritdoc cref="ITimeSystem.PeriodicTimer" />
+	public IPeriodicTimerFactory PeriodicTimer
+		=> _periodictimerFactoryMock;
+#endif
 
 	/// <inheritdoc cref="ITimeSystem.Stopwatch" />
 	public IStopwatchFactory Stopwatch
