@@ -21,6 +21,7 @@ In addition, the following interfaces are defined:
   - `Stopwatch` is a wrapper around [`System.Diagnostics.Stopwatch`](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.stopwatch)
   - `Task` allows replacing [`Task.Delay`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.delay)
   - `Thread` allows replacing [`Thread.Sleep`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.thread.sleep)
+  - `PeriodicTimer` is a wrapper around [`System.Threading.PeriodicTimer`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.periodictimer)
   - `Timer` is a wrapper around [`System.Threading.Timer`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.timer)
 - The `IRandomSystem` interface abstracts away functionality related to randomness:  
   `Random` methods implement a thread-safe Shared instance also under .NET Framework and `Guid` methods allow creating new GUIDs.
