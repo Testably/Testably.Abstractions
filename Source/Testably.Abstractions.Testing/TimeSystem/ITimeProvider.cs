@@ -22,7 +22,7 @@ public interface ITimeProvider
 	///     The start time of the time provider.
 	/// </summary>
 	/// <remarks>
-	///     This is the time, the time provider was initialized at the beginning of the test.
+	///     This is the time the time provider was initialized at the beginning of the test.
 	/// </remarks>
 	DateTime StartTime { get; }
 

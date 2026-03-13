@@ -76,5 +76,5 @@ public interface INotificationHandler
 	/// <returns>A <see cref="IAwaitableCallback{TimeSpan}" /> to un-register the callback on dispose.</returns>
 	IAwaitableCallback<DateTime> TimeChanged(
 		Action<DateTime>? callback = null,
-		Func<DateTime, bool>? predicate = null);
+		Func<DateTime, DateTime, bool>? predicate = null);
 }

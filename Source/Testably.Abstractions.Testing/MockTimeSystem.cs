@@ -64,7 +64,7 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// </summary>
 	public MockTimeSystem(ITimeProviderFactory timeProvider)
 	{
-		_callbackHandler = new NotificationHandler();
+		_callbackHandler = new NotificationHandler(this);
 		TimeProvider = timeProvider.Create(_callbackHandler.InvokeTimeChanged);
 		_dateTimeMock = new DateTimeMock(this, _callbackHandler);
 		_stopwatchFactoryMock = new StopwatchFactoryMock(this);

@@ -125,9 +125,11 @@ namespace Testably.Abstractions.Testing
     }
     public static class NotificationHandlerExtensions
     {
+        public static Testably.Abstractions.Testing.IAwaitableCallback<System.DateTime> Elapsed(this Testably.Abstractions.Testing.TimeSystem.INotificationHandler handler, System.TimeSpan interval, System.Action<System.DateTime>? callback = null) { }
         public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnChanged(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string globPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
         public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnCreated(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string globPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
         public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnDeleted(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string globPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.IAwaitableCallback<System.DateTime> TimeChanged(this Testably.Abstractions.Testing.TimeSystem.INotificationHandler handler, System.Action<System.DateTime>? callback = null, System.Func<System.DateTime, bool>? predicate = null) { }
     }
     public static class RandomProvider
     {
@@ -413,7 +415,7 @@ namespace Testably.Abstractions.Testing.TimeSystem
         Testably.Abstractions.Testing.IAwaitableCallback<System.DateTime> DateTimeRead(System.Action<System.DateTime>? callback = null, System.Func<System.DateTime, bool>? predicate = null);
         Testably.Abstractions.Testing.IAwaitableCallback<System.TimeSpan> TaskDelay(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
         Testably.Abstractions.Testing.IAwaitableCallback<System.TimeSpan> ThreadSleep(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
-        Testably.Abstractions.Testing.IAwaitableCallback<System.DateTime> TimeChanged(System.Action<System.DateTime>? callback = null, System.Func<System.DateTime, bool>? predicate = null);
+        Testably.Abstractions.Testing.IAwaitableCallback<System.DateTime> TimeChanged(System.Action<System.DateTime>? callback = null, System.Func<System.DateTime, System.DateTime, bool>? predicate = null);
     }
     public interface ITimeProvider
     {

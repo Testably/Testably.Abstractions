@@ -2,7 +2,7 @@
 
 namespace Testably.Abstractions.Testing.TimeSystem;
 
-internal sealed class NotificationHandler : INotificationHandler
+internal sealed class NotificationHandler(MockTimeSystem mockTimeSystem) : INotificationHandler
 {
 	private readonly Notification.INotificationFactory<DateTime>
 		_dateTimeReadCallbacks = Notification.CreateFactory<DateTime>();
@@ -12,10 +12,9 @@ internal sealed class NotificationHandler : INotificationHandler
 
 	private readonly Notification.INotificationFactory<TimeSpan>
 		_threadSleepCallbacks = Notification.CreateFactory<TimeSpan>();
-	
+
 	private readonly Notification.INotificationFactory<DateTime>
 		_timeChangedCallbacks = Notification.CreateFactory<DateTime>();
-
 
 	#region INotificationHandler Members
 
@@ -37,11 +36,12 @@ internal sealed class NotificationHandler : INotificationHandler
 		Func<TimeSpan, bool>? predicate = null)
 		=> _threadSleepCallbacks.RegisterCallback(callback, predicate);
 
-	/// <inheritdoc cref="INotificationHandler.TimeChanged(Action{DateTime}?, Func{DateTime, bool}?)" />
+	/// <inheritdoc cref="INotificationHandler.TimeChanged(Action{DateTime}?, Func{DateTime, DateTime, bool}?)" />
 	public IAwaitableCallback<DateTime> TimeChanged(
 		Action<DateTime>? callback = null,
-		Func<DateTime, bool>? predicate = null)
-		=> _timeChangedCallbacks.RegisterCallback(callback, predicate);
+		Func<DateTime, DateTime, bool>? predicate = null)
+		=> _timeChangedCallbacks.RegisterCallback(callback,
+			predicate is null ? null : d => predicate(mockTimeSystem.TimeProvider.StartTime, d));
 
 	#endregion
 

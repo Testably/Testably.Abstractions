@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Testing;
 /// <summary>
 ///     Extension methods for the <see cref="INotificationHandler" />
 /// </summary>
-public static class NotificationHandlerExtensions
+public static partial class NotificationHandlerExtensions
 {
 	/// <summary>
 	///     Callback executed when a <paramref name="fileSystemType" /> matching the
