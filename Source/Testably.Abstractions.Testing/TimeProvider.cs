@@ -12,9 +12,10 @@ public static class TimeProvider
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem.TimeProvider" /> with the current time.
 	/// </summary>
-	public static ITimeProvider Now()
+	public static ITimeProviderFactory Now()
 	{
-		return new TimeProviderMock(DateTime.UtcNow, "Now");
+		return new Factory(onTimeChanged
+			=> new TimeProviderMock(onTimeChanged, DateTime.UtcNow, "Now"));
 	}
 
 	/// <summary>
@@ -22,23 +23,37 @@ public static class TimeProvider
 	///     <para />
 	///     The random time increments the unix epoch by a random integer of seconds.
 	/// </summary>
-	public static ITimeProvider Random()
+	public static ITimeProviderFactory Random()
 	{
 		#pragma warning disable MA0113 // Use DateTime.UnixEpoch
 		DateTime randomTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
 			.AddSeconds(RandomFactory.Shared.Next());
 		#pragma warning restore MA0113
-		return new TimeProviderMock(randomTime, "Random");
+		return new Factory(onTimeChanged
+			=> new TimeProviderMock(onTimeChanged, randomTime, "Random"));
 	}
 
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem.TimeProvider" /> with the specified <paramref name="time" />.
 	/// </summary>
 	/// <remarks>
-	///     If the <paramref name="time" /> has Kind DateTimeKind.Unspecified it will be treated as if it had Kind DateTimeKind.Utc.
+	///     If the <paramref name="time" /> has Kind DateTimeKind.Unspecified it will be treated as if it had Kind
+	///     DateTimeKind.Utc.
 	/// </remarks>
-	public static ITimeProvider Use(DateTime time)
+	public static ITimeProviderFactory Use(DateTime time)
 	{
-		return new TimeProviderMock(time, "Fixed");
+		return new Factory(onTimeChanged => new TimeProviderMock(onTimeChanged, time, "Fixed"));
+	}
+
+	internal class Factory(Func<Action<DateTime>, ITimeProvider> createCallback)
+		: ITimeProviderFactory
+	{
+		#region ITimeProviderFactory Members
+
+		/// <inheritdoc />
+		public ITimeProvider Create(Action<DateTime> onTimeChanged)
+			=> createCallback(onTimeChanged);
+
+		#endregion
 	}
 }

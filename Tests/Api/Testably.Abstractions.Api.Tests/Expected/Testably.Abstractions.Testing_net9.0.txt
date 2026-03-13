@@ -103,6 +103,7 @@ namespace Testably.Abstractions.Testing
         public MockTimeSystem() { }
         public MockTimeSystem(System.DateTime time) { }
         public MockTimeSystem(Testably.Abstractions.Testing.TimeSystem.ITimeProvider timeProvider) { }
+        public MockTimeSystem(Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory timeProvider) { }
         public Testably.Abstractions.TimeSystem.IDateTime DateTime { get; }
         public Testably.Abstractions.Testing.TimeSystem.INotificationHandler On { get; }
         public Testably.Abstractions.TimeSystem.IStopwatchFactory Stopwatch { get; }
@@ -159,9 +160,9 @@ namespace Testably.Abstractions.Testing
     }
     public static class TimeProvider
     {
-        public static Testably.Abstractions.Testing.TimeSystem.ITimeProvider Now() { }
-        public static Testably.Abstractions.Testing.TimeSystem.ITimeProvider Random() { }
-        public static Testably.Abstractions.Testing.TimeSystem.ITimeProvider Use(System.DateTime time) { }
+        public static Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory Now() { }
+        public static Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory Random() { }
+        public static Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory Use(System.DateTime time) { }
     }
 }
 namespace Testably.Abstractions.Testing.FileSystem
@@ -422,6 +423,7 @@ namespace Testably.Abstractions.Testing.TimeSystem
         Testably.Abstractions.Testing.IAwaitableCallback<System.DateTime> DateTimeRead(System.Action<System.DateTime>? callback = null, System.Func<System.DateTime, bool>? predicate = null);
         Testably.Abstractions.Testing.IAwaitableCallback<System.TimeSpan> TaskDelay(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
         Testably.Abstractions.Testing.IAwaitableCallback<System.TimeSpan> ThreadSleep(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
+        Testably.Abstractions.Testing.IAwaitableCallback<System.DateTime> TimeChanged(System.Action<System.DateTime>? callback = null, System.Func<System.DateTime, bool>? predicate = null);
     }
     public interface ITimeProvider
     {
@@ -432,6 +434,10 @@ namespace Testably.Abstractions.Testing.TimeSystem
         void AdvanceBy(System.TimeSpan interval);
         System.DateTime Read();
         void SetTo(System.DateTime value);
+    }
+    public interface ITimeProviderFactory
+    {
+        Testably.Abstractions.Testing.TimeSystem.ITimeProvider Create(System.Action<System.DateTime> onTimeChanged);
     }
     public interface ITimerHandler
     {

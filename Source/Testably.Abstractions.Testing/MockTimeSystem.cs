@@ -51,10 +51,21 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with the specified <paramref name="timeProvider" />.
 	/// </summary>
-	public MockTimeSystem(ITimeProvider timeProvider)
+#if MarkExecuteWhileWaitingNotificationObsolete
+	[Obsolete("Use the constructor with ITimeProviderFactory instead.")]
+#endif
+	public MockTimeSystem(ITimeProvider timeProvider) : this(
+		new TimeProvider.Factory(_ => timeProvider))
 	{
-		TimeProvider = timeProvider;
+	}
+
+	/// <summary>
+	///     Initializes the <see cref="MockTimeSystem" /> with the specified <paramref name="timeProvider" />.
+	/// </summary>
+	public MockTimeSystem(ITimeProviderFactory timeProvider)
+	{
 		_callbackHandler = new NotificationHandler();
+		TimeProvider = timeProvider.Create(_callbackHandler.InvokeTimeChanged);
 		_dateTimeMock = new DateTimeMock(this, _callbackHandler);
 		_stopwatchFactoryMock = new StopwatchFactoryMock(this);
 		_threadMock = new ThreadMock(this, _callbackHandler);
