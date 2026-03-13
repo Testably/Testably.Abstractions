@@ -96,7 +96,8 @@ public class NotificationHandlerTests
 		IDisposable disposable = timeSystem.On.TaskDelay(d => receivedDelay = d);
 
 		disposable.Dispose();
-		_ = timeSystem.Task.Delay(millisecondsDelay, TestContext.Current!.Execution.CancellationToken);
+		_ = timeSystem.Task.Delay(millisecondsDelay,
+			TestContext.Current!.Execution.CancellationToken);
 
 		await That(receivedDelay).IsNull();
 	}
@@ -112,7 +113,8 @@ public class NotificationHandlerTests
 		using (timeSystem.On.TaskDelay(d => receivedDelay1 = d))
 		{
 			timeSystem.On.TaskDelay(d => receivedDelay2 = d).Dispose();
-			_ = timeSystem.Task.Delay(expectedDelay, TestContext.Current!.Execution.CancellationToken);
+			_ = timeSystem.Task.Delay(expectedDelay,
+				TestContext.Current!.Execution.CancellationToken);
 		}
 
 		await That(receivedDelay1).IsEqualTo(expectedDelay);
@@ -131,7 +133,8 @@ public class NotificationHandlerTests
 		{
 			using (timeSystem.On.TaskDelay(d => receivedDelay2 = d))
 			{
-				_ = timeSystem.Task.Delay(expectedDelay, TestContext.Current!.Execution.CancellationToken);
+				_ = timeSystem.Task.Delay(expectedDelay,
+					TestContext.Current!.Execution.CancellationToken);
 			}
 		}
 
@@ -165,7 +168,8 @@ public class NotificationHandlerTests
 
 		using (timeSystem.On.TaskDelay(d => receivedDelay = d))
 		{
-			_ = timeSystem.Task.Delay(millisecondsDelay, TestContext.Current!.Execution.CancellationToken);
+			_ = timeSystem.Task.Delay(millisecondsDelay,
+				TestContext.Current!.Execution.CancellationToken);
 		}
 
 		await That(receivedDelay.TotalMilliseconds).IsEqualTo(millisecondsDelay);
@@ -197,7 +201,8 @@ public class NotificationHandlerTests
 
 		using (timeSystem.On.TaskDelay(d => receivedDelay = d))
 		{
-			_ = timeSystem.Task.Delay(expectedDelay, TestContext.Current!.Execution.CancellationToken);
+			_ = timeSystem.Task.Delay(expectedDelay,
+				TestContext.Current!.Execution.CancellationToken);
 		}
 
 		await That(receivedDelay).IsEqualTo(expectedDelay);
@@ -283,5 +288,53 @@ public class NotificationHandlerTests
 		}
 
 		await That(receivedTimeout).IsEqualTo(expectedTimeout);
+	}
+
+	[Test]
+	public async Task OnTimeChanged_ShouldBeTriggeredByAdvanceBy()
+	{
+		DateTime? receivedTime = null;
+		MockTimeSystem timeSystem = new();
+		TimeSpan advanceBy = TimeSpan.FromMinutes(42);
+		DateTime expectedTime = timeSystem.TimeProvider.StartTime + advanceBy;
+
+		using (timeSystem.On.TimeChanged(d => receivedTime = d))
+		{
+			timeSystem.TimeProvider.AdvanceBy(advanceBy);
+		}
+
+		await That(receivedTime).IsEqualTo(expectedTime);
+	}
+
+	[Test]
+	public async Task OnTimeChanged_ShouldBeTriggeredByTaskDelay()
+	{
+		DateTime? receivedTime = null;
+		MockTimeSystem timeSystem = new();
+		TimeSpan advanceBy = TimeSpan.FromMinutes(42);
+		DateTime expectedTime = timeSystem.TimeProvider.StartTime + advanceBy;
+
+		using (timeSystem.On.TimeChanged(d => receivedTime = d))
+		{
+			await timeSystem.Task.Delay(advanceBy);
+		}
+
+		await That(receivedTime).IsEqualTo(expectedTime);
+	}
+
+	[Test]
+	public async Task OnTimeChanged_ShouldBeTriggeredByThreadSleep()
+	{
+		DateTime? receivedTime = null;
+		MockTimeSystem timeSystem = new();
+		TimeSpan advanceBy = TimeSpan.FromMinutes(42);
+		DateTime expectedTime = timeSystem.TimeProvider.StartTime + advanceBy;
+
+		using (timeSystem.On.TimeChanged(d => receivedTime = d))
+		{
+			timeSystem.Thread.Sleep(advanceBy);
+		}
+
+		await That(receivedTime).IsEqualTo(expectedTime);
 	}
 }

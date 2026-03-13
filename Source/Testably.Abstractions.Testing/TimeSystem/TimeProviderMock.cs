@@ -8,6 +8,7 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 internal sealed class TimeProviderMock : ITimeProvider
 {
 	private DateTime _now;
+	private readonly Action<DateTime> _onTimeChanged;
 	private readonly string _description;
 #if NET9_0_OR_GREATER
 	private readonly System.Threading.Lock _lock = new();
@@ -15,12 +16,13 @@ internal sealed class TimeProviderMock : ITimeProvider
 	private readonly object _lock = new();
 #endif
 
-	public TimeProviderMock(DateTime now, string description)
+	public TimeProviderMock(Action<DateTime> onTimeChanged, DateTime now, string description)
 	{
 		_now = now.Kind == DateTimeKind.Unspecified
 			? DateTime.SpecifyKind(now, DateTimeKind.Utc)
 			: now;
-
+		StartTime = _now;
+		_onTimeChanged = onTimeChanged;
 		_description = description;
 	}
 
@@ -41,12 +43,16 @@ internal sealed class TimeProviderMock : ITimeProvider
 	public DateTime UnixEpoch { get; set; } = DateTime.UnixEpoch;
 #endif
 
+	/// <inheritdoc cref="ITimeProvider.StartTime" />
+	public DateTime StartTime { get; }
+
 	/// <inheritdoc cref="ITimeProvider.AdvanceBy(TimeSpan)" />
 	public void AdvanceBy(TimeSpan interval)
 	{
 		lock (_lock)
 		{
 			_now = _now.Add(interval);
+			_onTimeChanged.Invoke(_now);
 		}
 	}
 

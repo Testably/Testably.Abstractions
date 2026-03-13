@@ -10,7 +10,7 @@ public class TimeProviderTests
 	public async Task Now_ShouldReturnCurrentDateTime()
 	{
 		DateTime begin = DateTime.UtcNow;
-		ITimeProvider timeProvider = TimeProvider.Now();
+		ITimeProvider timeProvider = TimeProvider.Now().Create(_ => { });
 		DateTime end = DateTime.UtcNow;
 
 		DateTime result1 = timeProvider.Read();
@@ -27,7 +27,7 @@ public class TimeProviderTests
 
 		Parallel.For(0, 100, _ =>
 		{
-			results.Add(TimeProvider.Random().Read());
+			results.Add(TimeProvider.Random().Create(_ => { }).Read());
 		});
 
 		await That(results).AreAllUnique();
@@ -37,7 +37,7 @@ public class TimeProviderTests
 	[AutoArguments]
 	public async Task SetTo_ShouldChangeTimeForRead(DateTime time1, DateTime time2)
 	{
-		ITimeProvider timeProvider = TimeProvider.Use(time1);
+		ITimeProvider timeProvider = TimeProvider.Use(time1).Create(_ => { });
 
 		DateTime result1 = timeProvider.Read();
 		timeProvider.SetTo(time2);
@@ -51,7 +51,7 @@ public class TimeProviderTests
 	public async Task Use_ShouldReturnFixedDateTime()
 	{
 		DateTime now = TimeTestHelper.GetRandomTime();
-		ITimeProvider timeProvider = TimeProvider.Use(now);
+		ITimeProvider timeProvider = TimeProvider.Use(now).Create(_ => { });
 
 		DateTime result1 = timeProvider.Read();
 		DateTime result2 = timeProvider.Read();
@@ -63,8 +63,8 @@ public class TimeProviderTests
 	[Test]
 	public async Task Use_UnspecifiedKind_ShouldConvertToUtcDateTime()
 	{
-		DateTime unspecifiedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Unspecified);
-		ITimeProvider timeProvider = TimeProvider.Use(unspecifiedTime);
+		DateTime unspecifiedTime = TimeTestHelper.GetRandomTime();
+		ITimeProvider timeProvider = TimeProvider.Use(unspecifiedTime).Create(_ => { });
 		DateTime result = timeProvider.Read();
 		await That(result).IsEqualTo(DateTime.SpecifyKind(unspecifiedTime, DateTimeKind.Utc));
 	}

@@ -15,7 +15,9 @@ public interface INotificationHandler
 	///     - <see cref="IDateTime.UtcNow" /><br />
 	///     - <see cref="IDateTime.Today" />
 	/// </summary>
-	/// <param name="callback">The callback to execute after <c>DateTime</c> was read.</param>
+	/// <param name="callback">
+	///     (optional) The callback to execute after <c>DateTime</c> was read.
+	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
@@ -32,7 +34,9 @@ public interface INotificationHandler
 	///     - <see cref="ITask.Delay(int)" /><br />
 	///     - <see cref="ITask.Delay(int, CancellationToken)" />
 	/// </summary>
-	/// <param name="callback">The callback to execute after the <c>Task.Delay</c> was called.</param>
+	/// <param name="callback">
+	///     (optional) The callback to execute after the <c>Task.Delay</c> was called.
+	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
@@ -47,7 +51,9 @@ public interface INotificationHandler
 	///     - <see cref="IThread.Sleep(TimeSpan)" /><br />
 	///     - <see cref="IThread.Sleep(int)" />
 	/// </summary>
-	/// <param name="callback">The callback to execute after the <c>Thread.Sleep</c> was called.</param>
+	/// <param name="callback">
+	///     (optional) The callback to execute after the <c>Thread.Sleep</c> was called.
+	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
@@ -56,4 +62,20 @@ public interface INotificationHandler
 	IAwaitableCallback<TimeSpan> ThreadSleep(
 		Action<TimeSpan>? callback = null,
 		Func<TimeSpan, bool>? predicate = null);
+
+	/// <summary>
+	///     Callback executed when the mocked time changed.
+	/// </summary>
+	/// <param name="callback">
+	///     (optional) The callback to execute after the mocked time changed.
+	/// </param>
+	/// <param name="predicate">
+	///     (optional) A predicate used to filter which changes should be notified.<br />
+	///     The first parameter is the start time, the second parameter is the current time of the time provider.<br />
+	///     If set to <see langword="null" /> (default value) all changes are notified.
+	/// </param>
+	/// <returns>A <see cref="IAwaitableCallback{TimeSpan}" /> to un-register the callback on dispose.</returns>
+	IAwaitableCallback<DateTime> TimeChanged(
+		Action<DateTime>? callback = null,
+		Func<DateTime, DateTime, bool>? predicate = null);
 }

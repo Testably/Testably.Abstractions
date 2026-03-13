@@ -62,6 +62,6 @@ public class RandomSystemExtensionsTests
 		// Check edge cases for directories
 		await That(fileNames).Contains(d => d.Contains(' ', StringComparison.Ordinal));
 		await That(fileNames).Contains(d => d.Length == 1);
-		await That(fileNames).Contains(d => d.StartsWith('.'));
+		await That(fileNames).Contains(d => d.StartsWith('.', StringComparison.Ordinal));
 	}
 }

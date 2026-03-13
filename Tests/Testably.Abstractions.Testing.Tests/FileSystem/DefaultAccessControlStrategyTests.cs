@@ -25,7 +25,7 @@ public class DefaultAccessControlStrategyTests
 	[Test]
 	public async Task IsAccessGranted_ShouldUseCallback()
 	{
-		DefaultAccessControlStrategy sut = new((p, _) => p.StartsWith('a'));
+		DefaultAccessControlStrategy sut = new((p, _) => p.StartsWith('a', StringComparison.Ordinal));
 
 		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility())).IsTrue();
 		await That(sut.IsAccessGranted("xyz", new FileSystemExtensibility())).IsFalse();
