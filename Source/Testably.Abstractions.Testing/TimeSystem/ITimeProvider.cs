@@ -19,6 +19,14 @@ public interface ITimeProvider
 	DateTime MinValue { get; set; }
 
 	/// <summary>
+	///     The start time of the time provider.
+	/// </summary>
+	/// <remarks>
+	///     This is the time, the time provider was initialized at the beginning of the test.
+	/// </remarks>
+	DateTime StartTime { get; }
+
+	/// <summary>
 	///     Gets or sets the <see cref="IDateTime.UnixEpoch" />
 	/// </summary>
 	DateTime UnixEpoch { get; set; }

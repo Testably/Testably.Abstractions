@@ -20,7 +20,7 @@ internal sealed class TimeProviderMock : ITimeProvider
 		_now = now.Kind == DateTimeKind.Unspecified
 			? DateTime.SpecifyKind(now, DateTimeKind.Utc)
 			: now;
-
+		StartTime = _now;
 		_description = description;
 	}
 
@@ -40,6 +40,9 @@ internal sealed class TimeProviderMock : ITimeProvider
 	/// <inheritdoc cref="ITimeProvider.UnixEpoch" />
 	public DateTime UnixEpoch { get; set; } = DateTime.UnixEpoch;
 #endif
+
+	/// <inheritdoc cref="ITimeProvider.StartTime" />
+	public DateTime StartTime { get; }
 
 	/// <inheritdoc cref="ITimeProvider.AdvanceBy(TimeSpan)" />
 	public void AdvanceBy(TimeSpan interval)

@@ -427,6 +427,7 @@ namespace Testably.Abstractions.Testing.TimeSystem
     {
         System.DateTime MaxValue { get; set; }
         System.DateTime MinValue { get; set; }
+        System.DateTime StartTime { get; }
         System.DateTime UnixEpoch { get; set; }
         void AdvanceBy(System.TimeSpan interval);
         System.DateTime Read();

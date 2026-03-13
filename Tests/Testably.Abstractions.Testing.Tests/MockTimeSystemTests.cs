@@ -11,7 +11,8 @@ public class MockTimeSystemTests
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
 			await Record.ExceptionAsync(()
-				=> timeSystem.Task.Delay(Timeout.Infinite, TestContext.Current!.Execution.CancellationToken));
+				=> timeSystem.Task.Delay(Timeout.Infinite,
+					TestContext.Current!.Execution.CancellationToken));
 
 		await That(exception).IsNull();
 	}
@@ -56,14 +57,16 @@ public class MockTimeSystemTests
 	[Arguments(DateTimeKind.Local)]
 	[Arguments(DateTimeKind.Unspecified)]
 	[Arguments(DateTimeKind.Utc)]
-	public async Task DifferenceBetweenDateTimeNowAndDateTimeUtcNow_ShouldBeLocalTimeZoneOffsetFromUtc(DateTimeKind dateTimeKind)
+	public async Task
+		DifferenceBetweenDateTimeNowAndDateTimeUtcNow_ShouldBeLocalTimeZoneOffsetFromUtc(
+			DateTimeKind dateTimeKind)
 	{
 		DateTime now = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
 
-		var expectedDifference = TimeZoneInfo.Local.GetUtcOffset(now);
+		TimeSpan expectedDifference = TimeZoneInfo.Local.GetUtcOffset(now);
 
 		MockTimeSystem timeSystem = new(DateTime.SpecifyKind(now, dateTimeKind));
-		var actualDifference = timeSystem.DateTime.Now - timeSystem.DateTime.UtcNow;
+		TimeSpan actualDifference = timeSystem.DateTime.Now - timeSystem.DateTime.UtcNow;
 
 		await That(actualDifference).IsEqualTo(expectedDifference);
 	}
@@ -107,6 +110,17 @@ public class MockTimeSystemTests
 				=> timeSystem.Thread.Sleep(TimeSpan.FromMilliseconds(-2)));
 
 		await That(exception).IsExactly<ArgumentOutOfRangeException>();
+	}
+
+	[Test]
+	public async Task TimeProvider_StartTime_ShouldBeSetToInitialTime()
+	{
+		DateTime now = TimeTestHelper.GetRandomTime(DateTimeKind.Utc);
+		MockTimeSystem timeSystem = new(TimeProvider.Use(now));
+
+		timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromMinutes(42));
+
+		await That(timeSystem.TimeProvider.StartTime).IsEqualTo(now);
 	}
 
 	[Test]
