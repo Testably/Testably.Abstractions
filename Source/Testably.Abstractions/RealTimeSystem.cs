@@ -16,6 +16,9 @@ public sealed class RealTimeSystem : ITimeSystem
 	public RealTimeSystem()
 	{
 		DateTime = new DateTimeWrapper(this);
+#if FEATURE_PERIODIC_TIMER
+		PeriodicTimer = new PeriodicTimerFactory(this);
+#endif
 		Stopwatch = new StopwatchFactory(this);
 		Task = new TaskWrapper(this);
 		Thread = new ThreadWrapper(this);
@@ -26,6 +29,13 @@ public sealed class RealTimeSystem : ITimeSystem
 
 	/// <inheritdoc cref="ITimeSystem.DateTime" />
 	public IDateTime DateTime { get; }
+
+#if FEATURE_PERIODIC_TIMER
+	/// <summary>
+	///     Abstractions for <see cref="System.Threading.PeriodicTimer" />.
+	/// </summary>
+	public IPeriodicTimerFactory PeriodicTimer { get; }
+#endif
 
 	/// <inheritdoc cref="ITimeSystem.Stopwatch" />
 	public IStopwatchFactory Stopwatch { get; }
