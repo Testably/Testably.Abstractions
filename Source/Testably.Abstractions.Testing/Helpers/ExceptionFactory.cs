@@ -94,7 +94,8 @@ internal static class ExceptionFactory
 		};
 
 	internal static IOException FileSharingViolation(string path)
-		=> new($"The process cannot access the file '{path}' because it is being used by another process.")
+		=> new(
+			$"The process cannot access the file '{path}' because it is being used by another process.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
 			HResult = -2147024864,
@@ -155,6 +156,11 @@ internal static class ExceptionFactory
 
 	internal static NotSupportedException NotSupportedStopwatchWrapping()
 		=> new("You cannot wrap an existing Stopwatch in the MockTimeSystem instance!");
+
+#if FEATURE_PERIODIC_TIMER
+	internal static NotSupportedException NotSupportedPeriodicTimerWrapping()
+		=> new("You cannot wrap an existing PeriodicTimer in the MockTimeSystem instance!");
+#endif
 
 	internal static NotSupportedException NotSupportedTimerWrapping()
 		=> new("You cannot wrap an existing Timer in the MockTimeSystem instance!");
@@ -229,7 +235,8 @@ internal static class ExceptionFactory
 
 	internal static IOException ReplaceSourceMustBeDifferentThanDestination(
 		string sourcePath, string destinationPath)
-		=> new($"The source '{sourcePath}' and destination '{destinationPath}' are the same file.", -2146232800);
+		=> new($"The source '{sourcePath}' and destination '{destinationPath}' are the same file.",
+			-2146232800);
 
 	#pragma warning disable MA0015 // Specify the parameter name
 	internal static ArgumentException SearchPatternCannotContainTwoDots()
@@ -334,7 +341,8 @@ internal static class ExceptionFactory
 			HResult = -2146233031,
 #endif
 		};
-	
+
 	internal static ArgumentException InvalidUnixCreateMode(string paramName)
-		=> new("UnixCreateMode can only be used with file modes that can create a new file.", paramName);
+		=> new("UnixCreateMode can only be used with file modes that can create a new file.",
+			paramName);
 }
