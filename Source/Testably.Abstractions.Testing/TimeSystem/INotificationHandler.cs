@@ -71,6 +71,7 @@ public interface INotificationHandler
 	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which changes should be notified.<br />
+	///     The first parameter is the start time, the second parameter is the current time of the time provider.<br />
 	///     If set to <see langword="null" /> (default value) all changes are notified.
 	/// </param>
 	/// <returns>A <see cref="IAwaitableCallback{TimeSpan}" /> to un-register the callback on dispose.</returns>
