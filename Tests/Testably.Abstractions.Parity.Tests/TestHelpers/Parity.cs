@@ -73,6 +73,16 @@ public class Parity
 		#pragma warning restore CS0618
 	});
 
+#if FEATURE_PERIODIC_TIMER
+	public ParityCheck PeriodicTimer { get; } = new(excludeConstructors:
+	[
+		typeof(PeriodicTimer).GetConstructor([
+			typeof(TimeSpan),
+			typeof(TimeProvider),
+		]),
+	]);
+#endif
+
 	public ParityCheck Random { get; } = new();
 
 	public ParityCheck Stopwatch { get; } = new(excludeMethods:

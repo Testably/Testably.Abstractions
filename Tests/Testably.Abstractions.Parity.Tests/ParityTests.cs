@@ -13,11 +13,7 @@ namespace Testably.Abstractions.Parity.Tests;
 public abstract class ParityTests(
 	TestHelpers.Parity parity)
 {
-	#region Test Setup
-
 	public TestHelpers.Parity Parity { get; } = parity;
-
-	#endregion
 
 	[Test]
 	public async Task IDirectory_EnsureParityWith_Directory()
@@ -121,23 +117,25 @@ public abstract class ParityTests(
 		await That(parityErrors).IsEmpty();
 	}
 
+#if FEATURE_PERIODIC_TIMER
+	[Test]
+	public async Task
+		IPeriodicTimerAndIPeriodicTimerFactory_EnsureParityWith_PeriodicTimer()
+	{
+		List<string> parityErrors = Parity.PeriodicTimer
+			.GetErrorsToInstanceType<IPeriodicTimer, IPeriodicTimerFactory>(
+				typeof(PeriodicTimer));
+
+		await That(parityErrors).IsEmpty();
+	}
+#endif
+
 	[Test]
 	public async Task IRandomAndIRandomFactory_EnsureParityWith_Random()
 	{
 		List<string> parityErrors = Parity.Random
 			.GetErrorsToInstanceType<IRandom, IRandomFactory>(
 				typeof(Random));
-
-		await That(parityErrors).IsEmpty();
-	}
-
-	[Test]
-	public async Task
-		ITimerAndITimerFactory_EnsureParityWith_Timer()
-	{
-		List<string> parityErrors = Parity.Timer
-			.GetErrorsToInstanceType<ITimer, ITimerFactory>(
-				typeof(Timer));
 
 		await That(parityErrors).IsEmpty();
 	}
@@ -152,6 +150,17 @@ public abstract class ParityTests(
 		parityErrors.AddRange(Parity.Stopwatch
 			.GetErrorsToStaticType<IStopwatchFactory>(
 				typeof(Stopwatch)));
+
+		await That(parityErrors).IsEmpty();
+	}
+
+	[Test]
+	public async Task
+		ITimerAndITimerFactory_EnsureParityWith_Timer()
+	{
+		List<string> parityErrors = Parity.Timer
+			.GetErrorsToInstanceType<ITimer, ITimerFactory>(
+				typeof(Timer));
 
 		await That(parityErrors).IsEmpty();
 	}
