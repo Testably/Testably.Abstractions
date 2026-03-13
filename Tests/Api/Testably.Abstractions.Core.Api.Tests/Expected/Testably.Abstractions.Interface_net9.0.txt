@@ -60,6 +60,7 @@ namespace Testably.Abstractions
     public interface ITimeSystem
     {
         Testably.Abstractions.TimeSystem.IDateTime DateTime { get; }
+        Testably.Abstractions.TimeSystem.IPeriodicTimerFactory PeriodicTimer { get; }
         Testably.Abstractions.TimeSystem.IStopwatchFactory Stopwatch { get; }
         Testably.Abstractions.TimeSystem.ITask Task { get; }
         Testably.Abstractions.TimeSystem.IThread Thread { get; }
@@ -126,6 +127,16 @@ namespace Testably.Abstractions.TimeSystem
         System.DateTime Today { get; }
         System.DateTime UnixEpoch { get; }
         System.DateTime UtcNow { get; }
+    }
+    public interface IPeriodicTimer : System.IDisposable, Testably.Abstractions.TimeSystem.ITimeSystemEntity
+    {
+        System.TimeSpan Period { get; set; }
+        System.Threading.Tasks.ValueTask<bool> WaitForNextTickAsync(System.Threading.CancellationToken cancellationToken = default);
+    }
+    public interface IPeriodicTimerFactory : Testably.Abstractions.TimeSystem.ITimeSystemEntity
+    {
+        Testably.Abstractions.TimeSystem.IPeriodicTimer New(System.TimeSpan period);
+        Testably.Abstractions.TimeSystem.IPeriodicTimer Wrap(System.Threading.PeriodicTimer timer);
     }
     public interface IStopwatch : Testably.Abstractions.TimeSystem.ITimeSystemEntity
     {
