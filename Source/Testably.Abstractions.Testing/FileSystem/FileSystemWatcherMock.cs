@@ -30,6 +30,27 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	/// </summary>
 	private const int BytesPerMessage = 128;
 
+	/// <summary>
+	///     Caches the full path of <see cref="Path" />
+	/// </summary>
+	private string FullPath
+	{
+		get;
+		set
+		{
+			if (string.IsNullOrEmpty(value))
+			{
+				field = value;
+
+				return;
+			}
+
+			string fullPath = GetNormalizedFullPath(value);
+
+			field = fullPath;
+		}
+	} = string.Empty;
+
 	private CancellationTokenSource? _cancellationTokenSource;
 	private IDisposable? _changeHandler;
 	private readonly MockFileSystem _fileSystem;
@@ -258,27 +279,6 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 	}
 
-	/// <summary>
-	///     Caches the full path of <see cref="Path" />
-	/// </summary>
-	private string FullPath
-	{
-		get;
-		set
-		{
-			if (string.IsNullOrEmpty(value))
-			{
-				field = value;
-
-				return;
-			}
-
-			string fullPath = GetNormalizedFullPath(value);
-
-			field = fullPath;
-		}
-	} = string.Empty;
-
 	/// <inheritdoc cref="IFileSystemWatcher.BeginInit()" />
 	public void BeginInit()
 	{
@@ -355,6 +355,23 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	internal static FileSystemWatcherMock New(MockFileSystem fileSystem)
 		=> new(fileSystem);
 
+	private static void CheckRenamePremise(RenamedContext context)
+	{
+		Debug.Assert(
+			context is not { ComesFromOutside: true, GoesToInside: true },
+			"The premise { ComesFromOutside: true, GoesToInside: true } should have been handled."
+		);
+
+		Debug.Assert(
+			context is not { ComesFromInside: true, GoesToInside: true },
+			"The premise { ComesFromInside: true, GoesToInside: true } should have been handled."
+		);
+
+		Debug.Assert(
+			!context.GoesToOutside, "The premise { GoesToOutside: true } should have been handled."
+		);
+	}
+
 	/// <inheritdoc cref="Component.Dispose(bool)" />
 	protected override void Dispose(bool disposing)
 	{
@@ -364,6 +381,70 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 
 		base.Dispose(disposing);
+	}
+
+	private string GetNormalizedFullPath(string path)
+	{
+		string normalized = _fileSystem.Execute.Path.GetFullPath(path);
+
+		return normalized.TrimEnd(_fileSystem.Execute.Path.DirectorySeparatorChar);
+	}
+
+	private string? GetNormalizedParent(string? path)
+	{
+		if (path == null)
+		{
+			return null;
+		}
+
+		string normalized = GetNormalizedFullPath(path);
+
+		return _fileSystem.Execute.Path.GetDirectoryName(normalized)
+			?.TrimEnd(_fileSystem.Execute.Path.DirectorySeparatorChar);
+	}
+
+	/// <summary>
+	///     Counts the number of directory separators inside the relative path to <see cref="FullPath" />
+	/// </summary>
+	/// <param name="path"></param>
+	/// <returns>The number of directory separators inside the relative path to <see cref="FullPath" /></returns>
+	/// <remarks>Returns -1 if the path is outside the <see cref="FullPath" /></remarks>
+	private int GetSubDirectoryCount(string path)
+	{
+		string normalizedPath = GetNormalizedFullPath(path);
+
+		if (!normalizedPath.StartsWith(FullPath, _fileSystem.Execute.StringComparisonMode))
+		{
+			return -1;
+		}
+
+		return normalizedPath.Substring(FullPath.Length)
+			.TrimStart(_fileSystem.Execute.Path.DirectorySeparatorChar)
+			.Count(c => c == _fileSystem.Execute.Path.DirectorySeparatorChar);
+	}
+
+	private bool IsItemNameChange(ChangeDescription changeDescription)
+	{
+		string normalizedPath = GetNormalizedFullPath(changeDescription.Path);
+		string normalizedOldPath = GetNormalizedFullPath(changeDescription.OldPath!);
+
+		string name = _fileSystem.Execute.Path.GetFileName(normalizedPath);
+		string oldName = _fileSystem.Execute.Path.GetFileName(normalizedOldPath);
+
+		if (name.Equals(oldName, _fileSystem.Execute.StringComparisonMode))
+		{
+			return false;
+		}
+
+		if (name.Length == 0 || oldName.Length == 0)
+		{
+			return false;
+		}
+
+		string? parent = _fileSystem.Execute.Path.GetDirectoryName(normalizedPath);
+		string? oldParent = _fileSystem.Execute.Path.GetDirectoryName(normalizedOldPath);
+
+		return string.Equals(parent, oldParent, _fileSystem.Execute.StringComparisonMode);
 	}
 
 	private bool MatchesFilter(ChangeDescription changeDescription)
@@ -465,6 +546,50 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 	}
 
+	private void SetFileSystemEventArgsFullPath(FileSystemEventArgs args, string name)
+	{
+		if (_fileSystem.SimulationMode == SimulationMode.Native)
+		{
+			return;
+		}
+
+		string fullPath = _fileSystem.Execute.Path.Combine(Path, name);
+
+		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
+		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
+#if NETFRAMEWORK
+			typeof(FileSystemEventArgs)
+				.GetField("fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(args, fullPath);
+#else
+		typeof(FileSystemEventArgs)
+			.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+			.SetValue(args, fullPath);
+#endif
+	}
+
+	private void SetRenamedEventArgsFullPath(RenamedEventArgs args, string oldName)
+	{
+		if (_fileSystem.SimulationMode == SimulationMode.Native)
+		{
+			return;
+		}
+
+		string fullPath = _fileSystem.Execute.Path.Combine(Path, oldName);
+
+		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
+		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
+#if NETFRAMEWORK
+			typeof(RenamedEventArgs)
+				.GetField("oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(args, fullPath);
+#else
+		typeof(RenamedEventArgs)
+			.GetField("_oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+			.SetValue(args, fullPath);
+#endif
+	}
+
 	private void Start()
 	{
 		if (_isInitializing)
@@ -504,13 +629,9 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 							}
 						}
 					}
-					catch (OperationCanceledException)
-					{
-						// Expected when the token is cancelled
-					}
 					catch (Exception)
 					{
-						//Ignore any exception
+						// Ignore any exception, e.g. an OperationCanceledException when the token is canceled
 					}
 				},
 				token)
@@ -536,17 +657,37 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		_changeHandler?.Dispose();
 	}
 
+	private FileSystemEventArgs ToFileSystemEventArgs(
+		WatcherChangeTypes changeType,
+		string changePath)
+	{
+		string name = TransformPathAndName(changePath);
+
+		FileSystemEventArgs eventArgs = new(changeType, Path, name);
+
+		SetFileSystemEventArgsFullPath(eventArgs, name);
+
+		return eventArgs;
+	}
+
+	private string TransformPathAndName(string changeDescriptionPath)
+	{
+		return changeDescriptionPath.Substring(FullPath.Length)
+			.TrimStart(_fileSystem.Execute.Path.DirectorySeparatorChar);
+	}
+
+	/// <summary>
+	///     Triggers the appropriate <see cref="Created" />, <see cref="Deleted" />, or <see cref="Renamed" /> events
+	///     for a rename operation in the file system. Determines whether an item was moved into, out of,
+	///     or within the watched directory, and raises the correct event(s) based on the platform
+	///     (Windows, Linux, macOS) and the current watcher settings (such as <see cref="IncludeSubdirectories" />).
+	/// </summary>
+	/// <param name="item">The <see cref="ChangeDescription" /> representing the rename operation.</param>
 	private void TriggerRenameNotification(ChangeDescription item)
 	{
-		// Outside: Outside the FullPath
-		// Inside: FullPath/<target>
-		// Nested: FullPath/*/<target>
-		// Deep Nested: FullPath/*/**/<target>
-
 		bool comesFromOutside = !MatchesWatcherPath(item.OldPath, true);
 		bool goesToInside = MatchesWatcherPath(item.Path, false);
 
-		// Outside -> Inside
 		if (comesFromOutside && goesToInside)
 		{
 			Created?.Invoke(this, ToFileSystemEventArgs(WatcherChangeTypes.Created, item.Path));
@@ -557,7 +698,6 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		bool comesFromInside = MatchesWatcherPath(item.OldPath, false);
 		bool goesToOutside = !MatchesWatcherPath(item.Path, true);
 
-		// ... -> Outside
 		if (goesToOutside && (comesFromInside || IncludeSubdirectories))
 		{
 			Deleted?.Invoke(this, ToFileSystemEventArgs(WatcherChangeTypes.Deleted, item.OldPath!));
@@ -565,7 +705,6 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			return;
 		}
 
-		// Inside -> Inside
 		if (comesFromInside && goesToInside)
 		{
 			if (TryMakeRenamedEventArgs(item, out RenamedEventArgs? eventArgs))
@@ -600,6 +739,147 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				Renamed?.Invoke(this, eventArgs);
 			}
 		}
+	}
+
+	private bool TryMakeRenamedEventArgs(
+		ChangeDescription changeDescription,
+		[NotNullWhen(true)] out RenamedEventArgs? eventArgs
+	)
+	{
+		if (changeDescription.OldPath == null)
+		{
+			eventArgs = null;
+
+			return false;
+		}
+
+		string name = TransformPathAndName(changeDescription.Path);
+
+		string oldName = TransformPathAndName(changeDescription.OldPath);
+
+		eventArgs = new RenamedEventArgs(changeDescription.ChangeType, Path, name, oldName);
+
+		SetFileSystemEventArgsFullPath(eventArgs, name);
+		SetRenamedEventArgsFullPath(eventArgs, oldName);
+
+		return true;
+	}
+
+	private IWaitForChangedResult WaitForChangedInternal(
+		WatcherChangeTypes changeType, TimeSpan timeout)
+	{
+		TaskCompletionSource<IWaitForChangedResult>
+			tcs = new();
+
+		void EventHandler(object? _, ChangeDescriptionEventArgs c)
+		{
+			if ((c.ChangeDescription.ChangeType & changeType) != 0)
+			{
+				tcs.TrySetResult(new WaitForChangedResultMock(
+					c.ChangeDescription.ChangeType,
+					c.ChangeDescription.Name,
+					oldName: c.ChangeDescription.OldName,
+					timedOut: false));
+			}
+		}
+
+		InternalEvent += EventHandler;
+		try
+		{
+			bool wasEnabled = EnableRaisingEvents;
+			if (!wasEnabled)
+			{
+				EnableRaisingEvents = true;
+			}
+
+			#pragma warning disable MA0040
+			tcs.Task.Wait(timeout);
+			#pragma warning restore MA0040
+			EnableRaisingEvents = wasEnabled;
+		}
+		finally
+		{
+			InternalEvent -= EventHandler;
+		}
+
+#if NETFRAMEWORK
+		return tcs.Task.IsCompleted
+			? tcs.Task.Result
+			: WaitForChangedResultMock.TimedOutResult;
+#else
+		return tcs.Task.IsCompletedSuccessfully
+			? tcs.Task.Result
+			: WaitForChangedResultMock.TimedOutResult;
+#endif
+	}
+
+	private struct WaitForChangedResultMock : IWaitForChangedResult
+	{
+		public WaitForChangedResultMock(
+			WatcherChangeTypes changeType,
+			string? name,
+			string? oldName,
+			bool timedOut)
+		{
+			ChangeType = changeType;
+			Name = name;
+			OldName = oldName;
+			TimedOut = timedOut;
+		}
+
+		/// <summary>
+		///     The instance representing a timed out <see cref="WaitForChangedResult" />.
+		/// </summary>
+		public static readonly WaitForChangedResultMock TimedOutResult =
+			new(changeType: 0, name: null, oldName: null, timedOut: true);
+
+		/// <inheritdoc cref="IWaitForChangedResult.ChangeType" />
+		public WatcherChangeTypes ChangeType { get; }
+
+		/// <inheritdoc cref="IWaitForChangedResult.Name" />
+		public string? Name { get; }
+
+		/// <inheritdoc cref="IWaitForChangedResult.OldName" />
+		public string? OldName { get; }
+
+		/// <inheritdoc cref="IWaitForChangedResult.TimedOut" />
+		public bool TimedOut { get; }
+	}
+
+	[StructLayout(LayoutKind.Auto)]
+	private readonly struct RenamedContext(
+		bool comesFromOutside,
+		bool comesFromInside,
+		bool goesToInside,
+		bool goesToOutside,
+		int oldSubDirectoryCount
+	)
+	{
+		private const int NestedLevelCount = 1;
+
+		public bool ComesFromOutside { get; } = comesFromOutside;
+
+		public bool ComesFromInside { get; } = comesFromInside;
+
+		public bool GoesToInside { get; } = goesToInside;
+
+		public bool GoesToOutside { get; } = goesToOutside;
+
+		/// <remarks>
+		///     If this is <see langword="true" /> then <see cref="ComesFromDeepNested" /> is <see langword="false" />
+		/// </remarks>
+		public bool ComesFromNested { get; } = oldSubDirectoryCount == NestedLevelCount;
+
+		/// <remarks>
+		///     If this is <see langword="true" /> then <see cref="ComesFromNested" /> is <see langword="false" />
+		/// </remarks>
+		public bool ComesFromDeepNested { get; } = oldSubDirectoryCount > NestedLevelCount;
+	}
+
+	internal sealed class ChangeDescriptionEventArgs(ChangeDescription changeDescription)
+		: EventArgs
+	{
+		public ChangeDescription ChangeDescription { get; } = changeDescription;
 	}
 
 	#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
@@ -723,289 +1003,4 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 	}
 	#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
-
-	private static void CheckRenamePremise(RenamedContext context)
-	{
-		Debug.Assert(
-			context is not { ComesFromOutside: true, GoesToInside: true },
-			"The premise { ComesFromOutside: true, GoesToInside: true } should have been handled."
-		);
-
-		Debug.Assert(
-			context is not { ComesFromInside: true, GoesToInside: true },
-			"The premise { ComesFromInside: true, GoesToInside: true } should have been handled."
-		);
-
-		Debug.Assert(
-			!context.GoesToOutside, "The premise { GoesToOutside: true } should have been handled."
-		);
-	}
-
-	private string? GetNormalizedParent(string? path)
-	{
-		if (path == null)
-		{
-			return null;
-		}
-
-		string normalized = GetNormalizedFullPath(path);
-
-		return _fileSystem.Execute.Path.GetDirectoryName(normalized)
-			?.TrimEnd(_fileSystem.Execute.Path.DirectorySeparatorChar);
-	}
-
-	private string GetNormalizedFullPath(string path)
-	{
-		string normalized = _fileSystem.Execute.Path.GetFullPath(path);
-
-		return normalized.TrimEnd(_fileSystem.Execute.Path.DirectorySeparatorChar);
-	}
-
-	/// <summary>
-	///     Counts the number of directory separators inside the relative path to <see cref="FullPath" />
-	/// </summary>
-	/// <param name="path"></param>
-	/// <returns>The number of directory separators inside the relative path to <see cref="FullPath" /></returns>
-	/// <remarks>Returns -1 if the path is outside the <see cref="FullPath" /></remarks>
-	private int GetSubDirectoryCount(string path)
-	{
-		string normalizedPath = GetNormalizedFullPath(path);
-
-		if (!normalizedPath.StartsWith(FullPath, _fileSystem.Execute.StringComparisonMode))
-		{
-			return -1;
-		}
-
-		return normalizedPath.Substring(FullPath.Length)
-			.TrimStart(_fileSystem.Execute.Path.DirectorySeparatorChar)
-			.Count(c => c == _fileSystem.Execute.Path.DirectorySeparatorChar);
-	}
-
-	private bool IsItemNameChange(ChangeDescription changeDescription)
-	{
-		string normalizedPath = GetNormalizedFullPath(changeDescription.Path);
-		string normalizedOldPath = GetNormalizedFullPath(changeDescription.OldPath!);
-
-		string name = _fileSystem.Execute.Path.GetFileName(normalizedPath);
-		string oldName = _fileSystem.Execute.Path.GetFileName(normalizedOldPath);
-
-		if (name.Equals(oldName, _fileSystem.Execute.StringComparisonMode))
-		{
-			return false;
-		}
-
-		if (name.Length == 0 || oldName.Length == 0)
-		{
-			return false;
-		}
-
-		string? parent = _fileSystem.Execute.Path.GetDirectoryName(normalizedPath);
-		string? oldParent = _fileSystem.Execute.Path.GetDirectoryName(normalizedOldPath);
-
-		return string.Equals(parent, oldParent, _fileSystem.Execute.StringComparisonMode);
-	}
-
-	private bool TryMakeRenamedEventArgs(
-		ChangeDescription changeDescription,
-		[NotNullWhen(true)] out RenamedEventArgs? eventArgs
-	)
-	{
-		if (changeDescription.OldPath == null)
-		{
-			eventArgs = null;
-
-			return false;
-		}
-
-		string name = TransformPathAndName(changeDescription.Path);
-
-		string oldName = TransformPathAndName(changeDescription.OldPath);
-
-		eventArgs = new RenamedEventArgs(changeDescription.ChangeType, Path, name, oldName);
-
-		SetFileSystemEventArgsFullPath(eventArgs, name);
-		SetRenamedEventArgsFullPath(eventArgs, oldName);
-
-		return true;
-	}
-
-	private FileSystemEventArgs ToFileSystemEventArgs(
-		WatcherChangeTypes changeType,
-		string changePath)
-	{
-		string name = TransformPathAndName(changePath);
-
-		FileSystemEventArgs eventArgs = new(changeType, Path, name);
-
-		SetFileSystemEventArgsFullPath(eventArgs, name);
-
-		return eventArgs;
-	}
-
-	private string TransformPathAndName(string changeDescriptionPath)
-	{
-		return changeDescriptionPath.Substring(FullPath.Length)
-			.TrimStart(_fileSystem.Execute.Path.DirectorySeparatorChar);
-	}
-
-	private void SetFileSystemEventArgsFullPath(FileSystemEventArgs args, string name)
-	{
-		if (_fileSystem.SimulationMode == SimulationMode.Native)
-		{
-			return;
-		}
-
-		string fullPath = _fileSystem.Execute.Path.Combine(Path, name);
-
-		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
-		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
-#if NETFRAMEWORK
-			typeof(FileSystemEventArgs)
-				.GetField("fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-				.SetValue(args, fullPath);
-#else
-		typeof(FileSystemEventArgs)
-			.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-			.SetValue(args, fullPath);
-#endif
-	}
-
-	private void SetRenamedEventArgsFullPath(RenamedEventArgs args, string oldName)
-	{
-		if (_fileSystem.SimulationMode == SimulationMode.Native)
-		{
-			return;
-		}
-
-		string fullPath = _fileSystem.Execute.Path.Combine(Path, oldName);
-
-		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
-		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
-#if NETFRAMEWORK
-			typeof(RenamedEventArgs)
-				.GetField("oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-				.SetValue(args, fullPath);
-#else
-		typeof(RenamedEventArgs)
-			.GetField("_oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
-			.SetValue(args, fullPath);
-#endif
-	}
-
-	private IWaitForChangedResult WaitForChangedInternal(
-		WatcherChangeTypes changeType, TimeSpan timeout)
-	{
-		TaskCompletionSource<IWaitForChangedResult>
-			tcs = new();
-
-		void EventHandler(object? _, ChangeDescriptionEventArgs c)
-		{
-			if ((c.ChangeDescription.ChangeType & changeType) != 0)
-			{
-				tcs.TrySetResult(new WaitForChangedResultMock(
-					c.ChangeDescription.ChangeType,
-					c.ChangeDescription.Name,
-					oldName: c.ChangeDescription.OldName,
-					timedOut: false));
-			}
-		}
-
-		InternalEvent += EventHandler;
-		try
-		{
-			bool wasEnabled = EnableRaisingEvents;
-			if (!wasEnabled)
-			{
-				EnableRaisingEvents = true;
-			}
-
-			#pragma warning disable MA0040
-			tcs.Task.Wait(timeout);
-			#pragma warning restore MA0040
-			EnableRaisingEvents = wasEnabled;
-		}
-		finally
-		{
-			InternalEvent -= EventHandler;
-		}
-
-#if NETFRAMEWORK
-		return tcs.Task.IsCompleted
-			? tcs.Task.Result
-			: WaitForChangedResultMock.TimedOutResult;
-#else
-		return tcs.Task.IsCompletedSuccessfully
-			? tcs.Task.Result
-			: WaitForChangedResultMock.TimedOutResult;
-#endif
-	}
-
-	private struct WaitForChangedResultMock : IWaitForChangedResult
-	{
-		public WaitForChangedResultMock(
-			WatcherChangeTypes changeType,
-			string? name,
-			string? oldName,
-			bool timedOut)
-		{
-			ChangeType = changeType;
-			Name = name;
-			OldName = oldName;
-			TimedOut = timedOut;
-		}
-
-		/// <summary>
-		///     The instance representing a timed out <see cref="WaitForChangedResult" />.
-		/// </summary>
-		public static readonly WaitForChangedResultMock TimedOutResult =
-			new(changeType: 0, name: null, oldName: null, timedOut: true);
-
-		/// <inheritdoc cref="IWaitForChangedResult.ChangeType" />
-		public WatcherChangeTypes ChangeType { get; }
-
-		/// <inheritdoc cref="IWaitForChangedResult.Name" />
-		public string? Name { get; }
-
-		/// <inheritdoc cref="IWaitForChangedResult.OldName" />
-		public string? OldName { get; }
-
-		/// <inheritdoc cref="IWaitForChangedResult.TimedOut" />
-		public bool TimedOut { get; }
-	}
-
-	[StructLayout(LayoutKind.Auto)]
-	private readonly struct RenamedContext(
-		bool comesFromOutside,
-		bool comesFromInside,
-		bool goesToInside,
-		bool goesToOutside,
-		int oldSubDirectoryCount
-	)
-	{
-		private const int NestedLevelCount = 1;
-
-		public bool ComesFromOutside { get; } = comesFromOutside;
-
-		public bool ComesFromInside { get; } = comesFromInside;
-
-		public bool GoesToInside { get; } = goesToInside;
-
-		public bool GoesToOutside { get; } = goesToOutside;
-
-		/// <remarks>
-		///     If this is <see langword="true" /> then <see cref="ComesFromDeepNested" /> is <see langword="false" />
-		/// </remarks>
-		public bool ComesFromNested { get; } = oldSubDirectoryCount == NestedLevelCount;
-
-		/// <remarks>
-		///     If this is <see langword="true" /> then <see cref="ComesFromNested" /> is <see langword="false" />
-		/// </remarks>
-		public bool ComesFromDeepNested { get; } = oldSubDirectoryCount > NestedLevelCount;
-	}
-
-	internal sealed class ChangeDescriptionEventArgs(ChangeDescription changeDescription)
-		: EventArgs
-	{
-		public ChangeDescription ChangeDescription { get; } = changeDescription;
-	}
 }
