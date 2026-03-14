@@ -618,46 +618,44 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			}
 		});
 		_ = Task.Run(async () =>
+			{
+				try
 				{
-					try
+					while (await reader.WaitToReadAsync(token).ConfigureAwait(false))
 					{
-						while (await reader.WaitToReadAsync(token).ConfigureAwait(false))
-						{
-							while (reader.TryRead(out ChangeDescription? c))
-							{
-								NotifyChange(c);
-							}
-						}
-					}
-					catch (OperationCanceledException) when (token.IsCancellationRequested)
-					{
-						// The token was canceled: drain any already-buffered items without honoring cancellation
 						while (reader.TryRead(out ChangeDescription? c))
 						{
 							NotifyChange(c);
 						}
 					}
-					catch (Exception)
+				}
+				catch (OperationCanceledException) when (token.IsCancellationRequested)
+				{
+					while (reader.TryRead(out ChangeDescription? c))
 					{
-						// Ignore any other exception
+						NotifyChange(c);
 					}
-					finally
-					{
-						// Complete the writer and ensure the reader can finish, then dispose the CTS
-						channel.Writer.TryComplete();
+				}
+				catch (Exception)
+				{
+					// Ignore any other exception
+				}
+				finally
+				{
+					channel.Writer.TryComplete();
 
+					while (reader.TryRead(out _))
+					{
 						// Drain and ignore any remaining items so that Reader.Completion can complete deterministically
-						while (reader.TryRead(out _))
-						{
-						}
-
-						_ = channel.Reader.Completion.ContinueWith(_ =>
-						{
-							cancellationTokenSource.Dispose();
-						}, CancellationToken.None);
 					}
-				},
-				token);
+
+					_ = channel.Reader.Completion.ContinueWith(_ =>
+					{
+						cancellationTokenSource.Dispose();
+					}, CancellationToken.None);
+				}
+			},
+			token);
 	}
 
 	private void Stop()
