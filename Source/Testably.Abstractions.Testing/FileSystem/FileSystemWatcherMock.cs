@@ -629,22 +629,35 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 							}
 						}
 					}
+					catch (OperationCanceledException) when (token.IsCancellationRequested)
+					{
+						// The token was canceled: drain any already-buffered items without honoring cancellation
+						while (reader.TryRead(out ChangeDescription? c))
+						{
+							NotifyChange(c);
+						}
+					}
 					catch (Exception)
 					{
-						// Ignore any exception, e.g. an OperationCanceledException when the token is canceled
+						// Ignore any other exception
+					}
+					finally
+					{
+						// Complete the writer and ensure the reader can finish, then dispose the CTS
+						channel.Writer.TryComplete();
+
+						// Drain and ignore any remaining items so that Reader.Completion can complete deterministically
+						while (reader.TryRead(out _))
+						{
+						}
+
+						_ = channel.Reader.Completion.ContinueWith(_ =>
+						{
+							cancellationTokenSource.Dispose();
+						}, CancellationToken.None);
 					}
 				},
-				token)
-			.ContinueWith(__ =>
-			{
-				if (channel.Writer.TryComplete())
-				{
-					_ = channel.Reader.Completion.ContinueWith(_ =>
-					{
-						cancellationTokenSource.Dispose();
-					}, CancellationToken.None);
-				}
-			}, TaskScheduler.Default);
+				token);
 	}
 
 	private void Stop()
