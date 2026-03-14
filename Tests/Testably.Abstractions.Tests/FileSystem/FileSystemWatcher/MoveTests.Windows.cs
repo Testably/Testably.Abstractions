@@ -59,7 +59,7 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(createdMs.Wait(ExpectTimeout, CancellationToken))
+		await That(createdMs.Wait(includeSubdirectories ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
 		await That(deletedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
@@ -133,9 +133,9 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(deletedMs.Wait(ExpectTimeout, CancellationToken)).IsTrue();
+		await That(deletedMs.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 
-		await That(createdMs.Wait(ExpectTimeout, CancellationToken))
+		await That(createdMs.Wait(includeSubdirectories ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
 		await That(renamedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
@@ -229,10 +229,10 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(createdMs.Wait(ExpectTimeout, CancellationToken))
+		await That(createdMs.Wait(isCreated ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(isCreated);
 
-		await That(deletedMs.Wait(ExpectTimeout, CancellationToken))
+		await That(deletedMs.Wait(includeSubdirectories ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
 		await That(renamedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
@@ -333,10 +333,10 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(createdMs.Wait(ExpectTimeout, CancellationToken))
+		await That(createdMs.Wait(isCreated ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(isCreated);
 
-		await That(deletedMs.Wait(ExpectTimeout, CancellationToken))
+		await That(deletedMs.Wait(includeSubdirectories ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
 		await That(renamedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();

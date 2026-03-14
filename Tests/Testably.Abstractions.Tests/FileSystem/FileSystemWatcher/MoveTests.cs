@@ -6,8 +6,6 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 [FileSystemTests]
-// TODO #956: Investigate, why these tests are not stable when run in parallel
-[NotInParallel(nameof(MoveTests))]
 public partial class MoveTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	[Test]
@@ -51,7 +49,7 @@ public partial class MoveTests(FileSystemTestData testData) : FileSystemTestBase
 
 		// Assert
 
-		await That(createdMs.Wait(ExpectTimeout, CancellationToken)).IsTrue();
+		await That(createdMs.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 
 		await That(deletedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 		await That(renamedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
@@ -122,7 +120,7 @@ public partial class MoveTests(FileSystemTestData testData) : FileSystemTestBase
 
 		// Assert
 
-		await That(deletedMs.Wait(ExpectTimeout, CancellationToken))
+		await That(deletedMs.Wait(shouldInvokeDeleted ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(shouldInvokeDeleted);
 
 		await That(createdMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
@@ -206,7 +204,7 @@ public partial class MoveTests(FileSystemTestData testData) : FileSystemTestBase
 
 		// Assert
 
-		await That(renamedMs.Wait(ExpectTimeout, CancellationToken))
+		await That(renamedMs.Wait(shouldInvokeRenamed ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(shouldInvokeRenamed);
 
 		await That(deletedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();

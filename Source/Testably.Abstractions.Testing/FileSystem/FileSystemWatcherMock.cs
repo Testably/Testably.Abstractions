@@ -492,17 +492,21 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 						InternalBufferSize, channelCapacity)));
 			}
 		});
-		_ = Task.Run(() =>
+		_ = Task.Run(async () =>
 				{
 					try
 					{
-						while (!token.IsCancellationRequested)
+						while (await reader.WaitToReadAsync(token).ConfigureAwait(false))
 						{
-							if (reader.TryRead(out ChangeDescription? c))
+							while (reader.TryRead(out ChangeDescription? c))
 							{
 								NotifyChange(c);
 							}
 						}
+					}
+					catch (OperationCanceledException)
+					{
+						// Expected when the token is cancelled
 					}
 					catch (Exception)
 					{

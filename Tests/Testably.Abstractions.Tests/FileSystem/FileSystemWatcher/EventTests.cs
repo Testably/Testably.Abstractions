@@ -7,7 +7,6 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 [FileSystemTests]
-[NotInParallel(nameof(EventTests))]
 public class EventTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	[Test]

@@ -63,7 +63,7 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(createdMs.Wait(ExpectTimeout, CancellationToken))
+		await That(createdMs.Wait(includeSubdirectories ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
 		await That(deletedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
@@ -147,10 +147,10 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(deletedMs.Wait(ExpectTimeout, CancellationToken))
+		await That(deletedMs.Wait(!isRenamed ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(!isRenamed);
 
-		await That(renamedMs.Wait(ExpectTimeout, CancellationToken))
+		await That(renamedMs.Wait(isRenamed ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(isRenamed);
 
 		await That(changedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
@@ -255,10 +255,10 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(createdMs.Wait(ExpectTimeout, CancellationToken))
+		await That(createdMs.Wait(isCreated ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(isCreated);
 
-		await That(renamedMs.Wait(ExpectTimeout, CancellationToken))
+		await That(renamedMs.Wait(includeSubdirectories ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
 		await That(changedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
@@ -360,10 +360,10 @@ public partial class MoveTests
 
 		// Assert
 
-		await That(createdMs.Wait(ExpectTimeout, CancellationToken))
+		await That(createdMs.Wait(isCreated ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(isCreated);
 
-		await That(renamedMs.Wait(ExpectTimeout, CancellationToken))
+		await That(renamedMs.Wait(includeSubdirectories ? ExpectSuccess : ExpectTimeout, CancellationToken))
 			.IsEqualTo(includeSubdirectories);
 
 		await That(changedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
