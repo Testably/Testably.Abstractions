@@ -97,7 +97,7 @@ public abstract class FileSystemTestData
 		/// <inheritdoc />
 		public override IDirectoryCleaner GetDirectoryCleaner(IFileSystem fileSystem)
 			=> fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory(
-				$"{_dataGeneratorMetadata.TestInformation?.Class.Name}{fileSystem.Path.DirectorySeparatorChar}{_dataGeneratorMetadata.TestInformation?.Name ?? _dataGeneratorMetadata.TestSessionId}-",
+				$"{_dataGeneratorMetadata.TestInformation?.Class.Name}-{_dataGeneratorMetadata.TestInformation?.Name ?? _dataGeneratorMetadata.TestSessionId}-",
 				Console.WriteLine);
 
 		/// <inheritdoc />
