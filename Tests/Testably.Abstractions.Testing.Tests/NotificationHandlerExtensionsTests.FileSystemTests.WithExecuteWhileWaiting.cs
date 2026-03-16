@@ -6,6 +6,7 @@ public partial class NotificationHandlerExtensionsTests
 	{
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnChanged_File_OtherEvent_ShouldNotTrigger(
 			string path)
 		{
@@ -28,6 +29,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnChanged_File_ShouldConsiderBasePath(
 			string path1,
 			string path2)
@@ -58,6 +60,7 @@ public partial class NotificationHandlerExtensionsTests
 		[Arguments("bar", "foo", "baz/f*o", false)]
 		[Arguments("bar", "foo", "/f*o", false)]
 		[Arguments("bar", "foo", "**/f*o", true)]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnChanged_File_ShouldConsiderGlobPattern(
 			string directoryPath, string fileName, string globPattern, bool expectedResult)
 		{
@@ -91,6 +94,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnChanged_File_ShouldNotifyWhenFileIsChanged(
 			string path)
 		{
@@ -111,6 +115,7 @@ public partial class NotificationHandlerExtensionsTests
 		[Test]
 		[AutoArguments(false)]
 		[AutoArguments(true)]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnChanged_File_ShouldUsePredicate(
 			bool expectedResult,
 			string path)
@@ -144,6 +149,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnCreated_Directory_OtherEvent_ShouldNotTrigger(
 			string path)
 		{
@@ -167,6 +173,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnCreated_Directory_ShouldConsiderBasePath(
 			string path1, string path2)
 		{
@@ -194,6 +201,7 @@ public partial class NotificationHandlerExtensionsTests
 		[Arguments("bar", "foo", "baz/f*o", false)]
 		[Arguments("bar", "foo", "/f*o", false)]
 		[Arguments("bar", "foo", "**/f*o", true)]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnCreated_Directory_ShouldConsiderGlobPattern(
 			string directoryPath, string fileName, string globPattern, bool expectedResult)
 		{
@@ -227,6 +235,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task
 			WithExecuteWhileWaiting_OnCreated_Directory_ShouldNotifyWhenDirectoryIsCreated(
 				string path)
@@ -247,6 +256,7 @@ public partial class NotificationHandlerExtensionsTests
 		[Test]
 		[AutoArguments(false)]
 		[AutoArguments(true)]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnCreated_Directory_ShouldUsePredicate(
 			bool expectedResult, string path)
 		{
@@ -278,6 +288,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnCreated_File_OtherEvent_ShouldNotTrigger(
 			string path)
 		{
@@ -301,6 +312,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnCreated_File_ShouldConsiderBasePath(
 			string path1,
 			string path2)
@@ -329,6 +341,7 @@ public partial class NotificationHandlerExtensionsTests
 		[Arguments("bar", "foo", "baz/f*o", false)]
 		[Arguments("bar", "foo", "/f*o", false)]
 		[Arguments("bar", "foo", "**/f*o", true)]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnCreated_File_ShouldConsiderGlobPattern(
 			string directoryPath, string fileName, string globPattern, bool expectedResult)
 		{
@@ -362,6 +375,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnCreated_File_ShouldNotifyWhenFileIsCreated(
 			string path)
 		{
@@ -381,6 +395,7 @@ public partial class NotificationHandlerExtensionsTests
 		[Test]
 		[AutoArguments(false)]
 		[AutoArguments(true)]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnCreated_File_ShouldUsePredicate(
 			bool expectedResult,
 			string path)
@@ -413,6 +428,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnDeleted_Directory_OtherEvent_ShouldNotTrigger(
 			string path)
 		{
@@ -435,6 +451,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnDeleted_Directory_ShouldConsiderBasePath(
 			string path1, string path2)
 		{
@@ -464,6 +481,7 @@ public partial class NotificationHandlerExtensionsTests
 		[Arguments("bar", "foo", "baz/f*o", false)]
 		[Arguments("bar", "foo", "/f*o", false)]
 		[Arguments("bar", "foo", "**/f*o", true)]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnDeleted_Directory_ShouldConsiderGlobPattern(
 			string basePath, string directoryName, string globPattern, bool expectedResult)
 		{
@@ -498,6 +516,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task
 			WithExecuteWhileWaiting_OnDeleted_Directory_ShouldNotifyWhenDirectoryIsDeleted(
 				string path)
@@ -519,6 +538,7 @@ public partial class NotificationHandlerExtensionsTests
 		[Test]
 		[AutoArguments(false)]
 		[AutoArguments(true)]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnDeleted_Directory_ShouldUsePredicate(
 			bool expectedResult, string path)
 		{
@@ -551,6 +571,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnDeleted_File_OtherEvent_ShouldNotTrigger(
 			string path)
 		{
@@ -573,6 +594,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnDeleted_File_ShouldConsiderBasePath(
 			string path1,
 			string path2)
@@ -603,6 +625,7 @@ public partial class NotificationHandlerExtensionsTests
 		[Arguments("bar", "foo", "baz/f*o", false)]
 		[Arguments("bar", "foo", "/f*o", false)]
 		[Arguments("bar", "foo", "**/f*o", true)]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnDeleted_File_ShouldConsiderGlobPattern(
 			string directoryPath, string fileName, string globPattern, bool expectedResult)
 		{
@@ -637,6 +660,7 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnDeleted_File_ShouldNotifyWhenFileIsDeleted(
 			string path)
 		{
@@ -657,6 +681,7 @@ public partial class NotificationHandlerExtensionsTests
 		[Test]
 		[AutoArguments(false)]
 		[AutoArguments(true)]
+		[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
 		public async Task WithExecuteWhileWaiting_OnDeleted_File_ShouldUsePredicate(
 			bool expectedResult,
 			string path)
