@@ -121,36 +121,36 @@ public class MockTimeSystemTests
 		List<DateTime> tickTimes = [];
 		using CancellationTokenSource cts = CancellationTokenSource
 			.CreateLinkedTokenSource(TestContext.Current!.Execution.CancellationToken);
+		cts.CancelAfter(30.Seconds());
 		CancellationToken token = cts.Token;
-		_ = Task.Run(async () =>
+		using SemaphoreSlim waitStarted = new(0, amount);
+		using SemaphoreSlim tickObserved = new(0, amount);
+
+		Task backgroundTask = Task.Run(async () =>
 		{
-			try
+			using IPeriodicTimer periodicTimer = timeSystem.PeriodicTimer.New(1.Seconds());
+			for (int i = 0; i < amount; i++)
 			{
-				using IPeriodicTimer periodicTimer = timeSystem.PeriodicTimer.New(1.Seconds());
-				timeSystem.TimeProvider.AdvanceBy(2.Seconds());
-				while (await periodicTimer.WaitForNextTickAsync(token))
-				{
-					tickTimes.Add(timeSystem.DateTime.UtcNow);
-				}
-			}
-			catch (OperationCanceledException)
-			{
-				// Ignore cancelled tasks
-			}
-			catch (ObjectDisposedException)
-			{
-				// Ignore if the semaphore has already been disposed
+				ValueTask<bool> waitForTickTask = periodicTimer.WaitForNextTickAsync(token);
+				// ReSharper disable once AccessToDisposedClosure
+				waitStarted.Release();
+				_ = await waitForTickTask;
+				tickTimes.Add(timeSystem.DateTime.UtcNow);
+				// ReSharper disable once AccessToDisposedClosure
+				tickObserved.Release();
 			}
 		}, token);
 
-		for (int i = 1; i < amount; i++)
+		for (int i = 0; i < amount; i++)
 		{
-			await Task.Delay(50);
+			await waitStarted.WaitAsync(token);
 			timeSystem.TimeProvider.AdvanceBy(2.Seconds());
+			await tickObserved.WaitAsync(token);
 		}
+
+		await backgroundTask;
 		await That(tickTimes).HasCount(amount);
-		// ReSharper disable once MethodHasAsyncOverload
-		cts.Cancel();
+		await That(tickTimes).All().Satisfy(t => t.Second % 2 == 0);
 	}
 #endif
 
