@@ -8,14 +8,17 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 
 internal sealed class TaskMock : ITask
 {
+	private readonly bool _autoAdvance;
 	private readonly NotificationHandler _callbackHandler;
 	private readonly MockTimeSystem _mockTimeSystem;
 
 	internal TaskMock(MockTimeSystem timeSystem,
-		NotificationHandler callbackHandler)
+		NotificationHandler callbackHandler,
+		bool autoAdvance)
 	{
 		_mockTimeSystem = timeSystem;
 		_callbackHandler = callbackHandler;
+		_autoAdvance = autoAdvance;
 	}
 
 	#region ITask Members
@@ -53,7 +56,11 @@ internal sealed class TaskMock : ITask
 			throw ExceptionFactory.TaskWasCanceled();
 		}
 
-		_mockTimeSystem.TimeProvider.AdvanceBy(delay);
+		if (_autoAdvance)
+		{
+			_mockTimeSystem.TimeProvider.AdvanceBy(delay);
+		}
+
 		_callbackHandler.InvokeTaskDelayCallbacks(delay);
 		return Task.CompletedTask;
 	}

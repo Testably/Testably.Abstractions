@@ -12,13 +12,15 @@ internal sealed class PeriodicTimerMock : IPeriodicTimer
 	private bool _isDisposed;
 	private DateTime _lastTime;
 	private readonly MockTimeSystem _timeSystem;
+	private readonly bool _autoAdvance;
 
 	internal PeriodicTimerMock(MockTimeSystem timeSystem,
-		TimeSpan period)
+		TimeSpan period, bool autoAdvance)
 	{
 		ThrowIfPeriodIsInvalid(period, nameof(period));
 
 		_timeSystem = timeSystem;
+		_autoAdvance = autoAdvance;
 		_lastTime = _timeSystem.DateTime.UtcNow;
 		Period = period;
 	}
@@ -60,8 +62,18 @@ internal sealed class PeriodicTimerMock : IPeriodicTimer
 		DateTime nextTime = _lastTime + Period;
 		if (nextTime > now)
 		{
-			_timeSystem.TimeProvider.AdvanceBy(nextTime - now);
-			_lastTime = nextTime;
+			if (_autoAdvance)
+			{
+				_timeSystem.TimeProvider.AdvanceBy(nextTime - now);
+				_lastTime = nextTime;
+			}
+			else
+			{
+				using var wait = _timeSystem.On
+					.TimeChanged(predicate: t => t >= nextTime);
+				await wait.WaitAsync().ConfigureAwait(false);
+				_lastTime = _timeSystem.DateTime.UtcNow;
+			}
 		}
 		else
 		{

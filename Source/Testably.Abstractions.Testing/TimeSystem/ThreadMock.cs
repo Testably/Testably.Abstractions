@@ -7,14 +7,17 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 
 internal sealed class ThreadMock : IThread
 {
+	private readonly bool _autoAdvance;
 	private readonly NotificationHandler _callbackHandler;
 	private readonly MockTimeSystem _mockTimeSystem;
 
 	internal ThreadMock(MockTimeSystem timeSystem,
-		NotificationHandler callbackHandler)
+		NotificationHandler callbackHandler,
+		bool autoAdvance)
 	{
 		_mockTimeSystem = timeSystem;
 		_callbackHandler = callbackHandler;
+		_autoAdvance = autoAdvance;
 	}
 
 	#region IThread Members
@@ -33,7 +36,11 @@ internal sealed class ThreadMock : IThread
 			throw ExceptionFactory.ThreadSleepOutOfRange(nameof(timeout));
 		}
 
-		_mockTimeSystem.TimeProvider.AdvanceBy(timeout);
+		if (_autoAdvance)
+		{
+			_mockTimeSystem.TimeProvider.AdvanceBy(timeout);
+		}
+
 		Thread.Yield();
 		_callbackHandler.InvokeThreadSleepCallbacks(timeout);
 	}

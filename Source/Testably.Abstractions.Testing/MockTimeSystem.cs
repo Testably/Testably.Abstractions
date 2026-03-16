@@ -40,14 +40,28 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with a random time.
 	/// </summary>
-	public MockTimeSystem() : this(Testing.TimeProvider.Random())
+	public MockTimeSystem() : this(Testing.TimeProvider.Random(), options => options)
+	{
+	}
+
+	/// <summary>
+	///     Initializes the <see cref="MockTimeSystem" /> with a random time.
+	/// </summary>
+	public MockTimeSystem(Func<MockTimeSystemOptions, MockTimeSystemOptions> options) : this(Testing.TimeProvider.Random(), options)
 	{
 	}
 
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with the specified <paramref name="time" />.
 	/// </summary>
-	public MockTimeSystem(DateTime time) : this(Testing.TimeProvider.Use(time))
+	public MockTimeSystem(DateTime time) : this(Testing.TimeProvider.Use(time), options => options)
+	{
+	}
+
+	/// <summary>
+	///     Initializes the <see cref="MockTimeSystem" /> with the specified <paramref name="time" />.
+	/// </summary>
+	public MockTimeSystem(DateTime time, Func<MockTimeSystemOptions, MockTimeSystemOptions> options) : this(Testing.TimeProvider.Use(time), options)
 	{
 	}
 
@@ -65,16 +79,26 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with the specified <paramref name="timeProvider" />.
 	/// </summary>
-	public MockTimeSystem(ITimeProviderFactory timeProvider)
+	public MockTimeSystem(ITimeProviderFactory timeProvider) : this(timeProvider, options => options)
 	{
+	}
+
+	/// <summary>
+	///     Initializes the <see cref="MockTimeSystem" /> with the specified <paramref name="timeProvider" /> and the given <paramref name="options" />.
+	/// </summary>
+	public MockTimeSystem(ITimeProviderFactory timeProvider, Func<MockTimeSystemOptions, MockTimeSystemOptions> options)
+	{
+		MockTimeSystemOptions initialization = new();
+		initialization = options(initialization);
+		
 		_callbackHandler = new NotificationHandler(this);
 		TimeProvider = timeProvider.Create(_callbackHandler.InvokeTimeChanged);
 		_dateTimeMock = new DateTimeMock(this, _callbackHandler);
 		_stopwatchFactoryMock = new StopwatchFactoryMock(this);
-		_threadMock = new ThreadMock(this, _callbackHandler);
-		_taskMock = new TaskMock(this, _callbackHandler);
+		_threadMock = new ThreadMock(this, _callbackHandler, initialization.AutoAdvance);
+		_taskMock = new TaskMock(this, _callbackHandler, initialization.AutoAdvance);
 #if FEATURE_PERIODIC_TIMER
-		_periodicTimerFactoryMock = new PeriodicTimerFactoryMock(this);
+		_periodicTimerFactoryMock = new PeriodicTimerFactoryMock(this, initialization.AutoAdvance);
 #endif
 		_timerFactoryMock = new TimerFactoryMock(this);
 	}
@@ -121,5 +145,25 @@ public sealed class MockTimeSystem : ITimeSystem
 	{
 		_timerFactoryMock.SetTimerStrategy(timerStrategy);
 		return this;
+	}
+
+	/// <summary>
+	///     The initialization options for the <see cref="MockTimeSystem" />.
+	/// </summary>
+	public class MockTimeSystemOptions
+	{
+		/// <summary>
+		///     Flag indicating if the time should automatically be advanced when waiting for timers, tasks or threads to complete.
+		/// </summary>
+		internal bool AutoAdvance { get; private set; } = true;
+
+		/// <summary>
+		///     Disables automatic advancement of the time when waiting for timers, tasks or threads to complete.
+		/// </summary>
+		public MockTimeSystemOptions DisableAutoAdvance()
+		{
+			AutoAdvance = false;
+			return this;
+		}
 	}
 }
