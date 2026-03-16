@@ -33,7 +33,7 @@ public interface IAwaitableCallback<TValue> : IDisposable
 	///     (optional) A callback to execute when waiting started.
 	/// </param>
 	[Obsolete("Use another `Wait` or `WaitAsync` overload and move the filter to the creation of the awaitable callback.")]
-	void Wait(Func<TValue, bool>? filter = null,
+	void Wait(Func<TValue, bool>? filter,
 		int timeout = 30000,
 		int count = 1,
 		Action? executeWhenWaiting = null);
@@ -52,7 +52,7 @@ public interface IAwaitableCallback<TValue> : IDisposable
 	///     (optional) The timeout to wait on the callback.<br />
 	///     If not specified (<see langword="null" />), defaults to 30 seconds.
 	/// </param>
-	TValue[] Wait(int count, TimeSpan? timeout = null);
+	TValue[] Wait(int count = 1, TimeSpan? timeout = null);
 
 	/// <summary>
 	///     Waits asynchronously until the callback is executed.
