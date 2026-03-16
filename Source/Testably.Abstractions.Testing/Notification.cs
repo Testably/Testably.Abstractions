@@ -17,9 +17,7 @@ public static class Notification
 	///     Executes the <paramref name="callback" /> while waiting for the notification.
 	/// </summary>
 	/// <returns>The <paramref name="awaitable" /> callback.</returns>
-#if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("Execute the callback before calling `Wait` or `WaitAsync` instead.")]
-#endif
 	public static IAwaitableCallback<TValue> ExecuteWhileWaiting<TValue>(
 		this IAwaitableCallback<TValue> awaitable, Action callback)
 	{
@@ -34,9 +32,7 @@ public static class Notification
 	///     Executes the <paramref name="callback" /> while waiting for the notification.
 	/// </summary>
 	/// <returns>The <paramref name="awaitable" /> callback.</returns>
-#if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("Execute the callback before calling `Wait` or `WaitAsync` instead.")]
-#endif
 	public static IAwaitableCallback<TValue, TFunc> ExecuteWhileWaiting<TValue, TFunc>(
 		this IAwaitableCallback<TValue> awaitable, Func<TFunc> callback)
 	{
@@ -117,7 +113,7 @@ public static class Notification
 			}
 
 			/// <inheritdoc cref="IAwaitableCallback{TValue}.Wait(Func{TValue, bool}?, int, int, Action?)" />
-			public void Wait(Func<TValue, bool>? filter = null,
+			public void Wait(Func<TValue, bool>? filter,
 				int timeout = 30000,
 				int count = 1,
 				Action? executeWhenWaiting = null)
@@ -159,7 +155,7 @@ public static class Notification
 			}
 
 			/// <inheritdoc />
-			public TValue[] Wait(int count, TimeSpan? timeout = null)
+			public TValue[] Wait(int count = 1, TimeSpan? timeout = null)
 			{
 				if (_isDisposed)
 				{
@@ -276,9 +272,7 @@ public static class Notification
 	///     - un-registering a callback by calling <see cref="IDisposable.Dispose()" /><br />
 	///     - blocking for the callback to be executed
 	/// </summary>
-#if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("Will be removed when `ExecuteWhileWaiting` is removed.")]
-#endif
 	public interface IAwaitableCallback<TValue, out TFunc>
 		: IAwaitableCallback<TValue>
 	{
@@ -305,15 +299,13 @@ public static class Notification
 		/// <param name="executeWhenWaiting">
 		///     (optional) A callback to execute when waiting started.
 		/// </param>
-		new TFunc Wait(Func<TValue, bool>? filter = null,
+		new TFunc Wait(Func<TValue, bool>? filter,
 			int timeout = 30000,
 			int count = 1,
 			Action? executeWhenWaiting = null);
 	}
 
-#if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("Will be removed when `ExecuteWhileWaiting` is removed.")]
-#endif
 	private sealed class CallbackWaiterWithValue<TValue, TFunc>
 		: IAwaitableCallback<TValue, TFunc>
 	{
@@ -334,11 +326,8 @@ public static class Notification
 			=> _awaitableCallback.Dispose();
 
 		/// <inheritdoc cref="IAwaitableCallback{TValue, TFunc}.Wait(Func{TValue, bool}?,int,int, Action?)" />
-#if MarkExecuteWhileWaitingNotificationObsolete
-		[Obsolete(
-			"Use another `Wait` or `WaitAsync` overload and move the filter to the creation of the awaitable callback.")]
-#endif
-		public TFunc Wait(Func<TValue, bool>? filter = null,
+		[Obsolete("Use another `Wait` or `WaitAsync` overload and move the filter to the creation of the awaitable callback.")]
+		public TFunc Wait(Func<TValue, bool>? filter,
 			int timeout = 30000,
 			int count = 1,
 			Action? executeWhenWaiting = null)
@@ -353,7 +342,7 @@ public static class Notification
 		}
 
 		/// <inheritdoc />
-		public TValue[] Wait(int count, TimeSpan? timeout = null)
+		public TValue[] Wait(int count = 1, TimeSpan? timeout = null)
 		{
 			_valueProvider();
 			return _awaitableCallback.Wait(count, timeout);

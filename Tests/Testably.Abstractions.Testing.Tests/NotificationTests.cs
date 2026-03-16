@@ -70,9 +70,7 @@ public partial class NotificationTests
 	}
 
 	[Test]
-#if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("TODO: Remove once the obsolete filter overload is removed from the public API.")]
-#endif
 	public async Task AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		MockTimeSystem timeSystem = new();
@@ -307,9 +305,7 @@ public partial class NotificationTests
 
 	[Test]
 	[AutoArguments]
-#if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
-#endif
 	public async Task Execute_ShouldBeExecutedBeforeWait(int milliseconds)
 	{
 		MockTimeSystem timeSystem = new();
@@ -325,7 +321,7 @@ public partial class NotificationTests
 			{
 				timeSystem.Thread.Sleep(milliseconds);
 			})
-			.Wait(executeWhenWaiting: () =>
+			.Wait(null, executeWhenWaiting: () =>
 			{
 				isExecuted = true;
 			});
@@ -336,9 +332,7 @@ public partial class NotificationTests
 
 	[Test]
 	[AutoArguments]
-#if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
-#endif
 	public async Task Execute_WithReturnValue_ShouldBeExecutedAndReturnValue(
 		int milliseconds, string result)
 	{
@@ -356,7 +350,7 @@ public partial class NotificationTests
 				timeSystem.Thread.Sleep(milliseconds);
 				return result;
 			})
-			.Wait(executeWhenWaiting: () =>
+			.Wait(null, executeWhenWaiting: () =>
 			{
 				isExecuted = true;
 			});
@@ -367,9 +361,7 @@ public partial class NotificationTests
 	}
 
 	[Test]
-#if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
-#endif
 	public async Task ExecuteWhileWaiting_ShouldExecuteCallback()
 	{
 		MockTimeSystem timeSystem = new();
@@ -389,9 +381,7 @@ public partial class NotificationTests
 
 	[Test]
 	[AutoArguments]
-#if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("TODO: Remove once the obsolete ExecuteWhileWaiting method is removed from the public API.")]
-#endif
 	public async Task ExecuteWhileWaiting_WithReturnValue_ShouldExecuteCallback(int result)
 	{
 		MockTimeSystem timeSystem = new();
@@ -405,7 +395,7 @@ public partial class NotificationTests
 				timeSystem.Thread.Sleep(10);
 				return result;
 			})
-			.Wait();
+			.Wait(null);
 
 		await That(actualResult).IsEqualTo(result);
 		await That(isExecuted).IsTrue();

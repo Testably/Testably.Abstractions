@@ -68,9 +68,7 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with the specified <paramref name="timeProvider" />.
 	/// </summary>
-#if MarkExecuteWhileWaitingNotificationObsolete
 	[Obsolete("Use the constructor with ITimeProviderFactory instead.")]
-#endif
 	public MockTimeSystem(ITimeProvider timeProvider) : this(
 		new TimeProvider.Factory(_ => timeProvider))
 	{
