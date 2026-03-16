@@ -102,8 +102,11 @@ namespace Testably.Abstractions.Testing
     {
         public MockTimeSystem() { }
         public MockTimeSystem(System.DateTime time) { }
+        public MockTimeSystem(System.Func<Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions, Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions> options) { }
         public MockTimeSystem(Testably.Abstractions.Testing.TimeSystem.ITimeProvider timeProvider) { }
         public MockTimeSystem(Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory timeProvider) { }
+        public MockTimeSystem(System.DateTime time, System.Func<Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions, Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions> options) { }
+        public MockTimeSystem(Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory timeProvider, System.Func<Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions, Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions> options) { }
         public Testably.Abstractions.TimeSystem.IDateTime DateTime { get; }
         public Testably.Abstractions.Testing.TimeSystem.INotificationHandler On { get; }
         public Testably.Abstractions.TimeSystem.IPeriodicTimerFactory PeriodicTimer { get; }
@@ -115,6 +118,11 @@ namespace Testably.Abstractions.Testing
         public Testably.Abstractions.Testing.TimeSystem.ITimerHandler TimerHandler { get; }
         public override string ToString() { }
         public Testably.Abstractions.Testing.MockTimeSystem WithTimerStrategy(Testably.Abstractions.Testing.TimeSystem.ITimerStrategy timerStrategy) { }
+        public class MockTimeSystemOptions
+        {
+            public MockTimeSystemOptions() { }
+            public Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions DisableAutoAdvance() { }
+        }
     }
     public static class Notification
     {
