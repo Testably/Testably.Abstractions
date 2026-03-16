@@ -69,9 +69,11 @@ internal sealed class PeriodicTimerMock : IPeriodicTimer
 			}
 			else
 			{
-				using var wait = _timeSystem.On
+				using var onTimeChanged = _timeSystem.On
 					.TimeChanged(predicate: t => t >= nextTime);
-				await wait.WaitAsync().ConfigureAwait(false);
+				await onTimeChanged.WaitAsync(
+					timeout: Timeout.InfiniteTimeSpan,
+					cancellationToken: cancellationToken).ConfigureAwait(false);
 				_lastTime = _timeSystem.DateTime.UtcNow;
 			}
 		}
