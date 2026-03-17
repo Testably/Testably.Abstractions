@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using System.Threading;
+﻿using aweXpect.Chronology;
+using System.Diagnostics;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
@@ -10,7 +10,7 @@ public class StopwatchFactoryTests(TimeSystemTestData testData) : TimeSystemTest
 	[Test]
 	public async Task Frequency_ShouldReturnValueOfAtLeastTicksPerSecond()
 	{
-		var expectedMinimum = TimeSystem is RealTimeSystem
+		long expectedMinimum = TimeSystem is RealTimeSystem
 			? Stopwatch.Frequency
 			: TimeSpan.TicksPerSecond;
 		long frequency = TimeSystem.Stopwatch.Frequency;
@@ -29,7 +29,8 @@ public class StopwatchFactoryTests(TimeSystemTestData testData) : TimeSystemTest
 		TimeSpan timestamp =
 			TimeSystem.Stopwatch.GetElapsedTime(startingTimestamp, endingTimestamp);
 
-		long actualStopwatchTicks = timestamp.Ticks * TimeSystem.Stopwatch.Frequency / TimeSpan.TicksPerSecond;
+		long actualStopwatchTicks =
+			timestamp.Ticks * TimeSystem.Stopwatch.Frequency / TimeSpan.TicksPerSecond;
 		await That(actualStopwatchTicks).IsEqualTo(expectedTicks);
 	}
 #endif
@@ -45,7 +46,8 @@ public class StopwatchFactoryTests(TimeSystemTestData testData) : TimeSystemTest
 		TimeSpan timestamp =
 			TimeSystem.Stopwatch.GetElapsedTime(startingTimestamp);
 
-		long actualStopwatchTicks = timestamp.Ticks * TimeSystem.Stopwatch.Frequency / TimeSpan.TicksPerSecond;
+		long actualStopwatchTicks =
+			timestamp.Ticks * TimeSystem.Stopwatch.Frequency / TimeSpan.TicksPerSecond;
 		await That(actualStopwatchTicks).IsGreaterThanOrEqualTo(expectedTicks);
 	}
 #endif
@@ -59,6 +61,20 @@ public class StopwatchFactoryTests(TimeSystemTestData testData) : TimeSystemTest
 
 		long timestamp2 = TimeSystem.Stopwatch.GetTimestamp();
 		await That(timestamp2).IsGreaterThan(timestamp1);
+	}
+
+	[Test]
+	public async Task GetTimestamp_DividedByFrequency_ShouldReturnSeconds()
+	{
+		Skip.If(TimeSystem is RealTimeSystem);
+
+		long timestamp1 = TimeSystem.Stopwatch.GetTimestamp();
+
+		await TimeSystem.Task.Delay(1.4.Seconds(), CancellationToken);
+
+		long timestamp2 = TimeSystem.Stopwatch.GetTimestamp();
+		await That((double)(timestamp2 - timestamp1) / TimeSystem.Stopwatch.Frequency)
+			.IsEqualTo(1.4).Within(0.2);
 	}
 
 	[Test]
