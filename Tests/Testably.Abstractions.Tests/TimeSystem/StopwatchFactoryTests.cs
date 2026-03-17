@@ -66,11 +66,11 @@ public class StopwatchFactoryTests(TimeSystemTestData testData) : TimeSystemTest
 	{
 		long timestamp1 = TimeSystem.Stopwatch.GetTimestamp();
 
-		await TimeSystem.Task.Delay(1.Seconds(), CancellationToken);
+		await TimeSystem.Task.Delay(0.4.Seconds(), CancellationToken);
 
 		long timestamp2 = TimeSystem.Stopwatch.GetTimestamp();
 		await That((double)(timestamp2 - timestamp1) / TimeSystem.Stopwatch.Frequency)
-			.IsEqualTo(1.0).Within(0.1);
+			.IsEqualTo(0.4).Within(0.1);
 	}
 
 	[Test]
