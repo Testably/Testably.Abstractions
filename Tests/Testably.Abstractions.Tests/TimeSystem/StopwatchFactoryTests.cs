@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using System.Threading;
+﻿using aweXpect.Chronology;
+using System.Diagnostics;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
@@ -59,6 +59,18 @@ public class StopwatchFactoryTests(TimeSystemTestData testData) : TimeSystemTest
 
 		long timestamp2 = TimeSystem.Stopwatch.GetTimestamp();
 		await That(timestamp2).IsGreaterThan(timestamp1);
+	}
+
+	[Test]
+	public async Task GetTimestamp_DividedByFrequency_ShouldReturnSeconds()
+	{
+		long timestamp1 = TimeSystem.Stopwatch.GetTimestamp();
+
+		await TimeSystem.Task.Delay(1.Seconds(), CancellationToken);
+
+		long timestamp2 = TimeSystem.Stopwatch.GetTimestamp();
+		await That((double)(timestamp2 - timestamp1) / TimeSystem.Stopwatch.Frequency)
+			.IsEqualTo(1.0).Within(0.1);
 	}
 
 	[Test]

@@ -42,7 +42,7 @@ internal sealed class StopwatchFactoryMock : IStopwatchFactory
 
 	/// <inheritdoc cref="IStopwatchFactory.GetTimestamp()" />
 	public long GetTimestamp()
-		=> _mockTimeSystem.TimeProvider.Read().Ticks;
+		=> _mockTimeSystem.TimeProvider.Read().Ticks * _tickPeriod;
 
 	/// <inheritdoc cref="IStopwatchFactory.New()" />
 	public IStopwatch New()
