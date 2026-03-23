@@ -42,7 +42,7 @@
 		<PackageVersion Include="aweXpect" Version="2.30.0"/>
 		<PackageVersion Include="aweXpect.Chronology" Version="1.0.0"/>
 		<PackageVersion Include="aweXpect.Testably" Version="0.13.0"/>
-		<PackageVersion Include="aweXpect.Mockolate" Version="1.2.0"/>
+		<PackageVersion Include="aweXpect.Mockolate" Version="1.3.0"/>
 		<PackageVersion Include="Mockolate" Version="1.6.0"/>
 		<PackageVersion Include="TUnit.Engine" Version="1.19.22"/>
 		<PackageVersion Include="Polyfill" Version="9.22.0"/>
