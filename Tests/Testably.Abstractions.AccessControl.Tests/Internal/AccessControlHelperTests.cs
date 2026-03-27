@@ -9,7 +9,7 @@ public sealed class AccessControlHelperTests
 	[Test]
 	public async Task GetExtensibilityOrThrow_CustomDirectoryInfo_ShouldThrowNotSupportedException()
 	{
-		var sut = Mock.Create<IDirectoryInfo>();
+		var sut = IDirectoryInfo.CreateMock();
 		void Act()
 		{
 			sut.GetExtensibilityOrThrow();
@@ -22,7 +22,7 @@ public sealed class AccessControlHelperTests
 	[Test]
 	public async Task GetExtensibilityOrThrow_CustomFileInfo_ShouldThrowNotSupportedException()
 	{
-		var sut = Mock.Create<IFileInfo>();
+		var sut = IFileInfo.CreateMock();
 		void Act()
 		{
 			sut.GetExtensibilityOrThrow();
