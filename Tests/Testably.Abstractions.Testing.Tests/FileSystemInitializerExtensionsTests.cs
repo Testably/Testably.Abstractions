@@ -353,6 +353,200 @@ public class FileSystemInitializerExtensionsTests
 	}
 
 	[Test]
+	public async Task InitializeFromRealDirectory_ShouldCopyFileAttributes()
+	{
+		SkipIfRealFileSystemShouldBeSkipped();
+
+		MockFileSystem fileSystem = new();
+		string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+		try
+		{
+			Directory.CreateDirectory(tempPath);
+			string filePath = Path.Combine(tempPath, "test.txt");
+			File.WriteAllText(filePath, "content");
+			File.SetAttributes(filePath, FileAttributes.ReadOnly);
+			FileAttributes expectedAttributes = File.GetAttributes(filePath);
+
+			fileSystem.InitializeFromRealDirectory(tempPath, "foo");
+
+			await That(fileSystem.File.GetAttributes(
+				fileSystem.Path.Combine("foo", "test.txt"))).IsEqualTo(expectedAttributes);
+		}
+		finally
+		{
+			foreach (string file in Directory.EnumerateFiles(tempPath, "*",
+				         SearchOption.AllDirectories))
+			{
+				File.SetAttributes(file, FileAttributes.Normal);
+			}
+
+			Directory.Delete(tempPath, true);
+		}
+	}
+
+	[Test]
+	public async Task InitializeFromRealDirectory_ShouldCopyFileCreationTime()
+	{
+		SkipIfRealFileSystemShouldBeSkipped();
+
+		MockFileSystem fileSystem = new();
+		string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+		try
+		{
+			Directory.CreateDirectory(tempPath);
+			string filePath = Path.Combine(tempPath, "test.txt");
+			File.WriteAllText(filePath, "content");
+			DateTime expectedCreationTime =
+				new DateTime(2020, 1, 15, 10, 30, 0, DateTimeKind.Utc);
+			File.SetCreationTimeUtc(filePath, expectedCreationTime);
+
+			fileSystem.InitializeFromRealDirectory(tempPath, "foo");
+
+			await That(fileSystem.File.GetCreationTimeUtc(
+				fileSystem.Path.Combine("foo", "test.txt"))).IsEqualTo(expectedCreationTime);
+		}
+		finally
+		{
+			Directory.Delete(tempPath, true);
+		}
+	}
+
+	[Test]
+	public async Task InitializeFromRealDirectory_ShouldCopyFileLastAccessTime()
+	{
+		SkipIfRealFileSystemShouldBeSkipped();
+
+		MockFileSystem fileSystem = new();
+		string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+		try
+		{
+			Directory.CreateDirectory(tempPath);
+			string filePath = Path.Combine(tempPath, "test.txt");
+			File.WriteAllText(filePath, "content");
+			DateTime expectedLastAccessTime =
+				new DateTime(2021, 6, 10, 8, 0, 0, DateTimeKind.Utc);
+			File.SetLastAccessTimeUtc(filePath, expectedLastAccessTime);
+
+			fileSystem.InitializeFromRealDirectory(tempPath, "foo");
+
+			await That(fileSystem.File.GetLastAccessTimeUtc(
+				fileSystem.Path.Combine("foo", "test.txt"))).IsEqualTo(expectedLastAccessTime);
+		}
+		finally
+		{
+			Directory.Delete(tempPath, true);
+		}
+	}
+
+	[Test]
+	public async Task InitializeFromRealDirectory_ShouldCopyFileLastWriteTime()
+	{
+		SkipIfRealFileSystemShouldBeSkipped();
+
+		MockFileSystem fileSystem = new();
+		string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+		try
+		{
+			Directory.CreateDirectory(tempPath);
+			string filePath = Path.Combine(tempPath, "test.txt");
+			File.WriteAllText(filePath, "content");
+			DateTime expectedLastWriteTime =
+				new DateTime(2022, 3, 25, 12, 0, 0, DateTimeKind.Utc);
+			File.SetLastWriteTimeUtc(filePath, expectedLastWriteTime);
+
+			fileSystem.InitializeFromRealDirectory(tempPath, "foo");
+
+			await That(fileSystem.File.GetLastWriteTimeUtc(
+				fileSystem.Path.Combine("foo", "test.txt"))).IsEqualTo(expectedLastWriteTime);
+		}
+		finally
+		{
+			Directory.Delete(tempPath, true);
+		}
+	}
+
+	[Test]
+	public async Task InitializeFromRealDirectory_ShouldCopyDirectoryCreationTime()
+	{
+		SkipIfRealFileSystemShouldBeSkipped();
+
+		MockFileSystem fileSystem = new();
+		string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+		try
+		{
+			Directory.CreateDirectory(tempPath);
+			string subDir = Path.Combine(tempPath, "subdir");
+			Directory.CreateDirectory(subDir);
+			DateTime expectedCreationTime =
+				new DateTime(2020, 1, 15, 10, 30, 0, DateTimeKind.Utc);
+			Directory.SetCreationTimeUtc(subDir, expectedCreationTime);
+
+			fileSystem.InitializeFromRealDirectory(tempPath, "foo");
+
+			await That(fileSystem.Directory.GetCreationTimeUtc(
+				fileSystem.Path.Combine("foo", "subdir"))).IsEqualTo(expectedCreationTime);
+		}
+		finally
+		{
+			Directory.Delete(tempPath, true);
+		}
+	}
+
+	[Test]
+	public async Task InitializeFromRealDirectory_ShouldCopyDirectoryLastWriteTime()
+	{
+		SkipIfRealFileSystemShouldBeSkipped();
+
+		MockFileSystem fileSystem = new();
+		string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+		try
+		{
+			Directory.CreateDirectory(tempPath);
+			string subDir = Path.Combine(tempPath, "subdir");
+			Directory.CreateDirectory(subDir);
+			DateTime expectedLastWriteTime =
+				new DateTime(2022, 3, 25, 12, 0, 0, DateTimeKind.Utc);
+			Directory.SetLastWriteTimeUtc(subDir, expectedLastWriteTime);
+
+			fileSystem.InitializeFromRealDirectory(tempPath, "foo");
+
+			await That(fileSystem.Directory.GetLastWriteTimeUtc(
+				fileSystem.Path.Combine("foo", "subdir"))).IsEqualTo(expectedLastWriteTime);
+		}
+		finally
+		{
+			Directory.Delete(tempPath, true);
+		}
+	}
+
+	[Test]
+	public async Task InitializeFromRealDirectory_ShouldCopyDirectoryLastAccessTime()
+	{
+		SkipIfRealFileSystemShouldBeSkipped();
+
+		MockFileSystem fileSystem = new();
+		string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+		try
+		{
+			Directory.CreateDirectory(tempPath);
+			string subDir = Path.Combine(tempPath, "subdir");
+			Directory.CreateDirectory(subDir);
+			DateTime expectedLastAccessTime =
+				new DateTime(2021, 6, 10, 8, 0, 0, DateTimeKind.Utc);
+			Directory.SetLastAccessTimeUtc(subDir, expectedLastAccessTime);
+
+			fileSystem.InitializeFromRealDirectory(tempPath, "foo");
+
+			await That(fileSystem.Directory.GetLastAccessTimeUtc(
+				fileSystem.Path.Combine("foo", "subdir"))).IsEqualTo(expectedLastAccessTime);
+		}
+		finally
+		{
+			Directory.Delete(tempPath, true);
+		}
+	}
+
+	[Test]
 	[Arguments("my-directory")]
 	public async Task InitializeIn_MissingDrive_ShouldCreateDrive(string directoryName)
 	{
