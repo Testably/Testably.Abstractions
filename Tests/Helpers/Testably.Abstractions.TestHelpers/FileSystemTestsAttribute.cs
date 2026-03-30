@@ -31,7 +31,7 @@ public class FileSystemTestsAttribute : TypedDataSourceAttribute<FileSystemTestD
 		    context.TestContext.Metadata.TestDetails.TestClassArguments[0] is FileSystemTestData
 			    .Real)
 		{
-			context.AddParallelConstraint(new NotInParallelConstraint(["RealFileSystem"]));
+			context.AddParallelConstraint(new NotInParallelConstraint([nameof(RealFileSystem)]));
 		}
 
 		return _completedTask;
