@@ -5,7 +5,7 @@ using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
-[NotInParallel(nameof(IDirectoryCleaner))]
+[NotInParallel(nameof(RealFileSystem))]
 public class DirectoryCleanerTests
 {
 	#region Test Setup
