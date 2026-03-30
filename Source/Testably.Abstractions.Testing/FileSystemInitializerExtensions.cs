@@ -205,8 +205,12 @@ public static class FileSystemInitializerExtensions
 		foreach (string file in Directory.EnumerateFiles(sourceDirectory))
 		{
 			string fileName = Path.GetFileName(file);
-			fileSystem.File.WriteAllBytes(fileSystem.Path.Combine(targetDirectory, fileName),
-				File.ReadAllBytes(file));
+			string targetFilePath = fileSystem.Path.Combine(targetDirectory, fileName);
+			fileSystem.File.WriteAllBytes(targetFilePath, File.ReadAllBytes(file));
+			fileSystem.File.SetCreationTimeUtc(targetFilePath, File.GetCreationTimeUtc(file));
+			fileSystem.File.SetLastWriteTimeUtc(targetFilePath, File.GetLastWriteTimeUtc(file));
+			fileSystem.File.SetLastAccessTimeUtc(targetFilePath, File.GetLastAccessTimeUtc(file));
+			fileSystem.File.SetAttributes(targetFilePath, File.GetAttributes(file));
 		}
 
 		foreach (string directory in Directory.EnumerateDirectories(sourceDirectory))
@@ -215,6 +219,13 @@ public static class FileSystemInitializerExtensions
 			CopyDirectory(fileSystem, directory,
 				fileSystem.Path.Combine(targetDirectory, directoryName));
 		}
+
+		fileSystem.Directory.SetCreationTimeUtc(targetDirectory,
+			Directory.GetCreationTimeUtc(sourceDirectory));
+		fileSystem.Directory.SetLastWriteTimeUtc(targetDirectory,
+			Directory.GetLastWriteTimeUtc(sourceDirectory));
+		fileSystem.Directory.SetLastAccessTimeUtc(targetDirectory,
+			Directory.GetLastAccessTimeUtc(sourceDirectory));
 	}
 
 	private static void InitializeFileFromEmbeddedResource(this IFileSystem fileSystem,
