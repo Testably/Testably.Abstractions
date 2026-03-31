@@ -38,6 +38,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Testing.Extensions.TrxReport"/>
 		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage"/>
+		<PackageReference Include="System.Memory" Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' " />
 	</ItemGroup>
 
 	<ItemGroup>
