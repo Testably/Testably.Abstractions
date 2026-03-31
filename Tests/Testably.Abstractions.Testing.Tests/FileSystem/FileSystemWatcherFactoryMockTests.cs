@@ -3,7 +3,7 @@ using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
-[NotInParallel(nameof(IDirectoryCleaner))]
+[NotInParallel(nameof(RealFileSystem))]
 public sealed class FileSystemWatcherFactoryMockTests : IDisposable
 {
 	#region Test Setup
