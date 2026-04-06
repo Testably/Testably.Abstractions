@@ -230,10 +230,10 @@ internal sealed class TimerMock : ITimerMock
 			cancellationToken.WaitHandle.WaitOne(_dueTime);
 		}
 
-		DateTime nextPlannedExecution = _mockTimeSystem.DateTime.UtcNow;
+		long nextPlannedExecution = _mockTimeSystem.TimeProvider.ElapsedTicks;
 		while (!cancellationToken.IsCancellationRequested)
 		{
-			nextPlannedExecution += _period;
+			nextPlannedExecution += _period.Ticks;
 			try
 			{
 				_callback(_state);
@@ -260,10 +260,12 @@ internal sealed class TimerMock : ITimerMock
 				return;
 			}
 
-			TimeSpan delay = nextPlannedExecution - _mockTimeSystem.DateTime.UtcNow;
-			if (delay > TimeSpan.Zero)
+			long nowTicks = _mockTimeSystem.TimeProvider.ElapsedTicks;
+			if (nextPlannedExecution > nowTicks)
 			{
-				await _mockTimeSystem.Task.Delay(delay, cancellationToken).ConfigureAwait(false);
+				await _mockTimeSystem.Task
+					.Delay(TimeSpan.FromTicks(nextPlannedExecution - nowTicks), cancellationToken)
+					.ConfigureAwait(false);
 			}
 		}
 	}

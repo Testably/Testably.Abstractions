@@ -9,6 +9,11 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 public interface ITimeProvider
 {
 	/// <summary>
+	///     The elapsed ticks since the <see cref="StartTime" />.
+	/// </summary>
+	long ElapsedTicks { get; }
+
+	/// <summary>
 	///     Gets or sets the <see cref="IDateTime.MaxValue" />
 	/// </summary>
 	DateTime MaxValue { get; set; }

@@ -9,10 +9,10 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 
 internal sealed class PeriodicTimerMock : IPeriodicTimer
 {
-	private bool _isDisposed;
-	private DateTime _lastTime;
-	private readonly MockTimeSystem _timeSystem;
 	private readonly bool _autoAdvance;
+	private bool _isDisposed;
+	private long _lastTime;
+	private readonly MockTimeSystem _timeSystem;
 
 	internal PeriodicTimerMock(MockTimeSystem timeSystem,
 		TimeSpan period, bool autoAdvance)
@@ -21,7 +21,7 @@ internal sealed class PeriodicTimerMock : IPeriodicTimer
 
 		_timeSystem = timeSystem;
 		_autoAdvance = autoAdvance;
-		_lastTime = _timeSystem.DateTime.UtcNow;
+		_lastTime = _timeSystem.TimeProvider.ElapsedTicks;
 		Period = period;
 	}
 
@@ -58,23 +58,23 @@ internal sealed class PeriodicTimerMock : IPeriodicTimer
 			return false;
 		}
 
-		DateTime now = _timeSystem.DateTime.UtcNow;
-		DateTime nextTime = _lastTime + Period;
+		long now = _timeSystem.TimeProvider.ElapsedTicks;
+		long nextTime = _lastTime + Period.Ticks;
 		if (nextTime > now)
 		{
 			if (_autoAdvance)
 			{
-				_timeSystem.TimeProvider.AdvanceBy(nextTime - now);
+				_timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromTicks(nextTime - now));
 				_lastTime = nextTime;
 			}
 			else
 			{
-				using var onTimeChanged = _timeSystem.On
-					.TimeChanged(predicate: t => t >= nextTime);
+				using IAwaitableCallback<DateTime> onTimeChanged = _timeSystem.On
+					.TimeChanged(predicate: _ => _timeSystem.TimeProvider.ElapsedTicks >= nextTime);
 				await onTimeChanged.WaitAsync(
 					timeout: Timeout.InfiniteTimeSpan,
 					cancellationToken: cancellationToken).ConfigureAwait(false);
-				_lastTime = _timeSystem.DateTime.UtcNow;
+				_lastTime = _timeSystem.TimeProvider.ElapsedTicks;
 			}
 		}
 		else

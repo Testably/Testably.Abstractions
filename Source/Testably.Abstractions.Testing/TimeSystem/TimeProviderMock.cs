@@ -21,6 +21,7 @@ internal sealed class TimeProviderMock : ITimeProvider
 		_now = now.Kind == DateTimeKind.Unspecified
 			? DateTime.SpecifyKind(now, DateTimeKind.Utc)
 			: now;
+		ElapsedTicks = _now.Ticks;
 		StartTime = _now;
 		_onTimeChanged = onTimeChanged;
 		_description = description;
@@ -46,12 +47,16 @@ internal sealed class TimeProviderMock : ITimeProvider
 	/// <inheritdoc cref="ITimeProvider.StartTime" />
 	public DateTime StartTime { get; }
 
+	/// <inheritdoc cref="ITimeProvider.ElapsedTicks" />
+	public long ElapsedTicks { get; private set; }
+
 	/// <inheritdoc cref="ITimeProvider.AdvanceBy(TimeSpan)" />
 	public void AdvanceBy(TimeSpan interval)
 	{
 		lock (_lock)
 		{
 			_now = _now.Add(interval);
+			ElapsedTicks += interval.Ticks;
 			_onTimeChanged.Invoke(_now);
 		}
 	}
@@ -68,6 +73,7 @@ internal sealed class TimeProviderMock : ITimeProvider
 		lock (_lock)
 		{
 			_now = value;
+			_onTimeChanged.Invoke(_now);
 		}
 	}
 
