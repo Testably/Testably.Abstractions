@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using aweXpect.Chronology;
+using System.Threading;
 using Testably.Abstractions.Testing.TimeSystem;
 using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
@@ -216,6 +217,72 @@ public class TimerMockTests
 		await That(count).IsEqualTo(0);
 		timerHandler[0].Wait();
 		await That(count).IsGreaterThan(0);
+	}
+
+	[Test]
+	public async Task ShouldNotBeAffectedByTimeChange()
+	{
+		int timerCount = 0;
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		using CancellationTokenSource cts = CancellationTokenSource
+			.CreateLinkedTokenSource(TestContext.Current!.Execution.CancellationToken);
+		cts.CancelAfter(30.Seconds());
+		CancellationToken token = cts.Token;
+		using SemaphoreSlim ticks = new(0);
+		using SemaphoreSlim advanced = new(0);
+		Task timerTask = Task.Run(async () =>
+		{
+			try
+			{
+				using ITimer timer = timeSystem.Timer.New(_ =>
+				{
+					// ReSharper disable once AccessToModifiedClosure
+					Interlocked.Increment(ref timerCount);
+					// ReSharper disable AccessToDisposedClosure
+					ticks.Release();
+					advanced.Wait(token);
+					// ReSharper restore AccessToDisposedClosure
+				}, null, TimeSpan.Zero, 2.Seconds());
+
+				await Task.Delay(Timeout.InfiniteTimeSpan, token);
+			}
+			catch (OperationCanceledException)
+			{
+				// Ignore cancellation
+			}
+		}, token);
+
+		await ticks.WaitAsync(token);
+
+		timeSystem.TimeProvider.AdvanceBy(1.Seconds());
+		advanced.Release();
+		await ticks.WaitAsync(token);
+
+		timeSystem.TimeProvider.AdvanceBy(1.Seconds());
+		advanced.Release();
+		await ticks.WaitAsync(token);
+
+		await That(Volatile.Read(ref timerCount)).IsEqualTo(3);
+
+		// Changing the wall clock time should not affect the timer
+		timeSystem.TimeProvider.SetTo(timeSystem.DateTime.Now + 10.Seconds());
+
+		for (int i = 0; i < 10; i++)
+		{
+			timeSystem.TimeProvider.AdvanceBy(1.Seconds());
+			advanced.Release();
+			await ticks.WaitAsync(token);
+		}
+
+		await That(Volatile.Read(ref timerCount)).IsEqualTo(13);
+
+		timeSystem.TimeProvider.AdvanceBy(1.Seconds());
+		advanced.Release();
+		await ticks.WaitAsync(token);
+
+		await That(Volatile.Read(ref timerCount)).IsEqualTo(14);
+		cts.Cancel();
+		await timerTask;
 	}
 
 	[Test]

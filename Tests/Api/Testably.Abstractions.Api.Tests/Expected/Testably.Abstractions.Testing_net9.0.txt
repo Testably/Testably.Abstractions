@@ -444,6 +444,7 @@ namespace Testably.Abstractions.Testing.TimeSystem
     }
     public interface ITimeProvider
     {
+        long ElapsedTicks { get; }
         System.DateTime MaxValue { get; set; }
         System.DateTime MinValue { get; set; }
         System.DateTime StartTime { get; }

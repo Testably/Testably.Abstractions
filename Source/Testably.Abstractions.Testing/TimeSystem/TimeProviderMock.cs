@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 #if NETSTANDARD2_0
 using Testably.Abstractions.TimeSystem;
 #endif
@@ -8,6 +8,7 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 internal sealed class TimeProviderMock : ITimeProvider
 {
 	private DateTime _now;
+	private long _elapsedTicks;
 	private readonly Action<DateTime> _onTimeChanged;
 	private readonly string _description;
 #if NET9_0_OR_GREATER
@@ -21,6 +22,7 @@ internal sealed class TimeProviderMock : ITimeProvider
 		_now = now.Kind == DateTimeKind.Unspecified
 			? DateTime.SpecifyKind(now, DateTimeKind.Utc)
 			: now;
+		_elapsedTicks = _now.Ticks;
 		StartTime = _now;
 		_onTimeChanged = onTimeChanged;
 		_description = description;
@@ -46,12 +48,22 @@ internal sealed class TimeProviderMock : ITimeProvider
 	/// <inheritdoc cref="ITimeProvider.StartTime" />
 	public DateTime StartTime { get; }
 
+	/// <inheritdoc cref="ITimeProvider.ElapsedTicks" />
+	public long ElapsedTicks
+	{
+		get
+		{
+			lock (_lock) { return _elapsedTicks; }
+		}
+	}
+
 	/// <inheritdoc cref="ITimeProvider.AdvanceBy(TimeSpan)" />
 	public void AdvanceBy(TimeSpan interval)
 	{
 		lock (_lock)
 		{
 			_now = _now.Add(interval);
+			_elapsedTicks += interval.Ticks;
 			_onTimeChanged.Invoke(_now);
 		}
 	}
@@ -59,7 +71,10 @@ internal sealed class TimeProviderMock : ITimeProvider
 	/// <inheritdoc cref="ITimeProvider.Read()" />
 	public DateTime Read()
 	{
-		return _now;
+		lock (_lock)
+		{
+			return _now;
+		}
 	}
 
 	/// <inheritdoc cref="ITimeProvider.SetTo(DateTime)" />
@@ -68,6 +83,7 @@ internal sealed class TimeProviderMock : ITimeProvider
 		lock (_lock)
 		{
 			_now = value;
+			_onTimeChanged.Invoke(_now);
 		}
 	}
 

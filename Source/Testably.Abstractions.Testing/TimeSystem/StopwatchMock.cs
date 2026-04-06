@@ -7,7 +7,7 @@ internal sealed class StopwatchMock : IStopwatch
 {
 	private long _elapsedTicks;
 	private readonly MockTimeSystem _mockTimeSystem;
-	private DateTime? _start;
+	private long? _start;
 	private readonly long _tickPeriod;
 
 	internal StopwatchMock(MockTimeSystem timeSystem, long tickPeriod)
@@ -36,7 +36,7 @@ internal sealed class StopwatchMock : IStopwatch
 			// If the Stopwatch is running, add elapsed time since the Stopwatch is started last time.
 			if (_start is not null)
 			{
-				timeElapsed += (_mockTimeSystem.TimeProvider.Read() - _start.Value).Ticks
+				timeElapsed += (_mockTimeSystem.TimeProvider.ElapsedTicks - _start.Value)
 				               * _tickPeriod;
 			}
 
@@ -70,7 +70,7 @@ internal sealed class StopwatchMock : IStopwatch
 	{
 		if (_start is null)
 		{
-			_start = _mockTimeSystem.TimeProvider.Read();
+			_start = _mockTimeSystem.TimeProvider.ElapsedTicks;
 		}
 	}
 
@@ -79,7 +79,7 @@ internal sealed class StopwatchMock : IStopwatch
 	{
 		if (_start.HasValue)
 		{
-			_elapsedTicks += (_mockTimeSystem.TimeProvider.Read() - _start.Value).Ticks *
+			_elapsedTicks += (_mockTimeSystem.TimeProvider.ElapsedTicks - _start.Value) *
 			                 _tickPeriod;
 			_start = null;
 		}

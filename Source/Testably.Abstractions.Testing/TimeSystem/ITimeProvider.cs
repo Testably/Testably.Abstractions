@@ -8,6 +8,25 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 /// </summary>
 public interface ITimeProvider
 {
+#if FEATURE_PERIODIC_TIMER
+	/// <summary>
+	///     The elapsed ticks represent a monotonic clock that is not affected by changes to the system time.
+	/// </summary>
+	/// <remarks>
+	///     It is used internally for the <see cref="IPeriodicTimer" />, the <see cref="IStopwatch" /> and the <see cref="ITimer" />.<br />
+	///     The value is not affected by changes to the system time (see <see cref="SetTo(DateTime)" />), but it is affected by the <see cref="AdvanceBy(TimeSpan)" /> method.<br />
+	/// </remarks>
+#else
+	/// <summary>
+	///     The elapsed ticks represent a monotonic clock that is not affected by changes to the system time.
+	/// </summary>
+	/// <remarks>
+	///     It is used internally for the <see cref="IStopwatch" /> and the <see cref="ITimer" />.<br />
+	///     The value is not affected by changes to the system time (see <see cref="SetTo(DateTime)" />), but it is affected by the <see cref="AdvanceBy(TimeSpan)" /> method.<br />
+	/// </remarks>
+#endif
+	long ElapsedTicks { get; }
+
 	/// <summary>
 	///     Gets or sets the <see cref="IDateTime.MaxValue" />
 	/// </summary>
