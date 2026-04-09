@@ -285,17 +285,22 @@ internal sealed class TimerMock : ITimerMock
 			}
 			else
 			{
-				long nowTicks = _mockTimeSystem.TimeProvider.ElapsedTicks;
-				while (targetTicks > nowTicks)
+				while (true)
 				{
 					long executeAfter = targetTicks;
 					using IAwaitableCallback<DateTime> onTimeChanged = _mockTimeSystem.On
 						.TimeChanged(predicate: _
 							=> _mockTimeSystem.TimeProvider.ElapsedTicks >= executeAfter);
+					// Check AFTER registering the callback to avoid missing a time change
+					// that occurred between reading ElapsedTicks and subscribing.
+					if (_mockTimeSystem.TimeProvider.ElapsedTicks >= targetTicks)
+					{
+						break;
+					}
+
 					await onTimeChanged.WaitAsync(
 						timeout: null,
 						cancellationToken: cancellationToken).ConfigureAwait(false);
-					nowTicks = _mockTimeSystem.TimeProvider.ElapsedTicks;
 				}
 			}
 		}
