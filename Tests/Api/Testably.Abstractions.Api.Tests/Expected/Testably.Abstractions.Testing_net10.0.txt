@@ -437,10 +437,15 @@ namespace Testably.Abstractions.Testing.TimeSystem
 {
     public interface INotificationHandler
     {
+        Testably.Abstractions.Testing.TimeSystem.IPeriodicTimerNotificationHandler PeriodicTimer { get; }
         Testably.Abstractions.Testing.IAwaitableCallback<System.DateTime> DateTimeRead(System.Action<System.DateTime>? callback = null, System.Func<System.DateTime, bool>? predicate = null);
         Testably.Abstractions.Testing.IAwaitableCallback<System.TimeSpan> TaskDelay(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
         Testably.Abstractions.Testing.IAwaitableCallback<System.TimeSpan> ThreadSleep(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
         Testably.Abstractions.Testing.IAwaitableCallback<System.DateTime> TimeChanged(System.Action<System.DateTime>? callback = null, System.Func<System.DateTime, System.DateTime, bool>? predicate = null);
+    }
+    public interface IPeriodicTimerNotificationHandler
+    {
+        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.TimeSystem.IPeriodicTimer> WaitingForNextTick(System.Action<Testably.Abstractions.TimeSystem.IPeriodicTimer>? callback = null, System.Func<Testably.Abstractions.TimeSystem.IPeriodicTimer, bool>? predicate = null);
     }
     public interface ITimeProvider
     {
