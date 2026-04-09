@@ -19,7 +19,7 @@ public interface IPeriodicTimerNotificationHandler
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
-	/// <returns>A <see cref="IAwaitableCallback{DateTime}" /> to un-register the callback on dispose.</returns>
+	/// <returns>A <see cref="IAwaitableCallback{IPeriodicTimer}" /> to un-register the callback on dispose.</returns>
 	IAwaitableCallback<IPeriodicTimer> WaitingForNextTick(
 		Action<IPeriodicTimer>? callback = null,
 		Func<IPeriodicTimer, bool>? predicate = null);

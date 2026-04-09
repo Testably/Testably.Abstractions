@@ -63,8 +63,6 @@ internal sealed class NotificationHandler(MockTimeSystem mockTimeSystem)
 
 	#endregion
 
-	#region IPeriodicTimerNotificationHandler Members
-
 #if FEATURE_PERIODIC_TIMER
 
 	#region IPeriodicTimerNotificationHandler Members
@@ -77,8 +75,6 @@ internal sealed class NotificationHandler(MockTimeSystem mockTimeSystem)
 	#endregion
 
 #endif
-
-	#endregion
 
 	public void InvokeDateTimeReadCallbacks(DateTime now)
 		=> _dateTimeReadCallbacks.InvokeCallbacks(now);
