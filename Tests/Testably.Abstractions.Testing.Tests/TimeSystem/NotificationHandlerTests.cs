@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
+using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
@@ -86,6 +87,129 @@ public class NotificationHandlerTests
 
 		await That(receivedTime).IsEqualTo(expectedTime);
 	}
+
+#if FEATURE_PERIODIC_TIMER
+	[Test]
+	public async Task OnPeriodicTimerWaitingForNextTick_DisposedCallback_ShouldNotBeCalled()
+	{
+		MockTimeSystem timeSystem = new();
+		IPeriodicTimer? receivedTimer = null;
+		using IPeriodicTimer periodicTimer =
+			timeSystem.PeriodicTimer.New(TimeSpan.FromSeconds(1));
+		IDisposable disposable =
+			timeSystem.On.PeriodicTimer.WaitingForNextTick(t => receivedTimer = t);
+
+		disposable.Dispose();
+		await periodicTimer.WaitForNextTickAsync();
+
+		await That(receivedTimer).IsNull();
+	}
+#endif
+
+#if FEATURE_PERIODIC_TIMER
+	[Test]
+	public async Task
+		OnPeriodicTimerWaitingForNextTick_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
+	{
+		MockTimeSystem timeSystem = new();
+		IPeriodicTimer? receivedTimer1 = null;
+		IPeriodicTimer? receivedTimer2 = null;
+		using IPeriodicTimer periodicTimer =
+			timeSystem.PeriodicTimer.New(TimeSpan.FromSeconds(1));
+
+		using (timeSystem.On.PeriodicTimer.WaitingForNextTick(t => receivedTimer1 = t))
+		{
+			timeSystem.On.PeriodicTimer.WaitingForNextTick(t => receivedTimer2 = t).Dispose();
+			await periodicTimer.WaitForNextTickAsync();
+		}
+
+		await That(receivedTimer1).IsEqualTo(periodicTimer);
+		await That(receivedTimer2).IsNull();
+	}
+#endif
+
+#if FEATURE_PERIODIC_TIMER
+	[Test]
+	public async Task OnPeriodicTimerWaitingForNextTick_MultipleCallbacks_ShouldAllBeCalled()
+	{
+		MockTimeSystem timeSystem = new();
+		IPeriodicTimer? receivedTimer1 = null;
+		IPeriodicTimer? receivedTimer2 = null;
+		using IPeriodicTimer periodicTimer =
+			timeSystem.PeriodicTimer.New(TimeSpan.FromSeconds(1));
+
+		using (timeSystem.On.PeriodicTimer.WaitingForNextTick(t => receivedTimer1 = t))
+		{
+			using (timeSystem.On.PeriodicTimer.WaitingForNextTick(t => receivedTimer2 = t))
+			{
+				await periodicTimer.WaitForNextTickAsync();
+			}
+		}
+
+		await That(receivedTimer1).IsEqualTo(periodicTimer);
+		await That(receivedTimer2).IsEqualTo(periodicTimer);
+	}
+#endif
+
+#if FEATURE_PERIODIC_TIMER
+	[Test]
+	public async Task
+		OnPeriodicTimerWaitingForNextTick_ShouldBeCalledOnEachWaitForNextTickAsync()
+	{
+		MockTimeSystem timeSystem = new();
+		int callbackCount = 0;
+		using IPeriodicTimer periodicTimer =
+			timeSystem.PeriodicTimer.New(TimeSpan.FromSeconds(1));
+
+		using (timeSystem.On.PeriodicTimer.WaitingForNextTick(_ => callbackCount++))
+		{
+			await periodicTimer.WaitForNextTickAsync();
+			await periodicTimer.WaitForNextTickAsync();
+			await periodicTimer.WaitForNextTickAsync();
+		}
+
+		await That(callbackCount).IsEqualTo(3);
+	}
+#endif
+
+#if FEATURE_PERIODIC_TIMER
+	[Test]
+	public async Task OnPeriodicTimerWaitingForNextTick_ShouldExecuteCallbackWithCorrectParameter()
+	{
+		MockTimeSystem timeSystem = new();
+		IPeriodicTimer? receivedTimer = null;
+		using IPeriodicTimer periodicTimer =
+			timeSystem.PeriodicTimer.New(TimeSpan.FromSeconds(1));
+
+		using (timeSystem.On.PeriodicTimer.WaitingForNextTick(t => receivedTimer = t))
+		{
+			await periodicTimer.WaitForNextTickAsync();
+		}
+
+		await That(receivedTimer).IsEqualTo(periodicTimer);
+	}
+#endif
+
+#if FEATURE_PERIODIC_TIMER
+	[Test]
+	public async Task OnPeriodicTimerWaitingForNextTick_WithPredicate_ShouldFilterCallbacks()
+	{
+		MockTimeSystem timeSystem = new();
+		int callbackCount = 0;
+		using IPeriodicTimer periodicTimer1 =
+			timeSystem.PeriodicTimer.New(TimeSpan.FromSeconds(1));
+		using IPeriodicTimer periodicTimer2 =
+			timeSystem.PeriodicTimer.New(TimeSpan.FromSeconds(2));
+
+		using IAwaitableCallback<IPeriodicTimer> _ = timeSystem.On.PeriodicTimer.WaitingForNextTick(
+			callback: _ => callbackCount++,
+			predicate: p => p == periodicTimer1);
+		await periodicTimer1.WaitForNextTickAsync();
+		await That(callbackCount).IsEqualTo(1);
+		await periodicTimer2.WaitForNextTickAsync();
+		await That(callbackCount).IsEqualTo(1);
+	}
+#endif
 
 	[Test]
 	public async Task OnTaskDelay_DisposedCallback_ShouldNotBeCalled()

@@ -96,7 +96,7 @@ public sealed class MockTimeSystem : ITimeSystem
 		_threadMock = new ThreadMock(this, _callbackHandler, initialization.AutoAdvance);
 		_taskMock = new TaskMock(this, _callbackHandler, initialization.AutoAdvance);
 #if FEATURE_PERIODIC_TIMER
-		_periodicTimerFactoryMock = new PeriodicTimerFactoryMock(this, initialization.AutoAdvance);
+		_periodicTimerFactoryMock = new PeriodicTimerFactoryMock(this, _callbackHandler, initialization.AutoAdvance);
 #endif
 		_timerFactoryMock = new TimerFactoryMock(this);
 	}

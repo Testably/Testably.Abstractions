@@ -13,13 +13,18 @@ internal sealed class PeriodicTimerMock : IPeriodicTimer
 	private bool _isDisposed;
 	private long _lastTime;
 	private readonly MockTimeSystem _timeSystem;
+	private readonly NotificationHandler _callbackHandler;
 
-	internal PeriodicTimerMock(MockTimeSystem timeSystem,
-		TimeSpan period, bool autoAdvance)
+	internal PeriodicTimerMock(
+		MockTimeSystem timeSystem,
+		NotificationHandler callbackHandler,
+		TimeSpan period,
+		bool autoAdvance)
 	{
 		ThrowIfPeriodIsInvalid(period, nameof(period));
 
 		_timeSystem = timeSystem;
+		_callbackHandler = callbackHandler;
 		_autoAdvance = autoAdvance;
 		_lastTime = _timeSystem.TimeProvider.ElapsedTicks;
 		Period = period;
@@ -58,6 +63,7 @@ internal sealed class PeriodicTimerMock : IPeriodicTimer
 			return false;
 		}
 
+		_callbackHandler.InvokePeriodicTimerWaitingForNextTick(this);
 		long now = _timeSystem.TimeProvider.ElapsedTicks;
 		long nextTime = _lastTime + Period.Ticks;
 		if (nextTime > now)

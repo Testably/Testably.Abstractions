@@ -5,10 +5,17 @@ using Testably.Abstractions.TimeSystem;
 namespace Testably.Abstractions.Testing.TimeSystem;
 
 /// <summary>
-///     The callback handler for the <see cref="MockTimeSystem" />
+///     The callback handler for the <see cref="MockTimeSystem" />.
 /// </summary>
 public interface INotificationHandler
 {
+#if FEATURE_PERIODIC_TIMER
+	/// <summary>
+	///     Notifications for the <see cref="IPeriodicTimer" />.
+	/// </summary>
+	IPeriodicTimerNotificationHandler PeriodicTimer { get; }
+#endif
+
 	/// <summary>
 	///     Callback executed when any of the following <c>DateTime</c> read methods is called:<br />
 	///     - <see cref="IDateTime.Now" /><br />
