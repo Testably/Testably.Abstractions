@@ -11,13 +11,15 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 {
 	private readonly MockTimeSystem _mockTimeSystem;
+	private readonly bool _autoAdvance;
 	private ITimerStrategy _timerStrategy;
 	private readonly ConcurrentDictionary<int, TimerMock> _timers = new();
 	private int _nextIndex = -1;
 
-	internal TimerFactoryMock(MockTimeSystem timeSystem)
+	internal TimerFactoryMock(MockTimeSystem timeSystem, bool autoAdvance)
 	{
 		_mockTimeSystem = timeSystem;
+		_autoAdvance = autoAdvance;
 		_timerStrategy = TimerStrategy.Default;
 	}
 
@@ -38,7 +40,7 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 	public ITimer New(TimerCallback callback)
 	{
 		TimerMock timerMock = new(_mockTimeSystem, _timerStrategy,
-			callback, null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+			callback, null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan, _autoAdvance);
 		return RegisterTimerMock(timerMock);
 	}
 
@@ -46,7 +48,7 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 	public ITimer New(TimerCallback callback, object? state, int dueTime, int period)
 	{
 		TimerMock timerMock = new(_mockTimeSystem, _timerStrategy,
-			callback, state, TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period));
+			callback, state, TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period), _autoAdvance);
 		return RegisterTimerMock(timerMock);
 	}
 
@@ -54,7 +56,7 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 	public ITimer New(TimerCallback callback, object? state, long dueTime, long period)
 	{
 		TimerMock timerMock = new(_mockTimeSystem, _timerStrategy,
-			callback, state, TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period));
+			callback, state, TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period), _autoAdvance);
 		return RegisterTimerMock(timerMock);
 	}
 
@@ -62,7 +64,7 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 	public ITimer New(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
 	{
 		TimerMock timerMock = new(_mockTimeSystem, _timerStrategy,
-			callback, state, dueTime, period);
+			callback, state, dueTime, period, _autoAdvance);
 		return RegisterTimerMock(timerMock);
 	}
 

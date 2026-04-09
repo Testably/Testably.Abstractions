@@ -24,6 +24,7 @@ internal sealed class TimerMock : ITimerMock
 	private readonly MockTimeSystem _mockTimeSystem;
 	private Action? _onDispose;
 	private TimeSpan _period;
+	private readonly bool _autoAdvance;
 	private readonly object? _state;
 	private readonly ITimerStrategy _timerStrategy;
 
@@ -32,7 +33,8 @@ internal sealed class TimerMock : ITimerMock
 		TimerCallback callback,
 		object? state,
 		TimeSpan dueTime,
-		TimeSpan period)
+		TimeSpan period,
+		bool autoAdvance)
 	{
 		if (dueTime.TotalMilliseconds < -1)
 		{
@@ -50,6 +52,7 @@ internal sealed class TimerMock : ITimerMock
 		_state = state;
 		_dueTime = dueTime;
 		_period = period;
+		_autoAdvance = autoAdvance;
 		if (_timerStrategy.Mode == TimerMode.StartImmediately)
 		{
 			Start();
@@ -224,16 +227,19 @@ internal sealed class TimerMock : ITimerMock
 
 	private async Task RunTimer(CancellationToken cancellationToken = default)
 	{
-		await _mockTimeSystem.Task.Delay(_dueTime, cancellationToken).ConfigureAwait(false);
+		long nextPlannedExecution = _mockTimeSystem.TimeProvider.ElapsedTicks + _dueTime.Ticks;
+
 		if (_dueTime.TotalMilliseconds < 0)
 		{
 			cancellationToken.WaitHandle.WaitOne(_dueTime);
 		}
+		else
+		{
+			await WaitUntil(nextPlannedExecution).ConfigureAwait(false);
+		}
 
-		long nextPlannedExecution = _mockTimeSystem.TimeProvider.ElapsedTicks;
 		while (!cancellationToken.IsCancellationRequested)
 		{
-			nextPlannedExecution += _period.Ticks;
 			try
 			{
 				_callback(_state);
@@ -260,12 +266,37 @@ internal sealed class TimerMock : ITimerMock
 				return;
 			}
 
-			long nowTicks = _mockTimeSystem.TimeProvider.ElapsedTicks;
-			if (nextPlannedExecution > nowTicks)
+			nextPlannedExecution += _period.Ticks;
+			await WaitUntil(nextPlannedExecution).ConfigureAwait(false);
+		}
+
+		async Task WaitUntil(long targetTicks)
+		{
+			if (_autoAdvance)
 			{
-				await _mockTimeSystem.Task
-					.Delay(TimeSpan.FromTicks(nextPlannedExecution - nowTicks), cancellationToken)
-					.ConfigureAwait(false);
+				long nowTicks = _mockTimeSystem.TimeProvider.ElapsedTicks;
+				if (targetTicks > nowTicks)
+				{
+					await _mockTimeSystem.Task
+						.Delay(TimeSpan.FromTicks(targetTicks - nowTicks),
+							cancellationToken)
+						.ConfigureAwait(false);
+				}
+			}
+			else
+			{
+				long nowTicks = _mockTimeSystem.TimeProvider.ElapsedTicks;
+				while (targetTicks > nowTicks)
+				{
+					long executeAfter = targetTicks;
+					using IAwaitableCallback<DateTime> onTimeChanged = _mockTimeSystem.On
+						.TimeChanged(predicate: _
+							=> _mockTimeSystem.TimeProvider.ElapsedTicks >= executeAfter);
+					await onTimeChanged.WaitAsync(
+						timeout: null,
+						cancellationToken: cancellationToken).ConfigureAwait(false);
+					nowTicks = _mockTimeSystem.TimeProvider.ElapsedTicks;
+				}
 			}
 		}
 	}

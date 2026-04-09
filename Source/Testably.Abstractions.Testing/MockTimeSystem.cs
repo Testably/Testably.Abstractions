@@ -98,7 +98,7 @@ public sealed class MockTimeSystem : ITimeSystem
 #if FEATURE_PERIODIC_TIMER
 		_periodicTimerFactoryMock = new PeriodicTimerFactoryMock(this, _callbackHandler, initialization.AutoAdvance);
 #endif
-		_timerFactoryMock = new TimerFactoryMock(this);
+		_timerFactoryMock = new TimerFactoryMock(this, initialization.AutoAdvance);
 	}
 
 	#region ITimeSystem Members
