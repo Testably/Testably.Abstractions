@@ -225,6 +225,7 @@ internal sealed class TimerMock : ITimerMock
 		_onDispose = onDispose;
 	}
 
+	#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private async Task RunTimer(CancellationToken cancellationToken = default)
 	{
 		long nextPlannedExecution = _mockTimeSystem.TimeProvider.ElapsedTicks + _dueTime.Ticks;
@@ -305,6 +306,7 @@ internal sealed class TimerMock : ITimerMock
 			}
 		}
 	}
+	#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	private void Start()
 	{
