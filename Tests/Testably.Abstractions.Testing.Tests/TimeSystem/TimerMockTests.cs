@@ -49,6 +49,92 @@ public class TimerMockTests
 	}
 
 	[Test]
+	public async Task DisableAutoAdvance_ShouldExecuteTimerLimitedNumberOfTimes()
+	{
+		int callbackCount = 0;
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		using CancellationTokenSource cts = CancellationTokenSource
+			.CreateLinkedTokenSource(TestContext.Current!.Execution.CancellationToken);
+		cts.CancelAfter(30.Seconds());
+		CancellationToken token = cts.Token;
+		using SemaphoreSlim callbackExecuted = new(0);
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			// ReSharper disable once AccessToModifiedClosure
+			Interlocked.Increment(ref callbackCount);
+			// ReSharper disable once AccessToDisposedClosure
+			callbackExecuted.Release();
+		}, null, 1.Seconds(), 2.Seconds());
+
+		await Task.Delay(50.Milliseconds(), token);
+		await That(Volatile.Read(ref callbackCount)).IsEqualTo(0);
+
+		// Advance past dueTime (1s): should trigger first callback
+		timeSystem.TimeProvider.AdvanceBy(2.Seconds());
+		await callbackExecuted.WaitAsync(token);
+		await That(Volatile.Read(ref callbackCount)).IsEqualTo(1);
+
+		// Advance past one period (2s): should trigger second callback
+		await Task.Delay(50.Milliseconds(), token);
+		timeSystem.TimeProvider.AdvanceBy(2.Seconds());
+		await callbackExecuted.WaitAsync(token);
+		await That(Volatile.Read(ref callbackCount)).IsEqualTo(2);
+
+		// Advance past two periods (4s): should trigger two more callbacks
+		await Task.Delay(50.Milliseconds(), token);
+		timeSystem.TimeProvider.AdvanceBy(4.Seconds());
+		await callbackExecuted.WaitAsync(token);
+		await Task.Delay(50.Milliseconds(), token);
+		timeSystem.TimeProvider.AdvanceBy(0.Seconds());
+		await callbackExecuted.WaitAsync(token);
+		await That(Volatile.Read(ref callbackCount)).IsEqualTo(4);
+	}
+
+	[Test]
+	public async Task DisableAutoAdvance_ShouldNotExecuteTimerBeforeTimeElapsed()
+	{
+		int callbackCount = 0;
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		using CancellationTokenSource cts = CancellationTokenSource
+			.CreateLinkedTokenSource(TestContext.Current!.Execution.CancellationToken);
+		cts.CancelAfter(30.Seconds());
+		CancellationToken token = cts.Token;
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			// ReSharper disable once AccessToModifiedClosure
+			Interlocked.Increment(ref callbackCount);
+		}, null, 1.Seconds(), 2.Seconds());
+
+		await Task.Delay(50.Milliseconds(), token);
+		await That(Volatile.Read(ref callbackCount)).IsEqualTo(0);
+	}
+
+	[Test]
+	public async Task DisableAutoAdvance_ShouldStartTimerWhenTimeElapsed()
+	{
+		DateTime callbackTime = DateTime.MinValue;
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		using CancellationTokenSource cts = CancellationTokenSource
+			.CreateLinkedTokenSource(TestContext.Current!.Execution.CancellationToken);
+		cts.CancelAfter(30.Seconds());
+		CancellationToken token = cts.Token;
+		using SemaphoreSlim callbackExecuted = new(0);
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			callbackTime = timeSystem.DateTime.UtcNow;
+			// ReSharper disable once AccessToDisposedClosure
+			callbackExecuted.Release();
+		}, null, 1.Seconds(), Timeout.InfiniteTimeSpan);
+
+		await Task.Delay(50.Milliseconds(), token);
+		timeSystem.TimeProvider.AdvanceBy(2.Seconds());
+		await callbackExecuted.WaitAsync(token);
+		DateTime after = timeSystem.DateTime.UtcNow;
+
+		await That(callbackTime).IsEqualTo(after);
+	}
+
+	[Test]
 	public async Task Dispose_ShouldDisposeTimer()
 	{
 		MockTimeSystem timeSystem = new();
@@ -242,7 +328,7 @@ public class TimerMockTests
 					ticks.Release();
 					advanced.Wait(token);
 					// ReSharper restore AccessToDisposedClosure
-				}, null, TimeSpan.Zero, 2.Seconds());
+				}, null, TimeSpan.Zero, 1.Seconds());
 
 				await Task.Delay(Timeout.InfiniteTimeSpan, token);
 			}
