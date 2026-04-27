@@ -35,7 +35,7 @@
 		<PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0"/>
 		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5"/>
 		<PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.1.0" />
-		<PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.5.2" />
+		<PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.6.2" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageVersion Include="System.Memory" Version="4.6.3" />
