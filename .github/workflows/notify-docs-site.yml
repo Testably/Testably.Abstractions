@@ -1,0 +1,22 @@
+name: Notify Docs Site
+
+on:
+    push:
+        branches: [ main ]
+        paths:
+            - 'Docs/pages/docs/**'
+            - '.github/workflows/notify-docs-site.yml'
+    workflow_dispatch:
+
+jobs:
+    dispatch:
+        name: Trigger Site rebuild
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Dispatch extension-documentation-updated-event to Testably/Testably.Site
+                uses: peter-evans/repository-dispatch@v3
+                with:
+                    token: ${{ secrets.SITE_DISPATCH_TOKEN }}
+                    repository: Testably/Testably.Site
+                    event-type: extension-documentation-updated-event
+                    client-payload: '{"source": "${{ github.repository }}", "sha": "${{ github.sha }}"}'
