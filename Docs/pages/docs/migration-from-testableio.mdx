@@ -9,19 +9,9 @@ title: Migration from TestableIO
 
 ## When to use which
 
-**Use Testably.Abstractions** when you need:
+The shared `IFileSystem` interface means production code is identical either way - this choice only affects tests. The core differentiator: `Testably.Abstractions` runs its full test suite against both `MockFileSystem` and `RealFileSystem` on every supported OS and against each `SimulationMode`, so the mock and the real OS stay in lock-step over time.
 
-- Advanced testing scenarios (`FileSystemWatcher`, `SafeFileHandle`, multiple drives)
-- Additional abstractions (`ITimeSystem`, `IRandomSystem`)
-- Cross-platform file system simulation (Linux, macOS, Windows)
-- More extensive and consistent behavioural validation
-- Active development and new features
-
-**Use TestableIO.System.IO.Abstractions** when you need:
-
-- Basic file system mocking
-- Direct manipulation of stored file entities (`MockFileData`, `MockDirectoryData`)
-- An established codebase already integrated with TestableIO
+Pick **Testably.Abstractions** when you need a watcher, `SafeFileHandle`, multiple drives with size quotas, the `ITimeSystem` / `IRandomSystem` companions, or you want to exercise Linux/macOS/Windows behaviour from a single CI job. Pick **TestableIO.System.IO.Abstractions** when you're already using its `MockFileData` / `MockDirectoryData` to inspect or mutate the in-memory store directly - that surface has no equivalent here.
 
 ## How to migrate
 

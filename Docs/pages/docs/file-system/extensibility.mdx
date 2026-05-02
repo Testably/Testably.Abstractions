@@ -25,15 +25,16 @@ Any `IFileSystemInfo` (or `FileSystemStream`) on the mock can be cast to `IFileS
 A typical pattern in a strategy:
 
 ```csharp
-public bool IsAccessGranted(string path, IFileSystemExtensibility extensibility)
+public bool IsAccessGranted(string fullPath,
+    IFileSystemExtensibility extensibility,
+    UnixFileMode mode, FileAccess requestedAccess)
 {
-    UnixFileMode? mode = extensibility.RetrieveMetadata<UnixFileMode?>("mode");
     string? owner = extensibility.RetrieveMetadata<string>("owner");
-    return CheckPermissions(mode, owner);
+    return CheckPermissions(mode, owner, requestedAccess);
 }
 
-public void OnSetUnixFileMode(string path, UnixFileMode mode,
-    IFileSystemExtensibility extensibility)
+public void OnSetUnixFileMode(string fullPath,
+    IFileSystemExtensibility extensibility, UnixFileMode mode)
 {
     extensibility.StoreMetadata("mode", mode);
     extensibility.StoreMetadata("owner", CurrentUser);

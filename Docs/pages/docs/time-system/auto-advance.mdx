@@ -16,7 +16,7 @@ timeSystem.DateTime.UtcNow; // 2026-01-01 00:10:00 UTC
 
 ## Disabling auto-advance
 
-When you need to assert *that* code waited (instead of just letting it through), turn auto-advance off:
+When you need to assert *that* code waited (instead of just letting it through), turn auto-advance off via `MockTimeSystemOptions.DisableAutoAdvance()`:
 
 ```csharp
 MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());

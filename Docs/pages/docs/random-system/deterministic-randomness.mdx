@@ -27,21 +27,23 @@ randomSystem.Guid.NewGuid();         // 00000000-0000-0000-0000-000000000001
 
 ## Building generators
 
-`Generator<T>` has implicit conversions and four factory methods so most call sites stay terse:
+`Generator<T>` has implicit conversions from `T`, `T[]` and `Func<T>`, plus four explicit factory methods so most call sites stay terse:
 
 ```csharp
-// From a single value (every call returns 42)
+// From a single value (every call returns 42) - implicit, or explicit Generator.FromValue(42)
 Generator<int> g1 = 42;
 
-// From an array (round-robin)
+// From an array (round-robin) - implicit, or explicit Generator.FromArray(new[] { 1, 2, 3 })
 Generator<int> g2 = new[] { 1, 2, 3 };
 
-// From a callback
+// From a callback - implicit from Func<T>, or explicit Generator.FromCallback(...)
 Generator<int> g3 = Generator.FromCallback(() => DateTime.Now.Millisecond);
 
 // From any IEnumerable (loops once exhausted)
 Generator<Guid> g4 = Generator.FromEnumerable(MyKnownGuids);
 ```
+
+If you have a `Generator<T>` directly, `g.GetNext()` returns the next value - useful when you build the generator yourself outside a `MockRandomSystem` (e.g. for parameterised test-data generation).
 
 `Generator<T>` is `IDisposable` - when wrapping an `IEnumerable<T>`, dispose it (or rely on garbage collection in tests) to release the underlying enumerator.
 

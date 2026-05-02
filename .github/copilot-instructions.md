@@ -16,7 +16,7 @@ Testably.Abstractions is a feature-complete testing helper for the `System.IO.Ab
 ### Architecture
 - **Source/**: Main library code with 6 projects
 - **Tests/**: Comprehensive test suite with 13,134+ tests
-- **Examples/**: Usage examples and documentation
+- **Docs/**: Docusaurus documentation site (published to docs.testably.org)
 - **Pipeline/**: Nuke build system with .NET 8.0
 
 ## Critical Setup Requirements

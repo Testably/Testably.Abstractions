@@ -53,5 +53,3 @@ The custom domain `docs.testably.org` is configured via the `static/CNAME` file.
 - Top-level navigation order is controlled by `sidebar_position` frontmatter on individual pages and by `_category_.json` in folder roots.
 - The landing page is `src/pages/index.tsx`; the feature cards underneath are in `src/components/HomepageFeatures/`.
 - Site-wide config (title, navbar, footer) lives in `docusaurus.config.ts`.
-
-When editing example pages under `docs/examples/`, keep them in sync with the source READMEs at the top of the corresponding `Examples/<name>/` folder of the repository.
