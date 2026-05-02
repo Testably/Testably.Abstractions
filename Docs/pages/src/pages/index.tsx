@@ -103,7 +103,7 @@ function HomepageCodeSample() {
         <p className={clsx('text--center', styles.codeSampleSubtitle)}>
           Depend on <code>IFileSystem</code>, <code>ITimeSystem</code> and{' '}
           <code>IRandomSystem</code> in production. Swap in the in-memory mocks for
-          tests — deterministic, cross-platform, no temp folders or{' '}
+          tests - deterministic, cross-platform, no temp folders or{' '}
           <code>Thread.Sleep</code>.
         </p>
         <div className={styles.codeSampleContainer}>
