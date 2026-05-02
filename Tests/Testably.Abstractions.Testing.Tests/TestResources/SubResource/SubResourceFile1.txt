@@ -1,1 +1,0 @@
-﻿SubResourceFile1 content
