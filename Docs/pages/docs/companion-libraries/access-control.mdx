@@ -1,0 +1,46 @@
+---
+sidebar_position: 2
+title: Access control
+---
+
+# Testably.Abstractions.AccessControl
+
+[![NuGet](https://img.shields.io/nuget/v/Testably.Abstractions.AccessControl?label=NuGet&logo=nuget)](https://www.nuget.org/packages/Testably.Abstractions.AccessControl)
+
+Implements the methods from [`FileSystemAclExtensions`](https://learn.microsoft.com/en-us/dotnet/api/system.io.filesystemaclextensions) on the `IFileSystem` interface so production code that reads or writes ACLs works against both real and mocked file systems.
+
+```powershell
+dotnet add package Testably.Abstractions.AccessControl
+```
+
+## What it adds
+
+| Extension on            | Methods                                                                                |
+|-------------------------|----------------------------------------------------------------------------------------|
+| `IDirectory`            | `CreateDirectory(path, DirectorySecurity)`, `GetAccessControl`, `SetAccessControl`     |
+| `IDirectoryInfo`        | `Create(DirectorySecurity)`, `GetAccessControl`, `SetAccessControl`                    |
+| `IFile`                 | `GetAccessControl`, `SetAccessControl`                                                 |
+| `IFileInfo`             | `GetAccessControl`, `SetAccessControl`                                                 |
+| `FileSystemStream`      | `GetAccessControl`, `SetAccessControl`                                                 |
+
+Each `GetAccessControl` overload accepts an optional `AccessControlSections` mask, matching the BCL.
+
+```csharp
+IFileSystem fileSystem; // injected
+
+DirectorySecurity acl = fileSystem.Directory.GetAccessControl("data");
+fileSystem.Directory.SetAccessControl("backup", acl);
+
+fileSystem.File.WriteAllText("secret.txt", "x");
+FileSecurity fileAcl = fileSystem.File.GetAccessControl("secret.txt");
+```
+
+## Behaviour on the mock
+
+On `RealFileSystem` the calls forward to `System.IO.FileSystemAclExtensions`. On `MockFileSystem` the ACL object is stored as metadata via [`IFileSystemExtensibility`](../file-system/extensibility) and round-tripped - set it, read it back, and it will be the same object.
+
+To simulate *enforcement* (denying a read or write based on the ACL), combine the package with [`MockFileSystem.WithAccessControlStrategy(...)`](../file-system/access-control).
+
+:::warning[Windows-only]
+All ACL APIs are marked `[SupportedOSPlatform("windows")]`. Calling them on Linux/macOS throws `PlatformNotSupportedException`.
+:::

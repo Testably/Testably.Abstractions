@@ -38,7 +38,7 @@ const FeatureList: FeatureItem[] = [
     emoji: '🖥️',
     description: (
       <>
-        Simulate Linux, macOS or Windows file systems on any host — case-sensitivity,
+        Simulate Linux, macOS or Windows file systems on any host - case-sensitivity,
         path separators, drive letters and Unix file modes are all honoured, so you can
         test platform-specific behaviour from a single CI job.
       </>

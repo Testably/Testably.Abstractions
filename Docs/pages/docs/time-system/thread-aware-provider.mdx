@@ -1,0 +1,115 @@
+---
+sidebar_position: 7
+title: Thread-aware time provider
+---
+
+# Thread-aware time provider
+
+The default `ITimeProvider` stores the simulated time in a single `DateTime` field. Two parallel threads each calling `Sleep(5s)` therefore advance the shared clock by **10 seconds total**, which doesn't match what would happen in the real world (where they'd both finish after roughly 5 seconds of wall time).
+
+The fix is a custom `ITimeProvider` that stores the clock per logical thread using `AsyncLocal<DateTime>`.
+
+## A complete reference implementation
+
+```csharp
+public sealed class ThreadAwareTimeProvider : ITimeProvider
+{
+    private static readonly AsyncLocal<DateTime>  Now              = new();
+    private static readonly AsyncLocal<DateTime?> SynchronizedTime = new();
+    private DateTime? _synchronizedTime;
+
+    public ThreadAwareTimeProvider(DateTime? now = null)
+    {
+        Now.Value = now ?? DateTime.Now;
+    }
+
+    public DateTime MaxValue   { get; set; } = DateTime.MaxValue;
+    public DateTime MinValue   { get; set; } = DateTime.MinValue;
+    public DateTime UnixEpoch  { get; set; } = DateTime.UnixEpoch;
+
+    public DateTime Read()
+    {
+        CheckSynchronization();
+        return Now.Value;
+    }
+
+    public void AdvanceBy(TimeSpan interval)
+    {
+        CheckSynchronization();
+        Now.Value = Now.Value.Add(interval);
+    }
+
+    public void SetTo(DateTime value) => Now.Value = value;
+
+    /// Aligns every async context to the value of the calling context on next read.
+    public void SynchronizeClock() => _synchronizedTime = Now.Value;
+
+    private void CheckSynchronization()
+    {
+        if (_synchronizedTime is { } target && SynchronizedTime.Value != target)
+        {
+            SynchronizedTime.Value = target;
+            Now.Value = target;
+        }
+    }
+}
+```
+
+`AsyncLocal<T>` flows with the async context, so each `Task.Run` (or `new Thread`) starts with its own copy of the current time. `SynchronizeClock()` lets you re-merge the per-thread clocks when you need to compare them.
+
+### Per-task clocks
+
+With this provider, parallel tasks advance their own clocks independently - task `i` ticks by `i` seconds per step:
+
+```csharp
+ThreadAwareTimeProvider timeProvider = new();
+MockTimeSystem timeSystem = new(timeProvider);
+DateTime start = timeSystem.DateTime.UtcNow;
+ConcurrentDictionary<int, List<int>> delays = new();
+
+for (int i = 1; i <= 10; i++)
+{
+    int id = i;
+    TimeSpan step = TimeSpan.FromSeconds(id);
+    await Task.Run(async () =>
+    {
+        for (int j = 0; j < 20; j++)
+        {
+            await timeSystem.Task.Delay(step);
+            int ms = (int)(timeSystem.DateTime.UtcNow - start).TotalMilliseconds;
+            delays.AddOrUpdate(id, _ => new List<int> { ms }, (_, l) => { l.Add(ms); return l; });
+        }
+    });
+}
+
+// Task 1's clock advanced 1s per step → [1000, 2000, …, 20000]
+// Task 5's clock advanced 5s per step → [5000, 10000, …, 100000]
+await Expect.That(delays[1]).IsEqualTo(Enumerable.Range(1, 20).Select(x => x * 1000));
+await Expect.That(delays[5]).IsEqualTo(Enumerable.Range(1, 20).Select(x => x * 5000));
+```
+
+The same pattern works with raw `Thread`s - `AsyncLocal<T>` flows across both.
+
+### Re-synchronising
+
+When a parallel branch finishes and you want subsequent reads on the main thread to continue from *its* clock, call `SynchronizeClock()` before joining:
+
+```csharp
+ThreadAwareTimeProvider timeProvider = new();
+MockTimeSystem timeSystem = new(timeProvider);
+DateTime start = timeSystem.DateTime.UtcNow;
+
+await timeSystem.Task.Delay(1_000); // main: +1s
+
+await Task.Run(async () =>
+{
+    await timeSystem.Task.Delay(1_000); // task: starts from +1s, now at +2s
+    timeProvider.SynchronizeClock();    // publish +2s as the new baseline
+});
+
+timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromMilliseconds(1_000));
+
+// Without SynchronizeClock the main thread would be at +2s (its own +1s, plus the +1s above).
+// With it, the main thread picks up the task's +2s and ends at +3s.
+await Expect.That((int)(timeSystem.DateTime.UtcNow - start).TotalMilliseconds).IsEqualTo(3_000);
+```

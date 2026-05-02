@@ -64,10 +64,11 @@ public void StoreData_ShouldWriteValidFile()
 }
 ```
 
-That's it — your code now runs against an in-memory file system in tests, and against the real one in production.
+That's it - your code now runs against an in-memory file system in tests, and against the real one in production.
 
 ## Next steps
 
-- [Concepts](./concepts) — what each abstraction covers.
-- [Testing](./testing) — initialization, simulating other operating systems, drives, the `FileSystemWatcher`.
-- [Examples](./examples) — runnable sample projects.
+- [File system](./file-system) - `IFileSystem`, `MockFileSystem`, drives, watcher, statistics, strategies.
+- [Time system](./time-system) - `ITimeSystem`, time providers, timers, auto-advance, notifications.
+- [Random system](./random-system) - `IRandomSystem` and deterministic generators.
+- [Companion libraries](./companion-libraries) - Compression and AccessControl.

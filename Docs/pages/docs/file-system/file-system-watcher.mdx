@@ -1,0 +1,81 @@
+---
+sidebar_position: 4
+title: FileSystemWatcher
+---
+
+# FileSystemWatcher
+
+`MockFileSystem` ships a fully functional [`FileSystemWatcher`](https://learn.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher) replacement. It fires the same events as the real one - and crucially, it fires the **OS-specific** events that the real watcher fires on Linux, Windows and macOS.
+
+## Basic usage
+
+```csharp
+var fileSystem = new MockFileSystem();
+fileSystem.Initialize().WithSubdirectory("watched");
+
+using var watcher = fileSystem.FileSystemWatcher.New("watched");
+var deleted = new ManualResetEventSlim();
+
+watcher.Deleted += (_, _) => deleted.Set();
+watcher.EnableRaisingEvents = true;
+
+fileSystem.Directory.Delete("watched");
+
+await Expect.That(deleted.Wait(TimeSpan.FromSeconds(1))).IsTrue();
+```
+
+## Reacting to triggered events from a test
+
+`MockFileSystem.Watcher.OnTriggered(...)` returns an awaitable callback that fires after every `IFileSystemWatcher` event. Use it to assert what a watcher saw without subscribing to the event yourself:
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.Initialize().WithSubdirectory("watched");
+
+using var watcher = fileSystem.FileSystemWatcher.New("watched");
+watcher.EnableRaisingEvents = true;
+
+using var triggered = fileSystem.Watcher.OnTriggered(
+    change => { /* inspect ChangeDescription */ });
+
+fileSystem.File.WriteAllText("watched/a.txt", "hi");
+ChangeDescription[] events = triggered.Wait(count: 1);
+```
+
+## Event tables (per OS)
+
+The watcher fires different events depending on whether the source/target is **inside**, **nested** under, **deeply nested** under, or **outside** the watched path. The table below lists every combination for both values of `IncludeSubdirectories` - it is also the contract that the `MockFileSystem` watcher honours when simulating other operating systems.
+
+| Location | Description                                            |
+|----------|--------------------------------------------------------|
+| `_`      | Entry was created or deleted                           |
+| Outside  | Outside the watching path                              |
+| Inside   | Immediately inside the watching path                   |
+| Nested   | Nested under the watching path                         |
+| Deep     | Deeply nested under the watching path                  |
+
+Each cell is `IncludeSubdirectories = false / IncludeSubdirectories = true`. When both values match, only one is shown. `–` means no event is raised.
+
+| From → To         | Linux                     | Windows                             | Mac                       |
+|-------------------|---------------------------|-------------------------------------|---------------------------|
+| `_` → Inside      | `Created`                 | `Created`                           | `Created`                 |
+| Inside → `_`      | `Deleted`                 | `Deleted`                           | `Deleted`                 |
+| `_` → Nested      | – / `Created`             | – / `Created`                       | – / `Created`             |
+| Nested → `_`      | – / `Deleted`             | – / `Deleted`                       | – / `Deleted`             |
+| `_` → Deep        | – / `Created`             | – / `Created`                       | – / `Created`             |
+| Deep → `_`        | – / `Deleted`             | – / `Deleted`                       | – / `Deleted`             |
+| Outside → Inside  | `Created`                 | `Created`                           | `Created`                 |
+| Inside → Inside   | `Renamed`                 | `Renamed`                           | `Renamed`                 |
+| Inside → Outside  | `Deleted`                 | `Deleted`                           | `Deleted`                 |
+| Outside → Nested  | – / `Created`             | – / `Created`                       | – / `Created`             |
+| Nested → Nested   | – / `Renamed`             | – / `Renamed`                       | – / `Renamed`             |
+| Nested → Outside  | – / `Deleted`             | – / `Deleted`                       | – / `Deleted`             |
+| Outside → Deep    | – / `Created`             | – / `Created`                       | – / `Created`             |
+| Deep → Deep       | – / `Renamed`             | – / `Renamed`                       | – / `Renamed`             |
+| Deep → Outside    | – / `Deleted`             | – / `Deleted`                       | – / `Deleted`             |
+| Inside → Nested   | `Deleted` / `Renamed`     | `Deleted` / `Deleted`+`Created`     | `Renamed`                 |
+| Inside → Deep     | `Deleted` / `Renamed`     | `Deleted` / `Deleted`+`Created`     | `Renamed`                 |
+| Nested → Inside   | `Created` / `Renamed`     | `Created` / `Deleted`+`Created`     | `Created` / `Renamed`     |
+| Deep → Inside     | `Created` / `Renamed`     | `Created` / `Deleted`+`Created`     | `Created` / `Renamed`     |
+| Nested → Deep     | – / `Renamed`             | – / `Deleted`+`Created`             | – / `Renamed`             |
+| Deep → Nested     | – / `Renamed`             | – / `Deleted`+`Created`             | – / `Renamed`             |

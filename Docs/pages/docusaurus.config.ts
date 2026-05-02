@@ -79,7 +79,9 @@ const config: Config = {
           items: [
             {label: 'Introduction', to: '/docs/intro'},
             {label: 'Getting Started', to: '/docs/getting-started'},
-            {label: 'Examples', to: '/docs/examples'},
+            {label: 'File system', to: '/docs/file-system/'},
+            {label: 'Time system', to: '/docs/time-system/'},
+            {label: 'Random system', to: '/docs/random-system/'},
           ],
         },
         {

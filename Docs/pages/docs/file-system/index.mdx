@@ -1,6 +1,5 @@
 ---
-sidebar_position: 1
-title: IFileSystem
+title: File system
 ---
 
 # IFileSystem
@@ -18,6 +17,8 @@ title: IFileSystem
 | `new DirectoryInfo("foo")`           | `fileSystem.DirectoryInfo.New("foo")`           |
 | `new FileStream(...)`                | `fileSystem.FileStream.New(...)`                |
 | `new FileSystemWatcher(...)`         | `fileSystem.FileSystemWatcher.New(...)`         |
+| `DriveInfo.GetDrives()`              | `fileSystem.DriveInfo.GetDrives()`              |
+| `FileVersionInfo.GetVersionInfo(...)`| `fileSystem.FileVersionInfo.GetVersionInfo(...)`|
 
 Static methods stay static on the sub-properties; constructors become factory methods (`New`). Everything else mirrors the framework one-to-one.
 
@@ -28,4 +29,13 @@ Static methods stay static on the sub-properties; constructors become factory me
 | `RealFileSystem` | `Testably.Abstractions`          | Production                  |
 | `MockFileSystem` | `Testably.Abstractions.Testing`  | Unit tests                  |
 
-Continue with [Testing › MockFileSystem](../testing/mock-file-system) to see the testing surface.
+`MockFileSystem` is the in-memory implementation of `IFileSystem` shipped in `Testably.Abstractions.Testing`. It implements every member of `IFileSystem` and is exercised by the same test suite as `RealFileSystem` - if a test passes against the real file system, it passes against the mock, and vice versa.
+
+```csharp
+IFileSystem fileSystem = new MockFileSystem();
+
+fileSystem.File.WriteAllText("hello.txt", "world");
+string content = fileSystem.File.ReadAllText("hello.txt"); // "world"
+```
+
+The remaining pages in this section cover how to seed it, simulate other operating systems, model drives, react to events, gather statistics and plug in custom strategies for ACLs, Unix file modes, safe handles and version info.

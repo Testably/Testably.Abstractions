@@ -1,0 +1,113 @@
+---
+sidebar_position: 8
+title: Unix file mode
+---
+
+# Unix file mode
+
+To simulate POSIX permissions in the mock, plug in an `IUnixFileModeStrategy` via `WithUnixFileModeStrategy(...)`.
+
+The strategy decides:
+
+- whether a given user/group is allowed to read or write a path (`IsAccessGranted`)
+- what to record when a test calls `File.SetUnixFileMode(...)` (`OnSetUnixFileMode`)
+
+A typical implementation stores the file's user and group alongside the file via [`IFileSystemExtensibility`](./extensibility), then uses that data plus the file's `UnixFileMode` to decide whether to grant access.
+
+Read access is granted when:
+
+- the file's mode includes `OtherRead`, **or**
+- the mode includes `GroupRead` and the file's group matches the simulated group, **or**
+- the mode includes `UserRead` and the file's user matches the simulated user
+
+The same rules apply to write access with the `*Write` flags.
+
+:::warning[Not on Windows]
+`WithUnixFileModeStrategy` throws `PlatformNotSupportedException` when the host (or simulated OS) is Windows.
+:::
+
+## A complete reference implementation
+
+`DefaultUnixFileModeStrategy` lets a test simulate "running as user X in group Y" via fluent setters and stores the user/group on each file at creation time:
+
+```csharp
+public class DefaultUnixFileModeStrategy : IUnixFileModeStrategy
+{
+    private string _user = "";
+    private string _group = "";
+
+    public DefaultUnixFileModeStrategy SimulateUser(string user)   { _user = user; return this; }
+    public DefaultUnixFileModeStrategy SimulateGroup(string group) { _group = group; return this; }
+
+    public void OnSetUnixFileMode(string fullPath,
+        IFileSystemExtensibility extensibility, UnixFileMode mode)
+    {
+        // Record the simulated owner at the moment the file's mode was set
+        extensibility.StoreMetadata(nameof(DefaultUnixFileModeStrategy),
+            new UserGroup(_user, _group));
+    }
+
+    public bool IsAccessGranted(string fullPath,
+        IFileSystemExtensibility extensibility,
+        UnixFileMode mode, FileAccess requestedAccess)
+    {
+        UserGroup owner = extensibility
+            .RetrieveMetadata<UserGroup>(nameof(DefaultUnixFileModeStrategy))
+            ?? new UserGroup(_user, _group);
+
+        bool readOk =
+            mode.HasFlag(UnixFileMode.OtherRead) ||
+            (mode.HasFlag(UnixFileMode.GroupRead) && owner.Group == _group) ||
+            (mode.HasFlag(UnixFileMode.UserRead)  && owner.User  == _user);
+
+        bool writeOk =
+            mode.HasFlag(UnixFileMode.OtherWrite) ||
+            (mode.HasFlag(UnixFileMode.GroupWrite) && owner.Group == _group) ||
+            (mode.HasFlag(UnixFileMode.UserWrite)  && owner.User  == _user);
+
+        return requestedAccess switch
+        {
+            FileAccess.Read  => readOk,
+            FileAccess.Write => writeOk,
+            _                => readOk && writeOk,
+        };
+    }
+
+    private record UserGroup(string User, string Group);
+}
+```
+
+### Wiring it into a test
+
+```csharp
+DefaultUnixFileModeStrategy strategy = new();
+MockFileSystem fileSystem = new MockFileSystem()
+    .WithUnixFileModeStrategy(strategy);
+
+// "alice" creates a directory readable only by its group "editors"
+strategy.SimulateUser("alice").SimulateGroup("editors");
+fileSystem.Directory.CreateDirectory("foo", UnixFileMode.GroupRead);
+
+// "bob" (also "editors") can read it
+strategy.SimulateUser("bob").SimulateGroup("editors");
+fileSystem.Directory.GetFiles("foo"); // ✓ no exception
+
+// switch to a different group → read denied
+strategy.SimulateGroup("guests");
+fileSystem.Directory.GetFiles("foo"); // throws UnauthorizedAccessException
+```
+
+### Asserting denial
+
+The mock throws `UnauthorizedAccessException` whenever `IsAccessGranted` returns `false`:
+
+```csharp
+strategy.SimulateUser("alice");
+fileSystem.Directory.CreateDirectory("private", UnixFileMode.UserWrite);
+
+strategy.SimulateUser("bob");
+Action act = () => fileSystem.Directory.CreateDirectory("private/sub");
+
+await Expect.That(act).Throws<UnauthorizedAccessException>();
+```
+

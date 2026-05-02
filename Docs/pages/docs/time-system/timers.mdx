@@ -1,0 +1,53 @@
+---
+sidebar_position: 4
+title: Timer
+---
+
+# Timer
+
+`MockTimeSystem.Timer` wraps `System.Threading.Timer` (`ITimer`). The mocked timer lets you wait for a specific number of executions instead of sleeping.
+
+For the `await`-based pull loop variant, see [PeriodicTimer](./periodic-timer).
+
+## Driving a `Timer` from a test
+
+```csharp
+MockTimeSystem timeSystem = new();
+
+int ticks = 0;
+ITimer timer = timeSystem.Timer.New(_ => ticks++,
+    state: null,
+    dueTime: TimeSpan.FromSeconds(1),
+    period: TimeSpan.FromSeconds(1));
+
+// Block until the timer fired 3 times (or throw TimeoutException)
+((ITimerMock)timer).Wait(executionCount: 3);
+
+await Expect.That(ticks).IsEqualTo(3);
+```
+
+`ITimerMock.Wait(executionCount, timeout, callback)` is the testing-only addition. The optional `callback` runs between executions - call `Dispose()` on the timer from inside it to stop early.
+
+You can also reach every registered timer via `MockTimeSystem.TimerHandler[index]`, useful when the system under test owns the `Timer` and you don't have a reference.
+
+## Timer strategies
+
+`WithTimerStrategy(ITimerStrategy)` controls when timers start and how exceptions inside callbacks are handled:
+
+```csharp
+MockTimeSystem timeSystem = new();
+timeSystem.WithTimerStrategy(new TimerStrategy(
+    mode: TimerMode.StartOnMockWait,
+    swallowExceptions: true));
+```
+
+| `TimerMode`         | Behaviour                                                                                                  |
+|---------------------|------------------------------------------------------------------------------------------------------------|
+| `StartImmediately`  | Default. Timer thread starts as soon as the timer is constructed - matches real `Timer`.                   |
+| `StartOnMockWait`   | Timer is dormant until `ITimerMock.Wait(...)` is called. Removes thread-scheduling races from the test.    |
+
+| `SwallowExceptions` | Behaviour                                                                                                  |
+|---------------------|------------------------------------------------------------------------------------------------------------|
+| `false` (default)   | An exception in the callback throws - your test sees it, mirroring the real-world process crash.           |
+| `true`              | Exceptions are silently dropped, matching legacy code that handled them in unspecified ways.               |
+

@@ -1,0 +1,55 @@
+---
+sidebar_position: 1
+title: Deterministic randomness
+---
+
+# Deterministic randomness
+
+For snapshot tests, generated-id assertions, or reproducing a reported bug, you want the "random" values to be predictable. `RandomProvider.Generate(...)` lets you supply a generator for any of the primitive types `Random` produces:
+
+```csharp
+IRandomProvider provider = RandomProvider.Generate(
+    seed: 42,
+    intGenerator: new[] { 1, 2, 3 },          // round-robins through the array
+    guidGenerator: () => Guid.Parse("00000000-0000-0000-0000-000000000001"),
+    doubleGenerator: 0.5);                    // always returns 0.5
+
+MockRandomSystem randomSystem = new(provider);
+
+randomSystem.Random.Shared.Next();   // 1
+randomSystem.Random.Shared.Next();   // 2
+randomSystem.Random.Shared.Next();   // 3
+randomSystem.Random.Shared.Next();   // 1 (wraps around)
+randomSystem.Guid.NewGuid();         // 00000000-0000-0000-0000-000000000001
+```
+
+`Generate` accepts generators for `int`, `long`, `float`, `double`, `byte[]` and `Guid`. Any generator left as `null` falls through to the seeded `Random`.
+
+## Building generators
+
+`Generator<T>` has implicit conversions and four factory methods so most call sites stay terse:
+
+```csharp
+// From a single value (every call returns 42)
+Generator<int> g1 = 42;
+
+// From an array (round-robin)
+Generator<int> g2 = new[] { 1, 2, 3 };
+
+// From a callback
+Generator<int> g3 = Generator.FromCallback(() => DateTime.Now.Millisecond);
+
+// From any IEnumerable (loops once exhausted)
+Generator<Guid> g4 = Generator.FromEnumerable(MyKnownGuids);
+```
+
+`Generator<T>` is `IDisposable` - when wrapping an `IEnumerable<T>`, dispose it (or rely on garbage collection in tests) to release the underlying enumerator.
+
+## Wiring it into the file system
+
+`MockFileSystem` uses the random system internally for things like `Path.GetRandomFileName()` and `WithAFile()`. Pass a deterministic provider through to keep file-system tests reproducible:
+
+```csharp
+MockFileSystem fileSystem = new(o =>
+    o.UseRandomProvider(RandomProvider.Generate(seed: 1234)));
+```

@@ -1,6 +1,5 @@
 ---
-sidebar_position: 2
-title: ITimeSystem
+title: Time system
 ---
 
 # ITimeSystem
@@ -11,14 +10,19 @@ title: ITimeSystem
 
 | Sub-property      | Wraps                                                                                                                         |
 |-------------------|-------------------------------------------------------------------------------------------------------------------------------|
-| `DateTime`        | `DateTime.Now`, `DateTime.UtcNow`, `DateTime.Today`                                                                           |
+| `DateTime`        | `DateTime.Now`, `DateTime.UtcNow`, `DateTime.Today` (plus `MinValue`, `MaxValue`, `UnixEpoch`)                                |
 | `Stopwatch`       | [`System.Diagnostics.Stopwatch`](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.stopwatch)                   |
 | `Task`            | [`Task.Delay`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.delay)                                |
 | `Thread`          | [`Thread.Sleep`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.thread.sleep)                                  |
 | `PeriodicTimer`   | [`System.Threading.PeriodicTimer`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.periodictimer)               |
 | `Timer`           | [`System.Threading.Timer`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.timer)                               |
 
-## Test usage
+## Implementations
+
+| Type             | Package                          | Use it for                  |
+|------------------|----------------------------------|-----------------------------|
+| `RealTimeSystem` | `Testably.Abstractions`          | Production                  |
+| `MockTimeSystem` | `Testably.Abstractions.Testing`  | Unit tests                  |
 
 ```csharp
 ITimeSystem timeSystem = new MockTimeSystem();
@@ -28,4 +32,4 @@ timeSystem.Thread.Sleep(TimeSpan.FromMinutes(5));
 DateTime now = timeSystem.DateTime.Now; // advanced by 5 minutes
 ```
 
-For multi-threaded scenarios where every thread should not advance the shared clock, see the [Thread-aware time provider example](../examples/thread-aware-time-provider).
+The remaining pages cover how to configure the underlying time provider, control auto-advance, drive timers and periodic timers, and react to time-related events.

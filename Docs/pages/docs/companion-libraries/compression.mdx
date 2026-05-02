@@ -1,0 +1,106 @@
+---
+sidebar_position: 1
+title: Compression
+---
+
+# Testably.Abstractions.Compression
+
+[![NuGet](https://img.shields.io/nuget/v/Testably.Abstractions.Compression?label=NuGet&logo=nuget)](https://www.nuget.org/packages/Testably.Abstractions.Compression)
+
+Wraps `System.IO.Compression.ZipFile` and `System.IO.Compression.ZipArchive` as extensions on `IFileSystem`.
+
+```powershell
+dotnet add package Testably.Abstractions.Compression
+```
+
+## Why this package exists
+
+`System.IO.Compression.ZipFile` operates on real `string` paths and `System.IO.Compression.ZipArchive` operates on `Stream`s - neither knows about `IFileSystem`. Without the companion package, bridging the two means writing your own glue:
+
+```csharp
+// With Testably.Abstractions.Compression - one line:
+fileSystem.ZipFile().CreateFromDirectory("source", "out.zip");
+```
+
+<details>
+<summary>Without the companion package (~15 lines of glue)</summary>
+
+```csharp
+using MemoryStream buffer = new();
+using (ZipArchive archive = new(buffer, ZipArchiveMode.Create, leaveOpen: true))
+{
+    AddDirectory("", "source");
+
+    void AddDirectory(string prefix, string directory)
+    {
+        foreach (string file in fileSystem.Directory.GetFiles(directory))
+        {
+            ZipArchiveEntry entry = archive.CreateEntry(prefix + Path.GetFileName(file));
+            using Stream entryStream = entry.Open();
+            entryStream.Write(fileSystem.File.ReadAllBytes(file));
+        }
+        foreach (string sub in fileSystem.Directory.GetDirectories(directory))
+        {
+            string name = fileSystem.Path.GetFileName(sub);
+            archive.CreateEntry(prefix + name + "/");
+            AddDirectory(prefix + name + "/", sub);
+        }
+    }
+}
+buffer.Position = 0;
+using FileSystemStream output = fileSystem.File.Create("out.zip");
+buffer.CopyTo(output);
+```
+
+Extraction looks similar: open a `ZipArchive` in `Read` mode, loop the entries, recreate directories on the file system, copy each entry's stream into `fileSystem.File.WriteAllBytes`.
+
+</details>
+
+The package replaces this glue with a one-line call. Beyond brevity, it also gives you stream/path overloads on both sides, async variants on .NET 9+, and an `IZipArchive` / `IZipArchiveEntry` wrapper so the abstraction extends through the archive itself rather than stopping at the zip boundary.
+
+### Production uses the real BCL implementation
+
+The wrapper isn't just a uniform façade - at runtime it forwards every call to the matching `System.IO.Compression.ZipFile` / `ZipArchive` method when `IFileSystem` is a `RealFileSystem`, and to an in-memory equivalent only when it's a `MockFileSystem`:
+
+```csharp
+// Inside ZipFileWrapper.CreateFromDirectory:
+Execute.WhenRealFileSystem(FileSystem,
+    () => ZipFile.CreateFromDirectory(sourceDirectoryName, destination),  // real → BCL
+    () => ZipUtilities.CreateFromDirectory(FileSystem, sourceDirectoryName, destination)); // mock → in-memory
+```
+
+That means production code keeps every native optimisation the BCL ships - kernel-level streaming, no extra `MemoryStream` allocation, the latest deflate tuning - while tests run against a deterministic in-memory implementation. You don't trade performance for testability.
+
+## ZipFile
+
+`fileSystem.ZipFile()` exposes the static methods of `System.IO.Compression.ZipFile`:
+
+```csharp
+fileSystem.ZipFile()
+    .CreateFromDirectory("your-directory", "your-file.zip");
+
+fileSystem.ZipFile()
+    .ExtractToDirectory("your-file.zip", "your-destination");
+
+using IZipArchive archive = fileSystem.ZipFile()
+    .Open("your-file.zip", ZipArchiveMode.Update);
+```
+
+All overloads from the BCL are present, including the async variants on .NET 9+ (`CreateFromDirectoryAsync`, `ExtractToDirectoryAsync`, `OpenAsync`, `OpenReadAsync`).
+
+## ZipArchive
+
+`fileSystem.ZipArchive()` is a factory for `IZipArchive` from a `Stream` (matches the `new ZipArchive(...)` constructors):
+
+```csharp
+using FileSystemStream stream = fileSystem.File.OpenRead("your-file.zip");
+using IZipArchive archive = fileSystem.ZipArchive()
+    .New(stream, ZipArchiveMode.Read);
+
+foreach (IZipArchiveEntry entry in archive.Entries)
+{
+    Console.WriteLine(entry.FullName);
+}
+```
+
+`IZipArchive` exposes `Entries`, `Mode`, `CreateEntry`, `CreateEntryFromFile`, `GetEntry`, `ExtractToDirectory` and their async counterparts. `IZipArchiveEntry` mirrors `ZipArchiveEntry` (`Open`, `Delete`, `LastWriteTime`, `Length`, `CompressedLength`, …).

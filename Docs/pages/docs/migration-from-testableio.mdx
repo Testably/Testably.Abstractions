@@ -44,12 +44,12 @@ var fileSystem = new MockFileSystem();
 fileSystem.AddDirectory("some-directory");
 fileSystem.AddFile("some-file.txt", new MockFileData("content"));
 
-// After (Testably) — option A: imperative
+// After (Testably) - option A: imperative
 var fileSystem = new MockFileSystem();
 fileSystem.Directory.CreateDirectory("some-directory");
 fileSystem.File.WriteAllText("some-file.txt", "content");
 
-// After (Testably) — option B: fluent initialization
+// After (Testably) - option B: fluent initialization
 var fileSystem = new MockFileSystem();
 fileSystem.Initialize()
     .WithSubdirectory("some-directory")
@@ -57,4 +57,4 @@ fileSystem.Initialize()
         .HasStringContent("content"));
 ```
 
-Production code keeps using `IFileSystem` exactly as before — no changes there.
+Production code keeps using `IFileSystem` exactly as before - no changes there.

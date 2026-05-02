@@ -1,0 +1,27 @@
+---
+sidebar_position: 7
+title: Access control (ACL)
+---
+
+# Access control (ACL)
+
+To simulate Windows ACL-based access restrictions, `MockFileSystem` accepts an `IAccessControlStrategy` via `WithAccessControlStrategy(...)`.
+
+The default implementation takes a callback `(path, extensibility) => bool` - return `false` to deny access to that path. When access is denied, the next read/write operation throws `IOException` with the message `"Access to the path '{fullPath}' is denied."`, matching what the real Windows file system does.
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.WithAccessControlStrategy(
+    new DefaultAccessControlStrategy((path, _) => !path.EndsWith("secret.txt")));
+
+fileSystem.File.WriteAllText("secret.txt", "x"); // throws IOException
+fileSystem.File.WriteAllText("public.txt", "x"); // ok
+```
+
+:::warning[Windows-only]
+`WithAccessControlStrategy` throws `PlatformNotSupportedException` on non-Windows hosts (and when simulating a non-Windows OS). ACL functionality is intentionally tied to Windows behaviour.
+:::
+
+## Reading and writing ACL objects
+
+For full `FileSecurity` / `DirectorySecurity` support (the actual `GetAccessControl` / `SetAccessControl` APIs), install the [`Testably.Abstractions.AccessControl`](../companion-libraries/access-control) companion package. It adds extension methods on `IFile`, `IFileInfo`, `IDirectory`, `IDirectoryInfo` and `FileSystemStream` that store ACL objects on the mock and round-trip them on the real file system.
