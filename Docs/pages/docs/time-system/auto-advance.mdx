@@ -1,0 +1,32 @@
+---
+sidebar_position: 2
+title: Auto-advance
+---
+
+# Auto-advance
+
+By default, `MockTimeSystem` advances its clock every time the code under test waits. A call to `Thread.Sleep(5s)` or `Task.Delay(5s)` returns immediately and the next read of `DateTime.Now` reflects 5 seconds later. This is the right default - most tests want to skip the wait, not enforce it.
+
+```csharp
+MockTimeSystem timeSystem = new(new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+
+await timeSystem.Task.Delay(TimeSpan.FromMinutes(10));
+timeSystem.DateTime.UtcNow; // 2026-01-01 00:10:00 UTC
+```
+
+## Disabling auto-advance
+
+When you need to assert *that* code waited (instead of just letting it through), turn auto-advance off:
+
+```csharp
+MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+
+await timeSystem.Task.Delay(TimeSpan.FromMinutes(10));
+// Clock did NOT move - Delay returned because nothing simulates progress
+```
+
+With auto-advance off you control time yourself by writing into the time provider. Combine this with the [notifications](./notifications) hooks to assert what your code asked for.
+
+## Multi-threaded scenarios
+
+The default time provider stores the clock in a single field, so two parallel `Sleep(5s)` calls move it by **10 seconds total**, which can be surprising. If your test exercises real parallelism, swap in the [thread-aware provider](./thread-aware-provider) so each virtual thread has its own clock.

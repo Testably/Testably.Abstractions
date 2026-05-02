@@ -1,0 +1,33 @@
+---
+sidebar_position: 2
+title: Simulating other operating systems
+---
+
+# Simulating other operating systems
+
+`MockFileSystem` can pretend to be a different operating system than the host it runs on. Pass a `SimulationMode` in the constructor:
+
+```csharp
+var linuxFileSystem = new MockFileSystem(o =>
+    o.SimulatingOperatingSystem(SimulationMode.Linux));
+// case-sensitive, '/' separator, single root
+
+var windowsFileSystem = new MockFileSystem(o =>
+    o.SimulatingOperatingSystem(SimulationMode.Windows));
+// case-insensitive, '\\' separator, drive letters
+
+var macFileSystem = new MockFileSystem(o =>
+    o.SimulatingOperatingSystem(SimulationMode.MacOS));
+```
+
+Because the entire test suite runs against the **real** file system on Linux, macOS and Windows _and_ against each `SimulationMode` in CI, the simulated behaviour stays in lock-step with the genuine platform behaviour over time.
+
+## Why simulate
+
+- Catch case-sensitivity bugs that only show up on Linux from a Windows dev machine.
+- Verify path-handling code on Windows from a Linux CI runner.
+- Test drive-letter handling without spinning up a Windows job.
+
+If you only need the host's own behaviour, omit `SimulatingOperatingSystem` - `MockFileSystem` defaults to whichever OS it is running on.
+
+`SimulatingOperatingSystem` is only available when running on .NET 6 or newer. On earlier targets, the mock always uses the host OS.

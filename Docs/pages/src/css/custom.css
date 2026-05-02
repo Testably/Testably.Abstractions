@@ -1,0 +1,38 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* Light mode - Material Pink 700 (#c2185b) base. */
+:root {
+  --ifm-color-primary: #c2185b;
+  --ifm-color-primary-dark: #af1652;
+  --ifm-color-primary-darker: #a5154d;
+  --ifm-color-primary-darkest: #88113f;
+  --ifm-color-primary-light: #d51865;
+  --ifm-color-primary-lighter: #db256d;
+  --ifm-color-primary-lightest: #e34782;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode - lighter, more vibrant variant of the same hue for contrast on dark backgrounds. */
+[data-theme='dark'] {
+  --ifm-color-primary: #eb6098;
+  --ifm-color-primary-dark: #e84789;
+  --ifm-color-primary-darker: #e63a82;
+  --ifm-color-primary-darkest: #c8246e;
+  --ifm-color-primary-light: #ed75a4;
+  --ifm-color-primary-lighter: #f084ad;
+  --ifm-color-primary-lightest: #f4a8c2;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Right-align the last footer column on wider viewports. */
+@media (min-width: 997px) {
+  .footer__links .footer__col:last-child {
+    margin-left: auto;
+    text-align: right;
+  }
+}

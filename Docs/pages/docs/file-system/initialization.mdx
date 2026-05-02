@@ -1,0 +1,121 @@
+---
+sidebar_position: 1
+title: Initialization
+---
+
+# Initialization
+
+You can seed a `MockFileSystem` declaratively (with descriptions), fluently (with a builder), or by copying data in from outside the test.
+
+The first two snippets create:
+
+- a directory `foo/` containing a sub-directory `bar/` and an empty file `bar.txt`
+- a file `foo.txt` with content `"some file content"`
+
+## Declarative
+
+```csharp
+var fileSystem = new MockFileSystem();
+fileSystem.Initialize().With(
+    new DirectoryDescription("foo",
+        new DirectoryDescription("bar"),
+        new FileDescription("bar.txt")),
+    new FileDescription("foo.txt", "some file content"));
+```
+
+## Fluent
+
+```csharp
+var fileSystem = new MockFileSystem();
+fileSystem.Initialize()
+    .WithSubdirectory("foo").Initialized(d => d
+        .WithSubdirectory("bar")
+        .WithFile("bar.txt"))
+    .WithFile("foo.txt").Which(f => f.HasStringContent("some file content"));
+```
+
+Use `HasStringContent(string)` or `HasBytesContent(byte[])` on the file manipulator to set content.
+
+## Initializing inside a specific directory
+
+```csharp
+fileSystem.InitializeIn("current-directory")
+    .WithASubdirectory()
+    .WithSubdirectory("foo").Initialized(s => s
+        .WithAFile())
+    .WithFile("bar.txt");
+```
+
+This sets `current-directory` as the working directory and seeds it with:
+
+- a randomly named sub-directory
+- a `foo/` sub-directory containing one randomly named file
+- a `bar.txt` file
+
+`WithASubdirectory()` / `WithAFile()` use generated names when you don't care about the exact value - useful for tests that operate over whatever they find. `WithAFile(string extension)` lets you constrain the random name to a specific extension.
+
+`InitializeIn(absolutePath)` automatically registers the corresponding drive on Windows when the path is rooted.
+
+## Bulk subdirectories
+
+```csharp
+fileSystem.Initialize()
+    .WithSubdirectories("a/b/c", "x/y", "logs");
+```
+
+Creates each path (and any missing parents) in one call.
+
+## Accessing what was created
+
+`Initialize()` returns an `IFileSystemInitializer<TFileSystem>` exposing:
+
+- `BaseDirectory` - the `IDirectoryInfo` of the seed root
+- `FileSystem` - the underlying file system
+- `this[int index]` - the created entries in the order they were added
+
+```csharp
+var init = fileSystem.Initialize()
+    .WithFile("foo.txt")
+    .WithSubdirectory("bar");
+
+var foo = (IFileInfo)init[0];
+var bar = (IDirectoryInfo)init[1];
+```
+
+## Seeding from a real directory
+
+```csharp
+fileSystem.InitializeFromRealDirectory("test-data");
+// or copy the source directory into a different target on the mock:
+fileSystem.InitializeFromRealDirectory(@"C:\fixtures\sample-project", "project");
+```
+
+Recursively copies every file and sub-directory from the real path into the mock, preserving creation/last-write/last-access time and attributes. With large fixtures this can be slow - prefer it for small, hand-curated test data.
+
+## Seeding from embedded resources
+
+```csharp
+fileSystem.InitializeEmbeddedResourcesFromAssembly(
+    directoryPath: "fixtures",
+    assembly: typeof(MyTests).Assembly,
+    relativePath: "TestData",
+    searchPattern: "*.json",
+    searchOption: SearchOption.AllDirectories);
+```
+
+Materializes embedded resources as files inside the mock. Resource names are split on the last `.` to recover an extension (e.g. `MyTests.TestData.users.json` becomes `fixtures/users.json`). `relativePath` filters which resources are included; `searchPattern` and `searchOption` work like `Directory.EnumerateFiles`.
+
+## Real file system: temporary directory with auto-cleanup
+
+For integration tests that hit the real disk, `SetCurrentDirectoryToEmptyTemporaryDirectory` creates a fresh temp directory, switches `Directory.GetCurrentDirectory()` to it, and force-deletes everything when the returned `IDirectoryCleaner` is disposed:
+
+```csharp
+IFileSystem fileSystem = new RealFileSystem();
+using IDirectoryCleaner cleaner =
+    fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory(prefix: "MyTests-");
+
+// fileSystem.Directory.GetCurrentDirectory() is now an empty temp directory
+// On dispose: the directory is force-deleted (read-only flag and all)
+```
+
+The `prefix` parameter makes leftovers easier to spot in `%TEMP%` if cleanup ever fails. The optional `logger` parameter receives diagnostic messages (e.g. retry attempts when antivirus holds a file open).

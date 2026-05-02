@@ -1,0 +1,74 @@
+---
+sidebar_position: 2
+title: Getting Started
+---
+
+# Getting Started
+
+## 1. Install the packages
+
+Install `Testably.Abstractions` in your production projects and `Testably.Abstractions.Testing` in your test projects:
+
+```powershell
+dotnet add package Testably.Abstractions
+dotnet add package Testably.Abstractions.Testing
+```
+
+Optional companion packages:
+
+```powershell
+dotnet add package Testably.Abstractions.Compression
+dotnet add package Testably.Abstractions.AccessControl
+```
+
+## 2. Register the abstractions
+
+With `Microsoft.Extensions.DependencyInjection`:
+
+```csharp
+builder.Services
+    .AddSingleton<IFileSystem, RealFileSystem>()
+    .AddSingleton<IRandomSystem, RealRandomSystem>()
+    .AddSingleton<ITimeSystem, RealTimeSystem>();
+```
+
+## 3. Use the interfaces in your services
+
+```csharp
+public class MyService(IFileSystem fileSystem)
+{
+    private readonly IFileSystem _fileSystem = fileSystem;
+
+    public void StoreData()
+    {
+        _fileSystem.File.WriteAllText("result.xml", GetFileContent());
+    }
+
+    private string GetFileContent() => /* ... */;
+}
+```
+
+## 4. Replace the real implementations in tests
+
+```csharp
+[Test]
+public void StoreData_ShouldWriteValidFile()
+{
+    IFileSystem fileSystem = new MockFileSystem();
+    var sut = new MyService(fileSystem);
+
+    sut.StoreData();
+
+    var content = fileSystem.File.ReadAllText("result.xml");
+    // assert on content
+}
+```
+
+That's it - your code now runs against an in-memory file system in tests, and against the real one in production.
+
+## Next steps
+
+- [File system](./file-system) - `IFileSystem`, `MockFileSystem`, drives, watcher, statistics, strategies.
+- [Time system](./time-system) - `ITimeSystem`, time providers, timers, auto-advance, notifications.
+- [Random system](./random-system) - `IRandomSystem` and deterministic generators.
+- [Companion libraries](./companion-libraries) - Compression and AccessControl.

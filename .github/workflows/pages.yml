@@ -1,0 +1,42 @@
+name: Pages
+
+on:
+    repository_dispatch:
+        types: [ extension-documentation-updated-event ]
+
+jobs:
+    build-pages:
+        name: Build Pages
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            -   uses: actions/checkout@v6
+                with:
+                    fetch-depth: 0
+            -   name: Setup .NET SDKs
+                uses: actions/setup-dotnet@v5
+                with:
+                    dotnet-version: |
+                        8.0.x
+                        10.0.x
+            -   name: Get documentation from extensions
+                run: ./build.sh Pages
+                env:
+                    GithubToken: ${{ secrets.GITHUB_TOKEN }}
+            -   uses: actions/setup-node@v6
+                with:
+                    node-version: 20
+                    cache: npm
+                    cache-dependency-path: ./Docs/pages/package-lock.json
+            -   name: Install dependencies
+                working-directory: ./Docs/pages
+                run: npm ci --ignore-scripts
+            -   name: Build website
+                working-directory: ./Docs/pages
+                run: npm run build
+            -   name: Deploy to GitHub Pages
+                uses: peaceiris/actions-gh-pages@v4
+                with:
+                    github_token: ${{ secrets.GITHUB_TOKEN }}
+                    publish_dir: ./Docs/pages/build

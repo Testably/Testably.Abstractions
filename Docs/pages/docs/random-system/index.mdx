@@ -1,0 +1,30 @@
+---
+title: Random system
+---
+
+# IRandomSystem
+
+`IRandomSystem` wraps the two non-deterministic primitives most code reaches for: `Random` and `Guid`.
+
+## What it covers
+
+| Sub-property | Wraps                                                                                                  |
+|--------------|--------------------------------------------------------------------------------------------------------|
+| `Random`     | `new Random()` and `Random.Shared` - including a thread-safe shared instance under .NET Framework     |
+| `Guid`       | `Guid.NewGuid()` and the related factories                                                            |
+
+## Implementations
+
+| Type               | Package                          | Use it for                  |
+|--------------------|----------------------------------|-----------------------------|
+| `RealRandomSystem` | `Testably.Abstractions`          | Production                  |
+| `MockRandomSystem` | `Testably.Abstractions.Testing`  | Unit tests                  |
+
+```csharp
+IRandomSystem randomSystem = new MockRandomSystem();
+
+int n = randomSystem.Random.Shared.Next(100);
+Guid id = randomSystem.Guid.NewGuid();
+```
+
+By default the mock seeds itself fresh per test and produces unpredictable values - useful for catching code that accidentally depends on a specific output. See [Deterministic randomness](./deterministic-randomness) for how to drive `Random` and `Guid` from a known sequence.

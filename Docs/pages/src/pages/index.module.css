@@ -1,0 +1,58 @@
+.heroBanner {
+  padding: 4rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 2rem;
+  }
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.secondaryButton {
+  --ifm-button-border-color: var(--ifm-color-white);
+  color: var(--ifm-color-white);
+}
+
+.secondaryButton:hover,
+.secondaryButton:focus {
+  background-color: var(--ifm-color-white);
+  border-color: var(--ifm-color-white);
+  color: var(--ifm-color-primary);
+}
+
+.codeSample {
+  padding: 4rem 0;
+  background-color: var(--ifm-background-surface-color);
+}
+
+.codeSampleSubtitle {
+  max-width: 42rem;
+  margin: 0 auto 2rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.codeSampleTabs {
+  justify-content: center;
+}
+
+.codeSampleContainer {
+  max-width: 50rem;
+  margin: 0 auto;
+}
+
+.codeSampleStack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

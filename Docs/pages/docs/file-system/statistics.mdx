@@ -1,0 +1,43 @@
+---
+sidebar_position: 6
+title: Statistics
+---
+
+# Statistics
+
+`MockFileSystem.Statistics` records every call made through the mock - which property was accessed, which method was invoked, with what arguments. Use it to assert *what* a system under test did, not just what it produced.
+
+```csharp
+MockFileSystem fileSystem = new();
+
+fileSystem.File.WriteAllText("a.txt", "hi");
+fileSystem.File.ReadAllText("a.txt");
+
+IFileSystemStatistics stats = fileSystem.Statistics;
+await Expect.That(stats.TotalCount).IsEqualTo(2);
+await Expect.That(stats.File.Methods).Contains(m => m.Name == nameof(IFile.WriteAllText));
+```
+
+## What is recorded
+
+`IFileSystemStatistics` exposes one property per `IFileSystem` sub-property:
+
+| Property              | Type                                                                |
+|-----------------------|---------------------------------------------------------------------|
+| `Directory`           | `IStatistics<IDirectory>`                                           |
+| `DirectoryInfo`       | `IPathStatistics<IDirectoryInfoFactory, IDirectoryInfo>`            |
+| `DriveInfo`           | `IPathStatistics<IDriveInfoFactory, IDriveInfo>`                    |
+| `File`                | `IStatistics<IFile>`                                                |
+| `FileInfo`            | `IPathStatistics<IFileInfoFactory, IFileInfo>`                      |
+| `FileStream`          | `IPathStatistics<IFileStreamFactory, FileSystemStream>`             |
+| `FileSystemWatcher`   | `IPathStatistics<IFileSystemWatcherFactory, IFileSystemWatcher>`    |
+| `FileVersionInfo`     | `IPathStatistics<IFileVersionInfoFactory, IFileVersionInfo>`        |
+| `Path`                | `IStatistics<IPath>`                                                |
+
+`IStatistics<T>` exposes `Methods` and `Properties` collections. Each entry carries the call's name, parameters and a stack-frame counter so you can correlate concurrent activity. `IPathStatistics<TFactory, TItem>` adds an indexer keyed by the path that the factory produced - `stats.FileInfo["a.txt"]` returns just the calls made on that specific `IFileInfo`.
+
+`TotalCount` returns the sum across every sub-property - handy for "did anything touch the file system at all?" assertions.
+
+## What is *not* recorded
+
+Calls inside the testing helpers themselves (`Initialize`, `InitializeFromRealDirectory`, `SetCurrentDirectoryToEmptyTemporaryDirectory`, …) are excluded from the statistics so seeding does not pollute your assertions. The same goes for any code that explicitly opts out via `IgnoreStatistics()`.

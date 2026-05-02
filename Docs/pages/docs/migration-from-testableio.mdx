@@ -1,0 +1,60 @@
+---
+sidebar_position: 7
+title: Migration from TestableIO
+---
+
+# Migration from TestableIO
+
+`Testably.Abstractions` and [TestableIO.System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions) share the **same** `IFileSystem` interface, so production code does not need to change when you switch testing libraries.
+
+## When to use which
+
+**Use Testably.Abstractions** when you need:
+
+- Advanced testing scenarios (`FileSystemWatcher`, `SafeFileHandle`, multiple drives)
+- Additional abstractions (`ITimeSystem`, `IRandomSystem`)
+- Cross-platform file system simulation (Linux, macOS, Windows)
+- More extensive and consistent behavioural validation
+- Active development and new features
+
+**Use TestableIO.System.IO.Abstractions** when you need:
+
+- Basic file system mocking
+- Direct manipulation of stored file entities (`MockFileData`, `MockDirectoryData`)
+- An established codebase already integrated with TestableIO
+
+## How to migrate
+
+The migration only affects your **test** projects.
+
+### 1. Swap the package
+
+```xml
+<!-- Remove -->
+<PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" />
+<!-- Add -->
+<PackageReference Include="Testably.Abstractions.Testing" />
+```
+
+### 2. Update the test code
+
+```csharp
+// Before (TestableIO)
+var fileSystem = new MockFileSystem();
+fileSystem.AddDirectory("some-directory");
+fileSystem.AddFile("some-file.txt", new MockFileData("content"));
+
+// After (Testably) - option A: imperative
+var fileSystem = new MockFileSystem();
+fileSystem.Directory.CreateDirectory("some-directory");
+fileSystem.File.WriteAllText("some-file.txt", "content");
+
+// After (Testably) - option B: fluent initialization
+var fileSystem = new MockFileSystem();
+fileSystem.Initialize()
+    .WithSubdirectory("some-directory")
+    .WithFile("some-file.txt").Which(f => f
+        .HasStringContent("content"));
+```
+
+Production code keeps using `IFileSystem` exactly as before - no changes there.

@@ -1,0 +1,62 @@
+---
+sidebar_position: 5
+title: Intercept & notify
+---
+
+# Intercept & notify
+
+`MockFileSystem` exposes three hooks for reacting to file system activity in tests:
+
+- **`Intercept`** runs **before** an operation completes and can throw to abort it.
+- **`Notify`** runs **after** an operation completes and supports awaiting the next event.
+- **`Watcher`** runs **after** the `IFileSystemWatcher` raised an event - see [FileSystemWatcher](./file-system-watcher#reacting-to-triggered-events-from-a-test).
+
+All three return an `IAwaitableCallback<ChangeDescription>`. Dispose it to remove the subscription; call `Wait`/`WaitAsync` to block until the expected number of events arrived.
+
+## Intercept - abort an operation
+
+```csharp
+MockFileSystem fileSystem = new();
+
+fileSystem.Intercept.Creating(FileSystemTypes.File,
+    _ => throw new IOException("disk full"));
+
+// Throws "disk full"
+fileSystem.File.WriteAllText("a.txt", "x");
+```
+
+Useful for simulating disk errors, permission failures or race conditions.
+
+`IInterceptionHandler` exposes `Changing`, `Creating` and `Deleting` extensions. Each takes a `FileSystemTypes` (`File`, `Directory` or `DirectoryOrFile`), an optional `globPattern` (defaults to `"*"`) and an optional `predicate` for finer filtering.
+
+## Notify - await an event
+
+```csharp
+MockFileSystem fileSystem = new();
+
+using var notify = fileSystem.Notify
+    .OnCreated(FileSystemTypes.File);
+
+fileSystem.File.Create("some-file.txt");
+
+ChangeDescription[] events = notify.Wait(count: 1);
+// events[0].Path == "some-file.txt"
+```
+
+The recommended pattern is: register the callback, do the work, then call `Wait` (or `WaitAsync` for an async test). Both accept a `count` and a `TimeSpan?` timeout (default 30 seconds).
+
+`OnChanged`, `OnCreated` and `OnDeleted` are all available, with the same `globPattern` / `predicate` filters as `Intercept`.
+
+## Streaming events
+
+On .NET 6+ you can stream the same callback as an async sequence:
+
+```csharp
+await foreach (ChangeDescription change in
+    fileSystem.Notify.OnCreated(FileSystemTypes.File).ToAsyncEnumerable())
+{
+    // process every file creation as it happens
+}
+```
+
+A 30-second default timeout prevents the loop from hanging forever when no events arrive; pass an explicit `timeout` to override it.

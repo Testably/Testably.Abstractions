@@ -1,0 +1,93 @@
+---
+sidebar_position: 3
+title: Stopwatch
+---
+
+# Stopwatch
+
+`MockTimeSystem.Stopwatch` wraps `System.Diagnostics.Stopwatch`. It exposes both the instance API (`IStopwatch`: `Start`, `Stop`, `Elapsed`, `ElapsedMilliseconds`, `ElapsedTicks`, `Restart`, `Reset`, `IsRunning`) and the static API on the factory itself (`IStopwatchFactory`: `Frequency`, `IsHighResolution`, `GetTimestamp`, `StartNew`).
+
+## Basic usage
+
+```csharp
+ITimeSystem timeSystem = new MockTimeSystem();
+IStopwatch sw = timeSystem.Stopwatch.StartNew();
+
+// Simulate work that takes 5 seconds - Sleep auto-advances the simulated clock
+timeSystem.Thread.Sleep(TimeSpan.FromSeconds(5));
+
+sw.Stop();
+await Expect.That(sw.Elapsed).IsEqualTo(TimeSpan.FromSeconds(5));
+```
+
+## Wall clock vs monotonic clock
+
+A real `Stopwatch` reads the OS **monotonic clock** - it measures elapsed real time, completely independent of the wall-clock date. Setting the system clock backwards mid-measurement doesn't subtract from `Elapsed`; only actual time passing does.
+
+`MockTimeSystem` mirrors that distinction. The two knobs on `TimeProvider` behave differently:
+
+| Method                       | `DateTime.UtcNow`           | Running `Stopwatch.Elapsed` |
+|------------------------------|-----------------------------|-----------------------------|
+| `AdvanceBy(TimeSpan)`        | Moves forward by the span   | Moves forward by the span   |
+| `SetTo(DateTime)`            | Jumps to the given instant  | **Unchanged**               |
+
+```csharp
+MockTimeSystem timeSystem = new(new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+IStopwatch sw = timeSystem.Stopwatch.StartNew();
+
+// Jump the wall clock backwards by a year - Stopwatch is unaffected
+timeSystem.TimeProvider.SetTo(new DateTime(2025, 1, 1));
+await Expect.That(sw.Elapsed).IsEqualTo(TimeSpan.Zero);
+
+// AdvanceBy moves both the wall clock and the monotonic clock
+timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromMinutes(5));
+await Expect.That(sw.Elapsed).IsEqualTo(TimeSpan.FromMinutes(5));
+```
+
+This means tests that mix `Stopwatch` measurements with manual `SetTo` calls (e.g. simulating a clock change at midnight, NTP correction, daylight-saving switch) don't produce nonsensical elapsed values. The Stopwatch always reflects "real" simulated elapsed time.
+
+The same monotonic clock backs `Timer`, `PeriodicTimer` and `Task.Delay` - none of them are affected by `SetTo` either.
+
+## Frequency, GetTimestamp and GetElapsedTime
+
+The static surface lives on the factory (`timeSystem.Stopwatch`), not on individual `IStopwatch` instances:
+
+```csharp
+long t1 = timeSystem.Stopwatch.GetTimestamp();
+timeSystem.Thread.Sleep(TimeSpan.FromSeconds(2));
+long t2 = timeSystem.Stopwatch.GetTimestamp();
+
+double seconds = (t2 - t1) / (double)timeSystem.Stopwatch.Frequency;   // 2.0
+```
+
+On .NET 8+, `GetElapsedTime` does the math for you:
+
+```csharp
+long start = timeSystem.Stopwatch.GetTimestamp();
+timeSystem.Thread.Sleep(TimeSpan.FromSeconds(2));
+
+TimeSpan elapsed = timeSystem.Stopwatch.GetElapsedTime(start);                 // 00:00:02
+TimeSpan span    = timeSystem.Stopwatch.GetElapsedTime(t1, t2);                // 00:00:02
+```
+
+On the mock, `Frequency` is fixed at `TimeSpan.TicksPerSecond * 10` = 100,000,000 (10 MHz, i.e. 10 ns per timestamp tick) and `IsHighResolution` is always `true` - matching what every modern OS reports for the real `Stopwatch`.
+
+## Pause, resume, restart
+
+`Start`/`Stop`/`Reset`/`Restart` behave exactly as on the BCL:
+
+```csharp
+IStopwatch sw = timeSystem.Stopwatch.StartNew();
+
+timeSystem.Thread.Sleep(TimeSpan.FromSeconds(3));
+sw.Stop();                                              // Elapsed = 3s
+timeSystem.Thread.Sleep(TimeSpan.FromSeconds(10));      // paused, ignored
+sw.Start();                                             // resume
+timeSystem.Thread.Sleep(TimeSpan.FromSeconds(2));
+await Expect.That(sw.Elapsed).IsEqualTo(TimeSpan.FromSeconds(5));
+
+sw.Restart();                                           // Elapsed = 0, running
+sw.Reset();                                             // Elapsed = 0, stopped
+```
+
+A second `Start()` on an already-running stopwatch is a no-op, matching the BCL.

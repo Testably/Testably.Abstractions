@@ -1,0 +1,80 @@
+---
+sidebar_position: 3
+title: Drives
+---
+
+# Drives
+
+`MockFileSystem` supports multiple drives with independent quotas. This is most useful when simulating Windows, where drive letters carry meaning, but the main drive can also be configured on non-Windows hosts.
+
+## Adding a drive
+
+```csharp
+var fileSystem = new MockFileSystem();
+fileSystem
+    .WithDrive("D:", d => d.SetTotalSize(1024 * 1024)) // 1 MiB total
+    .InitializeIn("D:")
+    .WithFile("foo.txt")
+    .WithSubdirectory("sub-dir").Initialized(s => s
+        .WithAFile(".json").Which(
+            f => f.HasStringContent("{\"count\":1}")));
+```
+
+This adds a `D:` drive limited to 1 MiB and seeds it with an empty `foo.txt` and a sub-directory containing one randomly named JSON file.
+
+## Limiting the main drive
+
+`WithDrive` without an argument configures the default drive (works on any OS):
+
+```csharp
+var fileSystem = new MockFileSystem();
+fileSystem.WithDrive(d => d.SetTotalSize(20));
+
+// Throws IOException - not enough space on the disk
+fileSystem.File.WriteAllText("foo", "some text longer than 20 bytes");
+```
+
+When a drive runs out of space, every file operation that writes content throws `IOException`, exactly as on the real system.
+
+`AvailableFreeSpace` tracks every byte written, appended or freed:
+
+```csharp
+MockFileSystem fileSystem = new MockFileSystem()
+    .WithDrive("C:\\", d => d.SetTotalSize(100));
+IDriveInfo drive = fileSystem.GetDefaultDrive();
+
+drive.AvailableFreeSpace; // 100
+
+fileSystem.File.WriteAllText("foo.txt", "This is a text with 29 bytes.");
+drive.AvailableFreeSpace; // 71
+
+fileSystem.File.AppendAllText("foo.txt", "Another 17 bytes.");
+drive.AvailableFreeSpace; // 54
+
+fileSystem.File.WriteAllBytes("bar.bin", new byte[90]); // throws IOException
+drive.AvailableFreeSpace; // still 54 - the failed write did not consume space
+
+fileSystem.File.Delete("foo.txt");
+drive.AvailableFreeSpace; // back to 100
+```
+
+## UNC drives
+
+`WithUncDrive("//server")` registers a Universal Naming Convention path so reads and writes against `\\server\share\...` succeed in the mock:
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.WithUncDrive(@"//build-server");
+
+fileSystem.File.WriteAllText(@"//build-server/share/foo.txt", "hi");
+IDriveInfo drive = fileSystem.DriveInfo.New(@"//build-server");
+drive.IsReady; // true
+```
+
+UNC drives don't appear in `DriveInfo.GetDrives()` - they're addressable but not enumerated, matching the real behaviour.
+
+## Inspecting drives
+
+`fileSystem.DriveInfo.GetDrives()` returns the registered drives. The objects are full `IDriveInfo` instances and report `TotalSize`, `AvailableFreeSpace`, `DriveFormat`, `VolumeLabel` and so on.
+
+`fileSystem.GetDefaultDrive()` returns the drive backing the current working directory - convenient when you need to assert against the same drive `MockFileSystem` is using by default.

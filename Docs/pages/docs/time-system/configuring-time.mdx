@@ -1,0 +1,47 @@
+---
+sidebar_position: 1
+title: Configuring time
+---
+
+# Configuring time
+
+`MockTimeSystem` gets its current time from an `ITimeProvider`. Three factories cover most cases:
+
+```csharp
+// 1. Random instant per test (default - useful for catching tests that pass only "today")
+new MockTimeSystem();
+
+// 2. Pin to a specific instant (UTC if Kind is Unspecified)
+new MockTimeSystem(new DateTime(2026, 1, 15, 10, 0, 0, DateTimeKind.Utc));
+
+// 3. Use the host's current wall clock
+new MockTimeSystem(TimeProvider.Now());
+```
+
+`TimeProvider.Use(DateTime)`, `TimeProvider.Random()` and `TimeProvider.Now()` all return an `ITimeProviderFactory` you can pass to the `MockTimeSystem` constructor.
+
+## Custom time providers
+
+Implement `ITimeProvider` directly when you need something more interesting than a single `DateTime` - for example, a clock that ticks per virtual thread. See [Thread-aware time provider](./thread-aware-provider) for a worked example.
+
+Wrap your provider in a factory and pass it in:
+
+```csharp
+ITimeProviderFactory factory = new MyTimeProviderFactory(...);
+MockTimeSystem timeSystem = new(factory);
+```
+
+The factory hands the mock an `Action<DateTime>` callback to invoke whenever the simulated time changes. That callback drives the [notifications](./notifications) and the auto-advance behaviour.
+
+## Sharing the time system
+
+Pass an existing `MockTimeSystem` into a `MockFileSystem` so file-system timestamps and time-related assertions stay consistent:
+
+```csharp
+MockTimeSystem timeSystem = new(new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+MockFileSystem fileSystem = new(o => o.UseTimeSystem(timeSystem));
+
+fileSystem.File.WriteAllText("a.txt", "hi");
+DateTime created = fileSystem.File.GetCreationTimeUtc("a.txt");
+// created is anchored to 2026-01-01
+```

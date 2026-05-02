@@ -1,0 +1,96 @@
+---
+sidebar_position: 9
+title: SafeFileHandle
+---
+
+# SafeFileHandle
+
+`SafeFileHandle` is a wrapper around an OS handle to a real file, and overloads like `File.GetLastAccessTime(SafeFileHandle)` route through it. Because the mock has no kernel handle, you have to tell it how to translate handles into mock paths.
+
+`MockFileSystem.WithSafeFileHandleStrategy(ISafeFileHandleStrategy)` registers the translation. The strategy maps a `SafeFileHandle` to a `SafeFileHandleMock` that points at a location inside the mock.
+
+The default strategy (`NullSafeFileHandleStrategy`) is registered automatically and throws `NotSupportedException` for any handle - install a custom strategy as soon as your code under test reaches for `SafeFileHandle`.
+
+## A complete reference implementation
+
+This strategy keeps an explicit map from `SafeFileHandle` to (real path, mock path). On every lookup it copies the real file's attributes and timestamps into the mock, so the test sees fresh data without having to write a fixture by hand:
+
+```csharp
+public class CustomSafeFileHandleStrategy : ISafeFileHandleStrategy
+{
+    private readonly RealFileSystem _realFileSystem;
+    private readonly MockFileSystem _mockFileSystem;
+    private readonly Dictionary<SafeFileHandle, (string RealPath, SafeFileHandleMock Mock)> _mapping = new();
+
+    public CustomSafeFileHandleStrategy(
+        RealFileSystem realFileSystem, MockFileSystem mockFileSystem)
+    {
+        _realFileSystem = realFileSystem;
+        _mockFileSystem = mockFileSystem;
+    }
+
+    public CustomSafeFileHandleStrategy AddMapping(
+        SafeFileHandle handle, string realPath, SafeFileHandleMock mock)
+    {
+        _mapping[handle] = (realPath, mock);
+        return this;
+    }
+
+    public SafeFileHandleMock MapSafeFileHandle(SafeFileHandle handle)
+    {
+        if (!_mapping.TryGetValue(handle, out var entry))
+            throw new KeyNotFoundException("The provided fileHandle is not mapped!");
+
+        SyncMetadata(entry.RealPath, entry.Mock.Path);
+        return entry.Mock;
+    }
+
+    private void SyncMetadata(string realPath, string mockPath)
+    {
+        _mockFileSystem.File.SetAttributes(mockPath,
+            _realFileSystem.File.GetAttributes(realPath));
+        _mockFileSystem.File.SetCreationTime(mockPath,
+            _realFileSystem.File.GetCreationTime(realPath));
+        _mockFileSystem.File.SetLastAccessTime(mockPath,
+            _realFileSystem.File.GetLastAccessTime(realPath));
+        _mockFileSystem.File.SetLastWriteTime(mockPath,
+            _realFileSystem.File.GetLastWriteTime(realPath));
+    }
+}
+```
+
+### Wiring it into a test
+
+```csharp
+RealFileSystem realFileSystem = new();
+MockFileSystem mockFileSystem = new();
+
+CustomSafeFileHandleStrategy strategy = new(realFileSystem, mockFileSystem);
+mockFileSystem.WithSafeFileHandleStrategy(strategy);
+
+using IDirectoryCleaner _ = realFileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
+
+// Create the same file on both sides
+mockFileSystem.File.WriteAllText("mock", "some content");
+realFileSystem.File.WriteAllText("real", "some content");
+
+// Mutate the real file's last-access time
+DateTime expected = new DateTime(2026, 1, 1);
+realFileSystem.File.SetLastAccessTime("real", expected);
+
+// Open a SafeFileHandle on the real file (UnmanagedFileLoader is a small
+// P/Invoke helper in the example project)
+SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle("real");
+
+// Register the mapping
+strategy.AddMapping(handle, "real", new SafeFileHandleMock("mock"));
+
+// Reading via the SafeFileHandle goes through the strategy and synchronises
+// the mock metadata from the real file system on the way in
+await Expect.That(mockFileSystem.File.GetLastAccessTime(handle)).IsEqualTo(expected);
+
+// As a side effect the mock path now also reflects the synced value
+await Expect.That(mockFileSystem.File.GetLastAccessTime("mock")).IsEqualTo(expected);
+```
+
+`UnmanagedFileLoader` is a small P/Invoke helper that calls `CreateFileW` to obtain the `SafeFileHandle`.

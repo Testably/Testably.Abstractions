@@ -1,0 +1,60 @@
+---
+sidebar_position: 1
+title: Introduction
+slug: /intro
+---
+
+# Testably.Abstractions
+
+[![Testably.Abstractions](https://img.shields.io/nuget/v/Testably.Abstractions?label=Testably.Abstractions&logo=nuget)](https://www.nuget.org/packages/Testably.Abstractions)
+[![Testably.Abstractions.Testing](https://img.shields.io/nuget/v/Testably.Abstractions.Testing?label=Testably.Abstractions.Testing&logo=nuget)](https://www.nuget.org/packages/Testably.Abstractions.Testing)
+
+`Testably.Abstractions` is a feature-complete testing helper for the [`IFileSystem`](https://github.com/TestableIO/System.IO.Abstractions) abstractions of the `System.IO` namespace, plus matching abstractions for time and randomness.
+
+It provides:
+
+- An in-memory **`MockFileSystem`** that behaves exactly like the real file system. The whole test suite runs against both implementations, so the mock and reality stay in sync.
+- An **`ITimeSystem`** abstraction for `DateTime`, `Stopwatch`, `Task.Delay`, `Thread.Sleep`, `PeriodicTimer` and `Timer`.
+- An **`IRandomSystem`** abstraction for `Random` (with a thread-safe `Shared` instance also under .NET Framework) and `Guid`.
+- Companion packages **`Testably.Abstractions.Compression`** (Zip files) and **`Testably.Abstractions.AccessControl`** (ACLs).
+
+## Why another file system mock?
+
+`Testably.Abstractions` shares the `IFileSystem` interface with [TestableIO.System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions) - your **production code does not change** when you switch testing libraries. What you get on top:
+
+- Advanced testing scenarios: `FileSystemWatcher`, `SafeFileHandle`, multiple drives with size limits.
+- Cross-platform simulation: run a Linux file system on Windows (and vice versa) to exercise platform-specific behaviour from a single CI job.
+- A second abstraction layer for time and randomness.
+
+See [Migration from TestableIO](./migration-from-testableio) if you are already using TestableIO.
+
+## A short example
+
+```csharp
+public class MyService(IFileSystem fileSystem)
+{
+    private readonly IFileSystem _fileSystem = fileSystem;
+
+    public void StoreData()
+    {
+        var content = GetFileContent();
+        _fileSystem.File.WriteAllText("result.xml", content);
+    }
+}
+```
+
+```csharp
+[Test]
+public void StoreData_ShouldWriteValidFile()
+{
+    IFileSystem fileSystem = new MockFileSystem();
+    var sut = new MyService(fileSystem);
+
+    sut.StoreData();
+
+    var content = fileSystem.File.ReadAllText("result.xml");
+    // assert on content
+}
+```
+
+Continue with [Getting Started](./getting-started) to install the packages and wire them up, then explore [File system](./file-system), [Time system](./time-system), [Random system](./random-system) and the [Companion libraries](./companion-libraries).
