@@ -28,7 +28,7 @@ Like the file-system [notifications](../file-system/intercept-and-notify), each 
 | `TaskDelay()`      | `Task.Delay` (any overload) is called                   | `TimeSpan`  |
 | `ThreadSleep()`    | `Thread.Sleep` (any overload) is called                 | `TimeSpan`  |
 | `TimeChanged()`    | the simulated time advanced (auto-advance or manual)    | `DateTime`  |
-| `PeriodicTimer.*`  | a `PeriodicTimer` was constructed or ticked             | various     |
+| `PeriodicTimer.WaitingForNextTick()` | a `PeriodicTimer` is waiting for its next tick | `IPeriodicTimer` |
 
 Each accepts an optional `callback` (run synchronously when the event fires) and an optional `predicate` to filter events before they are recorded.
 

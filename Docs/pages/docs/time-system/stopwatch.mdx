@@ -70,7 +70,7 @@ TimeSpan elapsed = timeSystem.Stopwatch.GetElapsedTime(start);                 /
 TimeSpan span    = timeSystem.Stopwatch.GetElapsedTime(t1, t2);                // 00:00:02
 ```
 
-On the mock, `Frequency` is fixed at `TimeSpan.TicksPerSecond * 10` = 100,000,000 (10 MHz, i.e. 10 ns per timestamp tick) and `IsHighResolution` is always `true` - matching what every modern OS reports for the real `Stopwatch`.
+On the mock, `Frequency` is fixed at `TimeSpan.TicksPerSecond * 10` = 100,000,000 (100 MHz, i.e. 10 ns per timestamp tick) and `IsHighResolution` is always `true` - matching what every modern OS reports for the real `Stopwatch`.
 
 ## Pause, resume, restart
 

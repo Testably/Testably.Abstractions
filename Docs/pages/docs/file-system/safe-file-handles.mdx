@@ -78,8 +78,7 @@ realFileSystem.File.WriteAllText("real", "some content");
 DateTime expected = new DateTime(2026, 1, 1);
 realFileSystem.File.SetLastAccessTime("real", expected);
 
-// Open a SafeFileHandle on the real file (UnmanagedFileLoader is a small
-// P/Invoke helper in the example project)
+// Open a SafeFileHandle on the real file via a small P/Invoke helper
 SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle("real");
 
 // Register the mapping
@@ -93,4 +92,4 @@ await Expect.That(mockFileSystem.File.GetLastAccessTime(handle)).IsEqualTo(expec
 await Expect.That(mockFileSystem.File.GetLastAccessTime("mock")).IsEqualTo(expected);
 ```
 
-`UnmanagedFileLoader` is a small P/Invoke helper that calls `CreateFileW` to obtain the `SafeFileHandle`.
+`UnmanagedFileLoader` is a small P/Invoke helper that calls the Win32 `CreateFile` API to obtain a `SafeFileHandle` for an existing path.

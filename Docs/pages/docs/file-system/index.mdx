@@ -38,4 +38,20 @@ fileSystem.File.WriteAllText("hello.txt", "world");
 string content = fileSystem.File.ReadAllText("hello.txt"); // "world"
 ```
 
+## Configuring the mock
+
+`MockFileSystem` accepts an options builder (`MockFileSystemOptions`):
+
+```csharp
+MockFileSystem fileSystem = new(o => o
+    .UseCurrentDirectory("/work")                      // sets CurrentDirectory to "/work"
+    .UseTimeSystem(timeSystem)                         // share an existing MockTimeSystem
+    .UseRandomProvider(randomProvider)                 // share an existing IRandomProvider
+    .SimulatingOperatingSystem(SimulationMode.Linux)); // simulate Linux semantics
+```
+
+`UseCurrentDirectory()` (no argument) seeds the mock with the host's actual working directory, useful when test code uses relative paths and you want them to resolve against the same place the real system would.
+
+The mock also exposes `MockFileSystem.TimeSystem` and `MockFileSystem.RandomSystem` if you didn't wire them in yourself - use them to assert against the same instances the file system is using internally.
+
 The remaining pages in this section cover how to seed it, simulate other operating systems, model drives, react to events, gather statistics and plug in custom strategies for ACLs, Unix file modes, safe handles and version info.

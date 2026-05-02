@@ -5,6 +5,5 @@ engines:
 exclude_paths:
   - ".github/**"
   - "**.md"
-  - "Examples/**"
   - "Docs/**"
   - "Tests/Helpers/**"

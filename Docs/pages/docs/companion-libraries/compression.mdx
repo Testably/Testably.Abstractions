@@ -103,4 +103,4 @@ foreach (IZipArchiveEntry entry in archive.Entries)
 }
 ```
 
-`IZipArchive` exposes `Entries`, `Mode`, `CreateEntry`, `CreateEntryFromFile`, `GetEntry`, `ExtractToDirectory` and their async counterparts. `IZipArchiveEntry` mirrors `ZipArchiveEntry` (`Open`, `Delete`, `LastWriteTime`, `Length`, `CompressedLength`, …).
+`IZipArchive` exposes `Entries`, `Mode`, `CreateEntry`, `CreateEntryFromFile`, `GetEntry`, `ExtractToDirectory` and - on .NET 9+ - the async counterparts `CreateEntryFromFileAsync` and `ExtractToDirectoryAsync`. `IZipArchiveEntry` mirrors `ZipArchiveEntry` (`Open`, `Delete`, `LastWriteTime`, `Length`, `CompressedLength`, …).

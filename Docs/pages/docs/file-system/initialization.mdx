@@ -105,6 +105,18 @@ fileSystem.InitializeEmbeddedResourcesFromAssembly(
 
 Materializes embedded resources as files inside the mock. Resource names are split on the last `.` to recover an extension (e.g. `MyTests.TestData.users.json` becomes `fixtures/users.json`). `relativePath` filters which resources are included; `searchPattern` and `searchOption` work like `Directory.EnumerateFiles`.
 
+## Skipping the implicit temp directory
+
+By default, `Initialize()` and `InitializeIn()` also materialize the system temp directory inside the mock, so code that calls `Path.GetTempPath()` finds something there. Pass an options callback to opt out:
+
+```csharp
+fileSystem.Initialize(o => o.InitializeTempDirectory = false);
+```
+
+## Errors during initialization
+
+The fluent builders throw `TestingException` (in `Testably.Abstractions.Testing.Initializer`) when used incorrectly - for example calling `WithFile("foo")` twice in the same parent scope. Catch this type if you need to surface a friendly assertion in a custom helper.
+
 ## Real file system: temporary directory with auto-cleanup
 
 For integration tests that hit the real disk, `SetCurrentDirectoryToEmptyTemporaryDirectory` creates a fresh temp directory, switches `Directory.GetCurrentDirectory()` to it, and force-deletes everything when the returned `IDirectoryCleaner` is disposed:

@@ -40,4 +40,4 @@ await Expect.That(stats.File.Methods).Contains(m => m.Name == nameof(IFile.Write
 
 ## What is *not* recorded
 
-Calls inside the testing helpers themselves (`Initialize`, `InitializeFromRealDirectory`, `SetCurrentDirectoryToEmptyTemporaryDirectory`, …) are excluded from the statistics so seeding does not pollute your assertions. The same goes for any code that explicitly opts out via `IgnoreStatistics()`.
+Calls inside the testing helpers themselves (`Initialize`, `InitializeFromRealDirectory`, `SetCurrentDirectoryToEmptyTemporaryDirectory`, …) are excluded from the statistics so seeding does not pollute your assertions.

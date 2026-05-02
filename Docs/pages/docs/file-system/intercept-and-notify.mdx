@@ -11,7 +11,13 @@ title: Intercept & notify
 - **`Notify`** runs **after** an operation completes and supports awaiting the next event.
 - **`Watcher`** runs **after** the `IFileSystemWatcher` raised an event - see [FileSystemWatcher](./file-system-watcher#reacting-to-triggered-events-from-a-test).
 
-All three return an `IAwaitableCallback<ChangeDescription>`. Dispose it to remove the subscription; call `Wait`/`WaitAsync` to block until the expected number of events arrived.
+All three return an `IAwaitableCallback<ChangeDescription>` with the same shape:
+
+- `Dispose()` removes the subscription.
+- `Wait(int count = 1, TimeSpan? timeout = null)` blocks until `count` events arrived; defaults to a 30-second timeout.
+- `WaitAsync(...)` is the async counterpart and additionally accepts a `CancellationToken`.
+
+This page describes that `count`/`timeout` shape once and just shows the registration calls below.
 
 ## Intercept - abort an operation
 
@@ -43,7 +49,7 @@ ChangeDescription[] events = notify.Wait(count: 1);
 // events[0].Path == "some-file.txt"
 ```
 
-The recommended pattern is: register the callback, do the work, then call `Wait` (or `WaitAsync` for an async test). Both accept a `count` and a `TimeSpan?` timeout (default 30 seconds).
+The recommended pattern is: register the callback, do the work, then call `Wait` (or `WaitAsync` for an async test).
 
 `OnChanged`, `OnCreated` and `OnDeleted` are all available, with the same `globPattern` / `predicate` filters as `Intercept`.
 
@@ -59,4 +65,4 @@ await foreach (ChangeDescription change in
 }
 ```
 
-A 30-second default timeout prevents the loop from hanging forever when no events arrive; pass an explicit `timeout` to override it.
+A 30-second default timeout prevents the loop from hanging forever when no events arrive; pass an explicit `timeout` (`TimeSpan?` or `int` milliseconds) or a `CancellationToken` to override it.

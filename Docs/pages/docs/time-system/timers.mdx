@@ -11,22 +11,24 @@ For the `await`-based pull loop variant, see [PeriodicTimer](./periodic-timer).
 
 ## Driving a `Timer` from a test
 
+`MockTimeSystem.Timer.New(...)` returns an `ITimer`, but its concrete type is `ITimerMock` - declare the local as `ITimerMock` to skip the cast and gain the testing-only `Wait` method:
+
 ```csharp
 MockTimeSystem timeSystem = new();
 
 int ticks = 0;
-ITimer timer = timeSystem.Timer.New(_ => ticks++,
+ITimerMock timer = (ITimerMock)timeSystem.Timer.New(_ => ticks++,
     state: null,
     dueTime: TimeSpan.FromSeconds(1),
     period: TimeSpan.FromSeconds(1));
 
 // Block until the timer fired 3 times (or throw TimeoutException)
-((ITimerMock)timer).Wait(executionCount: 3);
+timer.Wait(executionCount: 3);
 
 await Expect.That(ticks).IsEqualTo(3);
 ```
 
-`ITimerMock.Wait(executionCount, timeout, callback)` is the testing-only addition. The optional `callback` runs between executions - call `Dispose()` on the timer from inside it to stop early.
+`ITimerMock.Wait(int executionCount = 1, int timeout = 10000, Action<ITimerMock>? callback = null)` is the testing-only addition. Note `timeout` is **milliseconds** (not `TimeSpan` - this differs from `IAwaitableCallback<T>.Wait`, which takes a `TimeSpan?`). The optional `callback` runs between executions and receives the timer itself; call `Dispose()` on it to stop early.
 
 You can also reach every registered timer via `MockTimeSystem.TimerHandler[index]`, useful when the system under test owns the `Timer` and you don't have a reference.
 

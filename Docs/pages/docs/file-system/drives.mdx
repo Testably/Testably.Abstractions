@@ -78,3 +78,24 @@ UNC drives don't appear in `DriveInfo.GetDrives()` - they're addressable but not
 `fileSystem.DriveInfo.GetDrives()` returns the registered drives. The objects are full `IDriveInfo` instances and report `TotalSize`, `AvailableFreeSpace`, `DriveFormat`, `VolumeLabel` and so on.
 
 `fileSystem.GetDefaultDrive()` returns the drive backing the current working directory - convenient when you need to assert against the same drive `MockFileSystem` is using by default.
+
+## Mutating a drive at runtime
+
+The callback passed to `WithDrive(...)` receives an `IStorageDrive` whose setters keep working after the test has started, so you can flip a drive offline mid-test or change its format/type without recreating the file system:
+
+| Setter                         | What it changes                                                                  |
+|--------------------------------|----------------------------------------------------------------------------------|
+| `SetTotalSize(long)`           | Total disk capacity (default reset value: a generous default size)               |
+| `SetDriveFormat(string)`       | The reported `DriveFormat` (e.g. `"NTFS"`, `"ext4"`)                             |
+| `SetDriveType(DriveType)`      | The reported `DriveType` (Fixed, Removable, Network, …)                          |
+| `SetIsReady(bool)`             | Whether the drive reports itself as ready - simulate a removable drive ejecting  |
+| `ChangeUsedBytes(long delta)`  | Adjust used space by a delta. Throws `IOException` if free space goes negative   |
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.WithDrive("E:", d => d.SetDriveType(DriveType.Removable));
+
+// later in the test: simulate the user yanking the USB stick
+IDriveInfo e = fileSystem.DriveInfo.New("E:");
+((IStorageDrive)e).SetIsReady(false);
+```
