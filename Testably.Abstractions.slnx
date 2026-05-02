@@ -48,7 +48,6 @@
   <Folder Name="/_/.github/workflows/">
     <File Path=".github/workflows/build.yml" />
     <File Path=".github/workflows/ci.yml" />
-    <File Path=".github/workflows/pages.yml" />
   </Folder>
   <Folder Name="/_/Docs/">
     <File Path="Docs/FileSystemWatcherMock.md" />
