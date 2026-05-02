@@ -1,0 +1,91 @@
+---
+sidebar_position: 6
+title: FileSystemWatcher
+---
+
+# FileSystemWatcher
+
+`MockFileSystem` ships a fully functional [`FileSystemWatcher`](https://learn.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher) replacement. It fires the same events as the real one — and crucially, it fires the **OS-specific** events that the real watcher fires on Linux, Windows and macOS.
+
+## Basic usage
+
+```csharp
+var fileSystem = new MockFileSystem();
+fileSystem.Initialize().WithSubdirectory("watched");
+
+using var watcher = fileSystem.FileSystemWatcher.New("watched");
+var deleted = new ManualResetEventSlim();
+
+watcher.Deleted += (_, _) => deleted.Set();
+watcher.EnableRaisingEvents = true;
+
+fileSystem.Directory.Delete("watched");
+
+deleted.Wait(TimeSpan.FromSeconds(1)).Should().BeTrue();
+```
+
+See the runnable [FileSystemWatcher example](../examples/file-system-watcher) for a complete project.
+
+## Event tables (per OS)
+
+The watcher fires different events depending on whether the source/target is **inside**, **nested** under, **deeply nested** under, or **outside** the watched path. The tables below list every combination — they are also the contract that the `MockFileSystem` watcher honours when simulating other operating systems.
+
+| Location | Description                                            |
+|----------|--------------------------------------------------------|
+| `_`      | Entry was created or deleted                           |
+| Outside  | Outside the watching path                              |
+| Inside   | Immediately inside the watching path                   |
+| Nested   | Nested under the watching path                         |
+| Deep     | Deeply nested under the watching path                  |
+
+### `IncludeSubdirectories = false`
+
+| From → To         | Linux     | Windows   | Mac       |
+|-------------------|-----------|-----------|-----------|
+| `_` → Inside      | `Created` | `Created` | `Created` |
+| Inside → `_`      | `Deleted` | `Deleted` | `Deleted` |
+| `_` → Nested      | -         | -         | -         |
+| Nested → `_`      | -         | -         | -         |
+| `_` → Deep        | -         | -         | -         |
+| Deep → `_`        | -         | -         | -         |
+| Outside → Inside  | `Created` | `Created` | `Created` |
+| Inside → Inside   | `Renamed` | `Renamed` | `Renamed` |
+| Inside → Outside  | `Deleted` | `Deleted` | `Deleted` |
+| Outside → Nested  | -         | -         | -         |
+| Nested → Nested   | -         | -         | -         |
+| Nested → Outside  | -         | -         | -         |
+| Outside → Deep    | -         | -         | -         |
+| Deep → Deep       | -         | -         | -         |
+| Deep → Outside    | -         | -         | -         |
+| Inside → Nested   | `Deleted` | `Deleted` | `Renamed` |
+| Inside → Deep     | `Deleted` | `Deleted` | `Renamed` |
+| Nested → Inside   | `Created` | `Created` | `Created` |
+| Deep → Inside     | `Created` | `Created` | `Created` |
+| Nested → Deep     | -         | -         | -         |
+| Deep → Nested     | -         | -         | -         |
+
+### `IncludeSubdirectories = true`
+
+| From → To         | Linux     | Windows               | Mac       |
+|-------------------|-----------|-----------------------|-----------|
+| `_` → Inside      | `Created` | `Created`             | `Created` |
+| Inside → `_`      | `Deleted` | `Deleted`             | `Deleted` |
+| `_` → Nested      | `Created` | `Created`             | `Created` |
+| Nested → `_`      | `Deleted` | `Deleted`             | `Deleted` |
+| `_` → Deep        | `Created` | `Created`             | `Created` |
+| Deep → `_`        | `Deleted` | `Deleted`             | `Deleted` |
+| Outside → Inside  | `Created` | `Created`             | `Created` |
+| Inside → Inside   | `Renamed` | `Renamed`             | `Renamed` |
+| Inside → Outside  | `Deleted` | `Deleted`             | `Deleted` |
+| Outside → Nested  | `Created` | `Created`             | `Created` |
+| Nested → Nested   | `Renamed` | `Renamed`             | `Renamed` |
+| Nested → Outside  | `Deleted` | `Deleted`             | `Deleted` |
+| Outside → Deep    | `Created` | `Created`             | `Created` |
+| Deep → Deep       | `Renamed` | `Renamed`             | `Renamed` |
+| Deep → Outside    | `Deleted` | `Deleted`             | `Deleted` |
+| Inside → Nested   | `Renamed` | `Deleted` + `Created` | `Renamed` |
+| Inside → Deep     | `Renamed` | `Deleted` + `Created` | `Renamed` |
+| Nested → Inside   | `Renamed` | `Deleted` + `Created` | `Renamed` |
+| Deep → Inside     | `Renamed` | `Deleted` + `Created` | `Renamed` |
+| Nested → Deep     | `Renamed` | `Deleted` + `Created` | `Renamed` |
+| Deep → Nested     | `Renamed` | `Deleted` + `Created` | `Renamed` |

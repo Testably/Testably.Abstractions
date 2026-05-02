@@ -1,0 +1,31 @@
+---
+sidebar_position: 2
+title: ITimeSystem
+---
+
+# ITimeSystem
+
+`ITimeSystem` wraps everything in the BCL that depends on the wall clock or makes a thread wait. Replace it with a `MockTimeSystem` in tests and you can fast-forward time without sleeping.
+
+## What it covers
+
+| Sub-property      | Wraps                                                                                                                         |
+|-------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| `DateTime`        | `DateTime.Now`, `DateTime.UtcNow`, `DateTime.Today`                                                                           |
+| `Stopwatch`       | [`System.Diagnostics.Stopwatch`](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.stopwatch)                   |
+| `Task`            | [`Task.Delay`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.delay)                                |
+| `Thread`          | [`Thread.Sleep`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.thread.sleep)                                  |
+| `PeriodicTimer`   | [`System.Threading.PeriodicTimer`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.periodictimer)               |
+| `Timer`           | [`System.Threading.Timer`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.timer)                               |
+
+## Test usage
+
+```csharp
+ITimeSystem timeSystem = new MockTimeSystem();
+
+// any Thread.Sleep / Task.Delay / Stopwatch / Timer call goes through this instance
+timeSystem.Thread.Sleep(TimeSpan.FromMinutes(5));
+DateTime now = timeSystem.DateTime.Now; // advanced by 5 minutes
+```
+
+For multi-threaded scenarios where every thread should not advance the shared clock, see the [Thread-aware time provider example](../examples/thread-aware-time-provider).

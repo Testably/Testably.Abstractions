@@ -1,0 +1,18 @@
+---
+sidebar_position: 1
+title: Access control lists (ACL)
+---
+
+# Working with access control lists (ACL)
+
+> Source: [Examples/AccessControlLists](https://github.com/Testably/Testably.Abstractions/tree/main/Examples/AccessControlLists)
+
+To support simulating access restrictions, the `MockFileSystem` provides an `IAccessControlStrategy` that can be set via `MockFileSystem.WithAccessControlStrategy(...)`.
+
+The included default implementation uses a callback to determine whether to grant access to a given file or directory.
+
+## Example
+
+The example shows how to implement a custom strategy and provides a test where access to one path is granted and access to a second path is denied. In the second case an `IOException` is thrown when trying to read the file.
+
+See the test project on GitHub for the full implementation: [`AccessControlLists.Tests`](https://github.com/Testably/Testably.Abstractions/tree/main/Examples/AccessControlLists/AccessControlLists.Tests).

@@ -1,0 +1,39 @@
+---
+sidebar_position: 4
+title: Drive management
+---
+
+# Drive management
+
+`MockFileSystem` supports multiple drives with independent quotas. This is most useful when simulating Windows, where drive letters carry meaning, but the main drive can also be configured on non-Windows hosts.
+
+## Adding a drive
+
+```csharp
+var fileSystem = new MockFileSystem();
+fileSystem
+    .WithDrive("D:", d => d.SetTotalSize(1024 * 1024)) // 1 MiB total
+    .InitializeIn("D:")
+    .WithFile("foo.txt")
+    .WithSubdirectory("sub-dir").Initialized(s => s
+        .WithAFile(".json").Which(
+            f => f.HasStringContent("{\"count\":1}")));
+```
+
+This adds a `D:` drive limited to 1 MiB and seeds it with an empty `foo.txt` and a sub-directory containing one randomly named JSON file.
+
+## Limiting the main drive
+
+`WithDrive` without an argument configures the default drive (works on any OS):
+
+```csharp
+var fileSystem = new MockFileSystem();
+fileSystem.WithDrive(d => d.SetTotalSize(20));
+
+// Throws IOException — not enough space on the disk
+fileSystem.File.WriteAllText("foo", "some text longer than 20 bytes");
+```
+
+When a drive runs out of space, every file operation that writes content throws `IOException`, exactly as on the real system.
+
+See the runnable [Drive Management example](../examples/drive-management) for additional scenarios (changing the default drive used for relative paths, multiple drives in one test, etc.).

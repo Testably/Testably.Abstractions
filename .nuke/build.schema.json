@@ -39,6 +39,7 @@
         "MutationTestsLinux",
         "MutationTestsWindows",
         "Pack",
+        "Pages",
         "Restore",
         "UnitTests"
       ]
