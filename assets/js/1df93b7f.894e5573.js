@@ -1,0 +1,45 @@
+"use strict";(self.webpackChunkpages=self.webpackChunkpages||[]).push([["452"],{3748(e,t,r){r.r(t),r.d(t,{default:()=>G});var a=r(4848),s=r(4164),n=r(5310),l=r(898),i=r(1085),o=r(6540),c=r(8287),u=r(6347),d=r(9989),m=r(6629),h=r(618),p=r(1367);function f({value:e,tabValues:t}){return t.some(t=>t.value===e)}let b=(0,o.createContext)(null);function y(){let e=o.useContext(b);if(!e)throw Error("useTabsContext() must be used within a Tabs component");return e}function x(e){return(0,a.jsx)(b.Provider,{value:e.value,children:e.children})}var v=r(8584),S=r(9863);function T({className:e}){let{selectedValue:t,selectValue:r,tabValues:n,block:l}=y(),i=[],{blockElementScrollPositionUntilNextRender:o}=(0,v.a_)(),c=e=>{let a=e.currentTarget,s=n[i.indexOf(a)].value;s!==t&&(o(a),r(s))},u=e=>{let t=null;switch(e.key){case"Enter":c(e);break;case"ArrowRight":{let r=i.indexOf(e.currentTarget)+1;t=i[r]??i[0];break}case"ArrowLeft":{let r=i.indexOf(e.currentTarget)-1;t=i[r]??i[i.length-1]}}t?.focus()};return(0,a.jsx)("ul",{role:"tablist","aria-orientation":"horizontal",className:(0,s.A)("tabs",{"tabs--block":l},e),children:n.map(({value:e,label:r,attributes:n})=>(0,a.jsx)("li",{role:"tab",tabIndex:t===e?0:-1,"aria-selected":t===e,ref:e=>{i.push(e)},onKeyDown:u,onClick:c,...n,className:(0,s.A)("tabs__item","tabItem_LNqP",n?.className,{"tabs__item--active":t===e}),children:r??e},e))})}function j({children:e}){return(0,a.jsx)("div",{className:"margin-top--md",children:e})}function g({className:e,children:t}){return(0,a.jsxs)("div",{className:(0,s.A)(c.G.tabs.container,"tabs-container","tabList__CuJ"),children:[(0,a.jsx)(T,{className:e}),(0,a.jsx)(j,{children:t})]})}function N(e){var t;let r=(0,S.A)(),s=function(e){let t,{defaultValue:r,queryString:a=!1,groupId:s}=e,n=function(e){let{values:t,children:r}=e;return(0,o.useMemo)(()=>{let e=t??o.Children.toArray(r).flatMap(e=>{if(!e)return[];if((0,o.isValidElement)(e)&&function(e){let{props:t}=e;return!!t&&"object"==typeof t&&"value"in t}(e))return[e];let t="string"==typeof e.type?e.type:e.type.name;throw Error(`Docusaurus error: Bad <Tabs> child <${t}>: all children of the <Tabs> component should be <TabItem>, and every <TabItem> should have a unique "value" prop.
+If you do not want to pass on a "value" prop to the direct children of <Tabs>, you can also pass an explicit <Tabs values={...}> prop.`)}).map(({props:{value:e,label:t,attributes:r,default:a}})=>({value:e,label:t,attributes:r,default:a})),a=(0,h.XI)(e,(e,t)=>e.value===t.value);if(a.length>0)throw Error(`Docusaurus error: Duplicate values "${a.map(e=>`'${e.value}'`).join(", ")}" found in <Tabs>. Every value needs to be unique.`);return e},[t,r])}(e),[l,i]=(0,o.useState)(()=>(function({defaultValue:e,tabValues:t}){if(0===t.length)throw Error("Docusaurus error: the <Tabs> component requires at least one <TabItem> children component");if(e){if(!f({value:e,tabValues:t}))throw Error(`Docusaurus error: The <Tabs> has a defaultValue "${e}" but none of its children has the corresponding value. Available values are: ${t.map(e=>e.value).join(", ")}. If you intend to show no default tab, use defaultValue={null} instead.`);return e}let r=t.find(e=>e.default)??t[0];if(!r)throw Error("Unexpected error: 0 tabValues");return r.value})({defaultValue:r,tabValues:n})),[c,b]=function({queryString:e=!1,groupId:t}){let r=(0,u.W6)(),a=function({queryString:e=!1,groupId:t}){if("string"==typeof e)return e;if(!1===e)return null;if(!0===e&&!t)throw Error('Docusaurus error: The <Tabs> component groupId prop is required if queryString=true, because this value is used as the search param name. You can also provide an explicit value such as queryString="my-search-param".');return t??null}({queryString:e,groupId:t});return[(0,m.aZ)(a),(0,o.useCallback)(e=>{if(!a)return;let t=new URLSearchParams(r.location.search);t.set(a,e),r.replace({...r.location,search:t.toString()})},[a,r])]}({queryString:a,groupId:s}),[y,x]=function({groupId:e}){let t=e?`docusaurus.tab.${e}`:null,[r,a]=(0,p.Dv)(t);return[r,(0,o.useCallback)(e=>{t&&a.set(e)},[t,a])]}({groupId:s}),v=f({value:t=c??y,tabValues:n})?t:null;return(0,d.A)(()=>{v&&i(v)},[v]),{selectedValue:l,selectValue:(0,o.useCallback)(e=>{if(!f({value:e,tabValues:n}))throw Error(`Can't select invalid tab value=${e}`);i(e),b(e),x(e)},[b,x,n]),tabValues:n,lazy:e.lazy??!1,block:e.block??!1}}(e);return(0,a.jsx)(x,{value:s,children:(0,a.jsx)(g,{className:e.className,children:(t=e.children,o.Children.toArray(t).filter(e=>"\n"!==e))})},String(r))}function w({children:e,className:t,hidden:r}){return(0,a.jsx)("div",{role:"tabpanel",className:(0,s.A)("tabItem_Ymn6",t),hidden:r,children:e})}function A({children:e,className:t,value:r}){let{selectedValue:s,lazy:n}=y(),l=r===s;return!l&&n?null:(0,a.jsx)(w,{className:t,hidden:!l,children:e})}var I=r(1113),_=r(2072);let k="codeSampleStack_KddR",C=`public class ReportService(IFileSystem fileSystem)
+{
+    public void Save(string content)
+    {
+        fileSystem.Directory.CreateDirectory("reports");
+        fileSystem.File.WriteAllText("reports/latest.xml", content);
+    }
+}`,E=`[Fact]
+public async Task Save_WritesReportToReportsFolder()
+{
+    var fileSystem = new MockFileSystem();
+    var sut = new ReportService(fileSystem);
+
+    sut.Save("<report />");
+
+    await Expect.That(fileSystem.File.ReadAllText("reports/latest.xml"))
+        .IsEqualTo("<report />");
+}`,R=`public class CacheEntry(ITimeSystem timeSystem, TimeSpan ttl)
+{
+    private readonly DateTime _expiresAt = timeSystem.DateTime.UtcNow + ttl;
+
+    public bool IsExpired => timeSystem.DateTime.UtcNow >= _expiresAt;
+}`,D=`[Fact]
+public async Task IsExpired_ReturnsTrue_AfterTtlPasses()
+{
+    MockTimeSystem timeSystem = new(new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+    var entry = new CacheEntry(timeSystem, TimeSpan.FromMinutes(5));
+
+    await timeSystem.Task.Delay(TimeSpan.FromMinutes(6));
+
+    await Expect.That(entry.IsExpired).IsTrue();
+}`,F=`public class CorrelationIdProvider(IRandomSystem randomSystem)
+{
+    public string Next() => randomSystem.Guid.NewGuid().ToString();
+}`,M=`[Fact]
+public async Task Next_ReturnsConfiguredGuid_ForDeterministicTests()
+{
+    MockRandomSystem randomSystem = new(RandomProvider.Generate(
+        guidGenerator: () => Guid.Parse("11111111-1111-1111-1111-111111111111")));
+    var sut = new CorrelationIdProvider(randomSystem);
+
+    await Expect.That(sut.Next())
+        .IsEqualTo("11111111-1111-1111-1111-111111111111");
+}`;function q(){let{siteConfig:e}=(0,l.A)();return(0,a.jsx)("header",{className:(0,s.A)("hero hero--primary","heroBanner_qdFl"),children:(0,a.jsxs)("div",{className:"container",children:[(0,a.jsx)(_.A,{as:"h1",className:"hero__title",children:e.title}),(0,a.jsx)("p",{className:"hero__subtitle",children:e.tagline}),(0,a.jsxs)("div",{className:"buttons_AeoN",children:[(0,a.jsx)(n.A,{className:"button button--secondary button--lg",to:"/docs/getting-started",children:"Get started"}),(0,a.jsx)(n.A,{className:(0,s.A)("button button--outline button--secondary button--lg","secondaryButton_uRtX"),to:"/docs/intro",children:"Learn more"})]})]})})}function P(){return(0,a.jsx)("section",{className:"codeSample_OMlE",children:(0,a.jsxs)("div",{className:"container",children:[(0,a.jsx)(_.A,{as:"h2",className:"text--center",children:"Inject. Mock. Test."}),(0,a.jsxs)("p",{className:(0,s.A)("text--center","codeSampleSubtitle_dtzZ"),children:["Depend on ",(0,a.jsx)("code",{children:"IFileSystem"}),", ",(0,a.jsx)("code",{children:"ITimeSystem"})," and"," ",(0,a.jsx)("code",{children:"IRandomSystem"})," in production. Swap in the in-memory mocks for tests - deterministic, cross-platform, no temp folders or"," ",(0,a.jsx)("code",{children:"Thread.Sleep"}),"."]}),(0,a.jsx)("div",{className:"codeSampleContainer_IM6t",children:(0,a.jsxs)(N,{groupId:"codeSample",className:"codeSampleTabs_NCUj",children:[(0,a.jsx)(A,{value:"file",label:"File system",default:!0,children:(0,a.jsxs)("div",{className:k,children:[(0,a.jsx)(I.A,{language:"csharp",title:"ReportService.cs",children:C}),(0,a.jsx)(I.A,{language:"csharp",title:"ReportServiceTests.cs",children:E})]})}),(0,a.jsx)(A,{value:"time",label:"Time system",children:(0,a.jsxs)("div",{className:k,children:[(0,a.jsx)(I.A,{language:"csharp",title:"CacheEntry.cs",children:R}),(0,a.jsx)(I.A,{language:"csharp",title:"CacheEntryTests.cs",children:D})]})}),(0,a.jsx)(A,{value:"random",label:"Random system",children:(0,a.jsxs)("div",{className:k,children:[(0,a.jsx)(I.A,{language:"csharp",title:"CorrelationIdProvider.cs",children:F}),(0,a.jsx)(I.A,{language:"csharp",title:"CorrelationIdProviderTests.cs",children:M})]})})]})})]})})}function G(){let{siteConfig:e}=(0,l.A)();return(0,a.jsxs)(i.A,{title:e.title,description:"Testably.Abstractions provides IFileSystem, ITimeSystem and IRandomSystem interfaces with a feature-complete in-memory MockFileSystem for unit tests.",children:[(0,a.jsx)(q,{}),(0,a.jsx)("main",{children:(0,a.jsx)(P,{})})]})}}}]);
