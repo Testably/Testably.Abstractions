@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Testably.Abstractions',
-  tagline: 'Feature-complete testing helpers for IFileSystem, ITimeSystem and IRandomSystem',
+  tagline: 'Mock the unmockable.',
   favicon: 'img/favicon.ico',
 
   future: {
@@ -59,16 +59,6 @@ const config: Config = {
           position: 'left',
           label: 'Docs',
         },
-        {
-          href: 'https://www.nuget.org/packages/Testably.Abstractions',
-          label: 'NuGet',
-          position: 'right',
-        },
-        {
-          href: 'https://github.com/Testably/Testably.Abstractions',
-          label: 'GitHub',
-          position: 'right',
-        },
       ],
     },
     footer: {
@@ -77,32 +67,9 @@ const config: Config = {
         {
           title: 'Docs',
           items: [
-            {label: 'Introduction', to: '/docs/intro'},
-            {label: 'Getting Started', to: '/docs/getting-started'},
             {label: 'File system', to: '/docs/file-system/'},
             {label: 'Time system', to: '/docs/time-system/'},
             {label: 'Random system', to: '/docs/random-system/'},
-          ],
-        },
-        {
-          title: 'Packages',
-          items: [
-            {
-              label: 'Testably.Abstractions',
-              href: 'https://www.nuget.org/packages/Testably.Abstractions',
-            },
-            {
-              label: 'Testably.Abstractions.Testing',
-              href: 'https://www.nuget.org/packages/Testably.Abstractions.Testing',
-            },
-            {
-              label: 'Testably.Abstractions.Compression',
-              href: 'https://www.nuget.org/packages/Testably.Abstractions.Compression',
-            },
-            {
-              label: 'Testably.Abstractions.AccessControl',
-              href: 'https://www.nuget.org/packages/Testably.Abstractions.AccessControl',
-            },
           ],
         },
         {
@@ -113,13 +80,13 @@ const config: Config = {
               href: 'https://github.com/Testably/Testably.Abstractions',
             },
             {
-              label: 'Issue tracker',
-              href: 'https://github.com/Testably/Testably.Abstractions/issues',
+              label: 'NuGet',
+              href: 'https://www.nuget.org/packages/Testably.Abstractions',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Testably. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Testably.`,
     },
     prism: {
       theme: prismThemes.github,

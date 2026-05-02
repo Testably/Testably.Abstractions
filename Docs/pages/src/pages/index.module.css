@@ -30,3 +30,29 @@
   border-color: var(--ifm-color-white);
   color: var(--ifm-color-primary);
 }
+
+.codeSample {
+  padding: 4rem 0;
+  background-color: var(--ifm-background-surface-color);
+}
+
+.codeSampleSubtitle {
+  max-width: 42rem;
+  margin: 0 auto 2rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.codeSampleTabs {
+  justify-content: center;
+}
+
+.codeSampleContainer {
+  max-width: 50rem;
+  margin: 0 auto;
+}
+
+.codeSampleStack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
