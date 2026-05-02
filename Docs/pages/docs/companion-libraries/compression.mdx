@@ -56,7 +56,7 @@ Extraction looks similar: open a `ZipArchive` in `Read` mode, loop the entries, 
 
 </details>
 
-The package replaces this glue with a one-line call. Beyond brevity, it also gives you stream/path overloads on both sides, async variants on .NET 9+, and an `IZipArchive` / `IZipArchiveEntry` wrapper so the abstraction extends through the archive itself rather than stopping at the zip boundary.
+The package replaces this glue with a one-line call. Beyond brevity, it also gives you stream/path overloads on both sides, async variants on .NET 10+, and an `IZipArchive` / `IZipArchiveEntry` wrapper so the abstraction extends through the archive itself rather than stopping at the zip boundary.
 
 ### Production uses the real BCL implementation
 
@@ -86,7 +86,7 @@ using IZipArchive archive = fileSystem.ZipFile()
     .Open("your-file.zip", ZipArchiveMode.Update);
 ```
 
-All overloads from the BCL are present, including the async variants on .NET 9+ (`CreateFromDirectoryAsync`, `ExtractToDirectoryAsync`, `OpenAsync`, `OpenReadAsync`).
+All overloads from the BCL are present, including the async variants on .NET 10+ (`CreateFromDirectoryAsync`, `ExtractToDirectoryAsync`, `OpenAsync`, `OpenReadAsync`).
 
 ## ZipArchive
 
@@ -103,4 +103,4 @@ foreach (IZipArchiveEntry entry in archive.Entries)
 }
 ```
 
-`IZipArchive` exposes `Entries`, `Mode`, `CreateEntry`, `CreateEntryFromFile`, `GetEntry`, `ExtractToDirectory` and - on .NET 9+ - the async counterparts `CreateEntryFromFileAsync` and `ExtractToDirectoryAsync`. `IZipArchiveEntry` mirrors `ZipArchiveEntry` (`Open`, `Delete`, `LastWriteTime`, `Length`, `CompressedLength`, …).
+`IZipArchive` exposes `Entries`, `Mode`, `CreateEntry`, `CreateEntryFromFile`, `GetEntry`, `ExtractToDirectory` and - on .NET 10+ - the async counterparts `CreateEntryFromFileAsync` and `ExtractToDirectoryAsync`. `IZipArchiveEntry` mirrors `ZipArchiveEntry` (`Open`, `Delete`, `LastWriteTime`, `Length`, `CompressedLength`, …).
