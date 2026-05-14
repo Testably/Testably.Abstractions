@@ -7,6 +7,18 @@
 		{
 			"matchPackagePatterns": "^Testably.Abstractions",
 			"groupName": [ "Testably.Abstractions packages" ]
+		},
+		{
+			"description": "Freeze the legacy System.Threading.Channels entries (net6.0=6.x, net8.0=8.x) so they stay aligned with the runtime-bundled assembly. Only the entry for newer TFMs (currently 10.x) is auto-updated.",
+			"matchPackageNames": ["System.Threading.Channels"],
+			"matchCurrentVersion": "/^(6|8)\\./",
+			"enabled": false
+		},
+		{
+			"description": "Freeze the System.Linq.Async entries that aren't on the latest line: the net6.0 entry on 6.x, and the net8.0 entry on 7.0.0. The entry for newer TFMs (currently 7.0.1) continues to be updated.",
+			"matchPackageNames": ["System.Linq.Async"],
+			"matchCurrentVersion": "/^(6\\.|7\\.0\\.0$)/",
+			"enabled": false
 		}
 	],
 	"ignoreDeps": [ "actions/download-artifact", "actions/upload-artifact" ],
