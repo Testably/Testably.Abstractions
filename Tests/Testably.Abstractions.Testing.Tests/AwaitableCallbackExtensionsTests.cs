@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using Testably.Abstractions.Testing.FileSystem;
@@ -61,25 +62,24 @@ public class AwaitableCallbackExtensionsTests
 			using CancellationTokenSource cts = new();
 			CancellationToken token = cts.Token;
 
-			_ = Task.Run(async () =>
+			for (int i = 0; i < 10; i++)
 			{
-				for (int i = 0; i < 10; i++)
+				fileSystem.Directory.CreateDirectory($"Test{i}");
+			}
+
+			List<ChangeDescription> results = [];
+			await foreach (ChangeDescription item in sut
+				.ToAsyncEnumerable(cancellationToken: token)
+				.WithCancellation(cancellationToken))
+			{
+				results.Add(item);
+				if (results.Count == 6)
 				{
-					fileSystem.Directory.CreateDirectory($"Test{i}");
-					await Task.Delay(100, cancellationToken);
-					if (i == 5)
-					{
-						// ReSharper disable once AccessToDisposedClosure
-						cts.Cancel();
-					}
+					cts.Cancel();
 				}
-			}, cancellationToken);
+			}
 
-			ChangeDescription[] results = await sut.ToAsyncEnumerable(cancellationToken: token)
-				.Take(10)
-				.ToArrayAsync(cancellationToken: cancellationToken);
-
-			await That(results.Length).IsEqualTo(6);
+			await That(results.Count).IsEqualTo(6);
 		}
 
 		[Test]
