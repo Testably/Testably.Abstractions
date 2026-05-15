@@ -15,36 +15,44 @@ Pick **Testably.Abstractions** when you need a watcher, `SafeFileHandle`, multip
 
 ## How to migrate
 
-The migration only affects your **test** projects.
+The migration only affects your **test** projects. There are two paths — pick one.
 
-### 1. Swap the package
+### Automated (recommended)
 
-```xml
-<!-- Remove -->
-<PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" />
-<!-- Add -->
-<PackageReference Include="Testably.Abstractions.Testing" />
-```
+The [`Testably.Abstractions.Migration`](./Migration/) analyzer rewrites the supported call sites for you. Install it alongside `Testably.Abstractions.Testing`, apply the code fix from your IDE or `dotnet format analyzers`, then uninstall it. Patterns it cannot rewrite safely are still reported so you can address them by hand — see the [analyzer page](./Migration/) for the full mapping table and recommended workflow.
 
-### 2. Update the test code
+### Manual
 
-```csharp
-// Before (TestableIO)
-var fileSystem = new MockFileSystem();
-fileSystem.AddDirectory("some-directory");
-fileSystem.AddFile("some-file.txt", new MockFileData("content"));
+If you'd rather not introduce a build-time analyzer, swap the package and rewrite the call sites yourself.
 
-// After (Testably) - option A: imperative
-var fileSystem = new MockFileSystem();
-fileSystem.Directory.CreateDirectory("some-directory");
-fileSystem.File.WriteAllText("some-file.txt", "content");
+1. **Swap the package:**
 
-// After (Testably) - option B: fluent initialization
-var fileSystem = new MockFileSystem();
-fileSystem.Initialize()
-    .WithSubdirectory("some-directory")
-    .WithFile("some-file.txt").Which(f => f
-        .HasStringContent("content"));
-```
+   ```xml
+   <!-- Remove -->
+   <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" />
+   <!-- Add -->
+   <PackageReference Include="Testably.Abstractions.Testing" />
+   ```
+
+2. **Update the test code:**
+
+   ```csharp
+   // Before (TestableIO)
+   var fileSystem = new MockFileSystem();
+   fileSystem.AddDirectory("some-directory");
+   fileSystem.AddFile("some-file.txt", new MockFileData("content"));
+
+   // After (Testably) - option A: imperative
+   var fileSystem = new MockFileSystem();
+   fileSystem.Directory.CreateDirectory("some-directory");
+   fileSystem.File.WriteAllText("some-file.txt", "content");
+
+   // After (Testably) - option B: fluent initialization
+   var fileSystem = new MockFileSystem();
+   fileSystem.Initialize()
+       .WithSubdirectory("some-directory")
+       .WithFile("some-file.txt").Which(f => f
+           .HasStringContent("content"));
+   ```
 
 Production code keeps using `IFileSystem` exactly as before - no changes there.
