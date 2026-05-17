@@ -94,7 +94,8 @@ public class ChangeHandlerTests
 	}
 
 	public static
-		IEnumerable<(Action<IFileSystem, string>?, Action<IFileSystem, string>, WatcherChangeTypes, FileSystemTypes, string)> NotificationTriggeringMethods()
+		IEnumerable<(Action<IFileSystem, string>?, Action<IFileSystem, string>, WatcherChangeTypes,
+			FileSystemTypes, string)> NotificationTriggeringMethods()
 	{
 		yield return (null, (f, p) => f.Directory.CreateDirectory(p), WatcherChangeTypes.Created,
 			FileSystemTypes.Directory, $"path_{Guid.NewGuid()}");
@@ -104,6 +105,21 @@ public class ChangeHandlerTests
 			FileSystemTypes.File, $"path_{Guid.NewGuid()}");
 		yield return ((f, p) => f.File.WriteAllText(p, null), (f, p) => f.File.Delete(p),
 			WatcherChangeTypes.Deleted, FileSystemTypes.File, $"path_{Guid.NewGuid()}");
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task OnEventOrReplay_CallbackThrowsDuringReplay_ShouldNotLeakWaiter(string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+
+		void Subscribe()
+			=> FileSystem.Notify.OnEventOrReplay(_ => throw new InvalidOperationException("boom"));
+
+		await That(Subscribe).Throws<InvalidOperationException>().WithMessage("boom");
+
+		void TriggerAnotherChange() => FileSystem.File.WriteAllText(path, "more");
+		await That(TriggerAnotherChange).DoesNotThrow();
 	}
 
 	[Test]
@@ -168,18 +184,107 @@ public class ChangeHandlerTests
 	}
 
 	[Test]
-	[AutoArguments]
-	public async Task OnEventOrReplay_CallbackThrowsDuringReplay_ShouldNotLeakWaiter(string path)
+	public async Task OnTriggeredOrReplay_ShouldAlsoReceiveFutureEmissions()
 	{
-		FileSystem.File.WriteAllText(path, null);
+		FileSystem.InitializeIn(".");
+		IFileSystemWatcher watcher = FileSystem.FileSystemWatcher.New(".");
+		watcher.EnableRaisingEvents = true;
 
-		void Subscribe() => FileSystem.Notify.OnEventOrReplay(
-			_ => throw new InvalidOperationException("boom"));
+		using IAwaitableCallback<WatcherChangeDescription> warmup =
+			FileSystem.Watcher.OnTriggered();
+		FileSystem.File.WriteAllText("foo.txt", "some-text");
+		warmup.Wait(timeout: 30000);
 
-		await That(Subscribe).Throws<InvalidOperationException>().WithMessage("boom");
+		using IAwaitableCallback<WatcherChangeDescription> onEvent = FileSystem.Watcher
+			.OnTriggeredOrReplay(predicate: c => c.ChangeType == WatcherChangeTypes.Created);
 
-		void TriggerAnotherChange() => FileSystem.File.WriteAllText(path, "more");
-		await That(TriggerAnotherChange).DoesNotThrow();
+		FileSystem.File.WriteAllText("bar.txt", "more-text");
+
+		WatcherChangeDescription[] received = await onEvent.WaitAsync(
+			count: 2,
+			timeout: TimeSpan.FromSeconds(5));
+
+		await That(received.Length).IsEqualTo(2);
+	}
+
+	[Test]
+	public async Task OnTriggeredOrReplay_ShouldFilterByEmittingWatcher()
+	{
+		FileSystem.InitializeIn(".");
+		IFileSystemWatcher watcher1 = FileSystem.FileSystemWatcher.New(".");
+		IFileSystemWatcher watcher2 = FileSystem.FileSystemWatcher.New(".");
+		watcher1.EnableRaisingEvents = true;
+		watcher2.EnableRaisingEvents = true;
+
+		using IAwaitableCallback<WatcherChangeDescription> warmup =
+			FileSystem.Watcher.OnTriggered();
+		FileSystem.File.WriteAllText("foo.txt", "some-text");
+		warmup.Wait(count: 2, timeout: TimeSpan.FromSeconds(30));
+
+		using IAwaitableCallback<WatcherChangeDescription> onEvent = FileSystem.Watcher
+			.OnTriggeredOrReplay(predicate: c =>
+				ReferenceEquals(c.FileSystemWatcher, watcher1));
+
+		WatcherChangeDescription[] replayed =
+			await onEvent.WaitAsync(timeout: TimeSpan.FromSeconds(5));
+
+		await That(replayed.Length).IsEqualTo(1);
+		await That(replayed[0].FileSystemWatcher).IsSameAs(watcher1);
+	}
+
+	[Test]
+	public async Task OnTriggeredOrReplay_ShouldNotReplayEmissionsFilteredOutByPredicate()
+	{
+		FileSystem.InitializeIn(".");
+		IFileSystemWatcher watcher = FileSystem.FileSystemWatcher.New(".");
+		watcher.EnableRaisingEvents = true;
+
+		using IAwaitableCallback<WatcherChangeDescription> warmup =
+			FileSystem.Watcher.OnTriggered();
+		FileSystem.File.WriteAllText("foo.txt", "some-text");
+		warmup.Wait(timeout: 30000);
+
+		using IAwaitableCallback<WatcherChangeDescription> onEvent = FileSystem.Watcher
+			.OnTriggeredOrReplay(predicate: c => c.ChangeType == WatcherChangeTypes.Deleted);
+
+		void Act() =>
+			// ReSharper disable once AccessToDisposedClosure
+			onEvent.Wait(timeout: 50);
+
+		await That(Act).Throws<TimeoutException>();
+	}
+
+	[Test]
+	public async Task OnTriggeredOrReplay_ShouldReplayPriorMatchingEmissions()
+	{
+		FileSystem.InitializeIn(".");
+		IFileSystemWatcher watcher = FileSystem.FileSystemWatcher.New(".");
+		watcher.EnableRaisingEvents = true;
+
+		using IAwaitableCallback<WatcherChangeDescription> warmup =
+			FileSystem.Watcher.OnTriggered();
+		FileSystem.File.WriteAllText("foo.txt", "some-text");
+		warmup.Wait(timeout: 30000);
+
+		using IAwaitableCallback<WatcherChangeDescription> onEvent = FileSystem.Watcher
+			.OnTriggeredOrReplay(predicate: c => c.ChangeType == WatcherChangeTypes.Created);
+
+		WatcherChangeDescription[] replayed =
+			await onEvent.WaitAsync(timeout: TimeSpan.FromSeconds(5));
+
+		await That(replayed.Length).IsEqualTo(1);
+		await That(replayed[0].Path).IsEqualTo(FileSystem.Path.GetFullPath("foo.txt"));
+	}
+
+	[Test]
+	public async Task OnTriggeredOrReplay_WithoutNotificationHistory_ShouldThrow()
+	{
+		MockFileSystem fileSystem = new(o => o.WithoutNotificationHistory());
+
+		void Act() => fileSystem.Watcher.OnTriggeredOrReplay();
+
+		await That(Act).Throws<InvalidOperationException>()
+			.WithMessage("*WithoutNotificationHistory*").AsWildcard();
 	}
 
 	[Test]
@@ -189,7 +294,8 @@ public class ChangeHandlerTests
 		IFileSystemWatcher watcher = FileSystem.FileSystemWatcher.New("bar");
 		watcher.EnableRaisingEvents = true;
 
-		using IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Watcher.OnTriggered();
+		using IAwaitableCallback<WatcherChangeDescription> onEvent =
+			FileSystem.Watcher.OnTriggered();
 
 		FileSystem.File.WriteAllText(@"foo.txt", "some-text");
 
@@ -209,7 +315,8 @@ public class ChangeHandlerTests
 		watcher.Created += (_, _) => isTriggered = true;
 		watcher.EnableRaisingEvents = true;
 
-		using IAwaitableCallback<ChangeDescription> onEvent = FileSystem.Watcher.OnTriggered();
+		using IAwaitableCallback<WatcherChangeDescription> onEvent =
+			FileSystem.Watcher.OnTriggered();
 		FileSystem.File.WriteAllText(@"foo.txt", "some-text");
 
 		onEvent.Wait(timeout: 30000);

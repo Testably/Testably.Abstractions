@@ -528,7 +528,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				TriggerRenameNotification(item);
 			}
 
-			_fileSystem.ChangeHandler.NotifyWatcherTriggeredChange(item);
+			_fileSystem.ChangeHandler.NotifyWatcherTriggeredChange(item, this);
 		}
 	}
 
