@@ -1,7 +1,10 @@
-﻿using Microsoft.Win32.SafeHandles;
+using System.IO.Abstractions;
+using System;
+using System.IO;
+using Microsoft.Win32.SafeHandles;
 
-namespace System.IO.Abstractions;
-
+namespace Testably.Abstractions
+{
 /// <summary>
 ///     A factory for the creation of wrappers for <see cref="FileStream" /> in a <see cref="IFileSystem" />.
 /// </summary>
@@ -47,4 +50,15 @@ public interface IFileStreamFactory : IFileSystemEntity
 	///     Wraps the <paramref name="fileStream" /> to the testable <see cref="FileSystemStream" />.
 	/// </summary>
 	FileSystemStream Wrap(FileStream fileStream);
+}
+}
+
+namespace System.IO.Abstractions
+{
+	/// <summary>
+	///     Backwards-compatibility alias for <see cref="Testably.Abstractions.IFileStreamFactory" />.
+	/// </summary>
+	public interface IFileStreamFactory : Testably.Abstractions.IFileStreamFactory
+	{
+	}
 }

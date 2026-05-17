@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+using System;
+using System.IO;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace System.IO.Abstractions;
-
+namespace Testably.Abstractions
+{
 /// <summary>
 ///     Abstraction interface for <see cref="Directory" />.
 /// </summary>
@@ -206,4 +208,15 @@ public interface IDirectory : IFileSystemEntity
 
 	/// <inheritdoc cref="Directory.SetLastWriteTimeUtc(string, DateTime)" />
 	void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc);
+}
+}
+
+namespace System.IO.Abstractions
+{
+	/// <summary>
+	///     Backwards-compatibility alias for <see cref="Testably.Abstractions.IDirectory" />.
+	/// </summary>
+	public interface IDirectory : Testably.Abstractions.IDirectory
+	{
+	}
 }

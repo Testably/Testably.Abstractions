@@ -1,12 +1,14 @@
-﻿#if NETSTANDARD2_0 || NETSTANDARD2_1
+using System;
+using System.IO;
+#if NETSTANDARD2_0 || NETSTANDARD2_1
 using Testably.Abstractions.Polyfills;
 #else
 using System.Runtime.Versioning;
 #endif
 using System.Diagnostics.CodeAnalysis;
 
-namespace System.IO.Abstractions;
-
+namespace Testably.Abstractions
+{
 /// <inheritdoc cref="DriveInfo" />
 public interface IDriveInfo : IFileSystemEntity
 {
@@ -40,5 +42,16 @@ public interface IDriveInfo : IFileSystemEntity
 	{
 		get;
 		[SupportedOSPlatform("windows")] set;
+	}
+}
+}
+
+namespace System.IO.Abstractions
+{
+	/// <summary>
+	///     Backwards-compatibility alias for <see cref="Testably.Abstractions.IDriveInfo" />.
+	/// </summary>
+	public interface IDriveInfo : Testably.Abstractions.IDriveInfo
+	{
 	}
 }

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+using System.IO.Abstractions;
+using System;
+using System.IO;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 #if FEATURE_FILESYSTEM_ASYNC
@@ -14,8 +17,8 @@ using Testably.Abstractions.Polyfills;
 using System.Runtime.Versioning;
 #endif
 
-namespace System.IO.Abstractions;
-
+namespace Testably.Abstractions
+{
 /// <summary>
 ///     Abstractions for <see cref="File" />.
 /// </summary>
@@ -473,4 +476,15 @@ public interface IFile : IFileSystemEntity
 	Task WriteAllTextAsync(string path, ReadOnlyMemory<char> contents, Encoding encoding,
 		CancellationToken cancellationToken = default);
 #endif
+}
+}
+
+namespace System.IO.Abstractions
+{
+	/// <summary>
+	///     Backwards-compatibility alias for <see cref="Testably.Abstractions.IFile" />.
+	/// </summary>
+	public interface IFile : Testably.Abstractions.IFile
+	{
+	}
 }

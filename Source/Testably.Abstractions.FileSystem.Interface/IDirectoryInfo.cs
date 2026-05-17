@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+using System;
+using System.IO;
+using System.Collections.Generic;
 
-namespace System.IO.Abstractions;
-
+namespace Testably.Abstractions
+{
 /// <inheritdoc cref="DirectoryInfo" />
 public interface IDirectoryInfo : IFileSystemInfo
 {
@@ -122,4 +124,15 @@ public interface IDirectoryInfo : IFileSystemInfo
 
 	/// <inheritdoc cref="DirectoryInfo.MoveTo(string)" />
 	void MoveTo(string destDirName);
+}
+}
+
+namespace System.IO.Abstractions
+{
+	/// <summary>
+	///     Backwards-compatibility alias for <see cref="Testably.Abstractions.IDirectoryInfo" />.
+	/// </summary>
+	public interface IDirectoryInfo : Testably.Abstractions.IDirectoryInfo
+	{
+	}
 }

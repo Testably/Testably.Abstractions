@@ -1,11 +1,14 @@
-﻿#if NETSTANDARD2_0 || NETSTANDARD2_1
+using System.IO.Abstractions;
+using System;
+using System.IO;
+#if NETSTANDARD2_0 || NETSTANDARD2_1
 using Testably.Abstractions.Polyfills;
 #else
 using System.Runtime.Versioning;
 #endif
 
-namespace System.IO.Abstractions;
-
+namespace Testably.Abstractions
+{
 /// <inheritdoc cref="FileInfo" />
 public interface IFileInfo : IFileSystemInfo
 {
@@ -83,4 +86,15 @@ public interface IFileInfo : IFileSystemInfo
 	IFileInfo Replace(string destinationFileName,
 		string? destinationBackupFileName,
 		bool ignoreMetadataErrors);
+}
+}
+
+namespace System.IO.Abstractions
+{
+	/// <summary>
+	///     Backwards-compatibility alias for <see cref="Testably.Abstractions.IFileInfo" />.
+	/// </summary>
+	public interface IFileInfo : Testably.Abstractions.IFileInfo
+	{
+	}
 }

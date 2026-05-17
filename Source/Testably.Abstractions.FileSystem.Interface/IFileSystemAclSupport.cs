@@ -1,5 +1,7 @@
-﻿namespace System.IO.Abstractions;
-
+using System;
+using System.IO;
+namespace Testably.Abstractions
+{
 /// <summary>
 ///     Support ACL functionality on file system instances.
 /// </summary>
@@ -63,4 +65,15 @@ public interface IFileSystemAclSupport
 	///     directory in the file system.
 	/// </summary>
 	void SetAccessControl(object value);
+}
+}
+
+namespace System.IO.Abstractions
+{
+	/// <summary>
+	///     Backwards-compatibility alias for <see cref="Testably.Abstractions.IFileSystemAclSupport" />.
+	/// </summary>
+	public interface IFileSystemAclSupport : Testably.Abstractions.IFileSystemAclSupport
+	{
+	}
 }

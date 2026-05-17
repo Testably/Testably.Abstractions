@@ -1,7 +1,9 @@
-﻿using System.Diagnostics;
+using System;
+using System.IO;
+using System.Diagnostics;
 
-namespace System.IO.Abstractions;
-
+namespace Testably.Abstractions
+{
 /// <inheritdoc cref="FileVersionInfo" />
 public interface IFileVersionInfo
 {
@@ -85,4 +87,15 @@ public interface IFileVersionInfo
 
 	/// <inheritdoc cref="FileVersionInfo.SpecialBuild" />
 	string? SpecialBuild { get; }
+}
+}
+
+namespace System.IO.Abstractions
+{
+	/// <summary>
+	///     Backwards-compatibility alias for <see cref="Testably.Abstractions.IFileVersionInfo" />.
+	/// </summary>
+	public interface IFileVersionInfo : Testably.Abstractions.IFileVersionInfo
+	{
+	}
 }

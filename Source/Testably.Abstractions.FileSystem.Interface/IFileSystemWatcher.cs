@@ -1,10 +1,12 @@
-﻿using System.ComponentModel;
+using System;
+using System.IO;
+using System.ComponentModel;
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 using System.Collections.ObjectModel;
 #endif
 
-namespace System.IO.Abstractions;
-
+namespace Testably.Abstractions
+{
 /// <inheritdoc cref="FileSystemWatcher" />
 public interface IFileSystemWatcher : IFileSystemEntity, IDisposable
 {
@@ -71,4 +73,15 @@ public interface IFileSystemWatcher : IFileSystemEntity, IDisposable
 	/// <inheritdoc cref="FileSystemWatcher.WaitForChanged(WatcherChangeTypes, TimeSpan)" />
 	IWaitForChangedResult WaitForChanged(WatcherChangeTypes changeType, TimeSpan timeout);
 #endif
+}
+}
+
+namespace System.IO.Abstractions
+{
+	/// <summary>
+	///     Backwards-compatibility alias for <see cref="Testably.Abstractions.IFileSystemWatcher" />.
+	/// </summary>
+	public interface IFileSystemWatcher : Testably.Abstractions.IFileSystemWatcher
+	{
+	}
 }

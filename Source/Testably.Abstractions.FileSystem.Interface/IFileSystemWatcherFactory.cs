@@ -1,7 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System;
+using System.IO;
+using System.Diagnostics.CodeAnalysis;
 
-namespace System.IO.Abstractions;
-
+namespace Testably.Abstractions
+{
 /// <summary>
 ///     A factory for the creation of wrappers for <see cref="FileSystemWatcher" /> in a <see cref="IFileSystem" />.
 /// </summary>
@@ -36,4 +38,15 @@ public interface IFileSystemWatcherFactory : IFileSystemEntity
 	/// </summary>
 	[return: NotNullIfNotNull("fileSystemWatcher")]
 	IFileSystemWatcher? Wrap(FileSystemWatcher? fileSystemWatcher);
+}
+}
+
+namespace System.IO.Abstractions
+{
+	/// <summary>
+	///     Backwards-compatibility alias for <see cref="Testably.Abstractions.IFileSystemWatcherFactory" />.
+	/// </summary>
+	public interface IFileSystemWatcherFactory : Testably.Abstractions.IFileSystemWatcherFactory
+	{
+	}
 }

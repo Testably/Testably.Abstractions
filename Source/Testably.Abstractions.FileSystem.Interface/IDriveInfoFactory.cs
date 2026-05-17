@@ -1,7 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System;
+using System.IO;
+using System.Diagnostics.CodeAnalysis;
 
-namespace System.IO.Abstractions;
-
+namespace Testably.Abstractions
+{
 /// <summary>
 ///     A factory for the creation of wrappers for <see cref="DriveInfo" /> in a <see cref="IFileSystem" />.
 /// </summary>
@@ -29,4 +31,15 @@ public interface IDriveInfoFactory : IFileSystemEntity
 	/// </summary>
 	[return: NotNullIfNotNull("driveInfo")]
 	IDriveInfo? Wrap(DriveInfo? driveInfo);
+}
+}
+
+namespace System.IO.Abstractions
+{
+	/// <summary>
+	///     Backwards-compatibility alias for <see cref="Testably.Abstractions.IDriveInfoFactory" />.
+	/// </summary>
+	public interface IDriveInfoFactory : Testably.Abstractions.IDriveInfoFactory
+	{
+	}
 }

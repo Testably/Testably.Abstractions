@@ -1,6 +1,8 @@
-﻿using System.Runtime.Versioning;
+using System;
+using System.IO;
+using System.Runtime.Versioning;
 
-namespace System.IO.Abstractions
+namespace Testably.Abstractions
 {
     /// <inheritdoc cref="FileSystemInfo" />
     public interface IFileSystemInfo
@@ -77,4 +79,14 @@ namespace System.IO.Abstractions
         IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget);
 #endif
     }
+}
+
+namespace System.IO.Abstractions
+{
+	/// <summary>
+	///     Backwards-compatibility alias for <see cref="Testably.Abstractions.IFileSystemInfo" />.
+	/// </summary>
+	public interface IFileSystemInfo : Testably.Abstractions.IFileSystemInfo
+	{
+	}
 }

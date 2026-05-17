@@ -1,5 +1,7 @@
-﻿namespace System.IO.Abstractions;
-
+using System;
+using System.IO;
+namespace Testably.Abstractions
+{
 /// <summary>
 ///     Abstraction of the file system.
 /// </summary>
@@ -49,4 +51,15 @@ public interface IFileSystem
 	///     Abstraction for static methods and properties in <see cref="System.IO.Path" />.
 	/// </summary>
 	IPath Path { get; }
+}
+}
+
+namespace System.IO.Abstractions
+{
+	/// <summary>
+	///     Backwards-compatibility alias for <see cref="Testably.Abstractions.IFileSystem" />.
+	/// </summary>
+	public interface IFileSystem : Testably.Abstractions.IFileSystem
+	{
+	}
 }
