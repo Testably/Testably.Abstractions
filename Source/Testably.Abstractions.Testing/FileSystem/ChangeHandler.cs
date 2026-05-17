@@ -67,17 +67,29 @@ internal sealed class ChangeHandler
 				$"Use {nameof(OnEvent)} instead, or remove the opt-out.");
 		}
 
+		IAwaitableCallback<ChangeDescription> waiter;
+		ChangeDescription[] snapshot;
 		lock (_historyLock)
 		{
-			IAwaitableCallback<ChangeDescription> waiter =
+			waiter =
 				_changeOccurredCallbacks.RegisterCallback(notificationCallback, predicate);
-			foreach (ChangeDescription past in _history)
+			snapshot = _history.ToArray();
+		}
+
+		try
+		{
+			foreach (ChangeDescription past in snapshot)
 			{
 				_changeOccurredCallbacks.Replay(waiter, past);
 			}
-
-			return waiter;
 		}
+		catch
+		{
+			waiter.Dispose();
+			throw;
+		}
+
+		return waiter;
 	}
 
 	#endregion
@@ -105,11 +117,14 @@ internal sealed class ChangeHandler
 			return;
 		}
 
+		Action<ChangeDescription> invoke;
 		lock (_historyLock)
 		{
 			_history.Add(fileSystemChange);
-			_changeOccurredCallbacks.InvokeCallbacks(fileSystemChange);
+			invoke = _changeOccurredCallbacks.SnapshotInvocations();
 		}
+
+		invoke(fileSystemChange);
 	}
 
 	internal ChangeDescription NotifyPendingChange(WatcherChangeTypes changeType,

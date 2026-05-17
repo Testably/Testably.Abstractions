@@ -77,6 +77,19 @@ public static class Notification
 			}
 		}
 
+		public Action<TValue> SnapshotInvocations()
+		{
+			System.Collections.Generic.ICollection<CallbackWaiter> snapshot =
+				_callbackWaiters.Values;
+			return value =>
+			{
+				foreach (CallbackWaiter callback in snapshot)
+				{
+					callback.Invoke(value);
+				}
+			};
+		}
+
 		#endregion
 
 		private void UnRegisterCallback(Guid key)
@@ -278,6 +291,14 @@ public static class Notification
 			Func<TValue, bool>? predicate = null);
 
 		void Replay(IAwaitableCallback<TValue> callback, TValue value);
+
+		/// <summary>
+		///     Captures the set of currently-registered callbacks and returns a delegate that, when
+		///     invoked with a value, delivers it to that snapshot. Call this under whatever lock guards
+		///     the surrounding state, then invoke the returned delegate outside the lock so user
+		///     callbacks do not run while the lock is held.
+		/// </summary>
+		Action<TValue> SnapshotInvocations();
 	}
 
 	/// <summary>

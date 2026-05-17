@@ -168,6 +168,21 @@ public class ChangeHandlerTests
 	}
 
 	[Test]
+	[AutoArguments]
+	public async Task OnEventOrReplay_CallbackThrowsDuringReplay_ShouldNotLeakWaiter(string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+
+		void Subscribe() => FileSystem.Notify.OnEventOrReplay(
+			_ => throw new InvalidOperationException("boom"));
+
+		await That(Subscribe).Throws<InvalidOperationException>().WithMessage("boom");
+
+		void TriggerAnotherChange() => FileSystem.File.WriteAllText(path, "more");
+		await That(TriggerAnotherChange).DoesNotThrow();
+	}
+
+	[Test]
 	public async Task Watcher_ShouldNotTriggerWhenFileSystemWatcherDoesNotMatch()
 	{
 		FileSystem.Directory.CreateDirectory("bar");
