@@ -5,53 +5,19 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=coverage)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 
-This library contains the testing helpers for [Testably.Abstractions](https://github.com/Testably/Testably.Abstractions).
+Testing helpers for [`Testably.Abstractions`](https://www.nuget.org/packages/Testably.Abstractions) - in-memory `MockFileSystem`, `MockTimeSystem` and `MockRandomSystem` that behave identically to the .NET base class library (BCL) but stay deterministic and never touch disk, the system clock or randomness.
 
-## MockFileSystem
-
-### Initialization
-Shows how to initialize the file system:
-```csharp
-    fileSystem.InitializeIn("current-directory")
-        .WithASubdirectory()
-        .WithSubdirectory("foo").Initialized(s => s
-            .WithAFile())
-        .WithFile("bar.txt");
+```ps
+dotnet add package Testably.Abstractions.Testing
 ```
-Initialize the file system in "current-directory" with
-- a randomly named directory
-- a directory named "foo" which contains a randomly named file
-- a file named "bar.txt"
 
-In order to use multiple drives on Windows (or network shares) you have to first register them:
-```csharp
-    fileSystem.WithDrive(@"D:", drive => drive.SetTotalSize(1024));
-```
-The optional configuration allows limiting the maximum available space on the drive.
+**Full documentation: [docs.testably.org/Abstractions](https://docs.testably.org/Abstractions/)**
 
-### Events
-All changes in the file system trigger certain events. All events can be
-- _intercepted_, before they occur (and e.g. an exception thrown to prevent the event from completing) on the `Intercept` property:
-  ```csharp
-      MockFileSystem fileSystem = new();
-          fileSystem.Intercept.Creating(FileSystemTypes.File,
-              _ => throw new Exception("my custom exception"));
-  ```
-- _notified_, after they occured to allow a test to react to changes on the `MockFileSystem.Notify` property:
-  These methods return an awaitable object that
-  - Removes the notification on dispose
-  - Provides a blocking mechanism until the notification happens
-  ```csharp
-      MockFileSystem fileSystem = new();
-      fileSystem.Notify
-          .OnCreated(FileSystemTypes.File, _ =>
-          {
-              // Do something
-          })
-          .ExecuteWhileWaiting(() =>
-          {
-              // This will trigger the callback
-              fileSystem.File.Create("some-file.txt");
-          })
-          .Wait();
-  ```
+The test suite runs every assertion against both the real and the mocked file system, so the mock behaves identically to the BCL. Highlights:
+
+- **MockFileSystem** - fluent `Initialize()` API, multiple drives with size limits, `FileSystemWatcher`, `SafeFileHandle`, file-version metadata and unix file modes.
+- **Cross-platform simulation** - run a Linux, macOS or Windows file system regardless of the host via `new MockFileSystem(o => o.SimulatingOperatingSystem(SimulationMode.Linux))`.
+- **Intercept and Notify** - inject exceptions before a file-system or time-system operation completes, or react to them after the fact (including replay of events that fired before the subscription).
+- **MockTimeSystem** - control `DateTime.Now`, advance time manually or via auto-advance, mock `Timer`/`PeriodicTimer` with persistent execution counters.
+- **MockRandomSystem** - seed `Random` and `Guid.NewGuid()` for reproducible tests.
+- **Statistics** - inspect how the system-under-test used each abstraction (`fileSystem.Statistics`).
