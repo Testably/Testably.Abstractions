@@ -218,7 +218,8 @@ namespace Testably.Abstractions.Testing.FileSystem
     }
     public interface IWatcherTriggeredHandler : System.IO.Abstractions.IFileSystemEntity
     {
-        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnTriggered(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? triggerCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
+        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.WatcherChangeDescription> OnTriggered(System.Action<Testably.Abstractions.Testing.FileSystem.WatcherChangeDescription>? triggerCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.WatcherChangeDescription, bool>? predicate = null);
+        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.WatcherChangeDescription> OnTriggeredOrReplay(System.Action<Testably.Abstractions.Testing.FileSystem.WatcherChangeDescription>? triggerCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.WatcherChangeDescription, bool>? predicate = null);
     }
     public class NullAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy
     {
@@ -236,6 +237,10 @@ namespace Testably.Abstractions.Testing.FileSystem
         public System.IO.FileMode Mode { get; }
         public string Path { get; }
         public System.IO.FileShare Share { get; }
+    }
+    public sealed class WatcherChangeDescription : Testably.Abstractions.Testing.FileSystem.ChangeDescription
+    {
+        public System.IO.Abstractions.IFileSystemWatcher FileSystemWatcher { get; }
     }
 }
 namespace Testably.Abstractions.Testing.Initializer

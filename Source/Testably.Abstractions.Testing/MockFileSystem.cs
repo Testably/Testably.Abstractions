@@ -316,7 +316,8 @@ public sealed class MockFileSystem : IFileSystem
 
 		/// <summary>
 		///     Whether to record a history of completed change notifications so that
-		///     <see cref="INotificationHandler.OnEventOrReplay" /> can replay past events.
+		///     <see cref="INotificationHandler.OnEventOrReplay" /> and
+		///     <see cref="IWatcherTriggeredHandler.OnTriggeredOrReplay" /> can replay past events.
 		/// </summary>
 		internal bool RecordNotificationHistory { get; private set; } = true;
 
@@ -378,10 +379,12 @@ public sealed class MockFileSystem : IFileSystem
 		}
 
 		/// <summary>
-		///     Disables recording the change notification history. With history disabled,
-		///     <see cref="INotificationHandler.OnEventOrReplay" /> throws
+		///     Disables recording the change notification history for both the notify and
+		///     watcher-triggered streams. With history disabled,
+		///     <see cref="INotificationHandler.OnEventOrReplay" /> and
+		///     <see cref="IWatcherTriggeredHandler.OnTriggeredOrReplay" /> throw
 		///     <see cref="InvalidOperationException" />; use <see cref="INotificationHandler.OnEvent" />
-		///     instead.
+		///     or <see cref="IWatcherTriggeredHandler.OnTriggered" /> instead.
 		/// </summary>
 		public MockFileSystemOptions WithoutNotificationHistory()
 		{

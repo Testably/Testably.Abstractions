@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Testably.Abstractions.Testing.Storage;
@@ -23,13 +23,24 @@ internal sealed class ChangeHandler
 
 	private readonly MockFileSystem _mockFileSystem;
 
-	private readonly Notification.INotificationFactory<ChangeDescription>
-		_watcherNotificationTriggeredCallbacks = Notification.CreateFactory<ChangeDescription>();
+	private readonly List<WatcherChangeDescription>? _watcherHistory;
+#if NET9_0_OR_GREATER
+	private readonly System.Threading.Lock _watcherHistoryLock = new();
+#else
+	private readonly object _watcherHistoryLock = new();
+#endif
+
+	private readonly Notification.INotificationFactory<WatcherChangeDescription>
+		_watcherNotificationTriggeredCallbacks =
+			Notification.CreateFactory<WatcherChangeDescription>();
 
 	public ChangeHandler(MockFileSystem mockFileSystem, bool recordNotificationHistory)
 	{
 		_mockFileSystem = mockFileSystem;
 		_history = recordNotificationHistory ? new List<ChangeDescription>() : null;
+		_watcherHistory = recordNotificationHistory
+			? new List<WatcherChangeDescription>()
+			: null;
 	}
 
 	#region IInterceptionHandler Members
@@ -97,10 +108,49 @@ internal sealed class ChangeHandler
 	#region IWatcherTriggeredHandler Members
 
 	/// <inheritdoc cref="IWatcherTriggeredHandler.OnTriggered" />
-	public IAwaitableCallback<ChangeDescription> OnTriggered(
-		Action<ChangeDescription>? triggerCallback = null,
-		Func<ChangeDescription, bool>? predicate = null)
+	public IAwaitableCallback<WatcherChangeDescription> OnTriggered(
+		Action<WatcherChangeDescription>? triggerCallback = null,
+		Func<WatcherChangeDescription, bool>? predicate = null)
 		=> _watcherNotificationTriggeredCallbacks.RegisterCallback(triggerCallback, predicate);
+
+	/// <inheritdoc cref="IWatcherTriggeredHandler.OnTriggeredOrReplay" />
+	public IAwaitableCallback<WatcherChangeDescription> OnTriggeredOrReplay(
+		Action<WatcherChangeDescription>? triggerCallback = null,
+		Func<WatcherChangeDescription, bool>? predicate = null)
+	{
+		if (_watcherHistory is null)
+		{
+			throw new InvalidOperationException(
+				$"{nameof(OnTriggeredOrReplay)} requires notification history, but it was disabled via " +
+				$"{nameof(MockFileSystem.MockFileSystemOptions)}." +
+				$"{nameof(MockFileSystem.MockFileSystemOptions.WithoutNotificationHistory)}. " +
+				$"Use {nameof(OnTriggered)} instead, or remove the opt-out.");
+		}
+
+		IAwaitableCallback<WatcherChangeDescription> waiter;
+		WatcherChangeDescription[] snapshot;
+		lock (_watcherHistoryLock)
+		{
+			waiter =
+				_watcherNotificationTriggeredCallbacks.RegisterCallback(triggerCallback, predicate);
+			snapshot = _watcherHistory.ToArray();
+		}
+
+		try
+		{
+			foreach (WatcherChangeDescription past in snapshot)
+			{
+				_watcherNotificationTriggeredCallbacks.Replay(waiter, past);
+			}
+		}
+		catch
+		{
+			waiter.Dispose();
+			throw;
+		}
+
+		return waiter;
+	}
 
 	#endregion
 
@@ -140,6 +190,24 @@ internal sealed class ChangeHandler
 		return fileSystemChange;
 	}
 
-	internal void NotifyWatcherTriggeredChange(ChangeDescription fileSystemChange)
-		=> _watcherNotificationTriggeredCallbacks.InvokeCallbacks(fileSystemChange);
+	internal void NotifyWatcherTriggeredChange(ChangeDescription fileSystemChange,
+		IFileSystemWatcher watcher)
+	{
+		WatcherChangeDescription watcherChange = new(fileSystemChange, watcher);
+
+		if (_watcherHistory is null)
+		{
+			_watcherNotificationTriggeredCallbacks.InvokeCallbacks(watcherChange);
+			return;
+		}
+
+		Action<WatcherChangeDescription> invoke;
+		lock (_watcherHistoryLock)
+		{
+			_watcherHistory.Add(watcherChange);
+			invoke = _watcherNotificationTriggeredCallbacks.SnapshotInvocations();
+		}
+
+		invoke(watcherChange);
+	}
 }

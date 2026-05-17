@@ -58,6 +58,17 @@ public class ChangeDescription
 		NotifyFilters = notifyFilters;
 	}
 
+	internal ChangeDescription(ChangeDescription source)
+	{
+		Path = source.Path;
+		Name = source.Name;
+		OldPath = source.OldPath;
+		OldName = source.OldName;
+		ChangeType = source.ChangeType;
+		FileSystemType = source.FileSystemType;
+		NotifyFilters = source.NotifyFilters;
+	}
+
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> $"{ChangeType} ({FileSystemType}) {Path} [{NotifyFilters}]";
