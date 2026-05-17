@@ -27,11 +27,6 @@ public sealed class MockFileSystem : IFileSystem
 	public INotificationHandler Notify => ChangeHandler;
 
 	/// <summary>
-	///     Get notified of events after they were triggered by a <see cref="IFileSystemWatcher" />.
-	/// </summary>
-	public IWatcherTriggeredHandler Watcher => ChangeHandler;
-
-	/// <summary>
 	///     The used random system.
 	/// </summary>
 	public IRandomSystem RandomSystem { get; }
@@ -63,6 +58,11 @@ public sealed class MockFileSystem : IFileSystem
 	///     The used time system.
 	/// </summary>
 	public ITimeSystem TimeSystem { get; }
+
+	/// <summary>
+	///     Get notified of events after they were triggered by a <see cref="IFileSystemWatcher" />.
+	/// </summary>
+	public IWatcherTriggeredHandler Watcher => ChangeHandler;
 
 	internal IAccessControlStrategy AccessControlStrategy
 	{
@@ -144,7 +144,7 @@ public sealed class MockFileSystem : IFileSystem
 		TimeSystem = initialization.TimeSystem ?? new MockTimeSystem(TimeProvider.Now());
 		_pathMock = new PathMock(this);
 		_storage = new InMemoryStorage(this);
-		ChangeHandler = new ChangeHandler(this);
+		ChangeHandler = new ChangeHandler(this, initialization.RecordNotificationHistory);
 		_directoryMock = new DirectoryMock(this);
 		_fileMock = new FileMock(this);
 		DirectoryInfo = new DirectoryInfoFactoryMock(this);
@@ -315,6 +315,12 @@ public sealed class MockFileSystem : IFileSystem
 		internal IRandomProvider? RandomProvider { get; private set; }
 
 		/// <summary>
+		///     Whether to record a history of completed change notifications so that
+		///     <see cref="INotificationHandler.OnEventOrReplay" /> can replay past events.
+		/// </summary>
+		internal bool RecordNotificationHistory { get; private set; } = true;
+
+		/// <summary>
 		///     The simulated operating system.
 		/// </summary>
 		internal SimulationMode SimulationMode { get; private set; } = SimulationMode.Native;
@@ -368,6 +374,18 @@ public sealed class MockFileSystem : IFileSystem
 		public MockFileSystemOptions UseTimeSystem(ITimeSystem timeSystem)
 		{
 			TimeSystem = timeSystem;
+			return this;
+		}
+
+		/// <summary>
+		///     Disables recording the change notification history. With history disabled,
+		///     <see cref="INotificationHandler.OnEventOrReplay" /> throws
+		///     <see cref="InvalidOperationException" />; use <see cref="INotificationHandler.OnEvent" />
+		///     instead.
+		/// </summary>
+		public MockFileSystemOptions WithoutNotificationHistory()
+		{
+			RecordNotificationHistory = false;
 			return this;
 		}
 	}

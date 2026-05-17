@@ -83,6 +83,7 @@ namespace Testably.Abstractions.Testing
             public Testably.Abstractions.Testing.MockFileSystem.MockFileSystemOptions UseCurrentDirectory(string path) { }
             public Testably.Abstractions.Testing.MockFileSystem.MockFileSystemOptions UseRandomProvider(Testably.Abstractions.Testing.RandomSystem.IRandomProvider randomProvider) { }
             public Testably.Abstractions.Testing.MockFileSystem.MockFileSystemOptions UseTimeSystem(Testably.Abstractions.ITimeSystem timeSystem) { }
+            public Testably.Abstractions.Testing.MockFileSystem.MockFileSystemOptions WithoutNotificationHistory() { }
         }
     }
     public static class MockFileSystemExtensions
@@ -217,6 +218,7 @@ namespace Testably.Abstractions.Testing.FileSystem
     public interface INotificationHandler : System.IO.Abstractions.IFileSystemEntity
     {
         Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnEvent(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
+        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnEventOrReplay(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
     }
     public interface ISafeFileHandleStrategy
     {

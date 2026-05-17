@@ -69,6 +69,27 @@ public static class Notification
 			return callbackWaiter;
 		}
 
+		public void Replay(IAwaitableCallback<TValue> callback, TValue value)
+		{
+			if (callback is CallbackWaiter waiter)
+			{
+				waiter.Invoke(value);
+			}
+		}
+
+		public Action<TValue> SnapshotInvocations()
+		{
+			System.Collections.Generic.ICollection<CallbackWaiter> snapshot =
+				_callbackWaiters.Values;
+			return value =>
+			{
+				foreach (CallbackWaiter callback in snapshot)
+				{
+					callback.Invoke(value);
+				}
+			};
+		}
+
 		#endregion
 
 		private void UnRegisterCallback(Guid key)
@@ -120,7 +141,8 @@ public static class Notification
 			{
 				if (_isDisposed)
 				{
-					throw new ObjectDisposedException(null, "The awaitable callback is already disposed.");
+					throw new ObjectDisposedException(null,
+						"The awaitable callback is already disposed.");
 				}
 
 				_filter = filter;
@@ -159,7 +181,8 @@ public static class Notification
 			{
 				if (_isDisposed)
 				{
-					throw new ObjectDisposedException(null, "The awaitable callback is already disposed.");
+					throw new ObjectDisposedException(null,
+						"The awaitable callback is already disposed.");
 				}
 
 				_reset.Reset();
@@ -196,7 +219,8 @@ public static class Notification
 			{
 				if (_isDisposed)
 				{
-					throw new ObjectDisposedException(null, "The awaitable callback is already disposed.");
+					throw new ObjectDisposedException(null,
+						"The awaitable callback is already disposed.");
 				}
 
 				List<TValue> values = [];
@@ -265,6 +289,16 @@ public static class Notification
 		IAwaitableCallback<TValue> RegisterCallback(
 			Action<TValue>? callback,
 			Func<TValue, bool>? predicate = null);
+
+		void Replay(IAwaitableCallback<TValue> callback, TValue value);
+
+		/// <summary>
+		///     Captures the set of currently-registered callbacks and returns a delegate that, when
+		///     invoked with a value, delivers it to that snapshot. Call this under whatever lock guards
+		///     the surrounding state, then invoke the returned delegate outside the lock so user
+		///     callbacks do not run while the lock is held.
+		/// </summary>
+		Action<TValue> SnapshotInvocations();
 	}
 
 	/// <summary>
@@ -326,7 +360,8 @@ public static class Notification
 			=> _awaitableCallback.Dispose();
 
 		/// <inheritdoc cref="IAwaitableCallback{TValue, TFunc}.Wait(Func{TValue, bool}?,int,int, Action?)" />
-		[Obsolete("Use another `Wait` or `WaitAsync` overload and move the filter to the creation of the awaitable callback.")]
+		[Obsolete(
+			"Use another `Wait` or `WaitAsync` overload and move the filter to the creation of the awaitable callback.")]
 		public TFunc Wait(Func<TValue, bool>? filter,
 			int timeout = 30000,
 			int count = 1,

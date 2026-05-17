@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Testably.Abstractions.Testing.Storage;
 
@@ -13,14 +14,22 @@ internal sealed class ChangeHandler
 	private readonly Notification.INotificationFactory<ChangeDescription>
 		_changeOccurringCallbacks = Notification.CreateFactory<ChangeDescription>();
 
+	private readonly List<ChangeDescription>? _history;
+#if NET9_0_OR_GREATER
+	private readonly System.Threading.Lock _historyLock = new();
+#else
+	private readonly object _historyLock = new();
+#endif
+
 	private readonly MockFileSystem _mockFileSystem;
 
 	private readonly Notification.INotificationFactory<ChangeDescription>
 		_watcherNotificationTriggeredCallbacks = Notification.CreateFactory<ChangeDescription>();
 
-	public ChangeHandler(MockFileSystem mockFileSystem)
+	public ChangeHandler(MockFileSystem mockFileSystem, bool recordNotificationHistory)
 	{
 		_mockFileSystem = mockFileSystem;
+		_history = recordNotificationHistory ? new List<ChangeDescription>() : null;
 	}
 
 	#region IInterceptionHandler Members
@@ -44,6 +53,45 @@ internal sealed class ChangeHandler
 		Func<ChangeDescription, bool>? predicate = null)
 		=> _changeOccurredCallbacks.RegisterCallback(notificationCallback, predicate);
 
+	/// <inheritdoc cref="INotificationHandler.OnEventOrReplay" />
+	public IAwaitableCallback<ChangeDescription> OnEventOrReplay(
+		Action<ChangeDescription>? notificationCallback = null,
+		Func<ChangeDescription, bool>? predicate = null)
+	{
+		if (_history is null)
+		{
+			throw new InvalidOperationException(
+				$"{nameof(OnEventOrReplay)} requires notification history, but it was disabled via " +
+				$"{nameof(MockFileSystem.MockFileSystemOptions)}." +
+				$"{nameof(MockFileSystem.MockFileSystemOptions.WithoutNotificationHistory)}. " +
+				$"Use {nameof(OnEvent)} instead, or remove the opt-out.");
+		}
+
+		IAwaitableCallback<ChangeDescription> waiter;
+		ChangeDescription[] snapshot;
+		lock (_historyLock)
+		{
+			waiter =
+				_changeOccurredCallbacks.RegisterCallback(notificationCallback, predicate);
+			snapshot = _history.ToArray();
+		}
+
+		try
+		{
+			foreach (ChangeDescription past in snapshot)
+			{
+				_changeOccurredCallbacks.Replay(waiter, past);
+			}
+		}
+		catch
+		{
+			waiter.Dispose();
+			throw;
+		}
+
+		return waiter;
+	}
+
 	#endregion
 
 	#region IWatcherTriggeredHandler Members
@@ -58,10 +106,25 @@ internal sealed class ChangeHandler
 
 	internal void NotifyCompletedChange(ChangeDescription? fileSystemChange)
 	{
-		if (fileSystemChange != null)
+		if (fileSystemChange is null)
+		{
+			return;
+		}
+
+		if (_history is null)
 		{
 			_changeOccurredCallbacks.InvokeCallbacks(fileSystemChange);
+			return;
 		}
+
+		Action<ChangeDescription> invoke;
+		lock (_historyLock)
+		{
+			_history.Add(fileSystemChange);
+			invoke = _changeOccurredCallbacks.SnapshotInvocations();
+		}
+
+		invoke(fileSystemChange);
 	}
 
 	internal ChangeDescription NotifyPendingChange(WatcherChangeTypes changeType,
