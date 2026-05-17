@@ -445,6 +445,7 @@ namespace Testably.Abstractions.Testing.TimeSystem
     }
     public interface ITimerMock : System.IAsyncDisposable, System.IDisposable, Testably.Abstractions.TimeSystem.ITimeSystemEntity, Testably.Abstractions.TimeSystem.ITimer
     {
+        long ExecutionCount { get; }
         Testably.Abstractions.Testing.TimeSystem.ITimerMock Wait(int executionCount = 1, int timeout = 10000, System.Action<Testably.Abstractions.Testing.TimeSystem.ITimerMock>? callback = null);
     }
     public interface ITimerStrategy

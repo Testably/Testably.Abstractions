@@ -290,6 +290,54 @@ public class TimerMockTests
 	}
 
 	[Test]
+	public async Task ExecutionCount_AfterDispose_ShouldStopIncreasing()
+	{
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
+
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 0, 100);
+		ITimerMock mock = timerHandler[0];
+
+		mock.Wait(5, callback: t => t.Dispose(), timeout: 10000);
+		long countAfterDispose = mock.ExecutionCount;
+		await Task.Delay(200, TestContext.Current!.Execution.CancellationToken);
+
+		await That(mock.ExecutionCount).IsEqualTo(countAfterDispose);
+	}
+
+	[Test]
+	public async Task ExecutionCount_PersistsAcrossWaitCalls()
+	{
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
+
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 0, 100);
+
+		await That(timerHandler[0].ExecutionCount).IsEqualTo(0L);
+
+		timerHandler[0].Wait(3, timeout: 10000);
+		await That(timerHandler[0].ExecutionCount).IsGreaterThanOrEqualTo(3L);
+
+		long afterFirstWait = timerHandler[0].ExecutionCount;
+		timerHandler[0].Wait(3, timeout: 10000);
+		await That(timerHandler[0].ExecutionCount).IsGreaterThanOrEqualTo(afterFirstWait + 3L);
+	}
+
+	[Test]
+	public async Task ExecutionCount_ShouldStartAtZero()
+	{
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
+
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 0, 100);
+
+		await That(timerHandler[0].ExecutionCount).IsEqualTo(0L);
+	}
+
+	[Test]
 	public async Task New_WithStartOnMockWaitMode_ShouldOnlyStartWhenCallingWait()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()

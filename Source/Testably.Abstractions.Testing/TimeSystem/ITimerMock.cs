@@ -10,6 +10,13 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 public interface ITimerMock : ITimer
 {
 	/// <summary>
+	///     Gets the total number of times the timer callback has been invoked since the timer was created.<br />
+	///     The counter is not reset by <see cref="ITimer.Change(System.TimeSpan, System.TimeSpan)" /> and stops
+	///     increasing once the timer is disposed.
+	/// </summary>
+	long ExecutionCount { get; }
+
+	/// <summary>
 	///     Blocks the current thread, until the timer is executed <paramref name="executionCount" /> times.<br />
 	///     Throws a <see cref="TimeoutException" />
 	/// </summary>

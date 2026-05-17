@@ -15,6 +15,7 @@ internal sealed class TimerMock : ITimerMock
 	private CountdownEvent? _countdownEvent;
 	private TimeSpan _dueTime;
 	private Exception? _exception;
+	private long _executionCount;
 	private bool _isDisposed;
 #if NET9_0_OR_GREATER
 	private readonly Lock _lock = new();
@@ -64,6 +65,10 @@ internal sealed class TimerMock : ITimerMock
 	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem
 		=> _mockTimeSystem;
+
+	/// <inheritdoc cref="ITimerMock.ExecutionCount" />
+	public long ExecutionCount
+		=> Volatile.Read(ref _executionCount);
 
 	/// <inheritdoc cref="ITimer.Change(int, int)" />
 	public bool Change(int dueTime, int period)
@@ -249,6 +254,8 @@ internal sealed class TimerMock : ITimerMock
 			{
 				_exception = swallowedException;
 			}
+
+			Interlocked.Increment(ref _executionCount);
 
 			if (_countdownEvent?.Signal() == true)
 			{

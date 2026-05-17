@@ -443,6 +443,10 @@ namespace Testably.Abstractions.Testing.TimeSystem
         Testably.Abstractions.Testing.IAwaitableCallback<System.TimeSpan> ThreadSleep(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
         Testably.Abstractions.Testing.IAwaitableCallback<System.DateTime> TimeChanged(System.Action<System.DateTime>? callback = null, System.Func<System.DateTime, System.DateTime, bool>? predicate = null);
     }
+    public interface IPeriodicTimerMock : System.IDisposable, Testably.Abstractions.TimeSystem.IPeriodicTimer, Testably.Abstractions.TimeSystem.ITimeSystemEntity
+    {
+        long WaitForNextTickCount { get; }
+    }
     public interface IPeriodicTimerNotificationHandler
     {
         Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.TimeSystem.IPeriodicTimer> WaitingForNextTick(System.Action<Testably.Abstractions.TimeSystem.IPeriodicTimer>? callback = null, System.Func<Testably.Abstractions.TimeSystem.IPeriodicTimer, bool>? predicate = null);
@@ -468,6 +472,7 @@ namespace Testably.Abstractions.Testing.TimeSystem
     }
     public interface ITimerMock : System.IAsyncDisposable, System.IDisposable, Testably.Abstractions.TimeSystem.ITimeSystemEntity, Testably.Abstractions.TimeSystem.ITimer
     {
+        long ExecutionCount { get; }
         Testably.Abstractions.Testing.TimeSystem.ITimerMock Wait(int executionCount = 1, int timeout = 10000, System.Action<Testably.Abstractions.Testing.TimeSystem.ITimerMock>? callback = null);
     }
     public interface ITimerStrategy
