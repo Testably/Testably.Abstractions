@@ -7,11 +7,12 @@ using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.TimeSystem;
 
-internal sealed class PeriodicTimerMock : IPeriodicTimer
+internal sealed class PeriodicTimerMock : IPeriodicTimerMock
 {
 	private readonly bool _autoAdvance;
 	private bool _isDisposed;
 	private long _lastTime;
+	private long _waitForNextTickCount;
 	private readonly MockTimeSystem _timeSystem;
 	private readonly NotificationHandler _callbackHandler;
 
@@ -46,6 +47,9 @@ internal sealed class PeriodicTimerMock : IPeriodicTimer
 	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem => _timeSystem;
 
+	/// <inheritdoc cref="IPeriodicTimerMock.WaitForNextTickCount" />
+	public long WaitForNextTickCount => Volatile.Read(ref _waitForNextTickCount);
+
 	/// <inheritdoc cref="IDisposable.Dispose()" />
 	public void Dispose()
 		=> _isDisposed = true;
@@ -64,6 +68,7 @@ internal sealed class PeriodicTimerMock : IPeriodicTimer
 		}
 
 		_callbackHandler.InvokePeriodicTimerWaitingForNextTick(this);
+		Interlocked.Increment(ref _waitForNextTickCount);
 		long now = _timeSystem.TimeProvider.ElapsedTicks;
 		long nextTime = _lastTime + Period.Ticks;
 		if (nextTime > now)

@@ -1,6 +1,7 @@
 ﻿#if FEATURE_PERIODIC_TIMER
 using aweXpect.Chronology;
 using System.Threading;
+using Testably.Abstractions.Testing.TimeSystem;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
@@ -71,6 +72,73 @@ public class PeriodicTimerMockTests
 		await That(Volatile.Read(ref timerCount)).IsEqualTo(14);
 		cts.Cancel();
 		await timerTask;
+	}
+
+	[Test]
+	public async Task WaitForNextTickCount_AfterDispose_ShouldStopIncreasing()
+	{
+		MockTimeSystem timeSystem = new();
+		IPeriodicTimer periodicTimer = timeSystem.PeriodicTimer.New(1.Seconds());
+
+		await periodicTimer.WaitForNextTickAsync();
+		await periodicTimer.WaitForNextTickAsync();
+		long countBeforeDispose = ((IPeriodicTimerMock)periodicTimer).WaitForNextTickCount;
+		periodicTimer.Dispose();
+		#pragma warning disable MA0040
+		await periodicTimer.WaitForNextTickAsync();
+		#pragma warning restore MA0040
+
+		await That(((IPeriodicTimerMock)periodicTimer).WaitForNextTickCount)
+			.IsEqualTo(countBeforeDispose);
+	}
+
+	[Test]
+	public async Task WaitForNextTickCount_ShouldExposeMockAsIPeriodicTimerMock()
+	{
+		MockTimeSystem timeSystem = new();
+		using IPeriodicTimer periodicTimer = timeSystem.PeriodicTimer.New(1.Seconds());
+
+		await That(periodicTimer is IPeriodicTimerMock).IsTrue();
+	}
+
+	[Test]
+	public async Task WaitForNextTickCount_ShouldIncrementOnEachCall()
+	{
+		MockTimeSystem timeSystem = new();
+		using IPeriodicTimer periodicTimer = timeSystem.PeriodicTimer.New(1.Seconds());
+		IPeriodicTimerMock mock = (IPeriodicTimerMock)periodicTimer;
+
+		await That(mock.WaitForNextTickCount).IsEqualTo(0L);
+
+		await periodicTimer.WaitForNextTickAsync();
+		await That(mock.WaitForNextTickCount).IsEqualTo(1L);
+
+		await periodicTimer.WaitForNextTickAsync();
+		await periodicTimer.WaitForNextTickAsync();
+		await That(mock.WaitForNextTickCount).IsEqualTo(3L);
+	}
+
+	[Test]
+	public async Task WaitForNextTickCount_WhenCancelledBeforeNotification_ShouldNotIncrement()
+	{
+		MockTimeSystem timeSystem = new();
+		using IPeriodicTimer periodicTimer = timeSystem.PeriodicTimer.New(1.Seconds());
+		IPeriodicTimerMock mock = (IPeriodicTimerMock)periodicTimer;
+		using CancellationTokenSource cts = new();
+		cts.Cancel();
+
+		Exception? exception = null;
+		try
+		{
+			await periodicTimer.WaitForNextTickAsync(cts.Token);
+		}
+		catch (OperationCanceledException ex)
+		{
+			exception = ex;
+		}
+
+		await That(exception).IsNotNull();
+		await That(mock.WaitForNextTickCount).IsEqualTo(0L);
 	}
 
 	[Test]
