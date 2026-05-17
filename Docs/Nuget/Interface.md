@@ -5,12 +5,16 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=coverage)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 
-This library contains the abstraction interfaces for [Testably.Abstractions](https://github.com/Testably/Testably.Abstractions), which allow replacing system dependencies:
+Interfaces for [`Testably.Abstractions`](https://www.nuget.org/packages/Testably.Abstractions) - `IFileSystem`, `ITimeSystem` and `IRandomSystem` for abstracting the static parts of the .NET base class library (BCL).
 
-- The `IFileSystem` interface abstracts away all I/O-related functionality from the `System.IO` namespace:  
-  Static methods are directly implemented on the `IFileSystem` interface.
-  Constructors are implemented as factory methods, e.g. `IFileSystem.FileInfo.New(string)` instead of `new FileInfo(string)`.
-- The `ITimeSystem` interface abstracts away time-related functionality:  
-  `DateTime` methods give access to the current time, `Thread` allows replacing `Thread.Sleep` and `Task` allows replacing `Task.Delay`.
-- The `IRandomSystem` interface abstracts away functionality related to randomness:  
-  `Random` methods implement a thread-safe Shared instance also under .NET Framework and `Guid` methods allow creating new GUIDs.
+```ps
+dotnet add package Testably.Abstractions.Interface
+```
+
+**Full documentation: [docs.testably.org/Abstractions](https://docs.testably.org/Abstractions/)**
+
+> Most users install [`Testably.Abstractions`](https://www.nuget.org/packages/Testably.Abstractions) (production) and [`Testably.Abstractions.Testing`](https://www.nuget.org/packages/Testably.Abstractions.Testing) (tests) instead - both pull these interfaces in transitively.
+
+- `IFileSystem` mirrors `System.IO` (`File`, `Directory`, `FileInfo`, `DirectoryInfo`, `FileStream`, `Path`, `DriveInfo`, `FileSystemWatcher`, `FileVersionInfo`). Constructors are exposed as factory methods (e.g. `fileSystem.FileInfo.New(path)`). Lives in the `System.IO.Abstractions` namespace, so it is source-compatible with [`TestableIO.System.IO.Abstractions`](https://github.com/TestableIO/System.IO.Abstractions).
+- `ITimeSystem` covers `DateTime`, `Stopwatch`, `Task.Delay`, `Thread.Sleep`, `Timer` and (on supported targets) `PeriodicTimer`.
+- `IRandomSystem` covers `Random` (with a thread-safe `Shared` instance on all targets) and `Guid`.

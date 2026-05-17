@@ -6,9 +6,9 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Testably_Testably.Abstractions)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Testably_Testably.Abstractions)
 
-Injectable abstractions for the static parts of the .NET BCL - file system, time and randomness - with feature-complete in-memory mocks for tests.
+Injectable abstractions for the static parts of the .NET base class library (BCL) - file system, time and randomness - with feature-complete in-memory mocks for tests.
 
-**📖 Full documentation: [docs.testably.org](https://docs.testably.org)**
+**📖 Full documentation: [docs.testably.org/Abstractions](https://docs.testably.org/Abstractions/)**
 
 ## Quick example
 
@@ -44,7 +44,7 @@ dotnet add package Testably.Abstractions
 dotnet add package Testably.Abstractions.Testing
 ```
 
-Then register the implementations in your DI container - see [Getting Started](https://docs.testably.org/docs/getting-started).
+Then register the implementations in your DI container - see [Getting Started](https://docs.testably.org/Abstractions/getting-started).
 
 ## Packages
 
@@ -57,7 +57,7 @@ Then register the implementations in your DI container - see [Getting Started](h
 
 ## Already on TestableIO?
 
-`Testably.Abstractions` shares the `IFileSystem` interface with [TestableIO.System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions), so production code stays untouched. See the [migration guide](https://docs.testably.org/docs/migration-from-testableio).
+`Testably.Abstractions` shares the `IFileSystem` interface with [TestableIO.System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions), so production code stays untouched. See the [migration guide](https://docs.testably.org/Abstractions/migration-from-testableio).
 
 ## Contributing
 
