@@ -1,5 +1,4 @@
 #if FEATURE_FILESYSTEM_ASYNC
-using aweXpect.Testably;
 using System.IO;
 using System.Text;
 using System.Threading;

@@ -1,4 +1,3 @@
-using aweXpect.Testably;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;

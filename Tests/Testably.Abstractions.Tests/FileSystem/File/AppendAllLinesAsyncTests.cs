@@ -1,5 +1,4 @@
 #if FEATURE_FILESYSTEM_ASYNC
-using aweXpect.Testably;
 using AutoFixture;
 using System.Collections.Generic;
 using System.IO;

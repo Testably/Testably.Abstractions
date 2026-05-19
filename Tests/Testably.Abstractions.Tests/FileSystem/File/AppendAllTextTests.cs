@@ -1,4 +1,3 @@
-using aweXpect.Testably;
 using AutoFixture;
 using System.IO;
 using System.Text;
