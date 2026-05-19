@@ -69,8 +69,7 @@ public class AppendAllLinesAsyncTests(FileSystemTestData testData) : FileSystemT
 		await FileSystem.File.AppendAllLinesAsync(path, contents,
 			CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
+		await That(FileSystem).HasFile(path).WithContent(expectedContent);
 	}
 
 	[Test]
@@ -100,8 +99,7 @@ public class AppendAllLinesAsyncTests(FileSystemTestData testData) : FileSystemT
 		await FileSystem.File.AppendAllLinesAsync(path, contents,
 			CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
+		await That(FileSystem).HasFile(path).WithContent(expectedContent);
 	}
 
 	[Test]
@@ -146,8 +144,7 @@ public class AppendAllLinesAsyncTests(FileSystemTestData testData) : FileSystemT
 		await FileSystem.File.AppendAllLinesAsync(path, contents,
 			CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedResult);
+		await That(FileSystem).HasFile(path).WithContent(expectedResult);
 	}
 
 	[Test]

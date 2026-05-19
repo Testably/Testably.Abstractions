@@ -17,8 +17,7 @@ public class CreateTextTests(FileSystemTestData testData) : FileSystemTestBase(t
 			stream.Write(appendText);
 		}
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(appendText);
+		await That(FileSystem).HasFile(path).WithContent(appendText);
 	}
 
 #if NET8_0_OR_GREATER
@@ -70,7 +69,6 @@ public class CreateTextTests(FileSystemTestData testData) : FileSystemTestBase(t
 			stream.Write(appendText);
 		}
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(appendText);
+		await That(FileSystem).HasFile(path).WithContent(appendText);
 	}
 }

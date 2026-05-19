@@ -15,8 +15,7 @@ public class WriteAllBytesTests(FileSystemTestData testData) : FileSystemTestBas
 
 		FileSystem.File.WriteAllBytes(path, bytes);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
+		await That(FileSystem).HasFile(path).WithContent(bytes);
 	}
 
 	[Test]
@@ -25,8 +24,7 @@ public class WriteAllBytesTests(FileSystemTestData testData) : FileSystemTestBas
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
+		await That(FileSystem).HasFile(path).WithContent(bytes);
 	}
 
 	[Test]
@@ -88,8 +86,7 @@ public class WriteAllBytesTests(FileSystemTestData testData) : FileSystemTestBas
 
 		FileSystem.File.WriteAllBytes(path, bytes.AsSpan());
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
+		await That(FileSystem).HasFile(path).WithContent(bytes);
 	}
 
 	[Test]
@@ -98,8 +95,7 @@ public class WriteAllBytesTests(FileSystemTestData testData) : FileSystemTestBas
 	{
 		FileSystem.File.WriteAllBytes(path, bytes.AsSpan());
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
+		await That(FileSystem).HasFile(path).WithContent(bytes);
 	}
 
 	[Test]

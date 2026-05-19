@@ -7,6 +7,7 @@ global using Testably.Abstractions.TestHelpers;
 global using Testably.Abstractions.Tests.TestHelpers;
 global using TUnit;
 global using aweXpect;
+global using aweXpect.Testably;
 global using static aweXpect.Expect;
 global using Skip = Testably.Abstractions.TestHelpers.Skip;
 #if NET48

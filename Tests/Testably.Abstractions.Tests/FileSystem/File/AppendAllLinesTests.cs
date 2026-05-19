@@ -32,8 +32,7 @@ public class AppendAllLinesTests(FileSystemTestData testData) : FileSystemTestBa
 
 		FileSystem.File.AppendAllLines(path, contents);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
+		await That(FileSystem).HasFile(path).WithContent(expectedContent);
 	}
 
 	[Test]
@@ -45,8 +44,7 @@ public class AppendAllLinesTests(FileSystemTestData testData) : FileSystemTestBa
 		                         + Environment.NewLine;
 		FileSystem.File.AppendAllLines(path, contents);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedContent);
+		await That(FileSystem).HasFile(path).WithContent(expectedContent);
 	}
 
 	[Test]
@@ -88,8 +86,7 @@ public class AppendAllLinesTests(FileSystemTestData testData) : FileSystemTestBa
 
 		FileSystem.File.AppendAllLines(path, contents);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(expectedResult);
+		await That(FileSystem).HasFile(path).WithContent(expectedResult);
 	}
 
 	[Test]

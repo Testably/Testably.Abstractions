@@ -68,10 +68,8 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 
 		await That(Act).Throws<IOException>().WithHResult(Test.RunsOnWindows ? -2147024816 : 17);
 
-		await That(FileSystem.File.Exists(sourceName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(sourceContents);
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(destinationContents);
+		await That(FileSystem).HasFile(sourceName).WithContent(sourceContents);
+		await That(FileSystem).HasFile(destinationName).WithContent(destinationContents);
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
@@ -88,10 +86,8 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 
 		FileSystem.File.Copy(sourceName, destinationName, true);
 
-		await That(FileSystem.File.Exists(sourceName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(sourceContents);
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(sourceContents);
+		await That(FileSystem).HasFile(sourceName).WithContent(sourceContents);
+		await That(FileSystem).HasFile(destinationName).WithContent(sourceContents);
 	}
 #endif
 
@@ -149,10 +145,8 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 
 		FileSystem.File.Copy(sourceName, destinationName);
 
-		await That(FileSystem.File.Exists(sourceName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(contents);
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
+		await That(FileSystem).HasFile(sourceName).WithContent(contents);
+		await That(FileSystem).HasFile(destinationName).WithContent(contents);
 		await That(FileSystem.File.GetAttributes(destinationName)).HasFlag(FileAttributes.ReadOnly);
 	}
 
@@ -241,8 +235,7 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 			binaryWriter.Write("Some text");
 		}
 
-		await That(FileSystem.File.Exists(destination)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(destination)).IsEqualTo(original);
+		await That(FileSystem).HasFile(destination).WithContent(original);
 		await That(FileSystem.File.ReadAllBytes(destination))
 			.IsNotEqualTo(FileSystem.File.ReadAllBytes(source));
 	}
@@ -281,10 +274,8 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		TimeSystem.Thread.Sleep(EnsureTimeout);
 
 		FileSystem.File.Copy(sourceName, destinationName);
-		await That(FileSystem.File.Exists(sourceName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(contents);
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
+		await That(FileSystem).HasFile(sourceName).WithContent(contents);
+		await That(FileSystem).HasFile(destinationName).WithContent(contents);
 	}
 
 	[Test]
@@ -309,8 +300,7 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 			FileSystem.File.Copy(sourcePath, destinationPath);
 		}
 
-		await That(FileSystem.File.Exists(destinationPath)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationPath)).IsEqualTo(sourceContents);
+		await That(FileSystem).HasFile(destinationPath).WithContent(sourceContents);
 	}
 
 	[Test]
@@ -333,8 +323,7 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 			FileSystem.File.Copy(sourcePath, destinationPath);
 		}
 
-		await That(FileSystem.File.Exists(destinationPath)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationPath)).IsEqualTo(sourceContents);
+		await That(FileSystem).HasFile(destinationPath).WithContent(sourceContents);
 	}
 
 	[Test]

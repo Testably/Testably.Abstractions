@@ -1,4 +1,3 @@
-using aweXpect.Testably;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
@@ -119,11 +118,9 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 		FileSystem.File.Replace(sourceName, destinationName, backupName, true);
 
 		await That(FileSystem.File.Exists(sourceName)).IsFalse();
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEquivalentTo(sourceContents);
+		await That(FileSystem).HasFile(destinationName).WhoseContent(it => it.IsEquivalentTo(sourceContents));
 		await That(FileSystem.File.GetAttributes(destinationName)).HasFlag(FileAttributes.ReadOnly);
-		await That(FileSystem.File.Exists(backupName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(backupName)).IsEquivalentTo(destinationContents);
+		await That(FileSystem).HasFile(backupName).WhoseContent(it => it.IsEquivalentTo(destinationContents));
 	}
 
 	[Test]
@@ -148,11 +145,8 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 		if (Test.RunsOnWindows)
 		{
 			await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
-			await That(FileSystem.File.Exists(sourceName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(sourceName)).IsEquivalentTo(sourceContents);
-			await That(FileSystem.File.Exists(destinationName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(destinationName))
-				.IsEquivalentTo(destinationContents);
+			await That(FileSystem).HasFile(sourceName).WhoseContent(it => it.IsEquivalentTo(sourceContents));
+			await That(FileSystem).HasFile(destinationName).WhoseContent(it => it.IsEquivalentTo(destinationContents));
 			await That(FileSystem.File.GetAttributes(destinationName))
 				.DoesNotHaveFlag(FileAttributes.ReadOnly);
 			await That(FileSystem.File.Exists(backupName)).IsFalse();
@@ -161,10 +155,8 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 		{
 			await That(Act).DoesNotThrow();
 			await That(FileSystem.File.Exists(sourceName)).IsFalse();
-			await That(FileSystem.File.Exists(destinationName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(destinationName)).IsEquivalentTo(sourceContents);
-			await That(FileSystem.File.Exists(backupName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(backupName)).IsEquivalentTo(destinationContents);
+			await That(FileSystem).HasFile(destinationName).WhoseContent(it => it.IsEquivalentTo(sourceContents));
+			await That(FileSystem).HasFile(backupName).WhoseContent(it => it.IsEquivalentTo(destinationContents));
 		}
 	}
 
@@ -183,10 +175,8 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 		FileSystem.File.Replace(sourceName, destinationName, backupName);
 
 		await That(FileSystem.File.Exists(sourceName)).IsFalse();
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEquivalentTo(sourceContents);
-		await That(FileSystem.File.Exists(backupName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(backupName)).IsEquivalentTo(destinationContents);
+		await That(FileSystem).HasFile(destinationName).WhoseContent(it => it.IsEquivalentTo(sourceContents));
+		await That(FileSystem).HasFile(backupName).WhoseContent(it => it.IsEquivalentTo(destinationContents));
 	}
 
 	[Test]
@@ -266,11 +256,8 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 		if (Test.RunsOnWindows)
 		{
 			await That(Act).Throws<IOException>().WithHResult(-2147024864);
-			await That(FileSystem.File.Exists(sourceName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(sourceName)).IsEquivalentTo(sourceContents);
-			await That(FileSystem.File.Exists(destinationName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(destinationName))
-				.IsEquivalentTo(destinationContents);
+			await That(FileSystem).HasFile(sourceName).WhoseContent(it => it.IsEquivalentTo(sourceContents));
+			await That(FileSystem).HasFile(destinationName).WhoseContent(it => it.IsEquivalentTo(destinationContents));
 			await That(FileSystem.File.GetAttributes(destinationName))
 				.DoesNotHaveFlag(FileAttributes.ReadOnly);
 			await That(FileSystem.File.Exists(backupName)).IsFalse();
@@ -280,10 +267,8 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 			// https://github.com/dotnet/runtime/issues/52700
 			await That(Act).DoesNotThrow();
 			await That(FileSystem.File.Exists(sourceName)).IsFalse();
-			await That(FileSystem.File.Exists(destinationName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(destinationName)).IsEquivalentTo(sourceContents);
-			await That(FileSystem.File.Exists(backupName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(backupName)).IsEquivalentTo(destinationContents);
+			await That(FileSystem).HasFile(destinationName).WhoseContent(it => it.IsEquivalentTo(sourceContents));
+			await That(FileSystem).HasFile(backupName).WhoseContent(it => it.IsEquivalentTo(destinationContents));
 		}
 	}
 
@@ -326,10 +311,8 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 		FileSystem.File.Replace(sourceName, destinationName, null);
 
 		await That(FileSystem.File.Exists(sourceName)).IsFalse();
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEquivalentTo(sourceContents);
-		await That(FileSystem.File.Exists(backupName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(backupName)).IsEquivalentTo(backupContents);
+		await That(FileSystem).HasFile(destinationName).WhoseContent(it => it.IsEquivalentTo(sourceContents));
+		await That(FileSystem).HasFile(backupName).WhoseContent(it => it.IsEquivalentTo(backupContents));
 	}
 
 	[Test]
@@ -346,7 +329,6 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 		FileSystem.File.Replace(sourceName, destinationName, null);
 
 		await That(FileSystem.File.Exists(sourceName)).IsFalse();
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEquivalentTo(sourceContents);
+		await That(FileSystem).HasFile(destinationName).WhoseContent(it => it.IsEquivalentTo(sourceContents));
 	}
 }

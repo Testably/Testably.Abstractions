@@ -18,8 +18,7 @@ public class CreateTests(FileSystemTestData testData) : FileSystemTestBase(testD
 			streamWriter.Write(newContent);
 		}
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(newContent);
+		await That(FileSystem).HasFile(path).WithContent(newContent);
 	}
 
 	[Test]
