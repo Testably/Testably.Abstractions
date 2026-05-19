@@ -1,3 +1,4 @@
+using aweXpect.Testably;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
@@ -25,10 +26,8 @@ public class MoveToTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		await That(Act).Throws<IOException>().WithHResult(Test.RunsOnWindows ? -2147024713 : 17);
 
 		await That(sut.Exists).IsTrue();
-		await That(FileSystem.File.Exists(sourceName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(sourceContents);
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(destinationContents);
+		await That(FileSystem).HasFile(sourceName).WithContent(sourceContents);
+		await That(FileSystem).HasFile(destinationName).WithContent(destinationContents);
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
@@ -50,8 +49,7 @@ public class MoveToTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		await That(sut.ToString()).IsEqualTo(destinationName);
 		await That(sut.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
 		await That(FileSystem.File.Exists(sourceName)).IsFalse();
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(sourceContents);
+		await That(FileSystem).HasFile(destinationName).WithContent(sourceContents);
 	}
 #endif
 
@@ -114,8 +112,7 @@ public class MoveToTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		await That(Act).Throws<DirectoryNotFoundException>().WithHResult(-2147024893);
 
 		await That(sut.Exists).IsTrue();
-		await That(FileSystem.File.Exists(sourceName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(sourceContents);
+		await That(FileSystem).HasFile(sourceName).WithContent(sourceContents);
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 
@@ -131,8 +128,7 @@ public class MoveToTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		sut.MoveTo(destinationName);
 
 		await That(FileSystem.File.Exists(sourceName)).IsFalse();
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
+		await That(FileSystem).HasFile(destinationName).WithContent(contents);
 		await That(FileSystem.File.GetAttributes(destinationName)).HasFlag(FileAttributes.ReadOnly);
 	}
 
@@ -199,8 +195,7 @@ public class MoveToTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		await That(sut.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
 		await That(sut.Exists).IsTrue();
 		await That(FileSystem.File.Exists(sourceName)).IsFalse();
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(contents);
+		await That(FileSystem).HasFile(destinationName).WithContent(contents);
 	}
 
 	[Test]

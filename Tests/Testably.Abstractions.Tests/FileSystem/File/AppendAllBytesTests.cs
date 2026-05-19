@@ -1,4 +1,5 @@
 #if FEATURE_FILE_SPAN
+using aweXpect.Testably;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
@@ -15,8 +16,7 @@ public class AppendAllBytesTests(FileSystemTestData testData) : FileSystemTestBa
 
 		FileSystem.File.AppendAllBytes(path, bytes);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([..previousBytes, ..bytes]);
+		await That(FileSystem).HasFile(path).WithContent([..previousBytes, ..bytes]);
 	}
 
 	[Test]
@@ -40,8 +40,7 @@ public class AppendAllBytesTests(FileSystemTestData testData) : FileSystemTestBa
 	{
 		FileSystem.File.AppendAllBytes(path, bytes);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
+		await That(FileSystem).HasFile(path).WithContent(bytes);
 	}
 
 	[Test]
@@ -84,8 +83,7 @@ public class AppendAllBytesTests(FileSystemTestData testData) : FileSystemTestBa
 
 		FileSystem.File.AppendAllBytes(path, bytes.AsSpan());
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([..previousBytes, ..bytes]);
+		await That(FileSystem).HasFile(path).WithContent([..previousBytes, ..bytes]);
 	}
 
 	[Test]
@@ -109,8 +107,7 @@ public class AppendAllBytesTests(FileSystemTestData testData) : FileSystemTestBa
 	{
 		FileSystem.File.AppendAllBytes(path, bytes.AsSpan());
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
+		await That(FileSystem).HasFile(path).WithContent(bytes);
 	}
 
 	[Test]

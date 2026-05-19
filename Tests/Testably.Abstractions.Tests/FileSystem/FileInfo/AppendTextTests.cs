@@ -1,3 +1,4 @@
+using aweXpect.Testably;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
@@ -17,8 +18,7 @@ public class AppendTextTests(FileSystemTestData testData) : FileSystemTestBase(t
 			stream.Write(appendText);
 		}
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(appendText);
+		await That(FileSystem).HasFile(path).WithContent(appendText);
 	}
 
 	[Test]
@@ -34,7 +34,6 @@ public class AppendTextTests(FileSystemTestData testData) : FileSystemTestBase(t
 			stream.Write(appendText);
 		}
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents + appendText);
+		await That(FileSystem).HasFile(path).WithContent(contents + appendText);
 	}
 }

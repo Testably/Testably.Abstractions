@@ -1,3 +1,4 @@
+using aweXpect.Testably;
 using System.IO;
 using System.Text;
 using Testably.Abstractions.Testing.FileSystem;
@@ -79,8 +80,7 @@ public class WriteAllTextTests(FileSystemTestData testData) : FileSystemTestBase
 
 		FileSystem.File.WriteAllText(path, "AA", Encoding.UTF32);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(expectedBytes);
+		await That(FileSystem).HasFile(path).WithContent(expectedBytes);
 	}
 
 	[Test]
@@ -282,8 +282,7 @@ public class WriteAllTextTests(FileSystemTestData testData) : FileSystemTestBase
 
 		FileSystem.File.WriteAllText(path, "AA".AsSpan(), Encoding.UTF32);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(expectedBytes);
+		await That(FileSystem).HasFile(path).WithContent(expectedBytes);
 	}
 
 	[Test]

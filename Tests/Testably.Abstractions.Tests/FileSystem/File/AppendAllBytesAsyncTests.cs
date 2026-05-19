@@ -1,4 +1,5 @@
 #if FEATURE_FILE_SPAN
+using aweXpect.Testably;
 using System.IO;
 using System.Threading;
 
@@ -33,8 +34,7 @@ public class AppendAllBytesAsyncTests(FileSystemTestData testData) : FileSystemT
 		await FileSystem.File.AppendAllBytesAsync(path, bytes,
 			CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([..previousBytes, ..bytes]);
+		await That(FileSystem).HasFile(path).WithContent([..previousBytes, ..bytes]);
 	}
 
 	[Test]
@@ -61,8 +61,7 @@ public class AppendAllBytesAsyncTests(FileSystemTestData testData) : FileSystemT
 		await FileSystem.File.AppendAllBytesAsync(path, bytes,
 			CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
+		await That(FileSystem).HasFile(path).WithContent(bytes);
 	}
 
 	[Test]
@@ -90,8 +89,7 @@ public class AppendAllBytesAsyncTests(FileSystemTestData testData) : FileSystemT
 		await FileSystem.File.AppendAllBytesAsync(path, bytes.AsMemory(),
 			CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo([..previousBytes, ..bytes]);
+		await That(FileSystem).HasFile(path).WithContent([..previousBytes, ..bytes]);
 	}
 
 	[Test]
@@ -119,8 +117,7 @@ public class AppendAllBytesAsyncTests(FileSystemTestData testData) : FileSystemT
 		await FileSystem.File.AppendAllBytesAsync(path, bytes.AsMemory(),
 			CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
+		await That(FileSystem).HasFile(path).WithContent(bytes);
 	}
 
 	[Test]

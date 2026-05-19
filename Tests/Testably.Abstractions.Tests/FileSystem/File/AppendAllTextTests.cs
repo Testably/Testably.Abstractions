@@ -1,3 +1,4 @@
+using aweXpect.Testably;
 using AutoFixture;
 using System.IO;
 using System.Text;
@@ -16,8 +17,7 @@ public class AppendAllTextTests(FileSystemTestData testData) : FileSystemTestBas
 
 		FileSystem.File.AppendAllText(path, contents);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(previousContents + contents);
+		await That(FileSystem).HasFile(path).WithContent(previousContents + contents);
 	}
 
 	[Test]
@@ -42,8 +42,7 @@ public class AppendAllTextTests(FileSystemTestData testData) : FileSystemTestBas
 	{
 		FileSystem.File.AppendAllText(path, contents);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
+		await That(FileSystem).HasFile(path).WithContent(contents);
 	}
 
 	[Test]
@@ -55,8 +54,7 @@ public class AppendAllTextTests(FileSystemTestData testData) : FileSystemTestBas
 
 		FileSystem.File.AppendAllText(path, "AA", Encoding.UTF32);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(expectedBytes);
+		await That(FileSystem).HasFile(path).WithContent(expectedBytes);
 	}
 
 	[Test]
@@ -100,8 +98,7 @@ public class AppendAllTextTests(FileSystemTestData testData) : FileSystemTestBas
 
 		FileSystem.File.AppendAllText(path, contents);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
+		await That(FileSystem).HasFile(path).WithContent(contents);
 	}
 
 	[Test]
@@ -175,8 +172,7 @@ public class AppendAllTextTests(FileSystemTestData testData) : FileSystemTestBas
 
 		FileSystem.File.AppendAllText(path, contents.AsSpan());
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(previousContents + contents);
+		await That(FileSystem).HasFile(path).WithContent(previousContents + contents);
 	}
 
 	[Test]
@@ -201,8 +197,7 @@ public class AppendAllTextTests(FileSystemTestData testData) : FileSystemTestBas
 	{
 		FileSystem.File.AppendAllText(path, contents.AsSpan());
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
+		await That(FileSystem).HasFile(path).WithContent(contents);
 	}
 
 	[Test]
@@ -214,8 +209,7 @@ public class AppendAllTextTests(FileSystemTestData testData) : FileSystemTestBas
 
 		FileSystem.File.AppendAllText(path, "AA".AsSpan(), Encoding.UTF32);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(expectedBytes);
+		await That(FileSystem).HasFile(path).WithContent(expectedBytes);
 	}
 
 	[Test]
@@ -259,8 +253,7 @@ public class AppendAllTextTests(FileSystemTestData testData) : FileSystemTestBas
 
 		FileSystem.File.AppendAllText(path, contents.AsSpan());
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
+		await That(FileSystem).HasFile(path).WithContent(contents);
 	}
 
 	[Test]

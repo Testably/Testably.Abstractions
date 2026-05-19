@@ -104,8 +104,7 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 		await That(sut.Exists).IsFalse();
 		await That(FileSystem.File.Exists(sourceName)).IsFalse();
 		await That(result.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(sourceContents);
+		await That(FileSystem).HasFile(destinationName).WithContent(sourceContents);
 		await That(FileSystem.File.GetAttributes(destinationName)).HasFlag(FileAttributes.ReadOnly);
 		await That(FileSystem.File.Exists(backupName)).IsTrue();
 		await That(FileSystem.File.ReadAllText(backupName)).IsEqualTo(destinationContents);
@@ -134,10 +133,8 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 		if (Test.RunsOnWindows)
 		{
 			await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
-			await That(FileSystem.File.Exists(sourceName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(sourceContents);
-			await That(FileSystem.File.Exists(destinationName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(destinationContents);
+			await That(FileSystem).HasFile(sourceName).WithContent(sourceContents);
+			await That(FileSystem).HasFile(destinationName).WithContent(destinationContents);
 			await That(FileSystem.File.GetAttributes(destinationName))
 				.DoesNotHaveFlag(FileAttributes.ReadOnly);
 			await That(FileSystem.File.Exists(backupName)).IsFalse();
@@ -147,10 +144,8 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 			await That(Act).DoesNotThrow();
 			await That(sut.Exists).IsFalse();
 			await That(FileSystem.File.Exists(sourceName)).IsFalse();
-			await That(FileSystem.File.Exists(destinationName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(sourceContents);
-			await That(FileSystem.File.Exists(backupName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(backupName)).IsEqualTo(destinationContents);
+			await That(FileSystem).HasFile(destinationName).WithContent(sourceContents);
+			await That(FileSystem).HasFile(backupName).WithContent(destinationContents);
 		}
 	}
 
@@ -272,10 +267,8 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 		await That(sut.Exists).IsFalse();
 		await That(FileSystem.File.Exists(sourceName)).IsFalse();
 		await That(result.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(sourceContents);
-		await That(FileSystem.File.Exists(backupName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(backupName)).IsEqualTo(destinationContents);
+		await That(FileSystem).HasFile(destinationName).WithContent(sourceContents);
+		await That(FileSystem).HasFile(backupName).WithContent(destinationContents);
 	}
 
 	[Test]
@@ -355,10 +348,8 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 		{
 			await That(Act).Throws<IOException>().WithHResult(-2147024864);
 			await That(sut.Exists).IsTrue();
-			await That(FileSystem.File.Exists(sourceName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(sourceName)).IsEqualTo(sourceContents);
-			await That(FileSystem.File.Exists(destinationName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(destinationContents);
+			await That(FileSystem).HasFile(sourceName).WithContent(sourceContents);
+			await That(FileSystem).HasFile(destinationName).WithContent(destinationContents);
 			await That(FileSystem.File.GetAttributes(destinationName))
 				.DoesNotHaveFlag(FileAttributes.ReadOnly);
 			await That(FileSystem.File.Exists(backupName)).IsFalse();
@@ -369,10 +360,8 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 			await That(Act).DoesNotThrow();
 			await That(sut.Exists).IsFalse();
 			await That(FileSystem.File.Exists(sourceName)).IsFalse();
-			await That(FileSystem.File.Exists(destinationName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(sourceContents);
-			await That(FileSystem.File.Exists(backupName)).IsTrue();
-			await That(FileSystem.File.ReadAllText(backupName)).IsEqualTo(destinationContents);
+			await That(FileSystem).HasFile(destinationName).WithContent(sourceContents);
+			await That(FileSystem).HasFile(backupName).WithContent(destinationContents);
 		}
 	}
 
@@ -465,10 +454,8 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 		await That(sut.Exists).IsFalse();
 		await That(FileSystem.File.Exists(sourceName)).IsFalse();
 		await That(result.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(sourceContents);
-		await That(FileSystem.File.Exists(backupName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(backupName)).IsEqualTo(backupContents);
+		await That(FileSystem).HasFile(destinationName).WithContent(sourceContents);
+		await That(FileSystem).HasFile(backupName).WithContent(backupContents);
 	}
 
 	[Test]
@@ -488,7 +475,6 @@ public class ReplaceTests(FileSystemTestData testData) : FileSystemTestBase(test
 		await That(sut.Exists).IsFalse();
 		await That(FileSystem.File.Exists(sourceName)).IsFalse();
 		await That(result.FullName).IsEqualTo(FileSystem.Path.GetFullPath(destinationName));
-		await That(FileSystem.File.Exists(destinationName)).IsTrue();
-		await That(FileSystem.File.ReadAllText(destinationName)).IsEqualTo(sourceContents);
+		await That(FileSystem).HasFile(destinationName).WithContent(sourceContents);
 	}
 }

@@ -1,4 +1,5 @@
 #if FEATURE_FILESYSTEM_ASYNC
+using aweXpect.Testably;
 using AutoFixture;
 using System.IO;
 using System.Text;
@@ -50,8 +51,7 @@ public class AppendAllTextAsyncTests(FileSystemTestData testData) : FileSystemTe
 		await FileSystem.File.AppendAllTextAsync(path, contents,
 			CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(previousContents + contents);
+		await That(FileSystem).HasFile(path).WithContent(previousContents + contents);
 	}
 
 	[Test]
@@ -78,8 +78,7 @@ public class AppendAllTextAsyncTests(FileSystemTestData testData) : FileSystemTe
 		await FileSystem.File.AppendAllTextAsync(path, contents,
 			CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
+		await That(FileSystem).HasFile(path).WithContent(contents);
 	}
 
 	[Test]
@@ -91,8 +90,7 @@ public class AppendAllTextAsyncTests(FileSystemTestData testData) : FileSystemTe
 		await FileSystem.File.AppendAllTextAsync(path, contents,
 			CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
+		await That(FileSystem).HasFile(path).WithContent(contents);
 	}
 
 	[Test]
@@ -183,8 +181,7 @@ public class AppendAllTextAsyncTests(FileSystemTestData testData) : FileSystemTe
 		await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(),
 			CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(previousContents + contents);
+		await That(FileSystem).HasFile(path).WithContent(previousContents + contents);
 	}
 
 	[Test]
@@ -212,8 +209,7 @@ public class AppendAllTextAsyncTests(FileSystemTestData testData) : FileSystemTe
 		await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(),
 			CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
+		await That(FileSystem).HasFile(path).WithContent(contents);
 	}
 
 	[Test]
@@ -225,8 +221,7 @@ public class AppendAllTextAsyncTests(FileSystemTestData testData) : FileSystemTe
 		await FileSystem.File.AppendAllTextAsync(path, contents.AsMemory(),
 			CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllText(path)).IsEqualTo(contents);
+		await That(FileSystem).HasFile(path).WithContent(contents);
 	}
 
 	[Test]

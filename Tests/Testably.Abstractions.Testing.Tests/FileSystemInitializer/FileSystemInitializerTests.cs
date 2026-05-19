@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using aweXpect.Testably;
+using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Initializer;
 
@@ -54,8 +55,7 @@ public class FileSystemInitializerTests
 		sut.With(description);
 
 		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
-		await That(fileSystem.File.Exists(name)).IsTrue();
-		await That(fileSystem.File.ReadAllBytes(name)).IsEqualTo(bytes);
+		await That(fileSystem).HasFile(name).WithContent(bytes);
 	}
 
 	[Test]
@@ -70,8 +70,7 @@ public class FileSystemInitializerTests
 		sut.With(description);
 
 		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
-		await That(fileSystem.File.Exists(name)).IsTrue();
-		await That(fileSystem.File.ReadAllText(name)).IsEqualTo(content);
+		await That(fileSystem).HasFile(name).WithContent(content);
 	}
 
 	[Test]
@@ -105,8 +104,14 @@ public class FileSystemInitializerTests
 		sut.With(description);
 
 		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
-		await That(fileSystem.File.Exists(name)).IsTrue();
-		await That(fileSystem.FileInfo.New(name).IsReadOnly).IsEqualTo(isReadOnly);
+		if (isReadOnly)
+		{
+			await That(fileSystem).HasFile(name).Which.IsReadOnly();
+		}
+		else
+		{
+			await That(fileSystem).HasFile(name).Which.IsNotReadOnly();
+		}
 	}
 
 	[Test]
@@ -204,8 +209,7 @@ public class FileSystemInitializerTests
 		sut.WithFile(path).Which(f => f.HasStringContent("foo"));
 
 		await That(fileSystem.Statistics.TotalCount).IsEqualTo(0);
-		await That(fileSystem.File.Exists(path)).IsTrue();
-		await That(fileSystem.File.ReadAllText(path)).IsEqualTo("foo");
+		await That(fileSystem).HasFile(path).WithContent("foo");
 	}
 
 	[Test]

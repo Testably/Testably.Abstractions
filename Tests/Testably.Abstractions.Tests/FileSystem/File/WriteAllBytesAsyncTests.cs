@@ -1,4 +1,5 @@
 #if FEATURE_FILESYSTEM_ASYNC
+using aweXpect.Testably;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -33,8 +34,7 @@ public class WriteAllBytesAsyncTests(FileSystemTestData testData) : FileSystemTe
 
 		await FileSystem.File.WriteAllBytesAsync(path, bytes, CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
+		await That(FileSystem).HasFile(path).WithContent(bytes);
 	}
 
 	[Test]
@@ -44,8 +44,7 @@ public class WriteAllBytesAsyncTests(FileSystemTestData testData) : FileSystemTe
 	{
 		await FileSystem.File.WriteAllBytesAsync(path, bytes, CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
+		await That(FileSystem).HasFile(path).WithContent(bytes);
 	}
 
 	[Test]
@@ -122,8 +121,7 @@ public class WriteAllBytesAsyncTests(FileSystemTestData testData) : FileSystemTe
 
 		await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
+		await That(FileSystem).HasFile(path).WithContent(bytes);
 	}
 
 	[Test]
@@ -133,8 +131,7 @@ public class WriteAllBytesAsyncTests(FileSystemTestData testData) : FileSystemTe
 	{
 		await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), CancellationToken);
 
-		await That(FileSystem.File.Exists(path)).IsTrue();
-		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(bytes);
+		await That(FileSystem).HasFile(path).WithContent(bytes);
 	}
 
 	[Test]
