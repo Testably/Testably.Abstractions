@@ -96,9 +96,18 @@ public abstract class FileSystemTestData
 
 		/// <inheritdoc />
 		public override IDirectoryCleaner GetDirectoryCleaner(IFileSystem fileSystem)
-			=> fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory(
-				$"{_dataGeneratorMetadata.TestInformation?.Class.Name}-{_dataGeneratorMetadata.TestInformation?.Name ?? _dataGeneratorMetadata.TestSessionId}-",
-				Console.WriteLine);
+		{
+			string testName =
+				$"{_dataGeneratorMetadata.TestInformation?.Class.Name}-{_dataGeneratorMetadata.TestInformation?.Name ?? _dataGeneratorMetadata.TestSessionId}";
+			// Cap below the MAX_PATH headroom on .NET Framework; uniqueness comes from the random suffix in DirectoryCleaner.
+			if (testName.Length > 60)
+			{
+				testName = testName.Substring(0, 60);
+			}
+
+			return fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory(
+				$"{testName}-", Console.WriteLine);
+		}
 
 		/// <inheritdoc />
 		public override Test GetTest()
