@@ -116,17 +116,17 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		fileInfo.IsReadOnly = true;
 
 		await That(fileInfo.IsReadOnly).IsTrue();
-		await That(fileInfo.Attributes).HasFlag(FileAttributes.ReadOnly);
+		await That(fileInfo).HasAttribute(FileAttributes.ReadOnly);
 
 		fileInfo.IsReadOnly = true;
 
 		await That(fileInfo.IsReadOnly).IsTrue();
-		await That(fileInfo.Attributes).HasFlag(FileAttributes.ReadOnly);
+		await That(fileInfo).HasAttribute(FileAttributes.ReadOnly);
 
 		fileInfo.IsReadOnly = false;
 
 		await That(fileInfo.IsReadOnly).IsFalse();
-		await That(fileInfo.Attributes).DoesNotHaveFlag(FileAttributes.ReadOnly);
+		await That(fileInfo).DoesNotHaveAttribute(FileAttributes.ReadOnly);
 	}
 
 	[Test]
@@ -139,7 +139,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		fileInfo.Attributes = FileAttributes.ReadOnly | FileAttributes.Encrypted;
 
 		await That(fileInfo.IsReadOnly).IsTrue();
-		await That(fileInfo.Attributes).HasFlag(FileAttributes.ReadOnly);
+		await That(fileInfo).HasAttribute(FileAttributes.ReadOnly);
 	}
 
 	[Test]
@@ -150,7 +150,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		await That(fileInfo.IsReadOnly).IsFalse();
-		await That(fileInfo.Attributes).DoesNotHaveFlag(FileAttributes.ReadOnly);
+		await That(fileInfo).DoesNotHaveAttribute(FileAttributes.ReadOnly);
 	}
 
 	[Test]

@@ -54,9 +54,9 @@ public class EncryptDecryptTests(FileSystemTestData testData) : FileSystemTestBa
 		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		sut.Encrypt();
-		await That(sut.Attributes).HasFlag(FileAttributes.Encrypted);
+		await That(sut).HasAttribute(FileAttributes.Encrypted);
 		sut.Decrypt();
-		await That(sut.Attributes).DoesNotHaveFlag(FileAttributes.Encrypted);
+		await That(sut).DoesNotHaveAttribute(FileAttributes.Encrypted);
 	}
 
 	[Test]

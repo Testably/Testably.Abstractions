@@ -16,7 +16,7 @@ public class AttributesTests(FileSystemTestData testData) : FileSystemTestBase(t
 
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 		await That(FileSystem.File.Exists(path)).IsFalse();
-		await That(sut.Attributes).HasFlag(FileAttributes.Directory);
+		await That(sut).HasAttribute(FileAttributes.Directory);
 	}
 
 	[Test]
