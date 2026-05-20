@@ -67,8 +67,8 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 
 		await That(result.AvailableFreeSpace).IsGreaterThan(0);
 		await That(result.DriveFormat).IsNotNull();
-		await That(result.DriveType).IsEqualTo(DriveType.Fixed);
-		await That(result.IsReady).IsTrue();
+		await That(result).HasDriveType(DriveType.Fixed);
+		await That(result).IsReady();
 		await That(result.RootDirectory.FullName).IsEqualTo(FileTestHelper.RootDrive(Test));
 		await That(result.TotalFreeSpace).IsGreaterThan(0);
 		await That(result.TotalSize).IsGreaterThan(0);

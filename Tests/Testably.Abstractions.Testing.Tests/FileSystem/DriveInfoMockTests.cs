@@ -21,7 +21,7 @@ public class DriveInfoMockTests
 
 		FileSystem.WithDrive(d => d.ChangeUsedBytes(-1));
 
-		await That(drive.AvailableFreeSpace).IsEqualTo(size);
+		await That(drive).HasAvailableFreeSpace(size);
 	}
 
 	[Test]
@@ -38,7 +38,7 @@ public class DriveInfoMockTests
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
 		await That(Act).ThrowsExactly<IOException>().WithMessage($"*'{drive.Name}'*").AsWildcard();
-		await That(drive.AvailableFreeSpace).IsEqualTo(fileSize - 1);
+		await That(drive).HasAvailableFreeSpace(fileSize - 1);
 	}
 
 	[Test]
@@ -54,10 +54,10 @@ public class DriveInfoMockTests
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
 
 		FileSystem.File.WriteAllText(path, fileContent1, encoding);
-		await That(drive.AvailableFreeSpace).IsEqualTo(expectedRemainingBytes + fileSize2);
+		await That(drive).HasAvailableFreeSpace(expectedRemainingBytes + fileSize2);
 		FileSystem.File.AppendAllText(path, fileContent2, encoding);
 
-		await That(drive.AvailableFreeSpace).IsEqualTo(expectedRemainingBytes);
+		await That(drive).HasAvailableFreeSpace(expectedRemainingBytes);
 	}
 
 	[Test]
@@ -78,7 +78,7 @@ public class DriveInfoMockTests
 			stream.SetLength(stream.Length - reduceLength);
 		}
 
-		await That(drive.AvailableFreeSpace).IsEqualTo(previousFreeSpace + reduceLength);
+		await That(drive).HasAvailableFreeSpace(previousFreeSpace + reduceLength);
 	}
 
 	[Test]
@@ -94,7 +94,7 @@ public class DriveInfoMockTests
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
 
-		await That(drive.AvailableFreeSpace).IsEqualTo(0);
+		await That(drive).HasAvailableFreeSpace(0);
 	}
 
 	[Test]
@@ -111,7 +111,7 @@ public class DriveInfoMockTests
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
 
-		await That(drive.AvailableFreeSpace).IsEqualTo(fileSize);
+		await That(drive).HasAvailableFreeSpace(fileSize);
 	}
 
 	[Test]
@@ -122,7 +122,7 @@ public class DriveInfoMockTests
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
 
-		await That(drive.AvailableFreeSpace).IsEqualTo(size);
+		await That(drive).HasAvailableFreeSpace(size);
 	}
 
 	[Test]
@@ -220,7 +220,7 @@ public class DriveInfoMockTests
 		FileSystem.WithDrive(d => d.SetDriveFormat());
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
-		await That(drive.DriveFormat).IsEqualTo("NTFS");
+		await That(drive).HasDriveFormat("NTFS");
 	}
 
 	[Test]
@@ -230,7 +230,7 @@ public class DriveInfoMockTests
 		FileSystem.WithDrive(d => d.SetDriveFormat(driveFormat));
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
-		await That(drive.DriveFormat).IsEqualTo(driveFormat);
+		await That(drive).HasDriveFormat(driveFormat);
 	}
 
 	[Test]
@@ -239,7 +239,7 @@ public class DriveInfoMockTests
 		FileSystem.WithDrive(d => d.SetDriveType());
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
-		await That(drive.DriveType).IsEqualTo(DriveType.Fixed);
+		await That(drive).HasDriveType(DriveType.Fixed);
 	}
 
 	[Test]
@@ -249,7 +249,7 @@ public class DriveInfoMockTests
 		FileSystem.WithDrive(d => d.SetDriveType(driveType));
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
-		await That(drive.DriveType).IsEqualTo(driveType);
+		await That(drive).HasDriveType(driveType);
 	}
 
 	[Test]
@@ -270,6 +270,6 @@ public class DriveInfoMockTests
 
 		IDriveInfo drive = FileSystem.GetDefaultDrive();
 
-		await That(drive.AvailableFreeSpace).IsEqualTo(1024 * 1024 * 1024);
+		await That(drive).HasAvailableFreeSpace(1024 * 1024 * 1024);
 	}
 }

@@ -35,7 +35,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 			if (Test.RunsOnWindows)
 			{
 				await That(Act).DoesNotThrow();
-				await That(result.VolumeLabel).IsEqualTo("TEST");
+				await That(result).HasVolumeLabel("TEST");
 			}
 			else
 			{
