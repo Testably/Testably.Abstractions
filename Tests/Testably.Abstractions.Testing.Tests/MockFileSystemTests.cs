@@ -202,11 +202,8 @@ public class MockFileSystemTests
 		string driveName = "".PrefixRoot(sut);
 		sut.WithDrive(driveName);
 
-		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
-
-		await That(drives.Length).IsGreaterThanOrEqualTo(1);
-		await That(drives).HasSingle()
-			.Matching(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
+		await That(sut.DriveInfo.GetDrives().Length).IsGreaterThanOrEqualTo(1);
+		await That(sut).HasDrive(driveName);
 	}
 
 	[Test]
@@ -218,11 +215,8 @@ public class MockFileSystemTests
 		MockFileSystem sut = new();
 		sut.WithDrive(driveName);
 
-		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
-
-		await That(drives.Length).IsEqualTo(2);
-		await That(drives).HasSingle()
-			.Matching(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
+		await That(sut.DriveInfo.GetDrives().Length).IsEqualTo(2);
+		await That(sut).HasDrive(driveName);
 	}
 
 	[Test]
