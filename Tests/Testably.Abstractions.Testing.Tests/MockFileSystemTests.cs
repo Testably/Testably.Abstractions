@@ -84,10 +84,10 @@ public class MockFileSystemTests
 		IDriveInfo drive = sut.GetDefaultDrive();
 
 		await That(drives).IsNotEmpty();
-		await That(drive.Name).IsEqualTo(expectedDriveName);
+		await That(drive).HasName(expectedDriveName);
 		await That(drive.AvailableFreeSpace).IsGreaterThan(0);
-		await That(drive.DriveFormat).IsEqualTo(DriveInfoMock.DefaultDriveFormat);
-		await That(drive.DriveType).IsEqualTo(DriveInfoMock.DefaultDriveType);
+		await That(drive).HasDriveFormat(DriveInfoMock.DefaultDriveFormat);
+		await That(drive).HasDriveType(DriveInfoMock.DefaultDriveType);
 		await That(drive.VolumeLabel).IsNotNullOrEmpty();
 	}
 
@@ -188,11 +188,11 @@ public class MockFileSystemTests
 		await That(sut.DriveInfo.GetDrives().Length).IsEqualTo(2);
 		IDriveInfo drive = sut.DriveInfo.GetDrives()
 			.Single(x => string.Equals(x.Name, driveName, StringComparison.Ordinal));
-		await That(drive.TotalSize).IsEqualTo(100);
+		await That(drive).HasTotalSize(100);
 
 		sut.WithDrive(driveName, d => d.SetTotalSize(200));
 		await That(sut.DriveInfo.GetDrives().Length).IsEqualTo(2);
-		await That(drive.TotalSize).IsEqualTo(200);
+		await That(drive).HasTotalSize(200);
 	}
 
 	[Test]
@@ -202,11 +202,8 @@ public class MockFileSystemTests
 		string driveName = "".PrefixRoot(sut);
 		sut.WithDrive(driveName);
 
-		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
-
-		await That(drives.Length).IsGreaterThanOrEqualTo(1);
-		await That(drives).HasSingle()
-			.Matching(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
+		await That(sut.DriveInfo.GetDrives().Length).IsGreaterThanOrEqualTo(1);
+		await That(sut).HasDrive(driveName);
 	}
 
 	[Test]
@@ -218,11 +215,8 @@ public class MockFileSystemTests
 		MockFileSystem sut = new();
 		sut.WithDrive(driveName);
 
-		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
-
-		await That(drives.Length).IsEqualTo(2);
-		await That(drives).HasSingle()
-			.Matching(d => string.Equals(d.Name, driveName, StringComparison.Ordinal));
+		await That(sut.DriveInfo.GetDrives().Length).IsEqualTo(2);
+		await That(sut).HasDrive(driveName);
 	}
 
 	[Test]
@@ -266,9 +260,9 @@ public class MockFileSystemTests
 
 		IDriveInfo drive = sut.GetDefaultDrive();
 
-		await That(drive.TotalSize).IsEqualTo(totalSize);
-		await That(drive.TotalFreeSpace).IsEqualTo(totalSize);
-		await That(drive.AvailableFreeSpace).IsEqualTo(totalSize);
+		await That(drive).HasTotalSize(totalSize);
+		await That(drive).HasTotalFreeSpace(totalSize);
+		await That(drive).HasAvailableFreeSpace(totalSize);
 	}
 
 #if NET6_0_OR_GREATER
@@ -368,7 +362,7 @@ public class MockFileSystemTests
 
 		sut.File.WriteAllBytes(Path.Combine(uncDrive, path), bytes);
 
-		await That(drive.AvailableFreeSpace).IsEqualTo(previousFreeSpace - bytes.Length);
+		await That(drive).HasAvailableFreeSpace(previousFreeSpace - bytes.Length);
 	}
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE

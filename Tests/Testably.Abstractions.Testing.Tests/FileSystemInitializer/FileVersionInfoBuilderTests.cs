@@ -50,21 +50,21 @@ public class FileVersionInfoBuilderTests
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
 		await That(result.Comments).IsEqualTo(comments);
-		await That(result.CompanyName).IsEqualTo(companyName);
-		await That(result.FileDescription).IsEqualTo(fileDescription);
-		await That(result.FileVersion).IsEqualTo(fileVersion);
+		await That(result).HasCompanyName(companyName);
+		await That(result).HasFileDescription(fileDescription);
+		await That(result).HasFileVersion(fileVersion);
 		await That(result.InternalName).IsEqualTo(internalName);
 		await That(result.IsDebug).IsEqualTo(isDebug);
 		await That(result.IsPatched).IsEqualTo(isPatched);
 		await That(result.IsPreRelease).IsEqualTo(isPreRelease);
 		await That(result.IsSpecialBuild).IsEqualTo(isSpecialBuild);
-		await That(result.Language).IsEqualTo(language);
+		await That(result).HasLanguage(language);
 		await That(result.LegalCopyright).IsEqualTo(legalCopyright);
 		await That(result.LegalTrademarks).IsEqualTo(legalTrademarks);
-		await That(result.OriginalFilename).IsEqualTo(originalFilename);
+		await That(result).HasOriginalFilename(originalFilename);
 		await That(result.PrivateBuild).IsEqualTo(privateBuild);
-		await That(result.ProductName).IsEqualTo(productName);
-		await That(result.ProductVersion).IsEqualTo(productVersion);
+		await That(result).HasProductName(productName);
+		await That(result).HasProductVersion(productVersion);
 		await That(result.SpecialBuild).IsEqualTo(specialBuild);
 	}
 
@@ -91,7 +91,7 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		await That(result.CompanyName).IsEqualTo(companyName);
+		await That(result).HasCompanyName(companyName);
 	}
 
 	[Test]
@@ -104,7 +104,7 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		await That(result.FileDescription).IsEqualTo(fileDescription);
+		await That(result).HasFileDescription(fileDescription);
 	}
 
 	[Test]
@@ -123,7 +123,7 @@ public class FileVersionInfoBuilderTests
 			b => b.SetFileVersion("9.8.7.6").SetFileVersion(fileVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
-		await That(result.FileVersion).IsEqualTo(fileVersion);
+		await That(result).HasFileVersion(fileVersion);
 		await That(result.FileMajorPart).IsEqualTo(fileMajorPart);
 		await That(result.FileMinorPart).IsEqualTo(fileMinorPart);
 		await That(result.FileBuildPart).IsEqualTo(fileBuildPart);
@@ -155,7 +155,7 @@ public class FileVersionInfoBuilderTests
 		fileSystem.WithFileVersionInfo("*", b => b.SetFileVersion(fileVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
-		await That(result.FileVersion).IsEqualTo(fileVersion);
+		await That(result).HasFileVersion(fileVersion);
 		await That(result.FileMajorPart).IsEqualTo(fileMajorPart);
 		await That(result.FileMinorPart).IsEqualTo(fileMinorPart);
 		await That(result.FileBuildPart).IsEqualTo(fileBuildPart);
@@ -176,7 +176,7 @@ public class FileVersionInfoBuilderTests
 			.SetFileVersion(fileVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
-		await That(result.FileVersion).IsEqualTo(fileVersion);
+		await That(result).HasFileVersion(fileVersion);
 		await That(result.FileMajorPart).IsEqualTo(0);
 		await That(result.FileMinorPart).IsEqualTo(0);
 		await That(result.FileBuildPart).IsEqualTo(0);
@@ -271,7 +271,7 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		await That(result.Language).IsEqualTo(language);
+		await That(result).HasLanguage(language);
 	}
 
 	[Test]
@@ -310,7 +310,7 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		await That(result.OriginalFilename).IsEqualTo(originalFilename);
+		await That(result).HasOriginalFilename(originalFilename);
 	}
 
 	[Test]
@@ -336,7 +336,7 @@ public class FileVersionInfoBuilderTests
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
-		await That(result.ProductName).IsEqualTo(productName);
+		await That(result).HasProductName(productName);
 	}
 
 	[Test]
@@ -355,7 +355,7 @@ public class FileVersionInfoBuilderTests
 			b => b.SetProductVersion("9.8.7.6").SetProductVersion(productVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
-		await That(result.ProductVersion).IsEqualTo(productVersion);
+		await That(result).HasProductVersion(productVersion);
 		await That(result.ProductMajorPart).IsEqualTo(fileMajorPart);
 		await That(result.ProductMinorPart).IsEqualTo(fileMinorPart);
 		await That(result.ProductBuildPart).IsEqualTo(fileBuildPart);
@@ -387,7 +387,7 @@ public class FileVersionInfoBuilderTests
 		fileSystem.WithFileVersionInfo("*", b => b.SetProductVersion(productVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
-		await That(result.ProductVersion).IsEqualTo(productVersion);
+		await That(result).HasProductVersion(productVersion);
 		await That(result.ProductMajorPart).IsEqualTo(fileMajorPart);
 		await That(result.ProductMinorPart).IsEqualTo(fileMinorPart);
 		await That(result.ProductBuildPart).IsEqualTo(fileBuildPart);
@@ -408,7 +408,7 @@ public class FileVersionInfoBuilderTests
 			.SetProductVersion(productVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
-		await That(result.ProductVersion).IsEqualTo(productVersion);
+		await That(result).HasProductVersion(productVersion);
 		await That(result.ProductMajorPart).IsEqualTo(0);
 		await That(result.ProductMinorPart).IsEqualTo(0);
 		await That(result.ProductBuildPart).IsEqualTo(0);
