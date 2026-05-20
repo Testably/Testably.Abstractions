@@ -1,4 +1,5 @@
 ﻿using aweXpect.Chronology;
+using aweXpect.Core;
 using System.Threading;
 using Testably.Abstractions.Testing.TimeSystem;
 using ITimer = Testably.Abstractions.TimeSystem.ITimer;
@@ -51,62 +52,36 @@ public class TimerMockTests
 	[Test]
 	public async Task DisableAutoAdvance_ShouldExecuteTimerLimitedNumberOfTimes()
 	{
-		int callbackCount = 0;
 		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
-		using CancellationTokenSource cts = CancellationTokenSource
-			.CreateLinkedTokenSource(TestContext.Current!.Execution.CancellationToken);
-		cts.CancelAfter(30.Seconds());
-		CancellationToken token = cts.Token;
-		using SemaphoreSlim callbackExecuted = new(0);
-		using ITimer timer = timeSystem.Timer.New(_ =>
-		{
-			// ReSharper disable once AccessToModifiedClosure
-			Interlocked.Increment(ref callbackCount);
-			// ReSharper disable once AccessToDisposedClosure
-			callbackExecuted.Release();
-		}, null, 1.Seconds(), 2.Seconds());
+		using ITimerMock timer = (ITimerMock)timeSystem.Timer.New(
+			_ => { }, null, 1.Seconds(), 2.Seconds());
 
-		await Task.Delay(50.Milliseconds(), token);
-		await That(Volatile.Read(ref callbackCount)).IsEqualTo(0);
+		await That(timer).Executed().Never().Within(50.Milliseconds());
 
 		// Advance past dueTime (1s): should trigger first callback
 		timeSystem.TimeProvider.AdvanceBy(2.Seconds());
-		await callbackExecuted.WaitAsync(token);
-		await That(Volatile.Read(ref callbackCount)).IsEqualTo(1);
+		await That(timer).Executed().AtLeast(1.Times()).Within(10.Seconds());
+		await That(timer.ExecutionCount).IsEqualTo(1L);
 
 		// Advance past one period (2s): should trigger second callback
-		await Task.Delay(50.Milliseconds(), token);
 		timeSystem.TimeProvider.AdvanceBy(2.Seconds());
-		await callbackExecuted.WaitAsync(token);
-		await That(Volatile.Read(ref callbackCount)).IsEqualTo(2);
+		await That(timer).Executed().AtLeast(2.Times()).Within(10.Seconds());
+		await That(timer.ExecutionCount).IsEqualTo(2L);
 
 		// Advance past two periods (4s): should trigger two more callbacks
-		await Task.Delay(50.Milliseconds(), token);
 		timeSystem.TimeProvider.AdvanceBy(4.Seconds());
-		await callbackExecuted.WaitAsync(token);
-		await Task.Delay(50.Milliseconds(), token);
-		timeSystem.TimeProvider.AdvanceBy(0.Seconds());
-		await callbackExecuted.WaitAsync(token);
-		await That(Volatile.Read(ref callbackCount)).IsEqualTo(4);
+		await That(timer).Executed().AtLeast(4.Times()).Within(10.Seconds());
+		await That(timer.ExecutionCount).IsEqualTo(4L);
 	}
 
 	[Test]
 	public async Task DisableAutoAdvance_ShouldNotExecuteTimerBeforeTimeElapsed()
 	{
-		int callbackCount = 0;
 		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
-		using CancellationTokenSource cts = CancellationTokenSource
-			.CreateLinkedTokenSource(TestContext.Current!.Execution.CancellationToken);
-		cts.CancelAfter(30.Seconds());
-		CancellationToken token = cts.Token;
-		using ITimer timer = timeSystem.Timer.New(_ =>
-		{
-			// ReSharper disable once AccessToModifiedClosure
-			Interlocked.Increment(ref callbackCount);
-		}, null, 1.Seconds(), 2.Seconds());
+		using ITimerMock timer = (ITimerMock)timeSystem.Timer.New(
+			_ => { }, null, 1.Seconds(), 2.Seconds());
 
-		await Task.Delay(50.Milliseconds(), token);
-		await That(Volatile.Read(ref callbackCount)).IsEqualTo(0);
+		await That(timer).Executed().Never().Within(50.Milliseconds());
 	}
 
 	[Test]
