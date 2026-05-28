@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reflection;
 using Testably.Abstractions.Testing.Helpers;
@@ -189,7 +189,27 @@ public static class FileSystemInitializerExtensions
 		this IFileSystem fileSystem, string? prefix = null, Action<string>? logger = null)
 	{
 		using IDisposable release = fileSystem.IgnoreStatistics();
-		return new DirectoryCleaner(fileSystem, prefix, logger);
+		return new DirectoryCleaner(fileSystem, prefix, logger, true);
+	}
+
+	/// <summary>
+	///     Creates a new empty temporary directory without changing the current directory.
+	/// </summary>
+	/// <param name="fileSystem">The file system.</param>
+	/// <param name="prefix">
+	///     A prefix to use for the temporary directory.<br />
+	///     This simplifies matching directories to tests.
+	/// </param>
+	/// <param name="logger">(optional) A callback to log the cleanup process.</param>
+	/// <returns>
+	///     A <see cref="IDirectoryCleaner" /> that will
+	///     force delete all content in the temporary directory on dispose.
+	/// </returns>
+	public static IDirectoryCleaner CreateEmptyTemporaryDirectory(
+		this IFileSystem fileSystem, string? prefix = null, Action<string>? logger = null)
+	{
+		using IDisposable release = fileSystem.IgnoreStatistics();
+		return new DirectoryCleaner(fileSystem, prefix, logger, false);
 	}
 
 	private static void CopyDirectory(

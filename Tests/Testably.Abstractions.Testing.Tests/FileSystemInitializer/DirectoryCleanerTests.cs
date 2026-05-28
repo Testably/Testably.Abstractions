@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Initializer;
@@ -116,5 +116,60 @@ public class DirectoryCleanerTests
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		await That(sut.Directory.Exists(currentDirectory)).IsTrue();
 		await That(receivedLogs).Contains(m => m.Contains($"'{currentDirectory}'", StringComparison.Ordinal));
+	}
+
+	[Test]
+	public async Task CreateEmptyTemporaryDirectory_Dispose_ShouldForceDeleteDirectory()
+	{
+		MockFileSystem sut = new();
+		List<string> receivedLogs = [];
+		IDirectoryCleaner directoryCleaner =
+			sut.CreateEmptyTemporaryDirectory(logger: m => receivedLogs.Add(m));
+		string basePath = directoryCleaner.BasePath;
+
+		directoryCleaner.Dispose();
+
+		await That(sut.Directory.Exists(basePath)).IsFalse();
+		await That(receivedLogs).Contains("Cleanup was successful :-)");
+	}
+
+	[Test]
+	public async Task CreateEmptyTemporaryDirectory_Dispose_ShouldNotChangeCurrentDirectory()
+	{
+		MockFileSystem sut = new();
+		string currentDirectory = sut.Directory.GetCurrentDirectory();
+		IDirectoryCleaner directoryCleaner =
+			sut.CreateEmptyTemporaryDirectory();
+
+		directoryCleaner.Dispose();
+
+		await That(sut.Directory.GetCurrentDirectory()).IsEqualTo(currentDirectory);
+	}
+
+	[Test]
+	public async Task CreateEmptyTemporaryDirectory_ShouldCreateDirectory()
+	{
+		MockFileSystem sut = new();
+		List<string> receivedLogs = [];
+
+		using IDirectoryCleaner directoryCleaner =
+			sut.CreateEmptyTemporaryDirectory(logger: m => receivedLogs.Add(m));
+
+		await That(sut.Statistics.TotalCount).IsEqualTo(0);
+		await That(sut.Directory.Exists(directoryCleaner.BasePath)).IsTrue();
+		await That(receivedLogs).DoesNotContain(m =>
+			m.Contains("as current directory", StringComparison.Ordinal));
+	}
+
+	[Test]
+	public async Task CreateEmptyTemporaryDirectory_ShouldNotChangeCurrentDirectory()
+	{
+		MockFileSystem sut = new();
+		string currentDirectory = sut.Directory.GetCurrentDirectory();
+
+		using IDirectoryCleaner directoryCleaner =
+			sut.CreateEmptyTemporaryDirectory();
+
+		await That(sut.Directory.GetCurrentDirectory()).IsEqualTo(currentDirectory);
 	}
 }
