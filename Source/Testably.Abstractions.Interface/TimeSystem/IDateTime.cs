@@ -13,6 +13,7 @@ public interface IDateTime : ITimeSystemEntity
 	/// <inheritdoc cref="DateTime.MinValue" />
 	DateTime MinValue { get; }
 
+#pragma warning disable MA0202 // Branches differ only in XML doc comments
 #if NETSTANDARD2_0
 	/// <summary>
 	///     The value of this constant is equivalent to 00:00:00.0000000 UTC, January 1, 1970, in the Gregorian calendar.
@@ -23,6 +24,7 @@ public interface IDateTime : ITimeSystemEntity
 	/// <inheritdoc cref="DateTime.UnixEpoch" />
 	DateTime UnixEpoch { get; }
 #endif
+#pragma warning restore MA0202
 
 	/// <inheritdoc cref="DateTime.Now" />
 	DateTime Now { get; }

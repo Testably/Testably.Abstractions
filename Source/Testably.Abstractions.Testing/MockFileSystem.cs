@@ -31,6 +31,7 @@ public sealed class MockFileSystem : IFileSystem
 	/// </summary>
 	public IRandomSystem RandomSystem { get; }
 
+#pragma warning disable MA0202 // Branches differ only in XML doc comments
 #if CAN_SIMULATE_OTHER_OS
 	/// <summary>
 	///     The simulation mode for the underlying operating system.
@@ -47,6 +48,7 @@ public sealed class MockFileSystem : IFileSystem
 	///     This functionality is only supported on .NET 6 or newer.
 	/// </remarks>
 #endif
+#pragma warning restore MA0202
 	public SimulationMode SimulationMode { get; }
 
 	/// <summary>
