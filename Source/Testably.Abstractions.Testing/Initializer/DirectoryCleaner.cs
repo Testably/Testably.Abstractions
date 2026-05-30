@@ -18,7 +18,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 	private readonly Action<string>? _logger;
 	private readonly string _pathToDelete;
 
-	public DirectoryCleaner(IFileSystem fileSystem, string? prefix, Action<string>? logger)
+	public DirectoryCleaner(IFileSystem fileSystem, string? prefix, Action<string>? logger, bool setCurrentDirectory)
 	{
 		_fileSystem = fileSystem;
 		_logger = logger;
@@ -26,6 +26,10 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 			fileSystem.ExecuteOrDefault(),
 			prefix ?? "");
 		BasePath = _fileSystem.Path.Combine(_pathToDelete, EmptyDirectoryName);
+		if (setCurrentDirectory)
+		{
+			SetCurrentDirectoryToTestDirectory(BasePath);
+		}
 	}
 
 	#region IDirectoryCleaner Members
@@ -189,13 +193,18 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 				$"Could not create current directory '{basePath}' for tests");
 		}
 
-		_logger?.Invoke($"Use '{basePath}' as current directory.");
-		_fileSystem.Directory.SetCurrentDirectory(basePath);
+		return pathToDelete;
+	}
+
+	private void SetCurrentDirectoryToTestDirectory(string testDirectoryPath)
+	{
+		_logger?.Invoke($"Use '{testDirectoryPath}' as current directory.");
+		_fileSystem.Directory.SetCurrentDirectory(testDirectoryPath);
 		for (int i = 0;
 			i <= 10 &&
 			!string.Equals(
 				_fileSystem.Directory.GetCurrentDirectory(),
-				basePath,
+				testDirectoryPath,
 				_fileSystem.ExecuteOrDefault().StringComparisonMode);
 			i++)
 		{
@@ -204,13 +213,11 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 
 		if (!string.Equals(
 			_fileSystem.Directory.GetCurrentDirectory(),
-			basePath,
+			testDirectoryPath,
 			_fileSystem.ExecuteOrDefault().StringComparisonMode))
 		{
 			throw new TestingException(
-				$"Could not set current directory to '{basePath}' for tests");
+				$"Could not set current directory to '{testDirectoryPath}' for tests");
 		}
-
-		return pathToDelete;
 	}
 }
