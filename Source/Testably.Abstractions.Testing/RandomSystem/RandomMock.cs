@@ -16,6 +16,7 @@ internal sealed class RandomMock : IRandom
 	private readonly Generator<int>? _intGenerator;
 	private readonly IRandom _random;
 
+#pragma warning disable MA0202 // Branches differ only in XML doc comments
 #if FEATURE_RANDOM_ADVANCED
 	/// <summary>
 	///     Initializes a new instance of <see cref="RandomMock" /> which allows specifying explicit generators:<br />
@@ -33,6 +34,7 @@ internal sealed class RandomMock : IRandom
 	///     - <paramref name="byteGenerator" />: The generator for <c>byte[]</c> values.
 	/// </summary>
 #endif
+#pragma warning restore MA0202
 	public RandomMock(
 		int seed = SharedSeed,
 		Generator<int>? intGenerator = null,

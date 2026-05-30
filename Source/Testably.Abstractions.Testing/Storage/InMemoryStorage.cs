@@ -876,6 +876,7 @@ internal sealed class InMemoryStorage : IStorage
 		}
 	}
 
+#pragma warning disable MA0202 // Branches differ only in XML doc comments
 #if NETSTANDARD2_1
 	/// <summary>
 	///     Checks, if the <paramref name="item" /> should be included during enumeration, depending on the
@@ -922,6 +923,7 @@ internal sealed class InMemoryStorage : IStorage
 	///     <see langword="true" />.
 	/// </exception>
 #endif
+#pragma warning restore MA0202
 	private bool IncludeItemInEnumeration(
 		KeyValuePair<IStorageLocation, IStorageContainer> item,
 		string directoryPath,

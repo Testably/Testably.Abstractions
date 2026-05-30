@@ -128,11 +128,13 @@ internal class FileSystemInfoWrapper : IFileSystemInfo, IFileSystemExtensibility
 
 	#endregion
 
+#pragma warning disable MA0202 // Branches differ only in XML doc comments
 #if NETSTANDARD2_0
 	/// <inheritdoc cref="object.ToString()" />
 #else
 	/// <inheritdoc cref="FileSystemInfo.ToString()" />
 #endif
+#pragma warning restore MA0202
 	public override string ToString()
 		=> _instance.ToString();
 

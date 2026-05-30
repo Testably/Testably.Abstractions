@@ -8,6 +8,7 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 /// </summary>
 public interface ITimeProvider
 {
+#pragma warning disable MA0202 // Branches differ only in XML doc comments
 #if FEATURE_PERIODIC_TIMER
 	/// <summary>
 	///     The elapsed ticks represent a monotonic clock that is not affected by changes to the system time.
@@ -25,6 +26,7 @@ public interface ITimeProvider
 	///     The value is not affected by changes to the system time (see <see cref="SetTo(DateTime)" />), but it is affected by the <see cref="AdvanceBy(TimeSpan)" /> method.<br />
 	/// </remarks>
 #endif
+#pragma warning restore MA0202
 	long ElapsedTicks { get; }
 
 	/// <summary>
