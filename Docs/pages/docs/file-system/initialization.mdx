@@ -131,3 +131,15 @@ using IDirectoryCleaner cleaner =
 ```
 
 The `prefix` parameter makes leftovers easier to spot in `%TEMP%` if cleanup ever fails. The optional `logger` parameter receives diagnostic messages (e.g. retry attempts when antivirus holds a file open).
+
+If you need a temporary directory but want to leave `Directory.GetCurrentDirectory()` untouched, use `CreateEmptyTemporaryDirectory` instead. It behaves identically - same `prefix` and `logger` parameters, same force-delete on dispose - but does not change the current directory:
+
+```csharp
+IFileSystem fileSystem = new RealFileSystem();
+using IDirectoryCleaner cleaner =
+    fileSystem.CreateEmptyTemporaryDirectory(prefix: "MyTests-");
+
+// fileSystem.Directory.GetCurrentDirectory() is unchanged
+// Use cleaner.BasePath to access the empty temp directory
+// On dispose: the directory is force-deleted (read-only flag and all)
+```
