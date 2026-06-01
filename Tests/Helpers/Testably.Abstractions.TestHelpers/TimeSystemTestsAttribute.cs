@@ -7,7 +7,8 @@ using TimeProvider = Testably.Abstractions.Testing.TimeProvider;
 namespace Testably.Abstractions.TestHelpers;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class TimeSystemTestsAttribute : TypedDataSourceAttribute<TimeSystemTestData>
+public class TimeSystemTestsAttribute(bool disableAutoAdvance = false)
+	: TypedDataSourceAttribute<TimeSystemTestData>
 {
 	public override async IAsyncEnumerable<Func<Task<TimeSystemTestData>>> GetTypedDataRowsAsync(
 		DataGeneratorMetadata dataGeneratorMetadata)
@@ -17,7 +18,15 @@ public class TimeSystemTestsAttribute : TypedDataSourceAttribute<TimeSystemTestD
 		{
 			DateTime now = DateTime.UtcNow;
 			return Task.FromResult(
-				new TimeSystemTestData(now, new MockTimeSystem(TimeProvider.Use(now))));
+				new TimeSystemTestData(now, new MockTimeSystem(TimeProvider.Use(now), o =>
+				{
+					if (disableAutoAdvance)
+					{
+						o.DisableAutoAdvance();
+					}
+
+					return o;
+				})));
 		};
 		yield return () => Task.FromResult(
 			new TimeSystemTestData(DateTime.UtcNow, new RealTimeSystem()));

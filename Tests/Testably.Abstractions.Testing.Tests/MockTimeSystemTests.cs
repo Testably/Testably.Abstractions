@@ -9,15 +9,113 @@ namespace Testably.Abstractions.Testing.Tests;
 public class MockTimeSystemTests
 {
 	[Test]
-	public async Task Delay_DisabledAutoAdvance_ShouldNotChangeTime()
+	public async Task
+		Delay_DisabledAutoAdvance_InfiniteTimeSpan_ShouldOnlyBeReleasedByCancellation()
 	{
 		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		using CancellationTokenSource cts = CancellationTokenSource
+			.CreateLinkedTokenSource(TestContext.Current!.Execution.CancellationToken);
+
+		Task delayTask = timeSystem.Task.Delay(Timeout.InfiniteTimeSpan, cts.Token);
+
+		// Advancing the clock never releases an infinite delay.
+		timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromDays(1));
+		await That(delayTask.IsCompleted).IsFalse();
+
+		cts.Cancel();
+
+		async Task Act() => await delayTask;
+		await That(Act).Throws<OperationCanceledException>();
+	}
+
+	[Test]
+	public async Task
+		Delay_DisabledAutoAdvance_MultiplePendingDelays_ShouldEachBeReleasedAtTheirDueTime()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		CancellationToken token = TestContext.Current!.Execution.CancellationToken;
+
+		Task delay1 = timeSystem.Task.Delay(1.Seconds(), token);
+		Task delay2 = timeSystem.Task.Delay(2.Seconds(), token);
+		Task delay3 = timeSystem.Task.Delay(3.Seconds(), token);
+
+		timeSystem.TimeProvider.AdvanceBy(2.Seconds());
+
+		await delay1;
+		await delay2;
+		await That(delay1.IsCompleted).IsTrue();
+		await That(delay2.IsCompleted).IsTrue();
+		await That(delay3.IsCompleted).IsFalse();
+
+		timeSystem.TimeProvider.AdvanceBy(1.Seconds());
+
+		await delay3;
+		await That(delay3.IsCompleted).IsTrue();
+	}
+
+	[Test]
+	public async Task Delay_DisabledAutoAdvance_PartialAdvance_ShouldNotReleaseDelay()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		CancellationToken token = TestContext.Current!.Execution.CancellationToken;
+
+		Task delayTask = timeSystem.Task.Delay(5.Seconds(), token);
+
+		timeSystem.TimeProvider.AdvanceBy(3.Seconds());
+		await That(delayTask.IsCompleted).IsFalse();
+
+		timeSystem.TimeProvider.AdvanceBy(2.Seconds());
+		await delayTask;
+		await That(delayTask.IsCompleted).IsTrue();
+	}
+
+	[Test]
+	public async Task Delay_DisabledAutoAdvance_SetTo_ShouldNotReleaseDelay_OnlyAdvanceByDoes()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		CancellationToken token = TestContext.Current!.Execution.CancellationToken;
+
+		Task delayTask = timeSystem.Task.Delay(5.Seconds(), token);
+
+		// Jumping the wall clock (e.g. an NTP/DST change) must NOT release a monotonic delay.
+		timeSystem.TimeProvider.SetTo(timeSystem.DateTime.UtcNow.AddHours(1));
+		await That(delayTask.IsCompleted).IsFalse();
+
+		// Only elapsed (monotonic) time releases it.
+		timeSystem.TimeProvider.AdvanceBy(5.Seconds());
+		await delayTask;
+		await That(delayTask.IsCompleted).IsTrue();
+	}
+
+	[Test]
+	public async Task Delay_DisabledAutoAdvance_ShouldStayPendingUntilTimeIsAdvanced()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		CancellationToken token = TestContext.Current!.Execution.CancellationToken;
 		DateTime before = timeSystem.DateTime.Now;
 
-		await timeSystem.Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken);
+		Task delayTask = timeSystem.Task.Delay(5.Seconds(), token);
 
-		DateTime after = timeSystem.DateTime.Now;
-		await That(after).IsEqualTo(before);
+		// The delay stays pending and does not advance time on its own.
+		await That(delayTask.IsCompleted).IsFalse();
+		await That(timeSystem.DateTime.Now).IsEqualTo(before);
+
+		timeSystem.TimeProvider.AdvanceBy(5.Seconds());
+
+		await delayTask;
+		await That(delayTask.IsCompleted).IsTrue();
+	}
+
+	[Test]
+	public async Task Delay_DisabledAutoAdvance_Zero_ShouldCompleteImmediately()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		CancellationToken token = TestContext.Current!.Execution.CancellationToken;
+
+		Task delayTask = timeSystem.Task.Delay(TimeSpan.Zero, token);
+
+		await delayTask;
+		await That(delayTask.IsCompleted).IsTrue();
 	}
 
 	[Test]
@@ -114,9 +212,10 @@ public class MockTimeSystemTests
 #if FEATURE_PERIODIC_TIMER
 	[Test]
 	[Arguments(5)]
-	public async Task PeriodicTimer_DisabledAutoAdvance_ShouldTriggerWhenTimeIsManuallyAdvanced(int amount)
+	public async Task PeriodicTimer_DisabledAutoAdvance_ShouldTriggerWhenTimeIsManuallyAdvanced(
+		int amount)
 	{
-		var time = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+		DateTime time = new(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 		MockTimeSystem timeSystem = new(time, o => o.DisableAutoAdvance());
 		List<DateTime> tickTimes = [];
 		using CancellationTokenSource cts = CancellationTokenSource
