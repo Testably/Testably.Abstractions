@@ -59,11 +59,51 @@ internal sealed class TaskMock : ITask
 		if (_autoAdvance)
 		{
 			_mockTimeSystem.TimeProvider.AdvanceBy(delay);
+			_callbackHandler.InvokeTaskDelayCallbacks(delay);
+			return Task.CompletedTask;
 		}
 
 		_callbackHandler.InvokeTaskDelayCallbacks(delay);
-		return Task.CompletedTask;
+
+		if (delay == TimeSpan.Zero)
+		{
+			return Task.CompletedTask;
+		}
+
+		return DelayUntilAdvanced(delay, cancellationToken);
 	}
 
 	#endregion
+
+	/// <summary>
+	///     Returns a task that stays pending until the simulated clock advances to or past
+	///     <c>now + <paramref name="delay" /></c>, or faults with an
+	///     <see cref="OperationCanceledException" /> if the <paramref name="cancellationToken" /> is
+	///     cancelled while pending.
+	///     <para />
+	///     A <see cref="Timeout.InfiniteTimeSpan" /> never completes on its own and can only be
+	///     released via cancellation.
+	/// </summary>
+	private async Task DelayUntilAdvanced(TimeSpan delay, CancellationToken cancellationToken)
+	{
+		bool isInfinite = delay.TotalMilliseconds < 0;
+		long targetTicks = _mockTimeSystem.TimeProvider.ElapsedTicks + delay.Ticks;
+
+		while (true)
+		{
+			using IAwaitableCallback<DateTime> onTimeChanged = _mockTimeSystem.On
+				.TimeChanged(predicate: _
+					=> !isInfinite &&
+					   _mockTimeSystem.TimeProvider.ElapsedTicks >= targetTicks);
+			if (!isInfinite &&
+			    _mockTimeSystem.TimeProvider.ElapsedTicks >= targetTicks)
+			{
+				return;
+			}
+
+			await onTimeChanged.WaitAsync(
+				timeout: null,
+				cancellationToken: cancellationToken).ConfigureAwait(false);
+		}
+	}
 }
