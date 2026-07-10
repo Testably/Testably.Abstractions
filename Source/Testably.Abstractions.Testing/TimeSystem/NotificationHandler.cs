@@ -15,6 +15,9 @@ internal sealed class NotificationHandler(MockTimeSystem mockTimeSystem)
 	private readonly Notification.INotificationFactory<DateTime>
 		_dateTimeReadCallbacks = Notification.CreateFactory<DateTime>();
 
+	private readonly Notification.INotificationFactory<DateTimeOffset>
+		_dateTimeOffsetReadCallbacks = Notification.CreateFactory<DateTimeOffset>();
+
 #if FEATURE_PERIODIC_TIMER
 	private readonly Notification.INotificationFactory<IPeriodicTimer>
 		_periodicTimerWaitingForNextTickCallbacks = Notification.CreateFactory<IPeriodicTimer>();
@@ -41,6 +44,12 @@ internal sealed class NotificationHandler(MockTimeSystem mockTimeSystem)
 		Action<DateTime>? callback = null,
 		Func<DateTime, bool>? predicate = null)
 		=> _dateTimeReadCallbacks.RegisterCallback(callback, predicate);
+
+	/// <inheritdoc cref="INotificationHandler.DateTimeOffsetRead(Action{DateTimeOffset}?, Func{DateTimeOffset, bool}?)" />
+	public IAwaitableCallback<DateTimeOffset> DateTimeOffsetRead(
+		Action<DateTimeOffset>? callback = null,
+		Func<DateTimeOffset, bool>? predicate = null)
+		=> _dateTimeOffsetReadCallbacks.RegisterCallback(callback, predicate);
 
 	/// <inheritdoc cref="INotificationHandler.TaskDelay(Action{TimeSpan}?, Func{TimeSpan, bool}?)" />
 	public IAwaitableCallback<TimeSpan> TaskDelay(
@@ -78,6 +87,9 @@ internal sealed class NotificationHandler(MockTimeSystem mockTimeSystem)
 
 	public void InvokeDateTimeReadCallbacks(DateTime now)
 		=> _dateTimeReadCallbacks.InvokeCallbacks(now);
+
+	public void InvokeDateTimeOffsetReadCallbacks(DateTimeOffset now)
+		=> _dateTimeOffsetReadCallbacks.InvokeCallbacks(now);
 
 #if FEATURE_PERIODIC_TIMER
 	public void InvokePeriodicTimerWaitingForNextTick(IPeriodicTimer timer)

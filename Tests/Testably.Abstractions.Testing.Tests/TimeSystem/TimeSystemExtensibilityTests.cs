@@ -28,6 +28,17 @@ public class TimeSystemExtensibilityTests
 
 	[Test]
 	[MethodDataSource(nameof(GetTimeSystems))]
+	public async Task DateTimeOffset_ShouldSetExtensionPoint(ITimeSystem timeSystem)
+	{
+		IDateTimeOffset sut = timeSystem.DateTimeOffset;
+
+		ITimeSystem result = sut.TimeSystem;
+
+		await That(result).IsEqualTo(timeSystem);
+	}
+
+	[Test]
+	[MethodDataSource(nameof(GetTimeSystems))]
 	public async Task Task_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
 		ITask sut = timeSystem.Task;

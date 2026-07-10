@@ -9,8 +9,12 @@
 		<None Include="$(SolutionDir)Docs/Nuget/Testing.md" Pack="true" PackagePath="/Docs/" Link="Docs\Testing.md" />
 	</ItemGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition=" '$(Configuration)' != 'Debug' ">
 		<PackageReference Include="Testably.Abstractions.Interface" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+		<ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
