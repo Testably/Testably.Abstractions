@@ -16,6 +16,26 @@ public abstract class ParityTests(
 	public TestHelpers.Parity Parity { get; } = parity;
 
 	[Test]
+	public async Task IDateTime_EnsureParityWith_DateTime()
+	{
+		List<string> parityErrors = Parity.DateTime
+			.GetErrorsToStaticType<IDateTime>(
+				typeof(DateTime));
+
+		await That(parityErrors).IsEmpty();
+	}
+
+	[Test]
+	public async Task IDateTimeOffset_EnsureParityWith_DateTimeOffset()
+	{
+		List<string> parityErrors = Parity.DateTimeOffset
+			.GetErrorsToStaticType<IDateTimeOffset>(
+				typeof(DateTimeOffset));
+
+		await That(parityErrors).IsEmpty();
+	}
+
+	[Test]
 	public async Task IDirectory_EnsureParityWith_Directory()
 	{
 		List<string> parityErrors = Parity.Directory

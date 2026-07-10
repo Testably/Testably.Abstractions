@@ -16,6 +16,7 @@ public sealed class RealTimeSystem : ITimeSystem
 	public RealTimeSystem()
 	{
 		DateTime = new DateTimeWrapper(this);
+		DateTimeOffset = new DateTimeOffsetWrapper(this);
 #if FEATURE_PERIODIC_TIMER
 		PeriodicTimer = new PeriodicTimerFactory(this);
 #endif
@@ -30,6 +31,9 @@ public sealed class RealTimeSystem : ITimeSystem
 
 	/// <inheritdoc cref="ITimeSystem.DateTime" />
 	public IDateTime DateTime { get; }
+
+	/// <inheritdoc cref="ITimeSystem.DateTimeOffset" />
+	public IDateTimeOffset DateTimeOffset { get; }
 
 #if FEATURE_PERIODIC_TIMER
 	/// <inheritdoc cref="ITimeSystem.PeriodicTimer" />
