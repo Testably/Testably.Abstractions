@@ -12,6 +12,11 @@ public interface ITimeSystem
 	/// </summary>
 	IDateTime DateTime { get; }
 
+	/// <summary>
+	///     Abstractions for <see cref="System.DateTimeOffset" />.
+	/// </summary>
+	IDateTimeOffset DateTimeOffset { get; }
+
 #if FEATURE_PERIODIC_TIMER
 	/// <summary>
 	///     Abstractions for <see cref="System.Threading.PeriodicTimer" />.

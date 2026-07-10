@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 
 namespace Testably.Abstractions.Parity.Tests.TestHelpers;
@@ -17,6 +18,36 @@ public class Parity
 				nameof(FileStream), nameof(FileSystemStream)
 			},
 		});
+
+	public ParityCheck DateTime { get; } = new(excludeMethods:
+	[
+		typeof(DateTime).GetMethod(nameof(System.DateTime.Compare)),
+		typeof(DateTime).GetMethod(nameof(System.DateTime.DaysInMonth)),
+		typeof(DateTime).GetMethod(nameof(System.DateTime.Equals), BindingFlags.Static | BindingFlags.Public),
+		typeof(DateTime).GetMethod(nameof(System.DateTime.FromBinary)),
+		typeof(DateTime).GetMethod(nameof(System.DateTime.FromFileTime)),
+		typeof(DateTime).GetMethod(nameof(System.DateTime.FromFileTimeUtc)),
+		typeof(DateTime).GetMethod(nameof(System.DateTime.FromOADate)),
+		typeof(DateTime).GetMethod(nameof(System.DateTime.IsLeapYear)),
+		typeof(DateTime).GetMethod(nameof(System.DateTime.SpecifyKind)),
+		..typeof(DateTime).GetMethods().Where(x => string.Equals(x.Name, nameof(System.DateTime.Parse), StringComparison.Ordinal)),
+		..typeof(DateTime).GetMethods().Where(x => string.Equals(x.Name, nameof(System.DateTime.ParseExact), StringComparison.Ordinal)),
+		..typeof(DateTime).GetMethods().Where(x => string.Equals(x.Name, nameof(System.DateTime.TryParse), StringComparison.Ordinal)),
+		..typeof(DateTime).GetMethods().Where(x => string.Equals(x.Name, nameof(System.DateTime.TryParseExact), StringComparison.Ordinal)),
+	]);
+
+	public ParityCheck DateTimeOffset { get; } = new(excludeMethods:
+	[
+		typeof(DateTimeOffset).GetMethod(nameof(System.DateTimeOffset.Compare)),
+		typeof(DateTimeOffset).GetMethod(nameof(System.DateTimeOffset.Equals), BindingFlags.Static | BindingFlags.Public),
+		typeof(DateTimeOffset).GetMethod(nameof(System.DateTimeOffset.FromFileTime)),
+		typeof(DateTimeOffset).GetMethod(nameof(System.DateTimeOffset.FromUnixTimeMilliseconds)),
+		typeof(DateTimeOffset).GetMethod(nameof(System.DateTimeOffset.FromUnixTimeSeconds)),
+		..typeof(DateTimeOffset).GetMethods().Where(x => string.Equals(x.Name, nameof(System.DateTimeOffset.Parse), StringComparison.Ordinal)),
+		..typeof(DateTimeOffset).GetMethods().Where(x => string.Equals(x.Name, nameof(System.DateTimeOffset.ParseExact), StringComparison.Ordinal)),
+		..typeof(DateTimeOffset).GetMethods().Where(x => string.Equals(x.Name, nameof(System.DateTimeOffset.TryParse), StringComparison.Ordinal)),
+		..typeof(DateTimeOffset).GetMethods().Where(x => string.Equals(x.Name, nameof(System.DateTimeOffset.TryParseExact), StringComparison.Ordinal)),
+	]);
 
 	public ParityCheck Directory { get; } = new();
 

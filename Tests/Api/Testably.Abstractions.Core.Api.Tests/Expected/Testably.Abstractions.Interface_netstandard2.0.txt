@@ -36,6 +36,7 @@ namespace Testably.Abstractions
     public interface ITimeSystem
     {
         Testably.Abstractions.TimeSystem.IDateTime DateTime { get; }
+        Testably.Abstractions.TimeSystem.IDateTimeOffset DateTimeOffset { get; }
         Testably.Abstractions.TimeSystem.IStopwatchFactory Stopwatch { get; }
         Testably.Abstractions.TimeSystem.ITask Task { get; }
         Testably.Abstractions.TimeSystem.IThread Thread { get; }
@@ -79,6 +80,14 @@ namespace Testably.Abstractions.TimeSystem
         System.DateTime Today { get; }
         System.DateTime UnixEpoch { get; }
         System.DateTime UtcNow { get; }
+    }
+    public interface IDateTimeOffset : Testably.Abstractions.TimeSystem.ITimeSystemEntity
+    {
+        System.DateTimeOffset MaxValue { get; }
+        System.DateTimeOffset MinValue { get; }
+        System.DateTimeOffset Now { get; }
+        System.DateTimeOffset UnixEpoch { get; }
+        System.DateTimeOffset UtcNow { get; }
     }
     public interface IStopwatch : Testably.Abstractions.TimeSystem.ITimeSystemEntity
     {
