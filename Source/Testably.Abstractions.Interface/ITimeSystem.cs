@@ -38,4 +38,9 @@ public interface ITimeSystem
 	///     Abstractions for <see cref="System.Threading.Timer" />.
 	/// </summary>
 	ITimerFactory Timer { get; }
+
+	/// <summary>
+	///     Abstractions for <see cref="System.TimeZoneInfo" />.
+	/// </summary>
+	ITimeZoneInfo TimeZoneInfo { get; }
 }

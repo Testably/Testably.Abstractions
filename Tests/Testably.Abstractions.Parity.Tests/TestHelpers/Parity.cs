@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Threading;
 
 namespace Testably.Abstractions.Parity.Tests.TestHelpers;
@@ -104,6 +105,21 @@ public class Parity
 				typeof(uint),
 			]),
 		]);
+
+	public ParityCheck TimeZoneInfo { get; } = new(excludeMethods:
+	[
+		typeof(TimeZoneInfo).GetMethod(nameof(System.TimeZoneInfo.ClearCachedData)),
+		typeof(TimeZoneInfo).GetMethod(nameof(System.TimeZoneInfo.FromSerializedString)),
+		..typeof(TimeZoneInfo).GetMethods().Where(x => string.Equals(x.Name, nameof(System.TimeZoneInfo.ConvertTime), StringComparison.Ordinal)),
+		..typeof(TimeZoneInfo).GetMethods().Where(x => string.Equals(x.Name, nameof(System.TimeZoneInfo.ConvertTimeBySystemTimeZoneId), StringComparison.Ordinal)),
+		..typeof(TimeZoneInfo).GetMethods().Where(x => string.Equals(x.Name, nameof(System.TimeZoneInfo.ConvertTimeFromUtc), StringComparison.Ordinal)),
+		..typeof(TimeZoneInfo).GetMethods().Where(x => string.Equals(x.Name, nameof(System.TimeZoneInfo.ConvertTimeToUtc), StringComparison.Ordinal)),
+		..typeof(TimeZoneInfo).GetMethods().Where(x => string.Equals(x.Name, nameof(System.TimeZoneInfo.CreateCustomTimeZone), StringComparison.Ordinal)),
+		..typeof(TimeZoneInfo).GetMethods().Where(x => string.Equals(x.Name, "GetSystemTimeZones", StringComparison.Ordinal) && x.GetParameters().Length > 0),
+		..typeof(TimeZoneInfo).GetMethods().Where(x => string.Equals(x.Name, "TryConvertIanaIdToWindowsId", StringComparison.Ordinal)),
+		..typeof(TimeZoneInfo).GetMethods().Where(x => string.Equals(x.Name, "TryConvertWindowsIdToIanaId", StringComparison.Ordinal)),
+		..typeof(TimeZoneInfo).GetMethods().Where(x => string.Equals(x.Name, "TryFindSystemTimeZoneById", StringComparison.Ordinal)),
+	]);
 
 	public ParityCheck ZipArchive { get; } = new();
 
