@@ -177,7 +177,15 @@ namespace Testably.Abstractions.Testing
         MacOS = 2,
         Windows = 3,
     }
+    [System.Obsolete("Renamed to `TimeProviderFactory` to avoid confusion with the BCL `System.TimeProv" +
+        "ider`. This type will be removed in a future major version.")]
     public static class TimeProvider
+    {
+        public static Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory Now() { }
+        public static Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory Random() { }
+        public static Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory Use(System.DateTime time) { }
+    }
+    public static class TimeProviderFactory
     {
         public static Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory Now() { }
         public static Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory Random() { }
