@@ -40,28 +40,28 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with a random time.
 	/// </summary>
-	public MockTimeSystem() : this(Testing.TimeProvider.Random(), options => options)
+	public MockTimeSystem() : this(TimeProviderFactory.Random(), options => options)
 	{
 	}
 
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with a random time.
 	/// </summary>
-	public MockTimeSystem(Func<MockTimeSystemOptions, MockTimeSystemOptions> options) : this(Testing.TimeProvider.Random(), options)
+	public MockTimeSystem(Func<MockTimeSystemOptions, MockTimeSystemOptions> options) : this(TimeProviderFactory.Random(), options)
 	{
 	}
 
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with the specified <paramref name="time" />.
 	/// </summary>
-	public MockTimeSystem(DateTime time) : this(Testing.TimeProvider.Use(time), options => options)
+	public MockTimeSystem(DateTime time) : this(TimeProviderFactory.Use(time), options => options)
 	{
 	}
 
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with the specified <paramref name="time" />.
 	/// </summary>
-	public MockTimeSystem(DateTime time, Func<MockTimeSystemOptions, MockTimeSystemOptions> options) : this(Testing.TimeProvider.Use(time), options)
+	public MockTimeSystem(DateTime time, Func<MockTimeSystemOptions, MockTimeSystemOptions> options) : this(TimeProviderFactory.Use(time), options)
 	{
 	}
 
@@ -70,7 +70,7 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// </summary>
 	[Obsolete("Use the constructor with ITimeProviderFactory instead.")]
 	public MockTimeSystem(ITimeProvider timeProvider) : this(
-		new TimeProvider.Factory(_ => timeProvider))
+		new TimeProviderFactory.Factory(_ => timeProvider))
 	{
 	}
 

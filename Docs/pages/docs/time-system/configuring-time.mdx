@@ -15,10 +15,10 @@ new MockTimeSystem();
 new MockTimeSystem(new DateTime(2026, 1, 15, 10, 0, 0, DateTimeKind.Utc));
 
 // 3. Use the host's current wall clock
-new MockTimeSystem(TimeProvider.Now());
+new MockTimeSystem(TimeProviderFactory.Now());
 ```
 
-`TimeProvider.Use(DateTime)`, `TimeProvider.Random()` and `TimeProvider.Now()` all return an `ITimeProviderFactory` you can pass to the `MockTimeSystem` constructor.
+`TimeProviderFactory.Use(DateTime)`, `TimeProviderFactory.Random()` and `TimeProviderFactory.Now()` all return an `ITimeProviderFactory` you can pass to the `MockTimeSystem` constructor.
 
 ## Custom time providers
 

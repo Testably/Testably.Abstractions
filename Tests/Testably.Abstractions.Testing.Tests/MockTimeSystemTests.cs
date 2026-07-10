@@ -310,7 +310,7 @@ public class MockTimeSystemTests
 	public async Task TimeProvider_StartTime_ShouldBeSetToInitialTime()
 	{
 		DateTime now = TimeTestHelper.GetRandomTime(DateTimeKind.Utc);
-		MockTimeSystem timeSystem = new(TimeProvider.Use(now));
+		MockTimeSystem timeSystem = new(TimeProviderFactory.Use(now));
 
 		timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromMinutes(42));
 
@@ -321,7 +321,7 @@ public class MockTimeSystemTests
 	public async Task ToString_WithFixedContainer_ShouldContainTimeProvider()
 	{
 		DateTime now = TimeTestHelper.GetRandomTime();
-		MockTimeSystem timeSystem = new(TimeProvider.Use(now));
+		MockTimeSystem timeSystem = new(TimeProviderFactory.Use(now));
 
 		string result = timeSystem.ToString();
 
@@ -332,7 +332,7 @@ public class MockTimeSystemTests
 	[Test]
 	public async Task ToString_WithNowContainer_ShouldContainTimeProvider()
 	{
-		MockTimeSystem timeSystem = new(TimeProvider.Now());
+		MockTimeSystem timeSystem = new(TimeProviderFactory.Now());
 
 		string result = timeSystem.ToString();
 
@@ -343,7 +343,7 @@ public class MockTimeSystemTests
 	[Test]
 	public async Task ToString_WithRandomContainer_ShouldContainTimeProvider()
 	{
-		MockTimeSystem timeSystem = new(TimeProvider.Random());
+		MockTimeSystem timeSystem = new(TimeProviderFactory.Random());
 
 		string result = timeSystem.ToString();
 

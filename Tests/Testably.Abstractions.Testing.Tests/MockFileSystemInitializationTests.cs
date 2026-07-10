@@ -144,7 +144,7 @@ public class MockFileSystemInitializationTests
 	public async Task UseTimeSystem_ShouldUseProvidedTimeSystem(int offsetSeconds)
 	{
 		DateTime simulatedNow = DateTime.Now.AddSeconds(offsetSeconds);
-		MockTimeSystem timeSystem = new(TimeProvider.Use(simulatedNow));
+		MockTimeSystem timeSystem = new(TimeProviderFactory.Use(simulatedNow));
 		MockFileSystem fileSystem = new(options => options
 			.UseTimeSystem(timeSystem));
 

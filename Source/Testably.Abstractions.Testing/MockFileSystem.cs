@@ -143,7 +143,7 @@ public sealed class MockFileSystem : IFileSystem
 		using IDisposable release = FileSystemRegistration.Ignore();
 		RandomSystem =
 			new MockRandomSystem(initialization.RandomProvider ?? RandomProvider.Default());
-		TimeSystem = initialization.TimeSystem ?? new MockTimeSystem(TimeProvider.Now());
+		TimeSystem = initialization.TimeSystem ?? new MockTimeSystem(TimeProviderFactory.Now());
 		_pathMock = new PathMock(this);
 		_storage = new InMemoryStorage(this);
 		ChangeHandler = new ChangeHandler(this, initialization.RecordNotificationHistory);

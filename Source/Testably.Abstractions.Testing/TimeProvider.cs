@@ -1,5 +1,4 @@
 ﻿using System;
-using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.TimeSystem;
 
 namespace Testably.Abstractions.Testing;
@@ -7,53 +6,19 @@ namespace Testably.Abstractions.Testing;
 /// <summary>
 ///     <see cref="ITimeProvider" />s for use in the constructor of <see cref="MockTimeSystem" />.
 /// </summary>
+[Obsolete(
+	"Renamed to `TimeProviderFactory` to avoid confusion with the BCL `System.TimeProvider`. This type will be removed in a future major version.")]
 public static class TimeProvider
 {
-	/// <summary>
-	///     Initializes the <see cref="MockTimeSystem.TimeProvider" /> with the current time.
-	/// </summary>
+	/// <inheritdoc cref="TimeProviderFactory.Now()" />
 	public static ITimeProviderFactory Now()
-	{
-		return new Factory(onTimeChanged
-			=> new TimeProviderMock(onTimeChanged, DateTime.UtcNow, "Now"));
-	}
+		=> TimeProviderFactory.Now();
 
-	/// <summary>
-	///     Initializes the <see cref="MockTimeSystem.TimeProvider" /> with a random time.
-	///     <para />
-	///     The random time increments the unix epoch by a random integer of seconds.
-	/// </summary>
+	/// <inheritdoc cref="TimeProviderFactory.Random()" />
 	public static ITimeProviderFactory Random()
-	{
-		#pragma warning disable MA0113 // Use DateTime.UnixEpoch
-		DateTime randomTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-			.AddSeconds(RandomFactory.Shared.Next());
-		#pragma warning restore MA0113
-		return new Factory(onTimeChanged
-			=> new TimeProviderMock(onTimeChanged, randomTime, "Random"));
-	}
+		=> TimeProviderFactory.Random();
 
-	/// <summary>
-	///     Initializes the <see cref="MockTimeSystem.TimeProvider" /> with the specified <paramref name="time" />.
-	/// </summary>
-	/// <remarks>
-	///     If the <paramref name="time" /> has Kind DateTimeKind.Unspecified it will be treated as if it had Kind
-	///     DateTimeKind.Utc.
-	/// </remarks>
+	/// <inheritdoc cref="TimeProviderFactory.Use(DateTime)" />
 	public static ITimeProviderFactory Use(DateTime time)
-	{
-		return new Factory(onTimeChanged => new TimeProviderMock(onTimeChanged, time, "Fixed"));
-	}
-
-	internal sealed class Factory(Func<Action<DateTime>, ITimeProvider> createCallback)
-		: ITimeProviderFactory
-	{
-		#region ITimeProviderFactory Members
-
-		/// <inheritdoc cref="ITimeProviderFactory.Create(Action{DateTime})" />
-		public ITimeProvider Create(Action<DateTime> onTimeChanged)
-			=> createCallback(onTimeChanged);
-
-		#endregion
-	}
+		=> TimeProviderFactory.Use(time);
 }

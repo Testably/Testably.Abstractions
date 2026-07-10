@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing;
-using TimeProvider = Testably.Abstractions.Testing.TimeProvider;
 
 namespace Testably.Abstractions.TestHelpers;
 
@@ -18,7 +17,7 @@ public class TimeSystemTestsAttribute(bool disableAutoAdvance = false)
 		{
 			DateTime now = DateTime.UtcNow;
 			return Task.FromResult(
-				new TimeSystemTestData(now, new MockTimeSystem(TimeProvider.Use(now), o =>
+				new TimeSystemTestData(now, new MockTimeSystem(TimeProviderFactory.Use(now), o =>
 				{
 					if (disableAutoAdvance)
 					{
