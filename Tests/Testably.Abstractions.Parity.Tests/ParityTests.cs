@@ -166,6 +166,16 @@ public abstract class ParityTests(
 	}
 
 	[Test]
+	public async Task ITimeZoneInfo_EnsureParityWith_TimeZoneInfo()
+	{
+		List<string> parityErrors = Parity.TimeZoneInfo
+			.GetErrorsToStaticType<ITimeZoneInfo>(
+				typeof(TimeZoneInfo));
+
+		await That(parityErrors).IsEmpty();
+	}
+
+	[Test]
 	public async Task IZipArchive_EnsureParityWith_ZipArchive()
 	{
 		List<string> parityErrors = Parity.ZipArchive

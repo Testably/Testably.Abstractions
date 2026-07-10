@@ -39,6 +39,7 @@ namespace Testably.Abstractions
         Testably.Abstractions.TimeSystem.IStopwatchFactory Stopwatch { get; }
         Testably.Abstractions.TimeSystem.ITask Task { get; }
         Testably.Abstractions.TimeSystem.IThread Thread { get; }
+        Testably.Abstractions.TimeSystem.ITimeZoneInfo TimeZoneInfo { get; }
         Testably.Abstractions.TimeSystem.ITimerFactory Timer { get; }
     }
 }
@@ -114,6 +115,13 @@ namespace Testably.Abstractions.TimeSystem
     public interface ITimeSystemEntity
     {
         Testably.Abstractions.ITimeSystem TimeSystem { get; }
+    }
+    public interface ITimeZoneInfo : Testably.Abstractions.TimeSystem.ITimeSystemEntity
+    {
+        System.TimeZoneInfo Local { get; }
+        System.TimeZoneInfo Utc { get; }
+        System.TimeZoneInfo FindSystemTimeZoneById(string id);
+        System.Collections.ObjectModel.ReadOnlyCollection<System.TimeZoneInfo> GetSystemTimeZones();
     }
     public interface ITimer : System.IDisposable, Testably.Abstractions.TimeSystem.ITimeSystemEntity
     {

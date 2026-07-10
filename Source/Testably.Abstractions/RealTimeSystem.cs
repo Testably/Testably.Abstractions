@@ -23,6 +23,7 @@ public sealed class RealTimeSystem : ITimeSystem
 		Task = new TaskWrapper(this);
 		Thread = new ThreadWrapper(this);
 		Timer = new TimerFactory(this);
+		TimeZoneInfo = new TimeZoneInfoWrapper(this);
 	}
 
 	#region ITimeSystem Members
@@ -46,6 +47,9 @@ public sealed class RealTimeSystem : ITimeSystem
 
 	/// <inheritdoc cref="ITimeSystem.Timer" />
 	public ITimerFactory Timer { get; }
+
+	/// <inheritdoc cref="ITimeSystem.TimeZoneInfo" />
+	public ITimeZoneInfo TimeZoneInfo { get; }
 
 	#endregion
 }
