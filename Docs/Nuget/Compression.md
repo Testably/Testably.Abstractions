@@ -16,14 +16,14 @@ dotnet add package Testably.Abstractions.Compression
 ```csharp
 IFileSystem fileSystem; // injected
 
-fileSystem.ZipFile()
+fileSystem.ZipFile
     .CreateFromDirectory("source", "out.zip");
 
-fileSystem.ZipFile()
+fileSystem.ZipFile
     .ExtractToDirectory("out.zip", "destination");
 
-using IZipArchive archive = fileSystem.ZipFile()
+using IZipArchive archive = fileSystem.ZipFile
     .Open("out.zip", ZipArchiveMode.Update);
 ```
 
-All overloads from the .NET base class library (BCL) are present, including the async variants on .NET 10+. `fileSystem.ZipArchive().New(stream, mode)` returns an `IZipArchive` that wraps `ZipArchive`, with `IZipArchiveEntry` mirroring its BCL counterpart. On `RealFileSystem` every call forwards to the underlying BCL implementation; only `MockFileSystem` routes through the in-memory zip implementation.
+All overloads from the .NET base class library (BCL) are present, including the async variants on .NET 10+. `fileSystem.ZipArchive.New(stream, mode)` returns an `IZipArchive` that wraps `ZipArchive`, with `IZipArchiveEntry` mirroring its BCL counterpart. On `RealFileSystem` every call forwards to the underlying BCL implementation; only `MockFileSystem` routes through the in-memory zip implementation.

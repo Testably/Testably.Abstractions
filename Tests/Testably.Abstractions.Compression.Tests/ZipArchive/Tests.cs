@@ -14,13 +14,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Comment).IsEqualTo("");
 	}
@@ -33,13 +33,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 		archive.Comment = comment;
 
 		await That(archive.Comment).IsEqualTo(comment);
@@ -52,7 +52,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		using FileSystemStream stream =
 			FileSystem.File.Open("destination.zip", FileMode.Create, FileAccess.ReadWrite);
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Create);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Create);
 
 		ReadOnlyCollection<IZipArchiveEntry> Act() => archive.Entries;
 
@@ -67,11 +67,11 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
 
 		using IZipArchive archive =
-			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 		await That(archive.FileSystem).IsEqualTo(FileSystem);
 	}
@@ -82,12 +82,12 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				true);
 
 		using IZipArchive archive =
-			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 		await That(archive.GetEntry("bar.txt")).IsNull();
 		await That(archive.GetEntry("foo.txt")).IsNull();
@@ -101,11 +101,11 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.Fastest, false);
 
 		using IZipArchive archive =
-			FileSystem.ZipFile().Open("destination.zip", mode);
+			FileSystem.ZipFile.Open("destination.zip", mode);
 
 		await That(archive.Mode).IsEqualTo(mode);
 	}

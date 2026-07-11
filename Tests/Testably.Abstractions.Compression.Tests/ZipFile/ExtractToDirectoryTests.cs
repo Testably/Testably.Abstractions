@@ -17,9 +17,9 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 			.WithSubdirectory("foo").Initialized(s => s
 				.WithFile("test.txt"));
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
+		FileSystem.ZipFile.CreateFromDirectory("foo", "destination.zip");
 
-		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar");
+		FileSystem.ZipFile.ExtractToDirectory("destination.zip", "bar");
 
 		await That(FileSystem).HasFile("bar/test.txt")
 			.WithContent().SameAs("foo/test.txt");
@@ -34,7 +34,7 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 
 		void Act()
 		{
-			FileSystem.ZipFile().ExtractToDirectory(sourceArchiveFileName, "bar");
+			FileSystem.ZipFile.ExtractToDirectory(sourceArchiveFileName, "bar");
 		}
 
 		await That(Act).Throws<FileNotFoundException>()
@@ -50,7 +50,7 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 
 		void Act()
 		{
-			FileSystem.ZipFile().ExtractToDirectory(sourceArchiveFileName, "bar");
+			FileSystem.ZipFile.ExtractToDirectory(sourceArchiveFileName, "bar");
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
@@ -71,9 +71,9 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine("foo", "test.txt"),
 			contents);
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
+		FileSystem.ZipFile.CreateFromDirectory("foo", "destination.zip");
 
-		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar", true);
+		FileSystem.ZipFile.ExtractToDirectory("destination.zip", "bar", true);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent(contents);
@@ -95,9 +95,9 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine("foo", "test.txt"),
 			contents);
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
+		FileSystem.ZipFile.CreateFromDirectory("foo", "destination.zip");
 
-		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar", encoding, true);
+		FileSystem.ZipFile.ExtractToDirectory("destination.zip", "bar", encoding, true);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent(contents);
@@ -114,10 +114,10 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 			.WithSubdirectory("foo").Initialized(s => s
 				.WithFile("test.txt"));
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip",
+		FileSystem.ZipFile.CreateFromDirectory("foo", "destination.zip",
 			CompressionLevel.Fastest, false, encoding);
 
-		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar", encoding);
+		FileSystem.ZipFile.ExtractToDirectory("destination.zip", "bar", encoding);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent().SameAs(FileSystem.Path.Combine("foo", "test.txt"));
@@ -138,11 +138,11 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 		string destinationPath =
 			FileSystem.Path.Combine(FileSystem.Path.GetFullPath("bar"), "test.txt");
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
+		FileSystem.ZipFile.CreateFromDirectory("foo", "destination.zip");
 
 		void Act()
 		{
-			FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar");
+			FileSystem.ZipFile.ExtractToDirectory("destination.zip", "bar");
 		}
 
 		await That(Act).Throws<IOException>()
@@ -161,9 +161,9 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 				.WithFile("test.txt"));
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 
-		FileSystem.ZipFile().ExtractToDirectory(stream, "bar");
+		FileSystem.ZipFile.ExtractToDirectory(stream, "bar");
 
 		await That(FileSystem).HasFile("bar/test.txt")
 			.WithContent().SameAs("foo/test.txt");
@@ -180,7 +180,7 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 
 		void Act()
 		{
-			FileSystem.ZipFile().ExtractToDirectory(source, "bar");
+			FileSystem.ZipFile.ExtractToDirectory(source, "bar");
 		}
 
 		await That(Act).Throws<ArgumentException>()
@@ -200,7 +200,7 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 
 		void Act()
 		{
-			FileSystem.ZipFile().ExtractToDirectory(source, "bar");
+			FileSystem.ZipFile.ExtractToDirectory(source, "bar");
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
@@ -223,9 +223,9 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 			contents);
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 
-		FileSystem.ZipFile().ExtractToDirectory(stream, "bar", true);
+		FileSystem.ZipFile.ExtractToDirectory(stream, "bar", true);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent(contents);
@@ -248,9 +248,9 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 			contents);
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 
-		FileSystem.ZipFile().ExtractToDirectory(stream, "bar", encoding, true);
+		FileSystem.ZipFile.ExtractToDirectory(stream, "bar", encoding, true);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent(contents);
@@ -269,10 +269,10 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 				.WithFile("test.txt"));
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream,
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream,
 			CompressionLevel.Fastest, false, encoding);
 
-		FileSystem.ZipFile().ExtractToDirectory(stream, "bar", encoding);
+		FileSystem.ZipFile.ExtractToDirectory(stream, "bar", encoding);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent().SameAs(FileSystem.Path.Combine("foo", "test.txt"));
@@ -297,12 +297,12 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 			FileSystem.Path.Combine(FileSystem.Path.GetFullPath("bar"), "test.txt");
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 
 		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			FileSystem.ZipFile().ExtractToDirectory(stream, "bar");
+			FileSystem.ZipFile.ExtractToDirectory(stream, "bar");
 		}
 
 		await That(Act).Throws<IOException>()
@@ -323,12 +323,12 @@ public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTe
 		using FileSystemStream stream = FileSystem.FileStream.New(
 			"target.zip", FileMode.Open, FileAccess.Write);
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 
 		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			FileSystem.ZipFile().ExtractToDirectory(stream, "bar");
+			FileSystem.ZipFile.ExtractToDirectory(stream, "bar");
 		}
 
 		await That(Act).Throws<ArgumentException>()

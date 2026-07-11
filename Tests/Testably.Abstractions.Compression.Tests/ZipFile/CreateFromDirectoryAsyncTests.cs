@@ -22,12 +22,12 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 			.WithSubdirectory("foo").Initialized(s => s
 				.WithSubdirectory("bar"));
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.CreateFromDirectoryAsync("foo", "destination.zip", compressionLevel, false,
 				CancellationToken);
 
 		using IZipArchive archive =
-			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("bar/"));
@@ -41,12 +41,12 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.CreateFromDirectoryAsync("foo", "destination.zip", compressionLevel, false,
 				CancellationToken);
 
 		using IZipArchive archive =
-			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 		await That(archive.Entries).IsEmpty();
 	}
@@ -60,12 +60,12 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.CreateFromDirectoryAsync("foo", "destination.zip", compressionLevel, true,
 				CancellationToken);
 
 		using IZipArchive archive =
-			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/"));
@@ -80,12 +80,12 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 			.WithSubdirectory("foo").Initialized(s => s
 				.WithFile(entryName));
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.CreateFromDirectoryAsync("foo", "destination.zip", CompressionLevel.NoCompression,
 				false, encoding, CancellationToken);
 
 		using IZipArchive archive =
-			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 		IZipArchiveEntry singleEntry = await That(archive.Entries).HasSingle();
 		if (encodedCorrectly)
@@ -107,12 +107,12 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 			.WithSubdirectory("foo").Initialized(s => s
 				.WithFile("test.txt"));
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.CreateFromDirectoryAsync("foo", "destination.zip", compressionLevel, true,
 				CancellationToken);
 
 		using IZipArchive archive =
-			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/test.txt"));
@@ -131,10 +131,10 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine("foo", "test.txt"),
 			contents);
 
-		await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", "destination.zip",
+		await FileSystem.ZipFile.CreateFromDirectoryAsync("foo", "destination.zip",
 			CompressionLevel.Optimal, false, encoding, CancellationToken);
 
-		IZipArchive archive = FileSystem.ZipFile()
+		IZipArchive archive = FileSystem.ZipFile
 			.Open("destination.zip", ZipArchiveMode.Read, encoding);
 
 		await That(archive.Entries).HasSingle()
@@ -150,10 +150,10 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 				.WithSubdirectory("bar").Initialized(t => t
 					.WithFile("test.txt")));
 
-		await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", "destination.zip",
+		await FileSystem.ZipFile.CreateFromDirectoryAsync("foo", "destination.zip",
 			CancellationToken);
 
-		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "destination");
+		FileSystem.ZipFile.ExtractToDirectory("destination.zip", "destination");
 
 		await That(FileSystem).HasFile("destination/bar/test.txt")
 			.WithContent().SameAs("foo/bar/test.txt");
@@ -172,7 +172,7 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 		async Task Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream, CancellationToken);
+			await FileSystem.ZipFile.CreateFromDirectoryAsync("foo", stream, CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentException>()
@@ -192,11 +192,11 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 				.WithSubdirectory("bar"));
 		using MemoryStream stream = new();
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.CreateFromDirectoryAsync("foo", stream, compressionLevel, false,
 				CancellationToken);
 
-		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		using IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("bar/"));
@@ -212,11 +212,11 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 			.WithSubdirectory("foo");
 		using MemoryStream stream = new();
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.CreateFromDirectoryAsync("foo", stream, compressionLevel, false,
 				CancellationToken);
 
-		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		using IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries).IsEmpty();
 	}
@@ -231,11 +231,11 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 			.WithSubdirectory("foo");
 		using MemoryStream stream = new();
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.CreateFromDirectoryAsync("foo", stream, compressionLevel, true,
 				CancellationToken);
 
-		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		using IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/"));
@@ -251,11 +251,11 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 				.WithFile(entryName));
 		using MemoryStream stream = new();
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.CreateFromDirectoryAsync("foo", stream, CompressionLevel.NoCompression,
 				false, encoding, CancellationToken);
 
-		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		using IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		IZipArchiveEntry singleEntry = await That(archive.Entries).HasSingle();
 		if (encodedCorrectly)
@@ -279,11 +279,11 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 				.WithFile("test.txt"));
 		using MemoryStream stream = new();
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.CreateFromDirectoryAsync("foo", stream, compressionLevel, true,
 				CancellationToken);
 
-		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		using IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/test.txt"));
@@ -297,7 +297,7 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream, CancellationToken);
+			await FileSystem.ZipFile.CreateFromDirectoryAsync("foo", stream, CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentException>()
@@ -314,7 +314,7 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream, CancellationToken);
+			await FileSystem.ZipFile.CreateFromDirectoryAsync("foo", stream, CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
@@ -336,11 +336,11 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 			contents);
 		using MemoryStream stream = new();
 
-		await FileSystem.ZipFile().CreateFromDirectoryAsync("foo", stream,
+		await FileSystem.ZipFile.CreateFromDirectoryAsync("foo", stream,
 			CompressionLevel.Optimal, false, encoding, CancellationToken);
 
 		IZipArchive archive =
-			FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read, true, encoding);
+			FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read, true, encoding);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("test.txt"));
@@ -356,10 +356,10 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 					.WithFile("test.txt")));
 		using MemoryStream stream = new();
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.CreateFromDirectoryAsync("foo", stream, CancellationToken);
 
-		FileSystem.ZipFile().ExtractToDirectory(stream, "destination");
+		FileSystem.ZipFile.ExtractToDirectory(stream, "destination");
 
 		await That(FileSystem).HasFile("destination/bar/test.txt")
 			.WithContent().SameAs("foo/bar/test.txt");
@@ -375,7 +375,7 @@ public class CreateFromDirectoryAsyncTests(FileSystemTestData testData) : FileSy
 			"Some content");
 		void Act() => FileSystem.Directory.Delete(directory, true);
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.CreateFromDirectoryAsync(directory, archive, CancellationToken);
 
 		await That(Act).DoesNotThrow();

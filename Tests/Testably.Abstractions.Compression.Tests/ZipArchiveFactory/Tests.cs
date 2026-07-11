@@ -14,13 +14,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				true);
 
 		FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream);
 
 		await That(archive.Mode).IsEqualTo(ZipArchiveMode.Read);
 		await That(archive.Entries).HasCount().EqualTo(1);
@@ -32,7 +32,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				true);
 
@@ -40,7 +40,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 
 		void Act()
 		{
-			_ = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+			_ = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Update);
 		}
 		
 		await That(Act).Throws<ArgumentException>()
@@ -53,14 +53,14 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				true);
 
 		FileSystemStream stream =
 			FileSystem.File.Open("destination.zip", FileMode.Open, FileAccess.ReadWrite);
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Update);
 
 		await That(archive.Mode).IsEqualTo(ZipArchiveMode.Update);
 		await That(archive.Entries).HasCount().EqualTo(1);
@@ -74,14 +74,14 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				true);
 
 		FileSystemStream stream =
 			FileSystem.File.Open("destination.zip", FileMode.Open, FileAccess.ReadWrite);
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update, leaveOpen);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Update, leaveOpen);
 
 		archive.Dispose();
 		void Act() => stream.ReadByte();
@@ -100,12 +100,12 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystemStream stream = FileSystem.File.Create("destination.zip");
 
 		IZipArchive writeArchive =
-			FileSystem.ZipArchive().New(stream, ZipArchiveMode.Create, false, encoding);
+			FileSystem.ZipArchive.New(stream, ZipArchiveMode.Create, false, encoding);
 		writeArchive.CreateEntry(entryName);
 		writeArchive.Dispose();
 
 		using IZipArchive readArchive =
-			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 		var singleEntry = await That(readArchive.Entries).HasSingle();
 		if (encodedCorrectly)

@@ -21,11 +21,11 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 			.WithSubdirectory("foo").Initialized(s => s
 				.WithSubdirectory("bar"));
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
 
 		using IZipArchive archive =
-			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("bar/"));
@@ -39,11 +39,11 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
 
 		using IZipArchive archive =
-			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 		await That(archive.Entries).IsEmpty();
 	}
@@ -57,11 +57,11 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", compressionLevel, true);
 
 		using IZipArchive archive =
-			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/"));
@@ -76,12 +76,12 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 			.WithSubdirectory("foo").Initialized(s => s
 				.WithFile(entryName));
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false, encoding);
 
 		using IZipArchive archive =
-			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 		IZipArchiveEntry singleEntry = await That(archive.Entries).HasSingle();
 		if (encodedCorrectly)
@@ -103,11 +103,11 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 			.WithSubdirectory("foo").Initialized(s => s
 				.WithFile("test.txt"));
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", compressionLevel, true);
 
 		using IZipArchive archive =
-			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/test.txt"));
@@ -127,10 +127,10 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine("foo", "test.txt"),
 			contents);
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip",
+		FileSystem.ZipFile.CreateFromDirectory("foo", "destination.zip",
 			CompressionLevel.Optimal, false, encoding);
 
-		IZipArchive archive = FileSystem.ZipFile()
+		IZipArchive archive = FileSystem.ZipFile
 			.Open("destination.zip", ZipArchiveMode.Read, encoding);
 
 		await That(archive.Entries).HasSingle()
@@ -147,9 +147,9 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 				.WithSubdirectory("bar").Initialized(t => t
 					.WithFile("test.txt")));
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
+		FileSystem.ZipFile.CreateFromDirectory("foo", "destination.zip");
 
-		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "destination");
+		FileSystem.ZipFile.ExtractToDirectory("destination.zip", "destination");
 
 		await That(FileSystem).HasFile("destination/bar/test.txt")
 			.WithContent().SameAs("foo/bar/test.txt");
@@ -169,7 +169,7 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+			FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 		}
 
 		await That(Act).Throws<ArgumentException>()
@@ -191,10 +191,10 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 				.WithSubdirectory("bar"));
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", stream, compressionLevel, false);
 
-		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		using IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("bar/"));
@@ -212,10 +212,10 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 			.WithSubdirectory("foo");
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", stream, compressionLevel, false);
 
-		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		using IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries).IsEmpty();
 	}
@@ -232,10 +232,10 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 			.WithSubdirectory("foo");
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", stream, compressionLevel, true);
 
-		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		using IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/"));
@@ -253,11 +253,11 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 				.WithFile(entryName));
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", stream, CompressionLevel.NoCompression,
 				false, encoding);
 
-		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		using IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		IZipArchiveEntry singleEntry = await That(archive.Entries).HasSingle();
 		if (encodedCorrectly)
@@ -283,10 +283,10 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 				.WithFile("test.txt"));
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", stream, compressionLevel, true);
 
-		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		using IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/test.txt"));
@@ -302,7 +302,7 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 
 		void Act()
 		{
-			FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+			FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 		}
 
 		await That(Act).Throws<ArgumentException>()
@@ -321,7 +321,7 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 
 		void Act()
 		{
-			FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+			FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
@@ -344,11 +344,11 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 			contents);
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream,
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream,
 			CompressionLevel.Optimal, false, encoding);
 
 		IZipArchive archive =
-			FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read, true, encoding);
+			FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read, true, encoding);
 
 		await That(archive.Entries).HasSingle()
 			.Which.For(x => x.FullName, f => f.IsEqualTo("test.txt"));
@@ -366,9 +366,9 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 					.WithFile("test.txt")));
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 
-		FileSystem.ZipFile().ExtractToDirectory(stream, "destination");
+		FileSystem.ZipFile.ExtractToDirectory(stream, "destination");
 
 		await That(FileSystem).HasFile("destination/bar/test.txt")
 			.WithContent().SameAs("foo/bar/test.txt");
@@ -385,7 +385,7 @@ public class CreateFromDirectoryTests(FileSystemTestData testData) : FileSystemT
 			"Some content");
 		void Act() => FileSystem.Directory.Delete(directory, true);
 
-		FileSystem.ZipFile().CreateFromDirectory(directory, archive);
+		FileSystem.ZipFile.CreateFromDirectory(directory, archive);
 
 		await That(Act).DoesNotThrow();
 	}
