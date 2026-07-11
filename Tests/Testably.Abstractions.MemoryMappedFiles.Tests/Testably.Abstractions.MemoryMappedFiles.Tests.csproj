@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Source\Testably.Abstractions.MemoryMappedFiles\Testably.Abstractions.MemoryMappedFiles.csproj" />
+		<ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
+		<ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
+		<ProjectReference Include="..\Helpers\Testably.Abstractions.TestHelpers\Testably.Abstractions.TestHelpers.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Implicitely added from Testably.Abstractions.MemoryMappedFiles -->
+		<PackageReference Remove="Nullable" />
+	</ItemGroup>
+
+</Project>

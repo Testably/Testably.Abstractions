@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -16,6 +17,9 @@ public class Parity
 		{
 			{
 				nameof(FileStream), nameof(FileSystemStream)
+			},
+			{
+				nameof(MemoryMappedViewStream), nameof(MemoryMappedFileSystemViewStream)
 			},
 		});
 
@@ -97,6 +101,25 @@ public class Parity
 	]);
 
 	public ParityCheck Guid { get; } = new();
+
+	public ParityCheck MemoryMappedFile { get; } = new(excludeMethods:
+		[
+			..typeof(MemoryMappedFile).GetMethods().Where(m =>
+				string.Equals(m.ReturnType.Name, "MemoryMappedFileSecurity",
+					StringComparison.Ordinal) ||
+				m.GetParameters().Any(p => p.ParameterType.Name is "MemoryMappedFileSecurity"
+					or "SafeMemoryMappedFileHandle" or "SafeFileHandle")),
+		], excludeProperties:
+		[
+			typeof(MemoryMappedFile).GetProperty(nameof(System.IO.MemoryMappedFiles
+				.MemoryMappedFile.SafeMemoryMappedFileHandle)),
+		]);
+
+	public ParityCheck MemoryMappedViewAccessor { get; } = new(excludeProperties:
+	[
+		typeof(MemoryMappedViewAccessor).GetProperty(nameof(System.IO.MemoryMappedFiles
+			.MemoryMappedViewAccessor.SafeMemoryMappedViewHandle)),
+	]);
 
 	public ParityCheck Path { get; } = new(excludeFields: new[]
 	{

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.IO.MemoryMappedFiles;
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.RandomSystem;
@@ -123,6 +124,30 @@ public abstract class ParityTests(
 		List<string> parityErrors = Parity.Guid
 			.GetErrorsToStaticType<IGuid>(
 				typeof(Guid));
+
+		await That(parityErrors).IsEmpty();
+	}
+
+	[Test]
+	public async Task
+		IMemoryMappedFileAndIMemoryMappedFileFactory_EnsureParityWith_MemoryMappedFile()
+	{
+		List<string> parityErrors = Parity.MemoryMappedFile
+			.GetErrorsToStaticType<IMemoryMappedFileFactory>(
+				typeof(MemoryMappedFile));
+		parityErrors.AddRange(Parity.MemoryMappedFile
+			.GetErrorsToInstanceType<IMemoryMappedFile>(
+				typeof(MemoryMappedFile)));
+
+		await That(parityErrors).IsEmpty();
+	}
+
+	[Test]
+	public async Task IMemoryMappedViewAccessor_EnsureParityWith_MemoryMappedViewAccessor()
+	{
+		List<string> parityErrors = Parity.MemoryMappedViewAccessor
+			.GetErrorsToInstanceType<IMemoryMappedViewAccessor>(
+				typeof(MemoryMappedViewAccessor));
 
 		await That(parityErrors).IsEmpty();
 	}
