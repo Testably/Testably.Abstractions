@@ -4,11 +4,12 @@ title: Companion libraries
 
 # Companion libraries
 
-`Testably.Abstractions` ships two optional NuGet packages that extend `IFileSystem` with capabilities the BCL keeps in separate namespaces.
+`Testably.Abstractions` ships three optional NuGet packages that extend `IFileSystem` with capabilities the BCL keeps in separate namespaces.
 
 | Package                                  | Adds to `IFileSystem`                                              |
 |------------------------------------------|--------------------------------------------------------------------|
 | `Testably.Abstractions.Compression`      | `ZipFile` and `ZipArchive` extension properties                    |
 | `Testably.Abstractions.AccessControl`    | `GetAccessControl` / `SetAccessControl` on files and directories   |
+| `Testably.Abstractions.MemoryMappedFiles`| `MemoryMappedFile` extension property                              |
 
-Both packages target the `IFileSystem` interface, so they work transparently against either `RealFileSystem` or `MockFileSystem`.
+All packages target the `IFileSystem` interface, so they work transparently against either `RealFileSystem` or `MockFileSystem`.

@@ -1,0 +1,107 @@
+---
+sidebar_position: 3
+title: Memory-mapped files
+---
+
+# Testably.Abstractions.MemoryMappedFiles
+
+[![NuGet](https://img.shields.io/nuget/v/Testably.Abstractions.MemoryMappedFiles?label=NuGet&logo=nuget)](https://www.nuget.org/packages/Testably.Abstractions.MemoryMappedFiles)
+
+Wraps `System.IO.MemoryMappedFiles.MemoryMappedFile` as a `MemoryMappedFile` extension property on `IFileSystem`, so memory-mapped-file code can be tested against the in-memory `MockFileSystem`.
+
+```powershell
+dotnet add package Testably.Abstractions.MemoryMappedFiles
+```
+
+## Why this package exists
+
+`System.IO.MemoryMappedFiles.MemoryMappedFile.CreateFromFile` needs a real path (or a real `FileStream`) on disk - it cannot map a file that only exists inside a `MockFileSystem`. Without the companion package, any production code that touches `MemoryMappedFile` is effectively untestable against the mock: your test either falls back to writing real temp files or the memory-mapped path stays uncovered.
+
+```csharp
+IFileSystem fileSystem = //...
+
+using IMemoryMappedFile mappedFile = fileSystem.MemoryMappedFile
+    .CreateFromFile("data.bin");
+
+using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+accessor.Write(0, 42);
+int value = accessor.ReadInt32(0);
+```
+
+The same code runs unchanged against `RealFileSystem` and `MockFileSystem`.
+
+### Production uses the real BCL implementation
+
+The abstraction isn't just a uniform façade. When `IFileSystem` is a `RealFileSystem`, every call forwards to the underlying base class library (BCL) `MemoryMappedFile`, so production keeps the native memory-mapping semantics unchanged. Only when `IFileSystem` is a `MockFileSystem` are the views built directly over the in-memory file bytes:
+
+```csharp
+// Inside MemoryMappedFileFactory.CreateFromFile:
+if (extensibility.TryGetWrappedInstance(out FileStream? realStream))
+{
+    // real → BCL MemoryMappedFile over the real FileStream
+    return new MemoryMappedFileWrapper(FileSystem,
+        MemoryMappedFile.CreateFromFile(realStream, ...), backingStream);
+}
+
+// mock → view over the in-memory file bytes
+return new MemoryMappedFileMock(FileSystem, stream, capacity, access, ownsStream);
+```
+
+## Creating a memory-mapped file
+
+`fileSystem.MemoryMappedFile` exposes the `CreateFromFile` overloads of `System.IO.MemoryMappedFiles.MemoryMappedFile`:
+
+```csharp
+using IMemoryMappedFile fromPath = fileSystem.MemoryMappedFile
+    .CreateFromFile("data.bin", FileMode.Open, mapName: null, capacity: 0,
+        MemoryMappedFileAccess.ReadWrite);
+```
+
+The `FileStream`-based overload is exposed with a `FileSystemStream` instead of a `FileStream`, so it works against both the real and the mocked file system:
+
+```csharp
+using FileSystemStream stream =
+    fileSystem.FileStream.New("data.bin", FileMode.Open, FileAccess.ReadWrite);
+using IMemoryMappedFile mappedFile = fileSystem.MemoryMappedFile.CreateFromFile(
+    stream, mapName: null, capacity: 0, MemoryMappedFileAccess.ReadWrite,
+    HandleInheritability.None, leaveOpen: true);
+```
+
+## Views
+
+An `IMemoryMappedFile` creates two kinds of views over its bytes, mirroring the BCL:
+
+```csharp
+// Random-access, typed reads and writes:
+using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 100);
+accessor.Write(0, 1234567);
+int roundtrip = accessor.ReadInt32(0);
+
+// A Stream over a window of the mapped bytes:
+using MemoryMappedFileSystemViewStream stream = mappedFile.CreateViewStream(0, 50);
+stream.Write([1, 2, 3, 4], 0, 4);
+```
+
+`IMemoryMappedViewAccessor` mirrors `MemoryMappedViewAccessor`: the primitive `Read*`/`Write` overloads, the generic `Read<T>`/`Write<T>` for structs, `ReadArray<T>`/`WriteArray<T>`, plus `Capacity`, `CanRead`, `CanWrite`, `PointerOffset` and `Flush`.
+
+`MemoryMappedFileSystemViewStream` derives from `UnmanagedMemoryStream` - the same base class as the real `MemoryMappedViewStream` - so it inherits members like `Capacity` directly and only adds the `PointerOffset` member specific to `MemoryMappedViewStream`.
+
+## Not supported on the mock
+
+Some parts of the BCL surface operate on operating-system shared memory rather than a file, so they have no meaningful in-memory equivalent. They forward normally on `RealFileSystem`, but throw `NotSupportedException` on `MockFileSystem`:
+
+- `CreateNew`
+- `CreateOrOpen` *(Windows-only)*
+- `OpenExisting` *(Windows-only)*
+
+The `SafeMemoryMappedFileHandle` / `SafeMemoryMappedViewHandle` handle and pointer APIs, as well as the `SafeFileHandle`-based `CreateFromFile` overload, are not exposed at all - mirroring how the `SafeFileHandle`-based `FileStream` construction is excluded elsewhere.
+
+## Behaviour on the mock
+
+On `MockFileSystem` the reads and writes, the capacity handling and the thrown exceptions mirror the real `MemoryMappedViewAccessor` / `MemoryMappedViewStream`, including:
+
+- **Default view access is `ReadWrite`** - creating a writable view over a read-only mapping throws `UnauthorizedAccessException`, exactly as the BCL does.
+- **The file and its views have independent lifetimes** - a view stays usable after the `IMemoryMappedFile` is disposed.
+- **`CopyOnWrite` views are private** - writes are neither persisted to the underlying file nor visible to other views.
+
+Two details tied to operating-system memory mapping are intentionally simplified: a view created without an explicit size has a `Capacity` of exactly the remaining bytes (the real file system rounds up to the system page size), and `PointerOffset` is always `0`.
