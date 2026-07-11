@@ -5,8 +5,11 @@ namespace Testably.Abstractions
 {
     public static class FileSystemExtensions
     {
-        public static Testably.Abstractions.IZipArchiveFactory ZipArchive(this System.IO.Abstractions.IFileSystem fileSystem) { }
-        public static Testably.Abstractions.IZipFile ZipFile(this System.IO.Abstractions.IFileSystem fileSystem) { }
+        extension(System.IO.Abstractions.IFileSystem fileSystem)
+        {
+            public Testably.Abstractions.IZipArchiveFactory ZipArchive { get; }
+            public Testably.Abstractions.IZipFile ZipFile { get; }
+        }
     }
     public interface IZipArchive : System.IAsyncDisposable, System.IDisposable, System.IO.Abstractions.IFileSystemEntity
     {
