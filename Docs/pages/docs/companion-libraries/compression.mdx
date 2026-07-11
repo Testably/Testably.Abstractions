@@ -19,7 +19,7 @@ dotnet add package Testably.Abstractions.Compression
 
 ```csharp
 // With Testably.Abstractions.Compression - one line:
-fileSystem.ZipFile().CreateFromDirectory("source", "out.zip");
+fileSystem.ZipFile.CreateFromDirectory("source", "out.zip");
 ```
 
 <details>
@@ -73,16 +73,16 @@ That means production code keeps every native optimisation the BCL ships - kerne
 
 ## ZipFile
 
-`fileSystem.ZipFile()` exposes the static methods of `System.IO.Compression.ZipFile`:
+`fileSystem.ZipFile` exposes the static methods of `System.IO.Compression.ZipFile`:
 
 ```csharp
-fileSystem.ZipFile()
+fileSystem.ZipFile
     .CreateFromDirectory("your-directory", "your-file.zip");
 
-fileSystem.ZipFile()
+fileSystem.ZipFile
     .ExtractToDirectory("your-file.zip", "your-destination");
 
-using IZipArchive archive = fileSystem.ZipFile()
+using IZipArchive archive = fileSystem.ZipFile
     .Open("your-file.zip", ZipArchiveMode.Update);
 ```
 
@@ -90,11 +90,11 @@ All overloads from the BCL are present, including the async variants on .NET 10+
 
 ## ZipArchive
 
-`fileSystem.ZipArchive()` is a factory for `IZipArchive` from a `Stream` (matches the `new ZipArchive(...)` constructors):
+`fileSystem.ZipArchive` is a factory for `IZipArchive` from a `Stream` (matches the `new ZipArchive(...)` constructors):
 
 ```csharp
 using FileSystemStream stream = fileSystem.File.OpenRead("your-file.zip");
-using IZipArchive archive = fileSystem.ZipArchive()
+using IZipArchive archive = fileSystem.ZipArchive
     .New(stream, ZipArchiveMode.Read);
 
 foreach (IZipArchiveEntry entry in archive.Entries)
