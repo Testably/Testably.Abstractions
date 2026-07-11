@@ -57,7 +57,8 @@ public static class TimeProviderFactory
 	/// </summary>
 	/// <remarks>
 	///     If the <paramref name="time" /> has Kind DateTimeKind.Unspecified it will be treated as if it had Kind
-	///     DateTimeKind.Utc.<br />
+	///     DateTimeKind.Utc. If it has Kind DateTimeKind.Local it is interpreted against the local time zone (here
+	///     <see cref="TimeZoneInfo.Local" />), not the host machine's zone, so that "now" stays machine-independent.<br />
 	///     The local time zone is set to <see cref="TimeZoneInfo.Local" />.
 	/// </remarks>
 	public static ITimeProviderFactory Use(DateTime time)
@@ -69,7 +70,8 @@ public static class TimeProviderFactory
 	/// </summary>
 	/// <remarks>
 	///     If the <paramref name="time" /> has Kind DateTimeKind.Unspecified it will be treated as if it had Kind
-	///     DateTimeKind.Utc.
+	///     DateTimeKind.Utc. If it has Kind DateTimeKind.Local it is interpreted against the given
+	///     <paramref name="localTimeZone" />, not the host machine's zone, so that "now" stays machine-independent.
 	/// </remarks>
 	public static ITimeProviderFactory Use(DateTime time, TimeZoneInfo localTimeZone)
 	{
