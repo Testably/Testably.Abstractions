@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 #if NETSTANDARD2_0
 using Testably.Abstractions.TimeSystem;
 #endif
@@ -11,13 +14,16 @@ internal sealed class TimeProviderMock : ITimeProvider
 	private long _elapsedTicks;
 	private readonly Action<DateTime> _onTimeChanged;
 	private readonly string _description;
+	private readonly Dictionary<string, TimeZoneInfo> _timeZones;
+	private TimeZoneInfo _localTimeZone;
 #if NET9_0_OR_GREATER
 	private readonly System.Threading.Lock _lock = new();
 #else
 	private readonly object _lock = new();
 #endif
 
-	public TimeProviderMock(Action<DateTime> onTimeChanged, DateTime now, string description)
+	public TimeProviderMock(Action<DateTime> onTimeChanged, DateTime now, string description,
+		TimeZoneInfo localTimeZone)
 	{
 		_now = now.Kind == DateTimeKind.Unspecified
 			? DateTime.SpecifyKind(now, DateTimeKind.Utc)
@@ -26,9 +32,31 @@ internal sealed class TimeProviderMock : ITimeProvider
 		StartTime = _now;
 		_onTimeChanged = onTimeChanged;
 		_description = description;
+		_timeZones = TimeZoneInfo.GetSystemTimeZones()
+			.GroupBy(timeZone => timeZone.Id, StringComparer.Ordinal)
+			.ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
+		_localTimeZone = localTimeZone;
+		_timeZones[localTimeZone.Id] = localTimeZone;
 	}
 
 	#region ITimeProvider Members
+
+	/// <inheritdoc cref="ITimeProvider.LocalTimeZone" />
+	public TimeZoneInfo LocalTimeZone
+	{
+		get
+		{
+			lock (_lock) { return _localTimeZone; }
+		}
+		set
+		{
+			lock (_lock)
+			{
+				_localTimeZone = value;
+				_timeZones[value.Id] = value;
+			}
+		}
+	}
 
 	/// <inheritdoc cref="ITimeProvider.MaxValue" />
 	public DateTime MaxValue { get; set; } = DateTime.MaxValue;
@@ -68,12 +96,48 @@ internal sealed class TimeProviderMock : ITimeProvider
 		}
 	}
 
+	/// <inheritdoc cref="ITimeProvider.FindSystemTimeZoneById(string)" />
+	public TimeZoneInfo FindSystemTimeZoneById(string id)
+	{
+		lock (_lock)
+		{
+			if (_timeZones.TryGetValue(id, out TimeZoneInfo? timeZone))
+			{
+				return timeZone;
+			}
+		}
+
+		throw new TimeZoneNotFoundException(
+			$"The time zone ID '{id}' was not found on the local computer.");
+	}
+
+	/// <inheritdoc cref="ITimeProvider.GetSystemTimeZones()" />
+	public ReadOnlyCollection<TimeZoneInfo> GetSystemTimeZones()
+	{
+		lock (_lock)
+		{
+			return new ReadOnlyCollection<TimeZoneInfo>(_timeZones.Values
+				.OrderBy(timeZone => timeZone.BaseUtcOffset)
+				.ThenBy(timeZone => timeZone.Id, StringComparer.Ordinal)
+				.ToList());
+		}
+	}
+
 	/// <inheritdoc cref="ITimeProvider.Read()" />
 	public DateTime Read()
 	{
 		lock (_lock)
 		{
 			return _now;
+		}
+	}
+
+	/// <inheritdoc cref="ITimeProvider.RegisterTimeZone(TimeZoneInfo)" />
+	public void RegisterTimeZone(TimeZoneInfo timeZone)
+	{
+		lock (_lock)
+		{
+			_timeZones[timeZone.Id] = timeZone;
 		}
 	}
 

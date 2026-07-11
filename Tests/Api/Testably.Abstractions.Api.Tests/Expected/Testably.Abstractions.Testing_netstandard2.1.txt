@@ -107,11 +107,13 @@ namespace Testably.Abstractions.Testing
         public MockTimeSystem(System.DateTime time, System.Func<Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions, Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions> options) { }
         public MockTimeSystem(Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory timeProvider, System.Func<Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions, Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions> options) { }
         public Testably.Abstractions.TimeSystem.IDateTime DateTime { get; }
+        public Testably.Abstractions.TimeSystem.IDateTimeOffset DateTimeOffset { get; }
         public Testably.Abstractions.Testing.TimeSystem.INotificationHandler On { get; }
         public Testably.Abstractions.TimeSystem.IStopwatchFactory Stopwatch { get; }
         public Testably.Abstractions.TimeSystem.ITask Task { get; }
         public Testably.Abstractions.TimeSystem.IThread Thread { get; }
         public Testably.Abstractions.Testing.TimeSystem.ITimeProvider TimeProvider { get; }
+        public Testably.Abstractions.TimeSystem.ITimeZoneInfo TimeZoneInfo { get; }
         public Testably.Abstractions.TimeSystem.ITimerFactory Timer { get; }
         public Testably.Abstractions.Testing.TimeSystem.ITimerHandler TimerHandler { get; }
         public override string ToString() { }
@@ -183,6 +185,7 @@ namespace Testably.Abstractions.Testing
         public static Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory Now() { }
         public static Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory Random() { }
         public static Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory Use(System.DateTime time) { }
+        public static Testably.Abstractions.Testing.TimeSystem.ITimeProviderFactory Use(System.DateTime time, System.TimeZoneInfo localTimeZone) { }
     }
 }
 namespace Testably.Abstractions.Testing.FileSystem
@@ -443,12 +446,16 @@ namespace Testably.Abstractions.Testing.TimeSystem
     public interface ITimeProvider
     {
         long ElapsedTicks { get; }
+        System.TimeZoneInfo LocalTimeZone { get; set; }
         System.DateTime MaxValue { get; set; }
         System.DateTime MinValue { get; set; }
         System.DateTime StartTime { get; }
         System.DateTime UnixEpoch { get; set; }
         void AdvanceBy(System.TimeSpan interval);
+        System.TimeZoneInfo FindSystemTimeZoneById(string id);
+        System.Collections.ObjectModel.ReadOnlyCollection<System.TimeZoneInfo> GetSystemTimeZones();
         System.DateTime Read();
+        void RegisterTimeZone(System.TimeZoneInfo timeZone);
         void SetTo(System.DateTime value);
     }
     public interface ITimeProviderFactory

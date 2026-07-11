@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.TimeSystem;
@@ -30,6 +31,16 @@ public interface ITimeProvider
 	long ElapsedTicks { get; }
 
 	/// <summary>
+	///     Gets or sets the local time zone used when converting the currently simulated system time to local time
+	///     (e.g. for <see cref="IDateTime.Now" /> or <see cref="IDateTimeOffset.Now" />).
+	/// </summary>
+	/// <remarks>
+	///     Setting the local time zone also registers it (see <see cref="RegisterTimeZone(TimeZoneInfo)" />), so that it can
+	///     be resolved via <see cref="ITimeZoneInfo.FindSystemTimeZoneById(string)" />.
+	/// </remarks>
+	TimeZoneInfo LocalTimeZone { get; set; }
+
+	/// <summary>
 	///     Gets or sets the <see cref="IDateTime.MaxValue" />
 	/// </summary>
 	DateTime MaxValue { get; set; }
@@ -59,9 +70,35 @@ public interface ITimeProvider
 	void AdvanceBy(TimeSpan interval);
 
 	/// <summary>
+	///     Returns the registered time zone with the given <paramref name="id" />.
+	/// </summary>
+	/// <exception cref="TimeZoneNotFoundException">
+	///     No time zone is registered under the given <paramref name="id" />.
+	/// </exception>
+	TimeZoneInfo FindSystemTimeZoneById(string id);
+
+	/// <summary>
+	///     Returns all registered time zones.
+	/// </summary>
+	/// <remarks>
+	///     The registry is initially seeded from the host's <see cref="TimeZoneInfo.GetSystemTimeZones()" /> and can be
+	///     extended via <see cref="RegisterTimeZone(TimeZoneInfo)" />.
+	/// </remarks>
+	ReadOnlyCollection<TimeZoneInfo> GetSystemTimeZones();
+
+	/// <summary>
 	///     Reads the currently simulated system time.
 	/// </summary>
 	DateTime Read();
+
+	/// <summary>
+	///     Registers the <paramref name="timeZone" /> so that it can be resolved via
+	///     <see cref="FindSystemTimeZoneById(string)" /> and is included in <see cref="GetSystemTimeZones()" />.
+	/// </summary>
+	/// <remarks>
+	///     An already registered time zone with the same <see cref="TimeZoneInfo.Id" /> is replaced.
+	/// </remarks>
+	void RegisterTimeZone(TimeZoneInfo timeZone);
 
 	/// <summary>
 	///     Sets the currently simulated system time to the specified <paramref name="value" />.

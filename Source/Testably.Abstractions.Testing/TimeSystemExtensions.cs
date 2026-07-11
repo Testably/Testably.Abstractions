@@ -37,15 +37,7 @@ public static class TimeSystemExtensions
 	{
 		/// <inheritdoc cref="System.TimeProvider.LocalTimeZone" />
 		public override TimeZoneInfo LocalTimeZone
-		{
-			get
-			{
-				#pragma warning disable MA0026
-				// TODO: https://github.com/Testably/Testably.Abstractions/issues/1039
-				#pragma warning restore MA0026
-				return base.LocalTimeZone;
-			}
-		}
+			=> timeSystem.TimeZoneInfo.Local;
 
 		/// <inheritdoc cref="System.TimeProvider.TimestampFrequency" />
 		public override long TimestampFrequency

@@ -7,6 +7,39 @@ namespace Testably.Abstractions.Testing.Tests;
 public class TimeProviderFactoryTests
 {
 	[Test]
+	public async Task Now_ShouldUseLocalTimeZone()
+	{
+		ITimeProvider timeProvider = TimeProviderFactory.Now().Create(_ => { });
+
+		await That(timeProvider.LocalTimeZone).IsEqualTo(TimeZoneInfo.Local);
+	}
+
+	[Test]
+	public async Task Random_ShouldUseOneOfTheSampleTimeZones()
+	{
+		string[] sampleTimeZoneIds =
+		[
+			"UTC", "Sample/Plus0530", "Sample/Minus0800", "Sample/DaylightSaving",
+		];
+
+		ITimeProvider timeProvider = TimeProviderFactory.Random().Create(_ => { });
+
+		await That(sampleTimeZoneIds).Contains(timeProvider.LocalTimeZone.Id);
+	}
+
+	[Test]
+	public async Task Use_WithTimeZone_ShouldUseGivenTimeZone()
+	{
+		TimeZoneInfo timeZone = TimeZoneInfo.CreateCustomTimeZone(
+			"Custom/Plus07", TimeSpan.FromHours(7), "Custom +07", "Custom +07");
+
+		ITimeProvider timeProvider =
+			TimeProviderFactory.Use(DateTime.UtcNow, timeZone).Create(_ => { });
+
+		await That(timeProvider.LocalTimeZone).IsEqualTo(timeZone);
+	}
+
+	[Test]
 	public async Task Now_ShouldReturnCurrentDateTime()
 	{
 		DateTime begin = DateTime.UtcNow;
