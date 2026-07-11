@@ -29,6 +29,7 @@ public sealed class MockTimeSystem : ITimeSystem
 
 	private readonly NotificationHandler _callbackHandler;
 	private readonly DateTimeMock _dateTimeMock;
+	private readonly DateTimeOffsetMock _dateTimeOffsetMock;
 	private readonly TimeZoneInfoMock _timeZoneInfoMock;
 	private readonly StopwatchFactoryMock _stopwatchFactoryMock;
 	private readonly TaskMock _taskMock;
@@ -93,6 +94,7 @@ public sealed class MockTimeSystem : ITimeSystem
 		_callbackHandler = new NotificationHandler(this);
 		TimeProvider = timeProvider.Create(_callbackHandler.InvokeTimeChanged);
 		_dateTimeMock = new DateTimeMock(this, _callbackHandler);
+		_dateTimeOffsetMock = new DateTimeOffsetMock(this, _callbackHandler);
 		_timeZoneInfoMock = new TimeZoneInfoMock(this);
 		_stopwatchFactoryMock = new StopwatchFactoryMock(this);
 		_threadMock = new ThreadMock(this, _callbackHandler, initialization.AutoAdvance);
@@ -110,11 +112,8 @@ public sealed class MockTimeSystem : ITimeSystem
 		=> _dateTimeMock;
 
 	/// <inheritdoc cref="ITimeSystem.DateTimeOffset" />
-	/// <remarks>
-	///     The mock implementation for <see cref="System.DateTimeOffset" /> is added in a follow-up change.
-	/// </remarks>
 	public IDateTimeOffset DateTimeOffset
-		=> null!;
+		=> _dateTimeOffsetMock;
 
 #if FEATURE_PERIODIC_TIMER
 	/// <inheritdoc cref="ITimeSystem.PeriodicTimer" />

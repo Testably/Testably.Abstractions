@@ -22,7 +22,7 @@ new MockTimeSystem(TimeProviderFactory.Now());
 
 ## Local time zone
 
-`MockTimeSystem` exposes a controllable local time zone through `timeSystem.TimeZoneInfo` (an `ITimeZoneInfo`), and uses it to convert the simulated instant for `DateTime.Now` and `DateTime.Today`. This makes time-zone-dependent code deterministic instead of depending on the machine the test runs on.
+`MockTimeSystem` exposes a controllable local time zone through `timeSystem.TimeZoneInfo` (an `ITimeZoneInfo`), and uses it to convert the simulated instant for `DateTime.Now`, `DateTime.Today` and `DateTimeOffset.Now`. This makes time-zone-dependent code deterministic instead of depending on the machine the test runs on.
 
 The factory picks the initial local time zone:
 
@@ -51,8 +51,9 @@ TimeZoneInfo tokyo = TimeZoneInfo.CreateCustomTimeZone(
     "Test/Tokyo", TimeSpan.FromHours(9), "Test JST", "Test JST");
 timeSystem.TimeProvider.LocalTimeZone = tokyo;
 
-DateTime now = timeSystem.DateTime.Now;             // 2026-01-15 09:00 (JST)
-TimeZoneInfo local = timeSystem.TimeZoneInfo.Local; // Test/Tokyo
+DateTime now = timeSystem.DateTime.Now;                   // 2026-01-15 09:00 (JST)
+DateTimeOffset offsetNow = timeSystem.DateTimeOffset.Now; // offset +09:00
+TimeZoneInfo local = timeSystem.TimeZoneInfo.Local;       // Test/Tokyo
 
 // RegisterTimeZone adds zones resolvable via FindSystemTimeZoneById / GetSystemTimeZones
 timeSystem.TimeProvider.RegisterTimeZone(tokyo);

@@ -88,6 +88,73 @@ public class NotificationHandlerTests
 		await That(receivedTime).IsEqualTo(expectedTime);
 	}
 
+	[Test]
+	public async Task OnDateTimeOffsetRead_DisposedCallback_ShouldNotBeCalled()
+	{
+		DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
+		MockTimeSystem timeSystem = new(expectedTime);
+		DateTimeOffset? receivedTime = null;
+		IDisposable disposable = timeSystem.On.DateTimeOffsetRead(d => receivedTime = d);
+
+		disposable.Dispose();
+		_ = timeSystem.DateTimeOffset.Now;
+
+		await That(receivedTime).IsNull();
+	}
+
+	[Test]
+	public async Task OnDateTimeOffsetRead_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
+	{
+		DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
+		MockTimeSystem timeSystem = new(expectedTime);
+		DateTimeOffset? receivedTime1 = null;
+		DateTimeOffset? receivedTime2 = null;
+
+		using (timeSystem.On.DateTimeOffsetRead(d => receivedTime1 = d))
+		{
+			timeSystem.On.DateTimeOffsetRead(d => receivedTime2 = d).Dispose();
+			_ = timeSystem.DateTimeOffset.Now;
+		}
+
+		await That(receivedTime1).IsEqualTo(new DateTimeOffset(expectedTime));
+		await That(receivedTime2).IsNull();
+	}
+
+	[Test]
+	public async Task OnDateTimeOffsetRead_MultipleCallbacks_ShouldAllBeCalled()
+	{
+		DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
+		MockTimeSystem timeSystem = new(expectedTime);
+		DateTimeOffset? receivedTime1 = null;
+		DateTimeOffset? receivedTime2 = null;
+
+		using (timeSystem.On.DateTimeOffsetRead(d => receivedTime1 = d))
+		{
+			using (timeSystem.On.DateTimeOffsetRead(d => receivedTime2 = d))
+			{
+				_ = timeSystem.DateTimeOffset.Now;
+			}
+		}
+
+		await That(receivedTime1).IsEqualTo(new DateTimeOffset(expectedTime));
+		await That(receivedTime2).IsEqualTo(new DateTimeOffset(expectedTime));
+	}
+
+	[Test]
+	public async Task OnDateTimeOffsetRead_UtcNow_ShouldExecuteCallbackWithCorrectParameter()
+	{
+		DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Utc);
+		MockTimeSystem timeSystem = new(expectedTime);
+		DateTimeOffset? receivedTime = null;
+
+		using (timeSystem.On.DateTimeOffsetRead(d => receivedTime = d))
+		{
+			_ = timeSystem.DateTimeOffset.UtcNow;
+		}
+
+		await That(receivedTime).IsEqualTo(new DateTimeOffset(expectedTime, TimeSpan.Zero));
+	}
+
 #if FEATURE_PERIODIC_TIMER
 	[Test]
 	public async Task OnPeriodicTimerWaitingForNextTick_DisposedCallback_ShouldNotBeCalled()
