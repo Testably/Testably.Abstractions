@@ -146,7 +146,9 @@ internal sealed class TimeProviderMock : ITimeProvider
 	{
 		lock (_lock)
 		{
-			_now = value;
+			_now = value.Kind == DateTimeKind.Unspecified
+				? DateTime.SpecifyKind(value, DateTimeKind.Utc)
+				: value.ToUniversalTime();
 			_onTimeChanged.Invoke(_now);
 		}
 	}

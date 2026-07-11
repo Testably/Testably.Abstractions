@@ -1,8 +1,6 @@
-﻿using aweXpect.Chronology;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
+using aweXpect.Chronology;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
-using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests;
 
@@ -349,5 +347,34 @@ public class MockTimeSystemTests
 
 		await That(result).Contains("Random");
 		await That(result).Contains($"{timeSystem.DateTime.UtcNow}Z");
+	}
+
+	[Test]
+	[Arguments(DateTimeKind.Utc)]
+	[Arguments(DateTimeKind.Local)]
+	[Arguments(DateTimeKind.Unspecified)]
+	public async Task SetTo_ShouldNormalizeToUtc_ConsistentlyWithConstructor(DateTimeKind kind)
+	{
+		DateTime time = DateTime.SpecifyKind(new DateTime(2026, 1, 15, 10, 0, 0), kind);
+		MockTimeSystem fromConstructor = new(time);
+		MockTimeSystem fromSetTo = new(new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+
+		fromSetTo.TimeProvider.SetTo(time);
+
+		await That(fromSetTo.DateTime.UtcNow).IsEqualTo(fromConstructor.DateTime.UtcNow);
+		await That(fromSetTo.DateTime.UtcNow.Kind).IsEqualTo(DateTimeKind.Utc);
+		await That(fromSetTo.DateTime.Now).IsEqualTo(fromConstructor.DateTime.Now);
+	}
+
+	[Test]
+	public async Task SetTo_UnspecifiedKind_ShouldBeTreatedAsUtc()
+	{
+		DateTime unspecified = new(2026, 1, 15, 10, 0, 0, DateTimeKind.Unspecified);
+		MockTimeSystem timeSystem = new(new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+
+		timeSystem.TimeProvider.SetTo(unspecified);
+
+		await That(timeSystem.DateTime.UtcNow)
+			.IsEqualTo(new DateTime(2026, 1, 15, 10, 0, 0, DateTimeKind.Utc));
 	}
 }
