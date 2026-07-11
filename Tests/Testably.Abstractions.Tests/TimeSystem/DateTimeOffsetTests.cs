@@ -55,7 +55,9 @@ public class DateTimeOffsetTests(TimeSystemTestData testData) : TimeSystemTestBa
 	[Test]
 	public async Task UnixEpoch_ShouldReturnDefaultValue()
 	{
+		#pragma warning disable MA0114 // Use DateTimeOffset.UnixEpoch
 		DateTimeOffset expectedResult = new(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+		#pragma warning restore MA0114
 
 		DateTimeOffset result = TimeSystem.DateTimeOffset.UnixEpoch;
 
