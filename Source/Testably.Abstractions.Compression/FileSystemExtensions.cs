@@ -6,7 +6,7 @@
 /// </summary>
 public static class FileSystemExtensions
 {
-	#pragma warning disable S2325 // False positive: an extension property cannot be static
+	#pragma warning disable CA1822 // False positive: an extension property cannot be static
 	/// <inheritdoc cref="FileSystemExtensions" />
 	extension(IFileSystem fileSystem)
 	{
@@ -22,5 +22,5 @@ public static class FileSystemExtensions
 		public IZipFile ZipFile
 			=> new ZipFileWrapper(fileSystem);
 	}
-	#pragma warning restore S2325
+	#pragma warning restore CA1822
 }
