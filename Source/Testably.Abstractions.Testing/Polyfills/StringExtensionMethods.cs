@@ -41,7 +41,9 @@ internal static class StringExtensionMethods
 		string value,
 		StringComparison comparisonType)
 	{
+		#pragma warning disable MA0074
 		return @this.Contains(value);
+		#pragma warning restore MA0074
 	}
 
 	/// <summary>
