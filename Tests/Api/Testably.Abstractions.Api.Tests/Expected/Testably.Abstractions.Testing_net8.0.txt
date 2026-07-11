@@ -461,6 +461,7 @@ namespace Testably.Abstractions.Testing.TimeSystem
     public interface INotificationHandler
     {
         Testably.Abstractions.Testing.TimeSystem.IPeriodicTimerNotificationHandler PeriodicTimer { get; }
+        Testably.Abstractions.Testing.IAwaitableCallback<System.DateTimeOffset> DateTimeOffsetRead(System.Action<System.DateTimeOffset>? callback = null, System.Func<System.DateTimeOffset, bool>? predicate = null);
         Testably.Abstractions.Testing.IAwaitableCallback<System.DateTime> DateTimeRead(System.Action<System.DateTime>? callback = null, System.Func<System.DateTime, bool>? predicate = null);
         Testably.Abstractions.Testing.IAwaitableCallback<System.TimeSpan> TaskDelay(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
         Testably.Abstractions.Testing.IAwaitableCallback<System.TimeSpan> ThreadSleep(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);

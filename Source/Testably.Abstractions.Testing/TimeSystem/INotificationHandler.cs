@@ -35,6 +35,23 @@ public interface INotificationHandler
 		Func<DateTime, bool>? predicate = null);
 
 	/// <summary>
+	///     Callback executed when any of the following <c>DateTimeOffset</c> read methods is called:<br />
+	///     - <see cref="IDateTimeOffset.Now" /><br />
+	///     - <see cref="IDateTimeOffset.UtcNow" />
+	/// </summary>
+	/// <param name="callback">
+	///     (optional) The callback to execute after <c>DateTimeOffset</c> was read.
+	/// </param>
+	/// <param name="predicate">
+	///     (optional) A predicate used to filter which callbacks should be notified.<br />
+	///     If set to <see langword="null" /> (default value) all callbacks are notified.
+	/// </param>
+	/// <returns>A <see cref="IAwaitableCallback{DateTimeOffset}" /> to un-register the callback on dispose.</returns>
+	IAwaitableCallback<DateTimeOffset> DateTimeOffsetRead(
+		Action<DateTimeOffset>? callback = null,
+		Func<DateTimeOffset, bool>? predicate = null);
+
+	/// <summary>
 	///     Callback executed when any of the following <c>Task.Delay</c> overloads is called:<br />
 	///     - <see cref="ITask.Delay(TimeSpan)" /><br />
 	///     - <see cref="ITask.Delay(TimeSpan, CancellationToken)" /><br />
