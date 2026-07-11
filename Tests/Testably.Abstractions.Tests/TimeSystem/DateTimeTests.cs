@@ -1,3 +1,5 @@
+using aweXpect.Chronology;
+
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 [TimeSystemTests]
@@ -34,6 +36,18 @@ public class DateTimeTests(TimeSystemTestData testData) : TimeSystemTestBase(tes
 
 		await That(result.Kind).IsEqualTo(DateTimeKind.Local);
 		await That(result).IsBetween(BeforeTime.ToLocalTime()).And(after).Within(tolerance);
+	}
+
+	[Test]
+	public async Task NowAndUtcNow_ShouldRepresentTheSameInstant()
+	{
+		DateTime utcNowBefore = TimeSystem.DateTime.UtcNow;
+		DateTime now = TimeSystem.DateTime.Now;
+		DateTime utcNowAfter = TimeSystem.DateTime.UtcNow;
+
+		await That(now.Kind).IsEqualTo(DateTimeKind.Local);
+		await That(now.ToUniversalTime())
+			.IsBetween(utcNowBefore).And(utcNowAfter).Within(50.Milliseconds());
 	}
 
 	[Test]

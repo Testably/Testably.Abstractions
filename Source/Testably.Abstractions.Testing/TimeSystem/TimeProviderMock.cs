@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Testably.Abstractions.Testing.Helpers;
 #if NETSTANDARD2_0
 using Testably.Abstractions.TimeSystem;
 #endif
@@ -11,13 +15,17 @@ internal sealed class TimeProviderMock : ITimeProvider
 	private long _elapsedTicks;
 	private readonly Action<DateTime> _onTimeChanged;
 	private readonly string _description;
+	private Dictionary<string, TimeZoneInfo>? _timeZones;
+	private bool _systemTimeZonesSeeded;
+	private TimeZoneInfo _localTimeZone;
 #if NET9_0_OR_GREATER
 	private readonly System.Threading.Lock _lock = new();
 #else
 	private readonly object _lock = new();
 #endif
 
-	public TimeProviderMock(Action<DateTime> onTimeChanged, DateTime now, string description)
+	public TimeProviderMock(Action<DateTime> onTimeChanged, DateTime now, string description,
+		TimeZoneInfo localTimeZone)
 	{
 		_now = now.Kind == DateTimeKind.Unspecified
 			? DateTime.SpecifyKind(now, DateTimeKind.Utc)
@@ -26,9 +34,31 @@ internal sealed class TimeProviderMock : ITimeProvider
 		StartTime = _now;
 		_onTimeChanged = onTimeChanged;
 		_description = description;
+		_localTimeZone = localTimeZone;
 	}
 
 	#region ITimeProvider Members
+
+	/// <inheritdoc cref="ITimeProvider.LocalTimeZone" />
+	public TimeZoneInfo LocalTimeZone
+	{
+		get
+		{
+			lock (_lock) { return _localTimeZone; }
+		}
+		set
+		{
+			lock (_lock)
+			{
+				_localTimeZone = value;
+
+				if (_timeZones is not null)
+				{
+					_timeZones[value.Id] = value;
+				}
+			}
+		}
+	}
 
 	/// <inheritdoc cref="ITimeProvider.MaxValue" />
 	public DateTime MaxValue { get; set; } = DateTime.MaxValue;
@@ -68,6 +98,32 @@ internal sealed class TimeProviderMock : ITimeProvider
 		}
 	}
 
+	/// <inheritdoc cref="ITimeProvider.FindSystemTimeZoneById(string)" />
+	public TimeZoneInfo FindSystemTimeZoneById(string id)
+	{
+		lock (_lock)
+		{
+			if (GetSeededTimeZones().TryGetValue(id, out TimeZoneInfo? timeZone))
+			{
+				return timeZone;
+			}
+		}
+
+		throw ExceptionFactory.TimeZoneNotFound(id);
+	}
+
+	/// <inheritdoc cref="ITimeProvider.GetSystemTimeZones()" />
+	public ReadOnlyCollection<TimeZoneInfo> GetSystemTimeZones()
+	{
+		lock (_lock)
+		{
+			return new ReadOnlyCollection<TimeZoneInfo>(GetSeededTimeZones().Values
+				.OrderBy(timeZone => timeZone.BaseUtcOffset)
+				.ThenBy(timeZone => timeZone.Id, StringComparer.Ordinal)
+				.ToList());
+		}
+	}
+
 	/// <inheritdoc cref="ITimeProvider.Read()" />
 	public DateTime Read()
 	{
@@ -77,17 +133,56 @@ internal sealed class TimeProviderMock : ITimeProvider
 		}
 	}
 
+	/// <inheritdoc cref="ITimeProvider.RegisterTimeZone(TimeZoneInfo)" />
+	public void RegisterTimeZone(TimeZoneInfo timeZone)
+	{
+		lock (_lock)
+		{
+			_timeZones ??= new Dictionary<string, TimeZoneInfo>(StringComparer.Ordinal);
+			_timeZones[timeZone.Id] = timeZone;
+		}
+	}
+
 	/// <inheritdoc cref="ITimeProvider.SetTo(DateTime)" />
 	public void SetTo(DateTime value)
 	{
 		lock (_lock)
 		{
-			_now = value;
+			_now = value.Kind == DateTimeKind.Unspecified
+				? DateTime.SpecifyKind(value, DateTimeKind.Utc)
+				: value.ToUniversalTime();
 			_onTimeChanged.Invoke(_now);
 		}
 	}
 
 	#endregion
+
+	/// <summary>
+	///     Returns the time zone registry, allocating and seeding it on first use.
+	/// </summary>
+	/// <remarks>
+	///     The registry is created lazily so that mocks which never query time zones pay no allocation. On first use it is
+	///     seeded from the host's <see cref="TimeZoneInfo.GetSystemTimeZones()" />, without overwriting the local or
+	///     explicitly registered time zones.<br />
+	///     Must be called while holding <see cref="_lock" />.
+	/// </remarks>
+	private Dictionary<string, TimeZoneInfo> GetSeededTimeZones()
+	{
+		_timeZones ??= new Dictionary<string, TimeZoneInfo>(StringComparer.Ordinal);
+		if (_systemTimeZonesSeeded)
+		{
+			return _timeZones;
+		}
+
+		_systemTimeZonesSeeded = true;
+		foreach (TimeZoneInfo timeZone in TimeZoneInfo.GetSystemTimeZones())
+		{
+			_timeZones.TryAdd(timeZone.Id, timeZone);
+		}
+
+		_timeZones[_localTimeZone.Id] = _localTimeZone;
+		return _timeZones;
+	}
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()

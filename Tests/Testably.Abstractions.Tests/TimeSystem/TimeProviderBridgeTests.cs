@@ -7,6 +7,14 @@ namespace Testably.Abstractions.Tests.TimeSystem;
 public class TimeProviderBridgeTests(TimeSystemTestData testData) : TimeSystemTestBase(testData)
 {
 	[Test]
+	public async Task ToTimeProvider_LocalTimeZone_ShouldMatchTimeSystem()
+	{
+		System.TimeProvider provider = TimeSystem.ToTimeProvider();
+
+		await That(provider.LocalTimeZone).IsEqualTo(TimeSystem.TimeZoneInfo.Local);
+	}
+
+	[Test]
 	public async Task ToTimeProvider_ThrowingCallback_ShouldKeepFiring()
 	{
 		System.TimeProvider provider = TimeSystem.ToTimeProvider();

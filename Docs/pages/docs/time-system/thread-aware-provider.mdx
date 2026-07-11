@@ -9,12 +9,12 @@ The default `ITimeProvider` stores the simulated time in a single `DateTime` fie
 
 The fix is a custom `ITimeProvider` that stores the clock per logical thread using `AsyncLocal<DateTime>`.
 
-## A complete reference implementation
+## A reference implementation
 
 ```csharp
 public sealed class ThreadAwareTimeProvider : ITimeProvider
 {
-    private static readonly AsyncLocal<DateTime>  Now              = new();
+    private static readonly AsyncLocal<DateTime> Now = new();
     private static readonly AsyncLocal<DateTime?> SynchronizedTime = new();
     private DateTime? _synchronizedTime;
 
@@ -22,10 +22,6 @@ public sealed class ThreadAwareTimeProvider : ITimeProvider
     {
         Now.Value = now ?? DateTime.Now;
     }
-
-    public DateTime MaxValue   { get; set; } = DateTime.MaxValue;
-    public DateTime MinValue   { get; set; } = DateTime.MinValue;
-    public DateTime UnixEpoch  { get; set; } = DateTime.UnixEpoch;
 
     public DateTime Read()
     {
@@ -52,6 +48,8 @@ public sealed class ThreadAwareTimeProvider : ITimeProvider
             Now.Value = target;
         }
     }
+
+    // The remaining ITimeProvider members are boilerplate and omitted here.
 }
 ```
 

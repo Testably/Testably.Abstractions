@@ -318,6 +318,9 @@ internal static class ExceptionFactory
 	internal static TimeoutException TimerWaitTimeoutException(int executionCount, int timeout)
 		=> new($"The execution count {executionCount} was not reached in {timeout}ms.");
 
+	internal static TimeZoneNotFoundException TimeZoneNotFound(string id)
+		=> new($"The time zone ID '{id}' was not found on the local computer.");
+
 	internal static UnauthorizedAccessException AccessDenied(string path)
 		=> new($"Access to the path '{path}' is denied.")
 		{

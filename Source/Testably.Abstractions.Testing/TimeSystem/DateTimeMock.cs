@@ -30,7 +30,11 @@ internal sealed class DateTimeMock : IDateTime
 	{
 		get
 		{
-			DateTime value = _mockTimeSystem.TimeProvider.Read().ToLocalTime();
+			DateTime value = DateTime.SpecifyKind(
+				TimeZoneInfo.ConvertTimeFromUtc(
+					_mockTimeSystem.TimeProvider.Read().ToUniversalTime(),
+					_mockTimeSystem.TimeProvider.LocalTimeZone),
+				DateTimeKind.Local);
 			_callbackHandler.InvokeDateTimeReadCallbacks(value);
 			return value;
 		}
@@ -45,7 +49,11 @@ internal sealed class DateTimeMock : IDateTime
 	{
 		get
 		{
-			DateTime value = _mockTimeSystem.TimeProvider.Read().ToLocalTime().Date;
+			DateTime value = DateTime.SpecifyKind(
+				TimeZoneInfo.ConvertTimeFromUtc(
+					_mockTimeSystem.TimeProvider.Read().ToUniversalTime(),
+					_mockTimeSystem.TimeProvider.LocalTimeZone),
+				DateTimeKind.Local).Date;
 			_callbackHandler.InvokeDateTimeReadCallbacks(value);
 			return value;
 		}
