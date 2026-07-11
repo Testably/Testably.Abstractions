@@ -141,8 +141,10 @@ public abstract class MemoryMappedFileSystemViewStream : Stream
 		=> _stream.ReadByte();
 
 	/// <inheritdoc cref="Stream.Seek(long, SeekOrigin)" />
-	public override long Seek(long offset, SeekOrigin origin)
-		=> _stream.Seek(offset, origin);
+	// The parameter is named `loc` (not `origin`) to match the overridden
+	// `MemoryMappedViewStream.Seek` / `UnmanagedMemoryStream.Seek` signature.
+	public override long Seek(long offset, SeekOrigin loc)
+		=> _stream.Seek(offset, loc);
 
 	/// <inheritdoc cref="Stream.SetLength(long)" />
 	public override void SetLength(long value)

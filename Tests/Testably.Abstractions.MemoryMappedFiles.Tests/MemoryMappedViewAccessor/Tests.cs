@@ -422,4 +422,50 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		await That(Act).Throws<ArgumentOutOfRangeException>()
 			.WithParamName("position");
 	}
+
+	[Test]
+	public async Task WriteArray_WhenTooLargeForRemainingCapacity_ShouldThrowAndNotWritePartially()
+	{
+		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 100);
+		int[] source = new int[30];
+		for (int i = 0; i < source.Length; i++)
+		{
+			source[i] = i + 1;
+		}
+
+		// 30 four-byte integers (120 bytes) do not fit into the 100-byte view.
+		void Act() => accessor.WriteArray(0, source, 0, source.Length);
+
+		await That(Act).Throws<ArgumentException>();
+		// The failure is atomic: no element was written, so the region is still zero.
+		await That(accessor.ReadInt32(0)).IsEqualTo(0);
+		await That(accessor.ReadInt32(4)).IsEqualTo(0);
+	}
+
+	[Test]
+	public async Task DefaultAccessor_OnReadOnlyMapping_ShouldThrowUnauthorizedAccessException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
+			"data.bin", FileMode.Open, null, 0, MemoryMappedFileAccess.Read);
+
+		// The default view access is `ReadWrite`, which the read-only mapping does not permit.
+		void Act() => mappedFile.CreateViewAccessor();
+
+		await That(Act).Throws<UnauthorizedAccessException>();
+	}
+
+	[Test]
+	public async Task WriteAccessor_OnReadOnlyMapping_ShouldThrowUnauthorizedAccessException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
+			"data.bin", FileMode.Open, null, 0, MemoryMappedFileAccess.Read);
+
+		void Act() =>
+			mappedFile.CreateViewAccessor(0, 100, MemoryMappedFileAccess.ReadWrite);
+
+		await That(Act).Throws<UnauthorizedAccessException>();
+	}
 }

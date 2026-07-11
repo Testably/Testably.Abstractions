@@ -111,6 +111,32 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	}
 
 	[Test]
+	public async Task CreateViewAccessor_WithOffsetBeyondCapacity_ShouldThrowUnauthorizedAccessException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
+
+		void Act() => mappedFile.CreateViewAccessor(long.MaxValue, 0);
+
+		await That(Act).Throws<UnauthorizedAccessException>();
+	}
+
+	[Test]
+	public async Task CreateViewAccessor_WithSizeThatWouldOverflow_ShouldThrowUnauthorizedAccessException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
+
+		// `offset + size` would overflow `long`, so the view must still be rejected instead of
+		// wrapping around to a valid-looking (negative) value.
+		void Act() => mappedFile.CreateViewAccessor(1, long.MaxValue);
+
+		await That(Act).Throws<UnauthorizedAccessException>();
+	}
+
+	[Test]
 	public async Task CreateViewAccessor_WithNegativeOffset_ShouldThrowArgumentOutOfRangeException()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
@@ -174,5 +200,25 @@ public class CreateFromFileTests(FileSystemTestData testData)
 		void Act() => stream.Position = 0;
 
 		await That(Act).Throws<ObjectDisposedException>();
+	}
+
+	[Test]
+	public async Task View_ShouldRemainUsable_AfterMappedFileIsDisposed()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		IMemoryMappedViewAccessor accessor;
+		using (IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin"))
+		{
+			accessor = mappedFile.CreateViewAccessor();
+			accessor.Write(0, 12345);
+		}
+
+		// The memory-mapped file is disposed, but the still-open view keeps working (the file and
+		// its views have independent lifetimes).
+		await That(accessor.ReadInt32(0)).IsEqualTo(12345);
+		accessor.Write(4, 67890);
+		await That(accessor.ReadInt32(4)).IsEqualTo(67890);
+		accessor.Dispose();
 	}
 }

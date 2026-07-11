@@ -12,20 +12,20 @@ namespace Testably.Abstractions;
 internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 {
 	private readonly MemoryMappedFileAccess _access;
+	private readonly IDisposable _backingOwner;
 	private readonly long _offset;
-	private readonly bool _ownsStream;
 	private readonly long _size;
 	private readonly Stream _stream;
 
 	public MemoryMappedViewAccessorMock(IFileSystem fileSystem, Stream stream,
-		long offset, long size, MemoryMappedFileAccess access, bool ownsStream)
+		long offset, long size, MemoryMappedFileAccess access, IDisposable backingOwner)
 	{
 		FileSystem = fileSystem;
 		_stream = stream;
 		_offset = offset;
 		_size = size;
 		_access = access;
-		_ownsStream = ownsStream;
+		_backingOwner = backingOwner;
 	}
 
 	#region IMemoryMappedViewAccessor Members
@@ -52,14 +52,10 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	/// <inheritdoc cref="System.IDisposable.Dispose()" />
 	public void Dispose()
-	{
-		// The underlying stream is owned by the memory-mapped file, unless this view holds a
-		// private copy-on-write copy, in which case the view owns it.
-		if (_ownsStream)
-		{
-			_stream.Dispose();
-		}
-	}
+		// Releases this view's reference to the shared backing (disposing the underlying stream
+		// once the memory-mapped file and all views are gone) or disposes the private
+		// copy-on-write copy this view owns.
+		=> _backingOwner.Dispose();
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Flush()" />
 	public void Flush()
@@ -242,8 +238,29 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		where T : struct
 	{
 		ValidateArrayArguments(array, offset, count);
+		if (!CanWrite)
+		{
+			throw new NotSupportedException("Accessor does not support writing.");
+		}
+
+		if (position < 0)
+		{
+			throw new ArgumentOutOfRangeException(nameof(position), position,
+				$"position ('{position}') must be a non-negative value.");
+		}
 
 		int structureSize = Unsafe.SizeOf<T>();
+		// Validate up-front so the write is atomic: the BCL rejects the whole call before writing
+		// any element when the array does not fit, rather than writing partially and then failing.
+		if (count > 0 && position > _size - ((long)count * structureSize))
+		{
+#pragma warning disable MA0015 // Matches the parameter-less BCL message for this combination.
+			throw new ArgumentException(
+				"There are not enough bytes remaining in the accessor to write at this position.",
+				nameof(array));
+#pragma warning restore MA0015
+		}
+
 		for (int i = 0; i < count; i++)
 		{
 			T value = array[offset + i];

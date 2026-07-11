@@ -217,4 +217,17 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		// guaranteed to be at least the requested size.
 		await That(stream.Capacity).IsGreaterThanOrEqualTo(20L);
 	}
+
+	[Test]
+	public async Task DefaultViewStream_OnReadOnlyMapping_ShouldThrowUnauthorizedAccessException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
+			"data.bin", FileMode.Open, null, 0, MemoryMappedFileAccess.Read);
+
+		// The default view access is `ReadWrite`, which the read-only mapping does not permit.
+		void Act() => mappedFile.CreateViewStream();
+
+		await That(Act).Throws<UnauthorizedAccessException>();
+	}
 }

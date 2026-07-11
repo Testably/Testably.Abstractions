@@ -13,8 +13,8 @@ internal sealed class MemoryMappedViewStreamMock : MemoryMappedFileSystemViewStr
 	private readonly long _size;
 
 	public MemoryMappedViewStreamMock(Stream backing, long offset, long size,
-		MemoryMappedFileAccess access, bool ownsBacking)
-		: base(new BoundedViewStream(backing, offset, size, access, ownsBacking))
+		MemoryMappedFileAccess access, IDisposable backingOwner)
+		: base(new BoundedViewStream(backing, offset, size, access, backingOwner))
 	{
 		_size = size;
 	}
@@ -30,20 +30,20 @@ internal sealed class MemoryMappedViewStreamMock : MemoryMappedFileSystemViewStr
 	private sealed class BoundedViewStream : Stream
 	{
 		private readonly Stream _backing;
+		private readonly IDisposable _backingOwner;
 		private readonly bool _canRead;
 		private readonly bool _canWrite;
 		private readonly long _offset;
-		private readonly bool _ownsBacking;
 		private readonly long _size;
 		private long _position;
 
 		public BoundedViewStream(Stream backing, long offset, long size,
-			MemoryMappedFileAccess access, bool ownsBacking)
+			MemoryMappedFileAccess access, IDisposable backingOwner)
 		{
 			_backing = backing;
 			_offset = offset;
 			_size = size;
-			_ownsBacking = ownsBacking;
+			_backingOwner = backingOwner;
 			_canRead = access is not MemoryMappedFileAccess.Write;
 			_canWrite = access is not (MemoryMappedFileAccess.Read
 				or MemoryMappedFileAccess.ReadExecute);
@@ -156,11 +156,12 @@ internal sealed class MemoryMappedViewStreamMock : MemoryMappedFileSystemViewStr
 		/// <inheritdoc cref="Stream.Dispose(bool)" />
 		protected override void Dispose(bool disposing)
 		{
-			// The backing stream is owned by the memory-mapped file, unless this view holds a
-			// private copy-on-write copy, in which case the view owns it.
-			if (disposing && _ownsBacking)
+			if (disposing)
 			{
-				_backing.Dispose();
+				// Releases this view's reference to the shared backing (disposing the underlying
+				// stream once the memory-mapped file and all views are gone) or disposes the
+				// private copy-on-write copy this view owns.
+				_backingOwner.Dispose();
 			}
 
 			base.Dispose(disposing);

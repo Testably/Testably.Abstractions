@@ -153,6 +153,17 @@ public abstract class ParityTests(
 	}
 
 	[Test]
+	public async Task
+		MemoryMappedFileSystemViewStream_EnsureParityWith_MemoryMappedViewStream()
+	{
+		List<string> parityErrors = Parity.MemoryMappedViewStream
+			.GetErrorsToInstanceType<MemoryMappedFileSystemViewStream>(
+				typeof(MemoryMappedViewStream));
+
+		await That(parityErrors).IsEmpty();
+	}
+
+	[Test]
 	public async Task IPath_EnsureParityWith_Path()
 	{
 		List<string> parityErrors = Parity.Path
