@@ -23,6 +23,17 @@ fileSystem.Initialize().With(
     new FileDescription("foo.txt", "some file content"));
 ```
 
+`FileDescription` also accepts binary content and can mark a file read-only:
+
+```csharp
+var fileSystem = new MockFileSystem();
+fileSystem.Initialize().With(
+    new FileDescription("data.bin", new byte[] { 1, 2, 3 }),
+    new FileDescription("config.json", "{ \"x\": 1 }") { IsReadOnly = true });
+```
+
+Pass a `byte[]` to seed binary content, and set `IsReadOnly = true` to create the file with the read-only attribute.
+
 ## Fluent
 
 ```csharp
