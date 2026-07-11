@@ -21,12 +21,12 @@ public partial class ExtensionTests
 			.WithSubdirectory("bar");
 		FileSystem.File.WriteAllText("bar/foo.txt", "FooFooFoo");
 		FileSystem.File.SetLastWriteTime("bar/foo.txt", lastWriteTime);
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Update);
 		await That(archive.Entries).IsEmpty();
 
 		await archive.CreateEntryFromFileAsync("bar/foo.txt", "foo/bar.txt",
@@ -52,12 +52,12 @@ public partial class ExtensionTests
 			.WithSubdirectory("bar");
 		FileSystem.File.WriteAllText("bar/foo.txt", "FooFooFoo");
 		FileSystem.File.SetLastWriteTime("bar/foo.txt", lastWriteTime);
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Update);
 		await That(archive.Entries).IsEmpty();
 
 		await archive.CreateEntryFromFileAsync("bar/foo.txt", "foo/bar.txt",
@@ -74,12 +74,12 @@ public partial class ExtensionTests
 			.WithSubdirectory("foo")
 			.WithSubdirectory("bar");
 		FileSystem.File.WriteAllText("bar/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Update);
 		await That(archive.Entries).IsEmpty();
 
 		Task Act()
@@ -96,12 +96,12 @@ public partial class ExtensionTests
 			.WithSubdirectory("foo")
 			.WithSubdirectory("bar");
 		FileSystem.File.WriteAllText("bar/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Update);
 		await That(archive.Entries).IsEmpty();
 
 		Task Act()
@@ -119,12 +119,12 @@ public partial class ExtensionTests
 			.WithSubdirectory("foo")
 			.WithSubdirectory("bar");
 		FileSystem.File.WriteAllText("bar/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 		await That(archive.Entries).IsEmpty();
 
 		Task Act()
@@ -140,12 +140,12 @@ public partial class ExtensionTests
 			.WithSubdirectory("foo")
 			.WithSubdirectory("bar");
 		FileSystem.File.WriteAllText("bar/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Update);
 		await That(archive.Entries).IsEmpty();
 
 		await archive.CreateEntryFromFileAsync("bar/foo.txt", "foo/bar.txt",
@@ -166,13 +166,13 @@ public partial class ExtensionTests
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
 
 		async Task Act()
 		{
 			using IZipArchive archive =
-				FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+				FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 			await archive.ExtractToDirectoryAsync(null!, CancellationToken);
 		}
@@ -190,13 +190,13 @@ public partial class ExtensionTests
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
 
 		async Task Act()
 		{
 			using IZipArchive archive =
-				FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+				FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
 
 			await archive.ExtractToDirectoryAsync(null!, true, CancellationToken);
 		}
@@ -212,11 +212,11 @@ public partial class ExtensionTests
 				.WithSubdirectory("bar")
 				.WithFile("bar.txt"));
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await archive.ExtractToDirectoryAsync("bar", CancellationToken);
 
@@ -233,11 +233,11 @@ public partial class ExtensionTests
 			.WithSubdirectory("bar").Initialized(s => s
 				.WithFile("foo.txt"));
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		async Task Act()
 		{
@@ -258,11 +258,11 @@ public partial class ExtensionTests
 			.WithSubdirectory("bar").Initialized(s => s
 				.WithFile("foo.txt"));
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await archive.ExtractToDirectoryAsync("bar", true, CancellationToken);
 

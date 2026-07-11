@@ -18,9 +18,9 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 			.WithSubdirectory("foo").Initialized(s => s
 				.WithFile("test.txt"));
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
+		FileSystem.ZipFile.CreateFromDirectory("foo", "destination.zip");
 
-		await FileSystem.ZipFile().ExtractToDirectoryAsync("destination.zip", "bar",
+		await FileSystem.ZipFile.ExtractToDirectoryAsync("destination.zip", "bar",
 			CancellationToken);
 
 		await That(FileSystem).HasFile("bar/test.txt")
@@ -36,7 +36,7 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(sourceArchiveFileName, "bar",
+			await FileSystem.ZipFile.ExtractToDirectoryAsync(sourceArchiveFileName, "bar",
 				CancellationToken);
 		}
 
@@ -53,7 +53,7 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(sourceArchiveFileName, "bar", CancellationToken);
+			await FileSystem.ZipFile.ExtractToDirectoryAsync(sourceArchiveFileName, "bar", CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
@@ -73,9 +73,9 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine("foo", "test.txt"),
 			contents);
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
+		FileSystem.ZipFile.CreateFromDirectory("foo", "destination.zip");
 
-		await FileSystem.ZipFile().ExtractToDirectoryAsync("destination.zip", "bar", true,
+		await FileSystem.ZipFile.ExtractToDirectoryAsync("destination.zip", "bar", true,
 			CancellationToken);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
@@ -96,9 +96,9 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine("foo", "test.txt"),
 			contents);
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
+		FileSystem.ZipFile.CreateFromDirectory("foo", "destination.zip");
 
-		await FileSystem.ZipFile().ExtractToDirectoryAsync("destination.zip", "bar", encoding, true,
+		await FileSystem.ZipFile.ExtractToDirectoryAsync("destination.zip", "bar", encoding, true,
 			CancellationToken);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
@@ -115,10 +115,10 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 			.WithSubdirectory("foo").Initialized(s => s
 				.WithFile("test.txt"));
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip",
+		FileSystem.ZipFile.CreateFromDirectory("foo", "destination.zip",
 			CompressionLevel.Fastest, false, encoding);
 
-		await FileSystem.ZipFile().ExtractToDirectoryAsync("destination.zip", "bar", encoding,
+		await FileSystem.ZipFile.ExtractToDirectoryAsync("destination.zip", "bar", encoding,
 			CancellationToken);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
@@ -140,11 +140,11 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 		string destinationPath =
 			FileSystem.Path.Combine(FileSystem.Path.GetFullPath("bar"), "test.txt");
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
+		FileSystem.ZipFile.CreateFromDirectory("foo", "destination.zip");
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().ExtractToDirectoryAsync("destination.zip", "bar", CancellationToken);
+			await FileSystem.ZipFile.ExtractToDirectoryAsync("destination.zip", "bar", CancellationToken);
 		}
 
 		await That(Act).Throws<IOException>()
@@ -162,9 +162,9 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 				.WithFile("test.txt"));
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.ExtractToDirectoryAsync(stream, "bar", CancellationToken);
 
 		await That(FileSystem).HasFile("bar/test.txt")
@@ -180,7 +180,7 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(source, "bar", CancellationToken);
+			await FileSystem.ZipFile.ExtractToDirectoryAsync(source, "bar", CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentException>()
@@ -198,7 +198,7 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 
 		async Task Act()
 		{
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(source, "bar", CancellationToken);
+			await FileSystem.ZipFile.ExtractToDirectoryAsync(source, "bar", CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
@@ -219,9 +219,9 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 			contents);
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 
-		await FileSystem.ZipFile()
+		await FileSystem.ZipFile
 			.ExtractToDirectoryAsync(stream, "bar", true, CancellationToken);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
@@ -243,9 +243,9 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 			contents);
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 
-		await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar", encoding, true,
+		await FileSystem.ZipFile.ExtractToDirectoryAsync(stream, "bar", encoding, true,
 			CancellationToken);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
@@ -263,10 +263,10 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 				.WithFile("test.txt"));
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream,
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream,
 			CompressionLevel.Fastest, false, encoding);
 
-		await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar", encoding,
+		await FileSystem.ZipFile.ExtractToDirectoryAsync(stream, "bar", encoding,
 			CancellationToken);
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
@@ -290,12 +290,12 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 			FileSystem.Path.Combine(FileSystem.Path.GetFullPath("bar"), "test.txt");
 		using MemoryStream stream = new();
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 
 		async Task Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar", CancellationToken);
+			await FileSystem.ZipFile.ExtractToDirectoryAsync(stream, "bar", CancellationToken);
 		}
 
 		await That(Act).Throws<IOException>()
@@ -314,12 +314,12 @@ public class ExtractToDirectoryAsyncAsyncTests(FileSystemTestData testData) : Fi
 		using FileSystemStream stream = FileSystem.FileStream.New(
 			"target.zip", FileMode.Open, FileAccess.Write);
 
-		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		FileSystem.ZipFile.CreateFromDirectory("foo", stream);
 
 		async Task Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			await FileSystem.ZipFile().ExtractToDirectoryAsync(stream, "bar", CancellationToken);
+			await FileSystem.ZipFile.ExtractToDirectoryAsync(stream, "bar", CancellationToken);
 		}
 
 		await That(Act).Throws<ArgumentException>()

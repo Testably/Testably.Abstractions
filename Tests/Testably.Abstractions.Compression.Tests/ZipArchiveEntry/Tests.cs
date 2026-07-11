@@ -14,13 +14,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		IZipArchiveEntry entry = archive.Entries.Single();
 
@@ -34,13 +34,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 		IZipArchiveEntry entry = archive.Entries.Single();
 
 		await That(entry.Comment).IsEqualTo("");
@@ -55,13 +55,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 		IZipArchiveEntry entry = archive.Entries.Single();
 
 		entry.Comment = comment;
@@ -78,13 +78,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries.Single())
 			.For(x => x.Length, l => l.IsEqualTo(9)).And
@@ -97,13 +97,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.Optimal,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries.Single())
 			.For(x => x.Length, l => l.IsEqualTo(9)).And
@@ -118,13 +118,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo1.txt", "FooFooFoo");
 		FileSystem.File.WriteAllText("foo/foo2.txt", "Some other text");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		IZipArchiveEntry entry1 = archive.Entries[0];
 		IZipArchiveEntry entry2 = archive.Entries[1];
@@ -139,14 +139,14 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream =
 			FileSystem.File.Open("destination.zip", FileMode.Open, FileAccess.ReadWrite);
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 		IZipArchiveEntry entry = archive.Entries.Single();
 
 		void Act() => entry.Delete();
@@ -160,14 +160,14 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream =
 			FileSystem.File.Open("destination.zip", FileMode.Open, FileAccess.ReadWrite);
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Update);
 		IZipArchiveEntry entry = archive.Entries.Single();
 
 		entry.Delete();
@@ -184,13 +184,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo1.txt", "FooFooFoo");
 		FileSystem.File.WriteAllText("foo/foo2.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		IZipArchiveEntry entry1 = archive.Entries[0];
 		IZipArchiveEntry entry2 = archive.Entries[1];
@@ -207,13 +207,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		IZipArchiveEntry entry = archive.Entries.Single();
 
@@ -226,13 +226,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				true);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		IZipArchiveEntry entry = archive.Entries.Single();
 
@@ -249,13 +249,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo1.txt", "FooFooFoo");
 		FileSystem.File.WriteAllText("foo/foo2.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		IZipArchiveEntry entry1 = archive.Entries[0];
 
@@ -275,14 +275,14 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo1.txt", "FooFooFoo");
 		FileSystem.File.WriteAllText("foo/foo2.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Update);
 
 		IZipArchiveEntry entry1 = archive.Entries[0];
 		IZipArchiveEntry entry2 = archive.Entries[1];
@@ -298,14 +298,14 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream =
 			FileSystem.File.Open("destination.zip", FileMode.Open, FileAccess.ReadWrite);
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Update);
 		IZipArchiveEntry entry = archive.Entries.Single();
 
 		Stream resultStream = entry.Open();
@@ -320,14 +320,14 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream =
 			FileSystem.File.Open("destination.zip", FileMode.Open, FileAccess.ReadWrite);
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Update);
 		IZipArchiveEntry entry = archive.Entries.Single();
 
 		Stream resultStream = await entry.OpenAsync(CancellationToken);
@@ -342,14 +342,14 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
+		FileSystem.ZipFile
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream =
 			FileSystem.File.Open("destination.zip", FileMode.Open, FileAccess.ReadWrite);
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Update);
 		IZipArchiveEntry entry = archive.Entries.Single();
 
 		string? result = entry.ToString();
