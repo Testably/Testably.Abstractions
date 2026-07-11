@@ -27,15 +27,31 @@ internal sealed class TimeProviderMock : ITimeProvider
 	public TimeProviderMock(Action<DateTime> onTimeChanged, DateTime now, string description,
 		TimeZoneInfo localTimeZone)
 	{
-		_now = now.Kind == DateTimeKind.Unspecified
-			? DateTime.SpecifyKind(now, DateTimeKind.Utc)
-			: now;
+		_now = NormalizeToUtc(now, localTimeZone);
 		_elapsedTicks = _now.Ticks;
 		StartTime = _now;
 		_onTimeChanged = onTimeChanged;
 		_description = description;
 		_localTimeZone = localTimeZone;
 	}
+
+	/// <summary>
+	///     Normalizes <paramref name="value" /> to a <see cref="DateTimeKind.Utc" /> instant.
+	/// </summary>
+	/// <remarks>
+	///     A <see cref="DateTimeKind.Local" /> value is interpreted against the mock's
+	///     <paramref name="localTimeZone" /> (not the host machine's zone) so that "now" stays machine-independent; a
+	///     <see cref="DateTimeKind.Unspecified" /> value is treated as if it were <see cref="DateTimeKind.Utc" />, and an
+	///     already <see cref="DateTimeKind.Utc" /> value is left untouched.
+	/// </remarks>
+	private static DateTime NormalizeToUtc(DateTime value, TimeZoneInfo localTimeZone)
+		=> value.Kind switch
+		{
+			DateTimeKind.Utc => value,
+			DateTimeKind.Local => TimeZoneInfo.ConvertTimeToUtc(
+				DateTime.SpecifyKind(value, DateTimeKind.Unspecified), localTimeZone),
+			_ => DateTime.SpecifyKind(value, DateTimeKind.Utc),
+		};
 
 	#region ITimeProvider Members
 
@@ -148,9 +164,7 @@ internal sealed class TimeProviderMock : ITimeProvider
 	{
 		lock (_lock)
 		{
-			_now = value.Kind == DateTimeKind.Unspecified
-				? DateTime.SpecifyKind(value, DateTimeKind.Utc)
-				: value.ToUniversalTime();
+			_now = NormalizeToUtc(value, _localTimeZone);
 			_onTimeChanged.Invoke(_now);
 		}
 	}
