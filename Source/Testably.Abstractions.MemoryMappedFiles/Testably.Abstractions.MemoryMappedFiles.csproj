@@ -8,23 +8,23 @@
 
 	<ItemGroup>
 		<None Include="$(SolutionDir)Docs/Nuget/MemoryMappedFiles.md"
-		      Pack="true" PackagePath="/Docs/"
-		      Link="Docs\MemoryMappedFiles.md" />
+			  Pack="true" PackagePath="/Docs/"
+			  Link="Docs\MemoryMappedFiles.md"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Testably.Abstractions.Interface" />
+		<PackageReference Include="Testably.Abstractions.Interface"/>
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'netstandard2.1' OR '$(TargetFramework)' == 'netstandard2.0'">
 		<!-- https://github.com/advisories/GHSA-73j8-2gch-69rq
 		     On netstandard2.0/netstandard2.1 this also transitively provides
 		     System.Runtime.CompilerServices.Unsafe (used for the struct read/write). -->
-		<PackageReference Include="Microsoft.Bcl.Memory" />
+		<PackageReference Include="Microsoft.Bcl.Memory"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Testably.Abstractions.MemoryMappedFiles.Tests" PublicKey="$(PublicKey)" />
+		<InternalsVisibleTo Include="Testably.Abstractions.MemoryMappedFiles.Tests" PublicKey="$(PublicKey)"/>
 	</ItemGroup>
 
 </Project>

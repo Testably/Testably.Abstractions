@@ -2,59 +2,52 @@
 
 namespace Testably.Abstractions;
 
-internal sealed class MemoryMappedFileWrapper : IMemoryMappedFile
+internal sealed class MemoryMappedFileWrapper(
+	IFileSystem fileSystem,
+	MemoryMappedFile instance,
+	FileSystemStream? backingStream)
+	: IMemoryMappedFile
 {
-	private readonly FileSystemStream? _backingStream;
-	private readonly MemoryMappedFile _instance;
-
-	public MemoryMappedFileWrapper(IFileSystem fileSystem, MemoryMappedFile instance,
-		FileSystemStream? backingStream)
-	{
-		_instance = instance;
-		_backingStream = backingStream;
-		FileSystem = fileSystem;
-	}
-
 	#region IMemoryMappedFile Members
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
-	public IFileSystem FileSystem { get; }
+	public IFileSystem FileSystem { get; } = fileSystem;
 
 	/// <inheritdoc cref="IMemoryMappedFile.CreateViewAccessor()" />
 	public IMemoryMappedViewAccessor CreateViewAccessor()
 		=> new MemoryMappedViewAccessorWrapper(FileSystem,
-			_instance.CreateViewAccessor());
+			instance.CreateViewAccessor());
 
 	/// <inheritdoc cref="IMemoryMappedFile.CreateViewAccessor(long, long)" />
 	public IMemoryMappedViewAccessor CreateViewAccessor(long offset, long size)
 		=> new MemoryMappedViewAccessorWrapper(FileSystem,
-			_instance.CreateViewAccessor(offset, size));
+			instance.CreateViewAccessor(offset, size));
 
 	/// <inheritdoc cref="IMemoryMappedFile.CreateViewAccessor(long, long, MemoryMappedFileAccess)" />
 	public IMemoryMappedViewAccessor CreateViewAccessor(long offset, long size,
 		MemoryMappedFileAccess access)
 		=> new MemoryMappedViewAccessorWrapper(FileSystem,
-			_instance.CreateViewAccessor(offset, size, access));
+			instance.CreateViewAccessor(offset, size, access));
 
 	/// <inheritdoc cref="IMemoryMappedFile.CreateViewStream()" />
 	public MemoryMappedFileSystemViewStream CreateViewStream()
-		=> new MemoryMappedViewStreamWrapper(_instance.CreateViewStream());
+		=> new MemoryMappedViewStreamWrapper(instance.CreateViewStream());
 
 	/// <inheritdoc cref="IMemoryMappedFile.CreateViewStream(long, long)" />
 	public MemoryMappedFileSystemViewStream CreateViewStream(long offset, long size)
-		=> new MemoryMappedViewStreamWrapper(_instance.CreateViewStream(offset, size));
+		=> new MemoryMappedViewStreamWrapper(instance.CreateViewStream(offset, size));
 
 	/// <inheritdoc cref="IMemoryMappedFile.CreateViewStream(long, long, MemoryMappedFileAccess)" />
 	public MemoryMappedFileSystemViewStream CreateViewStream(long offset, long size,
 		MemoryMappedFileAccess access)
 		=> new MemoryMappedViewStreamWrapper(
-			_instance.CreateViewStream(offset, size, access));
+			instance.CreateViewStream(offset, size, access));
 
 	/// <inheritdoc cref="System.IDisposable.Dispose()" />
 	public void Dispose()
 	{
-		_instance.Dispose();
-		_backingStream?.Dispose();
+		instance.Dispose();
+		backingStream?.Dispose();
 	}
 
 	#endregion

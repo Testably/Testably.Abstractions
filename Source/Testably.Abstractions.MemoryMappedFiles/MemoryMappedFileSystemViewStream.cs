@@ -16,25 +16,8 @@ namespace Testably.Abstractions;
 ///     members are delegated to the wrapped <see cref="Stream" />, while the members specific to
 ///     <see cref="MemoryMappedViewStream" /> are added on top.
 /// </remarks>
-public abstract class MemoryMappedFileSystemViewStream : Stream
+public abstract class MemoryMappedFileSystemViewStream : UnmanagedMemoryStream
 {
-	private readonly Stream _stream;
-
-	/// <summary>
-	///     Initializes a new instance of <see cref="MemoryMappedFileSystemViewStream" />.
-	/// </summary>
-	/// <param name="stream">The wrapped <see cref="Stream" />.</param>
-	protected MemoryMappedFileSystemViewStream(Stream stream)
-	{
-		_stream = stream;
-	}
-
-	/// <inheritdoc cref="MemoryMappedViewStream.PointerOffset" />
-	public abstract long PointerOffset { get; }
-
-	/// <inheritdoc cref="System.IO.UnmanagedMemoryStream.Capacity" />
-	public abstract long Capacity { get; }
-
 	/// <inheritdoc cref="Stream.CanRead" />
 	public override bool CanRead
 		=> _stream.CanRead;
@@ -55,6 +38,9 @@ public abstract class MemoryMappedFileSystemViewStream : Stream
 	public override long Length
 		=> _stream.Length;
 
+	/// <inheritdoc cref="MemoryMappedViewStream.PointerOffset" />
+	public abstract long PointerOffset { get; }
+
 	/// <inheritdoc cref="Stream.Position" />
 	public override long Position
 	{
@@ -74,6 +60,17 @@ public abstract class MemoryMappedFileSystemViewStream : Stream
 	{
 		get => _stream.WriteTimeout;
 		set => _stream.WriteTimeout = value;
+	}
+
+	private readonly Stream _stream;
+
+	/// <summary>
+	///     Initializes a new instance of <see cref="MemoryMappedFileSystemViewStream" />.
+	/// </summary>
+	/// <param name="stream">The wrapped <see cref="Stream" />.</param>
+	protected MemoryMappedFileSystemViewStream(Stream stream)
+	{
+		_stream = stream;
 	}
 
 	/// <inheritdoc cref="Stream.BeginRead(byte[], int, int, AsyncCallback?, object?)" />
@@ -141,8 +138,6 @@ public abstract class MemoryMappedFileSystemViewStream : Stream
 		=> _stream.ReadByte();
 
 	/// <inheritdoc cref="Stream.Seek(long, SeekOrigin)" />
-	// The parameter is named `loc` (not `origin`) to match the overridden
-	// `MemoryMappedViewStream.Seek` / `UnmanagedMemoryStream.Seek` signature.
 	public override long Seek(long offset, SeekOrigin loc)
 		=> _stream.Seek(offset, loc);
 

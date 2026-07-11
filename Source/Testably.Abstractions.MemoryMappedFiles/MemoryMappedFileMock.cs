@@ -14,8 +14,8 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 	private readonly MemoryMappedFileAccess _access;
 	private readonly SharedBacking _backing;
 	private readonly long _capacity;
-	private readonly IDisposable _fileReference;
 	private bool _disposed;
+	private readonly IDisposable _fileReference;
 
 	public MemoryMappedFileMock(IFileSystem fileSystem, FileSystemStream stream,
 		long capacity, MemoryMappedFileAccess access, bool ownsStream)
@@ -32,10 +32,10 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 		{
 			if (stream.Length == 0)
 			{
-#pragma warning disable MA0015 // Matches the parameter-less BCL message for an empty file.
+				#pragma warning disable MA0015 // Matches the parameter-less BCL message for an empty file.
 				throw new ArgumentException(
 					"A positive capacity must be specified for a Memory Mapped File backed by an empty file.");
-#pragma warning restore MA0015
+				#pragma warning restore MA0015
 			}
 
 			capacity = stream.Length;
@@ -50,10 +50,10 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 			if (access is MemoryMappedFileAccess.Read
 				or MemoryMappedFileAccess.ReadExecute)
 			{
-#pragma warning disable MA0015 // Matches the parameter-less BCL message for this combination.
+				#pragma warning disable MA0015 // Matches the parameter-less BCL message for this combination.
 				throw new ArgumentException(
 					"The capacity may not be larger than the file size when creating a read-only memory-mapped file.");
-#pragma warning restore MA0015
+				#pragma warning restore MA0015
 			}
 
 			stream.SetLength(capacity);
@@ -167,19 +167,6 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 		return copyStream;
 	}
 
-	private void ValidateViewAccess(MemoryMappedFileAccess access)
-	{
-		bool mappingIsReadOnly = _access is MemoryMappedFileAccess.Read
-			or MemoryMappedFileAccess.ReadExecute;
-		bool viewRequiresWrite = access is MemoryMappedFileAccess.Write
-			or MemoryMappedFileAccess.ReadWrite
-			or MemoryMappedFileAccess.ReadWriteExecute;
-		if (mappingIsReadOnly && viewRequiresWrite)
-		{
-			throw new UnauthorizedAccessException("Access to the path is denied.");
-		}
-	}
-
 	private long ValidateAndNormalizeView(long offset, long size)
 	{
 		if (offset < 0)
@@ -205,23 +192,28 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 		return size == 0 ? _capacity - offset : size;
 	}
 
+	private void ValidateViewAccess(MemoryMappedFileAccess access)
+	{
+		bool mappingIsReadOnly = _access is MemoryMappedFileAccess.Read
+			or MemoryMappedFileAccess.ReadExecute;
+		bool viewRequiresWrite = access is MemoryMappedFileAccess.Write
+			or MemoryMappedFileAccess.ReadWrite
+			or MemoryMappedFileAccess.ReadWriteExecute;
+		if (mappingIsReadOnly && viewRequiresWrite)
+		{
+			throw new UnauthorizedAccessException("Access to the path is denied.");
+		}
+	}
+
 	/// <summary>
 	///     A reference-counted holder around the shared backing <see cref="Stream" />, so the
 	///     memory-mapped file and its views can be disposed in any order: the stream is disposed
 	///     only once the file and every view that acquired a reference have released it.
 	/// </summary>
-	private sealed class SharedBacking
+	private sealed class SharedBacking(Stream stream, bool ownsStream)
 	{
-		private readonly bool _ownsStream;
+		public Stream Stream { get; } = stream;
 		private int _refCount;
-
-		public SharedBacking(Stream stream, bool ownsStream)
-		{
-			Stream = stream;
-			_ownsStream = ownsStream;
-		}
-
-		public Stream Stream { get; }
 
 		public IDisposable Acquire()
 		{
@@ -231,29 +223,27 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 
 		private void Release()
 		{
-			if (Interlocked.Decrement(ref _refCount) == 0 && _ownsStream)
+			if (Interlocked.Decrement(ref _refCount) == 0 && ownsStream)
 			{
 				Stream.Dispose();
 			}
 		}
 
-		private sealed class Reference : IDisposable
+		private sealed class Reference(SharedBacking owner) : IDisposable
 		{
-			private readonly SharedBacking _owner;
 			private int _disposed;
 
-			public Reference(SharedBacking owner)
-			{
-				_owner = owner;
-			}
+			#region IDisposable Members
 
 			public void Dispose()
 			{
 				if (Interlocked.Exchange(ref _disposed, 1) == 0)
 				{
-					_owner.Release();
+					owner.Release();
 				}
 			}
+
+			#endregion
 		}
 	}
 }

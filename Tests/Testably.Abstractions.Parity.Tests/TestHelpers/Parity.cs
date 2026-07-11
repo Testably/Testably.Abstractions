@@ -125,11 +125,6 @@ public class Parity
 	[
 		typeof(MemoryMappedViewStream).GetProperty(nameof(System.IO.MemoryMappedFiles
 			.MemoryMappedViewStream.SafeMemoryMappedViewHandle)),
-		// The raw pointer into the mapped memory has no meaningful in-memory equivalent.
-		// (Resolved via `MemoryMappedViewStream` so the reflected type matches the inherited
-		// property enumerated during the parity check.)
-		typeof(MemoryMappedViewStream).GetProperty(nameof(System.IO.UnmanagedMemoryStream
-			.PositionPointer)),
 	]);
 
 	public ParityCheck Path { get; } = new(excludeFields: new[]

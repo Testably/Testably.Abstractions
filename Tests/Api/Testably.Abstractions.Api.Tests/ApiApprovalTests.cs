@@ -52,6 +52,18 @@ public sealed class ApiApprovalTests
 
 	[Test]
 	[MethodDataSource(nameof(TargetFrameworks))]
+	public async Task VerifyPublicApiForTestablyAbstractionsMemoryMappedFiles(string framework)
+	{
+		const string assemblyName = "Testably.Abstractions.MemoryMappedFiles";
+
+		string publicApi = Helper.CreatePublicApi(framework, assemblyName);
+		string expectedApi = Helper.GetExpectedApi(framework, assemblyName);
+
+		await Expect.That(publicApi).IsEqualTo(expectedApi);
+	}
+
+	[Test]
+	[MethodDataSource(nameof(TargetFrameworks))]
 	public async Task VerifyPublicApiForTestablyAbstractionsTesting(string framework)
 	{
 		const string assemblyName = "Testably.Abstractions.Testing";

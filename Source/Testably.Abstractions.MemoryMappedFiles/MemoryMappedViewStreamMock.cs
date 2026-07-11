@@ -8,47 +8,21 @@ namespace Testably.Abstractions;
 ///     A view stream backed directly by the (in-memory) bytes of a
 ///     <see cref="FileSystemStream" /> of the <c>MockFileSystem</c>.
 /// </summary>
-internal sealed class MemoryMappedViewStreamMock : MemoryMappedFileSystemViewStream
+internal sealed class MemoryMappedViewStreamMock(
+	Stream backing,
+	long offset,
+	long size,
+	MemoryMappedFileAccess access,
+	IDisposable backingOwner)
+	: MemoryMappedFileSystemViewStream(new BoundedViewStream(backing, offset, size, access,
+		backingOwner))
 {
-	private readonly long _size;
-
-	public MemoryMappedViewStreamMock(Stream backing, long offset, long size,
-		MemoryMappedFileAccess access, IDisposable backingOwner)
-		: base(new BoundedViewStream(backing, offset, size, access, backingOwner))
-	{
-		_size = size;
-	}
-
 	/// <inheritdoc cref="MemoryMappedFileSystemViewStream.PointerOffset" />
 	public override long PointerOffset
 		=> 0;
 
-	/// <inheritdoc cref="MemoryMappedFileSystemViewStream.Capacity" />
-	public override long Capacity
-		=> _size;
-
 	private sealed class BoundedViewStream : Stream
 	{
-		private readonly Stream _backing;
-		private readonly IDisposable _backingOwner;
-		private readonly bool _canRead;
-		private readonly bool _canWrite;
-		private readonly long _offset;
-		private readonly long _size;
-		private long _position;
-
-		public BoundedViewStream(Stream backing, long offset, long size,
-			MemoryMappedFileAccess access, IDisposable backingOwner)
-		{
-			_backing = backing;
-			_offset = offset;
-			_size = size;
-			_backingOwner = backingOwner;
-			_canRead = access is not MemoryMappedFileAccess.Write;
-			_canWrite = access is not (MemoryMappedFileAccess.Read
-				or MemoryMappedFileAccess.ReadExecute);
-		}
-
 		/// <inheritdoc cref="Stream.CanRead" />
 		public override bool CanRead
 			=> _canRead;
@@ -79,6 +53,26 @@ internal sealed class MemoryMappedViewStreamMock : MemoryMappedFileSystemViewStr
 
 				_position = value;
 			}
+		}
+
+		private readonly Stream _backing;
+		private readonly IDisposable _backingOwner;
+		private readonly bool _canRead;
+		private readonly bool _canWrite;
+		private readonly long _offset;
+		private long _position;
+		private readonly long _size;
+
+		public BoundedViewStream(Stream backing, long offset, long size,
+			MemoryMappedFileAccess access, IDisposable backingOwner)
+		{
+			_backing = backing;
+			_offset = offset;
+			_size = size;
+			_backingOwner = backingOwner;
+			_canRead = access is not MemoryMappedFileAccess.Write;
+			_canWrite = access is not (MemoryMappedFileAccess.Read
+				or MemoryMappedFileAccess.ReadExecute);
 		}
 
 		/// <inheritdoc cref="Stream.Flush()" />
@@ -188,10 +182,10 @@ internal sealed class MemoryMappedViewStreamMock : MemoryMappedFileSystemViewStr
 
 			if (buffer.Length - offset < count)
 			{
-#pragma warning disable MA0015 // Matches the parameter-less BCL message for this combination.
+				#pragma warning disable MA0015 // Matches the parameter-less BCL message for this combination.
 				throw new ArgumentException(
 					"Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection.");
-#pragma warning restore MA0015
+				#pragma warning restore MA0015
 			}
 		}
 	}

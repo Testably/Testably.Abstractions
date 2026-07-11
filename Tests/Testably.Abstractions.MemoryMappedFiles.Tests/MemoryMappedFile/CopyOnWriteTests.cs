@@ -19,15 +19,15 @@ public class CopyOnWriteTests(FileSystemTestData testData)
 
 			await That(accessor.CanWrite).IsTrue();
 
-			accessor.Write(0, 1234567);
+			accessor.Write(13, 1234567);
 
 			// The write is visible through the same (copy-on-write) view ...
-			await That(accessor.ReadInt32(0)).IsEqualTo(1234567);
+			await That(accessor.ReadInt32(13)).IsEqualTo(1234567);
 		}
 
 		// ... but is never persisted to the underlying file.
 		byte[] bytes = FileSystem.File.ReadAllBytes("data.bin");
-		await That(BitConverter.ToInt32(bytes, 0)).IsEqualTo(0);
+		await That(BitConverter.ToInt32(bytes, 13)).IsEqualTo(0);
 	}
 
 	[Test]

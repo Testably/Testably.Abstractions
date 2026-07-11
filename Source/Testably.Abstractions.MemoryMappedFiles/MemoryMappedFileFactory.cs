@@ -6,17 +6,12 @@ using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions;
 
-internal sealed class MemoryMappedFileFactory : IMemoryMappedFileFactory
+internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryMappedFileFactory
 {
-	public MemoryMappedFileFactory(IFileSystem fileSystem)
-	{
-		FileSystem = fileSystem;
-	}
-
 	#region IMemoryMappedFileFactory Members
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
-	public IFileSystem FileSystem { get; }
+	public IFileSystem FileSystem { get; } = fileSystem;
 
 	/// <inheritdoc cref="IMemoryMappedFileFactory.CreateFromFile(string)" />
 	public IMemoryMappedFile CreateFromFile(string path)

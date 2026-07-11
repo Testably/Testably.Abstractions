@@ -7,14 +7,14 @@ namespace Testably.Abstractions;
 /// <inheritdoc cref="MemoryMappedViewAccessor" />
 public interface IMemoryMappedViewAccessor : IFileSystemEntity, IDisposable
 {
-	/// <inheritdoc cref="UnmanagedMemoryAccessor.Capacity" />
-	long Capacity { get; }
-
 	/// <inheritdoc cref="UnmanagedMemoryAccessor.CanRead" />
 	bool CanRead { get; }
 
 	/// <inheritdoc cref="UnmanagedMemoryAccessor.CanWrite" />
 	bool CanWrite { get; }
+
+	/// <inheritdoc cref="UnmanagedMemoryAccessor.Capacity" />
+	long Capacity { get; }
 
 	/// <inheritdoc cref="MemoryMappedViewAccessor.PointerOffset" />
 	long PointerOffset { get; }

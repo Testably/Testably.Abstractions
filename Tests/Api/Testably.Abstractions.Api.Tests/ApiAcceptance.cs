@@ -18,6 +18,7 @@ public sealed class ApiAcceptance
 		[
 			"Testably.Abstractions.AccessControl",
 			"Testably.Abstractions.Compression",
+			"Testably.Abstractions.MemoryMappedFiles",
 			"Testably.Abstractions.Testing",
 			"Testably.Abstractions",
 		];

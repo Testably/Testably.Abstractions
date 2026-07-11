@@ -22,22 +22,8 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	}
 
 	[Test]
-	public async Task CreateFromFile_WithNegativeCapacity_ShouldThrowArgumentOutOfRangeException()
-	{
-		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
-
-		void Act()
-		{
-			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
-				"data.bin", FileMode.Open, null, -1, MemoryMappedFileAccess.ReadWrite);
-		}
-
-		await That(Act).Throws<ArgumentOutOfRangeException>()
-			.WithParamName("capacity");
-	}
-
-	[Test]
-	public async Task CreateFromFile_WithCapacitySmallerThanFile_ShouldThrowArgumentOutOfRangeException()
+	public async Task
+		CreateFromFile_WithCapacitySmallerThanFile_ShouldThrowArgumentOutOfRangeException()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
 
@@ -52,17 +38,43 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	}
 
 	[Test]
-	public async Task CreateFromFile_WithReadAccess_AndCapacityLargerThanFile_ShouldThrowArgumentException()
+	public async Task CreateFromFile_WithFileSystemStream_AndLeaveOpen_ShouldKeepStreamOpen()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using FileSystemStream stream =
+			FileSystem.FileStream.New("data.bin", FileMode.Open, FileAccess.ReadWrite);
 
-		void Act()
+		using (IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
+			stream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None,
+			leaveOpen: true))
 		{
-			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
-				"data.bin", FileMode.Open, null, 200, MemoryMappedFileAccess.Read);
+			using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+			accessor.Write(0, 12345);
 		}
 
-		await That(Act).Throws<ArgumentException>();
+		await That(stream.CanRead).IsTrue()
+			.Because("the stream is still usable after disposing the memory-mapped file");
+		stream.Position = 0;
+	}
+
+	[Test]
+	public async Task CreateFromFile_WithFileSystemStream_AndNotLeaveOpen_ShouldDisposeStream()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		FileSystemStream stream =
+			FileSystem.FileStream.New("data.bin", FileMode.Open, FileAccess.ReadWrite);
+
+		using (IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
+			stream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None,
+			leaveOpen: false))
+		{
+			using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+			accessor.Write(0, 12345);
+		}
+
+		void Act() => stream.Position = 0;
+
+		await That(Act).Throws<ObjectDisposedException>();
 	}
 
 	[Test]
@@ -81,6 +93,36 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	}
 
 	[Test]
+	public async Task CreateFromFile_WithNegativeCapacity_ShouldThrowArgumentOutOfRangeException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+
+		void Act()
+		{
+			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+				"data.bin", FileMode.Open, null, -1, MemoryMappedFileAccess.ReadWrite);
+		}
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("capacity");
+	}
+
+	[Test]
+	public async Task
+		CreateFromFile_WithReadAccess_AndCapacityLargerThanFile_ShouldThrowArgumentException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+
+		void Act()
+		{
+			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+				"data.bin", FileMode.Open, null, 200, MemoryMappedFileAccess.Read);
+		}
+
+		await That(Act).Throws<ArgumentException>();
+	}
+
+	[Test]
 	public async Task CreateFromFile_WrittenData_ShouldPersistToFile()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
@@ -94,8 +136,8 @@ public class CreateFromFileTests(FileSystemTestData testData)
 		}
 
 		byte[] bytes = FileSystem.File.ReadAllBytes("data.bin");
-		await That(bytes[0]).IsEqualTo((byte)42);
-		await That(bytes[1]).IsEqualTo((byte)43);
+		await That(bytes[0]).IsEqualTo(42);
+		await That(bytes[1]).IsEqualTo(43);
 	}
 
 	[Test]
@@ -106,32 +148,6 @@ public class CreateFromFileTests(FileSystemTestData testData)
 			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
 
 		void Act() => mappedFile.CreateViewAccessor(50, 100);
-
-		await That(Act).Throws<UnauthorizedAccessException>();
-	}
-
-	[Test]
-	public async Task CreateViewAccessor_WithOffsetBeyondCapacity_ShouldThrowUnauthorizedAccessException()
-	{
-		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
-		using IMemoryMappedFile mappedFile =
-			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
-
-		void Act() => mappedFile.CreateViewAccessor(long.MaxValue, 0);
-
-		await That(Act).Throws<UnauthorizedAccessException>();
-	}
-
-	[Test]
-	public async Task CreateViewAccessor_WithSizeThatWouldOverflow_ShouldThrowUnauthorizedAccessException()
-	{
-		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
-		using IMemoryMappedFile mappedFile =
-			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
-
-		// `offset + size` would overflow `long`, so the view must still be rejected instead of
-		// wrapping around to a valid-looking (negative) value.
-		void Act() => mappedFile.CreateViewAccessor(1, long.MaxValue);
 
 		await That(Act).Throws<UnauthorizedAccessException>();
 	}
@@ -163,43 +179,31 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	}
 
 	[Test]
-	public async Task CreateFromFile_WithFileSystemStream_AndLeaveOpen_ShouldKeepStreamOpen()
+	public async Task
+		CreateViewAccessor_WithOffsetBeyondCapacity_ShouldThrowUnauthorizedAccessException()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
-		using FileSystemStream stream =
-			FileSystem.FileStream.New("data.bin", FileMode.Open, FileAccess.ReadWrite);
+		using IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
 
-		using (IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
-			stream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None,
-			leaveOpen: true))
-		{
-			using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
-			accessor.Write(0, 12345);
-		}
+		void Act() => mappedFile.CreateViewAccessor(long.MaxValue, 0);
 
-		// The stream is still usable after disposing the memory-mapped file.
-		await That(stream.CanRead).IsTrue();
-		stream.Position = 0;
+		await That(Act).Throws<UnauthorizedAccessException>();
 	}
 
 	[Test]
-	public async Task CreateFromFile_WithFileSystemStream_AndNotLeaveOpen_ShouldDisposeStream()
+	public async Task
+		CreateViewAccessor_WithSizeThatWouldOverflow_ShouldThrowUnauthorizedAccessException()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
-		FileSystemStream stream =
-			FileSystem.FileStream.New("data.bin", FileMode.Open, FileAccess.ReadWrite);
+		using IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
 
-		using (IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
-			stream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None,
-			leaveOpen: false))
-		{
-			using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
-			accessor.Write(0, 12345);
-		}
+		void Act() => mappedFile.CreateViewAccessor(1, long.MaxValue);
 
-		void Act() => stream.Position = 0;
-
-		await That(Act).Throws<ObjectDisposedException>();
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.Because(
+				"`offset + size` would overflow `long`, so the view must still be rejected instead of wrapping around to a valid-looking (negative) value");
 	}
 
 	[Test]
@@ -214,9 +218,9 @@ public class CreateFromFileTests(FileSystemTestData testData)
 			accessor.Write(0, 12345);
 		}
 
-		// The memory-mapped file is disposed, but the still-open view keeps working (the file and
-		// its views have independent lifetimes).
-		await That(accessor.ReadInt32(0)).IsEqualTo(12345);
+		await That(accessor.ReadInt32(0)).IsEqualTo(12345)
+			.Because(
+				"The memory-mapped file is disposed, but the still-open view keeps working (the file and its views have independent lifetimes)");
 		accessor.Write(4, 67890);
 		await That(accessor.ReadInt32(4)).IsEqualTo(67890);
 		accessor.Dispose();

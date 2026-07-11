@@ -30,10 +30,6 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	#region IMemoryMappedViewAccessor Members
 
-	/// <inheritdoc cref="IMemoryMappedViewAccessor.Capacity" />
-	public long Capacity
-		=> _size;
-
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.CanRead" />
 	public bool CanRead
 		=> _access is not MemoryMappedFileAccess.Write;
@@ -42,6 +38,10 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 	public bool CanWrite
 		=> _access is not (MemoryMappedFileAccess.Read
 			or MemoryMappedFileAccess.ReadExecute);
+
+	/// <inheritdoc cref="IMemoryMappedViewAccessor.Capacity" />
+	public long Capacity
+		=> _size;
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
@@ -161,11 +161,15 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, bool)" />
 	public void Write(long position, bool value)
-		=> WriteBytes(position, new[] { (byte)(value ? 1 : 0) });
+		=> WriteBytes(position, [
+			(byte)(value ? 1 : 0),
+		]);
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, byte)" />
 	public void Write(long position, byte value)
-		=> WriteBytes(position, new[] { value });
+		=> WriteBytes(position, [
+			value,
+		]);
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, char)" />
 	public void Write(long position, char value)
@@ -202,7 +206,9 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, sbyte)" />
 	public void Write(long position, sbyte value)
-		=> WriteBytes(position, new[] { (byte)value });
+		=> WriteBytes(position, [
+			(byte)value,
+		]);
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, float)" />
 	public void Write(long position, float value)
@@ -254,11 +260,11 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		// any element when the array does not fit, rather than writing partially and then failing.
 		if (count > 0 && position > _size - ((long)count * structureSize))
 		{
-#pragma warning disable MA0015 // Matches the parameter-less BCL message for this combination.
+			#pragma warning disable MA0015 // Matches the parameter-less BCL message for this combination.
 			throw new ArgumentException(
 				"There are not enough bytes remaining in the accessor to write at this position.",
 				nameof(array));
-#pragma warning restore MA0015
+			#pragma warning restore MA0015
 		}
 
 		for (int i = 0; i < count; i++)
@@ -270,31 +276,21 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	#endregion
 
-	private static void ValidateArrayArguments<T>(T[] array, int offset, int count)
+	private void EnsureInBounds(long position, int count, bool forReading)
 	{
-		if (array == null)
+		if (position < 0)
 		{
-			throw new ArgumentNullException(nameof(array));
+			throw new ArgumentOutOfRangeException(nameof(position), position,
+				$"position ('{position}') must be a non-negative value.");
 		}
 
-		if (offset < 0)
+		if (position > _size - count)
 		{
-			throw new ArgumentOutOfRangeException(nameof(offset), offset,
-				$"offset ('{offset}') must be a non-negative value.");
-		}
-
-		if (count < 0)
-		{
-			throw new ArgumentOutOfRangeException(nameof(count), count,
-				$"count ('{count}') must be a non-negative value.");
-		}
-
-		if (array.Length - offset < count)
-		{
-#pragma warning disable MA0015 // Matches the parameter-less BCL message for this combination.
 			throw new ArgumentException(
-				"The number of bytes requested does not fit into the buffer.");
-#pragma warning restore MA0015
+				forReading
+					? "There are not enough bytes remaining in the accessor to read at this position."
+					: "There are not enough bytes remaining in the accessor to write at this position.",
+				nameof(position));
 		}
 	}
 
@@ -323,6 +319,34 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		return buffer;
 	}
 
+	private static void ValidateArrayArguments<T>(T[] array, int offset, int count)
+	{
+		if (array == null)
+		{
+			throw new ArgumentNullException(nameof(array));
+		}
+
+		if (offset < 0)
+		{
+			throw new ArgumentOutOfRangeException(nameof(offset), offset,
+				$"offset ('{offset}') must be a non-negative value.");
+		}
+
+		if (count < 0)
+		{
+			throw new ArgumentOutOfRangeException(nameof(count), count,
+				$"count ('{count}') must be a non-negative value.");
+		}
+
+		if (array.Length - offset < count)
+		{
+			#pragma warning disable MA0015 // Matches the parameter-less BCL message for this combination.
+			throw new ArgumentException(
+				"The number of bytes requested does not fit into the buffer.");
+			#pragma warning restore MA0015
+		}
+	}
+
 	private void WriteBytes(long position, byte[] bytes)
 	{
 		if (!CanWrite)
@@ -334,23 +358,5 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		_stream.Position = _offset + position;
 		_stream.Write(bytes, 0, bytes.Length);
 		_stream.Flush();
-	}
-
-	private void EnsureInBounds(long position, int count, bool forReading)
-	{
-		if (position < 0)
-		{
-			throw new ArgumentOutOfRangeException(nameof(position), position,
-				$"position ('{position}') must be a non-negative value.");
-		}
-
-		if (position > _size - count)
-		{
-			throw new ArgumentException(
-				forReading
-					? "There are not enough bytes remaining in the accessor to read at this position."
-					: "There are not enough bytes remaining in the accessor to write at this position.",
-				nameof(position));
-		}
 	}
 }
