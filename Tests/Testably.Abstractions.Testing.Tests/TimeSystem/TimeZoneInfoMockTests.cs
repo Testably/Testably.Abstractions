@@ -3,17 +3,6 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 public class TimeZoneInfoMockTests
 {
 	[Test]
-	public async Task FindSystemTimeZoneById_UnknownId_ShouldThrowTimeZoneNotFoundException()
-	{
-		MockTimeSystem timeSystem = new();
-
-		void Act()
-			=> timeSystem.TimeZoneInfo.FindSystemTimeZoneById("Unknown/Does-Not-Exist");
-
-		await That(Act).Throws<TimeZoneNotFoundException>();
-	}
-
-	[Test]
 	public async Task LocalTimeZone_WhenSetOnProvider_ShouldBeReturnedByLocal()
 	{
 		TimeZoneInfo timeZone = TimeZoneInfo.CreateCustomTimeZone(

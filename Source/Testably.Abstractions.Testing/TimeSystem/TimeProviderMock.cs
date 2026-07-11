@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Testably.Abstractions.Testing.Helpers;
 #if NETSTANDARD2_0
 using Testably.Abstractions.TimeSystem;
 #endif
@@ -107,8 +108,7 @@ internal sealed class TimeProviderMock : ITimeProvider
 			}
 		}
 
-		throw new TimeZoneNotFoundException(
-			$"The time zone ID '{id}' was not found on the local computer.");
+		throw ExceptionFactory.TimeZoneNotFound(id);
 	}
 
 	/// <inheritdoc cref="ITimeProvider.GetSystemTimeZones()" />

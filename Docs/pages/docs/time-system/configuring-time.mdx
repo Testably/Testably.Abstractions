@@ -20,6 +20,47 @@ new MockTimeSystem(TimeProviderFactory.Now());
 
 `TimeProviderFactory.Use(DateTime)`, `TimeProviderFactory.Random()` and `TimeProviderFactory.Now()` all return an `ITimeProviderFactory` you can pass to the `MockTimeSystem` constructor.
 
+## Local time zone
+
+`MockTimeSystem` exposes a controllable local time zone through `timeSystem.TimeZoneInfo` (an `ITimeZoneInfo`), and uses it to convert the simulated instant for `DateTime.Now` and `DateTime.Today`. This makes time-zone-dependent code deterministic instead of depending on the machine the test runs on.
+
+The factory picks the initial local time zone:
+
+```csharp
+// Now() and Use(DateTime) default the local time zone to TimeZoneInfo.Local
+new MockTimeSystem(TimeProviderFactory.Now());
+
+// Random() also picks a random local time zone from a curated, cross-platform
+// set (including one with daylight-saving-time transitions)
+new MockTimeSystem(TimeProviderFactory.Random());
+
+// Pin both the instant and the local time zone
+TimeZoneInfo tokyo = TimeZoneInfo.CreateCustomTimeZone(
+    "Test/Tokyo", TimeSpan.FromHours(9), "Test JST", "Test JST");
+new MockTimeSystem(TimeProviderFactory.Use(
+    new DateTime(2026, 1, 15, 0, 0, 0, DateTimeKind.Utc), tokyo));
+```
+
+Change it at runtime (and register additional zones for `FindSystemTimeZoneById` / `GetSystemTimeZones`) through the time provider:
+
+```csharp
+MockTimeSystem timeSystem = new(
+    new DateTime(2026, 1, 15, 0, 0, 0, DateTimeKind.Utc));
+
+TimeZoneInfo tokyo = TimeZoneInfo.CreateCustomTimeZone(
+    "Test/Tokyo", TimeSpan.FromHours(9), "Test JST", "Test JST");
+timeSystem.TimeProvider.LocalTimeZone = tokyo;
+
+DateTime now = timeSystem.DateTime.Now;             // 2026-01-15 09:00 (JST)
+TimeZoneInfo local = timeSystem.TimeZoneInfo.Local; // Test/Tokyo
+
+// RegisterTimeZone adds zones resolvable via FindSystemTimeZoneById / GetSystemTimeZones
+timeSystem.TimeProvider.RegisterTimeZone(tokyo);
+TimeZoneInfo resolved = timeSystem.TimeZoneInfo.FindSystemTimeZoneById("Test/Tokyo");
+```
+
+The registry is seeded from the host's `TimeZoneInfo.GetSystemTimeZones()`, so well-known ids keep resolving; setting `LocalTimeZone` registers that zone automatically.
+
 ## Custom time providers
 
 Implement `ITimeProvider` directly when you need something more interesting than a single `DateTime` - for example, a clock that ticks per virtual thread. See [Thread-aware time provider](./thread-aware-provider) for a worked example.
