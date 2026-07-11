@@ -25,6 +25,7 @@ Like the file-system [notifications](../file-system/intercept-and-notify), each 
 | Method on `On`     | Fires when                                              | `T`         |
 |--------------------|---------------------------------------------------------|-------------|
 | `DateTimeRead()`   | `DateTime.Now`, `UtcNow` or `Today` is read             | `DateTime`  |
+| `DateTimeOffsetRead()` | `DateTimeOffset.Now` or `UtcNow` is read            | `DateTimeOffset` |
 | `TaskDelay()`      | `Task.Delay` (any overload) is called                   | `TimeSpan`  |
 | `ThreadSleep()`    | `Thread.Sleep` (any overload) is called                 | `TimeSpan`  |
 | `TimeChanged()`    | the simulated time advanced (auto-advance or manual)    | `DateTime`  |
