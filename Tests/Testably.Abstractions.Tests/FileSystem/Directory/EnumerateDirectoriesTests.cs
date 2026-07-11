@@ -215,6 +215,7 @@ public class EnumerateDirectoriesTests(FileSystemTestData testData) : FileSystem
 	public async Task EnumerateDirectories_ShouldSupportExtendedLengthPaths1()
 	{
 		Skip.If(!Test.RunsOnWindows);
+		Skip.If(Test.IsNetFramework, "Extended-length paths are not supported on .NET Framework.");
 
 		FileSystem.Directory.CreateDirectory(@"\\?\c:\bar");
 		FileSystem.File.WriteAllText(@"\\?\c:\bar\foo1.txt", "foo1");
@@ -231,6 +232,7 @@ public class EnumerateDirectoriesTests(FileSystemTestData testData) : FileSystem
 	public async Task EnumerateDirectories_ShouldSupportExtendedLengthPaths2()
 	{
 		Skip.If(!Test.RunsOnWindows);
+		Skip.If(Test.IsNetFramework, "Extended-length paths are not supported on .NET Framework.");
 
 		FileSystem.Directory.CreateDirectory(@"\\?\c:\bar");
 		FileSystem.File.WriteAllText(@"\\?\c:\bar\foo1.txt", "foo1");
