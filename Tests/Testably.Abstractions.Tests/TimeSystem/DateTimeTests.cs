@@ -1,3 +1,5 @@
+using aweXpect.Chronology;
+
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 [TimeSystemTests]
@@ -39,16 +41,13 @@ public class DateTimeTests(TimeSystemTestData testData) : TimeSystemTestBase(tes
 	[Test]
 	public async Task NowAndUtcNow_ShouldRepresentTheSameInstant()
 	{
-		// Tests are brittle on the build system
-		TimeSpan tolerance = TimeSpan.FromMilliseconds(250);
-
 		DateTime utcNowBefore = TimeSystem.DateTime.UtcNow;
 		DateTime now = TimeSystem.DateTime.Now;
 		DateTime utcNowAfter = TimeSystem.DateTime.UtcNow;
 
 		await That(now.Kind).IsEqualTo(DateTimeKind.Local);
 		await That(now.ToUniversalTime())
-			.IsBetween(utcNowBefore).And(utcNowAfter).Within(tolerance);
+			.IsBetween(utcNowBefore).And(utcNowAfter).Within(50.Milliseconds());
 	}
 
 	[Test]

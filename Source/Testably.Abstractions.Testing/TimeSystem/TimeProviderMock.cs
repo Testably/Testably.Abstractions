@@ -15,7 +15,8 @@ internal sealed class TimeProviderMock : ITimeProvider
 	private long _elapsedTicks;
 	private readonly Action<DateTime> _onTimeChanged;
 	private readonly string _description;
-	private readonly Dictionary<string, TimeZoneInfo> _timeZones;
+	private Dictionary<string, TimeZoneInfo>? _timeZones;
+	private bool _systemTimeZonesSeeded;
 	private TimeZoneInfo _localTimeZone;
 #if NET9_0_OR_GREATER
 	private readonly System.Threading.Lock _lock = new();
@@ -33,11 +34,7 @@ internal sealed class TimeProviderMock : ITimeProvider
 		StartTime = _now;
 		_onTimeChanged = onTimeChanged;
 		_description = description;
-		_timeZones = TimeZoneInfo.GetSystemTimeZones()
-			.GroupBy(timeZone => timeZone.Id, StringComparer.Ordinal)
-			.ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
 		_localTimeZone = localTimeZone;
-		_timeZones[localTimeZone.Id] = localTimeZone;
 	}
 
 	#region ITimeProvider Members
@@ -54,7 +51,11 @@ internal sealed class TimeProviderMock : ITimeProvider
 			lock (_lock)
 			{
 				_localTimeZone = value;
-				_timeZones[value.Id] = value;
+
+				if (_timeZones is not null)
+				{
+					_timeZones[value.Id] = value;
+				}
 			}
 		}
 	}
@@ -102,7 +103,7 @@ internal sealed class TimeProviderMock : ITimeProvider
 	{
 		lock (_lock)
 		{
-			if (_timeZones.TryGetValue(id, out TimeZoneInfo? timeZone))
+			if (GetSeededTimeZones().TryGetValue(id, out TimeZoneInfo? timeZone))
 			{
 				return timeZone;
 			}
@@ -116,7 +117,7 @@ internal sealed class TimeProviderMock : ITimeProvider
 	{
 		lock (_lock)
 		{
-			return new ReadOnlyCollection<TimeZoneInfo>(_timeZones.Values
+			return new ReadOnlyCollection<TimeZoneInfo>(GetSeededTimeZones().Values
 				.OrderBy(timeZone => timeZone.BaseUtcOffset)
 				.ThenBy(timeZone => timeZone.Id, StringComparer.Ordinal)
 				.ToList());
@@ -137,6 +138,7 @@ internal sealed class TimeProviderMock : ITimeProvider
 	{
 		lock (_lock)
 		{
+			_timeZones ??= new Dictionary<string, TimeZoneInfo>(StringComparer.Ordinal);
 			_timeZones[timeZone.Id] = timeZone;
 		}
 	}
@@ -154,6 +156,33 @@ internal sealed class TimeProviderMock : ITimeProvider
 	}
 
 	#endregion
+
+	/// <summary>
+	///     Returns the time zone registry, allocating and seeding it on first use.
+	/// </summary>
+	/// <remarks>
+	///     The registry is created lazily so that mocks which never query time zones pay no allocation. On first use it is
+	///     seeded from the host's <see cref="TimeZoneInfo.GetSystemTimeZones()" />, without overwriting the local or
+	///     explicitly registered time zones.<br />
+	///     Must be called while holding <see cref="_lock" />.
+	/// </remarks>
+	private Dictionary<string, TimeZoneInfo> GetSeededTimeZones()
+	{
+		_timeZones ??= new Dictionary<string, TimeZoneInfo>(StringComparer.Ordinal);
+		if (_systemTimeZonesSeeded)
+		{
+			return _timeZones;
+		}
+
+		_systemTimeZonesSeeded = true;
+		foreach (TimeZoneInfo timeZone in TimeZoneInfo.GetSystemTimeZones())
+		{
+			_timeZones.TryAdd(timeZone.Id, timeZone);
+		}
+
+		_timeZones[_localTimeZone.Id] = _localTimeZone;
+		return _timeZones;
+	}
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()

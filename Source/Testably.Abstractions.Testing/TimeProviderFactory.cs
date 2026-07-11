@@ -44,7 +44,7 @@ public static class TimeProviderFactory
 	public static ITimeProviderFactory Random()
 	{
 		#pragma warning disable MA0113 // Use DateTime.UnixEpoch
-		var randomTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+		DateTime randomTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
 			.AddSeconds(RandomFactory.Shared.Next());
 		#pragma warning restore MA0113
 		var randomTimeZone = SampleTimeZones[RandomFactory.Shared.Next(SampleTimeZones.Length)];
@@ -73,6 +73,7 @@ public static class TimeProviderFactory
 	/// </remarks>
 	public static ITimeProviderFactory Use(DateTime time, TimeZoneInfo localTimeZone)
 	{
+		_ = localTimeZone ?? throw new ArgumentNullException(nameof(localTimeZone));
 		return new Factory(onTimeChanged
 			=> new TimeProviderMock(onTimeChanged, time, "Fixed", localTimeZone));
 	}

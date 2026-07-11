@@ -40,6 +40,15 @@ public class TimeProviderFactoryTests
 	}
 
 	[Test]
+	public async Task Use_WithNullTimeZone_ShouldThrowArgumentNullException()
+	{
+		void Act()
+			=> TimeProviderFactory.Use(DateTime.UtcNow, null!);
+
+		await That(Act).Throws<ArgumentNullException>().WithParamName("localTimeZone");
+	}
+
+	[Test]
 	public async Task Now_ShouldReturnCurrentDateTime()
 	{
 		DateTime begin = DateTime.UtcNow;
