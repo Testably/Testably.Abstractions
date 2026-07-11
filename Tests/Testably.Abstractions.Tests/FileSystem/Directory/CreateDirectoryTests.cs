@@ -54,6 +54,7 @@ public class CreateDirectoryTests(FileSystemTestData testData) : FileSystemTestB
 	public async Task CreateDirectory_ShouldSupportExtendedLengthPaths()
 	{
 		Skip.If(!Test.RunsOnWindows);
+		Skip.If(Test.IsNetFramework, "Extended-length paths are not supported on .NET Framework.");
 
 		FileSystem.DirectoryInfo.New(@"\\?\c:\bar").Create();
 

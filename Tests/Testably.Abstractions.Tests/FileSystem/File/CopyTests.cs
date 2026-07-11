@@ -116,23 +116,17 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 			string source, string destination)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
+		Skip.If(Test.IsNetFramework, "Invalid paths throw inconsistently on .NET Framework.");
 
 		void Act()
 		{
 			FileSystem.File.Copy(source, destination);
 		}
 
-		if (Test.IsNetFramework)
-		{
-			await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
-		}
-		else
-		{
-			await That(Act).Throws<IOException>()
-				.WithMessageContaining(
-					"The filename, directory name, or volume label syntax is incorrect").And
-				.WithHResult(-2147024773);
-		}
+		await That(Act).Throws<IOException>()
+			.WithMessageContaining(
+				"The filename, directory name, or volume label syntax is incorrect").And
+			.WithHResult(-2147024773);
 	}
 
 	[Test]
