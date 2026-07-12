@@ -39,6 +39,83 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	}
 
 	[Test]
+	public async Task
+		CreateFromFile_WithNegativeCapacity_AndCreateMode_ShouldNotTruncateExistingFile()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+
+		void Act()
+		{
+			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+				"data.bin", FileMode.Create, null, -1, MemoryMappedFileAccess.ReadWrite);
+		}
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("capacity");
+		await That(FileSystem.File.ReadAllBytes("data.bin").Length).IsEqualTo(100)
+			.Because("the capacity is validated before the file is opened, so the FileMode.Create must not truncate it");
+	}
+
+	[Test]
+	public async Task
+		CreateFromFile_WithReadOnlyStream_AndReadWriteAccess_ShouldThrowUnauthorizedAccessException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using FileSystemStream stream =
+			FileSystem.FileStream.New("data.bin", FileMode.Open, FileAccess.Read);
+
+		void Act()
+		{
+			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+				stream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None,
+				leaveOpen: true);
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.Because("a read-write mapping requires a writable stream");
+	}
+
+	[Test]
+	public async Task CreateViewAccessor_AfterDispose_ShouldThrowObjectDisposedException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
+		mappedFile.Dispose();
+
+		void Act() => mappedFile.CreateViewAccessor();
+
+		await That(Act).Throws<ObjectDisposedException>();
+	}
+
+	[Test]
+	public async Task CreateViewStream_AfterDispose_ShouldThrowObjectDisposedException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
+		mappedFile.Dispose();
+
+		void Act() => mappedFile.CreateViewStream();
+
+		await That(Act).Throws<ObjectDisposedException>();
+	}
+
+	[Test]
+	public async Task
+		CreateViewAccessor_WithInvalidAccess_ShouldThrowArgumentOutOfRangeException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
+
+		void Act() => mappedFile.CreateViewAccessor(0, 0, (MemoryMappedFileAccess)42);
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("access");
+	}
+
+	[Test]
 	public async Task CreateFromFile_WithFileSystemStream_AndLeaveOpen_ShouldKeepStreamOpen()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);

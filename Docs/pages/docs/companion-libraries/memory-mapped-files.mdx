@@ -95,7 +95,7 @@ Some parts of the BCL surface operate on operating-system shared memory rather t
 - `OpenExisting` *(Windows-only)*
 - A non-null `mapName` in `CreateFromFile` (named mappings are operating-system shared-memory objects)
 
-The `SafeMemoryMappedFileHandle` / `SafeMemoryMappedViewHandle` handle and pointer APIs, as well as the `SafeFileHandle`-based `CreateFromFile` overload, are not exposed at all - mirroring how the `SafeFileHandle`-based `FileStream` construction is excluded elsewhere.
+The `SafeMemoryMappedFileHandle` / `SafeMemoryMappedViewHandle` handle and pointer APIs, as well as the `SafeFileHandle`-based `CreateFromFile` overload, are not exposed at all - mirroring how the `SafeFileHandle`-based `FileStream` construction is excluded elsewhere. Since no unmanaged memory backs a `MemoryMappedFileSystemViewStream`, the members that only exist on its `UnmanagedMemoryStream` base throw `ObjectDisposedException`: the unsafe `PositionPointer`, and `Capacity` when accessed through a reference typed as `UnmanagedMemoryStream` instead of `MemoryMappedFileSystemViewStream`.
 
 ## Behaviour on the mock
 
@@ -103,6 +103,6 @@ On `MockFileSystem` the reads and writes, the capacity handling and the thrown e
 
 - **Default view access is `ReadWrite`** - creating a writable view over a read-only mapping throws `UnauthorizedAccessException`, exactly as the BCL does.
 - **The file and its views have independent lifetimes** - a view stays usable after the `IMemoryMappedFile` is disposed.
-- **`CopyOnWrite` views are private** - writes are neither persisted to the underlying file nor visible to other views.
+- **`CopyOnWrite` views privatize pages on write** - writes are neither persisted to the underlying file nor visible to other views, while pages the view has not written keep reflecting later changes made through other views, matching the lazy page privatization (4096-byte granularity) of real copy-on-write views.
 
-Two details tied to operating-system memory mapping are intentionally simplified: a view created without an explicit size has a `Capacity` of exactly the remaining bytes (the real file system rounds up to the system page size), and `PointerOffset` is always `0`.
+Two details tied to operating-system memory mapping are intentionally simplified: a view created without an explicit size has a `Capacity` of exactly the remaining bytes (the real file system rounds up to the system page size), and `PointerOffset` is always `0`. Exception messages of the mock follow the Windows behaviour of the BCL, regardless of the simulated operating system of the `MockFileSystem`.

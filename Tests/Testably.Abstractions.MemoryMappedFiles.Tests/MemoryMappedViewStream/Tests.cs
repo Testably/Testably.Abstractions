@@ -9,7 +9,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Capacity_ShouldBeAtLeastTheViewSize()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 
 		using MemoryMappedFileSystemViewStream stream = mappedFile.CreateViewStream(0, 20);
 
@@ -33,7 +33,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task DefaultViewStream_ShouldSupportReadWriteAndSeek()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 
 		using Stream stream = mappedFile.CreateViewStream();
 
@@ -45,7 +45,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Length_ShouldMatchViewSize()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 
 		using Stream stream = mappedFile.CreateViewStream(0, 50);
 
@@ -55,7 +55,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task PointerOffset_ForViewAtStart_ShouldBeZero()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 
 		using MemoryMappedFileSystemViewStream stream = mappedFile.CreateViewStream(0, 20);
 
@@ -65,7 +65,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Position_SetToNegative_ShouldThrowArgumentOutOfRangeException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using Stream stream = mappedFile.CreateViewStream(0, 50);
 
 		void Act() => stream.Position = -1;
@@ -76,7 +76,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Read_AtEndOfStream_ShouldReturnZero()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using Stream stream = mappedFile.CreateViewStream(0, 10);
 		stream.Seek(0, SeekOrigin.End);
 
@@ -88,7 +88,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Read_WithCountLargerThanBuffer_ShouldThrowArgumentException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using Stream stream = mappedFile.CreateViewStream(0, 50);
 
 		void Act() => _ = stream.Read(new byte[10], 5, 10);
@@ -99,7 +99,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Read_WithNegativeOffset_ShouldThrowArgumentOutOfRangeException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using Stream stream = mappedFile.CreateViewStream(0, 50);
 
 		void Act() => _ = stream.Read(new byte[10], -1, 1);
@@ -110,7 +110,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Read_WithNullBuffer_ShouldThrowArgumentNullException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using Stream stream = mappedFile.CreateViewStream(0, 50);
 
 		void Act() => _ = stream.Read(null!, 0, 1);
@@ -137,7 +137,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		byte[] payload = [1, 2, 3, 4, 5,];
 
 		using (Stream writeStream = mappedFile.CreateViewStream(0, 50))
@@ -168,7 +168,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Seek_BeforeBeginning_ShouldThrowIOException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using Stream stream = mappedFile.CreateViewStream(0, 50);
 
 		void Act() => stream.Seek(-1, SeekOrigin.Begin);
@@ -179,7 +179,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Seek_FromBeginCurrentAndEnd_ShouldUpdatePosition()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using Stream stream = mappedFile.CreateViewStream(0, 50);
 
 		await That(stream.Seek(10, SeekOrigin.Begin)).IsEqualTo(10L);
@@ -191,7 +191,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task SetLength_ShouldThrowNotSupportedException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using Stream stream = mappedFile.CreateViewStream(0, 50);
 
 		void Act() => stream.SetLength(10);
@@ -202,7 +202,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Write_BeyondCapacity_ShouldThrowNotSupportedException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using Stream stream = mappedFile.CreateViewStream(0, 10);
 
 		void Act() => stream.Write(new byte[20], 0, 20);
@@ -213,7 +213,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task WriteOnlyViewStream_ShouldNotSupportReading()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using Stream stream =
 			mappedFile.CreateViewStream(0, 50, MemoryMappedFileAccess.Write);
 
@@ -222,11 +222,5 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		void Act() => _ = stream.Read(new byte[5], 0, 5);
 
 		await That(Act).Throws<NotSupportedException>();
-	}
-
-	private IMemoryMappedFile CreateMappedFile(int size = 100, string path = "data.bin")
-	{
-		FileSystem.File.WriteAllBytes(path, new byte[size]);
-		return FileSystem.MemoryMappedFile.CreateFromFile(path);
 	}
 }

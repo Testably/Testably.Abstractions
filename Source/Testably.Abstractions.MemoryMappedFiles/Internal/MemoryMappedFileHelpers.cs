@@ -21,6 +21,33 @@ internal static class MemoryMappedFileHelpers
 			or MemoryMappedFileAccess.ReadExecute);
 
 	/// <summary>
+	///     Throws an <see cref="ArgumentOutOfRangeException" /> when the <paramref name="access" />
+	///     is not a defined <see cref="MemoryMappedFileAccess" /> value, matching the BCL.
+	/// </summary>
+	public static void ThrowIfOutOfRange(this MemoryMappedFileAccess access,
+		string paramName)
+	{
+		if (access < MemoryMappedFileAccess.ReadWrite ||
+		    access > MemoryMappedFileAccess.ReadWriteExecute)
+		{
+			throw new ArgumentOutOfRangeException(paramName);
+		}
+	}
+
+	/// <summary>
+	///     Throws an <see cref="ArgumentOutOfRangeException" /> when the <paramref name="value" />
+	///     is negative, matching the message of the BCL argument validation.
+	/// </summary>
+	public static void ThrowIfNegative(long value, string paramName)
+	{
+		if (value < 0)
+		{
+			throw new ArgumentOutOfRangeException(paramName, value,
+				$"{paramName} ('{value}') must be a non-negative value.");
+		}
+	}
+
+	/// <summary>
 	///     Retrieves the <see cref="IFileSystemExtensibility" /> from the <paramref name="fileStream" />
 	///     or throws a <see cref="NotSupportedException" /> if it is not supported.
 	/// </summary>

@@ -43,6 +43,41 @@ public class CopyOnWriteTests(FileSystemTestData testData)
 	}
 
 	[Test]
+	public async Task CopyOnWriteView_AfterOwnWrite_ShouldNotSeeWritesToThePrivatizedPage()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
+		using IMemoryMappedViewAccessor copyOnWrite =
+			mappedFile.CreateViewAccessor(0, 100, MemoryMappedFileAccess.CopyOnWrite);
+		using IMemoryMappedViewAccessor readWrite = mappedFile.CreateViewAccessor(0, 100);
+
+		copyOnWrite.Write(50, 42);
+		readWrite.Write(52, 777);
+
+		await That(copyOnWrite.ReadInt32(52)).IsEqualTo(0)
+			.Because(
+				"the copy-on-write view privatized the whole page when it wrote at offset 50, freezing it against later writes from other views");
+	}
+
+	[Test]
+	public async Task CopyOnWriteView_BeforeOwnWrite_ShouldSeeWritesFromOtherViews()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
+		using IMemoryMappedViewAccessor copyOnWrite =
+			mappedFile.CreateViewAccessor(0, 100, MemoryMappedFileAccess.CopyOnWrite);
+		using IMemoryMappedViewAccessor readWrite = mappedFile.CreateViewAccessor(0, 100);
+
+		readWrite.Write(0, 1234567);
+
+		await That(copyOnWrite.ReadInt32(0)).IsEqualTo(1234567)
+			.Because(
+				"pages the copy-on-write view has not written are only privatized lazily, so they keep reflecting writes made through other views");
+	}
+
+	[Test]
 	public async Task CopyOnWriteMapping_WritableView_ShouldThrowUnauthorizedAccessException()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);

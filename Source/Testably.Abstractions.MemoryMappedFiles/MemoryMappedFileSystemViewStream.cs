@@ -15,6 +15,13 @@ namespace Testably.Abstractions;
 ///     This mirrors the design of <see cref="FileSystemStream" />: all <see cref="Stream" />
 ///     members are delegated to the wrapped <see cref="Stream" />, while the members specific to
 ///     <see cref="MemoryMappedViewStream" /> are added on top.
+///     <para />
+///     The <see cref="UnmanagedMemoryStream" /> base is never initialized with unmanaged memory,
+///     because the bytes live in the wrapped <see cref="Stream" />. Members that only exist on
+///     the base and cannot be overridden or re-declared therefore throw an
+///     <see cref="ObjectDisposedException" />: <see cref="UnmanagedMemoryStream.PositionPointer" />,
+///     and <see cref="UnmanagedMemoryStream.Capacity" /> when accessed through a reference typed
+///     as the base <see cref="UnmanagedMemoryStream" />.
 /// </remarks>
 public abstract class MemoryMappedFileSystemViewStream : UnmanagedMemoryStream
 {

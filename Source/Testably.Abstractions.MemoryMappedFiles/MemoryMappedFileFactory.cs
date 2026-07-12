@@ -38,6 +38,7 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 	{
 		ValidateMapName(mapName);
 		ValidateAccess(access);
+		ValidateCapacity(capacity);
 		if (mode == FileMode.Append)
 		{
 			throw new ArgumentException(
@@ -91,6 +92,7 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 	{
 		ValidateMapName(mapName);
 		ValidateAccess(access);
+		ValidateCapacity(capacity);
 		IFileSystemExtensibility extensibility = fileStream.GetExtensibilityOrThrow();
 		if (extensibility.TryGetWrappedInstance(out FileStream? realStream))
 		{
@@ -172,9 +174,9 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 	}
 
 	private static FileAccess ToFileAccess(MemoryMappedFileAccess access)
-		=> access is MemoryMappedFileAccess.Read or MemoryMappedFileAccess.ReadExecute
-			? FileAccess.Read
-			: FileAccess.ReadWrite;
+		=> access.SupportsWriting()
+			? FileAccess.ReadWrite
+			: FileAccess.Read;
 
 	private static void ThrowIfMapNamed(string? mapName)
 	{
@@ -187,17 +189,22 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 
 	private static void ValidateAccess(MemoryMappedFileAccess access)
 	{
-		if (access < MemoryMappedFileAccess.ReadWrite ||
-		    access > MemoryMappedFileAccess.ReadWriteExecute)
-		{
-			throw new ArgumentOutOfRangeException(nameof(access));
-		}
+		access.ThrowIfOutOfRange(nameof(access));
 
 		if (access == MemoryMappedFileAccess.Write)
 		{
 			throw new ArgumentException(
 				"MemoryMappedFileAccess.Write is not permitted when creating new memory mapped files. Use MemoryMappedFileAccess.ReadWrite instead.",
 				nameof(access));
+		}
+	}
+
+	private static void ValidateCapacity(long capacity)
+	{
+		if (capacity < 0)
+		{
+			throw new ArgumentOutOfRangeException(nameof(capacity), capacity,
+				"The capacity must be greater than or equal to 0. 0 represents the size of the file being mapped.");
 		}
 	}
 

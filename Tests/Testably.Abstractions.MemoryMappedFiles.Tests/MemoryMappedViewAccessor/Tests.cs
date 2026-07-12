@@ -10,7 +10,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Capacity_WithExplicitSize_ShouldMatchRequestedSize()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(10, 20);
 
@@ -33,7 +33,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task DefaultAccessor_ShouldSupportReadAndWrite()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
@@ -44,7 +44,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task PointerOffset_ForViewAtStart_ShouldBeZero()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 20);
 
@@ -54,7 +54,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadArray_OnWriteOnlyAccessor_ShouldThrowNotSupportedException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor =
 			mappedFile.CreateViewAccessor(0, 100, MemoryMappedFileAccess.Write);
 
@@ -64,9 +64,47 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	}
 
 	[Test]
+	public async Task ReadArray_AtCapacity_ShouldThrowArgumentOutOfRangeException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 100);
+
+		void Act() => accessor.ReadArray(100, new int[1], 0, 1);
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("position")
+			.Because("the BCL rejects a position at or beyond the capacity before computing how many items fit");
+	}
+
+	[Test]
+	public async Task WriteArray_AtCapacity_WithZeroCount_ShouldThrowArgumentOutOfRangeException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 100);
+
+		void Act() => accessor.WriteArray(100, new int[0], 0, 0);
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("position")
+			.Because("the BCL checks the position against the capacity independent of the count");
+	}
+
+	[Test]
+	public async Task WriteArray_BeyondCapacity_ShouldThrowArgumentOutOfRangeException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 100);
+
+		void Act() => accessor.WriteArray(150, new int[1], 0, 1);
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("position");
+	}
+
+	[Test]
 	public async Task ReadByte_AtCapacity_ShouldThrowArgumentOutOfRangeException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 10);
 
 		void Act() => accessor.ReadByte(10);
@@ -79,7 +117,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Write_AtCapacity_ShouldThrowArgumentOutOfRangeException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 10);
 
 		void Act() => accessor.Write(10, (byte)1);
@@ -92,7 +130,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Read_BeyondCapacity_ShouldThrowArgumentException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 100);
 
 		void Act() => accessor.ReadInt32(98);
@@ -104,7 +142,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Read_OnWriteOnlyAccessor_ShouldThrowNotSupportedException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor =
 			mappedFile.CreateViewAccessor(0, 100, MemoryMappedFileAccess.Write);
 
@@ -116,7 +154,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Read_WithNegativePosition_ShouldThrowArgumentOutOfRangeException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		void Act() => accessor.ReadInt32(-1);
@@ -142,7 +180,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadArray_WhenPartiallyOutOfBounds_ShouldReturnItemsThatFit()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 100);
 		int[] target = new int[10];
 
@@ -155,7 +193,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadArray_WithNegativePosition_ShouldThrowArgumentOutOfRangeException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		void Act() => accessor.ReadArray(-1, new int[4], 0, 4);
@@ -167,7 +205,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadArray_WithNullArray_ShouldThrowArgumentNullException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		void Act() => accessor.ReadArray<int>(0, null!, 0, 1);
@@ -179,7 +217,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_Boolean_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(3, true);
@@ -190,7 +228,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_Byte_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(3, (byte)200);
@@ -201,7 +239,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_Char_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(3, 'Z');
@@ -212,7 +250,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_Decimal_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(8, 79228162514.264337593543950335m);
@@ -223,7 +261,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_Double_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(8, 2.718281828459045);
@@ -234,7 +272,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_GenericStruct_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 		Point value = new()
 		{
@@ -252,7 +290,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_Int16_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(3, (short)-12345);
@@ -263,7 +301,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_Int32_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(8, 1234567);
@@ -274,7 +312,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_Int64_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(8, -9_000_000_000L);
@@ -285,7 +323,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_SByte_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(3, (sbyte)-42);
@@ -296,7 +334,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_Single_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(8, 3.14159f);
@@ -307,7 +345,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_UInt16_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(3, (ushort)54321);
@@ -318,7 +356,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_UInt32_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(8, 3_000_000_000u);
@@ -329,7 +367,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWrite_UInt64_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(8, 18_000_000_000_000_000_000UL);
@@ -340,7 +378,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task ReadWriteArray_ShouldRoundtrip()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 		int[] source = [10, 20, 30, 40, 50];
 
@@ -355,7 +393,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Write_BeyondCapacity_ShouldThrowArgumentException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 100);
 
 		void Act() => accessor.Write(98, 1234567);
@@ -394,7 +432,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task WriteAccessor_ShouldNotSupportReading()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 
 		using IMemoryMappedViewAccessor accessor =
 			mappedFile.CreateViewAccessor(0, 100, MemoryMappedFileAccess.Write);
@@ -406,7 +444,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task WriteArray_WhenTooLargeForRemainingCapacity_ShouldThrowAndNotWritePartially()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 100);
 		int[] source = new int[30];
 		for (int i = 0; i < source.Length; i++)
@@ -426,7 +464,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task WriteArray_WithNegativePosition_ShouldThrowArgumentOutOfRangeException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		void Act() => accessor.WriteArray(-1, new int[4], 0, 4);
@@ -438,7 +476,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task WriteArray_WithNullArray_ShouldThrowArgumentNullException()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		void Act() => accessor.WriteArray<int>(0, null!, 0, 1);
@@ -453,7 +491,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		// A struct with a single bool has a managed size of 1 byte, but a marshalled
 		// size of 4 bytes. The view must use the managed size, matching the BCL, so the
 		// three bytes following the bool must remain untouched.
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 		accessor.Write(1, byte.MaxValue);
 		accessor.Write(2, byte.MaxValue);
@@ -474,7 +512,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task WriteGenericStruct_ShouldUseSequentialLayout()
 	{
-		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 		Point value = new()
 		{
@@ -486,12 +524,6 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 
 		await That(accessor.ReadInt32(16)).IsEqualTo(111);
 		await That(accessor.ReadInt32(20)).IsEqualTo(222);
-	}
-
-	private IMemoryMappedFile CreateMappedFile(int size = 100, string path = "data.bin")
-	{
-		FileSystem.File.WriteAllBytes(path, new byte[size]);
-		return FileSystem.MemoryMappedFile.CreateFromFile(path);
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

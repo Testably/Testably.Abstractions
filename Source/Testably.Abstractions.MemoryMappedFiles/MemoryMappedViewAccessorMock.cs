@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.CompilerServices;
 using Testably.Abstractions.Internal;
@@ -64,9 +64,8 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Read{T}(long, out T)" />
 	public void Read<T>(long position, out T structure) where T : struct
 	{
-		int size = Unsafe.SizeOf<T>();
-		byte[] bytes = ReadBytes(position, size);
-		structure = size == 0 ? default : Unsafe.ReadUnaligned<T>(ref bytes[0]);
+		byte[] bytes = ReadBytes(position, Unsafe.SizeOf<T>());
+		structure = Unsafe.ReadUnaligned<T>(ref bytes[0]);
 	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.ReadArray{T}(long, T[], int, int)" />
@@ -79,11 +78,8 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 			throw new NotSupportedException("Accessor does not support reading.");
 		}
 
-		if (position < 0)
-		{
-			throw new ArgumentOutOfRangeException(nameof(position), position,
-				$"position ('{position}') must be a non-negative value.");
-		}
+		MemoryMappedFileHelpers.ThrowIfNegative(position, nameof(position));
+		ThrowIfPositionAtOrBeyondCapacity(position);
 
 		int structureSize = Unsafe.SizeOf<T>();
 		long available = _size - position;
@@ -95,7 +91,9 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 			return 0;
 		}
 
-		byte[] bytes = ReadBytes(position, itemsToRead * structureSize);
+		int byteCount = itemsToRead * structureSize;
+		byte[] bytes = new byte[byteCount];
+		_backing.ReadAt(_offset + position, bytes, 0, byteCount);
 		for (int i = 0; i < itemsToRead; i++)
 		{
 			array[offset + i] = Unsafe.ReadUnaligned<T>(ref bytes[i * structureSize]);
@@ -266,13 +264,8 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write{T}(long, ref T)" />
 	public void Write<T>(long position, ref T structure) where T : struct
 	{
-		int size = Unsafe.SizeOf<T>();
-		byte[] bytes = new byte[size];
-		if (size > 0)
-		{
-			Unsafe.WriteUnaligned(ref bytes[0], structure);
-		}
-
+		byte[] bytes = new byte[Unsafe.SizeOf<T>()];
+		Unsafe.WriteUnaligned(ref bytes[0], structure);
 		WriteBytes(position, bytes);
 	}
 
@@ -286,21 +279,16 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 			throw new NotSupportedException("Accessor does not support writing.");
 		}
 
-		if (position < 0)
-		{
-			throw new ArgumentOutOfRangeException(nameof(position), position,
-				$"position ('{position}') must be a non-negative value.");
-		}
+		MemoryMappedFileHelpers.ThrowIfNegative(position, nameof(position));
+		ThrowIfPositionAtOrBeyondCapacity(position);
 
 		int structureSize = Unsafe.SizeOf<T>();
 		// Validate up-front so the write is atomic: the BCL rejects the whole call before writing
 		// any element when the array does not fit, rather than writing partially and then failing.
-		if (count > 0 && position > _size - ((long)count * structureSize))
+		if (position > _size - ((long)count * structureSize))
 		{
 			#pragma warning disable MA0015 // Matches the parameter-less BCL message for this combination.
-			throw new ArgumentException(
-				"There are not enough bytes remaining in the accessor to write at this position.",
-				nameof(array));
+			throw new ArgumentException("Not enough space available in the buffer.");
 			#pragma warning restore MA0015
 		}
 
@@ -316,32 +304,33 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 			Unsafe.WriteUnaligned(ref bytes[i * structureSize], value);
 		}
 
-		WriteBytes(position, bytes);
+		_backing.WriteAt(_offset + position, bytes, 0, bytes.Length);
 	}
 
 	#endregion
 
 	private void EnsureInBounds(long position, int count, bool forReading)
 	{
-		if (position < 0)
-		{
-			throw new ArgumentOutOfRangeException(nameof(position), position,
-				$"position ('{position}') must be a non-negative value.");
-		}
+		MemoryMappedFileHelpers.ThrowIfNegative(position, nameof(position));
 
 		if (position > _size - count)
 		{
-			if (position >= _size)
-			{
-				throw new ArgumentOutOfRangeException(nameof(position),
-					"The position may not be greater or equal to the capacity of the accessor.");
-			}
+			ThrowIfPositionAtOrBeyondCapacity(position);
 
 			throw new ArgumentException(
 				forReading
 					? "There are not enough bytes remaining in the accessor to read at this position."
 					: "There are not enough bytes remaining in the accessor to write at this position.",
 				nameof(position));
+		}
+	}
+
+	private void ThrowIfPositionAtOrBeyondCapacity(long position)
+	{
+		if (position >= _size)
+		{
+			throw new ArgumentOutOfRangeException(nameof(position),
+				"The position may not be greater or equal to the capacity of the accessor.");
 		}
 	}
 
@@ -365,17 +354,8 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 			throw new ArgumentNullException(nameof(array));
 		}
 
-		if (offset < 0)
-		{
-			throw new ArgumentOutOfRangeException(nameof(offset), offset,
-				$"offset ('{offset}') must be a non-negative value.");
-		}
-
-		if (count < 0)
-		{
-			throw new ArgumentOutOfRangeException(nameof(count), count,
-				$"count ('{count}') must be a non-negative value.");
-		}
+		MemoryMappedFileHelpers.ThrowIfNegative(offset, nameof(offset));
+		MemoryMappedFileHelpers.ThrowIfNegative(count, nameof(count));
 
 		if (array.Length - offset < count)
 		{

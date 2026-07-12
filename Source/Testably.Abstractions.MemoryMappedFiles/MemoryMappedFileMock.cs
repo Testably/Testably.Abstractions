@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Threading;
+using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions;
 
@@ -11,9 +12,12 @@ namespace Testably.Abstractions;
 /// </summary>
 internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 {
+	private const string AccessToPathDeniedMessage = "Access to the path is denied.";
+
 	private readonly MemoryMappedFileAccess _access;
 	private readonly SharedBacking _backing;
 	private readonly long _capacity;
+	private bool _disposed;
 	private readonly IDisposable _fileReference;
 	private readonly MemoryMappedViewBacking _sharedViewBacking;
 
@@ -22,11 +26,7 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 	{
 		FileSystem = fileSystem;
 		_access = access;
-		if (capacity < 0)
-		{
-			throw new ArgumentOutOfRangeException(nameof(capacity), capacity,
-				$"capacity ('{capacity}') must be a non-negative value.");
-		}
+		MemoryMappedFileHelpers.ThrowIfNegative(capacity, nameof(capacity));
 
 		if (capacity == 0)
 		{
@@ -45,10 +45,21 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 			throw new ArgumentOutOfRangeException(nameof(capacity), capacity,
 				"The capacity may not be smaller than the file size.");
 		}
-		else if (capacity > stream.Length)
+
+		// The mapping always reads the file, and all accesses except Read/ReadExecute also
+		// require write access to it; the real memory-mapped file fails in the same way when
+		// the file handle was opened without the required access.
+		bool requiresWritableStream = access is MemoryMappedFileAccess.ReadWrite
+			or MemoryMappedFileAccess.ReadWriteExecute
+			or MemoryMappedFileAccess.CopyOnWrite;
+		if (!stream.CanRead || (requiresWritableStream && !stream.CanWrite))
 		{
-			if (access is MemoryMappedFileAccess.Read
-				or MemoryMappedFileAccess.ReadExecute)
+			throw new UnauthorizedAccessException(AccessToPathDeniedMessage);
+		}
+
+		if (capacity > stream.Length)
+		{
+			if (!access.SupportsWriting())
 			{
 				#pragma warning disable MA0015 // Matches the parameter-less BCL message for this combination.
 				throw new ArgumentException(
@@ -69,7 +80,7 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 
 		_capacity = capacity;
 		_backing = new SharedBacking(stream, ownsStream);
-		_sharedViewBacking = new MemoryMappedViewBacking(stream, _backing.SyncRoot);
+		_sharedViewBacking = new StreamViewBacking(stream);
 		_fileReference = _backing.Acquire();
 	}
 
@@ -90,7 +101,7 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 	public IMemoryMappedViewAccessor CreateViewAccessor(long offset, long size,
 		MemoryMappedFileAccess access)
 	{
-		long viewSize = ValidateAndNormalizeView(offset, size);
+		long viewSize = ValidateAndNormalizeView(offset, size, access);
 		ValidateViewAccess(access);
 		MemoryMappedViewBacking backing =
 			CreateViewBacking(access, out IDisposable backingOwner);
@@ -110,7 +121,7 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 	public MemoryMappedFileSystemViewStream CreateViewStream(long offset, long size,
 		MemoryMappedFileAccess access)
 	{
-		long viewSize = ValidateAndNormalizeView(offset, size);
+		long viewSize = ValidateAndNormalizeView(offset, size, access);
 		ValidateViewAccess(access);
 		MemoryMappedViewBacking backing =
 			CreateViewBacking(access, out IDisposable backingOwner);
@@ -120,10 +131,13 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 
 	/// <inheritdoc cref="System.IDisposable.Dispose()" />
 	public void Dispose()
+	{
 		// The memory-mapped file releases only its own reference to the shared backing; any
 		// view that is still open keeps the backing alive, matching the independent lifetime
 		// of the real memory-mapped file and its views.
-		=> _fileReference.Dispose();
+		_disposed = true;
+		_fileReference.Dispose();
+	}
 
 	#endregion
 
@@ -132,43 +146,35 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 	///     <paramref name="access" />.
 	/// </summary>
 	/// <remarks>
-	///     For <see cref="MemoryMappedFileAccess.CopyOnWrite" /> a private in-memory copy of the
-	///     mapped bytes is returned, so that writes are neither persisted to the underlying file
-	///     nor visible to other views (matching the real memory-mapped file). The returned
-	///     <paramref name="backingOwner" /> disposes that copy.
-	///     For every other access the shared underlying stream is returned, and
-	///     <paramref name="backingOwner" /> is a reference that keeps it alive until the view is
-	///     disposed.
+	///     For <see cref="MemoryMappedFileAccess.CopyOnWrite" /> a page-privatizing backing over
+	///     the shared stream is returned, so that reads keep observing the shared bytes until the
+	///     view writes a page, and writes are neither persisted to the underlying file nor
+	///     visible to other views (matching the real memory-mapped file).
+	///     Every view holds a reference that keeps the shared underlying stream alive until the
+	///     view is disposed.
 	/// </remarks>
 	private MemoryMappedViewBacking CreateViewBacking(MemoryMappedFileAccess access,
 		out IDisposable backingOwner)
 	{
+		backingOwner = _backing.Acquire();
 		if (access != MemoryMappedFileAccess.CopyOnWrite)
 		{
-			backingOwner = _backing.Acquire();
 			return _sharedViewBacking;
 		}
 
-		byte[] copy = new byte[_capacity];
-		_sharedViewBacking.ReadAt(0, copy, 0, copy.Length);
-		MemoryStream copyStream = new(copy, 0, copy.Length, writable: true,
-			publiclyVisible: false);
-		backingOwner = copyStream;
-		return new MemoryMappedViewBacking(copyStream, new object());
+		return new CopyOnWriteViewBacking(_sharedViewBacking, _capacity);
 	}
 
-	private long ValidateAndNormalizeView(long offset, long size)
+	private long ValidateAndNormalizeView(long offset, long size,
+		MemoryMappedFileAccess access)
 	{
-		if (offset < 0)
-		{
-			throw new ArgumentOutOfRangeException(nameof(offset), offset,
-				$"offset ('{offset}') must be a non-negative value.");
-		}
+		MemoryMappedFileHelpers.ThrowIfNegative(offset, nameof(offset));
+		MemoryMappedFileHelpers.ThrowIfNegative(size, nameof(size));
+		access.ThrowIfOutOfRange(nameof(access));
 
-		if (size < 0)
+		if (_disposed)
 		{
-			throw new ArgumentOutOfRangeException(nameof(size), size,
-				$"size ('{size}') must be a non-negative value.");
+			throw new ObjectDisposedException(null);
 		}
 
 		if (size > long.MaxValue - offset)
@@ -182,7 +188,7 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 		// this subtraction is evaluated.
 		if (offset > _capacity || size > _capacity - offset)
 		{
-			throw new UnauthorizedAccessException("Access to the path is denied.");
+			throw new UnauthorizedAccessException(AccessToPathDeniedMessage);
 		}
 
 		return size == 0 ? _capacity - offset : size;
@@ -200,7 +206,7 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 			or MemoryMappedFileAccess.ReadWriteExecute;
 		if (mappingProhibitsWritableViews && viewRequiresWrite)
 		{
-			throw new UnauthorizedAccessException("Access to the path is denied.");
+			throw new UnauthorizedAccessException(AccessToPathDeniedMessage);
 		}
 	}
 
@@ -211,11 +217,6 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 	/// </summary>
 	private sealed class SharedBacking(Stream stream, bool ownsStream)
 	{
-		/// <summary>
-		///     Serializes all positional access to the shared <see cref="Stream" /> across views.
-		/// </summary>
-		public object SyncRoot { get; } = new();
-
 		private int _refCount;
 
 		public IDisposable Acquire()
