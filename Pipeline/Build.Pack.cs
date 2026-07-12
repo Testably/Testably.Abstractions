@@ -1,7 +1,7 @@
-using Nuke.Common;
-using Nuke.Common.IO;
-using Nuke.Common.ProjectModel;
-using Nuke.Common.Utilities.Collections;
+using Fallout.Common;
+using Fallout.Common.IO;
+using Fallout.Common.ProjectModel;
+using Fallout.Common.Utilities.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

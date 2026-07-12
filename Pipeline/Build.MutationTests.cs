@@ -1,7 +1,7 @@
-using Nuke.Common;
-using Nuke.Common.IO;
-using Nuke.Common.Tooling;
-using Nuke.Common.Tools.DotNet;
+using Fallout.Common;
+using Fallout.Common.IO;
+using Fallout.Common.Tooling;
+using Fallout.Common.Tools.DotNet;
 using Octokit;
 using Serilog;
 using System;
@@ -9,8 +9,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using static Nuke.Common.Tools.DotNet.DotNetTasks;
-using Project = Nuke.Common.ProjectModel.Project;
+using static Fallout.Common.Tools.DotNet.DotNetTasks;
+using Project = Fallout.Common.ProjectModel.Project;
 
 // ReSharper disable AllUnderscoreLocalParameterName
 
@@ -39,7 +39,7 @@ partial class Build
 
 			if (prId != null)
 			{
-				GitHubClient gitHubClient = new(new ProductHeaderValue("Nuke"));
+				GitHubClient gitHubClient = new(new ProductHeaderValue("Fallout"));
 				Credentials tokenAuth = new(GithubToken);
 				gitHubClient.Credentials = tokenAuth;
 				IReadOnlyList<IssueComment> comments =
