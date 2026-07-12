@@ -82,7 +82,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 100);
 
-		void Act() => accessor.WriteArray(100, new int[0], 0, 0);
+		void Act() => accessor.WriteArray(100, Array.Empty<int>(), 0, 0);
 
 		await That(Act).Throws<ArgumentOutOfRangeException>()
 			.WithParamName("position")

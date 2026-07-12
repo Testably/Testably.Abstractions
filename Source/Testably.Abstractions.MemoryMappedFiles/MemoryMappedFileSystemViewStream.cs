@@ -134,8 +134,10 @@ public abstract class MemoryMappedFileSystemViewStream : UnmanagedMemoryStream
 
 #if FEATURE_SPAN
 	/// <inheritdoc cref="Stream.Read(Span{byte})" />
+	#pragma warning disable S927 // The names of the base declarations conflict: `UnmanagedMemoryStream.Read` kept the historical `destination`, while the root `Stream.Read` declares `buffer`; `buffer` matches the root declaration and all other streams of this repository.
 	public override int Read(Span<byte> buffer)
 		=> _stream.Read(buffer);
+	#pragma warning restore S927
 #endif
 
 	/// <inheritdoc cref="Stream.ReadAsync(byte[], int, int, CancellationToken)" />
@@ -174,8 +176,10 @@ public abstract class MemoryMappedFileSystemViewStream : UnmanagedMemoryStream
 
 #if FEATURE_SPAN
 	/// <inheritdoc cref="Stream.Write(ReadOnlySpan{byte})" />
+	#pragma warning disable S927 // The names of the base declarations conflict: `UnmanagedMemoryStream.Write` kept the historical `source`, while the root `Stream.Write` declares `buffer`; `buffer` matches the root declaration and all other streams of this repository.
 	public override void Write(ReadOnlySpan<byte> buffer)
 		=> _stream.Write(buffer);
+	#pragma warning restore S927
 #endif
 
 	/// <inheritdoc cref="Stream.WriteAsync(byte[], int, int, CancellationToken)" />
