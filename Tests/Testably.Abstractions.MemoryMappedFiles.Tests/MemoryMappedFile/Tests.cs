@@ -150,7 +150,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	private struct Point
+	private record struct Point
 	{
 		public int X;
 		public int Y;

@@ -41,7 +41,7 @@ internal sealed class CopyOnWriteViewBacking(MemoryMappedViewBacking shared, lon
 			{
 				long pageIndex = (position + read) / PageSize;
 				int offsetInPage = (int)((position + read) % PageSize);
-				int chunk = (int)Math.Min(count - read, PageSize - offsetInPage);
+				int chunk = Math.Min(count - read, PageSize - offsetInPage);
 				if (_privatePages.TryGetValue(pageIndex, out byte[]? page))
 				{
 					Array.Copy(page, offsetInPage, buffer, offset + read, chunk);
@@ -68,7 +68,7 @@ internal sealed class CopyOnWriteViewBacking(MemoryMappedViewBacking shared, lon
 			{
 				long pageIndex = (position + written) / PageSize;
 				int offsetInPage = (int)((position + written) % PageSize);
-				int chunk = (int)Math.Min(count - written, PageSize - offsetInPage);
+				int chunk = Math.Min(count - written, PageSize - offsetInPage);
 				byte[] page = GetOrCreatePrivatePage(pageIndex);
 				Array.Copy(buffer, offset + written, page, offsetInPage, chunk);
 				written += chunk;

@@ -23,7 +23,9 @@ public interface IMemoryMappedViewAccessor : IFileSystemEntity, IDisposable
 	void Flush();
 
 	/// <inheritdoc cref="UnmanagedMemoryAccessor.Read{T}(long, out T)" />
+	#pragma warning disable S3874 // The `out` modifier mirrors the BCL `UnmanagedMemoryAccessor.Read{T}` signature, so code can switch between the real and the mocked API unchanged.
 	void Read<T>(long position, out T structure) where T : struct;
+	#pragma warning restore S3874
 
 	/// <inheritdoc cref="UnmanagedMemoryAccessor.ReadArray{T}(long, T[], int, int)" />
 	int ReadArray<T>(long position, T[] array, int offset, int count) where T : struct;
@@ -107,7 +109,9 @@ public interface IMemoryMappedViewAccessor : IFileSystemEntity, IDisposable
 	void Write(long position, ulong value);
 
 	/// <inheritdoc cref="UnmanagedMemoryAccessor.Write{T}(long, ref T)" />
+	#pragma warning disable S3874 // The `ref` modifier mirrors the BCL `UnmanagedMemoryAccessor.Write{T}` signature, so code can switch between the real and the mocked API unchanged.
 	void Write<T>(long position, ref T structure) where T : struct;
+	#pragma warning restore S3874
 
 	/// <inheritdoc cref="UnmanagedMemoryAccessor.WriteArray{T}(long, T[], int, int)" />
 	void WriteArray<T>(long position, T[] array, int offset, int count) where T : struct;

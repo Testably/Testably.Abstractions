@@ -527,14 +527,14 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	private struct Point
+	private record struct Point
 	{
 		public int X;
 		public int Y;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	private struct WithBool
+	private record struct WithBool
 	{
 		public bool Flag;
 	}

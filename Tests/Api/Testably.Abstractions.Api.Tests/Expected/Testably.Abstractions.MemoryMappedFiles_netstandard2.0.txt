@@ -104,7 +104,7 @@ namespace Testably.Abstractions
         public override int Read(byte[] buffer, int offset, int count) { }
         public override System.Threading.Tasks.Task<int> ReadAsync(byte[] buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) { }
         public override int ReadByte() { }
-        public override long Seek(long offset, System.IO.SeekOrigin loc) { }
+        public override long Seek(long offset, System.IO.SeekOrigin origin) { }
         public override void SetLength(long value) { }
         public override string? ToString() { }
         public override void Write(byte[] buffer, int offset, int count) { }

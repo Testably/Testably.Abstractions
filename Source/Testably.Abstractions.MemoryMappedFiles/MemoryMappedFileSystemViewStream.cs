@@ -155,8 +155,8 @@ public abstract class MemoryMappedFileSystemViewStream : UnmanagedMemoryStream
 		=> _stream.ReadByte();
 
 	/// <inheritdoc cref="Stream.Seek(long, SeekOrigin)" />
-	public override long Seek(long offset, SeekOrigin loc)
-		=> _stream.Seek(offset, loc);
+	public override long Seek(long offset, SeekOrigin origin)
+		=> _stream.Seek(offset, origin);
 
 	/// <inheritdoc cref="Stream.SetLength(long)" />
 	public override void SetLength(long value)
