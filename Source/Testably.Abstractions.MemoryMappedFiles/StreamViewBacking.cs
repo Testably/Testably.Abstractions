@@ -61,9 +61,11 @@ internal sealed class StreamViewBacking(Stream stream) : MemoryMappedViewBacking
 	}
 
 	/// <summary>
-	///     Writes the given bytes at the absolute <paramref name="position" /> and flushes the
-	///     backing <see cref="Stream" />, so that the change is immediately visible to other
-	///     readers of the file (matching the coherence of real memory-mapped views).
+	///     Writes the given bytes at the absolute <paramref name="position" />. The write is
+	///     immediately visible to all views (they share this stream); it reaches the underlying
+	///     file when a view is flushed or disposed, because flushing the
+	///     <c>MockFileSystem</c> stream copies the complete file content and would make every
+	///     single write cost <c>O(fileLength)</c>.
 	/// </summary>
 	public override void WriteAt(long position, byte[] buffer, int offset, int count)
 	{
@@ -74,7 +76,6 @@ internal sealed class StreamViewBacking(Stream stream) : MemoryMappedViewBacking
 			{
 				stream.Position = position;
 				stream.Write(buffer, offset, count);
-				stream.Flush();
 			}
 			finally
 			{

@@ -26,26 +26,37 @@ internal sealed class MemoryMappedViewStreamMock(
 	{
 		/// <inheritdoc cref="Stream.CanRead" />
 		public override bool CanRead
-			=> _canRead;
+			=> !_disposed && _canRead;
 
 		/// <inheritdoc cref="Stream.CanSeek" />
 		public override bool CanSeek
-			=> true;
+			=> !_disposed;
 
 		/// <inheritdoc cref="Stream.CanWrite" />
 		public override bool CanWrite
-			=> _canWrite;
+			=> !_disposed && _canWrite;
 
 		/// <inheritdoc cref="Stream.Length" />
 		public override long Length
-			=> _size;
+		{
+			get
+			{
+				ThrowIfDisposed();
+				return _size;
+			}
+		}
 
 		/// <inheritdoc cref="Stream.Position" />
 		public override long Position
 		{
-			get => _position;
+			get
+			{
+				ThrowIfDisposed();
+				return _position;
+			}
 			set
 			{
+				ThrowIfDisposed();
 				if (value < 0)
 				{
 					throw new ArgumentOutOfRangeException(nameof(value), value,
@@ -60,6 +71,7 @@ internal sealed class MemoryMappedViewStreamMock(
 		private readonly IDisposable _backingOwner;
 		private readonly bool _canRead;
 		private readonly bool _canWrite;
+		private bool _disposed;
 		private readonly long _offset;
 		private long _position;
 		private readonly long _size;
@@ -77,12 +89,16 @@ internal sealed class MemoryMappedViewStreamMock(
 
 		/// <inheritdoc cref="Stream.Flush()" />
 		public override void Flush()
-			=> _backing.Flush();
+		{
+			ThrowIfDisposed();
+			_backing.Flush();
+		}
 
 		/// <inheritdoc cref="Stream.Read(byte[], int, int)" />
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			EnsureValidBufferRange(buffer, offset, count);
+			ThrowIfDisposed();
 			if (!_canRead)
 			{
 				throw new NotSupportedException("Stream does not support reading.");
@@ -103,6 +119,7 @@ internal sealed class MemoryMappedViewStreamMock(
 		/// <inheritdoc cref="Stream.Seek(long, SeekOrigin)" />
 		public override long Seek(long offset, SeekOrigin origin)
 		{
+			ThrowIfDisposed();
 			long target = origin switch
 			{
 				SeekOrigin.Begin => offset,
@@ -129,6 +146,7 @@ internal sealed class MemoryMappedViewStreamMock(
 		public override void Write(byte[] buffer, int offset, int count)
 		{
 			EnsureValidBufferRange(buffer, offset, count);
+			ThrowIfDisposed();
 			if (!_canWrite)
 			{
 				throw new NotSupportedException("Stream does not support writing.");
@@ -147,15 +165,28 @@ internal sealed class MemoryMappedViewStreamMock(
 		/// <inheritdoc cref="Stream.Dispose(bool)" />
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing)
+			if (disposing && !_disposed)
 			{
-				// Releases this view's reference to the shared backing (disposing the underlying
-				// stream once the memory-mapped file and all views are gone) or disposes the
-				// private copy-on-write copy this view owns.
+				_disposed = true;
+				// Pending writes are flushed to the underlying file when the view is disposed,
+				// matching the real memory-mapped view, which writes its dirty pages on unmap.
+				_backing.Flush();
+				// Releases this view's reference to the shared backing, disposing the underlying
+				// stream once the memory-mapped file and all views are gone. (The private pages
+				// of a copy-on-write view are plain managed memory reclaimed by the garbage
+				// collector.)
 				_backingOwner.Dispose();
 			}
 
 			base.Dispose(disposing);
+		}
+
+		private void ThrowIfDisposed()
+		{
+			if (_disposed)
+			{
+				throw new ObjectDisposedException(null, "Cannot access a closed Stream.");
+			}
 		}
 
 		private static void EnsureValidBufferRange(byte[] buffer, int offset, int count)

@@ -63,6 +63,9 @@ public class CopyOnWriteTests(FileSystemTestData testData)
 	[Test]
 	public async Task CopyOnWriteView_BeforeOwnWrite_ShouldSeeWritesFromOtherViews()
 	{
+		Skip.If(FileSystem is not MockFileSystem && Test.RunsOnMac,
+			"POSIX leaves it unspecified whether a copy-on-write view sees later writes made through other views; macOS snapshots the pages eagerly, while Windows and Linux privatize them lazily. The mock mirrors Windows.");
+
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
 		using IMemoryMappedFile mappedFile =
 			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
@@ -75,6 +78,24 @@ public class CopyOnWriteTests(FileSystemTestData testData)
 		await That(copyOnWrite.ReadInt32(0)).IsEqualTo(1234567)
 			.Because(
 				"pages the copy-on-write view has not written are only privatized lazily, so they keep reflecting writes made through other views");
+	}
+
+	[Test]
+	public async Task CopyOnWriteMapping_OverReadOnlyStream_ShouldBeSupported()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using FileSystemStream stream =
+			FileSystem.FileStream.New("data.bin", FileMode.Open, FileAccess.Read);
+		using IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
+			stream, null, 0, MemoryMappedFileAccess.CopyOnWrite, HandleInheritability.None,
+			leaveOpen: true);
+		using IMemoryMappedViewAccessor accessor =
+			mappedFile.CreateViewAccessor(0, 100, MemoryMappedFileAccess.CopyOnWrite);
+
+		accessor.Write(0, 42);
+
+		await That(accessor.ReadInt32(0)).IsEqualTo(42)
+			.Because("a copy-on-write mapping never writes to the file, so it only needs read access to it");
 	}
 
 	[Test]

@@ -1,12 +1,69 @@
 ﻿using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Runtime.CompilerServices;
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+using System.Linq;
+using System.Reflection;
+#endif
 using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions.Internal;
 
 internal static class MemoryMappedFileHelpers
 {
+	/// <summary>
+	///     Returns the stride between two elements of an array of <typeparamref name="T" />,
+	///     matching the aligned size used by the BCL <c>UnmanagedMemoryAccessor</c> array
+	///     operations: sizes 1 and 2 are kept, larger sizes are rounded up to a multiple of 4.
+	/// </summary>
+	public static int AlignedSizeOf<T>() where T : struct
+	{
+		int size = Unsafe.SizeOf<T>();
+		if (size is 1 or 2)
+		{
+			return size;
+		}
+
+		return (size + 3) & ~3;
+	}
+
+	/// <summary>
+	///     Throws an <see cref="ArgumentException" /> when <typeparamref name="T" /> is a struct
+	///     containing object references, matching the BCL <c>UnmanagedMemoryAccessor</c>, which
+	///     never reinterprets raw bytes as references.
+	/// </summary>
+	public static void ThrowIfContainsReferences<T>() where T : struct
+	{
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+		if (ReferenceCheck<T>.ContainsReferences)
+#else
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+#endif
+		{
+			#pragma warning disable MA0015 // Matches the parameter-less BCL message for a reference-containing struct.
+			throw new ArgumentException(
+				"The specified Type must be a struct containing no references.");
+			#pragma warning restore MA0015
+		}
+	}
+
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+	private static class ReferenceCheck<T> where T : struct
+	{
+		public static readonly bool ContainsReferences = Check(typeof(T));
+
+		private static bool Check(Type type)
+			=> type
+				.GetFields(BindingFlags.Instance | BindingFlags.Public |
+				           BindingFlags.NonPublic)
+				.Any(field
+					=> (!field.FieldType.IsValueType && !field.FieldType.IsPointer) ||
+					   (field.FieldType.IsValueType && field.FieldType != type &&
+					    Check(field.FieldType)));
+	}
+#endif
+
 	/// <summary>
 	///     Returns whether a view with the given <paramref name="access" /> supports reading.
 	/// </summary>

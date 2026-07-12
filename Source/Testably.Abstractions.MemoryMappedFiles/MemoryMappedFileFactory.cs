@@ -90,9 +90,15 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 		long capacity, MemoryMappedFileAccess access, HandleInheritability inheritability,
 		bool leaveOpen)
 	{
+		if (fileStream == null)
+		{
+			throw new ArgumentNullException(nameof(fileStream));
+		}
+
 		ValidateMapName(mapName);
 		ValidateAccess(access);
 		ValidateCapacity(capacity);
+		ValidateInheritability(inheritability);
 		IFileSystemExtensibility extensibility = fileStream.GetExtensibilityOrThrow();
 		if (extensibility.TryGetWrappedInstance(out FileStream? realStream))
 		{
@@ -196,6 +202,14 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 			throw new ArgumentException(
 				"MemoryMappedFileAccess.Write is not permitted when creating new memory mapped files. Use MemoryMappedFileAccess.ReadWrite instead.",
 				nameof(access));
+		}
+	}
+
+	private static void ValidateInheritability(HandleInheritability inheritability)
+	{
+		if (inheritability is < HandleInheritability.None or > HandleInheritability.Inheritable)
+		{
+			throw new ArgumentOutOfRangeException(nameof(inheritability));
 		}
 	}
 

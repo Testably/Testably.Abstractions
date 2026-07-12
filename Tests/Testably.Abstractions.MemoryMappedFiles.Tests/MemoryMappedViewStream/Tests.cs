@@ -74,6 +74,43 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	}
 
 	[Test]
+	public async Task Read_AfterDispose_ShouldThrowObjectDisposedException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		Stream stream = mappedFile.CreateViewStream(0, 50);
+		stream.Dispose();
+
+		void Act() => _ = stream.Read(new byte[1], 0, 1);
+
+		await That(Act).Throws<ObjectDisposedException>();
+	}
+
+	[Test]
+	public async Task Write_AfterDispose_ShouldThrowObjectDisposedException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		Stream stream = mappedFile.CreateViewStream(0, 50);
+		stream.Dispose();
+
+		void Act() => stream.Write(new byte[1], 0, 1);
+
+		await That(Act).Throws<ObjectDisposedException>();
+	}
+
+	[Test]
+	public async Task CanReadWriteSeek_AfterDispose_ShouldBeFalse()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		Stream stream = mappedFile.CreateViewStream(0, 50);
+
+		stream.Dispose();
+
+		await That(stream.CanRead).IsFalse();
+		await That(stream.CanWrite).IsFalse();
+		await That(stream.CanSeek).IsFalse();
+	}
+
+	[Test]
 	public async Task Read_AtEndOfStream_ShouldReturnZero()
 	{
 		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();

@@ -526,11 +526,189 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		await That(accessor.ReadInt32(20)).IsEqualTo(222);
 	}
 
+	[Test]
+	public async Task Read_WithReferenceContainingStruct_ShouldThrowArgumentException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+
+		void Act() => accessor.Read(0, out WithReference _);
+
+		await That(Act).Throws<ArgumentException>()
+			.Because("a struct containing object references can never be reinterpreted from raw bytes");
+	}
+
+	[Test]
+	public async Task Write_WithReferenceContainingStruct_ShouldThrowArgumentException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+		WithReference value = new();
+
+		void Act() => accessor.Write(0, ref value);
+
+		await That(Act).Throws<ArgumentException>()
+			.Because("a struct containing object references can never be written as raw bytes");
+	}
+
+	[Test]
+	public async Task ReadArray_WithReferenceContainingStruct_ShouldThrowArgumentException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+
+		void Act() => _ = accessor.ReadArray(0, new WithReference[1], 0, 1);
+
+		await That(Act).Throws<ArgumentException>()
+			.Because("a struct containing object references can never be reinterpreted from raw bytes");
+	}
+
+	[Test]
+	public async Task WriteArray_WithReferenceContainingStruct_ShouldThrowArgumentException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+
+		void Act() => accessor.WriteArray(0, new WithReference[1], 0, 1);
+
+		await That(Act).Throws<ArgumentException>()
+			.Because("a struct containing object references can never be written as raw bytes");
+	}
+
+	[Test]
+	public async Task WriteArray_With3ByteStruct_ShouldStrideByAlignedSize()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[10]);
+
+		using (IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin"))
+		{
+			using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 10);
+			accessor.WriteArray(0, [
+				new Rgb(1, 2, 3),
+				new Rgb(4, 5, 6),
+			], 0, 2);
+		}
+
+		byte[] bytes = FileSystem.File.ReadAllBytes("data.bin");
+		byte[] expected = [1, 2, 3, 0, 4, 5, 6, 0, 0, 0,];
+		await That(bytes).IsEqualTo(expected)
+			.Because("array elements are strided by the aligned size (4 for a 3-byte struct), leaving the padding bytes untouched");
+	}
+
+	[Test]
+	public async Task ReadArray_With3ByteStruct_ShouldStrideByAlignedSize()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,]);
+		using IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 10);
+		Rgb[] target = new Rgb[4];
+
+		int count = accessor.ReadArray(0, target, 0, 4);
+
+		await That(count).IsEqualTo(2)
+			.Because("only complete aligned strides (4 bytes for a 3-byte struct) are counted");
+		await That(target[0]).IsEqualTo(new Rgb(1, 2, 3));
+		await That(target[1]).IsEqualTo(new Rgb(5, 6, 7))
+			.Because("the second element starts at the aligned offset 4");
+	}
+
+	[Test]
+	public async Task WriteArray_With3ByteStruct_WithoutRoomForAlignedStride_ShouldThrowArgumentException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[7]);
+		using IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 7);
+
+		void Act() => accessor.WriteArray(0, new Rgb[2], 0, 2);
+
+		await That(Act).Throws<ArgumentException>()
+			.Because("two elements require two full aligned strides (8 bytes), even though the last element itself would fit in 7 bytes");
+	}
+
+	[Test]
+	public async Task Read_AfterDispose_ShouldThrowObjectDisposedException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+		accessor.Dispose();
+
+		void Act() => _ = accessor.ReadInt32(0);
+
+		await That(Act).Throws<ObjectDisposedException>();
+	}
+
+	[Test]
+	public async Task Write_AfterDispose_ShouldThrowObjectDisposedException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+		accessor.Dispose();
+
+		void Act() => accessor.Write(0, 42);
+
+		await That(Act).Throws<ObjectDisposedException>();
+	}
+
+	[Test]
+	public async Task Flush_AfterDispose_ShouldThrowObjectDisposedException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+		accessor.Dispose();
+
+		void Act() => accessor.Flush();
+
+		await That(Act).Throws<ObjectDisposedException>();
+	}
+
+	[Test]
+	public async Task CanReadAndCanWrite_AfterDispose_ShouldBeFalse()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+
+		accessor.Dispose();
+
+		await That(accessor.CanRead).IsFalse();
+		await That(accessor.CanWrite).IsFalse();
+	}
+
+	[Test]
+	public async Task Flush_ShouldMakeWritesVisibleToOtherStreams()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+
+		accessor.Write(0, 1234567);
+		accessor.Flush();
+
+		using FileSystemStream reader = FileSystem.FileStream.New(
+			"data.bin", FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+		byte[] buffer = new byte[4];
+		_ = reader.Read(buffer, 0, 4);
+		await That(BitConverter.ToInt32(buffer, 0)).IsEqualTo(1234567);
+	}
+
 	[StructLayout(LayoutKind.Sequential)]
 	private record struct Point
 	{
 		public int X;
 		public int Y;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	private record struct Rgb(byte R, byte G, byte B);
+
+	private record struct WithReference
+	{
+		#pragma warning disable CS0649 // The field is only used to make the struct contain a reference.
+		public string? Text;
+		#pragma warning restore CS0649
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

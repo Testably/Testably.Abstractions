@@ -14,6 +14,7 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 	private readonly MemoryMappedFileAccess _access;
 	private readonly MemoryMappedViewBacking _backing;
 	private readonly IDisposable _backingOwner;
+	private bool _disposed;
 	private readonly long _offset;
 	private readonly long _size;
 
@@ -33,11 +34,11 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.CanRead" />
 	public bool CanRead
-		=> _access.SupportsReading();
+		=> !_disposed && _access.SupportsReading();
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.CanWrite" />
 	public bool CanWrite
-		=> _access.SupportsWriting();
+		=> !_disposed && _access.SupportsWriting();
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Capacity" />
 	public long Capacity
@@ -52,18 +53,33 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	/// <inheritdoc cref="System.IDisposable.Dispose()" />
 	public void Dispose()
-		// Releases this view's reference to the shared backing (disposing the underlying stream
-		// once the memory-mapped file and all views are gone) or disposes the private
-		// copy-on-write copy this view owns.
-		=> _backingOwner.Dispose();
+	{
+		if (_disposed)
+		{
+			return;
+		}
+
+		_disposed = true;
+		// Pending writes are flushed to the underlying file when the view is disposed,
+		// matching the real memory-mapped view, which writes its dirty pages on unmap.
+		_backing.Flush();
+		// Releases this view's reference to the shared backing, disposing the underlying stream
+		// once the memory-mapped file and all views are gone. (The private pages of a
+		// copy-on-write view are plain managed memory reclaimed by the garbage collector.)
+		_backingOwner.Dispose();
+	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Flush()" />
 	public void Flush()
-		=> _backing.Flush();
+	{
+		ThrowIfDisposed();
+		_backing.Flush();
+	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Read{T}(long, out T)" />
 	public void Read<T>(long position, out T structure) where T : struct
 	{
+		MemoryMappedFileHelpers.ThrowIfContainsReferences<T>();
 		byte[] bytes = ReadBytes(position, Unsafe.SizeOf<T>());
 		structure = Unsafe.ReadUnaligned<T>(ref bytes[0]);
 	}
@@ -73,30 +89,34 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		where T : struct
 	{
 		ValidateArrayArguments(array, offset, count);
+		ThrowIfDisposed();
 		if (!CanRead)
 		{
 			throw new NotSupportedException("Accessor does not support reading.");
 		}
 
 		MemoryMappedFileHelpers.ThrowIfNegative(position, nameof(position));
+		MemoryMappedFileHelpers.ThrowIfContainsReferences<T>();
 		ThrowIfPositionAtOrBeyondCapacity(position);
 
+		// The elements of an array are strided by the aligned size (the BCL rounds sizes other
+		// than 1 and 2 up to a multiple of 4), while each element itself only occupies its
+		// actual size.
 		int structureSize = Unsafe.SizeOf<T>();
+		int alignedSize = MemoryMappedFileHelpers.AlignedSizeOf<T>();
 		long available = _size - position;
-		int itemsToRead = available < structureSize
-			? 0
-			: (int)Math.Min(count, available / structureSize);
+		int itemsToRead = (int)Math.Min(count, available / alignedSize);
 		if (itemsToRead == 0)
 		{
 			return 0;
 		}
 
-		int byteCount = itemsToRead * structureSize;
+		int byteCount = ((itemsToRead - 1) * alignedSize) + structureSize;
 		byte[] bytes = new byte[byteCount];
 		_backing.ReadAt(_offset + position, bytes, 0, byteCount);
 		for (int i = 0; i < itemsToRead; i++)
 		{
-			array[offset + i] = Unsafe.ReadUnaligned<T>(ref bytes[i * structureSize]);
+			array[offset + i] = Unsafe.ReadUnaligned<T>(ref bytes[i * alignedSize]);
 		}
 
 		return itemsToRead;
@@ -264,6 +284,7 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write{T}(long, ref T)" />
 	public void Write<T>(long position, ref T structure) where T : struct
 	{
+		MemoryMappedFileHelpers.ThrowIfContainsReferences<T>();
 		byte[] bytes = new byte[Unsafe.SizeOf<T>()];
 		Unsafe.WriteUnaligned(ref bytes[0], structure);
 		WriteBytes(position, bytes);
@@ -274,18 +295,24 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		where T : struct
 	{
 		ValidateArrayArguments(array, offset, count);
+		ThrowIfDisposed();
 		if (!CanWrite)
 		{
 			throw new NotSupportedException("Accessor does not support writing.");
 		}
 
 		MemoryMappedFileHelpers.ThrowIfNegative(position, nameof(position));
+		MemoryMappedFileHelpers.ThrowIfContainsReferences<T>();
 		ThrowIfPositionAtOrBeyondCapacity(position);
 
+		// The elements of an array are strided by the aligned size (the BCL rounds sizes other
+		// than 1 and 2 up to a multiple of 4), while each element itself only occupies its
+		// actual size, leaving the padding bytes between elements untouched.
 		int structureSize = Unsafe.SizeOf<T>();
+		int alignedSize = MemoryMappedFileHelpers.AlignedSizeOf<T>();
 		// Validate up-front so the write is atomic: the BCL rejects the whole call before writing
 		// any element when the array does not fit, rather than writing partially and then failing.
-		if (position > _size - ((long)count * structureSize))
+		if (position > _size - ((long)count * alignedSize))
 		{
 			#pragma warning disable MA0015 // Matches the parameter-less BCL message for this combination.
 			throw new ArgumentException("Not enough space available in the buffer.");
@@ -297,11 +324,19 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 			return;
 		}
 
-		byte[] bytes = new byte[count * structureSize];
+		int byteCount = ((count - 1) * alignedSize) + structureSize;
+		byte[] bytes = new byte[byteCount];
+		if (alignedSize != structureSize && count > 1)
+		{
+			// Read-modify-write of the covered range, so the padding bytes between elements keep
+			// their current file content (the BCL writes only the actual bytes of each element).
+			_backing.ReadAt(_offset + position, bytes, 0, byteCount);
+		}
+
 		for (int i = 0; i < count; i++)
 		{
 			T value = array[offset + i];
-			Unsafe.WriteUnaligned(ref bytes[i * structureSize], value);
+			Unsafe.WriteUnaligned(ref bytes[i * alignedSize], value);
 		}
 
 		_backing.WriteAt(_offset + position, bytes, 0, bytes.Length);
@@ -334,8 +369,17 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		}
 	}
 
+	private void ThrowIfDisposed()
+	{
+		if (_disposed)
+		{
+			throw new ObjectDisposedException(null, "Cannot access a closed accessor.");
+		}
+	}
+
 	private byte[] ReadBytes(long position, int count)
 	{
+		ThrowIfDisposed();
 		if (!CanRead)
 		{
 			throw new NotSupportedException("Accessor does not support reading.");
@@ -368,6 +412,7 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	private void WriteBytes(long position, byte[] bytes)
 	{
+		ThrowIfDisposed();
 		if (!CanWrite)
 		{
 			throw new NotSupportedException("Accessor does not support writing.");

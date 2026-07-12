@@ -46,12 +46,12 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 				"The capacity may not be smaller than the file size.");
 		}
 
-		// The mapping always reads the file, and all accesses except Read/ReadExecute also
-		// require write access to it; the real memory-mapped file fails in the same way when
-		// the file handle was opened without the required access.
+		// The mapping always reads the file, and the write-through accesses also require write
+		// access to it; the real memory-mapped file fails in the same way when the file handle
+		// was opened without the required access. A copy-on-write mapping never writes to the
+		// file, so (like the real one) it only needs read access.
 		bool requiresWritableStream = access is MemoryMappedFileAccess.ReadWrite
-			or MemoryMappedFileAccess.ReadWriteExecute
-			or MemoryMappedFileAccess.CopyOnWrite;
+			or MemoryMappedFileAccess.ReadWriteExecute;
 		if (!stream.CanRead || (requiresWritableStream && !stream.CanWrite))
 		{
 			throw new UnauthorizedAccessException(AccessToPathDeniedMessage);

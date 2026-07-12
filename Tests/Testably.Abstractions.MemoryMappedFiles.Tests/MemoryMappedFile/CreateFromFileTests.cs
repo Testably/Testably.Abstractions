@@ -79,6 +79,39 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	}
 
 	[Test]
+	public async Task
+		CreateFromFile_WithInvalidInheritability_ShouldThrowArgumentOutOfRangeException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using FileSystemStream stream =
+			FileSystem.FileStream.New("data.bin", FileMode.Open, FileAccess.ReadWrite);
+
+		void Act()
+		{
+			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+				stream, null, 0, MemoryMappedFileAccess.ReadWrite, (HandleInheritability)5,
+				leaveOpen: true);
+		}
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("inheritability");
+	}
+
+	[Test]
+	public async Task CreateFromFile_WithNullFileStream_ShouldThrowArgumentNullException()
+	{
+		void Act()
+		{
+			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+				null!, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None,
+				leaveOpen: true);
+		}
+
+		await That(Act).Throws<ArgumentNullException>()
+			.WithParamName("fileStream");
+	}
+
+	[Test]
 	public async Task CreateViewAccessor_AfterDispose_ShouldThrowObjectDisposedException()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
