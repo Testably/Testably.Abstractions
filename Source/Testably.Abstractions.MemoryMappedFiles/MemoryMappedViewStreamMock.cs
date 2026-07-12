@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions;
 
@@ -9,7 +10,7 @@ namespace Testably.Abstractions;
 ///     <see cref="FileSystemStream" /> of the <c>MockFileSystem</c>.
 /// </summary>
 internal sealed class MemoryMappedViewStreamMock(
-	Stream backing,
+	MemoryMappedViewBacking backing,
 	long offset,
 	long size,
 	MemoryMappedFileAccess access,
@@ -55,7 +56,7 @@ internal sealed class MemoryMappedViewStreamMock(
 			}
 		}
 
-		private readonly Stream _backing;
+		private readonly MemoryMappedViewBacking _backing;
 		private readonly IDisposable _backingOwner;
 		private readonly bool _canRead;
 		private readonly bool _canWrite;
@@ -63,16 +64,15 @@ internal sealed class MemoryMappedViewStreamMock(
 		private long _position;
 		private readonly long _size;
 
-		public BoundedViewStream(Stream backing, long offset, long size,
+		public BoundedViewStream(MemoryMappedViewBacking backing, long offset, long size,
 			MemoryMappedFileAccess access, IDisposable backingOwner)
 		{
 			_backing = backing;
 			_offset = offset;
 			_size = size;
 			_backingOwner = backingOwner;
-			_canRead = access is not MemoryMappedFileAccess.Write;
-			_canWrite = access is not (MemoryMappedFileAccess.Read
-				or MemoryMappedFileAccess.ReadExecute);
+			_canRead = access.SupportsReading();
+			_canWrite = access.SupportsWriting();
 		}
 
 		/// <inheritdoc cref="Stream.Flush()" />
@@ -95,8 +95,7 @@ internal sealed class MemoryMappedViewStreamMock(
 			}
 
 			int toRead = (int)Math.Min(count, remaining);
-			_backing.Position = _offset + _position;
-			int read = _backing.Read(buffer, offset, toRead);
+			int read = _backing.ReadAt(_offset + _position, buffer, offset, toRead);
 			_position += read;
 			return read;
 		}
@@ -135,15 +134,13 @@ internal sealed class MemoryMappedViewStreamMock(
 				throw new NotSupportedException("Stream does not support writing.");
 			}
 
-			if (_position + count > _size)
+			if (_position > _size - count)
 			{
 				throw new NotSupportedException(
 					"Unable to expand length of this stream beyond its capacity.");
 			}
 
-			_backing.Position = _offset + _position;
-			_backing.Write(buffer, offset, count);
-			_backing.Flush();
+			_backing.WriteAt(_offset + _position, buffer, offset, count);
 			_position += count;
 		}
 

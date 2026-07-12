@@ -1,11 +1,25 @@
 ﻿using System;
 using System.IO;
+using System.IO.MemoryMappedFiles;
 using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions.Internal;
 
 internal static class MemoryMappedFileHelpers
 {
+	/// <summary>
+	///     Returns whether a view with the given <paramref name="access" /> supports reading.
+	/// </summary>
+	public static bool SupportsReading(this MemoryMappedFileAccess access)
+		=> access is not MemoryMappedFileAccess.Write;
+
+	/// <summary>
+	///     Returns whether a view with the given <paramref name="access" /> supports writing.
+	/// </summary>
+	public static bool SupportsWriting(this MemoryMappedFileAccess access)
+		=> access is not (MemoryMappedFileAccess.Read
+			or MemoryMappedFileAccess.ReadExecute);
+
 	/// <summary>
 	///     Retrieves the <see cref="IFileSystemExtensibility" /> from the <paramref name="fileStream" />
 	///     or throws a <see cref="NotSupportedException" /> if it is not supported.

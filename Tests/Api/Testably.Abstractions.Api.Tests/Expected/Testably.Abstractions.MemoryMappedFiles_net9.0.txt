@@ -92,6 +92,7 @@ namespace Testably.Abstractions
         public override bool CanSeek { get; }
         public override bool CanTimeout { get; }
         public override bool CanWrite { get; }
+        public virtual long Capacity { get; }
         public override long Length { get; }
         public abstract long PointerOffset { get; }
         public override long Position { get; set; }

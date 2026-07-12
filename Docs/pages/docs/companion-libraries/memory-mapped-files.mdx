@@ -30,9 +30,9 @@ int value = accessor.ReadInt32(0);
 
 The same code runs unchanged against `RealFileSystem` and `MockFileSystem`.
 
-### Production uses the real BCL implementation
+### Production uses the real base class library (BCL) implementation
 
-The abstraction isn't just a uniform façade. When `IFileSystem` is a `RealFileSystem`, every call forwards to the underlying base class library (BCL) `MemoryMappedFile`, so production keeps the native memory-mapping semantics unchanged. Only when `IFileSystem` is a `MockFileSystem` are the views built directly over the in-memory file bytes:
+The abstraction isn't just a uniform façade. When `IFileSystem` is a `RealFileSystem`, every call forwards to the underlying BCL `MemoryMappedFile`, so production keeps the native memory-mapping semantics unchanged. Only when `IFileSystem` is a `MockFileSystem` are the views built directly over the in-memory file bytes:
 
 ```csharp
 // Inside MemoryMappedFileFactory.CreateFromFile:
@@ -84,7 +84,7 @@ stream.Write([1, 2, 3, 4], 0, 4);
 
 `IMemoryMappedViewAccessor` mirrors `MemoryMappedViewAccessor`: the primitive `Read*`/`Write` overloads, the generic `Read<T>`/`Write<T>` for structs, `ReadArray<T>`/`WriteArray<T>`, plus `Capacity`, `CanRead`, `CanWrite`, `PointerOffset` and `Flush`.
 
-`MemoryMappedFileSystemViewStream` derives from `UnmanagedMemoryStream` - the same base class as the real `MemoryMappedViewStream` - so it inherits members like `Capacity` directly and only adds the `PointerOffset` member specific to `MemoryMappedViewStream`.
+`MemoryMappedFileSystemViewStream` derives from `UnmanagedMemoryStream` - the same base class as the real `MemoryMappedViewStream` - and re-declares the `Capacity` member on top of the stream members (the base is not backed by unmanaged memory), plus the `PointerOffset` member specific to `MemoryMappedViewStream`.
 
 ## Not supported on the mock
 
@@ -93,6 +93,7 @@ Some parts of the BCL surface operate on operating-system shared memory rather t
 - `CreateNew`
 - `CreateOrOpen` *(Windows-only)*
 - `OpenExisting` *(Windows-only)*
+- A non-null `mapName` in `CreateFromFile` (named mappings are operating-system shared-memory objects)
 
 The `SafeMemoryMappedFileHandle` / `SafeMemoryMappedViewHandle` handle and pointer APIs, as well as the `SafeFileHandle`-based `CreateFromFile` overload, are not exposed at all - mirroring how the `SafeFileHandle`-based `FileStream` construction is excluded elsewhere.
 

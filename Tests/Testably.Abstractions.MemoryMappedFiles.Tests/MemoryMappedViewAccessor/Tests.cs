@@ -52,6 +52,44 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	}
 
 	[Test]
+	public async Task ReadArray_OnWriteOnlyAccessor_ShouldThrowNotSupportedException()
+	{
+		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedViewAccessor accessor =
+			mappedFile.CreateViewAccessor(0, 100, MemoryMappedFileAccess.Write);
+
+		void Act() => accessor.ReadArray(0, new int[1], 0, 1);
+
+		await That(Act).Throws<NotSupportedException>();
+	}
+
+	[Test]
+	public async Task ReadByte_AtCapacity_ShouldThrowArgumentOutOfRangeException()
+	{
+		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 10);
+
+		void Act() => accessor.ReadByte(10);
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("position")
+			.Because("the BCL distinguishes a position at or beyond the capacity from a partially fitting read");
+	}
+
+	[Test]
+	public async Task Write_AtCapacity_ShouldThrowArgumentOutOfRangeException()
+	{
+		using IMemoryMappedFile mappedFile = CreateMappedFile();
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor(0, 10);
+
+		void Act() => accessor.Write(10, (byte)1);
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("position")
+			.Because("the BCL distinguishes a position at or beyond the capacity from a partially fitting write");
+	}
+
+	[Test]
 	public async Task Read_BeyondCapacity_ShouldThrowArgumentException()
 	{
 		using IMemoryMappedFile mappedFile = CreateMappedFile();

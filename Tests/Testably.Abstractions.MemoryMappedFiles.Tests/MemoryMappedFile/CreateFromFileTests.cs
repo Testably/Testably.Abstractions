@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.IO.MemoryMappedFiles;
+using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.MemoryMappedFiles.Tests.MemoryMappedFile;
 
@@ -123,6 +124,119 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	}
 
 	[Test]
+	public async Task CreateFromFile_WhenCreationFails_ShouldDeleteCreatedFile()
+	{
+		void Act()
+		{
+			using IMemoryMappedFile _ =
+				FileSystem.MemoryMappedFile.CreateFromFile("new.bin", FileMode.CreateNew);
+		}
+
+		await That(Act).Throws<ArgumentException>()
+			.Because("a memory-mapped file over an empty file requires a positive capacity");
+		await That(FileSystem.File.Exists("new.bin")).IsFalse()
+			.Because("the file created by the failed call is deleted again, matching the BCL");
+	}
+
+	[Test]
+	public async Task CreateFromFile_WithAppendMode_ShouldThrowArgumentException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+
+		void Act()
+		{
+			using IMemoryMappedFile _ =
+				FileSystem.MemoryMappedFile.CreateFromFile("data.bin", FileMode.Append);
+		}
+
+		await That(Act).Throws<ArgumentException>()
+			.WithParamName("mode");
+	}
+
+	[Test]
+	public async Task CreateFromFile_WithEmptyMapName_ShouldThrowArgumentException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+
+		void Act()
+		{
+			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+				"data.bin", FileMode.Open, "");
+		}
+
+		await That(Act).Throws<ArgumentException>();
+	}
+
+	[Test]
+	public async Task
+		CreateFromFile_WithFileSystemStream_AndLeaveOpen_ShouldNotChangeStreamPosition()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using FileSystemStream stream =
+			FileSystem.FileStream.New("data.bin", FileMode.Open, FileAccess.ReadWrite);
+		stream.Position = 7;
+
+		using IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
+			stream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None,
+			leaveOpen: true);
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+		accessor.Write(50, 1234567);
+		_ = accessor.ReadInt32(50);
+
+		await That(stream.Position).IsEqualTo(7L)
+			.Because("view operations must not move the position of the caller-owned stream");
+	}
+
+	[Test]
+	public async Task CreateFromFile_WithMapName_OnMockFileSystem_ShouldThrowNotSupportedException()
+	{
+		Skip.IfNot(FileSystem is MockFileSystem);
+
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+
+		void Act()
+		{
+			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+				"data.bin", FileMode.Open, "myMap");
+		}
+
+		await That(Act).Throws<NotSupportedException>()
+			.Because("named mappings are operating-system shared memory, which the mock cannot honor");
+	}
+
+	[Test]
+	public async Task CreateFromFile_WithTruncateMode_ShouldThrowArgumentException_AndKeepFileContent()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+
+		void Act()
+		{
+			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+				"data.bin", FileMode.Truncate, null, 100, MemoryMappedFileAccess.ReadWrite);
+		}
+
+		await That(Act).Throws<ArgumentException>()
+			.WithParamName("mode");
+		await That(FileSystem.File.ReadAllBytes("data.bin").Length).IsEqualTo(100)
+			.Because("the file must not be touched when the mode is rejected");
+	}
+
+	[Test]
+	public async Task CreateFromFile_WithWriteAccess_ShouldThrowArgumentException()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+
+		void Act()
+		{
+			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+				"data.bin", FileMode.Open, null, 0, MemoryMappedFileAccess.Write);
+		}
+
+		await That(Act).Throws<ArgumentException>()
+			.WithParamName("access");
+	}
+
+	[Test]
 	public async Task CreateFromFile_WrittenData_ShouldPersistToFile()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
@@ -192,8 +306,7 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	}
 
 	[Test]
-	public async Task
-		CreateViewAccessor_WithSizeThatWouldOverflow_ShouldThrowUnauthorizedAccessException()
+	public async Task CreateViewAccessor_WithSizeThatWouldOverflow_ShouldThrowIOException()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
 		using IMemoryMappedFile mappedFile =
@@ -201,9 +314,9 @@ public class CreateFromFileTests(FileSystemTestData testData)
 
 		void Act() => mappedFile.CreateViewAccessor(1, long.MaxValue);
 
-		await That(Act).Throws<UnauthorizedAccessException>()
+		await That(Act).Throws<IOException>()
 			.Because(
-				"`offset + size` would overflow `long`, so the view must still be rejected instead of wrapping around to a valid-looking (negative) value");
+				"`offset + size` would overflow `long`, so the operating system can never reserve the view");
 	}
 
 	[Test]

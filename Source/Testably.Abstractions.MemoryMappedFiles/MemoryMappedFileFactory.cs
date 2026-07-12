@@ -36,6 +36,23 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 	public IMemoryMappedFile CreateFromFile(string path, FileMode mode, string? mapName,
 		long capacity, MemoryMappedFileAccess access)
 	{
+		ValidateMapName(mapName);
+		ValidateAccess(access);
+		if (mode == FileMode.Append)
+		{
+			throw new ArgumentException(
+				"FileMode.Append is not permitted when creating new memory mapped files. Instead, use FileMode.OpenOrCreate.",
+				nameof(mode));
+		}
+
+		if (mode == FileMode.Truncate)
+		{
+			throw new ArgumentException(
+				"FileMode.Truncate is not permitted when creating new memory mapped files.",
+				nameof(mode));
+		}
+
+		bool fileExisted = mode == FileMode.Open || FileSystem.File.Exists(path);
 		FileSystemStream stream =
 			FileSystem.FileStream.New(path, mode, ToFileAccess(access));
 		try
@@ -49,12 +66,20 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 				return new MemoryMappedFileWrapper(FileSystem, instance, stream);
 			}
 
+			ThrowIfMapNamed(mapName);
 			return new MemoryMappedFileMock(FileSystem, stream, capacity, access,
 				ownsStream: true);
 		}
 		catch
 		{
 			stream.Dispose();
+			// The BCL deletes a file that was only created by this call when the creation of
+			// the memory-mapped file fails afterwards.
+			if (!fileExisted)
+			{
+				FileSystem.File.Delete(path);
+			}
+
 			throw;
 		}
 	}
@@ -64,6 +89,8 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 		long capacity, MemoryMappedFileAccess access, HandleInheritability inheritability,
 		bool leaveOpen)
 	{
+		ValidateMapName(mapName);
+		ValidateAccess(access);
 		IFileSystemExtensibility extensibility = fileStream.GetExtensibilityOrThrow();
 		if (extensibility.TryGetWrappedInstance(out FileStream? realStream))
 		{
@@ -72,6 +99,7 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 			return new MemoryMappedFileWrapper(FileSystem, instance, backingStream: null);
 		}
 
+		ThrowIfMapNamed(mapName);
 		return new MemoryMappedFileMock(FileSystem, fileStream, capacity, access,
 			ownsStream: !leaveOpen);
 	}
@@ -147,4 +175,39 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 		=> access is MemoryMappedFileAccess.Read or MemoryMappedFileAccess.ReadExecute
 			? FileAccess.Read
 			: FileAccess.ReadWrite;
+
+	private static void ThrowIfMapNamed(string? mapName)
+	{
+		if (mapName != null)
+		{
+			throw new NotSupportedException(
+				"Named memory-mapped files are not supported on the mocked file system.");
+		}
+	}
+
+	private static void ValidateAccess(MemoryMappedFileAccess access)
+	{
+		if (access < MemoryMappedFileAccess.ReadWrite ||
+		    access > MemoryMappedFileAccess.ReadWriteExecute)
+		{
+			throw new ArgumentOutOfRangeException(nameof(access));
+		}
+
+		if (access == MemoryMappedFileAccess.Write)
+		{
+			throw new ArgumentException(
+				"MemoryMappedFileAccess.Write is not permitted when creating new memory mapped files. Use MemoryMappedFileAccess.ReadWrite instead.",
+				nameof(access));
+		}
+	}
+
+	private static void ValidateMapName(string? mapName)
+	{
+		if (mapName is { Length: 0, })
+		{
+			#pragma warning disable MA0015 // Matches the parameter-less BCL message for an empty map name.
+			throw new ArgumentException("Map name cannot be an empty string.");
+			#pragma warning restore MA0015
+		}
+	}
 }

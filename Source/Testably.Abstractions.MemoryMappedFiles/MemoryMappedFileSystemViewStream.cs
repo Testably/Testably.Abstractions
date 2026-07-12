@@ -34,6 +34,16 @@ public abstract class MemoryMappedFileSystemViewStream : UnmanagedMemoryStream
 	public override bool CanWrite
 		=> _stream.CanWrite;
 
+	/// <inheritdoc cref="UnmanagedMemoryStream.Capacity" />
+	/// <remarks>
+	///     Re-declared because the <see cref="UnmanagedMemoryStream" /> base is never initialized
+	///     with unmanaged memory (the bytes live in the wrapped <see cref="Stream" />), so the
+	///     inherited non-virtual <see cref="UnmanagedMemoryStream.Capacity" /> would throw an
+	///     <see cref="ObjectDisposedException" />.
+	/// </remarks>
+	public new virtual long Capacity
+		=> _stream.Length;
+
 	/// <inheritdoc cref="Stream.Length" />
 	public override long Length
 		=> _stream.Length;

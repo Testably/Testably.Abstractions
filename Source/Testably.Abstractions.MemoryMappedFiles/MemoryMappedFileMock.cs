@@ -14,8 +14,8 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 	private readonly MemoryMappedFileAccess _access;
 	private readonly SharedBacking _backing;
 	private readonly long _capacity;
-	private bool _disposed;
 	private readonly IDisposable _fileReference;
+	private readonly MemoryMappedViewBacking _sharedViewBacking;
 
 	public MemoryMappedFileMock(IFileSystem fileSystem, FileSystemStream stream,
 		long capacity, MemoryMappedFileAccess access, bool ownsStream)
@@ -56,11 +56,20 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 				#pragma warning restore MA0015
 			}
 
+			if (access is MemoryMappedFileAccess.CopyOnWrite)
+			{
+				// A copy-on-write mapping may never modify the underlying file, so it cannot be
+				// grown to the requested capacity; matches the IOException of the BCL on Windows.
+				throw new IOException(
+					"Not enough memory resources are available to process this command.");
+			}
+
 			stream.SetLength(capacity);
 		}
 
 		_capacity = capacity;
 		_backing = new SharedBacking(stream, ownsStream);
+		_sharedViewBacking = new MemoryMappedViewBacking(stream, _backing.SyncRoot);
 		_fileReference = _backing.Acquire();
 	}
 
@@ -83,7 +92,8 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 	{
 		long viewSize = ValidateAndNormalizeView(offset, size);
 		ValidateViewAccess(access);
-		Stream backing = CreateViewBacking(access, out IDisposable backingOwner);
+		MemoryMappedViewBacking backing =
+			CreateViewBacking(access, out IDisposable backingOwner);
 		return new MemoryMappedViewAccessorMock(FileSystem, backing, offset, viewSize,
 			access, backingOwner);
 	}
@@ -102,28 +112,23 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 	{
 		long viewSize = ValidateAndNormalizeView(offset, size);
 		ValidateViewAccess(access);
-		Stream backing = CreateViewBacking(access, out IDisposable backingOwner);
+		MemoryMappedViewBacking backing =
+			CreateViewBacking(access, out IDisposable backingOwner);
 		return new MemoryMappedViewStreamMock(backing, offset, viewSize, access,
 			backingOwner);
 	}
 
 	/// <inheritdoc cref="System.IDisposable.Dispose()" />
 	public void Dispose()
-	{
-		if (!_disposed)
-		{
-			_disposed = true;
-			// The memory-mapped file releases only its own reference to the shared backing; any
-			// view that is still open keeps the backing alive, matching the independent lifetime
-			// of the real memory-mapped file and its views.
-			_fileReference.Dispose();
-		}
-	}
+		// The memory-mapped file releases only its own reference to the shared backing; any
+		// view that is still open keeps the backing alive, matching the independent lifetime
+		// of the real memory-mapped file and its views.
+		=> _fileReference.Dispose();
 
 	#endregion
 
 	/// <summary>
-	///     Returns the backing <see cref="Stream" /> for a view with the given
+	///     Returns the <see cref="MemoryMappedViewBacking" /> for a view with the given
 	///     <paramref name="access" />.
 	/// </summary>
 	/// <remarks>
@@ -135,36 +140,21 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 	///     <paramref name="backingOwner" /> is a reference that keeps it alive until the view is
 	///     disposed.
 	/// </remarks>
-	private Stream CreateViewBacking(MemoryMappedFileAccess access,
+	private MemoryMappedViewBacking CreateViewBacking(MemoryMappedFileAccess access,
 		out IDisposable backingOwner)
 	{
 		if (access != MemoryMappedFileAccess.CopyOnWrite)
 		{
 			backingOwner = _backing.Acquire();
-			return _backing.Stream;
+			return _sharedViewBacking;
 		}
 
 		byte[] copy = new byte[_capacity];
-		Stream stream = _backing.Stream;
-		long position = stream.Position;
-		stream.Position = 0;
-		int read = 0;
-		while (read < copy.Length)
-		{
-			int r = stream.Read(copy, read, copy.Length - read);
-			if (r == 0)
-			{
-				break;
-			}
-
-			read += r;
-		}
-
-		stream.Position = position;
+		_sharedViewBacking.ReadAt(0, copy, 0, copy.Length);
 		MemoryStream copyStream = new(copy, 0, copy.Length, writable: true,
 			publiclyVisible: false);
 		backingOwner = copyStream;
-		return copyStream;
+		return new MemoryMappedViewBacking(copyStream, new object());
 	}
 
 	private long ValidateAndNormalizeView(long offset, long size)
@@ -181,9 +171,15 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 				$"size ('{size}') must be a non-negative value.");
 		}
 
+		if (size > long.MaxValue - offset)
+		{
+			// A view whose `offset + size` overflows `long` can never be reserved; the real
+			// memory-mapped file fails with this IOException from the operating system.
+			throw new IOException("Not enough memory to map view.");
+		}
+
 		// `_capacity - offset` cannot overflow because `0 <= offset <= _capacity` holds whenever
-		// this subtraction is evaluated, so comparing it against `size` correctly rejects even
-		// absurdly large (near `long.MaxValue`) sizes that would overflow `offset + size`.
+		// this subtraction is evaluated.
 		if (offset > _capacity || size > _capacity - offset)
 		{
 			throw new UnauthorizedAccessException("Access to the path is denied.");
@@ -194,12 +190,15 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 
 	private void ValidateViewAccess(MemoryMappedFileAccess access)
 	{
-		bool mappingIsReadOnly = _access is MemoryMappedFileAccess.Read
-			or MemoryMappedFileAccess.ReadExecute;
+		// Read, ReadExecute and CopyOnWrite mappings never permit write-through views; a
+		// copy-on-write mapping only allows Read or CopyOnWrite views, matching the BCL.
+		bool mappingProhibitsWritableViews = _access is MemoryMappedFileAccess.Read
+			or MemoryMappedFileAccess.ReadExecute
+			or MemoryMappedFileAccess.CopyOnWrite;
 		bool viewRequiresWrite = access is MemoryMappedFileAccess.Write
 			or MemoryMappedFileAccess.ReadWrite
 			or MemoryMappedFileAccess.ReadWriteExecute;
-		if (mappingIsReadOnly && viewRequiresWrite)
+		if (mappingProhibitsWritableViews && viewRequiresWrite)
 		{
 			throw new UnauthorizedAccessException("Access to the path is denied.");
 		}
@@ -212,7 +211,11 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 	/// </summary>
 	private sealed class SharedBacking(Stream stream, bool ownsStream)
 	{
-		public Stream Stream { get; } = stream;
+		/// <summary>
+		///     Serializes all positional access to the shared <see cref="Stream" /> across views.
+		/// </summary>
+		public object SyncRoot { get; } = new();
+
 		private int _refCount;
 
 		public IDisposable Acquire()
@@ -225,7 +228,7 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 		{
 			if (Interlocked.Decrement(ref _refCount) == 0 && ownsStream)
 			{
-				Stream.Dispose();
+				stream.Dispose();
 			}
 		}
 

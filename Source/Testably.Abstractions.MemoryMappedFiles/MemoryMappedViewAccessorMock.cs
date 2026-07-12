@@ -1,7 +1,7 @@
-﻿using System;
-using System.IO;
+using System;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.CompilerServices;
+using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions;
 
@@ -12,16 +12,17 @@ namespace Testably.Abstractions;
 internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 {
 	private readonly MemoryMappedFileAccess _access;
+	private readonly MemoryMappedViewBacking _backing;
 	private readonly IDisposable _backingOwner;
 	private readonly long _offset;
 	private readonly long _size;
-	private readonly Stream _stream;
 
-	public MemoryMappedViewAccessorMock(IFileSystem fileSystem, Stream stream,
-		long offset, long size, MemoryMappedFileAccess access, IDisposable backingOwner)
+	public MemoryMappedViewAccessorMock(IFileSystem fileSystem,
+		MemoryMappedViewBacking backing, long offset, long size,
+		MemoryMappedFileAccess access, IDisposable backingOwner)
 	{
 		FileSystem = fileSystem;
-		_stream = stream;
+		_backing = backing;
 		_offset = offset;
 		_size = size;
 		_access = access;
@@ -32,12 +33,11 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.CanRead" />
 	public bool CanRead
-		=> _access is not MemoryMappedFileAccess.Write;
+		=> _access.SupportsReading();
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.CanWrite" />
 	public bool CanWrite
-		=> _access is not (MemoryMappedFileAccess.Read
-			or MemoryMappedFileAccess.ReadExecute);
+		=> _access.SupportsWriting();
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Capacity" />
 	public long Capacity
@@ -59,7 +59,7 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Flush()" />
 	public void Flush()
-		=> _stream.Flush();
+		=> _backing.Flush();
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Read{T}(long, out T)" />
 	public void Read<T>(long position, out T structure) where T : struct
@@ -74,6 +74,11 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		where T : struct
 	{
 		ValidateArrayArguments(array, offset, count);
+		if (!CanRead)
+		{
+			throw new NotSupportedException("Accessor does not support reading.");
+		}
+
 		if (position < 0)
 		{
 			throw new ArgumentOutOfRangeException(nameof(position), position,
@@ -81,21 +86,22 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		}
 
 		int structureSize = Unsafe.SizeOf<T>();
-		int read = 0;
-		for (int i = 0; i < count; i++)
+		long available = _size - position;
+		int itemsToRead = available < structureSize
+			? 0
+			: (int)Math.Min(count, available / structureSize);
+		if (itemsToRead == 0)
 		{
-			long itemPosition = position + ((long)i * structureSize);
-			if (itemPosition + structureSize > _size)
-			{
-				break;
-			}
-
-			Read(itemPosition, out T value);
-			array[offset + i] = value;
-			read++;
+			return 0;
 		}
 
-		return read;
+		byte[] bytes = ReadBytes(position, itemsToRead * structureSize);
+		for (int i = 0; i < itemsToRead; i++)
+		{
+			array[offset + i] = Unsafe.ReadUnaligned<T>(ref bytes[i * structureSize]);
+		}
+
+		return itemsToRead;
 	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.ReadBoolean(long)" />
@@ -108,11 +114,16 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.ReadChar(long)" />
 	public char ReadChar(long position)
-		=> (char)BitConverter.ToUInt16(ReadBytes(position, 2), 0);
+	{
+		Read(position, out char value);
+		return value;
+	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.ReadDecimal(long)" />
 	public decimal ReadDecimal(long position)
 	{
+		// The typed decimal overload uses the `decimal.GetBits` layout (lo, mid, hi, flags),
+		// which differs from the in-memory layout the generic `Read{T}` would use.
 		byte[] bytes = ReadBytes(position, 16);
 		int[] bits = new int[4];
 		for (int i = 0; i < 4; i++)
@@ -125,19 +136,31 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.ReadDouble(long)" />
 	public double ReadDouble(long position)
-		=> BitConverter.ToDouble(ReadBytes(position, 8), 0);
+	{
+		Read(position, out double value);
+		return value;
+	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.ReadInt16(long)" />
 	public short ReadInt16(long position)
-		=> BitConverter.ToInt16(ReadBytes(position, 2), 0);
+	{
+		Read(position, out short value);
+		return value;
+	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.ReadInt32(long)" />
 	public int ReadInt32(long position)
-		=> BitConverter.ToInt32(ReadBytes(position, 4), 0);
+	{
+		Read(position, out int value);
+		return value;
+	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.ReadInt64(long)" />
 	public long ReadInt64(long position)
-		=> BitConverter.ToInt64(ReadBytes(position, 8), 0);
+	{
+		Read(position, out long value);
+		return value;
+	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.ReadSByte(long)" />
 	public sbyte ReadSByte(long position)
@@ -145,19 +168,31 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.ReadSingle(long)" />
 	public float ReadSingle(long position)
-		=> BitConverter.ToSingle(ReadBytes(position, 4), 0);
+	{
+		Read(position, out float value);
+		return value;
+	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.ReadUInt16(long)" />
 	public ushort ReadUInt16(long position)
-		=> BitConverter.ToUInt16(ReadBytes(position, 2), 0);
+	{
+		Read(position, out ushort value);
+		return value;
+	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.ReadUInt32(long)" />
 	public uint ReadUInt32(long position)
-		=> BitConverter.ToUInt32(ReadBytes(position, 4), 0);
+	{
+		Read(position, out uint value);
+		return value;
+	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.ReadUInt64(long)" />
 	public ulong ReadUInt64(long position)
-		=> BitConverter.ToUInt64(ReadBytes(position, 8), 0);
+	{
+		Read(position, out ulong value);
+		return value;
+	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, bool)" />
 	public void Write(long position, bool value)
@@ -173,11 +208,13 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, char)" />
 	public void Write(long position, char value)
-		=> WriteBytes(position, BitConverter.GetBytes(value));
+		=> Write(position, ref value);
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, decimal)" />
 	public void Write(long position, decimal value)
 	{
+		// The typed decimal overload uses the `decimal.GetBits` layout (lo, mid, hi, flags),
+		// which differs from the in-memory layout the generic `Write{T}` would use.
 		int[] bits = decimal.GetBits(value);
 		byte[] bytes = new byte[16];
 		for (int i = 0; i < 4; i++)
@@ -190,19 +227,19 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, double)" />
 	public void Write(long position, double value)
-		=> WriteBytes(position, BitConverter.GetBytes(value));
+		=> Write(position, ref value);
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, short)" />
 	public void Write(long position, short value)
-		=> WriteBytes(position, BitConverter.GetBytes(value));
+		=> Write(position, ref value);
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, int)" />
 	public void Write(long position, int value)
-		=> WriteBytes(position, BitConverter.GetBytes(value));
+		=> Write(position, ref value);
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, long)" />
 	public void Write(long position, long value)
-		=> WriteBytes(position, BitConverter.GetBytes(value));
+		=> Write(position, ref value);
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, sbyte)" />
 	public void Write(long position, sbyte value)
@@ -212,19 +249,19 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, float)" />
 	public void Write(long position, float value)
-		=> WriteBytes(position, BitConverter.GetBytes(value));
+		=> Write(position, ref value);
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, ushort)" />
 	public void Write(long position, ushort value)
-		=> WriteBytes(position, BitConverter.GetBytes(value));
+		=> Write(position, ref value);
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, uint)" />
 	public void Write(long position, uint value)
-		=> WriteBytes(position, BitConverter.GetBytes(value));
+		=> Write(position, ref value);
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write(long, ulong)" />
 	public void Write(long position, ulong value)
-		=> WriteBytes(position, BitConverter.GetBytes(value));
+		=> Write(position, ref value);
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write{T}(long, ref T)" />
 	public void Write<T>(long position, ref T structure) where T : struct
@@ -267,11 +304,19 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 			#pragma warning restore MA0015
 		}
 
+		if (count == 0)
+		{
+			return;
+		}
+
+		byte[] bytes = new byte[count * structureSize];
 		for (int i = 0; i < count; i++)
 		{
 			T value = array[offset + i];
-			Write(position + ((long)i * structureSize), ref value);
+			Unsafe.WriteUnaligned(ref bytes[i * structureSize], value);
 		}
+
+		WriteBytes(position, bytes);
 	}
 
 	#endregion
@@ -286,6 +331,12 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 		if (position > _size - count)
 		{
+			if (position >= _size)
+			{
+				throw new ArgumentOutOfRangeException(nameof(position),
+					"The position may not be greater or equal to the capacity of the accessor.");
+			}
+
 			throw new ArgumentException(
 				forReading
 					? "There are not enough bytes remaining in the accessor to read at this position."
@@ -302,20 +353,8 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		}
 
 		EnsureInBounds(position, count, forReading: true);
-		_stream.Position = _offset + position;
 		byte[] buffer = new byte[count];
-		int read = 0;
-		while (read < count)
-		{
-			int r = _stream.Read(buffer, read, count - read);
-			if (r == 0)
-			{
-				break;
-			}
-
-			read += r;
-		}
-
+		_backing.ReadAt(_offset + position, buffer, 0, count);
 		return buffer;
 	}
 
@@ -355,8 +394,6 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		}
 
 		EnsureInBounds(position, bytes.Length, forReading: false);
-		_stream.Position = _offset + position;
-		_stream.Write(bytes, 0, bytes.Length);
-		_stream.Flush();
+		_backing.WriteAt(_offset + position, bytes, 0, bytes.Length);
 	}
 }
