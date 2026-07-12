@@ -39,7 +39,7 @@ partial class Build
 
 			if (prId != null)
 			{
-				GitHubClient gitHubClient = new(new ProductHeaderValue("Nuke"));
+				GitHubClient gitHubClient = new(new ProductHeaderValue("Fallout"));
 				Credentials tokenAuth = new(GithubToken);
 				gitHubClient.Credentials = tokenAuth;
 				IReadOnlyList<IssueComment> comments =
