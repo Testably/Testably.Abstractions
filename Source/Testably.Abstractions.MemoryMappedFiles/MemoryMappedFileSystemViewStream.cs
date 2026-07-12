@@ -155,8 +155,10 @@ public abstract class MemoryMappedFileSystemViewStream : UnmanagedMemoryStream
 		=> _stream.ReadByte();
 
 	/// <inheritdoc cref="Stream.Seek(long, SeekOrigin)" />
+	#pragma warning disable S927 // The names of the base declarations conflict: `UnmanagedMemoryStream.Seek` kept the historical `loc`, while the root `Stream.Seek` declares `origin`; `origin` matches the root declaration and all other streams of this repository.
 	public override long Seek(long offset, SeekOrigin origin)
 		=> _stream.Seek(offset, origin);
+	#pragma warning restore S927
 
 	/// <inheritdoc cref="Stream.SetLength(long)" />
 	public override void SetLength(long value)
