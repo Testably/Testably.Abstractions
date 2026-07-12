@@ -26,7 +26,6 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 	{
 		FileSystem = fileSystem;
 		_access = access;
-		MemoryMappedFileHelpers.ThrowIfNegative(capacity, nameof(capacity));
 
 		if (capacity == 0)
 		{
@@ -59,12 +58,20 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 
 		if (capacity > stream.Length)
 		{
-			if (!access.SupportsWriting())
+			if (access is MemoryMappedFileAccess.Read)
 			{
 				#pragma warning disable MA0015 // Matches the parameter-less BCL message for this combination.
 				throw new ArgumentException(
 					"The capacity may not be larger than the file size when creating a read-only memory-mapped file.");
 				#pragma warning restore MA0015
+			}
+
+			if (access is MemoryMappedFileAccess.ReadExecute)
+			{
+				// The BCL only special-cases `Read` above; growing the file for a `ReadExecute`
+				// mapping fails later through the read-only file handle, surfacing on Windows as
+				// this UnauthorizedAccessException.
+				throw new UnauthorizedAccessException(AccessToPathDeniedMessage);
 			}
 
 			if (access is MemoryMappedFileAccess.CopyOnWrite)
@@ -205,6 +212,18 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 			or MemoryMappedFileAccess.ReadWrite
 			or MemoryMappedFileAccess.ReadWriteExecute;
 		if (mappingProhibitsWritableViews && viewRequiresWrite)
+		{
+			throw new UnauthorizedAccessException(AccessToPathDeniedMessage);
+		}
+
+		// Execute views require a mapping that was created with execute access; the real
+		// memory-mapped file fails in the same way because the section lacks the execute
+		// page protection.
+		bool mappingSupportsExecute = _access is MemoryMappedFileAccess.ReadExecute
+			or MemoryMappedFileAccess.ReadWriteExecute;
+		bool viewRequiresExecute = access is MemoryMappedFileAccess.ReadExecute
+			or MemoryMappedFileAccess.ReadWriteExecute;
+		if (viewRequiresExecute && !mappingSupportsExecute)
 		{
 			throw new UnauthorizedAccessException(AccessToPathDeniedMessage);
 		}

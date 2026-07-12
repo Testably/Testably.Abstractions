@@ -207,6 +207,44 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	}
 
 	[Test]
+	public async Task CreateFromFile_WithLargerCapacity_WithoutViewWrites_ShouldGrowFile()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[10]);
+
+		using (IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+			"data.bin", FileMode.Open, null, 100, MemoryMappedFileAccess.ReadWrite))
+		{
+			// The file is grown to the capacity even when no view ever writes.
+		}
+
+		await That(FileSystem.File.ReadAllBytes("data.bin").Length).IsEqualTo(100);
+	}
+
+	[Test]
+	public async Task DisposeViews_AfterCallerOwnedStreamWasDisposed_ShouldNotThrow()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		FileSystemStream stream =
+			FileSystem.FileStream.New("data.bin", FileMode.Open, FileAccess.ReadWrite);
+		IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
+			stream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None,
+			leaveOpen: true);
+		IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+		MemoryMappedFileSystemViewStream viewStream = mappedFile.CreateViewStream();
+		stream.Dispose();
+
+		void Act()
+		{
+			accessor.Dispose();
+			viewStream.Dispose();
+			mappedFile.Dispose();
+		}
+
+		await That(Act).DoesNotThrow()
+			.Because("disposing the views must stay safe after the caller disposed its own stream");
+	}
+
+	[Test]
 	public async Task CreateFromFile_WithNegativeCapacity_ShouldThrowArgumentOutOfRangeException()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
@@ -234,6 +272,46 @@ public class CreateFromFileTests(FileSystemTestData testData)
 		}
 
 		await That(Act).Throws<ArgumentException>();
+	}
+
+	[Test]
+	public async Task
+		CreateFromFile_WithReadExecuteAccess_AndCapacityLargerThanFile_ShouldThrowUnauthorizedAccessException()
+	{
+		Skip.IfNot(FileSystem is MockFileSystem || Test.RunsOnWindows,
+			"Growing a file through a read-only handle is rejected with an UnauthorizedAccessException only on Windows; the mock mirrors Windows.");
+
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+
+		void Act()
+		{
+			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+				"data.bin", FileMode.Open, null, 200, MemoryMappedFileAccess.ReadExecute);
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.Because("only MemoryMappedFileAccess.Read is special-cased with an ArgumentException by the BCL");
+	}
+
+	[Test]
+	public async Task
+		CreateViewAccessor_WithExecuteAccess_OnMappingWithoutExecuteAccess_ShouldThrowUnauthorizedAccessException()
+	{
+		Skip.IfNot(FileSystem is MockFileSystem || Test.RunsOnWindows,
+			"An execute view on a mapping without execute access is only rejected on Windows; the mock mirrors Windows.");
+
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
+			"data.bin", FileMode.Open, null, 0, MemoryMappedFileAccess.ReadWrite);
+
+		void Act()
+		{
+			using IMemoryMappedViewAccessor _ = mappedFile.CreateViewAccessor(
+				0, 10, MemoryMappedFileAccess.ReadExecute);
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>()
+			.Because("the mapping was created without execute page protection");
 	}
 
 	[Test]

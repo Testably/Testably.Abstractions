@@ -580,6 +580,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
+		if (value != Length)
+		{
+			_isContentChanged = true;
+		}
+
 		base.SetLength(value);
 	}
 

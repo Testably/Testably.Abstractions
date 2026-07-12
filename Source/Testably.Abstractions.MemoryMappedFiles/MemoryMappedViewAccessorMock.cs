@@ -60,13 +60,25 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		}
 
 		_disposed = true;
-		// Pending writes are flushed to the underlying file when the view is disposed,
-		// matching the real memory-mapped view, which writes its dirty pages on unmap.
-		_backing.Flush();
-		// Releases this view's reference to the shared backing, disposing the underlying stream
-		// once the memory-mapped file and all views are gone. (The private pages of a
-		// copy-on-write view are plain managed memory reclaimed by the garbage collector.)
-		_backingOwner.Dispose();
+		try
+		{
+			// Pending writes are flushed to the underlying file when the view is disposed,
+			// matching the real memory-mapped view, which writes its dirty pages on unmap.
+			_backing.Flush();
+		}
+		catch (ObjectDisposedException)
+		{
+			// The caller-owned stream (`leaveOpen: true`) was already disposed, so there is
+			// nothing left to flush; disposing the view must not throw.
+		}
+		finally
+		{
+			// Releases this view's reference to the shared backing, disposing the underlying
+			// stream once the memory-mapped file and all views are gone. (The private pages
+			// of a copy-on-write view are plain managed memory reclaimed by the garbage
+			// collector.)
+			_backingOwner.Dispose();
+		}
 	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Flush()" />
@@ -114,9 +126,19 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		int byteCount = ((itemsToRead - 1) * alignedSize) + structureSize;
 		byte[] bytes = new byte[byteCount];
 		_backing.ReadAt(_offset + position, bytes, 0, byteCount);
-		for (int i = 0; i < itemsToRead; i++)
+		if (alignedSize == structureSize)
 		{
-			array[offset + i] = Unsafe.ReadUnaligned<T>(ref bytes[i * alignedSize]);
+			// Without padding between the elements the range is contiguous, so a single bulk
+			// copy replaces the per-element loop (relevant e.g. for large byte arrays).
+			Unsafe.CopyBlockUnaligned(ref Unsafe.As<T, byte>(ref array[offset]),
+				ref bytes[0], (uint)byteCount);
+		}
+		else
+		{
+			for (int i = 0; i < itemsToRead; i++)
+			{
+				array[offset + i] = Unsafe.ReadUnaligned<T>(ref bytes[i * alignedSize]);
+			}
 		}
 
 		return itemsToRead;
@@ -333,10 +355,20 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 			_backing.ReadAt(_offset + position, bytes, 0, byteCount);
 		}
 
-		for (int i = 0; i < count; i++)
+		if (alignedSize == structureSize)
 		{
-			T value = array[offset + i];
-			Unsafe.WriteUnaligned(ref bytes[i * alignedSize], value);
+			// Without padding between the elements the range is contiguous, so a single bulk
+			// copy replaces the per-element loop (relevant e.g. for large byte arrays).
+			Unsafe.CopyBlockUnaligned(ref bytes[0],
+				ref Unsafe.As<T, byte>(ref array[offset]), (uint)byteCount);
+		}
+		else
+		{
+			for (int i = 0; i < count; i++)
+			{
+				T value = array[offset + i];
+				Unsafe.WriteUnaligned(ref bytes[i * alignedSize], value);
+			}
 		}
 
 		_backing.WriteAt(_offset + position, bytes, 0, bytes.Length);

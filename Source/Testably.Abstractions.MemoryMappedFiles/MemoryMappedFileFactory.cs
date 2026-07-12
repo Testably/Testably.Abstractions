@@ -36,9 +36,11 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 	public IMemoryMappedFile CreateFromFile(string path, FileMode mode, string? mapName,
 		long capacity, MemoryMappedFileAccess access)
 	{
+		// The argument validation order matches the BCL: map name, capacity, access range,
+		// mode, write access.
 		ValidateMapName(mapName);
-		ValidateAccess(access);
 		ValidateCapacity(capacity);
+		access.ThrowIfOutOfRange(nameof(access));
 		if (mode == FileMode.Append)
 		{
 			throw new ArgumentException(
@@ -52,6 +54,8 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 				"FileMode.Truncate is not permitted when creating new memory mapped files.",
 				nameof(mode));
 		}
+
+		ThrowIfWriteAccess(access);
 
 		bool fileExisted = mode == FileMode.Open || FileSystem.File.Exists(path);
 		FileSystemStream stream =
@@ -95,9 +99,20 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 			throw new ArgumentNullException(nameof(fileStream));
 		}
 
+		// The argument validation order matches the BCL: map name, capacity, access, empty
+		// file, inheritability.
 		ValidateMapName(mapName);
-		ValidateAccess(access);
 		ValidateCapacity(capacity);
+		access.ThrowIfOutOfRange(nameof(access));
+		ThrowIfWriteAccess(access);
+		if (capacity == 0 && fileStream.Length == 0)
+		{
+			#pragma warning disable MA0015 // Matches the parameter-less BCL message for an empty file.
+			throw new ArgumentException(
+				"A positive capacity must be specified for a Memory Mapped File backed by an empty file.");
+			#pragma warning restore MA0015
+		}
+
 		ValidateInheritability(inheritability);
 		IFileSystemExtensibility extensibility = fileStream.GetExtensibilityOrThrow();
 		if (extensibility.TryGetWrappedInstance(out FileStream? realStream))
@@ -193,10 +208,8 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 		}
 	}
 
-	private static void ValidateAccess(MemoryMappedFileAccess access)
+	private static void ThrowIfWriteAccess(MemoryMappedFileAccess access)
 	{
-		access.ThrowIfOutOfRange(nameof(access));
-
 		if (access == MemoryMappedFileAccess.Write)
 		{
 			throw new ArgumentException(

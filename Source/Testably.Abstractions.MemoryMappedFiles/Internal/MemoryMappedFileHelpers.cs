@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.CompilerServices;
 #if NETSTANDARD2_0 || NETSTANDARD2_1
@@ -121,11 +120,10 @@ internal static class MemoryMappedFileHelpers
 	///     system (and therefore has an underlying operating-system file system to delegate to).
 	/// </summary>
 	/// <remarks>
-	///     This is detected without touching the disk by checking whether a newly created
-	///     <see cref="IFileInfo" /> wraps a real <see cref="FileInfo" />.
+	///     Uses the same side-effect-free type-name check as the other companion packages; probing
+	///     via a factory would register a phantom call in the statistics of the mocked file system.
 	/// </remarks>
 	public static bool IsRealFileSystem(this IFileSystem fileSystem)
-		=> fileSystem.FileInfo.New("memory-mapped-file-probe") is IFileSystemExtensibility
-			   extensibility &&
-		   extensibility.TryGetWrappedInstance(out FileInfo? _);
+		=> string.Equals(fileSystem.GetType().Name, "RealFileSystem",
+			StringComparison.Ordinal);
 }

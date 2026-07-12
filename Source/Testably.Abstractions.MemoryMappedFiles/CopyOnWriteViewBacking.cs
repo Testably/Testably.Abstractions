@@ -36,6 +36,13 @@ internal sealed class CopyOnWriteViewBacking(MemoryMappedViewBacking shared, lon
 	{
 		lock (_lock)
 		{
+			if (_privatePages.Count == 0)
+			{
+				// No page has been privatized yet, so the whole range comes from the shared
+				// backing in one call instead of one call per 4096-byte page.
+				return shared.ReadAt(position, buffer, offset, count);
+			}
+
 			int read = 0;
 			while (read < count)
 			{

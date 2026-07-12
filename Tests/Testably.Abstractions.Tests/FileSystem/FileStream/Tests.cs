@@ -279,6 +279,20 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 
 	[Test]
 	[AutoArguments]
+	public async Task SetLength_WithoutOtherWrites_ShouldPersistNewLength(string path)
+	{
+		FileSystem.File.WriteAllBytes(path, new byte[10]);
+
+		using (FileSystemStream stream = FileSystem.File.Open(path, FileMode.Open))
+		{
+			stream.SetLength(100);
+		}
+
+		await That(FileSystem.File.ReadAllBytes(path).Length).IsEqualTo(100);
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task SetLength_ReadOnlyStream_ShouldThrowNotSupportedException(
 		string path, int length)
 	{
