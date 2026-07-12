@@ -60,6 +60,9 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	public async Task
 		CreateFromFile_WithReadOnlyStream_AndReadWriteAccess_ShouldThrowUnauthorizedAccessException()
 	{
+		Skip.IfNot(FileSystem is MockFileSystem || Test.RunsOnWindows,
+			"Mapping a read-write view over a read-only stream is only rejected on Windows; the mock mirrors Windows.");
+
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
 		using FileSystemStream stream =
 			FileSystem.FileStream.New("data.bin", FileMode.Open, FileAccess.Read);
@@ -373,6 +376,9 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	public async Task
 		CreateViewAccessor_WithOffsetBeyondCapacity_ShouldThrowUnauthorizedAccessException()
 	{
+		Skip.IfNot(FileSystem is MockFileSystem || Test.RunsOnWindows,
+			"An offset beyond the capacity is rejected with an UnauthorizedAccessException only on Windows; the mock mirrors Windows.");
+
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
 		using IMemoryMappedFile mappedFile =
 			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");

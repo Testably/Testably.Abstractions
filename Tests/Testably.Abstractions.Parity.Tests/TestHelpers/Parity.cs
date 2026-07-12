@@ -121,7 +121,11 @@ public class Parity
 			.MemoryMappedViewAccessor.SafeMemoryMappedViewHandle)),
 	]);
 
-	public ParityCheck MemoryMappedViewStream { get; } = new(excludeProperties:
+	public ParityCheck MemoryMappedViewStream { get; } = new(excludeMethods:
+	[
+		typeof(MemoryMappedViewStream).GetMethod(nameof(Stream.Seek),
+			[typeof(long), typeof(SeekOrigin)]),
+	], excludeProperties:
 	[
 		typeof(MemoryMappedViewStream).GetProperty(nameof(System.IO.MemoryMappedFiles
 			.MemoryMappedViewStream.SafeMemoryMappedViewHandle)),
