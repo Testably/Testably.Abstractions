@@ -514,6 +514,41 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	}
 
 	[Test]
+	public async Task CreateFromFile_WithPath_ShouldOpenFileWithoutSharing()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
+
+		void Act() => FileSystem.File
+			.Open("data.bin", FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
+			.Dispose();
+
+		await That(Act).Throws<IOException>()
+			.Because(
+				"the BCL opens the backing file of a path-based memory-mapped file with FileShare.None");
+	}
+
+	[Test]
+	public async Task
+		CreateFromFile_WithCapacityGreaterThan2GB_OnMockFileSystem_ShouldThrowNotSupportedException()
+	{
+		Skip.IfNot(FileSystem is MockFileSystem,
+			"The 2 GB limit only applies to the in-memory content of the MockFileSystem.");
+
+		void Act()
+		{
+			using IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+				"huge.bin", FileMode.CreateNew, null, 3L * 1024 * 1024 * 1024,
+				MemoryMappedFileAccess.ReadWrite);
+		}
+
+		await That(Act).Throws<NotSupportedException>();
+		await That(FileSystem.File.Exists("huge.bin")).IsFalse()
+			.Because("the file only created by this call is deleted when the creation fails");
+	}
+
+	[Test]
 	public async Task View_ShouldRemainUsable_AfterMappedFileIsDisposed()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);

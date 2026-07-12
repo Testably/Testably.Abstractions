@@ -54,6 +54,7 @@ Then register the implementations in your DI container - see [Getting Started](h
 | `Testably.Abstractions.Testing`      | `MockFileSystem`, `MockTimeSystem`, `MockRandomSystem`                  |
 | `Testably.Abstractions.Compression`  | Zip / `ZipArchive` extension methods on `IFileSystem`                   |
 | `Testably.Abstractions.AccessControl`| `GetAccessControl` / `SetAccessControl` on files and directories        |
+| `Testably.Abstractions.MemoryMappedFiles` | `MemoryMappedFile` support on `IFileSystem`                        |
 
 ## Already on TestableIO?
 

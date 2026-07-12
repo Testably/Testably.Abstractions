@@ -58,8 +58,10 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 		ThrowIfWriteAccess(access);
 
 		bool fileExisted = mode == FileMode.Open || FileSystem.File.Exists(path);
+		// The BCL opens the backing stream of a path-based memory-mapped file with
+		// `FileShare.None`, so no other handle can be opened while the mapping is alive.
 		FileSystemStream stream =
-			FileSystem.FileStream.New(path, mode, ToFileAccess(access));
+			FileSystem.FileStream.New(path, mode, ToFileAccess(access), FileShare.None);
 		try
 		{
 			IFileSystemExtensibility extensibility = stream.GetExtensibilityOrThrow();
@@ -105,14 +107,7 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 		ValidateCapacity(capacity);
 		access.ThrowIfOutOfRange(nameof(access));
 		ThrowIfWriteAccess(access);
-		if (capacity == 0 && fileStream.Length == 0)
-		{
-			#pragma warning disable MA0015 // Matches the parameter-less BCL message for an empty file.
-			throw new ArgumentException(
-				"A positive capacity must be specified for a Memory Mapped File backed by an empty file.");
-			#pragma warning restore MA0015
-		}
-
+		MemoryMappedFileHelpers.ThrowIfEmptyFileWithZeroCapacity(capacity, fileStream.Length);
 		ValidateInheritability(inheritability);
 		IFileSystemExtensibility extensibility = fileStream.GetExtensibilityOrThrow();
 		if (extensibility.TryGetWrappedInstance(out FileStream? realStream))
@@ -195,9 +190,26 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 	}
 
 	private static FileAccess ToFileAccess(MemoryMappedFileAccess access)
-		=> access.SupportsWriting()
+	{
+#if NETSTANDARD2_0
+		if (access == MemoryMappedFileAccess.CopyOnWrite && IsNetFramework)
+		{
+			// On .NET Framework the BCL opens the file of a copy-on-write mapping with read
+			// access only, so e.g. a read-only file can be mapped copy-on-write; modern .NET
+			// requests read-write access instead.
+			return FileAccess.Read;
+		}
+#endif
+		return access.SupportsWriting()
 			? FileAccess.ReadWrite
 			: FileAccess.Read;
+	}
+
+#if NETSTANDARD2_0
+	private static readonly bool IsNetFramework =
+		System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription
+			.StartsWith(".NET Framework", StringComparison.Ordinal);
+#endif
 
 	private static void ThrowIfMapNamed(string? mapName)
 	{

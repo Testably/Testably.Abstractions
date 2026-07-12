@@ -10,7 +10,7 @@ Testably.Abstractions is a feature-complete testing helper for the `System.IO.Ab
 - Mock file system with identical behavior to real file system
 - Cross-platform testing (Linux, macOS, Windows simulation)
 - Advanced scenarios: multiple drives, FileSystemWatcher, SafeFileHandles
-- Companion projects for Compression and AccessControl
+- Companion projects for Compression, AccessControl and MemoryMappedFiles
 - Time and Random system abstractions
 
 ### Architecture
@@ -131,6 +131,7 @@ dotnet pack --no-build --configuration Release
 - `Testably.Abstractions.FileSystem.Interface`: File system interfaces
 - `Testably.Abstractions.Compression`: Zip file support
 - `Testably.Abstractions.AccessControl`: ACL support
+- `Testably.Abstractions.MemoryMappedFiles`: Memory-mapped file support
 
 ### Test Projects (Tests/)
 - `Testably.Abstractions.Tests`: Main test suite (~20,000+ tests)

@@ -46,8 +46,16 @@ internal sealed class MemoryMappedFileWrapper(
 	/// <inheritdoc cref="System.IDisposable.Dispose()" />
 	public void Dispose()
 	{
-		instance.Dispose();
-		backingStream?.Dispose();
+		try
+		{
+			instance.Dispose();
+		}
+		finally
+		{
+			// The factory-created backing stream is released even when disposing the real
+			// memory-mapped file throws, so the file does not stay locked until finalization.
+			backingStream?.Dispose();
+		}
 	}
 
 	#endregion

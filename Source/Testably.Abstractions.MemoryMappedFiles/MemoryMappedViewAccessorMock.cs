@@ -60,25 +60,7 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		}
 
 		_disposed = true;
-		try
-		{
-			// Pending writes are flushed to the underlying file when the view is disposed,
-			// matching the real memory-mapped view, which writes its dirty pages on unmap.
-			_backing.Flush();
-		}
-		catch (ObjectDisposedException)
-		{
-			// The caller-owned stream (`leaveOpen: true`) was already disposed, so there is
-			// nothing left to flush; disposing the view must not throw.
-		}
-		finally
-		{
-			// Releases this view's reference to the shared backing, disposing the underlying
-			// stream once the memory-mapped file and all views are gone. (The private pages
-			// of a copy-on-write view are plain managed memory reclaimed by the garbage
-			// collector.)
-			_backingOwner.Dispose();
-		}
+		MemoryMappedFileHelpers.DisposeView(_backing, _backingOwner);
 	}
 
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Flush()" />
@@ -91,6 +73,10 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Read{T}(long, out T)" />
 	public void Read<T>(long position, out T structure) where T : struct
 	{
+		// The BCL validates the position, the open state and the readability before the
+		// reference check of `SizeOf{T}` runs.
+		MemoryMappedFileHelpers.ThrowIfNegative(position, nameof(position));
+		ThrowIfCannotRead();
 		MemoryMappedFileHelpers.ThrowIfContainsReferences<T>();
 		byte[] bytes = ReadBytes(position, Unsafe.SizeOf<T>());
 		structure = Unsafe.ReadUnaligned<T>(ref bytes[0]);
@@ -101,12 +87,7 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		where T : struct
 	{
 		ValidateArrayArguments(array, offset, count);
-		ThrowIfDisposed();
-		if (!CanRead)
-		{
-			throw new NotSupportedException("Accessor does not support reading.");
-		}
-
+		ThrowIfCannotRead();
 		MemoryMappedFileHelpers.ThrowIfNegative(position, nameof(position));
 		MemoryMappedFileHelpers.ThrowIfContainsReferences<T>();
 		ThrowIfPositionAtOrBeyondCapacity(position);
@@ -306,6 +287,10 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 	/// <inheritdoc cref="IMemoryMappedViewAccessor.Write{T}(long, ref T)" />
 	public void Write<T>(long position, ref T structure) where T : struct
 	{
+		// The BCL validates the position, the open state and the writability before the
+		// reference check of `SizeOf{T}` runs.
+		MemoryMappedFileHelpers.ThrowIfNegative(position, nameof(position));
+		ThrowIfCannotWrite();
 		MemoryMappedFileHelpers.ThrowIfContainsReferences<T>();
 		byte[] bytes = new byte[Unsafe.SizeOf<T>()];
 		Unsafe.WriteUnaligned(ref bytes[0], structure);
@@ -317,12 +302,7 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		where T : struct
 	{
 		ValidateArrayArguments(array, offset, count);
-		ThrowIfDisposed();
-		if (!CanWrite)
-		{
-			throw new NotSupportedException("Accessor does not support writing.");
-		}
-
+		ThrowIfCannotWrite();
 		MemoryMappedFileHelpers.ThrowIfNegative(position, nameof(position));
 		MemoryMappedFileHelpers.ThrowIfContainsReferences<T>();
 		ThrowIfPositionAtOrBeyondCapacity(position);
@@ -409,14 +389,27 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 		}
 	}
 
-	private byte[] ReadBytes(long position, int count)
+	private void ThrowIfCannotRead()
 	{
 		ThrowIfDisposed();
 		if (!CanRead)
 		{
 			throw new NotSupportedException("Accessor does not support reading.");
 		}
+	}
 
+	private void ThrowIfCannotWrite()
+	{
+		ThrowIfDisposed();
+		if (!CanWrite)
+		{
+			throw new NotSupportedException("Accessor does not support writing.");
+		}
+	}
+
+	private byte[] ReadBytes(long position, int count)
+	{
+		ThrowIfCannotRead();
 		EnsureInBounds(position, count, forReading: true);
 		byte[] buffer = new byte[count];
 		_backing.ReadAt(_offset + position, buffer, 0, count);
@@ -444,12 +437,7 @@ internal sealed class MemoryMappedViewAccessorMock : IMemoryMappedViewAccessor
 
 	private void WriteBytes(long position, byte[] bytes)
 	{
-		ThrowIfDisposed();
-		if (!CanWrite)
-		{
-			throw new NotSupportedException("Accessor does not support writing.");
-		}
-
+		ThrowIfCannotWrite();
 		EnsureInBounds(position, bytes.Length, forReading: false);
 		_backing.WriteAt(_offset + position, bytes, 0, bytes.Length);
 	}

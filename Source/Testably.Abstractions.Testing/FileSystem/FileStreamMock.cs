@@ -177,6 +177,10 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	private bool _isContentChanged;
 	private bool _isDisposed;
 	private readonly IStorageLocation _location;
+	// [_minWrite, _maxWrite) is the contiguous range of all unflushed writes, so OnBytesChanged
+	// can re-apply every pending write over the changed container content. A write to a disjoint
+	// position first flushes the pending range (see TrackWrite), like the real FileStream, whose
+	// buffer is flushed when repositioning.
 	private long _maxWrite;
 	private long _minWrite = long.MaxValue;
 	private readonly FileMode _mode;
@@ -349,8 +353,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		_minWrite = Position;
-		_maxWrite = Position + count;
+		TrackWrite(Position, count);
 		return base.BeginWrite(buffer, offset, count, callback, state);
 	}
 
@@ -580,12 +583,12 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		if (value != Length)
+		long previousLength = Length;
+		base.SetLength(value);
+		if (value != previousLength)
 		{
 			_isContentChanged = true;
 		}
-
-		base.SetLength(value);
 	}
 
 	/// <inheritdoc cref="FileSystemStream.ToString()" />
@@ -609,9 +612,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
+		TrackWrite(Position, count);
 		_isContentChanged = true;
-		_minWrite = Position;
-		_maxWrite = Position + count;
 		base.Write(buffer, offset, count);
 	}
 
@@ -628,9 +630,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
+		TrackWrite(Position, buffer.Length);
 		_isContentChanged = true;
-		_minWrite = Position;
-		_maxWrite = Position + buffer.Length;
 		base.Write(buffer);
 	}
 #endif
@@ -648,9 +649,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
+		TrackWrite(Position, count);
 		_isContentChanged = true;
-		_minWrite = Position;
-		_maxWrite = Position + count;
 		await base.WriteAsync(buffer, offset, count, cancellationToken);
 	}
 
@@ -668,9 +668,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
+		TrackWrite(Position, buffer.Length);
 		_isContentChanged = true;
-		_minWrite = Position;
-		_maxWrite = Position + buffer.Length;
 		await base.WriteAsync(buffer, cancellationToken);
 	}
 #endif
@@ -687,9 +686,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
+		TrackWrite(Position, 1L);
 		_isContentChanged = true;
-		_minWrite = Position;
-		_maxWrite = Position + 1L;
 		base.WriteByte(value);
 	}
 
@@ -729,6 +727,21 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 	}
 
+	private void TrackWrite(long position, long count)
+	{
+		if (_minWrite < _maxWrite &&
+		    (position > _maxWrite || position + count < _minWrite))
+		{
+			// The real FileStream flushes its write buffer when repositioning, so a write to a
+			// position disjoint from the pending write range first persists that range. This
+			// also keeps [_minWrite, _maxWrite) free of gaps that were never written.
+			InternalFlush();
+		}
+
+		_minWrite = Math.Min(_minWrite, position);
+		_maxWrite = Math.Max(_maxWrite, position + count);
+	}
+
 	private void InternalFlush()
 	{
 		if (!_isContentChanged)
@@ -751,10 +764,13 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	{
 		byte[] existingContents = _container.GetBytes();
 		long position = _stream.Position;
-		if (_minWrite < _maxWrite)
+		// Another stream may have shrunk the file below the local write range, so the replayed
+		// range is clamped to the new container content.
+		long maxWrite = Math.Min(_maxWrite, existingContents.Length);
+		if (_minWrite < maxWrite)
 		{
 			_stream.Position = _minWrite;
-			_ = _stream.Read(existingContents, (int)_minWrite, (int)(_maxWrite - _minWrite));
+			_ = _stream.Read(existingContents, (int)_minWrite, (int)(maxWrite - _minWrite));
 		}
 
 		_stream.Position = 0;

@@ -17,7 +17,7 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 	private readonly MemoryMappedFileAccess _access;
 	private readonly SharedBacking _backing;
 	private readonly long _capacity;
-	private bool _disposed;
+	private volatile bool _disposed;
 	private readonly IDisposable _fileReference;
 	private readonly MemoryMappedViewBacking _sharedViewBacking;
 
@@ -27,16 +27,9 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 		FileSystem = fileSystem;
 		_access = access;
 
+		MemoryMappedFileHelpers.ThrowIfEmptyFileWithZeroCapacity(capacity, stream.Length);
 		if (capacity == 0)
 		{
-			if (stream.Length == 0)
-			{
-				#pragma warning disable MA0015 // Matches the parameter-less BCL message for an empty file.
-				throw new ArgumentException(
-					"A positive capacity must be specified for a Memory Mapped File backed by an empty file.");
-				#pragma warning restore MA0015
-			}
-
 			capacity = stream.Length;
 		}
 		else if (capacity < stream.Length)
@@ -80,6 +73,15 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 				// grown to the requested capacity; matches the IOException of the BCL on Windows.
 				throw new IOException(
 					"Not enough memory resources are available to process this command.");
+			}
+
+			if (capacity > int.MaxValue)
+			{
+				// The mocked file system stores the complete file content in memory, so a file
+				// cannot be grown beyond 2 GB; a deliberate exception replaces the
+				// ArgumentOutOfRangeException that would otherwise leak from the internal stream.
+				throw new NotSupportedException(
+					"The mocked file system stores the file content in memory, which limits the size of a memory-mapped file to 2 GB.");
 			}
 
 			stream.SetLength(capacity);
@@ -240,13 +242,32 @@ internal sealed class MemoryMappedFileMock : IMemoryMappedFile
 
 		public IDisposable Acquire()
 		{
-			Interlocked.Increment(ref _refCount);
-			return new Reference(this);
+			while (true)
+			{
+				int current = Volatile.Read(ref _refCount);
+				if (current < 0)
+				{
+					// The last reference was already released (and the stream disposed), so the
+					// count must not be resurrected; the SafeHandle-based reference counting of
+					// the real memory-mapped file fails such a race in the same way.
+					throw new ObjectDisposedException(null);
+				}
+
+				if (Interlocked.CompareExchange(ref _refCount, current + 1, current) == current)
+				{
+					return new Reference(this);
+				}
+			}
 		}
 
 		private void Release()
 		{
-			if (Interlocked.Decrement(ref _refCount) == 0 && ownsStream)
+			// Once the count drops to zero it is atomically marked as released (-1), so a racing
+			// `Acquire` either wins (keeping the stream alive for the new view) or observes the
+			// released state and throws; the stream is disposed exactly once.
+			if (Interlocked.Decrement(ref _refCount) == 0 &&
+			    Interlocked.CompareExchange(ref _refCount, -1, 0) == 0 &&
+			    ownsStream)
 			{
 				stream.Dispose();
 			}

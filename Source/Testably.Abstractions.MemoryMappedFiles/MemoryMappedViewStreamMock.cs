@@ -168,26 +168,7 @@ internal sealed class MemoryMappedViewStreamMock(
 			if (disposing && !_disposed)
 			{
 				_disposed = true;
-				try
-				{
-					// Pending writes are flushed to the underlying file when the view is
-					// disposed, matching the real memory-mapped view, which writes its dirty
-					// pages on unmap.
-					_backing.Flush();
-				}
-				catch (ObjectDisposedException)
-				{
-					// The caller-owned stream (`leaveOpen: true`) was already disposed, so
-					// there is nothing left to flush; disposing the view must not throw.
-				}
-				finally
-				{
-					// Releases this view's reference to the shared backing, disposing the
-					// underlying stream once the memory-mapped file and all views are gone.
-					// (The private pages of a copy-on-write view are plain managed memory
-					// reclaimed by the garbage collector.)
-					_backingOwner.Dispose();
-				}
+				MemoryMappedFileHelpers.DisposeView(_backing, _backingOwner);
 			}
 
 			base.Dispose(disposing);

@@ -463,6 +463,28 @@ public class AdjustTimesTests(FileSystemTestData testData) : FileSystemTestBase(
 		await That(lastWriteTime).IsOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
+	[Test]
+	[AutoArguments]
+	public async Task SetLength_WithInvalidValue_ShouldNotAdjustTimes(
+		string path, byte[] bytes)
+	{
+		SkipIfLongRunningTestsShouldBeSkipped();
+
+		FileSystem.File.WriteAllBytes(path, bytes);
+		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
+		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+
+		using (FileSystemStream stream = FileSystem.File.Open(path, FileMode.Open))
+		{
+			void Act() => stream.SetLength(-1);
+			await That(Act).Throws<ArgumentOutOfRangeException>();
+		}
+
+		await That(FileSystem.File.GetLastWriteTimeUtc(path)).IsEqualTo(lastWriteTime)
+			.Within(TimeComparison.Tolerance)
+			.Because("a failed SetLength must not flush unchanged content to the file");
+	}
+
 	#region Helpers
 
 	private DateTime WaitToBeUpdatedToAfter(Func<DateTime> callback,

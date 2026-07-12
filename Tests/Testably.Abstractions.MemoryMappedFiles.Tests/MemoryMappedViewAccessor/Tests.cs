@@ -552,6 +552,64 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	}
 
 	[Test]
+	public async Task
+		Read_WithReferenceContainingStruct_AfterDispose_ShouldThrowObjectDisposedException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+		accessor.Dispose();
+
+		void Act() => accessor.Read(0, out WithReference _);
+
+		await That(Act).Throws<ObjectDisposedException>()
+			.Because("the BCL validates the open state before the reference check");
+	}
+
+	[Test]
+	public async Task
+		Read_WithReferenceContainingStruct_AndNegativePosition_ShouldThrowArgumentOutOfRangeException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+
+		void Act() => accessor.Read(-1, out WithReference _);
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("position")
+			.Because("the BCL validates the position before the reference check");
+	}
+
+	[Test]
+	public async Task
+		Write_WithReferenceContainingStruct_AfterDispose_ShouldThrowObjectDisposedException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+		accessor.Dispose();
+		WithReference value = new();
+
+		void Act() => accessor.Write(0, ref value);
+
+		await That(Act).Throws<ObjectDisposedException>()
+			.Because("the BCL validates the open state before the reference check");
+	}
+
+	[Test]
+	public async Task
+		Write_WithReferenceContainingStruct_AndNegativePosition_ShouldThrowArgumentOutOfRangeException()
+	{
+		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
+		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
+		WithReference value = new();
+
+		void Act() => accessor.Write(-1, ref value);
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName("position")
+			.Because("the BCL validates the position before the reference check");
+	}
+
+	[Test]
 	public async Task ReadArray_WithReferenceContainingStruct_ShouldThrowArgumentException()
 	{
 		using IMemoryMappedFile mappedFile = FileSystem.CreateMappedFile();
@@ -679,9 +737,14 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Flush_ShouldMakeWritesVisibleToOtherStreams()
 	{
+		// A path-based memory-mapped file holds the file with `FileShare.None`, so the
+		// mapping is created over a caller-owned stream that permits concurrent readers.
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
-		using IMemoryMappedFile mappedFile =
-			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
+		using FileSystemStream stream = FileSystem.FileStream.New(
+			"data.bin", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+		using IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
+			stream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None,
+			leaveOpen: true);
 		using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 
 		accessor.Write(0, 1234567);
