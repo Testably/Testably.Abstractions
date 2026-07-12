@@ -6,7 +6,7 @@ using System.Linq;
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 
 [FileSystemTests]
-public class ExtensionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
+public partial class ExtensionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	[Test]
 	public async Task

@@ -6,7 +6,7 @@ using System.Linq;
 namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 
 [FileSystemTests]
-public class ExtensionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
+public partial class ExtensionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	[Test]
 	[Arguments("2000-01-01T12:14:15")]
