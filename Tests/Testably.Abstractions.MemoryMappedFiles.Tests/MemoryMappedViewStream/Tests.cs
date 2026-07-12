@@ -1,5 +1,7 @@
 ﻿using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Linq;
+using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.MemoryMappedFiles.Tests.MemoryMappedViewStream;
 
@@ -234,6 +236,32 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		void Act() => stream.SetLength(10);
 
 		await That(Act).Throws<NotSupportedException>();
+	}
+
+	[Test]
+	public async Task Read_AfterBackingStreamWasTruncated_ShouldReturnZeros()
+	{
+		Skip.IfNot(FileSystem is MockFileSystem,
+			"The operating system rejects truncating a file with a user-mapped section.");
+
+		FileSystem.File.WriteAllBytes("data.bin",
+			Enumerable.Repeat((byte)7, 100).ToArray());
+		using FileSystemStream stream = FileSystem.FileStream.New(
+			"data.bin", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+		using IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
+			stream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None,
+			leaveOpen: true);
+		using Stream viewStream = mappedFile.CreateViewStream();
+
+		stream.SetLength(50);
+		viewStream.Position = 60;
+		byte[] buffer = [9, 9, 9, 9,];
+		int read = viewStream.Read(buffer, 0, 4);
+
+		await That(read).IsEqualTo(4)
+			.Because("the view spans the full capacity, which does not shrink with the file");
+		await That(buffer).IsEqualTo(new byte[4])
+			.Because("reads of the truncated range return zeros");
 	}
 
 	[Test]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
@@ -177,14 +178,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	private bool _isContentChanged;
 	private bool _isDisposed;
 	private readonly IStorageLocation _location;
-	// [_minWrite, _maxWrite) is the contiguous range of all unflushed writes, so OnBytesChanged
-	// can re-apply every pending write over the changed container content. A write to a disjoint
-	// position first flushes the pending range (see TrackWrite), like the real FileStream, whose
-	// buffer is flushed when repositioning.
-	private long _maxWrite;
-	private long _minWrite = long.MaxValue;
 	private readonly FileMode _mode;
 	private readonly FileOptions _options;
+	private readonly List<(long Start, long End)> _pendingWrites = new();
 	private readonly MemoryStream _stream;
 
 	internal FileStreamMock(MockFileSystem fileSystem,
@@ -588,6 +584,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		if (value != previousLength)
 		{
 			_isContentChanged = true;
+			InternalFlush();
 		}
 	}
 
@@ -722,24 +719,33 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		else
 		{
 			_isContentChanged = true;
-			_minWrite = Position;
-			_maxWrite = Position;
 		}
 	}
 
 	private void TrackWrite(long position, long count)
 	{
-		if (_minWrite < _maxWrite &&
-		    (position > _maxWrite || position + count < _minWrite))
+		long end = position + count;
+		if (_pendingWrites.Count > 0 &&
+		    (position > _pendingWrites[_pendingWrites.Count - 1].End ||
+		     end < _pendingWrites[0].Start))
 		{
-			// The real FileStream flushes its write buffer when repositioning, so a write to a
-			// position disjoint from the pending write range first persists that range. This
-			// also keeps [_minWrite, _maxWrite) free of gaps that were never written.
 			InternalFlush();
 		}
 
-		_minWrite = Math.Min(_minWrite, position);
-		_maxWrite = Math.Max(_maxWrite, position + count);
+		int index = 0;
+		while (index < _pendingWrites.Count && _pendingWrites[index].End < position)
+		{
+			index++;
+		}
+
+		while (index < _pendingWrites.Count && _pendingWrites[index].Start <= end)
+		{
+			position = Math.Min(position, _pendingWrites[index].Start);
+			end = Math.Max(end, _pendingWrites[index].End);
+			_pendingWrites.RemoveAt(index);
+		}
+
+		_pendingWrites.Insert(index, (position, end));
 	}
 
 	private void InternalFlush()
@@ -756,25 +762,37 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		_ = _stream.Read(data, 0, (int)Length);
 		_stream.Seek(position, SeekOrigin.Begin);
 		_container.WriteBytes(data);
-		_minWrite = long.MaxValue;
-		_maxWrite = 0;
+		_pendingWrites.Clear();
 	}
 
 	private void OnBytesChanged(object? sender, EventArgs e)
 	{
 		byte[] existingContents = _container.GetBytes();
 		long position = _stream.Position;
-		// Another stream may have shrunk the file below the local write range, so the replayed
-		// range is clamped to the new container content.
-		long maxWrite = Math.Min(_maxWrite, existingContents.Length);
-		if (_minWrite < maxWrite)
+		List<(long Start, byte[] Data)> pendingWrites = new(_pendingWrites.Count);
+		foreach ((long start, long end) in _pendingWrites)
 		{
-			_stream.Position = _minWrite;
-			_ = _stream.Read(existingContents, (int)_minWrite, (int)(maxWrite - _minWrite));
+			long length = Math.Min(end, _stream.Length) - start;
+			if (length <= 0)
+			{
+				continue;
+			}
+
+			byte[] data = new byte[length];
+			_stream.Position = start;
+			_ = _stream.Read(data, 0, (int)length);
+			pendingWrites.Add((start, data));
 		}
 
 		_stream.Position = 0;
 		_stream.Write(existingContents, 0, existingContents.Length);
+		_stream.SetLength(existingContents.Length);
+		foreach ((long start, byte[] data) in pendingWrites)
+		{
+			_stream.Position = start;
+			_stream.Write(data, 0, data.Length);
+		}
+
 		_stream.Position = position;
 	}
 

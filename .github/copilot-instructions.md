@@ -14,7 +14,7 @@ Testably.Abstractions is a feature-complete testing helper for the `System.IO.Ab
 - Time and Random system abstractions
 
 ### Architecture
-- **Source/**: Main library code with 6 projects
+- **Source/**: Main library code with 7 projects
 - **Tests/**: Comprehensive test suite with 13,134+ tests
 - **Docs/**: Docusaurus documentation site (published to docs.testably.org)
 - **Pipeline/**: Nuke build system with .NET 8.0
@@ -62,7 +62,7 @@ dotnet test --no-build
 ### Package Commands
 **Package Time: ~3 seconds (set timeout: 60s)**
 ```bash
-# Create NuGet packages (6 packages total)
+# Create NuGet packages (7 packages total)
 export PATH="./.nuke/temp/dotnet-unix:$PATH"
 dotnet pack --no-build --configuration Release
 ```
@@ -120,7 +120,7 @@ dotnet pack --no-build --configuration Release
 ### Expected Outputs
 - **Build Success**: "Build succeeded with X warning(s)"
 - **Test Success**: "Test summary: total: 26699, failed: 0, succeeded: 19355, skipped: 7333"
-- **Package Success**: 6 NuGet packages created in Release configuration
+- **Package Success**: 7 NuGet packages created in Release configuration
 
 ## Project Structure Guide
 

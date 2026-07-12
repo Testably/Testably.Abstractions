@@ -32,7 +32,7 @@ internal sealed class CopyOnWriteViewBacking(MemoryMappedViewBacking shared, lon
 	}
 
 	/// <inheritdoc cref="MemoryMappedViewBacking.ReadAt(long, byte[], int, int)" />
-	public override int ReadAt(long position, byte[] buffer, int offset, int count)
+	public override void ReadAt(long position, byte[] buffer, int offset, int count)
 	{
 		lock (_lock)
 		{
@@ -40,7 +40,8 @@ internal sealed class CopyOnWriteViewBacking(MemoryMappedViewBacking shared, lon
 			{
 				// No page has been privatized yet, so the whole range comes from the shared
 				// backing in one call instead of one call per 4096-byte page.
-				return shared.ReadAt(position, buffer, offset, count);
+				shared.ReadAt(position, buffer, offset, count);
+				return;
 			}
 
 			int read = 0;
@@ -60,8 +61,6 @@ internal sealed class CopyOnWriteViewBacking(MemoryMappedViewBacking shared, lon
 
 				read += chunk;
 			}
-
-			return read;
 		}
 	}
 

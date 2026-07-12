@@ -111,9 +111,9 @@ internal sealed class MemoryMappedViewStreamMock(
 			}
 
 			int toRead = (int)Math.Min(count, remaining);
-			int read = _backing.ReadAt(_offset + _position, buffer, offset, toRead);
-			_position += read;
-			return read;
+			_backing.ReadAt(_offset + _position, buffer, offset, toRead);
+			_position += toRead;
+			return toRead;
 		}
 
 		/// <inheritdoc cref="Stream.Seek(long, SeekOrigin)" />

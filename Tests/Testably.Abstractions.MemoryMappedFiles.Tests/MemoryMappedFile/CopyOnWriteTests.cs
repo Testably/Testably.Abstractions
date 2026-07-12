@@ -136,6 +136,33 @@ public class CopyOnWriteTests(FileSystemTestData testData)
 	}
 
 	[Test]
+	public async Task CopyOnWriteView_AfterBackingStreamWasTruncated_ShouldReadZerosFromSharedPages()
+	{
+		Skip.IfNot(FileSystem is MockFileSystem,
+			"The operating system rejects truncating a file with a user-mapped section.");
+
+		// Two pages of 4096 bytes; the copy-on-write view only privatizes the first one.
+		FileSystem.File.WriteAllBytes("data.bin", new byte[8192]);
+		using FileSystemStream stream = FileSystem.FileStream.New(
+			"data.bin", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+		using IMemoryMappedFile mappedFile = FileSystem.MemoryMappedFile.CreateFromFile(
+			stream, null, 0, MemoryMappedFileAccess.ReadWrite, HandleInheritability.None,
+			leaveOpen: true);
+		using IMemoryMappedViewAccessor accessor =
+			mappedFile.CreateViewAccessor(0, 8192, MemoryMappedFileAccess.CopyOnWrite);
+
+		accessor.Write(0, 42);
+		stream.SetLength(4096);
+		byte[] buffer = new byte[8];
+		int read = accessor.ReadArray(8000, buffer, 0, 8);
+
+		await That(read).IsEqualTo(8)
+			.Because("the view spans the full capacity, which does not shrink with the file");
+		await That(buffer).IsEqualTo(new byte[8])
+			.Because("reads of the truncated range on a non-privatized page return zeros");
+	}
+
+	[Test]
 	public async Task CopyOnWrite_ShouldNotBeVisibleToOtherViews()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);

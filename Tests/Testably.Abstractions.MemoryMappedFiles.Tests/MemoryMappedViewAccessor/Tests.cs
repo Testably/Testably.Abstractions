@@ -737,8 +737,9 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task Flush_ShouldMakeWritesVisibleToOtherStreams()
 	{
-		// A path-based memory-mapped file holds the file with `FileShare.None`, so the
-		// mapping is created over a caller-owned stream that permits concurrent readers.
+		// A path-based memory-mapped file holds the file without write sharing (and without any
+		// sharing on the .NET Framework), so the mapping is created over a caller-owned stream
+		// that permits concurrent readers.
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
 		using FileSystemStream stream = FileSystem.FileStream.New(
 			"data.bin", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);

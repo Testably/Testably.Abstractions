@@ -315,6 +315,51 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 
 	[Test]
 	[AutoArguments]
+	public async Task SetLength_Truncate_ShouldShrinkOtherStreamsWithPendingWrites(
+		string path)
+	{
+		FileSystem.File.WriteAllBytes(path, new byte[100]);
+		using (FileSystemStream stream1 = FileSystem.FileStream.New(
+			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+		{
+			using FileSystemStream stream2 = FileSystem.FileStream.New(
+				path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+			stream2.SetLength(4);
+			stream1.Position = 0;
+			stream1.WriteByte(1);
+		}
+
+		byte[] result = FileSystem.File.ReadAllBytes(path);
+		await That(result.Length).IsEqualTo(4)
+			.Because("the flush of the first stream must not resurrect the truncated content");
+		await That(result[0]).IsEqualTo(1);
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task SetLength_Truncate_WhenOtherStreamFlushesAfterwards_ShouldKeepNewLength(
+		string path)
+	{
+		FileSystem.File.WriteAllBytes(path, new byte[100]);
+		using (FileSystemStream stream1 = FileSystem.FileStream.New(
+			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+		{
+			using FileSystemStream stream2 = FileSystem.FileStream.New(
+				path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+			stream1.SetLength(10);
+			stream2.Position = 0;
+			stream2.WriteByte(2);
+			stream2.Flush();
+		}
+
+		byte[] result = FileSystem.File.ReadAllBytes(path);
+		await That(result.Length).IsEqualTo(10)
+			.Because("the other stream's flush must not revert the truncation");
+		await That(result[0]).IsEqualTo(2);
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task Write_ScatteredWrites_WhenOtherStreamFlushes_ShouldKeepAllPendingWrites(
 		string path)
 	{

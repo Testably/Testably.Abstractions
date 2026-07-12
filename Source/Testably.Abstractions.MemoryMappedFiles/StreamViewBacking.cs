@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Testably.Abstractions;
 
@@ -31,7 +32,7 @@ internal sealed class StreamViewBacking(Stream stream) : MemoryMappedViewBacking
 	}
 
 	/// <inheritdoc cref="MemoryMappedViewBacking.ReadAt(long, byte[], int, int)" />
-	public override int ReadAt(long position, byte[] buffer, int offset, int count)
+	public override void ReadAt(long position, byte[] buffer, int offset, int count)
 	{
 		lock (_lock)
 		{
@@ -45,13 +46,15 @@ internal sealed class StreamViewBacking(Stream stream) : MemoryMappedViewBacking
 					int r = stream.Read(buffer, offset + read, count - read);
 					if (r == 0)
 					{
+						// The stream ends before the requested range (the caller truncated a
+						// shared backing stream), so the remainder is zero-filled, matching the
+						// zeroed pages the real memory-mapped view exposes.
+						Array.Clear(buffer, offset + read, count - read);
 						break;
 					}
 
 					read += r;
 				}
-
-				return read;
 			}
 			finally
 			{
@@ -63,9 +66,8 @@ internal sealed class StreamViewBacking(Stream stream) : MemoryMappedViewBacking
 	/// <summary>
 	///     Writes the given bytes at the absolute <paramref name="position" />. The write is
 	///     immediately visible to all views (they share this stream); it reaches the underlying
-	///     file when a view is flushed or disposed, because flushing the
-	///     <c>MockFileSystem</c> stream copies the complete file content and would make every
-	///     single write cost <c>O(fileLength)</c>.
+	///     file when a view is flushed or disposed, or earlier when the stream persists its
+	///     pending writes on a reposition, like the real <c>FileStream</c>.
 	/// </summary>
 	public override void WriteAt(long position, byte[] buffer, int offset, int count)
 	{

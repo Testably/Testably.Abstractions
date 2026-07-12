@@ -17,10 +17,12 @@ internal abstract class MemoryMappedViewBacking
 	public abstract void Flush();
 
 	/// <summary>
-	///     Reads up to <paramref name="count" /> bytes at the absolute <paramref name="position" />
-	///     into <paramref name="buffer" /> and returns the number of bytes read.
+	///     Reads <paramref name="count" /> bytes at the absolute <paramref name="position" />
+	///     into <paramref name="buffer" />. A range beyond the end of the underlying content
+	///     (because the caller truncated a shared backing stream) is zero-filled, matching the
+	///     zeroed pages the real memory-mapped view exposes.
 	/// </summary>
-	public abstract int ReadAt(long position, byte[] buffer, int offset, int count);
+	public abstract void ReadAt(long position, byte[] buffer, int offset, int count);
 
 	/// <summary>
 	///     Writes the given bytes at the absolute <paramref name="position" />.

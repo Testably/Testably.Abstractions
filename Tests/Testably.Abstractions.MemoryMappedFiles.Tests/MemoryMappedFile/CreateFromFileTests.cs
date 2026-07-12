@@ -221,6 +221,19 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	}
 
 	[Test]
+	public async Task CreateFromFile_WithLargerCapacity_ShouldGrowFileImmediately()
+	{
+		FileSystem.File.WriteAllBytes("data.bin", new byte[10]);
+
+		using (IMemoryMappedFile _ = FileSystem.MemoryMappedFile.CreateFromFile(
+			"data.bin", FileMode.Open, null, 100, MemoryMappedFileAccess.ReadWrite))
+		{
+			await That(FileSystem.FileInfo.New("data.bin").Length).IsEqualTo(100)
+				.Because("the BCL grows the file when the mapping is created, not when it is disposed");
+		}
+	}
+
+	[Test]
 	public async Task DisposeViews_AfterCallerOwnedStreamWasDisposed_ShouldNotThrow()
 	{
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
@@ -514,8 +527,11 @@ public class CreateFromFileTests(FileSystemTestData testData)
 	}
 
 	[Test]
-	public async Task CreateFromFile_WithPath_ShouldOpenFileWithoutSharing()
+	public async Task CreateFromFile_WithPath_ShouldAllowConcurrentReaders()
 	{
+		Skip.If(Test.IsNetFramework,
+			"The BCL of the .NET Framework opens the backing file with FileShare.None.");
+
 		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
 		using IMemoryMappedFile mappedFile =
 			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
@@ -524,9 +540,28 @@ public class CreateFromFileTests(FileSystemTestData testData)
 			.Open("data.bin", FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
 			.Dispose();
 
+		await That(Act).DoesNotThrow()
+			.Because(
+				"the BCL opens the backing file of a path-based memory-mapped file with FileShare.Read");
+	}
+
+	[Test]
+	public async Task CreateFromFile_WithPath_ShouldNotAllowConcurrentWriters()
+	{
+		Skip.IfNot(Test.RunsOnWindows,
+			"File sharing is only enforced on Windows; on Unix the FileShare.Read of the backing stream is not honored.");
+
+		FileSystem.File.WriteAllBytes("data.bin", new byte[100]);
+		using IMemoryMappedFile mappedFile =
+			FileSystem.MemoryMappedFile.CreateFromFile("data.bin");
+
+		void Act() => FileSystem.File
+			.Open("data.bin", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)
+			.Dispose();
+
 		await That(Act).Throws<IOException>()
 			.Because(
-				"the BCL opens the backing file of a path-based memory-mapped file with FileShare.None");
+				"the backing file of a path-based memory-mapped file is opened without write sharing");
 	}
 
 	[Test]

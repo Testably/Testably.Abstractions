@@ -58,10 +58,8 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 		ThrowIfWriteAccess(access);
 
 		bool fileExisted = mode == FileMode.Open || FileSystem.File.Exists(path);
-		// The BCL opens the backing stream of a path-based memory-mapped file with
-		// `FileShare.None`, so no other handle can be opened while the mapping is alive.
 		FileSystemStream stream =
-			FileSystem.FileStream.New(path, mode, ToFileAccess(access), FileShare.None);
+			FileSystem.FileStream.New(path, mode, ToFileAccess(access), PathBasedFileShare);
 		try
 		{
 			IFileSystemExtensibility extensibility = stream.GetExtensibilityOrThrow();
@@ -209,6 +207,11 @@ internal sealed class MemoryMappedFileFactory(IFileSystem fileSystem) : IMemoryM
 	private static readonly bool IsNetFramework =
 		System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription
 			.StartsWith(".NET Framework", StringComparison.Ordinal);
+
+	private static readonly FileShare PathBasedFileShare =
+		IsNetFramework ? FileShare.None : FileShare.Read;
+#else
+	private const FileShare PathBasedFileShare = FileShare.Read;
 #endif
 
 	private static void ThrowIfMapNamed(string? mapName)
