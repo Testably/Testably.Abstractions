@@ -53,6 +53,7 @@ internal static class MemoryMappedFileHelpers
 	{
 		public static readonly bool ContainsReferences = Check(typeof(T));
 
+		#pragma warning disable S3011 // Read-only metadata inspection: the object references of a struct usually sit in non-public fields, which is exactly what `RuntimeHelpers.IsReferenceOrContainsReferences` (used on the modern frameworks) inspects.
 		private static bool Check(Type type)
 			=> type
 				.GetFields(BindingFlags.Instance | BindingFlags.Public |
@@ -61,6 +62,7 @@ internal static class MemoryMappedFileHelpers
 					=> (!field.FieldType.IsValueType && !field.FieldType.IsPointer) ||
 					   (field.FieldType.IsValueType && field.FieldType != type &&
 					    Check(field.FieldType)));
+		#pragma warning restore S3011
 	}
 #endif
 
