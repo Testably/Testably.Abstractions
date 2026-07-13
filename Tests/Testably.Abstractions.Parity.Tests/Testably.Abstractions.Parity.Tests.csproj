@@ -3,6 +3,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Source\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
 		<ProjectReference Include="..\..\Source\Testably.Abstractions.Compression\Testably.Abstractions.Compression.csproj" />
+		<ProjectReference Include="..\..\Source\Testably.Abstractions.MemoryMappedFiles\Testably.Abstractions.MemoryMappedFiles.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">

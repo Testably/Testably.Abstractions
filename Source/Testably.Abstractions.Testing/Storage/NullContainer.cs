@@ -118,6 +118,12 @@ internal sealed class NullContainer : IStorageContainer
 		// Do nothing in NullContainer
 	}
 
+	/// <inheritdoc cref="IStorageContainer.WriteRange(byte[], long)" />
+	public void WriteRange(byte[] bytes, long offset)
+	{
+		// Do nothing in NullContainer
+	}
+
 	#endregion
 
 	internal static IStorageContainer New(MockFileSystem fileSystem)

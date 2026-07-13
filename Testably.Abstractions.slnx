@@ -12,6 +12,7 @@
   <Folder Name="/Tests/">
     <Project Path="Tests/Testably.Abstractions.AccessControl.Tests/Testably.Abstractions.AccessControl.Tests.csproj" />
     <Project Path="Tests/Testably.Abstractions.Compression.Tests/Testably.Abstractions.Compression.Tests.csproj" />
+    <Project Path="Tests/Testably.Abstractions.MemoryMappedFiles.Tests/Testably.Abstractions.MemoryMappedFiles.Tests.csproj" />
     <Project Path="Tests/Testably.Abstractions.Parity.Tests/Testably.Abstractions.Parity.Tests.csproj" />
     <Project Path="Tests/Testably.Abstractions.Testing.Tests/Testably.Abstractions.Testing.Tests.csproj" />
     <Project Path="Tests/Testably.Abstractions.Tests/Testably.Abstractions.Tests.csproj" />
@@ -57,6 +58,7 @@
     <File Path="Docs/Nuget/AccessControl.md" />
     <File Path="Docs/Nuget/Compression.md" />
     <File Path="Docs/Nuget/Interface.md" />
+    <File Path="Docs/Nuget/MemoryMappedFiles.md" />
     <File Path="Docs/Nuget/Testing.md" />
   </Folder>
   <Folder Name="/_/Source/">
@@ -67,5 +69,6 @@
   </Folder>
   <Project Path="Source/Testably.Abstractions.AccessControl/Testably.Abstractions.AccessControl.csproj" />
   <Project Path="Source/Testably.Abstractions.Compression/Testably.Abstractions.Compression.csproj" />
+  <Project Path="Source/Testably.Abstractions.MemoryMappedFiles/Testably.Abstractions.MemoryMappedFiles.csproj" />
   <Project Path="Source/Testably.Abstractions.Testing/Testably.Abstractions.Testing.csproj" />
 </Solution>

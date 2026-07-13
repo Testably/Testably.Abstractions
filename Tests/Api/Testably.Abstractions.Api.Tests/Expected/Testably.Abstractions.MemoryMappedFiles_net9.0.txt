@@ -1,0 +1,124 @@
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/Testably/Testably.Abstractions.git")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo(@"Testably.Abstractions.MemoryMappedFiles.Tests, PublicKey=00240000048000009400000006020000002400005253413100040000010001006104741100251820044d92b34b0519a1de0bccd80d6199aadbdcd5931d035462d42f70b0ae7a7db37bab63afb8a8ad0dc21392bb01f1243bfc51df4b5f1975b1b9746fecbed88913b783fccb69efc59e23b0e019e065abd38731711a2d6ac2569ab57d4b4d529f5903f5bee0f4388b2a5f4d5e0fddab6aac18d96aa78c2e73e0")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v9.0", FrameworkDisplayName=".NET 9.0")]
+namespace Testably.Abstractions
+{
+    public static class FileSystemExtensions
+    {
+        extension(System.IO.Abstractions.IFileSystem fileSystem)
+        {
+            public Testably.Abstractions.IMemoryMappedFileFactory MemoryMappedFile { get; }
+        }
+    }
+    public interface IMemoryMappedFile : System.IDisposable, System.IO.Abstractions.IFileSystemEntity
+    {
+        Testably.Abstractions.IMemoryMappedViewAccessor CreateViewAccessor();
+        Testably.Abstractions.IMemoryMappedViewAccessor CreateViewAccessor(long offset, long size);
+        Testably.Abstractions.IMemoryMappedViewAccessor CreateViewAccessor(long offset, long size, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access);
+        Testably.Abstractions.MemoryMappedFileSystemViewStream CreateViewStream();
+        Testably.Abstractions.MemoryMappedFileSystemViewStream CreateViewStream(long offset, long size);
+        Testably.Abstractions.MemoryMappedFileSystemViewStream CreateViewStream(long offset, long size, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access);
+    }
+    public interface IMemoryMappedFileFactory : System.IO.Abstractions.IFileSystemEntity
+    {
+        Testably.Abstractions.IMemoryMappedFile CreateFromFile(string path);
+        Testably.Abstractions.IMemoryMappedFile CreateFromFile(string path, System.IO.FileMode mode);
+        Testably.Abstractions.IMemoryMappedFile CreateFromFile(string path, System.IO.FileMode mode, string? mapName);
+        Testably.Abstractions.IMemoryMappedFile CreateFromFile(string path, System.IO.FileMode mode, string? mapName, long capacity);
+        Testably.Abstractions.IMemoryMappedFile CreateFromFile(string path, System.IO.FileMode mode, string? mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access);
+        Testably.Abstractions.IMemoryMappedFile CreateFromFile(System.IO.Abstractions.FileSystemStream fileStream, string? mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access, System.IO.HandleInheritability inheritability, bool leaveOpen);
+        Testably.Abstractions.IMemoryMappedFile CreateNew(string? mapName, long capacity);
+        Testably.Abstractions.IMemoryMappedFile CreateNew(string? mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access);
+        Testably.Abstractions.IMemoryMappedFile CreateNew(string? mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access, System.IO.MemoryMappedFiles.MemoryMappedFileOptions options, System.IO.HandleInheritability inheritability);
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        Testably.Abstractions.IMemoryMappedFile CreateOrOpen(string mapName, long capacity);
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        Testably.Abstractions.IMemoryMappedFile CreateOrOpen(string mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access);
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        Testably.Abstractions.IMemoryMappedFile CreateOrOpen(string mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access, System.IO.MemoryMappedFiles.MemoryMappedFileOptions options, System.IO.HandleInheritability inheritability);
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        Testably.Abstractions.IMemoryMappedFile OpenExisting(string mapName);
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        Testably.Abstractions.IMemoryMappedFile OpenExisting(string mapName, System.IO.MemoryMappedFiles.MemoryMappedFileRights desiredAccessRights);
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        Testably.Abstractions.IMemoryMappedFile OpenExisting(string mapName, System.IO.MemoryMappedFiles.MemoryMappedFileRights desiredAccessRights, System.IO.HandleInheritability inheritability);
+    }
+    public interface IMemoryMappedViewAccessor : System.IDisposable, System.IO.Abstractions.IFileSystemEntity
+    {
+        bool CanRead { get; }
+        bool CanWrite { get; }
+        long Capacity { get; }
+        long PointerOffset { get; }
+        void Flush();
+        void Read<T>(long position, out T structure)
+            where T :  struct;
+        int ReadArray<T>(long position, T[] array, int offset, int count)
+            where T :  struct;
+        bool ReadBoolean(long position);
+        byte ReadByte(long position);
+        char ReadChar(long position);
+        decimal ReadDecimal(long position);
+        double ReadDouble(long position);
+        short ReadInt16(long position);
+        int ReadInt32(long position);
+        long ReadInt64(long position);
+        sbyte ReadSByte(long position);
+        float ReadSingle(long position);
+        ushort ReadUInt16(long position);
+        uint ReadUInt32(long position);
+        ulong ReadUInt64(long position);
+        void Write(long position, bool value);
+        void Write(long position, byte value);
+        void Write(long position, char value);
+        void Write(long position, decimal value);
+        void Write(long position, double value);
+        void Write(long position, float value);
+        void Write(long position, int value);
+        void Write(long position, long value);
+        void Write(long position, sbyte value);
+        void Write(long position, short value);
+        void Write(long position, uint value);
+        void Write(long position, ulong value);
+        void Write(long position, ushort value);
+        void Write<T>(long position, ref T structure)
+            where T :  struct;
+        void WriteArray<T>(long position, T[] array, int offset, int count)
+            where T :  struct;
+    }
+    public abstract class MemoryMappedFileSystemViewStream : System.IO.UnmanagedMemoryStream
+    {
+        protected MemoryMappedFileSystemViewStream(System.IO.Stream stream) { }
+        public override bool CanRead { get; }
+        public override bool CanSeek { get; }
+        public override bool CanTimeout { get; }
+        public override bool CanWrite { get; }
+        public virtual long Capacity { get; }
+        public override long Length { get; }
+        public abstract long PointerOffset { get; }
+        public override long Position { get; set; }
+        public override int ReadTimeout { get; set; }
+        public override int WriteTimeout { get; set; }
+        public override System.IAsyncResult BeginRead(byte[] buffer, int offset, int count, System.AsyncCallback? callback, object? state) { }
+        public override System.IAsyncResult BeginWrite(byte[] buffer, int offset, int count, System.AsyncCallback? callback, object? state) { }
+        public override void Close() { }
+        public override System.Threading.Tasks.Task CopyToAsync(System.IO.Stream destination, int bufferSize, System.Threading.CancellationToken cancellationToken) { }
+        protected override void Dispose(bool disposing) { }
+        public override int EndRead(System.IAsyncResult asyncResult) { }
+        public override void EndWrite(System.IAsyncResult asyncResult) { }
+        public override void Flush() { }
+        public override System.Threading.Tasks.Task FlushAsync(System.Threading.CancellationToken cancellationToken) { }
+        public override int Read(System.Span<byte> buffer) { }
+        public override int Read(byte[] buffer, int offset, int count) { }
+        public override System.Threading.Tasks.ValueTask<int> ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken = default) { }
+        public override System.Threading.Tasks.Task<int> ReadAsync(byte[] buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) { }
+        public override int ReadByte() { }
+        public override long Seek(long offset, System.IO.SeekOrigin origin) { }
+        public override void SetLength(long value) { }
+        public override string? ToString() { }
+        public override void Write(System.ReadOnlySpan<byte> buffer) { }
+        public override void Write(byte[] buffer, int offset, int count) { }
+        public override System.Threading.Tasks.ValueTask WriteAsync(System.ReadOnlyMemory<byte> buffer, System.Threading.CancellationToken cancellationToken = default) { }
+        public override System.Threading.Tasks.Task WriteAsync(byte[] buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) { }
+        public override void WriteByte(byte value) { }
+    }
+}

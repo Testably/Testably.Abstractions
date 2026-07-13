@@ -292,4 +292,137 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 
 		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
+
+	[Test]
+	[AutoArguments]
+	public async Task SetLength_Truncate_ShouldShrinkOtherStreamsWithPendingWrites(
+		string path)
+	{
+		FileSystem.File.WriteAllBytes(path, new byte[100]);
+		using (FileSystemStream stream1 = FileSystem.FileStream.New(
+			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+		{
+			using FileSystemStream stream2 = FileSystem.FileStream.New(
+				path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+			stream2.SetLength(4);
+			stream1.Position = 0;
+			stream1.WriteByte(1);
+		}
+
+		byte[] result = FileSystem.File.ReadAllBytes(path);
+		await That(result.Length).IsEqualTo(4)
+			.Because("the flush of the first stream must not resurrect the truncated content");
+		await That(result[0]).IsEqualTo(1);
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task SetLength_Truncate_WhenOtherStreamFlushesAfterwards_ShouldKeepNewLength(
+		string path)
+	{
+		FileSystem.File.WriteAllBytes(path, new byte[100]);
+		using (FileSystemStream stream1 = FileSystem.FileStream.New(
+			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+		{
+			using FileSystemStream stream2 = FileSystem.FileStream.New(
+				path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+			stream1.SetLength(10);
+			stream2.Position = 0;
+			stream2.WriteByte(2);
+			stream2.Flush();
+		}
+
+		byte[] result = FileSystem.File.ReadAllBytes(path);
+		await That(result.Length).IsEqualTo(10)
+			.Because("the other stream's flush must not revert the truncation");
+		await That(result[0]).IsEqualTo(2);
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task SetLength_Truncate_WhileOtherStreamHasPendingWrites_ShouldNotThrow(
+		string path)
+	{
+		FileSystem.File.WriteAllBytes(path, new byte[100]);
+		using FileSystemStream stream1 = FileSystem.FileStream.New(
+			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+		using FileSystemStream stream2 = FileSystem.FileStream.New(
+			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+		stream1.Position = 90;
+		stream1.Write(new byte[10], 0, 10);
+
+		void Act()
+		{
+			stream2.SetLength(10);
+			stream2.Flush();
+		}
+
+		await That(Act).DoesNotThrow();
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task SetLength_WithoutOtherWrites_ShouldPersistNewLength(string path)
+	{
+		FileSystem.File.WriteAllBytes(path, new byte[10]);
+
+		using (FileSystemStream stream = FileSystem.File.Open(path, FileMode.Open))
+		{
+			stream.SetLength(100);
+		}
+
+		await That(FileSystem.File.ReadAllBytes(path).Length).IsEqualTo(100);
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task Write_ScatteredWrites_WhenOtherStreamFlushes_ShouldKeepAllPendingWrites(
+		string path)
+	{
+		FileSystem.File.WriteAllBytes(path, new byte[100]);
+		using (FileSystemStream stream1 = FileSystem.FileStream.New(
+			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+		{
+			using FileSystemStream stream2 = FileSystem.FileStream.New(
+				path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+			stream1.Position = 10;
+			stream1.WriteByte(1);
+			stream1.Position = 20;
+			stream1.WriteByte(2);
+			stream2.Position = 80;
+			stream2.WriteByte(3);
+			stream2.Flush();
+		}
+
+		byte[] result = FileSystem.File.ReadAllBytes(path);
+		await That(result[10]).IsEqualTo(1);
+		await That(result[20]).IsEqualTo(2);
+		await That(result[80]).IsEqualTo(3);
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task Write_WithInvalidArguments_ShouldNotCorruptContentOfOtherStreams(
+		string path)
+	{
+		FileSystem.File.WriteAllBytes(path, new byte[10]);
+		using (FileSystemStream stream1 = FileSystem.FileStream.New(
+			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+		{
+			using FileSystemStream stream2 = FileSystem.FileStream.New(
+				path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+			void Act() => stream1.Write(new byte[5], 0, 10);
+
+			await That(Act).Throws<ArgumentException>();
+
+			stream2.Position = 0;
+			stream2.WriteByte(1);
+			stream2.Flush();
+		}
+
+		byte[] result = FileSystem.File.ReadAllBytes(path);
+		await That(result[0]).IsEqualTo(1)
+			.Because(
+				"the rejected write must not leave a pending write range that overwrites the flushed content");
+	}
 }

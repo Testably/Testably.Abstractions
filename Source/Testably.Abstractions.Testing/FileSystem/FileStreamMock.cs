@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
@@ -177,10 +178,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	private bool _isContentChanged;
 	private bool _isDisposed;
 	private readonly IStorageLocation _location;
-	private long _maxWrite;
-	private long _minWrite = long.MaxValue;
 	private readonly FileMode _mode;
 	private readonly FileOptions _options;
+	private readonly List<(long Start, long End)> _pendingWrites = new();
 	private readonly MemoryStream _stream;
 
 	internal FileStreamMock(MockFileSystem fileSystem,
@@ -349,9 +349,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		_minWrite = Position;
-		_maxWrite = Position + count;
-		return base.BeginWrite(buffer, offset, count, callback, state);
+		long position = Position;
+		FlushWhenWriteIsDisjoint(position, count);
+		IAsyncResult result = base.BeginWrite(buffer, offset, count, callback, state);
+		TrackWrite(position, count);
+		return result;
 	}
 
 	/// <inheritdoc cref="FileSystemStream.Close()" />
@@ -580,7 +582,13 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
+		long previousLength = Length;
 		base.SetLength(value);
+		if (value != previousLength)
+		{
+			_isContentChanged = true;
+			InternalFlush();
+		}
 	}
 
 	/// <inheritdoc cref="FileSystemStream.ToString()" />
@@ -604,10 +612,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		_isContentChanged = true;
-		_minWrite = Position;
-		_maxWrite = Position + count;
+		long position = Position;
+		FlushWhenWriteIsDisjoint(position, count);
 		base.Write(buffer, offset, count);
+		TrackWrite(position, count);
+		_isContentChanged = true;
 	}
 
 #if FEATURE_SPAN
@@ -623,10 +632,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		_isContentChanged = true;
-		_minWrite = Position;
-		_maxWrite = Position + buffer.Length;
+		long position = Position;
+		FlushWhenWriteIsDisjoint(position, buffer.Length);
 		base.Write(buffer);
+		TrackWrite(position, buffer.Length);
+		_isContentChanged = true;
 	}
 #endif
 
@@ -643,10 +653,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		_isContentChanged = true;
-		_minWrite = Position;
-		_maxWrite = Position + count;
+		long position = Position;
+		FlushWhenWriteIsDisjoint(position, count);
 		await base.WriteAsync(buffer, offset, count, cancellationToken);
+		TrackWrite(position, count);
+		_isContentChanged = true;
 	}
 
 #if FEATURE_SPAN
@@ -663,10 +674,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		_isContentChanged = true;
-		_minWrite = Position;
-		_maxWrite = Position + buffer.Length;
+		long position = Position;
+		FlushWhenWriteIsDisjoint(position, buffer.Length);
 		await base.WriteAsync(buffer, cancellationToken);
+		TrackWrite(position, buffer.Length);
+		_isContentChanged = true;
 	}
 #endif
 
@@ -682,10 +694,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		_isContentChanged = true;
-		_minWrite = Position;
-		_maxWrite = Position + 1L;
+		long position = Position;
+		FlushWhenWriteIsDisjoint(position, 1L);
 		base.WriteByte(value);
+		TrackWrite(position, 1L);
+		_isContentChanged = true;
 	}
 
 	/// <inheritdoc cref="FileSystemStream.Dispose(bool)" />
@@ -719,9 +732,47 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		else
 		{
 			_isContentChanged = true;
-			_minWrite = Position;
-			_maxWrite = Position;
 		}
+	}
+
+	/// <summary>
+	///     Persists the pending writes when the write at <paramref name="position" /> does not
+	///     adjoin them, like the real <c>FileStream</c> flushes its buffer on a reposition.
+	///     Called before the write, so the not yet written bytes are not published.
+	/// </summary>
+	private void FlushWhenWriteIsDisjoint(long position, long count)
+	{
+		long end = position + count;
+		if (_pendingWrites.Count > 0 &&
+		    (position > _pendingWrites[_pendingWrites.Count - 1].End ||
+		     end < _pendingWrites[0].Start))
+		{
+			InternalFlush();
+		}
+	}
+
+	/// <summary>
+	///     Records the range of a write, so <see cref="OnBytesChanged" /> can preserve it when
+	///     the underlying container changes. Called only after the wrapped stream accepted the
+	///     write, so a write with rejected arguments leaves no pending range behind.
+	/// </summary>
+	private void TrackWrite(long position, long count)
+	{
+		long end = position + count;
+		int index = 0;
+		while (index < _pendingWrites.Count && _pendingWrites[index].End < position)
+		{
+			index++;
+		}
+
+		while (index < _pendingWrites.Count && _pendingWrites[index].Start <= end)
+		{
+			position = Math.Min(position, _pendingWrites[index].Start);
+			end = Math.Max(end, _pendingWrites[index].End);
+			_pendingWrites.RemoveAt(index);
+		}
+
+		_pendingWrites.Insert(index, (position, end));
 	}
 
 	private void InternalFlush()
@@ -732,28 +783,102 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 
 		_isContentChanged = false;
+		long length = Length;
 		long position = _stream.Position;
+		long containerLength = _container.GetBytes().Length;
+		if (_pendingWrites.Count > 0 &&
+		    (length == containerLength ||
+		     (length > containerLength &&
+		      _pendingWrites[_pendingWrites.Count - 1].End == length)))
+		{
+			long start = _pendingWrites[0].Start;
+			byte[] data = new byte[_pendingWrites[_pendingWrites.Count - 1].End - start];
+			_stream.Position = start;
+			_ = _stream.Read(data, 0, data.Length);
+			_stream.Position = position;
+			_pendingWrites.Clear();
+			_container.WriteRange(data, start);
+			return;
+		}
+
 		_stream.Seek(0, SeekOrigin.Begin);
-		byte[] data = new byte[Length];
-		_ = _stream.Read(data, 0, (int)Length);
+		byte[] content = new byte[length];
+		_ = _stream.Read(content, 0, (int)length);
 		_stream.Seek(position, SeekOrigin.Begin);
-		_container.WriteBytes(data);
-		_minWrite = long.MaxValue;
-		_maxWrite = 0;
+		_pendingWrites.Clear();
+		_container.WriteBytes(content);
 	}
 
 	private void OnBytesChanged(object? sender, EventArgs e)
 	{
+		if (e is BytesChangedEventArgs rangeUpdate)
+		{
+			ApplyRangeUpdate(rangeUpdate.Bytes, rangeUpdate.Offset);
+			return;
+		}
+
 		byte[] existingContents = _container.GetBytes();
 		long position = _stream.Position;
-		if (_minWrite < _maxWrite)
+		List<(long Start, byte[] Data)> pendingWrites = new(_pendingWrites.Count);
+		foreach ((long start, long end) in _pendingWrites)
 		{
-			_stream.Position = _minWrite;
-			_ = _stream.Read(existingContents, (int)_minWrite, (int)(_maxWrite - _minWrite));
+			long length = Math.Min(end, _stream.Length) - start;
+			if (length <= 0)
+			{
+				continue;
+			}
+
+			byte[] data = new byte[length];
+			_stream.Position = start;
+			_ = _stream.Read(data, 0, (int)length);
+			pendingWrites.Add((start, data));
 		}
 
 		_stream.Position = 0;
 		_stream.Write(existingContents, 0, existingContents.Length);
+		_stream.SetLength(existingContents.Length);
+		foreach ((long start, byte[] data) in pendingWrites)
+		{
+			_stream.Position = start;
+			_stream.Write(data, 0, data.Length);
+		}
+
+		_stream.Position = position;
+	}
+
+	/// <summary>
+	///     Applies a ranged update of the underlying container to the local stream without
+	///     processing the complete file content, preserving the own pending writes that overlap
+	///     the changed range.
+	/// </summary>
+	private void ApplyRangeUpdate(byte[] bytes, long offset)
+	{
+		long position = _stream.Position;
+		long end = offset + bytes.Length;
+		List<(long Start, byte[] Data)> pendingWrites = new(_pendingWrites.Count);
+		foreach ((long pendingStart, long pendingEnd) in _pendingWrites)
+		{
+			long overlapStart = Math.Max(pendingStart, offset);
+			long overlapEnd = Math.Min(Math.Min(pendingEnd, _stream.Length), end);
+			if (overlapEnd <= overlapStart)
+			{
+				continue;
+			}
+
+			byte[] data = new byte[overlapEnd - overlapStart];
+			_stream.Position = overlapStart;
+			_ = _stream.Read(data, 0, data.Length);
+			pendingWrites.Add((overlapStart, data));
+		}
+
+		_stream.Position = offset;
+		_stream.Write(bytes, 0, bytes.Length);
+		foreach ((long start, byte[] data) in pendingWrites)
+		{
+			_stream.Position = start;
+			_stream.Write(data, 0, data.Length);
+		}
+
 		_stream.Position = position;
 	}
 

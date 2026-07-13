@@ -65,8 +65,9 @@ partial class Build
 		Solution.Tests.Testably_Abstractions_Parity_Tests,
 		Solution.Tests.Testably_Abstractions_Tests,
 		Solution.Tests.Testably_Abstractions_Testing_Tests,
+		Solution.Tests.Testably_Abstractions_AccessControl_Tests,
 		Solution.Tests.Testably_Abstractions_Compression_Tests,
-		Solution.Tests.Testably_Abstractions_AccessControl_Tests
+		Solution.Tests.Testably_Abstractions_MemoryMappedFiles_Tests,
 	];
 
 	Target UnitTests => _ => _

@@ -104,6 +104,16 @@ internal interface IStorageContainer : IFileSystemEntity, ITimeSystemEntity
 	void WriteBytes(byte[] bytes);
 
 	/// <summary>
+	///     Writes the <paramref name="bytes" /> at the given <paramref name="offset" /> into the
+	///     content of the <see cref="IFileInfo" />, keeping the remaining content unchanged and
+	///     extending the file when the range ends beyond the current length.
+	///     <para />
+	///     The <see cref="BytesChanged" /> event carries a <see cref="BytesChangedEventArgs" />,
+	///     so that subscribers can apply the change without processing the complete file content.
+	/// </summary>
+	void WriteRange(byte[] bytes, long offset);
+
+	/// <summary>
 	///     A container to allow reading/writing <see cref="DateTime" />s with consistent <see cref="DateTimeKind" />.
 	/// </summary>
 	public interface ITimeContainer

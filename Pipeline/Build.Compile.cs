@@ -36,6 +36,7 @@ partial class Build
 				Solution.Testably_Abstractions_Testing,
 				Solution.Testably_Abstractions_AccessControl,
 				Solution.Testably_Abstractions_Compression,
+				Solution.Testably_Abstractions_MemoryMappedFiles,
 			];
 			
 			CoreProjects =

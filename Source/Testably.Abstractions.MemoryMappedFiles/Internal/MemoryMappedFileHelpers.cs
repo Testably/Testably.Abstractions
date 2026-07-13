@@ -1,0 +1,168 @@
+﻿using System;
+using System.IO.MemoryMappedFiles;
+using System.Runtime.CompilerServices;
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+using System.Linq;
+using System.Reflection;
+#endif
+using Testably.Abstractions.Helpers;
+
+namespace Testably.Abstractions.Internal;
+
+internal static class MemoryMappedFileHelpers
+{
+	/// <summary>
+	///     Returns the stride between two elements of an array of <typeparamref name="T" />,
+	///     matching the aligned size used by the BCL <c>UnmanagedMemoryAccessor</c> array
+	///     operations: sizes 1 and 2 are kept, larger sizes are rounded up to a multiple of 4.
+	/// </summary>
+	public static int AlignedSizeOf<T>() where T : struct
+	{
+		int size = Unsafe.SizeOf<T>();
+		if (size is 1 or 2)
+		{
+			return size;
+		}
+
+		return (size + 3) & ~3;
+	}
+
+	/// <summary>
+	///     Throws an <see cref="ArgumentException" /> when <typeparamref name="T" /> is a struct
+	///     containing object references, matching the BCL <c>UnmanagedMemoryAccessor</c>, which
+	///     never reinterprets raw bytes as references.
+	/// </summary>
+	public static void ThrowIfContainsReferences<T>() where T : struct
+	{
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+		if (ReferenceCheck<T>.ContainsReferences)
+#else
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+#endif
+		{
+			#pragma warning disable MA0015 // Matches the parameter-less BCL message for a reference-containing struct.
+			throw new ArgumentException(
+				"The specified Type must be a struct containing no references.");
+			#pragma warning restore MA0015
+		}
+	}
+
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+	private static class ReferenceCheck<T> where T : struct
+	{
+		public static readonly bool ContainsReferences = Check(typeof(T));
+
+		#pragma warning disable S3011 // Read-only metadata inspection: the object references of a struct usually sit in non-public fields, which is exactly what `RuntimeHelpers.IsReferenceOrContainsReferences` (used on the modern frameworks) inspects.
+		private static bool Check(Type type)
+			=> type
+				.GetFields(BindingFlags.Instance | BindingFlags.Public |
+				           BindingFlags.NonPublic)
+				.Any(field
+					=> (!field.FieldType.IsValueType && !field.FieldType.IsPointer) ||
+					   (field.FieldType.IsValueType && field.FieldType != type &&
+					    Check(field.FieldType)));
+		#pragma warning restore S3011
+	}
+#endif
+
+	/// <summary>
+	///     Returns whether a view with the given <paramref name="access" /> supports reading.
+	/// </summary>
+	public static bool SupportsReading(this MemoryMappedFileAccess access)
+		=> access is not MemoryMappedFileAccess.Write;
+
+	/// <summary>
+	///     Returns whether a view with the given <paramref name="access" /> supports writing.
+	/// </summary>
+	public static bool SupportsWriting(this MemoryMappedFileAccess access)
+		=> access is not (MemoryMappedFileAccess.Read
+			or MemoryMappedFileAccess.ReadExecute);
+
+	/// <summary>
+	///     Throws an <see cref="ArgumentOutOfRangeException" /> when the <paramref name="access" />
+	///     is not a defined <see cref="MemoryMappedFileAccess" /> value, matching the BCL.
+	/// </summary>
+	public static void ThrowIfOutOfRange(this MemoryMappedFileAccess access,
+		string paramName)
+	{
+		if (access < MemoryMappedFileAccess.ReadWrite ||
+		    access > MemoryMappedFileAccess.ReadWriteExecute)
+		{
+			throw new ArgumentOutOfRangeException(paramName);
+		}
+	}
+
+	/// <summary>
+	///     Throws an <see cref="ArgumentOutOfRangeException" /> when the <paramref name="value" />
+	///     is negative, matching the message of the BCL argument validation.
+	/// </summary>
+	public static void ThrowIfNegative(long value, string paramName)
+	{
+		if (value < 0)
+		{
+			throw new ArgumentOutOfRangeException(paramName, value,
+				$"{paramName} ('{value}') must be a non-negative value.");
+		}
+	}
+
+	/// <summary>
+	///     Throws an <see cref="ArgumentException" /> when a memory-mapped file over an empty file
+	///     is requested without an explicit capacity, matching the BCL.
+	/// </summary>
+	public static void ThrowIfEmptyFileWithZeroCapacity(long capacity, long fileLength)
+	{
+		if (capacity == 0 && fileLength == 0)
+		{
+			#pragma warning disable MA0015 // Matches the parameter-less BCL message for an empty file.
+			throw new ArgumentException(
+				"A positive capacity must be specified for a Memory Mapped File backed by an empty file.");
+			#pragma warning restore MA0015
+		}
+	}
+
+	/// <summary>
+	///     Disposes a view over the <paramref name="backing" />: pending writes are flushed to the
+	///     underlying file (matching the real memory-mapped view, which writes its dirty pages on
+	///     unmap) and the view's reference to the shared backing is released via
+	///     <paramref name="backingOwner" />, disposing the underlying stream once the memory-mapped
+	///     file and all views are gone.
+	/// </summary>
+	public static void DisposeView(MemoryMappedViewBacking backing, IDisposable backingOwner)
+	{
+		try
+		{
+			backing.Flush();
+		}
+		catch (ObjectDisposedException)
+		{
+			// The caller-owned stream (`leaveOpen: true`) was already disposed, so there is
+			// nothing left to flush; disposing the view must not throw.
+		}
+		finally
+		{
+			backingOwner.Dispose();
+		}
+	}
+
+	/// <summary>
+	///     Retrieves the <see cref="IFileSystemExtensibility" /> from the <paramref name="fileStream" />
+	///     or throws a <see cref="NotSupportedException" /> if it is not supported.
+	/// </summary>
+	public static IFileSystemExtensibility GetExtensibilityOrThrow(
+		this FileSystemStream fileStream)
+		=> fileStream as IFileSystemExtensibility
+		   ?? throw new NotSupportedException(
+			   $"{fileStream.GetType()} does not support IFileSystemExtensibility.");
+
+	/// <summary>
+	///     Returns <see langword="true" /> when the <paramref name="fileSystem" /> is the real file
+	///     system (and therefore has an underlying operating-system file system to delegate to).
+	/// </summary>
+	/// <remarks>
+	///     Uses the same side-effect-free type-name check as the other companion packages; probing
+	///     via a factory would register a phantom call in the statistics of the mocked file system.
+	/// </remarks>
+	public static bool IsRealFileSystem(this IFileSystem fileSystem)
+		=> string.Equals(fileSystem.GetType().Name, "RealFileSystem",
+			StringComparison.Ordinal);
+}
