@@ -230,6 +230,19 @@ internal sealed class InMemoryContainer : IStorageContainer
 
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />
 	public void WriteBytes(byte[] bytes)
+		=> WriteBytesInternal(bytes, EventArgs.Empty);
+
+	/// <inheritdoc cref="IStorageContainer.WriteRange(byte[], long)" />
+	public void WriteRange(byte[] bytes, long offset)
+	{
+		long newLength = Math.Max(_bytes.Length, offset + bytes.Length);
+		byte[] newBytes = new byte[newLength];
+		Array.Copy(_bytes, newBytes, _bytes.Length);
+		Array.Copy(bytes, 0L, newBytes, offset, bytes.Length);
+		WriteBytesInternal(newBytes, new BytesChangedEventArgs(bytes, offset));
+	}
+
+	private void WriteBytesInternal(byte[] bytes, EventArgs eventArgs)
 	{
 		NotifyFilters notifyFilters = NotifyFilters.LastAccess |
 		                              NotifyFilters.LastWrite |
@@ -269,7 +282,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 		}
 
 		_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
-		BytesChanged?.Invoke(this, EventArgs.Empty);
+		BytesChanged?.Invoke(this, eventArgs);
 	}
 
 	#endregion

@@ -122,6 +122,17 @@ internal sealed class LockableContainer(
 		BytesChanged?.Invoke(this, EventArgs.Empty);
 	}
 
+	/// <inheritdoc cref="IStorageContainer.WriteRange(byte[], long)" />
+	public void WriteRange(byte[] bytes, long offset)
+	{
+		long newLength = Math.Max(_bytes.Length, offset + bytes.Length);
+		byte[] newBytes = new byte[newLength];
+		Array.Copy(_bytes, newBytes, _bytes.Length);
+		Array.Copy(bytes, 0L, newBytes, offset, bytes.Length);
+		_bytes = newBytes;
+		BytesChanged?.Invoke(this, new BytesChangedEventArgs(bytes, offset));
+	}
+
 	#endregion
 
 	private sealed class AccessHandle(FileAccess access, FileShare share, bool deleteAccess)

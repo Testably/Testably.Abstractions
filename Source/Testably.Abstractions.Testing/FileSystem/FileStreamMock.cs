@@ -783,17 +783,40 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 
 		_isContentChanged = false;
+		long length = Length;
 		long position = _stream.Position;
+		long containerLength = _container.GetBytes().Length;
+		if (_pendingWrites.Count > 0 &&
+		    (length == containerLength ||
+		     (length > containerLength &&
+		      _pendingWrites[_pendingWrites.Count - 1].End == length)))
+		{
+			long start = _pendingWrites[0].Start;
+			byte[] data = new byte[_pendingWrites[_pendingWrites.Count - 1].End - start];
+			_stream.Position = start;
+			_ = _stream.Read(data, 0, data.Length);
+			_stream.Position = position;
+			_pendingWrites.Clear();
+			_container.WriteRange(data, start);
+			return;
+		}
+
 		_stream.Seek(0, SeekOrigin.Begin);
-		byte[] data = new byte[Length];
-		_ = _stream.Read(data, 0, (int)Length);
+		byte[] content = new byte[length];
+		_ = _stream.Read(content, 0, (int)length);
 		_stream.Seek(position, SeekOrigin.Begin);
-		_container.WriteBytes(data);
 		_pendingWrites.Clear();
+		_container.WriteBytes(content);
 	}
 
 	private void OnBytesChanged(object? sender, EventArgs e)
 	{
+		if (e is BytesChangedEventArgs rangeUpdate)
+		{
+			ApplyRangeUpdate(rangeUpdate.Bytes, rangeUpdate.Offset);
+			return;
+		}
+
 		byte[] existingContents = _container.GetBytes();
 		long position = _stream.Position;
 		List<(long Start, byte[] Data)> pendingWrites = new(_pendingWrites.Count);
@@ -814,6 +837,42 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		_stream.Position = 0;
 		_stream.Write(existingContents, 0, existingContents.Length);
 		_stream.SetLength(existingContents.Length);
+		foreach ((long start, byte[] data) in pendingWrites)
+		{
+			_stream.Position = start;
+			_stream.Write(data, 0, data.Length);
+		}
+
+		_stream.Position = position;
+	}
+
+	/// <summary>
+	///     Applies a ranged update of the underlying container to the local stream without
+	///     processing the complete file content, preserving the own pending writes that overlap
+	///     the changed range.
+	/// </summary>
+	private void ApplyRangeUpdate(byte[] bytes, long offset)
+	{
+		long position = _stream.Position;
+		long end = offset + bytes.Length;
+		List<(long Start, byte[] Data)> pendingWrites = new(_pendingWrites.Count);
+		foreach ((long pendingStart, long pendingEnd) in _pendingWrites)
+		{
+			long overlapStart = Math.Max(pendingStart, offset);
+			long overlapEnd = Math.Min(Math.Min(pendingEnd, _stream.Length), end);
+			if (overlapEnd <= overlapStart)
+			{
+				continue;
+			}
+
+			byte[] data = new byte[overlapEnd - overlapStart];
+			_stream.Position = overlapStart;
+			_ = _stream.Read(data, 0, data.Length);
+			pendingWrites.Add((overlapStart, data));
+		}
+
+		_stream.Position = offset;
+		_stream.Write(bytes, 0, bytes.Length);
 		foreach ((long start, byte[] data) in pendingWrites)
 		{
 			_stream.Position = start;
