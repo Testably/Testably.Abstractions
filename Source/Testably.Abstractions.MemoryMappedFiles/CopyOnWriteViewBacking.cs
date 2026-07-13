@@ -36,14 +36,6 @@ internal sealed class CopyOnWriteViewBacking(MemoryMappedViewBacking shared, lon
 	{
 		lock (_lock)
 		{
-			if (_privatePages.Count == 0)
-			{
-				// No page has been privatized yet, so the whole range comes from the shared
-				// backing in one call instead of one call per 4096-byte page.
-				shared.ReadAt(position, buffer, offset, count);
-				return;
-			}
-
 			int read = 0;
 			while (read < count)
 			{
@@ -56,6 +48,14 @@ internal sealed class CopyOnWriteViewBacking(MemoryMappedViewBacking shared, lon
 				}
 				else
 				{
+					// Coalesce the run of consecutive non-privatized pages into a single read
+					// from the shared backing instead of one read per 4096-byte page.
+					while (read + chunk < count &&
+					       !_privatePages.ContainsKey(++pageIndex))
+					{
+						chunk += Math.Min(count - read - chunk, PageSize);
+					}
+
 					shared.ReadAt(position + read, buffer, offset + read, chunk);
 				}
 
