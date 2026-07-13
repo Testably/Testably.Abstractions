@@ -19,7 +19,12 @@ internal static class AccessControlHelpers
 		   ?? throw new NotSupportedException(
 			   $"{fileInfo.GetType()} does not support IFileSystemExtensibility.");
 
-	public static IFileSystemExtensibility GetExtensibilityOrThrow(this FileSystemStream fileStream)
+	/// <summary>
+	///     Retrieves the <see cref="IFileSystemExtensibility" /> from the <paramref name="fileStream" />
+	///     or throws a <see cref="NotSupportedException" /> if it is not supported.
+	/// </summary>
+	public static IFileSystemExtensibility GetExtensibilityOrThrow(
+		this FileSystemStream fileStream)
 		=> fileStream as IFileSystemExtensibility
 		   ?? throw new NotSupportedException(
 			   $"{fileStream.GetType()} does not support IFileSystemExtensibility.");

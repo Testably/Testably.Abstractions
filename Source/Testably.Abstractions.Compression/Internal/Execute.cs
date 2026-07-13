@@ -65,7 +65,15 @@ internal static class Execute
 			? await onRealFileSystem()
 			: onMockFileSystem();
 
-	private static bool IsRealFileSystem(IFileSystem fileSystem)
+	/// <summary>
+	///     Returns <see langword="true" /> when the <paramref name="fileSystem" /> is the real file
+	///     system (and therefore has an underlying operating-system file system to delegate to).
+	/// </summary>
+	/// <remarks>
+	///     Uses the same side-effect-free type-name check as the other companion packages; probing
+	///     via a factory would register a phantom call in the statistics of the mocked file system.
+	/// </remarks>
+	public static bool IsRealFileSystem(this IFileSystem fileSystem)
 		=> string.Equals(fileSystem.GetType().Name, "RealFileSystem",
 			StringComparison.Ordinal);
 }
