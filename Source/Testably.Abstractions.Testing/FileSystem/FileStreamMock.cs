@@ -349,8 +349,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		TrackWrite(Position, count);
-		return base.BeginWrite(buffer, offset, count, callback, state);
+		long position = Position;
+		FlushWhenWriteIsDisjoint(position, count);
+		IAsyncResult result = base.BeginWrite(buffer, offset, count, callback, state);
+		TrackWrite(position, count);
+		return result;
 	}
 
 	/// <inheritdoc cref="FileSystemStream.Close()" />
@@ -609,9 +612,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		TrackWrite(Position, count);
-		_isContentChanged = true;
+		long position = Position;
+		FlushWhenWriteIsDisjoint(position, count);
 		base.Write(buffer, offset, count);
+		TrackWrite(position, count);
+		_isContentChanged = true;
 	}
 
 #if FEATURE_SPAN
@@ -627,9 +632,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		TrackWrite(Position, buffer.Length);
-		_isContentChanged = true;
+		long position = Position;
+		FlushWhenWriteIsDisjoint(position, buffer.Length);
 		base.Write(buffer);
+		TrackWrite(position, buffer.Length);
+		_isContentChanged = true;
 	}
 #endif
 
@@ -646,9 +653,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		TrackWrite(Position, count);
-		_isContentChanged = true;
+		long position = Position;
+		FlushWhenWriteIsDisjoint(position, count);
 		await base.WriteAsync(buffer, offset, count, cancellationToken);
+		TrackWrite(position, count);
+		_isContentChanged = true;
 	}
 
 #if FEATURE_SPAN
@@ -665,9 +674,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		TrackWrite(Position, buffer.Length);
-		_isContentChanged = true;
+		long position = Position;
+		FlushWhenWriteIsDisjoint(position, buffer.Length);
 		await base.WriteAsync(buffer, cancellationToken);
+		TrackWrite(position, buffer.Length);
+		_isContentChanged = true;
 	}
 #endif
 
@@ -683,9 +694,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		TrackWrite(Position, 1L);
-		_isContentChanged = true;
+		long position = Position;
+		FlushWhenWriteIsDisjoint(position, 1L);
 		base.WriteByte(value);
+		TrackWrite(position, 1L);
+		_isContentChanged = true;
 	}
 
 	/// <inheritdoc cref="FileSystemStream.Dispose(bool)" />
@@ -722,7 +735,12 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 	}
 
-	private void TrackWrite(long position, long count)
+	/// <summary>
+	///     Persists the pending writes when the write at <paramref name="position" /> does not
+	///     adjoin them, like the real <c>FileStream</c> flushes its buffer on a reposition.
+	///     Called before the write, so the not yet written bytes are not published.
+	/// </summary>
+	private void FlushWhenWriteIsDisjoint(long position, long count)
 	{
 		long end = position + count;
 		if (_pendingWrites.Count > 0 &&
@@ -731,7 +749,16 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		{
 			InternalFlush();
 		}
+	}
 
+	/// <summary>
+	///     Records the range of a write, so <see cref="OnBytesChanged" /> can preserve it when
+	///     the underlying container changes. Called only after the wrapped stream accepted the
+	///     write, so a write with rejected arguments leaves no pending range behind.
+	/// </summary>
+	private void TrackWrite(long position, long count)
+	{
+		long end = position + count;
 		int index = 0;
 		while (index < _pendingWrites.Count && _pendingWrites[index].End < position)
 		{

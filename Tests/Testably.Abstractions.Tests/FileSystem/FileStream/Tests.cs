@@ -279,38 +279,18 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 
 	[Test]
 	[AutoArguments]
-	public async Task SetLength_WithoutOtherWrites_ShouldPersistNewLength(string path)
+	public async Task SetLength_ReadOnlyStream_ShouldThrowNotSupportedException(
+		string path, int length)
 	{
-		FileSystem.File.WriteAllBytes(path, new byte[10]);
-
-		using (FileSystemStream stream = FileSystem.File.Open(path, FileMode.Open))
-		{
-			stream.SetLength(100);
-		}
-
-		await That(FileSystem.File.ReadAllBytes(path).Length).IsEqualTo(100);
-	}
-
-	[Test]
-	[AutoArguments]
-	public async Task SetLength_Truncate_WhileOtherStreamHasPendingWrites_ShouldNotThrow(
-		string path)
-	{
-		FileSystem.File.WriteAllBytes(path, new byte[100]);
-		using FileSystemStream stream1 = FileSystem.FileStream.New(
-			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-		using FileSystemStream stream2 = FileSystem.FileStream.New(
-			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-		stream1.Position = 90;
-		stream1.Write(new byte[10], 0, 10);
+		FileSystem.File.WriteAllText(path, null);
 
 		void Act()
 		{
-			stream2.SetLength(10);
-			stream2.Flush();
+			using FileSystemStream stream = FileSystem.File.OpenRead(path);
+			stream.SetLength(length);
 		}
 
-		await That(Act).DoesNotThrow();
+		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
 	}
 
 	[Test]
@@ -360,6 +340,42 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 
 	[Test]
 	[AutoArguments]
+	public async Task SetLength_Truncate_WhileOtherStreamHasPendingWrites_ShouldNotThrow(
+		string path)
+	{
+		FileSystem.File.WriteAllBytes(path, new byte[100]);
+		using FileSystemStream stream1 = FileSystem.FileStream.New(
+			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+		using FileSystemStream stream2 = FileSystem.FileStream.New(
+			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+		stream1.Position = 90;
+		stream1.Write(new byte[10], 0, 10);
+
+		void Act()
+		{
+			stream2.SetLength(10);
+			stream2.Flush();
+		}
+
+		await That(Act).DoesNotThrow();
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task SetLength_WithoutOtherWrites_ShouldPersistNewLength(string path)
+	{
+		FileSystem.File.WriteAllBytes(path, new byte[10]);
+
+		using (FileSystemStream stream = FileSystem.File.Open(path, FileMode.Open))
+		{
+			stream.SetLength(100);
+		}
+
+		await That(FileSystem.File.ReadAllBytes(path).Length).IsEqualTo(100);
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task Write_ScatteredWrites_WhenOtherStreamFlushes_ShouldKeepAllPendingWrites(
 		string path)
 	{
@@ -386,17 +402,27 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 
 	[Test]
 	[AutoArguments]
-	public async Task SetLength_ReadOnlyStream_ShouldThrowNotSupportedException(
-		string path, int length)
+	public async Task Write_WithInvalidArguments_ShouldNotCorruptContentOfOtherStreams(
+		string path)
 	{
-		FileSystem.File.WriteAllText(path, null);
-
-		void Act()
+		FileSystem.File.WriteAllBytes(path, new byte[10]);
+		using (FileSystemStream stream1 = FileSystem.FileStream.New(
+			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
 		{
-			using FileSystemStream stream = FileSystem.File.OpenRead(path);
-			stream.SetLength(length);
+			using FileSystemStream stream2 = FileSystem.FileStream.New(
+				path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+			void Act() => stream1.Write(new byte[5], 0, 10);
+
+			await That(Act).Throws<ArgumentException>();
+
+			stream2.Position = 0;
+			stream2.WriteByte(1);
+			stream2.Flush();
 		}
 
-		await That(Act).Throws<NotSupportedException>().WithHResult(-2146233067);
+		byte[] result = FileSystem.File.ReadAllBytes(path);
+		await That(result[0]).IsEqualTo(1)
+			.Because(
+				"the rejected write must not leave a pending write range that overwrites the flushed content");
 	}
 }
