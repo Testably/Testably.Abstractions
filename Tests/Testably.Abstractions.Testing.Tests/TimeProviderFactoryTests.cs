@@ -28,6 +28,26 @@ public class TimeProviderFactoryTests
 	}
 
 	[Test]
+	public async Task Random_WithTimeZone_ShouldUseGivenTimeZone()
+	{
+		TimeZoneInfo timeZone = TimeZoneInfo.CreateCustomTimeZone(
+			"Custom/Plus07", TimeSpan.FromHours(7), "Custom +07", "Custom +07");
+
+		ITimeProvider timeProvider = TimeProviderFactory.Random(timeZone).Create(_ => { });
+
+		await That(timeProvider.LocalTimeZone).IsEqualTo(timeZone);
+	}
+
+	[Test]
+	public async Task Random_WithNullTimeZone_ShouldThrowArgumentNullException()
+	{
+		void Act()
+			=> TimeProviderFactory.Random(null!);
+
+		await That(Act).Throws<ArgumentNullException>().WithParamName("localTimeZone");
+	}
+
+	[Test]
 	public async Task Use_WithTimeZone_ShouldUseGivenTimeZone()
 	{
 		TimeZoneInfo timeZone = TimeZoneInfo.CreateCustomTimeZone(

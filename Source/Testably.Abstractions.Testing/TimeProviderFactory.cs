@@ -36,20 +36,29 @@ public static class TimeProviderFactory
 	}
 
 	/// <summary>
-	///     Initializes the <see cref="MockTimeSystem.TimeProvider" /> with a random time.
+	///     Initializes the <see cref="MockTimeSystem.TimeProvider" /> with a random time and a random local time zone.
 	///     <para />
 	///     The random time increments the unix epoch by a random integer of seconds and the local time zone is picked at
 	///     random from a curated, cross-platform-stable set (including a zone with daylight-saving-time transitions).
 	/// </summary>
 	public static ITimeProviderFactory Random()
+		=> Random(SampleTimeZones[RandomFactory.Shared.Next(SampleTimeZones.Length)]);
+
+	/// <summary>
+	///     Initializes the <see cref="MockTimeSystem.TimeProvider" /> with a random time and the given
+	///     <paramref name="localTimeZone" />.
+	///     <para />
+	///     The random time increments the unix epoch by a random integer of seconds.
+	/// </summary>
+	public static ITimeProviderFactory Random(TimeZoneInfo localTimeZone)
 	{
+		_ = localTimeZone ?? throw new ArgumentNullException(nameof(localTimeZone));
 		#pragma warning disable MA0113 // Use DateTime.UnixEpoch
 		DateTime randomTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
 			.AddSeconds(RandomFactory.Shared.Next());
 		#pragma warning restore MA0113
-		var randomTimeZone = SampleTimeZones[RandomFactory.Shared.Next(SampleTimeZones.Length)];
 		return new Factory(onTimeChanged
-			=> new TimeProviderMock(onTimeChanged, randomTime, "Random", randomTimeZone));
+			=> new TimeProviderMock(onTimeChanged, randomTime, "Random", localTimeZone));
 	}
 
 	/// <summary>
