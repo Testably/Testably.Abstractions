@@ -40,16 +40,18 @@ public sealed class MockTimeSystem : ITimeSystem
 	private readonly TimerFactoryMock _timerFactoryMock;
 
 	/// <summary>
-	///     Initializes the <see cref="MockTimeSystem" /> with a random time.
+	///     Initializes the <see cref="MockTimeSystem" /> with a random time and the local time zone
+	///     (<see cref="TimeZoneInfo.Local" />).
 	/// </summary>
-	public MockTimeSystem() : this(TimeProviderFactory.Random(), options => options)
+	public MockTimeSystem() : this(TimeProviderFactory.Random(System.TimeZoneInfo.Local), options => options)
 	{
 	}
 
 	/// <summary>
-	///     Initializes the <see cref="MockTimeSystem" /> with a random time.
+	///     Initializes the <see cref="MockTimeSystem" /> with a random time and the local time zone
+	///     (<see cref="TimeZoneInfo.Local" />).
 	/// </summary>
-	public MockTimeSystem(Func<MockTimeSystemOptions, MockTimeSystemOptions> options) : this(TimeProviderFactory.Random(), options)
+	public MockTimeSystem(Func<MockTimeSystemOptions, MockTimeSystemOptions> options) : this(TimeProviderFactory.Random(System.TimeZoneInfo.Local), options)
 	{
 	}
 

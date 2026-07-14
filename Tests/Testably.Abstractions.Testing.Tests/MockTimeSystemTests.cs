@@ -185,6 +185,24 @@ public class MockTimeSystemTests
 		await That(actualDifference).IsEqualTo(expectedDifference);
 	}
 
+	[Test]
+	public async Task DefaultConstructor_ShouldUseLocalTimeZone()
+	{
+		MockTimeSystem timeSystem = new();
+
+		await That(timeSystem.TimeZoneInfo.Local).IsEqualTo(TimeZoneInfo.Local);
+	}
+
+	[Test]
+	public async Task DefaultConstructor_NowToUniversalTime_ShouldEqualUtcNow()
+	{
+		MockTimeSystem timeSystem = new();
+
+		var now = timeSystem.DateTime.Now;
+
+		await That(now.ToUniversalTime()).IsEqualTo(timeSystem.DateTime.UtcNow);
+	}
+
 #if FEATURE_PERIODIC_TIMER
 	[Test]
 	public async Task PeriodicTimer_DisabledAutoAdvance_ShouldNotAdvanceTime()
