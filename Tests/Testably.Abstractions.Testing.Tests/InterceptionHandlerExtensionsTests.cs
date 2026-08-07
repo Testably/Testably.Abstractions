@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Testably.Abstractions.Testing.Tests;
 
 public class InterceptionHandlerExtensionsTests
@@ -218,6 +220,22 @@ public class InterceptionHandlerExtensionsTests
 
 	[Test]
 	[AutoArguments]
+	public async Task Creating_DirectoryOrFile_ShouldInterceptDirectoriesAndFiles(
+		string directoryPath, string filePath)
+	{
+		List<FileSystemTypes> interceptedTypes = [];
+		FileSystem.Intercept.Creating(FileSystemTypes.DirectoryOrFile,
+			c => interceptedTypes.Add(c.FileSystemType));
+
+		FileSystem.Directory.CreateDirectory(directoryPath);
+		FileSystem.File.WriteAllText(filePath, null);
+
+		await That(interceptedTypes).Contains(FileSystemTypes.Directory);
+		await That(interceptedTypes).Contains(FileSystemTypes.File);
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task Creating_File_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
@@ -421,6 +439,24 @@ public class InterceptionHandlerExtensionsTests
 		}
 
 		await That(isNotified).IsEqualTo(expectedResult);
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task Deleting_DirectoryOrFile_ShouldInterceptDirectoriesAndFiles(
+		string directoryPath, string filePath)
+	{
+		List<FileSystemTypes> interceptedTypes = [];
+		FileSystem.Directory.CreateDirectory(directoryPath);
+		FileSystem.File.WriteAllText(filePath, null);
+		FileSystem.Intercept.Deleting(FileSystemTypes.DirectoryOrFile,
+			c => interceptedTypes.Add(c.FileSystemType));
+
+		FileSystem.Directory.Delete(directoryPath);
+		FileSystem.File.Delete(filePath);
+
+		await That(interceptedTypes).Contains(FileSystemTypes.Directory);
+		await That(interceptedTypes).Contains(FileSystemTypes.File);
 	}
 
 	[Test]
