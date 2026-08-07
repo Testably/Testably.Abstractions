@@ -17,7 +17,7 @@ internal static class ChangeDescriptionExtensions
 	/// <param name="changeDescription">The change description.</param>
 	/// <param name="execute">The execution engine simulation the underlying operating system.</param>
 	/// <param name="fileSystemType">The <see cref="ChangeDescription.FileSystemType" /> must have any of the provided flags.</param>
-	/// <param name="changeType">The <see cref="ChangeDescription.ChangeType" /> must match this type.</param>
+	/// <param name="changeType">The <see cref="ChangeDescription.ChangeType" /> must have any of the provided flags.</param>
 	/// <param name="globPattern">The <see cref="ChangeDescription.Path" /> must match this glob pattern.</param>
 	/// <param name="predicate">(optional) If provided, additional filter criteria can be implemented via this predicate.</param>
 	/// <returns>
@@ -31,8 +31,8 @@ internal static class ChangeDescriptionExtensions
 		string globPattern,
 		Func<ChangeDescription, bool>? predicate = null)
 	{
-		if (changeDescription.ChangeType != changeType ||
-		    !changeDescription.FileSystemType.HasFlag(fileSystemType))
+		if (!changeType.HasFlag(changeDescription.ChangeType) ||
+		    !fileSystemType.HasFlag(changeDescription.FileSystemType))
 		{
 			return false;
 		}

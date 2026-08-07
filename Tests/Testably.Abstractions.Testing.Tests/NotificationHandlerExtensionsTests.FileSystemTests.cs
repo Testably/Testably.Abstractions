@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Testing.Tests;
@@ -259,6 +260,25 @@ public partial class NotificationHandlerExtensionsTests
 
 		[Test]
 		[AutoArguments]
+		public async Task OnCreated_DirectoryOrFile_ShouldNotifyForDirectoriesAndFiles(
+			string directoryPath, string filePath)
+		{
+			List<FileSystemTypes> notifiedTypes = [];
+
+			using IAwaitableCallback<ChangeDescription> onCreated = FileSystem.Notify
+				.OnCreated(FileSystemTypes.DirectoryOrFile,
+					c => notifiedTypes.Add(c.FileSystemType));
+			FileSystem.Directory.CreateDirectory(directoryPath);
+			FileSystem.File.WriteAllText(filePath, null);
+
+			onCreated.Wait(count: 2);
+
+			await That(notifiedTypes).Contains(FileSystemTypes.Directory);
+			await That(notifiedTypes).Contains(FileSystemTypes.File);
+		}
+
+		[Test]
+		[AutoArguments]
 		public async Task OnCreated_File_OtherEvent_ShouldNotTrigger(string path)
 		{
 			bool isNotified = false;
@@ -505,6 +525,27 @@ public partial class NotificationHandlerExtensionsTests
 			}
 
 			await That(isNotified).IsEqualTo(expectedResult);
+		}
+
+		[Test]
+		[AutoArguments]
+		public async Task OnDeleted_DirectoryOrFile_ShouldNotifyForDirectoriesAndFiles(
+			string directoryPath, string filePath)
+		{
+			List<FileSystemTypes> notifiedTypes = [];
+			FileSystem.Directory.CreateDirectory(directoryPath);
+			FileSystem.File.WriteAllText(filePath, null);
+
+			using IAwaitableCallback<ChangeDescription> onDeleted = FileSystem.Notify
+				.OnDeleted(FileSystemTypes.DirectoryOrFile,
+					c => notifiedTypes.Add(c.FileSystemType));
+			FileSystem.Directory.Delete(directoryPath);
+			FileSystem.File.Delete(filePath);
+
+			onDeleted.Wait(count: 2);
+
+			await That(notifiedTypes).Contains(FileSystemTypes.Directory);
+			await That(notifiedTypes).Contains(FileSystemTypes.File);
 		}
 
 		[Test]
