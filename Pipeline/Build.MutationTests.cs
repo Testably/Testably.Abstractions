@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using static Fallout.Common.Tools.DotNet.DotNetTasks;
-using Project = Fallout.Common.ProjectModel.Project;
+using Project = Fallout.Solutions.Project;
 
 // ReSharper disable AllUnderscoreLocalParameterName
 
