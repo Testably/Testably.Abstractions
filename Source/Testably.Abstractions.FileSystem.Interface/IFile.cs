@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 #endif
-#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE || FEATURE_FILESYSTEM_RANDOMACCESS
 using Microsoft.Win32.SafeHandles;
 #endif
 #if NETSTANDARD2_0 || NETSTANDARD2_1
@@ -232,6 +232,16 @@ public interface IFile : IFileSystemEntity
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 	/// <inheritdoc cref="File.Open(string, FileStreamOptions)" />
 	FileSystemStream Open(string path, FileStreamOptions options);
+#endif
+
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	/// <inheritdoc cref="File.OpenHandle(string, FileMode, FileAccess, FileShare, FileOptions, long)" />
+	SafeFileHandle OpenHandle(string path,
+		FileMode mode = FileMode.Open,
+		FileAccess access = FileAccess.Read,
+		FileShare share = FileShare.Read,
+		FileOptions options = FileOptions.None,
+		long preallocationSize = 0);
 #endif
 
 	/// <inheritdoc cref="File.OpenRead(string)" />

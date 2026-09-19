@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
-#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE || FEATURE_FILESYSTEM_RANDOMACCESS
 using Microsoft.Win32.SafeHandles;
 #endif
 #if FEATURE_FILESYSTEM_ASYNC
@@ -315,6 +315,17 @@ internal sealed class FileWrapper : IFile
 	/// <inheritdoc cref="IFile.Open(string, FileStreamOptions)" />
 	public FileSystemStream Open(string path, FileStreamOptions options)
 		=> new FileStreamWrapper(File.Open(path, options));
+#endif
+
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	/// <inheritdoc cref="IFile.OpenHandle(string, FileMode, FileAccess, FileShare, FileOptions, long)" />
+	public SafeFileHandle OpenHandle(string path,
+		FileMode mode = FileMode.Open,
+		FileAccess access = FileAccess.Read,
+		FileShare share = FileShare.Read,
+		FileOptions options = FileOptions.None,
+		long preallocationSize = 0)
+		=> File.OpenHandle(path, mode, access, share, options, preallocationSize);
 #endif
 
 	/// <inheritdoc cref="IFile.OpenRead(string)" />

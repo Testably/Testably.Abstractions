@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
-#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE || FEATURE_FILESYSTEM_RANDOMACCESS
 using Microsoft.Win32.SafeHandles;
 #endif
 #if FEATURE_FILESYSTEM_ASYNC
@@ -824,6 +824,24 @@ internal sealed class FileMock : IFile
 			options.Share,
 			options.BufferSize,
 			options.Options);
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	/// <inheritdoc cref="IFile.OpenHandle(string, FileMode, FileAccess, FileShare, FileOptions, long)" />
+	public SafeFileHandle OpenHandle(string path,
+		FileMode mode = FileMode.Open,
+		FileAccess access = FileAccess.Read,
+		FileShare share = FileShare.Read,
+		FileOptions options = FileOptions.None,
+		long preallocationSize = 0)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(OpenHandle),
+				path, mode, access, share, options, preallocationSize);
+
+		return _fileSystem.SafeFileHandleRegistry
+			.Open(path, mode, access, share, options, preallocationSize);
 	}
 #endif
 
@@ -1671,20 +1689,7 @@ internal sealed class FileMock : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	private IStorageContainer GetContainerFromSafeFileHandle(SafeFileHandle fileHandle)
-	{
-		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleStrategy.MapSafeFileHandle(fileHandle);
-		IStorageContainer container = _fileSystem.Storage
-			.GetContainer(_fileSystem.Storage.GetLocation(
-					safeFileHandleMock.Path)
-				.ThrowExceptionIfNotFound(_fileSystem));
-		if (container is NullContainer)
-		{
-			throw ExceptionFactory.FileNotFound("");
-		}
-
-		return container;
-	}
+		=> _fileSystem.SafeFileHandleRegistry.GetContainer(fileHandle).Container;
 #endif
 	
 	private void WriteText(string path, string? contents, Encoding? encoding, bool append = false)
