@@ -15,6 +15,9 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics
 		FileVersionInfo;
 
 	internal readonly CallStatistics<IPath> Path;
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	internal readonly CallStatistics<IRandomAccess> RandomAccess;
+#endif
 	private readonly MockFileSystem _fileSystem;
 
 	public FileSystemStatistics(MockFileSystem fileSystem)
@@ -40,6 +43,10 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics
 			statisticsGate, fileSystem, nameof(IFileSystem.FileVersionInfo));
 		Path = new CallStatistics<IPath>(
 			statisticsGate, nameof(IFileSystem.Path));
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+		RandomAccess = new CallStatistics<IRandomAccess>(
+			statisticsGate, nameof(IFileSystem.RandomAccess));
+#endif
 	}
 
 	#region IFileSystemStatistics Members
@@ -85,6 +92,12 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics
 	/// <inheritdoc cref="IFileSystemStatistics.Path" />
 	IStatistics<IPath> IFileSystemStatistics.Path
 		=> Path;
+
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	/// <inheritdoc cref="IFileSystemStatistics.RandomAccess" />
+	IStatistics<IRandomAccess> IFileSystemStatistics.RandomAccess
+		=> RandomAccess;
+#endif
 
 	#endregion
 }

@@ -65,6 +65,7 @@ namespace Testably.Abstractions.Testing
         public Testably.Abstractions.Testing.FileSystem.IInterceptionHandler Intercept { get; }
         public Testably.Abstractions.Testing.FileSystem.INotificationHandler Notify { get; }
         public System.IO.Abstractions.IPath Path { get; }
+        public System.IO.Abstractions.IRandomAccess RandomAccess { get; }
         public Testably.Abstractions.IRandomSystem RandomSystem { get; }
         public Testably.Abstractions.Testing.SimulationMode SimulationMode { get; }
         public Testably.Abstractions.Testing.Statistics.IFileSystemStatistics Statistics { get; }
@@ -375,6 +376,7 @@ namespace Testably.Abstractions.Testing.Statistics
         Testably.Abstractions.Testing.Statistics.IPathStatistics<System.IO.Abstractions.IFileSystemWatcherFactory, System.IO.Abstractions.IFileSystemWatcher> FileSystemWatcher { get; }
         Testably.Abstractions.Testing.Statistics.IPathStatistics<System.IO.Abstractions.IFileVersionInfoFactory, System.IO.Abstractions.IFileVersionInfo> FileVersionInfo { get; }
         Testably.Abstractions.Testing.Statistics.IStatistics<System.IO.Abstractions.IPath> Path { get; }
+        Testably.Abstractions.Testing.Statistics.IStatistics<System.IO.Abstractions.IRandomAccess> RandomAccess { get; }
         int TotalCount { get; }
     }
     public interface IPathStatistics<TFactory, TType> : Testably.Abstractions.Testing.Statistics.IStatistics, Testably.Abstractions.Testing.Statistics.IStatistics<TFactory>

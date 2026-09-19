@@ -49,4 +49,11 @@ public interface IFileSystem
 	///     Abstraction for static methods and properties in <see cref="System.IO.Path" />.
 	/// </summary>
 	IPath Path { get; }
+
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	/// <summary>
+	///     Abstraction for static methods in <see cref="System.IO.RandomAccess" />.
+	/// </summary>
+	IRandomAccess RandomAccess { get; }
+#endif
 }
