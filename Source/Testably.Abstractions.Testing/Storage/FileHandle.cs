@@ -92,7 +92,7 @@ internal sealed class FileHandle : IStorageAccessHandle
 			case FileAccess.Write:
 				return share.HasFlag(FileShare.Write);
 			default:
-				return share == FileShare.ReadWrite;
+				return share.HasFlag(FileShare.ReadWrite);
 		}
 	}
 
