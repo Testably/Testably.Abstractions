@@ -60,23 +60,14 @@ internal sealed class FileStreamFactory : IFileStreamFactory
 		=> Wrap(new FileStream(path, mode, access, share, bufferSize, options));
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access)
 		=> Wrap(new FileStream(handle, access));
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize)
 		=> Wrap(new FileStream(handle, access, bufferSize));
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int, bool)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize,
 		bool isAsync)
 		=> Wrap(new FileStream(handle, access, bufferSize, isAsync));

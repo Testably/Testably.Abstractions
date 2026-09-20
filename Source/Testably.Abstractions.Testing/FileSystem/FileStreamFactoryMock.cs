@@ -144,9 +144,6 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 #endif
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
@@ -162,9 +159,6 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
@@ -181,9 +175,6 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int, bool)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize,
 		bool isAsync)
 	{
