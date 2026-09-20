@@ -11,6 +11,11 @@ namespace System.IO.Abstractions;
 /// </summary>
 public interface IRandomAccess : IFileSystemEntity
 {
+#if FEATURE_RANDOMACCESS_FLUSHTODISK
+	/// <inheritdoc cref="RandomAccess.FlushToDisk(SafeFileHandle)" />
+	void FlushToDisk(SafeFileHandle handle);
+#endif
+
 	/// <inheritdoc cref="RandomAccess.GetLength(SafeFileHandle)" />
 	long GetLength(SafeFileHandle handle);
 
@@ -28,7 +33,7 @@ public interface IRandomAccess : IFileSystemEntity
 	ValueTask<long> ReadAsync(SafeFileHandle handle, IReadOnlyList<Memory<byte>> buffers,
 		long fileOffset, CancellationToken cancellationToken = default);
 
-#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
+#if FEATURE_RANDOMACCESS_FLUSHTODISK
 	/// <inheritdoc cref="RandomAccess.SetLength(SafeFileHandle, long)" />
 	void SetLength(SafeFileHandle handle, long length);
 #endif
@@ -47,10 +52,5 @@ public interface IRandomAccess : IFileSystemEntity
 	/// <inheritdoc cref="RandomAccess.WriteAsync(SafeFileHandle, IReadOnlyList{ReadOnlyMemory{byte}}, long, CancellationToken)" />
 	ValueTask WriteAsync(SafeFileHandle handle, IReadOnlyList<ReadOnlyMemory<byte>> buffers,
 		long fileOffset, CancellationToken cancellationToken = default);
-
-#if FEATURE_RANDOMACCESS_FLUSHTODISK
-	/// <inheritdoc cref="RandomAccess.FlushToDisk(SafeFileHandle)" />
-	void FlushToDisk(SafeFileHandle handle);
-#endif
 }
 #endif

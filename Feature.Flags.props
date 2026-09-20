@@ -30,6 +30,7 @@
 		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_COMMENT_ENCRYPTED</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_NET_7_OR_GREATER</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_SAFEFILEHANDLE</DefineConstants>
+		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_RANDOMACCESS_FLUSHTODISK</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_UNIXFILEMODE</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_GUID_FORMATPROVIDER</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_RANDOM_ITEMS</DefineConstants>
@@ -43,7 +44,6 @@
 		<DefineConstants Condition="'$(IS_NET10_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_GUID_PARSE_UTF8</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET10_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_RANDOM_STRINGS</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET10_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_COMPRESSION_ASYNC</DefineConstants>
-		<DefineConstants Condition="'$(IS_NET10_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_RANDOMACCESS_FLUSHTODISK</DefineConstants>
 	</PropertyGroup>
 
 </Project>

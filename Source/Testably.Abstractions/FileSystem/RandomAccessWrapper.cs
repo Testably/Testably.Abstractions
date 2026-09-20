@@ -48,7 +48,7 @@ internal sealed class RandomAccessWrapper : IRandomAccess
 		long fileOffset, CancellationToken cancellationToken = default)
 		=> RandomAccess.ReadAsync(handle, buffers, fileOffset, cancellationToken);
 
-#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
+#if FEATURE_RANDOMACCESS_FLUSHTODISK
 	/// <inheritdoc cref="IRandomAccess.SetLength(SafeFileHandle, long)" />
 	public void SetLength(SafeFileHandle handle, long length)
 		=> RandomAccess.SetLength(handle, length);
