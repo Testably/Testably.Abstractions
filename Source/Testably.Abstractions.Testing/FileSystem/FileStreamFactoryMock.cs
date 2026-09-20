@@ -153,13 +153,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			.FileStream.RegisterMethod(nameof(New),
 				handle, access);
 
-		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
-		return New(
-			safeFileHandleMock.Path,
-			safeFileHandleMock.Mode,
-			access,
-			safeFileHandleMock.Share);
+		return FromHandle(handle, access);
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int)" />
@@ -172,14 +166,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			.FileStream.RegisterMethod(nameof(New),
 				handle, access, bufferSize);
 
-		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
-		return New(
-			safeFileHandleMock.Path,
-			safeFileHandleMock.Mode,
-			access,
-			safeFileHandleMock.Share,
-			bufferSize);
+		return FromHandle(handle, access, bufferSize);
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int, bool)" />
@@ -193,15 +180,8 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			.FileStream.RegisterMethod(nameof(New),
 				handle, access, bufferSize, isAsync);
 
-		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
-		return New(
-			safeFileHandleMock.Path,
-			safeFileHandleMock.Mode,
-			access,
-			safeFileHandleMock.Share,
-			bufferSize,
-			isAsync);
+		return FromHandle(handle, access, bufferSize,
+			isAsync ? FileOptions.Asynchronous : FileOptions.None);
 	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
@@ -234,4 +214,22 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	}
 
 	#endregion
+
+	private FileSystemStream FromHandle(SafeFileHandle handle,
+		FileAccess access,
+		int bufferSize = 4096,
+		FileOptions options = FileOptions.None)
+	{
+		SafeFileHandleMock safeFileHandleMock = _fileSystem
+			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
+		return new FileStreamMock(
+			_fileSystem,
+			safeFileHandleMock.Path,
+			safeFileHandleMock.Mode,
+			access,
+			safeFileHandleMock.Share,
+			bufferSize,
+			options,
+			adoptHandle: true);
+	}
 }
