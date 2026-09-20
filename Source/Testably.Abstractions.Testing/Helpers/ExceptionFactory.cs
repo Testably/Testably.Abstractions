@@ -102,6 +102,12 @@ internal static class ExceptionFactory
 #endif
 		};
 
+	internal static ArgumentOutOfRangeException NonNegativeNumberRequired(string paramName)
+		=> new(paramName, "Non-negative number required.");
+
+	internal static ObjectDisposedException HandleIsClosed()
+		=> new("SafeHandle", "Safe handle has been closed.");
+
 	internal static ArgumentException HandleIsInvalid(string? paramName = "handle")
 		=> new("Invalid handle.", paramName);
 

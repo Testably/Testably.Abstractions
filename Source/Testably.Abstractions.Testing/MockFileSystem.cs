@@ -84,6 +84,13 @@ public sealed class MockFileSystem : IFileSystem
 
 	internal FileSystemRegistration Registration { get; }
 
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	/// <summary>
+	///     Tracks the <see cref="SafeFileHandle" />s that this <see cref="MockFileSystem" /> created itself.
+	/// </summary>
+	internal MockSafeFileHandleRegistry SafeFileHandleRegistry { get; }
+#endif
+
 	internal ISafeFileHandleStrategy SafeFileHandleStrategy
 	{
 		get;
@@ -95,7 +102,18 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     The underlying storage of directories and files.
 	/// </summary>
-	internal IStorage Storage => _storage;
+	internal IStorage Storage
+	{
+		get
+		{
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+			// A `SafeFileHandle` is sealed, so the mock cannot be notified when one is closed. Noticing here means
+			// that any file system operation observes the released file share locks and `FileOptions.DeleteOnClose`.
+			SafeFileHandleRegistry.ReleaseClosedHandles();
+#endif
+			return _storage;
+		}
+	}
 
 	/// <summary>
 	///     The registered containers in the in-Memory <see cref="Storage" />.
@@ -114,6 +132,9 @@ public sealed class MockFileSystem : IFileSystem
 	private readonly DirectoryMock _directoryMock;
 	private readonly FileMock _fileMock;
 	private readonly PathMock _pathMock;
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	private readonly RandomAccessMock _randomAccessMock;
+#endif
 	private readonly InMemoryStorage _storage;
 
 	/// <summary>
@@ -146,6 +167,10 @@ public sealed class MockFileSystem : IFileSystem
 		TimeSystem = initialization.TimeSystem ?? new MockTimeSystem(TimeProviderFactory.Now());
 		_pathMock = new PathMock(this);
 		_storage = new InMemoryStorage(this);
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+		// Created before anything can access `Storage`, which sweeps the registry for closed handles.
+		SafeFileHandleRegistry = new MockSafeFileHandleRegistry(this);
+#endif
 		ChangeHandler = new ChangeHandler(this, initialization.RecordNotificationHistory);
 		_directoryMock = new DirectoryMock(this);
 		_fileMock = new FileMock(this);
@@ -156,6 +181,9 @@ public sealed class MockFileSystem : IFileSystem
 		FileSystemWatcher = new FileSystemWatcherFactoryMock(this);
 		FileVersionInfo = new FileVersionInfoFactoryMock(this);
 		SafeFileHandleStrategy = new NullSafeFileHandleStrategy();
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+		_randomAccessMock = new RandomAccessMock(this);
+#endif
 		AccessControlStrategy = new NullAccessControlStrategy();
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		UnixFileModeStrategy = new NullUnixFileModeStrategy();
@@ -194,6 +222,12 @@ public sealed class MockFileSystem : IFileSystem
 	/// <inheritdoc cref="IFileSystem.Path" />
 	public IPath Path
 		=> _pathMock;
+
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	/// <inheritdoc cref="IFileSystem.RandomAccess" />
+	public IRandomAccess RandomAccess
+		=> _randomAccessMock;
+#endif
 
 	#endregion
 

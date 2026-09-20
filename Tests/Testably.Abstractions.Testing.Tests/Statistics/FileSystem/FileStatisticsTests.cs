@@ -5,6 +5,8 @@ using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 using Testably.Abstractions.Testing.FileSystem;
+#endif
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE || FEATURE_FILESYSTEM_RANDOMACCESS
 using Microsoft.Win32.SafeHandles;
 #endif
 #if FEATURE_FILESYSTEM_ASYNC
@@ -814,6 +816,29 @@ public sealed class FileStatisticsTests
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
 		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.Open),
 			path, options);
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	[Test]
+	public async Task
+		Method_OpenHandle_String_FileMode_FileAccess_FileShare_FileOptions_Int64_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
+		string path = "foo";
+		FileMode mode = FileMode.Open;
+		FileAccess access = FileAccess.Read;
+		FileShare share = FileShare.Read;
+		FileOptions options = FileOptions.None;
+		long preallocationSize = 0;
+
+		using SafeFileHandle handle =
+			sut.File.OpenHandle(path, mode, access, share, options, preallocationSize);
+
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.OpenHandle),
+			path, mode, access, share, options, preallocationSize);
 	}
 #endif
 
