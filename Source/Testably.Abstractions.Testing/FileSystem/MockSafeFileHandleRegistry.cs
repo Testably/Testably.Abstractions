@@ -199,9 +199,20 @@ internal sealed class MockSafeFileHandleRegistry
 	internal (IStorageContainer Container, FileAccess Access, FileMode Mode) GetContainer(
 		SafeFileHandle handle)
 	{
+		if (handle is null)
+		{
+			throw new ArgumentNullException(nameof(handle));
+		}
+
 		if (Resolve(handle) is { } entry)
 		{
 			return (entry.Container, entry.Access, entry.Mode);
+		}
+
+		// A handle from elsewhere is resolved by the strategy, but a disposed one is unusable whatever its origin.
+		if (handle.IsClosed)
+		{
+			throw ExceptionFactory.HandleIsClosed();
 		}
 
 		SafeFileHandleMock mock = _fileSystem.SafeFileHandleStrategy.MapSafeFileHandle(handle);
@@ -210,7 +221,7 @@ internal sealed class MockSafeFileHandleRegistry
 				.ThrowExceptionIfNotFound(_fileSystem));
 		if (container is NullContainer)
 		{
-			throw ExceptionFactory.FileNotFound("");
+			throw ExceptionFactory.FileNotFound(mock.Path);
 		}
 
 		return (container, FileAccess.ReadWrite, mock.Mode);
