@@ -24,6 +24,9 @@ public sealed class RealFileSystem : IFileSystem
 		FileSystemWatcher = new FileSystemWatcherFactory(this);
 		FileVersionInfo = new FileVersionInfoFactory(this);
 		Path = new PathWrapper(this);
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+		RandomAccess = new RandomAccessWrapper(this);
+#endif
 	}
 
 	#region IFileSystem Members
@@ -54,6 +57,11 @@ public sealed class RealFileSystem : IFileSystem
 
 	/// <inheritdoc cref="IFileSystem.Path" />
 	public IPath Path { get; }
+
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	/// <inheritdoc cref="IFileSystem.RandomAccess" />
+	public IRandomAccess RandomAccess { get; }
+#endif
 
 	#endregion
 }

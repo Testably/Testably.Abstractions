@@ -173,6 +173,18 @@ public abstract class ParityTests(
 		await That(parityErrors).IsEmpty();
 	}
 
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	[Test]
+	public async Task IRandomAccess_EnsureParityWith_RandomAccess()
+	{
+		List<string> parityErrors = Parity.RandomAccess
+			.GetErrorsToStaticType<IRandomAccess>(
+				typeof(System.IO.RandomAccess));
+
+		await That(parityErrors).IsEmpty();
+	}
+#endif
+
 #if FEATURE_PERIODIC_TIMER
 	[Test]
 	public async Task
