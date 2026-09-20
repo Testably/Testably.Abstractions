@@ -150,6 +150,10 @@ public class Parity
 
 	public ParityCheck Random { get; } = new();
 
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	public ParityCheck RandomAccess { get; } = new();
+#endif
+
 	public ParityCheck Stopwatch { get; } = new(excludeMethods:
 	[
 		typeof(Stopwatch).GetMethod(nameof(ToString)),
