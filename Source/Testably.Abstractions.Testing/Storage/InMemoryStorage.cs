@@ -770,6 +770,27 @@ internal sealed class InMemoryStorage : IStorage
 			.ToList();
 
 	/// <summary>
+	///     Returns the location that <paramref name="container" /> is currently registered under, or
+	///     <see langword="null" /> if it is no longer registered.
+	/// </summary>
+	/// <remarks>
+	///     A container survives a rename, so anything holding on to one — an open handle, for instance — cannot rely
+	///     on the location it was opened at.
+	/// </remarks>
+	public IStorageLocation? GetLocation(IStorageContainer container)
+	{
+		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers)
+		{
+			if (ReferenceEquals(item.Value, container))
+			{
+				return item.Key;
+			}
+		}
+
+		return null;
+	}
+
+	/// <summary>
 	///     Removes the drive with the given <paramref name="driveName" />.
 	/// </summary>
 	internal IStorageDrive? RemoveDrive(string driveName)

@@ -191,5 +191,42 @@ public class WriteTests(FileSystemTestData testData) : FileSystemTestBase(testDa
 		await That(read).IsEqualTo(3);
 		await That(buffer).IsEqualTo(new byte[] { 1, 2, 3, });
 	}
+
+	/// <summary>
+	///     <see cref="RandomAccess" /> permits concurrent writes through the same handle at distinct offsets, so a
+	///     read-modify-write of the whole file must not let one of them overwrite the other.
+	/// </summary>
+	[Test]
+	[AutoArguments]
+	public async Task Write_ConcurrentlyAtDistinctOffsets_ShouldKeepBothWrites(string path)
+	{
+		const int count = 250;
+		FileSystem.File.WriteAllBytes(path, new byte[2 * count]);
+
+		using (SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+		{
+			await Task.WhenAll(
+				Task.Run(() =>
+				{
+					for (int i = 0; i < count; i++)
+					{
+						FileSystem.RandomAccess.Write(handle, new byte[] { 1, }, i);
+					}
+				}, CancellationToken),
+				Task.Run(() =>
+				{
+					for (int i = 0; i < count; i++)
+					{
+						FileSystem.RandomAccess.Write(handle, new byte[] { 2, }, count + i);
+					}
+				}, CancellationToken));
+		}
+
+		byte[] result = FileSystem.File.ReadAllBytes(path);
+
+		await That(result[..count]).All().AreEqualTo((byte)1);
+		await That(result[count..]).All().AreEqualTo((byte)2);
+	}
 }
 #endif

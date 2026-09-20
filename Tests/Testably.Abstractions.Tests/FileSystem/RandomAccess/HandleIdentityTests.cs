@@ -78,5 +78,48 @@ public class HandleIdentityTests(FileSystemTestData testData) : FileSystemTestBa
 
 		await That(FileSystem.File.Exists(path)).IsFalse();
 	}
+
+	[Test]
+	[AutoArguments]
+	public async Task DeleteOnClose_ShouldFollowTheFile_WhenItIsRenamed(
+		string path, string other)
+	{
+		Skip.If(Test.RunsOnWindows,
+			"the mock tracks file share locks by path, so it refuses to rename or delete a file that a handle is open on, even when the handle permits delete sharing");
+
+		FileSystem.File.WriteAllText(path, null);
+
+		using (SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete,
+			FileOptions.DeleteOnClose))
+		{
+			FileSystem.File.Move(path, other);
+		}
+
+		await That(FileSystem.File.Exists(other)).IsFalse()
+			.Because("the deletion follows the file, not the path it was opened at");
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task DeleteOnClose_ShouldNotDeleteAReplacementAtTheOldPath(
+		string path, string other)
+	{
+		Skip.If(Test.RunsOnWindows,
+			"the mock tracks file share locks by path, so it refuses to rename or delete a file that a handle is open on, even when the handle permits delete sharing");
+
+		FileSystem.File.WriteAllText(path, null);
+
+		using (SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete,
+			FileOptions.DeleteOnClose))
+		{
+			FileSystem.File.Move(path, other);
+			FileSystem.File.WriteAllText(path, "a different file");
+		}
+
+		await That(FileSystem.File.Exists(path)).IsTrue()
+			.Because("the replacement at the old path is a different file");
+	}
 }
 #endif

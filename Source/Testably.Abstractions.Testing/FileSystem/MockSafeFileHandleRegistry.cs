@@ -283,7 +283,14 @@ internal sealed class MockSafeFileHandleRegistry
 				}
 
 				_pendingDeletes.RemoveAt(i);
-				_fileSystem.Storage.DeleteContainer(pending.Location, FileSystemTypes.File);
+
+				// The file may have been renamed since the handle was opened, and a container survives a rename, so
+				// the deletion has to follow the container rather than the path it was opened at.
+				IStorageLocation? current = _fileSystem.Storage.GetLocation(pending.Container);
+				if (current is not null)
+				{
+					_fileSystem.Storage.DeleteContainer(current, FileSystemTypes.File);
+				}
 			}
 		}
 		finally
@@ -351,12 +358,8 @@ internal sealed class MockSafeFileHandleRegistry
 		internal SafeFileHandle Handle { get; }
 
 		/// <summary>
-		///     The location the handle was opened on.
+		///     The location the handle was opened on, which a rename can invalidate.
 		/// </summary>
-		/// <remarks>
-		///     Only used to apply <see cref="FileOptions.DeleteOnClose" />. A container does not expose its current
-		///     location, so a file renamed while such a handle is open is deleted under its original name.
-		/// </remarks>
 		internal IStorageLocation Location { get; }
 
 		internal FileMode Mode { get; }
