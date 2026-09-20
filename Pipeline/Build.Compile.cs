@@ -1,10 +1,10 @@
 using Fallout.Common;
 using Fallout.Common.IO;
-using Fallout.Common.ProjectModel;
 using Fallout.Common.Tooling;
 using Fallout.Common.Tools.DotNet;
 using Fallout.Common.Tools.GitVersion;
 using Fallout.Common.Utilities.Collections;
+using Fallout.Solutions;
 using Serilog;
 using System;
 using System.Linq;

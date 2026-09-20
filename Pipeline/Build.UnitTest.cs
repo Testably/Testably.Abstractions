@@ -1,7 +1,7 @@
 using Fallout.Common;
-using Fallout.Common.ProjectModel;
 using Fallout.Common.Tooling;
 using Fallout.Common.Tools.DotNet;
+using Fallout.Solutions;
 using Serilog;
 using System;
 using System.Linq;
