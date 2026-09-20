@@ -56,7 +56,7 @@ public class LengthTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		await That(FileSystem.RandomAccess.GetLength(handle)).IsEqualTo(3L);
 	}
 
-#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
+#if FEATURE_RANDOMACCESS_FLUSHTODISK
 	[Test]
 	[AutoArguments]
 	public async Task SetLength_ShouldTruncateTheFile(string path)

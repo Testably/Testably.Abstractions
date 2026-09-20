@@ -106,7 +106,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 		return new ValueTask<long>(Read(handle, buffers, fileOffset));
 	}
 
-#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
+#if FEATURE_RANDOMACCESS_FLUSHTODISK
 	/// <inheritdoc cref="IRandomAccess.SetLength(SafeFileHandle, long)" />
 	public void SetLength(SafeFileHandle handle, long length)
 	{
