@@ -87,8 +87,9 @@ internal sealed class DirectoryMock : IDirectory
 		{
 			string localBasePath = _fileSystem.Execute.Path.Combine(
 				_fileSystem.Execute.Path.GetTempPath(),
-				(prefix ?? "") + _fileSystem.Execute.Path.GetFileNameWithoutExtension(
-					_fileSystem.Execute.Path.GetRandomFileName()));
+				string.Concat(prefix,
+					_fileSystem.Execute.Path.GetFileNameWithoutExtension(
+						_fileSystem.Execute.Path.GetRandomFileName())));
 			if (_fileSystem.Execute.IsMac)
 			{
 				localBasePath = "/private" + localBasePath;
