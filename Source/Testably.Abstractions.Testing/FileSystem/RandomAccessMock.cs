@@ -118,7 +118,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 			throw ExceptionFactory.NonNegativeNumberRequired("length");
 		}
 
-		IStorageContainer container = GetContainer(handle, FileAccess.Write);
+		IStorageContainer container = GetContainerForResize(handle);
 		lock (Gate(container))
 		{
 			byte[] bytes = container.GetBytes();
@@ -209,11 +209,39 @@ internal sealed class RandomAccessMock : IRandomAccess
 		return bytes;
 	}
 
+	private IStorageContainer GetContainerForResize(SafeFileHandle handle)
+	{
+		(IStorageContainer container, FileAccess access, _) = ResolveEntry(handle);
+		if (access.HasFlag(FileAccess.Write))
+		{
+			return container;
+		}
+
+		// `ftruncate` on a read-only descriptor fails with `EINVAL`, where Windows reports access denied.
+		throw _fileSystem.Execute.IsWindows
+			? ExceptionFactory.AccessToPathDenied()
+			: ExceptionFactory.InvalidArgument(
+				_fileSystem.SafeFileHandleRegistry.Map(handle).Path);
+	}
+
 	private IStorageContainer GetContainer(SafeFileHandle handle, FileAccess? required)
 		=> Resolve(handle, required).Container;
 
 	private (IStorageContainer Container, FileMode Mode) Resolve(
 		SafeFileHandle handle, FileAccess? required)
+	{
+		(IStorageContainer container, FileAccess access, FileMode mode) = ResolveEntry(handle);
+
+		if (required is { } requiredAccess && !access.HasFlag(requiredAccess))
+		{
+			throw ExceptionFactory.AccessToPathDenied();
+		}
+
+		return (container, mode);
+	}
+
+	private (IStorageContainer Container, FileAccess Access, FileMode Mode) ResolveEntry(
+		SafeFileHandle handle)
 	{
 		if (handle is null)
 		{
@@ -225,15 +253,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 			throw ExceptionFactory.HandleIsInvalid();
 		}
 
-		(IStorageContainer container, FileAccess access, FileMode mode) =
-			_fileSystem.SafeFileHandleRegistry.GetContainer(handle);
-
-		if (required is { } requiredAccess && !access.HasFlag(requiredAccess))
-		{
-			throw ExceptionFactory.AccessToPathDenied();
-		}
-
-		return (container, mode);
+		return _fileSystem.SafeFileHandleRegistry.GetContainer(handle);
 	}
 
 	private int ReadInto(SafeFileHandle handle, Span<byte> buffer, long fileOffset)

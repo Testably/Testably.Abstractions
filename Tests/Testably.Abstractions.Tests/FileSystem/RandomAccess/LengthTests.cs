@@ -119,9 +119,11 @@ public class LengthTests(FileSystemTestData testData) : FileSystemTestBase(testD
 
 	[Test]
 	[AutoArguments]
-	public async Task SetLength_WithReadOnlyHandle_ShouldThrowUnauthorizedAccessException(
+	public async Task SetLength_WithReadOnlyHandle_OnWindows_ShouldThrowUnauthorizedAccess(
 		string path)
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		FileSystem.File.WriteAllBytes(path, [1, 2, 3,]);
 
 		using SafeFileHandle handle = FileSystem.File.OpenHandle(path);
@@ -129,6 +131,21 @@ public class LengthTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		void Act() => FileSystem.RandomAccess.SetLength(handle, 1);
 
 		await That(Act).Throws<UnauthorizedAccessException>();
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task SetLength_WithReadOnlyHandle_OnUnix_ShouldThrowIOException(string path)
+	{
+		Skip.If(Test.RunsOnWindows, "`ftruncate` reports an invalid argument, not access denied");
+
+		FileSystem.File.WriteAllBytes(path, [1, 2, 3,]);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path);
+
+		void Act() => FileSystem.RandomAccess.SetLength(handle, 1);
+
+		await That(Act).Throws<IOException>();
 	}
 #endif
 }

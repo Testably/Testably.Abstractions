@@ -250,14 +250,25 @@ internal sealed class MockSafeFileHandleRegistry
 			foreach (Entry entry in released!)
 			{
 				entry.AccessLock.Dispose();
-				if (entry.Options.HasFlag(FileOptions.DeleteOnClose))
+				if (!entry.Options.HasFlag(FileOptions.DeleteOnClose))
+				{
+					continue;
+				}
+
+				if (_fileSystem.Execute.IsWindows)
 				{
 					_pendingDeletes.Add(entry);
 				}
+				else
+				{
+					// Unix unlinks the name that was opened, as soon as this handle closes and whatever else still
+					// holds the file open — so a file renamed since then survives, and a replacement under the old
+					// name does not.
+					_fileSystem.Storage.DeleteContainer(entry.Location, FileSystemTypes.File);
+				}
 			}
 
-			// The file is removed when the last handle to it is closed, not the first, so a deletion stays pending
-			// until no handle refers to the file any more.
+			// Windows removes the file once the last handle to it closes, and follows it across a rename.
 			for (int i = _pendingDeletes.Count - 1; i >= 0; i--)
 			{
 				Entry pending = _pendingDeletes[i];
@@ -267,9 +278,6 @@ internal sealed class MockSafeFileHandleRegistry
 				}
 
 				_pendingDeletes.RemoveAt(i);
-
-				// The file may have been renamed since the handle was opened, and a container survives a rename, so
-				// the deletion has to follow the container rather than the path it was opened at.
 				IStorageLocation? current = _fileSystem.Storage.GetLocation(pending.Container);
 				if (current is not null)
 				{

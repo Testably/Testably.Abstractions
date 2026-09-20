@@ -116,6 +116,9 @@ internal static class ExceptionFactory
 		=> new(
 			$"The internal buffer is greater than the {internalBufferSize} allowed bytes (~ {messages} messages).");
 
+	internal static IOException InvalidArgument(string path)
+		=> new($"Invalid argument : '{path}'");
+
 	internal static ArgumentException InvalidAccessCombination(
 		FileMode mode, FileAccess access)
 		=> new($"Combining FileMode: {mode} with FileAccess: {access} is invalid.",
