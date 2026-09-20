@@ -70,7 +70,9 @@ internal sealed class FileHandle : IStorageAccessHandle
 
 		if (deleteAccess)
 		{
-			return !_fileSystem.Execute.IsWindows || Share == FileShare.Delete;
+			// `FileShare` is a flags enum: a file opened with `FileShare.Delete` combined with read or write
+			// sharing still permits deletion.
+			return !_fileSystem.Execute.IsWindows || Share.HasFlag(FileShare.Delete);
 		}
 
 		return CheckAccessWithShare(access, currentShare) &&
