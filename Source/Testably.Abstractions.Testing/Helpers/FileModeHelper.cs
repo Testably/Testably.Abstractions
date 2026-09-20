@@ -4,10 +4,6 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal static class FileModeHelper
 {
-	/// <summary>
-	///     Validates that the <paramref name="mode" /> and <paramref name="access" /> combination is allowed when
-	///     opening a file.
-	/// </summary>
 	internal static void ThrowIfInvalidModeAccess(FileMode mode, FileAccess access)
 	{
 		if (mode == FileMode.Append)

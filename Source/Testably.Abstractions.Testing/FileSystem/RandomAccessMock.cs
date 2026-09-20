@@ -35,8 +35,8 @@ internal sealed class RandomAccessMock : IRandomAccess
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.RandomAccess.RegisterMethod(nameof(FlushToDisk), handle);
 
-		// The in-memory storage has no write-back cache, so there is nothing to flush. The call is still resolved
-		// and counted, so that a test can assert that a durability barrier was requested.
+		// Nothing to flush without a write-back cache, but the handle is still resolved and the call counted, so a
+		// test can assert that a durability barrier was requested.
 		_ = GetContainer(handle, FileAccess.Write);
 	}
 #endif
@@ -236,11 +236,6 @@ internal sealed class RandomAccessMock : IRandomAccess
 		return (container, mode);
 	}
 
-	/// <summary>
-	///     Copies into <paramref name="buffer" /> from <paramref name="fileOffset" />, returning the number of bytes
-	///     copied. An offset at or beyond the end copies nothing, which is the short read that
-	///     <see cref="RandomAccess" /> reports as zero bytes.
-	/// </summary>
 	private int ReadInto(SafeFileHandle handle, Span<byte> buffer, long fileOffset)
 	{
 		if (fileOffset < 0)
@@ -263,10 +258,6 @@ internal sealed class RandomAccessMock : IRandomAccess
 		}
 	}
 
-	/// <summary>
-	///     Copies into <paramref name="buffers" /> in order from <paramref name="fileOffset" />, returning the number
-	///     of bytes copied.
-	/// </summary>
 	private long ReadInto(SafeFileHandle handle, IReadOnlyList<Memory<byte>> buffers,
 		long fileOffset)
 	{
@@ -297,15 +288,6 @@ internal sealed class RandomAccessMock : IRandomAccess
 		}
 	}
 
-	/// <summary>
-	///     Writes <paramref name="buffer" /> at <paramref name="fileOffset" />, growing the file and zero-filling any
-	///     gap between the previous end and the offset.
-	/// </summary>
-	/// <remarks>
-	///     On a handle opened with <see cref="FileMode.Append" /> the offset is ignored on Linux, whose
-	///     <c>pwrite(2)</c> appends to the end of the file when the descriptor carries <c>O_APPEND</c>, contrary to
-	///     POSIX. Windows and macOS honour the offset.
-	/// </remarks>
 	private void WriteBytes(SafeFileHandle handle, byte[] buffer, long fileOffset)
 	{
 		if (fileOffset < 0)
@@ -319,12 +301,13 @@ internal sealed class RandomAccessMock : IRandomAccess
 			return;
 		}
 
-		// Reading, growing and publishing the contents has to be atomic with respect to other operations on the same
-		// file: `RandomAccess` permits concurrent writes at distinct offsets, and without this one of them would be
-		// lost when both start from the same snapshot.
+		// `RandomAccess` permits concurrent writes at distinct offsets, which would lose each other if two of them
+		// started from the same snapshot.
 		lock (Gate(container))
 		{
 			byte[] bytes = container.GetBytes();
+			// Linux `pwrite(2)` appends when the descriptor carries `O_APPEND`, whatever offset is passed, contrary
+			// to POSIX; Windows and macOS honour the offset.
 			if (mode == FileMode.Append && _fileSystem.Execute.IsLinux)
 			{
 				fileOffset = bytes.Length;
@@ -343,10 +326,6 @@ internal sealed class RandomAccessMock : IRandomAccess
 		}
 	}
 
-	/// <summary>
-	///     The object that serialises read-modify-write sequences on a file, so that concurrent operations through
-	///     different handles to the same file cannot lose each other's writes.
-	/// </summary>
 	private object Gate(IStorageContainer container)
 		=> _gates.GetOrCreateValue(container);
 

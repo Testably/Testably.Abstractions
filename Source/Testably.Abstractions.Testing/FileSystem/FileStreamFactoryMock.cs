@@ -232,11 +232,6 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 
 	#endregion
 
-	/// <summary>
-	///     Resolves the file behind <paramref name="handle" />, preferring a handle that the
-	///     <see cref="MockFileSystem" /> created itself and falling back to the registered
-	///     <see cref="ISafeFileHandleStrategy" />.
-	/// </summary>
 	private SafeFileHandleMock MapSafeFileHandle(SafeFileHandle handle)
 #if FEATURE_FILESYSTEM_RANDOMACCESS
 		=> _fileSystem.SafeFileHandleRegistry.Map(handle);

@@ -769,14 +769,7 @@ internal sealed class InMemoryStorage : IStorage
 			.Select(x => x.Value)
 			.ToList();
 
-	/// <summary>
-	///     Returns the location that <paramref name="container" /> is currently registered under, or
-	///     <see langword="null" /> if it is no longer registered.
-	/// </summary>
-	/// <remarks>
-	///     A container survives a rename, so anything holding on to one — an open handle, for instance — cannot rely
-	///     on the location it was opened at.
-	/// </remarks>
+	/// <inheritdoc cref="IStorage.GetLocation(IStorageContainer)" />
 	public IStorageLocation? GetLocation(IStorageContainer container)
 	{
 		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers)

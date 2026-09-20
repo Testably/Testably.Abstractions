@@ -5,10 +5,6 @@ using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
-/// <summary>
-///     Handles that the <see cref="MockFileSystem" /> did not create are resolved by the registered
-///     <see cref="ISafeFileHandleStrategy" />, but are otherwise held to the same rules.
-/// </summary>
 public class ForeignSafeFileHandleTests
 {
 	private static MockFileSystem Arrange(string path)

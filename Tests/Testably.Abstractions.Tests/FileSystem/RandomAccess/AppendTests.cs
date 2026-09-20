@@ -5,10 +5,8 @@ using System.IO;
 namespace Testably.Abstractions.Tests.FileSystem.RandomAccess;
 
 /// <summary>
-///     Writing through a handle opened with <see cref="FileMode.Append" />.
-///     <para />
-///     Linux deviates from POSIX here: its <c>pwrite(2)</c> appends to the end of the file when the descriptor
-///     carries <c>O_APPEND</c>, whatever offset is passed. Windows and macOS honour the offset.
+///     Linux `pwrite(2)` appends when the descriptor carries `O_APPEND`, whatever offset is passed, contrary to
+///     POSIX; Windows and macOS honour the offset.
 /// </summary>
 [FileSystemTests]
 public class AppendTests(FileSystemTestData testData) : FileSystemTestBase(testData)

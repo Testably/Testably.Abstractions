@@ -192,10 +192,6 @@ public class WriteTests(FileSystemTestData testData) : FileSystemTestBase(testDa
 		await That(buffer).IsEqualTo(new byte[] { 1, 2, 3, });
 	}
 
-	/// <summary>
-	///     <see cref="RandomAccess" /> permits concurrent writes through the same handle at distinct offsets, so a
-	///     read-modify-write of the whole file must not let one of them overwrite the other.
-	/// </summary>
 	[Test]
 	[AutoArguments]
 	public async Task Write_ConcurrentlyAtDistinctOffsets_ShouldKeepBothWrites(string path)

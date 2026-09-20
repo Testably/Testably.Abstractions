@@ -4,12 +4,6 @@ using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
-/// <summary>
-///     Covers every <see cref="IFile" /> member that takes a <see cref="SafeFileHandle" />.
-///     <para />
-///     These could not be exercised against the <see cref="MockFileSystem" /> before, because there was no way to
-///     obtain a handle from the abstraction.
-/// </summary>
 [FileSystemTests]
 public class SafeFileHandleTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {

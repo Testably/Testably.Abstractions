@@ -85,9 +85,6 @@ public sealed class MockFileSystem : IFileSystem
 	internal FileSystemRegistration Registration { get; }
 
 #if FEATURE_FILESYSTEM_RANDOMACCESS
-	/// <summary>
-	///     Tracks the <see cref="SafeFileHandle" />s that this <see cref="MockFileSystem" /> created itself.
-	/// </summary>
 	internal MockSafeFileHandleRegistry SafeFileHandleRegistry { get; }
 #endif
 
@@ -107,8 +104,7 @@ public sealed class MockFileSystem : IFileSystem
 		get
 		{
 #if FEATURE_FILESYSTEM_RANDOMACCESS
-			// A `SafeFileHandle` is sealed, so the mock cannot be notified when one is closed. Noticing here means
-			// that any file system operation observes the released file share locks and `FileOptions.DeleteOnClose`.
+			// Sweeping here means every file system operation observes handles the caller has since closed.
 			SafeFileHandleRegistry.ReleaseClosedHandles();
 #endif
 			return _storage;
@@ -168,7 +164,7 @@ public sealed class MockFileSystem : IFileSystem
 		_pathMock = new PathMock(this);
 		_storage = new InMemoryStorage(this);
 #if FEATURE_FILESYSTEM_RANDOMACCESS
-		// Created before anything can access `Storage`, which sweeps the registry for closed handles.
+		// Created before anything can reach `Storage`, which sweeps it.
 		SafeFileHandleRegistry = new MockSafeFileHandleRegistry(this);
 #endif
 		ChangeHandler = new ChangeHandler(this, initialization.RecordNotificationHistory);

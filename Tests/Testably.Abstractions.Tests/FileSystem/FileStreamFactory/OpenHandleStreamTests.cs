@@ -4,17 +4,6 @@ using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;
 
-/// <summary>
-///     Covers the <see cref="IFileStreamFactory" /> overloads that take a <see cref="SafeFileHandle" />, using a
-///     handle obtained from the abstraction itself.
-///     <para />
-///     The equivalent tests in <c>SafeFileHandleTests</c> are compiled out behind
-///     <c>EXECUTE_SAFEFILEHANDLE_TESTS</c>, because creating a handle used to require platform invocation.
-///     <para />
-///     The handles are opened with <see cref="FileShare.ReadWrite" />: a real <see cref="FileStream" /> adopts the
-///     handle it is given, whereas <see cref="MockFileSystem" /> re-opens the path behind it, so it needs the file
-///     to be shareable with the handle that is already open on it.
-/// </summary>
 [FileSystemTests]
 public class OpenHandleStreamTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {

@@ -4,9 +4,6 @@ using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.RandomAccess;
 
-/// <summary>
-///     A handle refers to the file that was opened, not to its name.
-/// </summary>
 [FileSystemTests]
 public class HandleIdentityTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
