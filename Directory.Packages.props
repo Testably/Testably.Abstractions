@@ -55,8 +55,8 @@
 		<PackageVersion Include="AutoFixture" Version="4.18.1" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageVersion Include="Testably.Abstractions.Interface" Version="[10.3.0,10.4.0)"/>
-		<PackageVersion Include="Testably.Abstractions" Version="[10.3.0,10.4.0)"/>
+		<PackageVersion Include="Testably.Abstractions.Interface" Version="[10.4.0-pre.1,10.5.0)"/>
+		<PackageVersion Include="Testably.Abstractions" Version="[10.4.0-pre.1,10.5.0)"/>
 		<PackageVersion Include="Testably.Abstractions.Testing" Version="6.6.0"/>
 	</ItemGroup>
 	<ItemGroup>

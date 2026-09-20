@@ -10,9 +10,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!-- Referenced as a project (as Testably.Abstractions does), so that the mock can implement interface
-		     members that are introduced in the same change. -->
-		<ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
+		<PackageReference Include="Testably.Abstractions.Interface" />
 	</ItemGroup>
 
 	<ItemGroup>

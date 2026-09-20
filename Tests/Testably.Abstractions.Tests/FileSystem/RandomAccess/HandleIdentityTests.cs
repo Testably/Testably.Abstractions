@@ -15,7 +15,7 @@ public class HandleIdentityTests(FileSystemTestData testData) : FileSystemTestBa
 	public async Task Handle_ShouldKeepWorking_WhenTheFileIsRenamed(string path, string other)
 	{
 		Skip.If(Test.RunsOnWindows,
-			"the mock tracks file share locks by path, so it refuses to rename or delete a file that a handle is open on, even when the handle permits delete sharing");
+			"moving a file that a handle holds open needs `ignoreFileShare`, which is inert on Windows: see #1086");
 
 		FileSystem.File.WriteAllBytes(path, [1, 2, 3, 4,]);
 
@@ -37,7 +37,7 @@ public class HandleIdentityTests(FileSystemTestData testData) : FileSystemTestBa
 		string path, string other)
 	{
 		Skip.If(Test.RunsOnWindows,
-			"the mock tracks file share locks by path, so it refuses to rename or delete a file that a handle is open on, even when the handle permits delete sharing");
+			"moving a file that a handle holds open needs `ignoreFileShare`, which is inert on Windows: see #1086");
 
 		FileSystem.File.WriteAllBytes(path, [1, 2, 3, 4,]);
 
@@ -59,7 +59,7 @@ public class HandleIdentityTests(FileSystemTestData testData) : FileSystemTestBa
 	public async Task DeleteOnClose_ShouldDeleteOnlyWhenTheLastHandleIsClosed(string path)
 	{
 		Skip.If(Test.RunsOnWindows,
-			"the mock tracks file share locks by path, so it refuses to rename or delete a file that a handle is open on, even when the handle permits delete sharing");
+			"two openers that both permit `FileShare.ReadWrite | FileShare.Delete` are refused: see #1090");
 
 		FileSystem.File.WriteAllText(path, null);
 
@@ -85,7 +85,7 @@ public class HandleIdentityTests(FileSystemTestData testData) : FileSystemTestBa
 		string path, string other)
 	{
 		Skip.If(Test.RunsOnWindows,
-			"the mock tracks file share locks by path, so it refuses to rename or delete a file that a handle is open on, even when the handle permits delete sharing");
+			"moving a file that a handle holds open needs `ignoreFileShare`, which is inert on Windows: see #1086");
 
 		FileSystem.File.WriteAllText(path, null);
 
@@ -106,7 +106,7 @@ public class HandleIdentityTests(FileSystemTestData testData) : FileSystemTestBa
 		string path, string other)
 	{
 		Skip.If(Test.RunsOnWindows,
-			"the mock tracks file share locks by path, so it refuses to rename or delete a file that a handle is open on, even when the handle permits delete sharing");
+			"moving a file that a handle holds open needs `ignoreFileShare`, which is inert on Windows: see #1086");
 
 		FileSystem.File.WriteAllText(path, null);
 
