@@ -4,37 +4,13 @@ using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.RandomAccess;
 
-/// <summary>
-///     Linux `pwrite(2)` appends when the descriptor carries `O_APPEND`, whatever offset is passed, contrary to
-///     POSIX; Windows and macOS honour the offset.
-/// </summary>
 [FileSystemTests]
 public class AppendTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	[Test]
 	[AutoArguments]
-	public async Task Write_OnAppendHandle_ShouldAppend_OnLinux(string path)
+	public async Task Write_OnAppendHandle_ShouldHonourTheOffset(string path)
 	{
-		Skip.IfNot(Test.RunsOnLinux, "only Linux appends regardless of the offset");
-
-		FileSystem.File.WriteAllBytes(path, [1, 2, 3, 4,]);
-
-		using (SafeFileHandle handle = FileSystem.File.OpenHandle(path,
-			FileMode.Append, FileAccess.Write))
-		{
-			FileSystem.RandomAccess.Write(handle, new byte[] { 9, }, 0);
-		}
-
-		await That(FileSystem.File.ReadAllBytes(path))
-			.IsEqualTo(new byte[] { 1, 2, 3, 4, 9, });
-	}
-
-	[Test]
-	[AutoArguments]
-	public async Task Write_OnAppendHandle_ShouldHonourTheOffset_OnWindowsAndMac(string path)
-	{
-		Skip.If(Test.RunsOnLinux, "Linux appends regardless of the offset");
-
 		FileSystem.File.WriteAllBytes(path, [1, 2, 3, 4,]);
 
 		using (SafeFileHandle handle = FileSystem.File.OpenHandle(path,
@@ -49,8 +25,23 @@ public class AppendTests(FileSystemTestData testData) : FileSystemTestBase(testD
 
 	[Test]
 	[AutoArguments]
-	public async Task Write_OnAppendHandle_ShouldAppendToAnEmptyFileRegardlessOfPlatform(
-		string path)
+	public async Task Write_OnAppendHandle_AtTheLength_ShouldExtendTheFile(string path)
+	{
+		FileSystem.File.WriteAllBytes(path, [1, 2, 3, 4,]);
+
+		using (SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Append, FileAccess.Write))
+		{
+			FileSystem.RandomAccess.Write(handle, new byte[] { 9, }, 4);
+		}
+
+		await That(FileSystem.File.ReadAllBytes(path))
+			.IsEqualTo(new byte[] { 1, 2, 3, 4, 9, });
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task Write_OnAppendHandle_ToAnEmptyFile_ShouldWriteFromTheOffset(string path)
 	{
 		FileSystem.File.WriteAllBytes(path, []);
 

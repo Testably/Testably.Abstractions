@@ -326,13 +326,6 @@ internal sealed class RandomAccessMock : IRandomAccess
 		lock (Gate(container))
 		{
 			byte[] bytes = container.GetBytes();
-			// Linux `pwrite(2)` appends when the descriptor carries `O_APPEND`, whatever offset is passed, contrary
-			// to POSIX; Windows and macOS honour the offset.
-			if (mode == FileMode.Append && _fileSystem.Execute.IsLinux)
-			{
-				fileOffset = bytes.Length;
-			}
-
 			long required = fileOffset + buffer.Length;
 			if (required > bytes.Length)
 			{
