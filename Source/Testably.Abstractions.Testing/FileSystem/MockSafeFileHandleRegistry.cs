@@ -81,9 +81,10 @@ internal sealed class MockSafeFileHandleRegistry
 		{
 			IntPtr value = new(_nextHandleValue++);
 			SafeFileHandle handle = new(value, ownsHandle: false);
+			// The mode was applied above, so a stream on this handle must open the file as it is now.
 			_entries[value] = new Entry(
 				new WeakReference<SafeFileHandle>(handle),
-				new SafeFileHandleMock(location.FullPath, mode, share),
+				new SafeFileHandleMock(location.FullPath, FileMode.Open, share),
 				accessLock,
 				location,
 				container,
