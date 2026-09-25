@@ -203,6 +203,25 @@ public class MockSafeFileHandleTests
 			.Because("a handle that is no longer referenced is closed, as a real one would be when finalized");
 	}
 
+#if FEATURE_RANDOMACCESS_FLUSHTODISK
+	[Test]
+	public async Task SetLength_BeyondTheMaximumArrayLength_ShouldThrowIOException()
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllBytes("f.txt", [1,]);
+
+		using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+			FileMode.Open, FileAccess.Write);
+
+		void Act() => fileSystem.RandomAccess.SetLength(handle, long.MaxValue);
+
+		await That(Act).Throws<IOException>()
+			.Because("a length the in-memory content cannot hold is rejected like a write beyond it");
+		await That(fileSystem.RandomAccess.GetLength(handle)).IsEqualTo(1)
+			.Because("the rejected resize must leave the file unchanged");
+	}
+#endif
+
 	[Test]
 	public async Task OpenHandle_WhenUsedAndNeverDisposed_ShouldReleaseTheShareLockOnceCollected()
 	{
