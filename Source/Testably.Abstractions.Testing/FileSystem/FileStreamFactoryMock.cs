@@ -154,11 +154,11 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 				handle, access);
 
 		SafeFileHandleMock safeFileHandleMock = MapSafeFileHandle(handle);
-		return New(
+		return CloseHandleOnDispose(handle, New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
 			access,
-			safeFileHandleMock.Share);
+			safeFileHandleMock.Share));
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int)" />
@@ -172,12 +172,12 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 				handle, access, bufferSize);
 
 		SafeFileHandleMock safeFileHandleMock = MapSafeFileHandle(handle);
-		return New(
+		return CloseHandleOnDispose(handle, New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
 			access,
 			safeFileHandleMock.Share,
-			bufferSize);
+			bufferSize));
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int, bool)" />
@@ -192,13 +192,13 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 				handle, access, bufferSize, isAsync);
 
 		SafeFileHandleMock safeFileHandleMock = MapSafeFileHandle(handle);
-		return New(
+		return CloseHandleOnDispose(handle, New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
 			access,
 			safeFileHandleMock.Share,
 			bufferSize,
-			isAsync);
+			isAsync));
 	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
@@ -231,6 +231,21 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	}
 
 	#endregion
+
+	/// <summary>
+	///     Only a handle the <see cref="MockFileSystem" /> created is closed with the stream: a handle from the
+	///     <see cref="ISafeFileHandleStrategy" /> may wrap an operating system handle that the caller still uses.
+	/// </summary>
+	private FileSystemStream CloseHandleOnDispose(SafeFileHandle handle, FileSystemStream stream)
+	{
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+		if (_fileSystem.SafeFileHandleRegistry.IsRegistered(handle))
+		{
+			return ((FileStreamMock)stream).OwnHandle(handle);
+		}
+#endif
+		return stream;
+	}
 
 	private SafeFileHandleMock MapSafeFileHandle(SafeFileHandle handle)
 #if FEATURE_FILESYSTEM_RANDOMACCESS
