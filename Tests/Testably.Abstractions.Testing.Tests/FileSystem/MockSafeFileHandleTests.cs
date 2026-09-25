@@ -293,6 +293,41 @@ public class MockSafeFileHandleTests
 	}
 
 	[Test]
+	public async Task Write_AfterTheFileIsDeleted_ShouldNotChangeTheUsedBytesOfTheDrive()
+	{
+		MockFileSystem fileSystem = new();
+		IDriveInfo drive = fileSystem.GetDefaultDrive();
+		long freeSpace = drive.AvailableFreeSpace;
+		fileSystem.File.WriteAllBytes("f.txt", [1, 2, 3,]);
+
+		using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+		fileSystem.File.Delete("f.txt");
+		fileSystem.RandomAccess.Write(handle, new byte[] { 9, 9, 9, 9, 9, }, 0);
+
+		await That(drive).HasAvailableFreeSpace(freeSpace)
+			.Because("the deleted file no longer counts towards the drive, so writes to it must not either");
+	}
+
+	[Test]
+	public async Task Write_AfterTheFileIsDeleted_ShouldNotNotifyAboutItsFormerPath()
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllBytes("f.txt", [1, 2, 3,]);
+
+		using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+		fileSystem.File.Delete("f.txt");
+		bool isNotified = false;
+		fileSystem.Notify.OnEvent(_ => isNotified = true);
+
+		fileSystem.RandomAccess.Write(handle, new byte[] { 9, }, 0);
+
+		await That(isNotified).IsFalse()
+			.Because("the path no longer names the file the handle writes to");
+	}
+
+	[Test]
 	public async Task Write_WhenAChangingInterceptionThrows_ShouldLeaveTheContentUnchanged()
 	{
 		MockFileSystem fileSystem = new();
