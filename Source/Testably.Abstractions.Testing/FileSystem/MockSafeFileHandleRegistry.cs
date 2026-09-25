@@ -123,7 +123,8 @@ internal sealed class MockSafeFileHandleRegistry
 	/// </summary>
 	/// <remarks>
 	///     A closed handle is released here, together with its share lock and any deletion it requested, and nothing
-	///     here throws: a real file system also ignores a delete-on-close that fails.
+	///     here throws: a real file system also ignores a delete-on-close that fails, so one that an interception vetoes
+	///     is ignored as well instead of surfacing from an unrelated call.
 	/// </remarks>
 	internal void ReleaseClosedHandles()
 	{
@@ -268,13 +269,9 @@ internal sealed class MockSafeFileHandleRegistry
 		{
 			_fileSystem.Storage.DeleteContainer(location, FileSystemTypes.File);
 		}
-		catch (IOException)
+		catch (Exception)
 		{
-			// The name is gone, or its directory is.
-		}
-		catch (UnauthorizedAccessException)
-		{
-			// A directory now has the name.
+			// The name or its directory is gone, a directory now has the name, or an interception vetoed the deletion.
 		}
 	}
 
