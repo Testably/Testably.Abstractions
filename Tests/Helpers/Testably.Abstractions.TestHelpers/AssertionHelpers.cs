@@ -226,9 +226,8 @@ public static class AssertionHelpers
 					return value;
 				}
 
-				return string.Concat(
-					indentFirstLine ? indentation : "",
-					value.Replace("\n", $"\n{indentation}"));
+				return (indentFirstLine ? indentation : "") +
+					value.Replace("\n", $"\n{indentation}");
 			}
 
 			static string PrependAOrAn(string value)
