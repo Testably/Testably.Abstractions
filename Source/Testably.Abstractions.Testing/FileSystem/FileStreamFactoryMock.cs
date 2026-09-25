@@ -153,8 +153,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			.FileStream.RegisterMethod(nameof(New),
 				handle, access);
 
-		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
+		SafeFileHandleMock safeFileHandleMock = MapSafeFileHandle(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -172,8 +171,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			.FileStream.RegisterMethod(nameof(New),
 				handle, access, bufferSize);
 
-		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
+		SafeFileHandleMock safeFileHandleMock = MapSafeFileHandle(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -193,8 +191,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			.FileStream.RegisterMethod(nameof(New),
 				handle, access, bufferSize, isAsync);
 
-		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
+		SafeFileHandleMock safeFileHandleMock = MapSafeFileHandle(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -234,4 +231,11 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	}
 
 	#endregion
+
+	private SafeFileHandleMock MapSafeFileHandle(SafeFileHandle handle)
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+		=> _fileSystem.SafeFileHandleRegistry.Map(handle);
+#else
+		=> _fileSystem.SafeFileHandleStrategy.MapSafeFileHandle(handle);
+#endif
 }

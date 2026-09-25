@@ -5,11 +5,38 @@ title: SafeFileHandle
 
 # SafeFileHandle
 
-`SafeFileHandle` is a wrapper around an OS handle to a real file, and overloads like `File.GetLastAccessTime(SafeFileHandle)` route through it. Because the mock has no kernel handle, you have to tell it how to translate handles into mock paths.
+`SafeFileHandle` is a wrapper around an OS handle to a real file, and overloads like `File.GetLastAccessTime(SafeFileHandle)` route through it.
 
-`MockFileSystem.WithSafeFileHandleStrategy(ISafeFileHandleStrategy)` registers the translation. The strategy maps a `SafeFileHandle` to a `SafeFileHandleMock` that points at a location inside the mock.
+## Handles from the abstraction
 
-The default strategy (`NullSafeFileHandleStrategy`) is registered automatically and throws `NotSupportedException` for any handle - install a custom strategy as soon as your code under test reaches for `SafeFileHandle`.
+`IFile.OpenHandle` returns a handle that the file system it came from understands, so nothing has to be registered:
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.File.WriteAllText("file.txt", "some content");
+
+using SafeFileHandle handle = fileSystem.File.OpenHandle("file.txt");
+
+await Expect.That(fileSystem.File.GetLastAccessTime(handle))
+    .IsEqualTo(fileSystem.File.GetLastAccessTime("file.txt"));
+await Expect.That(fileSystem.RandomAccess.GetLength(handle)).IsEqualTo(12);
+```
+
+The handle refers to the file it was opened on rather than to its name, so reads and writes keep working after the file is renamed, and do not start addressing whatever is later created under the original path.
+
+It also carries the file share and the `FileOptions` it was opened with. `FileOptions.DeleteOnClose` follows the platform: on Unix the name that was opened is unlinked as soon as that handle closes, whatever else still holds the file open, so a file renamed in the meantime survives and a replacement under the old name does not; on Windows the file is removed once nothing holds it open any more, streams included.
+
+Because `SafeFileHandle` is sealed, the mock cannot be notified when one is closed, so released share locks and `DeleteOnClose` take effect the next time the file system is asked whether a file exists or may be opened, rather than at the moment of disposal. A handle that is dropped without being disposed releases its share lock once it is garbage collected, as a real handle does when it is finalized.
+
+A handle the `MockFileSystem` created is not a real OS handle, so passing it to `System.IO.RandomAccess` or to another process fails. Use `IFileSystem.RandomAccess` and the `IFile` overloads instead, which is the point of the abstraction.
+
+## Handles from elsewhere
+
+When a handle comes from somewhere the mock knows nothing about - platform invocation, or a library that hands you one - you still have to tell it which file that handle stands for.
+
+`MockFileSystem.WithSafeFileHandleStrategy(ISafeFileHandleStrategy)` registers the translation. The strategy maps a `SafeFileHandle` to a `SafeFileHandleMock` that points at a location inside the mock, and is consulted for any handle the mock did not create itself.
+
+The default strategy (`NullSafeFileHandleStrategy`) is registered automatically and throws `NotSupportedException` for any handle - install a custom strategy as soon as your code under test reaches for a handle from outside.
 
 ## A complete reference implementation
 
@@ -78,8 +105,8 @@ realFileSystem.File.WriteAllText("real", "some content");
 DateTime expected = new DateTime(2026, 1, 1);
 realFileSystem.File.SetLastAccessTime("real", expected);
 
-// Open a SafeFileHandle on the real file via a small P/Invoke helper
-SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle("real");
+// Open a SafeFileHandle on the real file
+SafeFileHandle handle = realFileSystem.File.OpenHandle("real");
 
 // Register the mapping
 strategy.AddMapping(handle, "real", new SafeFileHandleMock("mock"));
@@ -92,4 +119,4 @@ await Expect.That(mockFileSystem.File.GetLastAccessTime(handle)).IsEqualTo(expec
 await Expect.That(mockFileSystem.File.GetLastAccessTime("mock")).IsEqualTo(expected);
 ```
 
-`UnmanagedFileLoader` is a small P/Invoke helper that calls the Win32 `CreateFile` API to obtain a `SafeFileHandle` for an existing path.
+Here the handle belongs to the *real* file system, so the mock cannot resolve it on its own and the strategy supplies the mapping. A handle from `mockFileSystem.File.OpenHandle` needs none of this.

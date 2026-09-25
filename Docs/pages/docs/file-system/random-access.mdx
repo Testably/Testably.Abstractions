@@ -1,0 +1,69 @@
+---
+sidebar_position: 12
+title: RandomAccess
+---
+
+# RandomAccess
+
+`IFileSystem.RandomAccess` abstracts the static methods on `System.IO.RandomAccess`. It reads and writes a file through a `SafeFileHandle` at an explicit offset, without a stream in between.
+
+Every method is positionless: the offset is a parameter, not state carried on the handle. Nothing advances, so two reads at the same offset return the same bytes and concurrent writes at different offsets do not interfere.
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.File.WriteAllBytes("data.bin", [1, 2, 3, 4]);
+
+using SafeFileHandle handle = fileSystem.File.OpenHandle("data.bin",
+    FileMode.Open, FileAccess.ReadWrite);
+
+byte[] buffer = new byte[2];
+fileSystem.RandomAccess.Read(handle, buffer, fileOffset: 1);   // buffer is [2, 3]
+
+fileSystem.RandomAccess.Write(handle, new byte[] { 9 }, fileOffset: 0);
+await Expect.That(fileSystem.File.ReadAllBytes("data.bin"))
+    .IsEqualTo(new byte[] { 9, 2, 3, 4 });
+```
+
+Get the handle from [`IFile.OpenHandle`](./safe-file-handles), so the file system it came from can resolve it.
+
+## What is available
+
+| Member | Available from |
+|---|---|
+| `GetLength` | .NET 6 |
+| `Read`, `ReadAsync` | .NET 6 |
+| `Write`, `WriteAsync` | .NET 6 |
+| `SetLength` | .NET 8 |
+| `FlushToDisk` | .NET 8 |
+
+`Read` and `Write` each have a scatter/gather overload taking an `IReadOnlyList<Memory<byte>>`, which fills or consumes the buffers in order as though they were one.
+
+## Behaviour worth knowing
+
+- A read whose offset is at or past the end of the file returns `0`; a read that runs off the end returns a short count rather than throwing.
+- A write past the end grows the file and zero-fills the gap.
+- `SetLength` truncates, or grows with zeroes.
+- `GetLength` is metadata and works on a write-only handle. Reading a write-only handle, or writing a read-only one, throws `UnauthorizedAccessException`.
+- On a handle opened with `FileMode.Append` the offset is still honoured — `RandomAccess` does not append for you.
+- Operations on a disposed handle throw `ObjectDisposedException`.
+
+## `FlushToDisk` against the mock
+
+`FlushToDisk` asks the operating system to make prior writes durable. The `MockFileSystem` keeps its files in memory and has no write-back cache, so there is nothing to flush — but the call is still resolved against the handle and recorded, so a test can assert that a durability barrier was requested:
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.File.WriteAllText("log", null);
+
+using (SafeFileHandle handle = fileSystem.File.OpenHandle("log",
+    FileMode.Open, FileAccess.Write))
+{
+    fileSystem.RandomAccess.Write(handle, "entry"u8.ToArray(), 0);
+    fileSystem.RandomAccess.FlushToDisk(handle);
+}
+
+await Expect.That(fileSystem.Statistics.RandomAccess.Methods)
+    .Contains(m => m.Name == nameof(IRandomAccess.FlushToDisk));
+```
+
+That is something the real file system cannot tell you, and it is the reason to reach for the abstraction rather than the static class: code that needs a durability barrier can be tested for asking.

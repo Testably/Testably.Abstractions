@@ -196,6 +196,9 @@ internal sealed class InMemoryStorage : IStorage
 		EnumerationOptions? enumerationOptions = null)
 	{
 		ValidateExpression(searchPattern);
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+		_fileSystem.SafeFileHandleRegistry.ReleaseClosedHandles();
+#endif
 		if (!_containers.TryGetValue(location, out IStorageContainer? parentContainer))
 		{
 			throw ExceptionFactory.DirectoryNotFound(location.FullPath);
@@ -318,6 +321,9 @@ internal sealed class InMemoryStorage : IStorage
 			return null;
 		}
 
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+		_fileSystem.SafeFileHandleRegistry.ReleaseClosedHandles();
+#endif
 		if (_containers.TryGetValue(location, out IStorageContainer? container))
 		{
 			return container;
@@ -684,6 +690,9 @@ internal sealed class InMemoryStorage : IStorage
 		bool ignoreFileShare,
 		[NotNullWhen(true)] out FileHandle? fileHandle)
 	{
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+		_fileSystem.SafeFileHandleRegistry.ReleaseClosedHandles();
+#endif
 		if (CanGetAccess(location, access, share, deleteAccess, ignoreFileShare))
 		{
 			Guid guid = Guid.NewGuid();
