@@ -40,6 +40,24 @@ public class SafeFileHandleTests(FileSystemTestData testData) : FileSystemTestBa
 
 	[Test]
 	[AutoArguments]
+	public async Task SetAttributes_WithReadOnlyHandle_ShouldThrowUnauthorizedAccessExceptionOnWindows(
+		string path, string contents)
+	{
+		Skip.IfNot(Test.RunsOnWindows,
+			"Windows requires FILE_WRITE_ATTRIBUTES, which a read-only handle lacks");
+
+		FileSystem.File.WriteAllText(path, contents);
+		FileAttributes expectedAttributes = FileSystem.File.GetAttributes(path);
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path);
+
+		void Act() => FileSystem.File.SetAttributes(handle, FileAttributes.ReadOnly);
+
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.File.GetAttributes(path)).IsEqualTo(expectedAttributes);
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task GetCreationTime_ShouldMatchThePathOverload(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -211,6 +229,37 @@ public class SafeFileHandleTests(FileSystemTestData testData) : FileSystemTestBa
 			FileSystem.File.SetLastWriteTimeUtc(handle, lastWriteTime);
 		}
 
+		await That(FileSystem.File.GetLastWriteTimeUtc(path)).IsEqualTo(lastWriteTime);
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task SetTimes_WithReadOnlyHandle_ShouldThrowUnauthorizedAccessExceptionOnWindows(
+		string path, DateTime time)
+	{
+		Skip.IfNot(Test.RunsOnWindows,
+			"Windows requires FILE_WRITE_ATTRIBUTES, which a read-only handle lacks");
+
+		FileSystem.File.WriteAllText(path, null);
+		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
+		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
+		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path);
+
+		await That(() => FileSystem.File.SetCreationTime(handle, time))
+			.Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(() => FileSystem.File.SetCreationTimeUtc(handle, time))
+			.Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(() => FileSystem.File.SetLastAccessTime(handle, time))
+			.Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(() => FileSystem.File.SetLastAccessTimeUtc(handle, time))
+			.Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(() => FileSystem.File.SetLastWriteTime(handle, time))
+			.Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(() => FileSystem.File.SetLastWriteTimeUtc(handle, time))
+			.Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.File.GetCreationTimeUtc(path)).IsEqualTo(creationTime);
+		await That(FileSystem.File.GetLastAccessTimeUtc(path)).IsEqualTo(lastAccessTime);
 		await That(FileSystem.File.GetLastWriteTimeUtc(path)).IsEqualTo(lastWriteTime);
 	}
 
