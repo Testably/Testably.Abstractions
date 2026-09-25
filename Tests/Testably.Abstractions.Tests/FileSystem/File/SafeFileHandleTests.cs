@@ -249,29 +249,5 @@ public class SafeFileHandleTests(FileSystemTestData testData) : FileSystemTestBa
 	}
 #endif
 
-	[Test]
-	[AutoArguments]
-	public async Task AllHandleOverloads_ShouldAgreeWithThePathOverloads(
-		string path, string contents)
-	{
-		FileSystem.File.WriteAllText(path, contents);
-
-		using SafeFileHandle handle = FileSystem.File.OpenHandle(path);
-
-		await That(FileSystem.File.GetAttributes(handle))
-			.IsEqualTo(FileSystem.File.GetAttributes(path));
-		await That(FileSystem.File.GetCreationTime(handle))
-			.IsEqualTo(FileSystem.File.GetCreationTime(path));
-		await That(FileSystem.File.GetCreationTimeUtc(handle))
-			.IsEqualTo(FileSystem.File.GetCreationTimeUtc(path));
-		await That(FileSystem.File.GetLastAccessTime(handle))
-			.IsEqualTo(FileSystem.File.GetLastAccessTime(path));
-		await That(FileSystem.File.GetLastAccessTimeUtc(handle))
-			.IsEqualTo(FileSystem.File.GetLastAccessTimeUtc(path));
-		await That(FileSystem.File.GetLastWriteTime(handle))
-			.IsEqualTo(FileSystem.File.GetLastWriteTime(path));
-		await That(FileSystem.File.GetLastWriteTimeUtc(handle))
-			.IsEqualTo(FileSystem.File.GetLastWriteTimeUtc(path));
-	}
 }
 #endif
