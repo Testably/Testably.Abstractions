@@ -53,6 +53,72 @@ public class HandleIdentityTests(FileSystemTestData testData) : FileSystemTestBa
 
 	[Test]
 	[AutoArguments]
+	public async Task Handle_ShouldKeepTheContent_WhenTheFileIsDeleted(string path)
+	{
+		FileSystem.File.WriteAllBytes(path, [1, 2, 3, 4,]);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+
+		FileSystem.File.Delete(path);
+
+		byte[] buffer = new byte[4];
+		int read = FileSystem.RandomAccess.Read(handle, buffer, 0);
+
+		await That(FileSystem.RandomAccess.GetLength(handle)).IsEqualTo(4);
+		await That(read).IsEqualTo(4);
+		await That(buffer).IsEqualTo(new byte[] { 1, 2, 3, 4, })
+			.Because("deleting removes the name, not the file an open handle refers to");
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task Handle_ShouldKeepWorking_WhenTheFileIsDeletedAndWrittenTo(string path)
+	{
+		FileSystem.File.WriteAllBytes(path, [1, 2, 3, 4,]);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+
+		FileSystem.File.Delete(path);
+		FileSystem.RandomAccess.Write(handle, new byte[] { 5, 6, }, 3);
+
+		byte[] buffer = new byte[5];
+		int read = FileSystem.RandomAccess.Read(handle, buffer, 0);
+
+		await That(read).IsEqualTo(5);
+		await That(buffer).IsEqualTo(new byte[] { 1, 2, 3, 5, 6, });
+		await That(FileSystem.File.Exists(path)).IsFalse()
+			.Because("writing through the handle does not bring the name back");
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task Handle_ShouldNotAffectANewFile_WhenTheFileIsDeletedAndRecreated(
+		string path)
+	{
+		Skip.If(Test.RunsOnWindows,
+			"the mock keeps the share lock of a deleted file on its path, so it refuses to recreate the file while a handle is open");
+
+		FileSystem.File.WriteAllBytes(path, [1, 2, 3, 4,]);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+
+		FileSystem.File.Delete(path);
+		FileSystem.File.WriteAllBytes(path, [9, 9,]);
+		FileSystem.RandomAccess.Write(handle, new byte[] { 5, }, 0);
+
+		byte[] buffer = new byte[4];
+		FileSystem.RandomAccess.Read(handle, buffer, 0);
+
+		await That(buffer).IsEqualTo(new byte[] { 5, 2, 3, 4, });
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(new byte[] { 9, 9, })
+			.Because("the handle refers to the deleted file, not to the new one at its path");
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task DeleteOnClose_OnUnix_ShouldDeleteAsSoonAsThatHandleCloses(string path)
 	{
 		Skip.If(Test.RunsOnWindows, "Windows deletes once the last handle closes");
