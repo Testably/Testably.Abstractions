@@ -119,6 +119,12 @@ internal sealed class RandomAccessMock : IRandomAccess
 		}
 
 		IStorageContainer container = GetContainerForResize(handle);
+		if (length > Array.MaxLength)
+		{
+			throw ExceptionFactory.FileTooLarge(
+				_fileSystem.SafeFileHandleRegistry.Map(handle).Path);
+		}
+
 		lock (Gate(container))
 		{
 			byte[] bytes = container.GetBytes();
