@@ -82,6 +82,46 @@ public class RandomAccessStatisticsTests
 
 	[Test]
 	public async Task
+		Method_ReadAsync_SafeFileHandle_IReadOnlyListMemoryByte_Int64_CancellationToken_WhenCancelled_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		using SafeFileHandle handle = OpenHandle(sut);
+		IReadOnlyList<Memory<byte>> buffers = [new byte[1],];
+		long fileOffset = 0;
+		using CancellationTokenSource cts = new();
+		cts.Cancel();
+		CancellationToken cancellationToken = cts.Token;
+
+		async Task Act() => _ = await sut.RandomAccess.ReadAsync(handle, buffers, fileOffset,
+			cancellationToken);
+
+		await That(Act).Throws<TaskCanceledException>();
+		await That(sut.Statistics.RandomAccess).OnlyContainsMethodCall(
+			nameof(IRandomAccess.ReadAsync), handle, buffers, fileOffset, cancellationToken);
+	}
+
+	[Test]
+	public async Task
+		Method_ReadAsync_SafeFileHandle_MemoryByte_Int64_CancellationToken_WhenCancelled_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		using SafeFileHandle handle = OpenHandle(sut);
+		Memory<byte> buffer = new byte[1];
+		long fileOffset = 0;
+		using CancellationTokenSource cts = new();
+		cts.Cancel();
+		CancellationToken cancellationToken = cts.Token;
+
+		async Task Act() => _ = await sut.RandomAccess.ReadAsync(handle, buffer, fileOffset,
+			cancellationToken);
+
+		await That(Act).Throws<TaskCanceledException>();
+		await That(sut.Statistics.RandomAccess).OnlyContainsMethodCall(
+			nameof(IRandomAccess.ReadAsync), handle, buffer, fileOffset, cancellationToken);
+	}
+
+	[Test]
+	public async Task
 		Method_ReadAsync_SafeFileHandle_MemoryByte_Int64_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -154,6 +194,46 @@ public class RandomAccessStatisticsTests
 
 		await That(sut.Statistics.RandomAccess).OnlyContainsMethodCall(
 			nameof(IRandomAccess.WriteAsync), handle, buffers, fileOffset, cancellationToken);
+	}
+
+	[Test]
+	public async Task
+		Method_WriteAsync_SafeFileHandle_IReadOnlyListReadOnlyMemoryByte_Int64_CancellationToken_WhenCancelled_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		using SafeFileHandle handle = OpenHandle(sut);
+		IReadOnlyList<ReadOnlyMemory<byte>> buffers = [new byte[] { 1, },];
+		long fileOffset = 0;
+		using CancellationTokenSource cts = new();
+		cts.Cancel();
+		CancellationToken cancellationToken = cts.Token;
+
+		async Task Act() => await sut.RandomAccess.WriteAsync(handle, buffers, fileOffset,
+			cancellationToken);
+
+		await That(Act).Throws<TaskCanceledException>();
+		await That(sut.Statistics.RandomAccess).OnlyContainsMethodCall(
+			nameof(IRandomAccess.WriteAsync), handle, buffers, fileOffset, cancellationToken);
+	}
+
+	[Test]
+	public async Task
+		Method_WriteAsync_SafeFileHandle_ReadOnlyMemoryByte_Int64_CancellationToken_WhenCancelled_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		using SafeFileHandle handle = OpenHandle(sut);
+		ReadOnlyMemory<byte> buffer = new byte[] { 1, };
+		long fileOffset = 0;
+		using CancellationTokenSource cts = new();
+		cts.Cancel();
+		CancellationToken cancellationToken = cts.Token;
+
+		async Task Act() => await sut.RandomAccess.WriteAsync(handle, buffer, fileOffset,
+			cancellationToken);
+
+		await That(Act).Throws<TaskCanceledException>();
+		await That(sut.Statistics.RandomAccess).OnlyContainsMethodCall(
+			nameof(IRandomAccess.WriteAsync), handle, buffer, fileOffset, cancellationToken);
 	}
 
 	[Test]
