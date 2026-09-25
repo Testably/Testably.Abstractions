@@ -8,8 +8,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoFixture"/>
-		<PackageReference Include="Testably.Abstractions" />
-		<PackageReference Include="Testably.Abstractions.Interface" />
+		<PackageReference Include="Testably.Abstractions"/>
+		<PackageReference Include="Testably.Abstractions.Interface"/>
 		<PackageReference Include="Newtonsoft.Json"/>
 	</ItemGroup>
 
