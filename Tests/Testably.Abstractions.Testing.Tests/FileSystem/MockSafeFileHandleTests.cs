@@ -115,6 +115,41 @@ public class MockSafeFileHandleTests
 	}
 
 	[Test]
+	public async Task OpenHandle_WhenUsedAndNeverDisposed_ShouldReleaseTheShareLockOnceCollected()
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("f.txt", "x");
+
+		OpenUseAndDrop(fileSystem, "f.txt");
+		GC.Collect();
+		GC.WaitForPendingFinalizers();
+
+		void Act()
+		{
+			using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+				FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+		}
+
+		await That(Act).DoesNotThrow()
+			.Because("recording the handle in the statistics must not keep it alive");
+	}
+
+	[Test]
+	public async Task Statistics_WhenHandleWasCollected_ShouldStillDescribeTheCall()
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("f.txt", "x");
+
+		OpenUseAndDrop(fileSystem, "f.txt");
+		GC.Collect();
+		GC.WaitForPendingFinalizers();
+
+		await That(fileSystem.Statistics.RandomAccess.Methods[0].ToString())
+			.IsEqualTo($"GetLength({typeof(SafeFileHandle)})")
+			.Because("the description of a handle is kept, even when the handle itself is not");
+	}
+
+	[Test]
 	public async Task Write_AtAnOffsetThatOverflows_ShouldThrowIOException()
 	{
 		MockFileSystem fileSystem = new();
@@ -153,5 +188,10 @@ public class MockSafeFileHandleTests
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private static void OpenAndDrop(MockFileSystem fileSystem, string path)
 		=> _ = fileSystem.File.OpenHandle(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	private static void OpenUseAndDrop(MockFileSystem fileSystem, string path)
+		=> _ = fileSystem.RandomAccess.GetLength(
+			fileSystem.File.OpenHandle(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None));
 }
 #endif
