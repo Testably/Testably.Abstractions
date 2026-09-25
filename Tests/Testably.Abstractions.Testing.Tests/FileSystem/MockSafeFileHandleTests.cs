@@ -95,6 +95,33 @@ public class MockSafeFileHandleTests
 	}
 
 	[Test]
+	[Arguments(FileMode.Create)]
+	[Arguments(FileMode.Truncate)]
+	public async Task OpenHandle_WhenTruncationThrows_ShouldReleaseTheShareLock(FileMode mode)
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("f.txt", "x");
+
+		using (fileSystem.Intercept.Changing(FileSystemTypes.File,
+			       _ => throw new InvalidOperationException("vetoed")))
+		{
+			void OpenVetoed() => fileSystem.File.OpenHandle("f.txt",
+				mode, FileAccess.Write, FileShare.None);
+
+			await That(OpenVetoed).Throws<InvalidOperationException>();
+		}
+
+		void Act()
+		{
+			using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+				FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+		}
+
+		await That(Act).DoesNotThrow()
+			.Because("an open that failed must not keep holding the file");
+	}
+
+	[Test]
 	public async Task OpenHandle_WhenNeverDisposed_ShouldReleaseTheShareLockOnceCollected()
 	{
 		MockFileSystem fileSystem = new();
