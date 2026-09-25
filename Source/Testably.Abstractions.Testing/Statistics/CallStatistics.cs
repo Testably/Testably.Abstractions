@@ -244,7 +244,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 	}
 #endif
 
-#if FEATURE_FILE_SPAN
+#if FEATURE_SPAN
 	/// <summary>
 	///     Registers the method <paramref name="name" /> with <paramref name="parameter1" />, <paramref name="parameter2" /> and <paramref name="parameter3" />.
 	/// </summary>

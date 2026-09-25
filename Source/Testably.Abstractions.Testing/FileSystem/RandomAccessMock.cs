@@ -55,7 +55,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 	public int Read(SafeFileHandle handle, Span<byte> buffer, long fileOffset)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(Read), handle, buffer, fileOffset);
+			.RandomAccess.RegisterMethod<SafeFileHandle, byte, long>(nameof(Read), handle, buffer, fileOffset);
 
 		return ReadInto(handle, buffer, fileOffset);
 	}
@@ -133,7 +133,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 	public void Write(SafeFileHandle handle, ReadOnlySpan<byte> buffer, long fileOffset)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(Write), handle, buffer, fileOffset);
+			.RandomAccess.RegisterMethod<SafeFileHandle, byte, long>(nameof(Write), handle, buffer, fileOffset);
 
 		WriteBytes(handle, buffer.ToArray(), fileOffset);
 	}
