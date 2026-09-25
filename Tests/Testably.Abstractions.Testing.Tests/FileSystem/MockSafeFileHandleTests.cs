@@ -135,6 +135,46 @@ public class MockSafeFileHandleTests
 	}
 
 	[Test]
+	public async Task RandomAccess_WithHandleFromAnotherFileSystem_ShouldNotBeReportedAsClosed()
+	{
+		MockFileSystem fileSystemA = new();
+		MockFileSystem fileSystemB = new();
+		fileSystemA.File.WriteAllText("a.txt", "a");
+		fileSystemB.File.WriteAllText("b.txt", "b");
+		fileSystemB.File.OpenHandle("b.txt").Dispose();
+		fileSystemB.File.WriteAllText("c.txt", "cc");
+		fileSystemB.WithSafeFileHandleStrategy(
+			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock("c.txt")));
+
+		using SafeFileHandle handleA = fileSystemA.File.OpenHandle("a.txt");
+
+		void Act() => fileSystemB.RandomAccess.GetLength(handleA);
+
+		await That(Act).DoesNotThrow()
+			.Because("a live handle from another file system was never closed");
+	}
+
+	[Test]
+	public async Task RandomAccess_WithHandleFromAnotherFileSystem_ShouldUseTheSafeFileHandleStrategy()
+	{
+		MockFileSystem fileSystemA = new();
+		MockFileSystem fileSystemB = new();
+		fileSystemA.File.WriteAllText("a.txt", "a");
+		fileSystemB.File.WriteAllText("b.txt", "b");
+		fileSystemB.File.WriteAllText("c.txt", "cc");
+		fileSystemB.WithSafeFileHandleStrategy(
+			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock("c.txt")));
+
+		using SafeFileHandle handleA = fileSystemA.File.OpenHandle("a.txt");
+		using SafeFileHandle handleB = fileSystemB.File.OpenHandle("b.txt");
+
+		long result = fileSystemB.RandomAccess.GetLength(handleA);
+
+		await That(result).IsEqualTo(2)
+			.Because("a handle from another file system is foreign and must be mapped by the strategy");
+	}
+
+	[Test]
 	public async Task Statistics_WhenHandleWasCollected_ShouldStillDescribeTheCall()
 	{
 		MockFileSystem fileSystem = new();
