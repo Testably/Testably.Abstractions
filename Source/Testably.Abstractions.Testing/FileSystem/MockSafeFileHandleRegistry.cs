@@ -80,7 +80,15 @@ internal sealed class MockSafeFileHandleRegistry
 
 		if (mode is FileMode.Create or FileMode.Truncate)
 		{
-			container.WriteBytes([]);
+			try
+			{
+				container.WriteBytes([]);
+			}
+			catch
+			{
+				accessLock.Dispose();
+				throw;
+			}
 		}
 
 		lock (_lock)
