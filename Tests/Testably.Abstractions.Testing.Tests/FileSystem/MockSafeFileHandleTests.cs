@@ -45,6 +45,68 @@ public class MockSafeFileHandleTests
 	}
 
 	[Test]
+	public async Task DeleteOnClose_OnUnix_WhenADeletingInterceptionThrows_ShouldReleaseOtherClosedHandles()
+	{
+		MockFileSystem fileSystem = new(o => o.SimulatingOperatingSystem(SimulationMode.Linux));
+		fileSystem.File.WriteAllText("/a.txt", "a");
+		fileSystem.File.WriteAllText("/b.txt", "b");
+
+		SafeFileHandle deleteOnClose = fileSystem.File.OpenHandle("/a.txt", FileMode.Open,
+			FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete, FileOptions.DeleteOnClose);
+		SafeFileHandle exclusive = fileSystem.File.OpenHandle("/b.txt", FileMode.Open,
+			FileAccess.ReadWrite, FileShare.None);
+		using (fileSystem.Intercept.Deleting(FileSystemTypes.File,
+			       _ => throw new InvalidOperationException("vetoed")))
+		{
+			deleteOnClose.Dispose();
+			exclusive.Dispose();
+			try
+			{
+				fileSystem.File.Exists("/unrelated.txt");
+			}
+			catch (InvalidOperationException)
+			{
+			}
+		}
+
+		void Act()
+		{
+			using SafeFileHandle handle = fileSystem.File.OpenHandle("/b.txt",
+				FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+		}
+
+		await That(Act).DoesNotThrow()
+			.Because("every closed handle releases its share lock, even if deleting another one fails");
+	}
+
+	[Test]
+	public async Task DeleteOnClose_OnWindows_WhenADeletingInterceptionThrows_ShouldNotThrowFromAnUnrelatedCall()
+	{
+		MockFileSystem fileSystem = new(o => o.SimulatingOperatingSystem(SimulationMode.Windows));
+		fileSystem.File.WriteAllText("f.txt", "x");
+
+		SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite, FileOptions.DeleteOnClose);
+		using (fileSystem.Intercept.Deleting(FileSystemTypes.File,
+			       _ => throw new InvalidOperationException("vetoed")))
+		{
+			handle.Dispose();
+
+			void Act()
+			{
+				fileSystem.File.Exists("unrelated.txt");
+				fileSystem.File.Exists("unrelated.txt");
+			}
+
+			await That(Act).DoesNotThrow()
+				.Because("a vetoed delete-on-close is ignored like a failed one, and not retried on every later call");
+		}
+
+		await That(fileSystem.File.Exists("f.txt")).IsTrue()
+			.Because("the interception vetoed the deletion");
+	}
+
+	[Test]
 	public async Task DeleteOnClose_OnWindows_WhenAStreamStillHoldsTheFile_ShouldDeleteOnTheLastClose()
 	{
 		MockFileSystem fileSystem = new(o => o.SimulatingOperatingSystem(SimulationMode.Windows));
