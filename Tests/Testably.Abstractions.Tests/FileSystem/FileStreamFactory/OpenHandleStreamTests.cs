@@ -71,6 +71,52 @@ public class OpenHandleStreamTests(FileSystemTestData testData) : FileSystemTest
 
 	[Test]
 	[AutoArguments]
+	public async Task New_WithHandle_Dispose_ShouldCloseTheHandle(string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+		FileSystem.FileStream.New(handle, FileAccess.ReadWrite).Dispose();
+
+		await That(handle.IsClosed).IsTrue()
+			.Because("a stream created from a handle owns it");
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task New_WithHandle_Dispose_ShouldReleaseTheFileShareOfTheHandle(string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+		FileSystem.FileStream.New(handle, FileAccess.ReadWrite).Dispose();
+
+		using SafeFileHandle second = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+
+		await That(second.IsInvalid).IsFalse();
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task New_WithHandleOpenedWithDeleteOnClose_Dispose_ShouldDeleteTheFile(
+		string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite,
+			FileOptions.DeleteOnClose);
+		FileSystem.FileStream.New(handle, FileAccess.ReadWrite).Dispose();
+
+		await That(FileSystem.File.Exists(path)).IsFalse()
+			.Because("disposing the stream closes the handle, which deletes the file");
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task New_WithHandle_ShouldReportAccessFromTheGivenFileAccess(
 		string path, string contents)
 	{

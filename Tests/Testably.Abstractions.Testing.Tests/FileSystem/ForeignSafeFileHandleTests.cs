@@ -62,5 +62,17 @@ public class ForeignSafeFileHandleTests
 
 		await That(fileSystem.RandomAccess.GetLength(handle)).IsEqualTo(12L);
 	}
+
+	[Test]
+	public async Task FileStreamFromForeignHandle_Dispose_ShouldLeaveTheHandleOpen()
+	{
+		MockFileSystem fileSystem = Arrange("file.txt");
+		using SafeFileHandle handle = new(new IntPtr(0x1234), ownsHandle: false);
+
+		fileSystem.FileStream.New(handle, FileAccess.Read).Dispose();
+
+		await That(handle.IsClosed).IsFalse()
+			.Because("a foreign handle may wrap an operating system handle that the caller still uses");
+	}
 }
 #endif
