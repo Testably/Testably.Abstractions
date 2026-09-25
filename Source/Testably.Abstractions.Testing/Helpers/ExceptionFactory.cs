@@ -69,6 +69,9 @@ internal static class ExceptionFactory
 #endif
 		};
 
+	internal static ArgumentOutOfRangeException EnumValueOutOfRange(string paramName)
+		=> new(paramName, "Enum value was out of legal range.");
+
 	internal static IOException FileAlreadyExists(string path, int hResult)
 		=> new($"The file '{path}' already exists.", hResult);
 
@@ -102,8 +105,8 @@ internal static class ExceptionFactory
 #endif
 		};
 
-	internal static ArgumentOutOfRangeException NonNegativeNumberRequired(string paramName)
-		=> new(paramName, "Non-negative number required.");
+	internal static IOException FileTooLarge(string path)
+		=> new($"File too large : '{path}'");
 
 	internal static ObjectDisposedException HandleIsClosed()
 		=> new("SafeHandle", "Safe handle has been closed.");
@@ -116,9 +119,6 @@ internal static class ExceptionFactory
 		=> new(
 			$"The internal buffer is greater than the {internalBufferSize} allowed bytes (~ {messages} messages).");
 
-	internal static IOException InvalidArgument(string path)
-		=> new($"Invalid argument : '{path}'");
-
 	internal static ArgumentException InvalidAccessCombination(
 		FileMode mode, FileAccess access)
 		=> new($"Combining FileMode: {mode} with FileAccess: {access} is invalid.",
@@ -128,6 +128,9 @@ internal static class ExceptionFactory
 			HResult = -2147024809,
 #endif
 		};
+
+	internal static IOException InvalidArgument(string path)
+		=> new($"Invalid argument : '{path}'");
 
 	internal static IOException InvalidDirectoryName(string path)
 		=> new($"The directory name is invalid: '{path}'")
@@ -152,6 +155,9 @@ internal static class ExceptionFactory
 
 	internal static IOException NetworkPathNotFound(string path)
 		=> new($"The network path was not found. : '{path}'");
+
+	internal static ArgumentOutOfRangeException NonNegativeNumberRequired(string paramName)
+		=> new(paramName, "Non-negative number required.");
 
 	internal static IOException NotEnoughDiskSpace(string name)
 		=> new($"There is not enough space on the disk: '{name}'");
@@ -236,6 +242,14 @@ internal static class ExceptionFactory
 			HResult = hResult,
 #endif
 		};
+
+	internal static ArgumentException PreallocationRequiresNewFile(FileMode mode)
+		=> new($"Preallocation size can be requested only for new files. Mode was '{mode}'.",
+			nameof(mode));
+
+	internal static ArgumentException PreallocationRequiresWriteAccess(FileAccess access)
+		=> new($"Preallocation size can be requested only for write access. Access was '{access}'.",
+			nameof(access));
 
 	internal static IOException ProcessCannotAccessTheFile(string path, int hResult)
 		=> new(

@@ -55,7 +55,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 	public int Read(SafeFileHandle handle, Span<byte> buffer, long fileOffset)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(Read), handle, fileOffset);
+			.RandomAccess.RegisterMethod(nameof(Read), handle, buffer, fileOffset);
 
 		return ReadInto(handle, buffer, fileOffset);
 	}
@@ -64,7 +64,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 	public long Read(SafeFileHandle handle, IReadOnlyList<Memory<byte>> buffers, long fileOffset)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(Read), handle, fileOffset);
+			.RandomAccess.RegisterMethod(nameof(Read), handle, buffers, fileOffset);
 
 		if (buffers is null)
 		{
@@ -84,7 +84,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 		}
 
 		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(ReadAsync), handle, fileOffset,
+			.RandomAccess.RegisterMethod(nameof(ReadAsync), handle, buffer, fileOffset,
 				cancellationToken);
 
 		return new ValueTask<int>(Read(handle, buffer.Span, fileOffset));
@@ -100,7 +100,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 		}
 
 		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(ReadAsync), handle, fileOffset,
+			.RandomAccess.RegisterMethod(nameof(ReadAsync), handle, buffers, fileOffset,
 				cancellationToken);
 
 		return new ValueTask<long>(Read(handle, buffers, fileOffset));
@@ -115,7 +115,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 
 		if (length < 0)
 		{
-			throw ExceptionFactory.NonNegativeNumberRequired("length");
+			throw ExceptionFactory.NonNegativeNumberRequired(nameof(length));
 		}
 
 		IStorageContainer container = GetContainerForResize(handle);
@@ -133,7 +133,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 	public void Write(SafeFileHandle handle, ReadOnlySpan<byte> buffer, long fileOffset)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(Write), handle, fileOffset);
+			.RandomAccess.RegisterMethod(nameof(Write), handle, buffer, fileOffset);
 
 		WriteBytes(handle, buffer.ToArray(), fileOffset);
 	}
@@ -143,7 +143,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 		long fileOffset)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(Write), handle, fileOffset);
+			.RandomAccess.RegisterMethod(nameof(Write), handle, buffers, fileOffset);
 
 		if (buffers is null)
 		{
@@ -163,7 +163,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 		}
 
 		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(WriteAsync), handle, fileOffset,
+			.RandomAccess.RegisterMethod(nameof(WriteAsync), handle, buffer, fileOffset,
 				cancellationToken);
 
 		Write(handle, buffer.Span, fileOffset);
@@ -181,7 +181,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 		}
 
 		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(WriteAsync), handle, fileOffset,
+			.RandomAccess.RegisterMethod(nameof(WriteAsync), handle, buffers, fileOffset,
 				cancellationToken);
 
 		Write(handle, buffers, fileOffset);
@@ -209,9 +209,10 @@ internal sealed class RandomAccessMock : IRandomAccess
 		return bytes;
 	}
 
+#if FEATURE_RANDOMACCESS_FLUSHTODISK
 	private IStorageContainer GetContainerForResize(SafeFileHandle handle)
 	{
-		(IStorageContainer container, FileAccess access, _) = ResolveEntry(handle);
+		(IStorageContainer container, FileAccess access) = ResolveEntry(handle);
 		if (access.HasFlag(FileAccess.Write))
 		{
 			return container;
@@ -223,25 +224,20 @@ internal sealed class RandomAccessMock : IRandomAccess
 			: ExceptionFactory.InvalidArgument(
 				_fileSystem.SafeFileHandleRegistry.Map(handle).Path);
 	}
+#endif
 
 	private IStorageContainer GetContainer(SafeFileHandle handle, FileAccess? required)
-		=> Resolve(handle, required).Container;
-
-	private (IStorageContainer Container, FileMode Mode) Resolve(
-		SafeFileHandle handle, FileAccess? required)
 	{
-		(IStorageContainer container, FileAccess access, FileMode mode) = ResolveEntry(handle);
-
+		(IStorageContainer container, FileAccess access) = ResolveEntry(handle);
 		if (required is { } requiredAccess && !access.HasFlag(requiredAccess))
 		{
 			throw ExceptionFactory.AccessToPathDenied();
 		}
 
-		return (container, mode);
+		return container;
 	}
 
-	private (IStorageContainer Container, FileAccess Access, FileMode Mode) ResolveEntry(
-		SafeFileHandle handle)
+	private (IStorageContainer Container, FileAccess Access) ResolveEntry(SafeFileHandle handle)
 	{
 		if (handle is null)
 		{
@@ -260,7 +256,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 	{
 		if (fileOffset < 0)
 		{
-			throw ExceptionFactory.NonNegativeNumberRequired("fileOffset");
+			throw ExceptionFactory.NonNegativeNumberRequired(nameof(fileOffset));
 		}
 
 		IStorageContainer container = GetContainer(handle, FileAccess.Read);
@@ -283,7 +279,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 	{
 		if (fileOffset < 0)
 		{
-			throw ExceptionFactory.NonNegativeNumberRequired("fileOffset");
+			throw ExceptionFactory.NonNegativeNumberRequired(nameof(fileOffset));
 		}
 
 		IStorageContainer container = GetContainer(handle, FileAccess.Read);
@@ -312,35 +308,32 @@ internal sealed class RandomAccessMock : IRandomAccess
 	{
 		if (fileOffset < 0)
 		{
-			throw ExceptionFactory.NonNegativeNumberRequired("fileOffset");
+			throw ExceptionFactory.NonNegativeNumberRequired(nameof(fileOffset));
 		}
 
-		(IStorageContainer container, FileMode mode) = Resolve(handle, FileAccess.Write);
+		IStorageContainer container = GetContainer(handle, FileAccess.Write);
 		if (buffer.Length == 0)
 		{
 			return;
+		}
+
+		// The content is a single array, so an offset beyond its maximum length cannot be written, just like one
+		// beyond the maximum file size of a real file system.
+		if (fileOffset > Array.MaxLength - buffer.Length)
+		{
+			throw ExceptionFactory.FileTooLarge(
+				_fileSystem.SafeFileHandleRegistry.Map(handle).Path);
 		}
 
 		// `RandomAccess` permits concurrent writes at distinct offsets, which would lose each other if two of them
 		// started from the same snapshot.
 		lock (Gate(container))
 		{
-			byte[] bytes = container.GetBytes();
-			long required = fileOffset + buffer.Length;
-			if (required > bytes.Length)
-			{
-				byte[] grown = new byte[required];
-				Array.Copy(bytes, grown, bytes.Length);
-				bytes = grown;
-			}
-
-			Array.Copy(buffer, 0, bytes, fileOffset, buffer.Length);
-			container.WriteBytes(bytes);
+			container.WriteRange(buffer, fileOffset);
 		}
 	}
 
 	private object Gate(IStorageContainer container)
 		=> _gates.GetOrCreateValue(container);
-
 }
 #endif

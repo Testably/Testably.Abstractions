@@ -113,13 +113,6 @@ internal interface IStorage
 	IStorageLocation? GetLocation(string? path, string? friendlyName = null);
 
 	/// <summary>
-	///     Returns the location that <paramref name="container" /> is currently registered under, or
-	///     <see langword="null" /> if it is no longer registered. A container survives a rename, so anything holding
-	///     on to one cannot rely on the location it was opened at.
-	/// </summary>
-	IStorageLocation? GetLocation(IStorageContainer container);
-
-	/// <summary>
 	///     Returns the drives that are present.
 	/// </summary>
 	[return: NotNullIfNotNull("driveName")]

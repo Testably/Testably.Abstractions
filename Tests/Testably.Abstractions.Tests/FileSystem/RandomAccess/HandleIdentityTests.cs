@@ -73,10 +73,35 @@ public class HandleIdentityTests(FileSystemTestData testData) : FileSystemTestBa
 
 	[Test]
 	[AutoArguments]
+	public async Task DeleteOnClose_OnWindows_ShouldDeleteOnlyWhenTheLastHandleIsClosed(string path)
+	{
+		Skip.IfNot(Test.RunsOnWindows, "Unix unlinks the name as soon as that handle closes");
+
+		FileSystem.File.WriteAllText(path, null);
+
+		SafeFileHandle first = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete,
+			FileOptions.DeleteOnClose);
+		SafeFileHandle second = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+
+		first.Dispose();
+
+		await That(FileSystem.File.Exists(path)).IsTrue()
+			.Because("a second handle is still open on the file");
+
+		second.Dispose();
+
+		await That(FileSystem.File.Exists(path)).IsFalse();
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task DeleteOnClose_OnUnix_ShouldNotFollowTheFile_WhenItIsRenamed(
 		string path, string other)
 	{
-		Skip.If(Test.RunsOnWindows, "Windows follows the file across a rename");
+		Skip.If(Test.RunsOnWindows,
+			"moving a file that a handle holds open needs `ignoreFileShare`, which is inert on Windows: see #1086");
 
 		FileSystem.File.WriteAllText(path, null);
 
@@ -96,7 +121,8 @@ public class HandleIdentityTests(FileSystemTestData testData) : FileSystemTestBa
 	public async Task DeleteOnClose_OnUnix_ShouldDeleteAReplacementAtTheOldPath(
 		string path, string other)
 	{
-		Skip.If(Test.RunsOnWindows, "Windows follows the file across a rename");
+		Skip.If(Test.RunsOnWindows,
+			"moving a file that a handle holds open needs `ignoreFileShare`, which is inert on Windows: see #1086");
 
 		FileSystem.File.WriteAllText(path, null);
 

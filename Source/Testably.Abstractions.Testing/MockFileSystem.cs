@@ -99,17 +99,7 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     The underlying storage of directories and files.
 	/// </summary>
-	internal IStorage Storage
-	{
-		get
-		{
-#if FEATURE_FILESYSTEM_RANDOMACCESS
-			// Sweeping here means every file system operation observes handles the caller has since closed.
-			SafeFileHandleRegistry.ReleaseClosedHandles();
-#endif
-			return _storage;
-		}
-	}
+	internal IStorage Storage => _storage;
 
 	/// <summary>
 	///     The registered containers in the in-Memory <see cref="Storage" />.
@@ -164,7 +154,6 @@ public sealed class MockFileSystem : IFileSystem
 		_pathMock = new PathMock(this);
 		_storage = new InMemoryStorage(this);
 #if FEATURE_FILESYSTEM_RANDOMACCESS
-		// Created before anything can reach `Storage`, which sweeps it.
 		SafeFileHandleRegistry = new MockSafeFileHandleRegistry(this);
 #endif
 		ChangeHandler = new ChangeHandler(this, initialization.RecordNotificationHistory);

@@ -24,9 +24,9 @@ await Expect.That(fileSystem.RandomAccess.GetLength(handle)).IsEqualTo(12);
 
 The handle refers to the file it was opened on rather than to its name, so reads and writes keep working after the file is renamed, and do not start addressing whatever is later created under the original path.
 
-It also carries the file share and the `FileOptions` it was opened with. `FileOptions.DeleteOnClose` follows the platform: on Unix the name that was opened is unlinked as soon as that handle closes, whatever else still holds the file open, so a file renamed in the meantime survives and a replacement under the old name does not; on Windows the file is removed once the last handle closes, and the deletion follows the file across a rename.
+It also carries the file share and the `FileOptions` it was opened with. `FileOptions.DeleteOnClose` follows the platform: on Unix the name that was opened is unlinked as soon as that handle closes, whatever else still holds the file open, so a file renamed in the meantime survives and a replacement under the old name does not; on Windows the file is removed once nothing holds it open any more, streams included.
 
-Because `SafeFileHandle` is sealed, the mock cannot be notified when one is closed, so released share locks and `DeleteOnClose` take effect on the next file system operation rather than at the moment of disposal.
+Because `SafeFileHandle` is sealed, the mock cannot be notified when one is closed, so released share locks and `DeleteOnClose` take effect the next time the file system is asked whether a file exists or may be opened, rather than at the moment of disposal. A handle that is dropped without being disposed releases its share lock once it is garbage collected, as a real handle does when it is finalized.
 
 A handle the `MockFileSystem` created is not a real OS handle, so passing it to `System.IO.RandomAccess` or to another process fails. Use `IFileSystem.RandomAccess` and the `IFile` overloads instead, which is the point of the abstraction.
 

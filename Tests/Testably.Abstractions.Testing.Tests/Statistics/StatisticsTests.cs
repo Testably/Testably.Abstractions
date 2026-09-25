@@ -54,6 +54,10 @@ public sealed partial class StatisticsTests
 		typeof(IFileVersionInfo), typeof(FileVersionInfoStatisticsTests))]
 	[Arguments(nameof(MockFileSystem.Path), false,
 		typeof(IPath), typeof(FileSystem.PathStatisticsTests))]
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	[Arguments(nameof(MockFileSystem.RandomAccess), false,
+		typeof(IRandomAccess), typeof(RandomAccessStatisticsTests))]
+#endif
 	public async Task ShouldHaveTestedAllFileSystemMethods(string className, bool requireInstance,
 		Type mockType, Type testType)
 	{
