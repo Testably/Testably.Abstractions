@@ -57,11 +57,12 @@ internal interface IStorageContainer : IFileSystemEntity, ITimeSystemEntity
 	void AppendBytes(byte[] bytes);
 
 	/// <summary>
-	///     Clears the content of the <see cref="IFileInfo" />.
+	///     Marks the container as removed from the storage and releases its content from the drive.
 	///     <para />
-	///     This is used to delete the file.
+	///     Handles and streams that are still open keep reading and writing the content, as on a real file system,
+	///     but their writes no longer affect the drive or raise notifications for the path it had.
 	/// </summary>
-	void ClearBytes();
+	void Unlink();
 
 	/// <summary>
 	///     Decrypts the file content and removes the <see cref="FileAttributes.Encrypted" /> attribute.
