@@ -36,8 +36,8 @@ internal sealed class RandomAccessMock : IRandomAccess
 			.RandomAccess.RegisterMethod(nameof(FlushToDisk), handle);
 
 		// Nothing to flush without a write-back cache, but the handle is still resolved and the call counted, so a
-		// test can assert that a durability barrier was requested.
-		_ = GetContainer(handle, FileAccess.Write);
+		// test can assert that a durability barrier was requested. The runtime accepts read-only handles on every OS.
+		_ = GetContainer(handle, required: null);
 	}
 #endif
 
