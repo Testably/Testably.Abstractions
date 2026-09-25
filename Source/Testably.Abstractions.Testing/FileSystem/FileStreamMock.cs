@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -180,6 +181,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	private readonly IStorageLocation _location;
 	private readonly FileMode _mode;
 	private readonly FileOptions _options;
+	private SafeFileHandle? _ownedHandle;
 	private readonly List<(long Start, long End)> _pendingWrites = new();
 	private readonly MemoryStream _stream;
 
@@ -678,7 +680,18 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		InternalFlush();
 		base.Dispose(disposing);
 		OnClose();
+		_ownedHandle?.Dispose();
 		_isDisposed = true;
+	}
+
+	/// <summary>
+	///     Closes the <paramref name="handle" /> when this stream is disposed, as a <see cref="FileStream" /> owns the
+	///     handle it was created from.
+	/// </summary>
+	internal FileStreamMock OwnHandle(SafeFileHandle handle)
+	{
+		_ownedHandle = handle;
+		return this;
 	}
 
 	private void InitializeStream()
