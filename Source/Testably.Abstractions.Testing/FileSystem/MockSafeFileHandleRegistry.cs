@@ -128,6 +128,9 @@ internal sealed class MockSafeFileHandleRegistry
 		return (container, FileAccess.ReadWrite);
 	}
 
+	internal bool IsRegistered(SafeFileHandle handle)
+		=> Resolve(handle) is not null;
+
 	internal SafeFileHandleMock Map(SafeFileHandle handle)
 		=> Resolve(handle)?.Mock ?? MapForeign(handle);
 
