@@ -144,17 +144,13 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 #endif
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.FileStream.RegisterMethod(nameof(New),
 				handle, access);
 
-		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
+		SafeFileHandleMock safeFileHandleMock = MapSafeFileHandle(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -163,17 +159,13 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.FileStream.RegisterMethod(nameof(New),
 				handle, access, bufferSize);
 
-		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
+		SafeFileHandleMock safeFileHandleMock = MapSafeFileHandle(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -183,9 +175,6 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int, bool)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize,
 		bool isAsync)
 	{
@@ -193,8 +182,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			.FileStream.RegisterMethod(nameof(New),
 				handle, access, bufferSize, isAsync);
 
-		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
+		SafeFileHandleMock safeFileHandleMock = MapSafeFileHandle(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -234,4 +222,11 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	}
 
 	#endregion
+
+	private SafeFileHandleMock MapSafeFileHandle(SafeFileHandle handle)
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+		=> _fileSystem.SafeFileHandleRegistry.Map(handle);
+#else
+		=> _fileSystem.SafeFileHandleStrategy.MapSafeFileHandle(handle);
+#endif
 }

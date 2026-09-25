@@ -50,6 +50,13 @@ public interface IFileSystemStatistics
 	/// </summary>
 	IStatistics<IPath> Path { get; }
 
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	/// <summary>
+	///     Statistical information about calls to <see cref="IFileSystem.RandomAccess" />.
+	/// </summary>
+	IStatistics<IRandomAccess> RandomAccess { get; }
+#endif
+
 	/// <summary>
 	///     The sum of all registered statistic calls.
 	/// </summary>

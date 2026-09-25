@@ -186,9 +186,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetAttributes(SafeFileHandle)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public FileAttributes GetAttributes(SafeFileHandle fileHandle)
 		=> File.GetAttributes(fileHandle);
 #endif
@@ -199,9 +196,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetCreationTime(SafeFileHandle)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public DateTime GetCreationTime(SafeFileHandle fileHandle)
 		=> File.GetCreationTime(fileHandle);
 #endif
@@ -212,9 +206,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetCreationTimeUtc(SafeFileHandle)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public DateTime GetCreationTimeUtc(SafeFileHandle fileHandle)
 		=> File.GetCreationTimeUtc(fileHandle);
 #endif
@@ -225,9 +216,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetLastAccessTime(SafeFileHandle)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public DateTime GetLastAccessTime(SafeFileHandle fileHandle)
 		=> File.GetLastAccessTime(fileHandle);
 #endif
@@ -238,9 +226,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetLastAccessTimeUtc(SafeFileHandle)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public DateTime GetLastAccessTimeUtc(SafeFileHandle fileHandle)
 		=> File.GetLastAccessTimeUtc(fileHandle);
 #endif
@@ -251,9 +236,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetLastWriteTime(SafeFileHandle)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public DateTime GetLastWriteTime(SafeFileHandle fileHandle)
 		=> File.GetLastWriteTime(fileHandle);
 #endif
@@ -264,9 +246,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetLastWriteTimeUtc(SafeFileHandle)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public DateTime GetLastWriteTimeUtc(SafeFileHandle fileHandle)
 		=> File.GetLastWriteTimeUtc(fileHandle);
 #endif
@@ -281,9 +260,6 @@ internal sealed class FileWrapper : IFile
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetUnixFileMode(SafeFileHandle)" />
 	[UnsupportedOSPlatform("windows")]
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public UnixFileMode GetUnixFileMode(SafeFileHandle fileHandle)
 		=> File.GetUnixFileMode(fileHandle);
 #endif
@@ -451,9 +427,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.SetAttributes(SafeFileHandle, FileAttributes)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public void SetAttributes(SafeFileHandle fileHandle, FileAttributes fileAttributes)
 		=> File.SetAttributes(fileHandle, fileAttributes);
 #endif
@@ -464,9 +437,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.SetCreationTime(SafeFileHandle, DateTime)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public void SetCreationTime(SafeFileHandle fileHandle, DateTime creationTime)
 		=> File.SetCreationTime(fileHandle, creationTime);
 #endif
@@ -477,9 +447,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.SetCreationTimeUtc(SafeFileHandle, DateTime)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public void SetCreationTimeUtc(SafeFileHandle fileHandle, DateTime creationTimeUtc)
 		=> File.SetCreationTimeUtc(fileHandle, creationTimeUtc);
 #endif
@@ -490,9 +457,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.SetLastAccessTime(SafeFileHandle, DateTime)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public void SetLastAccessTime(SafeFileHandle fileHandle, DateTime lastAccessTime)
 		=> File.SetLastAccessTime(fileHandle, lastAccessTime);
 #endif
@@ -503,9 +467,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(SafeFileHandle, DateTime)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public void SetLastAccessTimeUtc(SafeFileHandle fileHandle,
 		DateTime lastAccessTimeUtc)
 		=> File.SetLastAccessTimeUtc(fileHandle, lastAccessTimeUtc);
@@ -517,9 +478,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.SetLastWriteTime(SafeFileHandle, DateTime)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public void SetLastWriteTime(SafeFileHandle fileHandle, DateTime lastWriteTime)
 		=> File.SetLastWriteTime(fileHandle, lastWriteTime);
 #endif
@@ -530,9 +488,6 @@ internal sealed class FileWrapper : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(SafeFileHandle, DateTime)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public void SetLastWriteTimeUtc(SafeFileHandle fileHandle, DateTime lastWriteTimeUtc)
 		=> File.SetLastWriteTimeUtc(fileHandle, lastWriteTimeUtc);
 #endif
@@ -547,9 +502,6 @@ internal sealed class FileWrapper : IFile
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.SetUnixFileMode(SafeFileHandle, UnixFileMode)" />
 	[UnsupportedOSPlatform("windows")]
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public void SetUnixFileMode(SafeFileHandle fileHandle, UnixFileMode mode)
 		=> File.SetUnixFileMode(fileHandle, mode);
 #endif

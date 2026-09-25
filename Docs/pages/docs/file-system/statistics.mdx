@@ -33,6 +33,7 @@ await Expect.That(stats.File.Methods).Contains(m => m.Name == nameof(IFile.Write
 | `FileSystemWatcher`   | `IPathStatistics<IFileSystemWatcherFactory, IFileSystemWatcher>`    |
 | `FileVersionInfo`     | `IPathStatistics<IFileVersionInfoFactory, IFileVersionInfo>`        |
 | `Path`                | `IStatistics<IPath>`                                                |
+| `RandomAccess`        | `IStatistics<IRandomAccess>`                                        |
 
 `IStatistics<T>` exposes `Methods` and `Properties` collections. Each entry carries the call's name, parameters and a stack-frame counter so you can correlate concurrent activity. `IPathStatistics<TFactory, TItem>` adds an indexer keyed by the path that the factory produced - `stats.FileInfo["a.txt"]` returns just the calls made on that specific `IFileInfo`.
 

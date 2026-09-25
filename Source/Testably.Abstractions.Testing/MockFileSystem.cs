@@ -84,6 +84,10 @@ public sealed class MockFileSystem : IFileSystem
 
 	internal FileSystemRegistration Registration { get; }
 
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	internal MockSafeFileHandleRegistry SafeFileHandleRegistry { get; }
+#endif
+
 	internal ISafeFileHandleStrategy SafeFileHandleStrategy
 	{
 		get;
@@ -114,6 +118,9 @@ public sealed class MockFileSystem : IFileSystem
 	private readonly DirectoryMock _directoryMock;
 	private readonly FileMock _fileMock;
 	private readonly PathMock _pathMock;
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	private readonly RandomAccessMock _randomAccessMock;
+#endif
 	private readonly InMemoryStorage _storage;
 
 	/// <summary>
@@ -146,6 +153,9 @@ public sealed class MockFileSystem : IFileSystem
 		TimeSystem = initialization.TimeSystem ?? new MockTimeSystem(TimeProviderFactory.Now());
 		_pathMock = new PathMock(this);
 		_storage = new InMemoryStorage(this);
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+		SafeFileHandleRegistry = new MockSafeFileHandleRegistry(this);
+#endif
 		ChangeHandler = new ChangeHandler(this, initialization.RecordNotificationHistory);
 		_directoryMock = new DirectoryMock(this);
 		_fileMock = new FileMock(this);
@@ -156,6 +166,9 @@ public sealed class MockFileSystem : IFileSystem
 		FileSystemWatcher = new FileSystemWatcherFactoryMock(this);
 		FileVersionInfo = new FileVersionInfoFactoryMock(this);
 		SafeFileHandleStrategy = new NullSafeFileHandleStrategy();
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+		_randomAccessMock = new RandomAccessMock(this);
+#endif
 		AccessControlStrategy = new NullAccessControlStrategy();
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		UnixFileModeStrategy = new NullUnixFileModeStrategy();
@@ -194,6 +207,12 @@ public sealed class MockFileSystem : IFileSystem
 	/// <inheritdoc cref="IFileSystem.Path" />
 	public IPath Path
 		=> _pathMock;
+
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+	/// <inheritdoc cref="IFileSystem.RandomAccess" />
+	public IRandomAccess RandomAccess
+		=> _randomAccessMock;
+#endif
 
 	#endregion
 

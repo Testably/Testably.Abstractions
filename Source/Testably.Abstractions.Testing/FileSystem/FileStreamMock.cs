@@ -227,7 +227,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			path == null ? "" : fileSystem.Execute.Path.GetFullPath(path),
 			(options & FileOptions.Asynchronous) != 0)
 	{
-		ThrowIfInvalidModeAccess(mode, access);
+		FileModeHelper.ThrowIfInvalidModeAccess(mode, access);
 
 		_stream = stream;
 		_fileSystem = fileSystem;
@@ -238,44 +238,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		_initialPosition = base.Position;
 
 		_location = _fileSystem.Storage.GetLocation(base.Name);
-		_location.ThrowExceptionIfNotFound(_fileSystem, true);
-		IStorageContainer file = _fileSystem.Storage.GetContainer(_location);
-		if (file is NullContainer)
-		{
-			if (_mode.Equals(FileMode.Open) ||
-			    _mode.Equals(FileMode.Truncate))
-			{
-				throw ExceptionFactory.FileNotFound(
-					_fileSystem.Execute.Path.GetFullPath(base.Name));
-			}
-
-			file = _fileSystem.Storage.GetOrCreateContainer(_location,
-				InMemoryContainer.NewFile,
-				this);
-		}
-		else if (file.Type == FileSystemTypes.Directory)
-		{
-			if (_fileSystem.Execute.IsWindows)
-			{
-				throw ExceptionFactory.AccessToPathDenied(
-					_fileSystem.Execute.Path.GetFullPath(base.Name));
-			}
-
-			throw ExceptionFactory.FileAlreadyExists(
-				_fileSystem.Execute.Path.GetFullPath(base.Name), 17);
-		}
-		else if (_mode.Equals(FileMode.CreateNew))
-		{
-			throw ExceptionFactory.FileAlreadyExists(
-				_fileSystem.Execute.Path.GetFullPath(Name),
-				_fileSystem.Execute.IsWindows ? -2147024816 : 17);
-		}
-
-		if (file.Attributes.HasFlag(FileAttributes.ReadOnly) &&
-		    access.HasFlag(FileAccess.Write))
-		{
-			throw ExceptionFactory.AccessToPathDenied(_location.FullPath);
-		}
+		IStorageContainer file = FileModeHelper.GetFileContainer(_fileSystem,
+			_location, mode, access, this);
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		if (unixFileMode.HasValue)
 		{
@@ -897,29 +861,6 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		if (_isDisposed)
 		{
 			throw new ObjectDisposedException("", "Cannot access a closed file.");
-		}
-	}
-
-	private static void ThrowIfInvalidModeAccess(FileMode mode, FileAccess access)
-	{
-		if (mode == FileMode.Append)
-		{
-			if (access == FileAccess.Read)
-			{
-				throw ExceptionFactory.InvalidAccessCombination(mode, access);
-			}
-
-			if (access != FileAccess.Write)
-			{
-				throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode();
-			}
-		}
-
-		if (!access.HasFlag(FileAccess.Write) &&
-		    (mode == FileMode.Truncate || mode == FileMode.CreateNew ||
-		     mode == FileMode.Create || mode == FileMode.Append))
-		{
-			throw ExceptionFactory.InvalidAccessCombination(mode, access);
 		}
 	}
 }
