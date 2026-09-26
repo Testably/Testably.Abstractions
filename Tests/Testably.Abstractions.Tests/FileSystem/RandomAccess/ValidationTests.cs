@@ -105,10 +105,10 @@ public class ValidationTests(FileSystemTestData testData) : FileSystemTestBase(t
 		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
-		void Act() => _ = FileSystem.RandomAccess.ReadAsync(null!, new byte[1], 0, cts.Token);
+		async Task Act() => await FileSystem.RandomAccess.ReadAsync(null!, new byte[1], 0, cts.Token);
 
 		await That(Act).ThrowsExactly<ArgumentNullException>().WithParamName("handle")
-			.Because("the arguments are validated synchronously before the cancellation is observed");
+			.Because("the arguments are validated before the cancellation is observed");
 	}
 
 	[Test]
@@ -121,11 +121,11 @@ public class ValidationTests(FileSystemTestData testData) : FileSystemTestBase(t
 		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
-		void Act() => _ = FileSystem.RandomAccess.ReadAsync(handle,
+		async Task Act() => await FileSystem.RandomAccess.ReadAsync(handle,
 			(IReadOnlyList<Memory<byte>>)null!, 0, cts.Token);
 
 		await That(Act).ThrowsExactly<ArgumentNullException>().WithParamName("buffers")
-			.Because("the arguments are validated synchronously before the cancellation is observed");
+			.Because("the arguments are validated before the cancellation is observed");
 	}
 
 	[Test]
@@ -154,10 +154,10 @@ public class ValidationTests(FileSystemTestData testData) : FileSystemTestBase(t
 		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
-		void Act() => _ = FileSystem.RandomAccess.WriteAsync(handle, new byte[] { 1, }, 0, cts.Token);
+		async Task Act() => await FileSystem.RandomAccess.WriteAsync(handle, new byte[] { 1, }, 0, cts.Token);
 
 		await That(Act).Throws<ObjectDisposedException>()
-			.Because("the arguments are validated synchronously before the cancellation is observed");
+			.Because("the arguments are validated before the cancellation is observed");
 	}
 
 	[Test]
@@ -171,11 +171,11 @@ public class ValidationTests(FileSystemTestData testData) : FileSystemTestBase(t
 		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
-		void Act() => _ = FileSystem.RandomAccess.WriteAsync(handle,
+		async Task Act() => await FileSystem.RandomAccess.WriteAsync(handle,
 			(IReadOnlyList<ReadOnlyMemory<byte>>)[new byte[] { 1, },], -1, cts.Token);
 
 		await That(Act).Throws<ArgumentOutOfRangeException>().WithParamName("fileOffset")
-			.Because("the arguments are validated synchronously before the cancellation is observed");
+			.Because("the arguments are validated before the cancellation is observed");
 	}
 
 #if FEATURE_RANDOMACCESS_FLUSHTODISK

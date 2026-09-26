@@ -142,11 +142,19 @@ public abstract class ParameterDescription
 		///     The parameter value, or <see langword="null" /> once a <see cref="SafeFileHandle" /> parameter was collected.
 		/// </summary>
 		public T Value
-			=> _handle is null
-				? _value
-				: _handle.TryGetTarget(out SafeFileHandle? handle)
+		{
+			get
+			{
+				if (_handle is null)
+				{
+					return _value;
+				}
+
+				return _handle.TryGetTarget(out SafeFileHandle? handle)
 					? (T)(object)handle
 					: default!;
+			}
+		}
 
 		public GenericParameterDescription(T value, bool isOutParameter) : base(isOutParameter)
 		{
