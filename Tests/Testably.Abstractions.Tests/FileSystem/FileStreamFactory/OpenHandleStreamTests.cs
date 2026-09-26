@@ -71,6 +71,41 @@ public class OpenHandleStreamTests(FileSystemTestData testData) : FileSystemTest
 
 	[Test]
 	[AutoArguments]
+	public async Task New_WithHandle_WhenTheFileWasDeleted_ShouldReadTheContent(string path)
+	{
+		FileSystem.File.WriteAllBytes(path, [1, 2, 3,]);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+		FileSystem.File.Delete(path);
+
+		using FileSystemStream stream = FileSystem.FileStream.New(handle, FileAccess.Read);
+		byte[] buffer = new byte[3];
+		int read = stream.Read(buffer, 0, buffer.Length);
+
+		await That(buffer.AsSpan(0, read).ToArray()).IsEqualTo(new byte[] { 1, 2, 3, })
+			.Because("the stream wraps the open file, not its former path");
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task New_WithHandleOpenedWithFileShareNone_ShouldReadTheContent(string path)
+	{
+		FileSystem.File.WriteAllBytes(path, [1, 2, 3,]);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.Read, FileShare.None);
+
+		using FileSystemStream stream = FileSystem.FileStream.New(handle, FileAccess.Read);
+		byte[] buffer = new byte[3];
+		int read = stream.Read(buffer, 0, buffer.Length);
+
+		await That(buffer.AsSpan(0, read).ToArray()).IsEqualTo(new byte[] { 1, 2, 3, })
+			.Because("the stream reuses the handle instead of opening the file a second time");
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task New_WithHandleOpenedWithCreateNew_ShouldNotThrow(string path)
 	{
 		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,

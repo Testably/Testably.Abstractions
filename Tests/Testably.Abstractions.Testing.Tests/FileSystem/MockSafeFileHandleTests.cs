@@ -368,6 +368,30 @@ public class MockSafeFileHandleTests
 			.Because("the write was vetoed before it was published");
 	}
 
+	[Test]
+	public async Task Write_AfterTheFileIsDeleted_WhenAChangingInterceptionThrows_ShouldLeaveTheContentUnchanged()
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllBytes("f.txt", [1, 2, 3,]);
+
+		using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+		fileSystem.File.Delete("f.txt");
+
+		using (fileSystem.Intercept.Changing(FileSystemTypes.File,
+			       _ => throw new InvalidOperationException("vetoed")))
+		{
+			void Act() => fileSystem.RandomAccess.Write(handle, new byte[] { 9, }, 0);
+
+			await That(Act).Throws<InvalidOperationException>()
+				.Because("an interception can veto a write through a handle, whether or not the file still has a name");
+		}
+
+		byte[] buffer = new byte[3];
+		fileSystem.RandomAccess.Read(handle, buffer, 0);
+		await That(buffer).IsEqualTo(new byte[] { 1, 2, 3, });
+	}
+
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private static void OpenAndDrop(MockFileSystem fileSystem, string path)
 		=> _ = fileSystem.File.OpenHandle(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
