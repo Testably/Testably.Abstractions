@@ -45,6 +45,68 @@ public class MockSafeFileHandleTests
 	}
 
 	[Test]
+	public async Task DeleteOnClose_OnUnix_WhenADeletingInterceptionThrows_ShouldReleaseOtherClosedHandles()
+	{
+		MockFileSystem fileSystem = new(o => o.SimulatingOperatingSystem(SimulationMode.Linux));
+		fileSystem.File.WriteAllText("/a.txt", "a");
+		fileSystem.File.WriteAllText("/b.txt", "b");
+
+		SafeFileHandle deleteOnClose = fileSystem.File.OpenHandle("/a.txt", FileMode.Open,
+			FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete, FileOptions.DeleteOnClose);
+		SafeFileHandle exclusive = fileSystem.File.OpenHandle("/b.txt", FileMode.Open,
+			FileAccess.ReadWrite, FileShare.None);
+		using (fileSystem.Intercept.Deleting(FileSystemTypes.File,
+			       _ => throw new InvalidOperationException("vetoed")))
+		{
+			deleteOnClose.Dispose();
+			exclusive.Dispose();
+			try
+			{
+				fileSystem.File.Exists("/unrelated.txt");
+			}
+			catch (InvalidOperationException)
+			{
+			}
+		}
+
+		void Act()
+		{
+			using SafeFileHandle handle = fileSystem.File.OpenHandle("/b.txt",
+				FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+		}
+
+		await That(Act).DoesNotThrow()
+			.Because("every closed handle releases its share lock, even if deleting another one fails");
+	}
+
+	[Test]
+	public async Task DeleteOnClose_OnWindows_WhenADeletingInterceptionThrows_ShouldNotThrowFromAnUnrelatedCall()
+	{
+		MockFileSystem fileSystem = new(o => o.SimulatingOperatingSystem(SimulationMode.Windows));
+		fileSystem.File.WriteAllText("f.txt", "x");
+
+		SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite, FileOptions.DeleteOnClose);
+		using (fileSystem.Intercept.Deleting(FileSystemTypes.File,
+			       _ => throw new InvalidOperationException("vetoed")))
+		{
+			handle.Dispose();
+
+			void Act()
+			{
+				fileSystem.File.Exists("unrelated.txt");
+				fileSystem.File.Exists("unrelated.txt");
+			}
+
+			await That(Act).DoesNotThrow()
+				.Because("a vetoed delete-on-close is ignored like a failed one, and not retried on every later call");
+		}
+
+		await That(fileSystem.File.Exists("f.txt")).IsTrue()
+			.Because("the interception vetoed the deletion");
+	}
+
+	[Test]
 	public async Task DeleteOnClose_OnWindows_WhenAStreamStillHoldsTheFile_ShouldDeleteOnTheLastClose()
 	{
 		MockFileSystem fileSystem = new(o => o.SimulatingOperatingSystem(SimulationMode.Windows));
@@ -95,6 +157,33 @@ public class MockSafeFileHandleTests
 	}
 
 	[Test]
+	[Arguments(FileMode.Create)]
+	[Arguments(FileMode.Truncate)]
+	public async Task OpenHandle_WhenTruncationThrows_ShouldReleaseTheShareLock(FileMode mode)
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("f.txt", "x");
+
+		using (fileSystem.Intercept.Changing(FileSystemTypes.File,
+			       _ => throw new InvalidOperationException("vetoed")))
+		{
+			void OpenVetoed() => fileSystem.File.OpenHandle("f.txt",
+				mode, FileAccess.Write, FileShare.None);
+
+			await That(OpenVetoed).Throws<InvalidOperationException>();
+		}
+
+		void Act()
+		{
+			using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+				FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+		}
+
+		await That(Act).DoesNotThrow()
+			.Because("an open that failed must not keep holding the file");
+	}
+
+	[Test]
 	public async Task OpenHandle_WhenNeverDisposed_ShouldReleaseTheShareLockOnceCollected()
 	{
 		MockFileSystem fileSystem = new();
@@ -114,6 +203,100 @@ public class MockSafeFileHandleTests
 			.Because("a handle that is no longer referenced is closed, as a real one would be when finalized");
 	}
 
+#if FEATURE_RANDOMACCESS_FLUSHTODISK
+	[Test]
+	public async Task SetLength_BeyondTheMaximumArrayLength_ShouldThrowIOException()
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllBytes("f.txt", [1,]);
+
+		using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+			FileMode.Open, FileAccess.Write);
+
+		void Act() => fileSystem.RandomAccess.SetLength(handle, long.MaxValue);
+
+		await That(Act).Throws<IOException>()
+			.Because("a length the in-memory content cannot hold is rejected like a write beyond it");
+		await That(fileSystem.RandomAccess.GetLength(handle)).IsEqualTo(1)
+			.Because("the rejected resize must leave the file unchanged");
+	}
+#endif
+
+	[Test]
+	public async Task OpenHandle_WhenUsedAndNeverDisposed_ShouldReleaseTheShareLockOnceCollected()
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("f.txt", "x");
+
+		OpenUseAndDrop(fileSystem, "f.txt");
+		GC.Collect();
+		GC.WaitForPendingFinalizers();
+
+		void Act()
+		{
+			using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+				FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+		}
+
+		await That(Act).DoesNotThrow()
+			.Because("recording the handle in the statistics must not keep it alive");
+	}
+
+	[Test]
+	public async Task RandomAccess_WithHandleFromAnotherFileSystem_ShouldNotBeReportedAsClosed()
+	{
+		MockFileSystem fileSystemA = new();
+		MockFileSystem fileSystemB = new();
+		fileSystemA.File.WriteAllText("a.txt", "a");
+		fileSystemB.File.WriteAllText("b.txt", "b");
+		fileSystemB.File.OpenHandle("b.txt").Dispose();
+		fileSystemB.File.WriteAllText("c.txt", "cc");
+		fileSystemB.WithSafeFileHandleStrategy(
+			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock("c.txt")));
+
+		using SafeFileHandle handleA = fileSystemA.File.OpenHandle("a.txt");
+
+		void Act() => fileSystemB.RandomAccess.GetLength(handleA);
+
+		await That(Act).DoesNotThrow()
+			.Because("a live handle from another file system was never closed");
+	}
+
+	[Test]
+	public async Task RandomAccess_WithHandleFromAnotherFileSystem_ShouldUseTheSafeFileHandleStrategy()
+	{
+		MockFileSystem fileSystemA = new();
+		MockFileSystem fileSystemB = new();
+		fileSystemA.File.WriteAllText("a.txt", "a");
+		fileSystemB.File.WriteAllText("b.txt", "b");
+		fileSystemB.File.WriteAllText("c.txt", "cc");
+		fileSystemB.WithSafeFileHandleStrategy(
+			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock("c.txt")));
+
+		using SafeFileHandle handleA = fileSystemA.File.OpenHandle("a.txt");
+		using SafeFileHandle handleB = fileSystemB.File.OpenHandle("b.txt");
+
+		long result = fileSystemB.RandomAccess.GetLength(handleA);
+
+		await That(result).IsEqualTo(2)
+			.Because("a handle from another file system is foreign and must be mapped by the strategy");
+	}
+
+	[Test]
+	public async Task Statistics_WhenHandleWasCollected_ShouldStillDescribeTheCall()
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("f.txt", "x");
+
+		OpenUseAndDrop(fileSystem, "f.txt");
+		GC.Collect();
+		GC.WaitForPendingFinalizers();
+
+		await That(fileSystem.Statistics.RandomAccess.Methods[0].ToString())
+			.IsEqualTo($"GetLength({typeof(SafeFileHandle)})")
+			.Because("the description of a handle is kept, even when the handle itself is not");
+	}
+
 	[Test]
 	public async Task Write_AtAnOffsetThatOverflows_ShouldThrowIOException()
 	{
@@ -126,6 +309,41 @@ public class MockSafeFileHandleTests
 		void Act() => fileSystem.RandomAccess.Write(handle, new byte[] { 9, }, long.MaxValue);
 
 		await That(Act).Throws<IOException>();
+	}
+
+	[Test]
+	public async Task Write_AfterTheFileIsDeleted_ShouldNotChangeTheUsedBytesOfTheDrive()
+	{
+		MockFileSystem fileSystem = new();
+		IDriveInfo drive = fileSystem.GetDefaultDrive();
+		long freeSpace = drive.AvailableFreeSpace;
+		fileSystem.File.WriteAllBytes("f.txt", [1, 2, 3,]);
+
+		using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+		fileSystem.File.Delete("f.txt");
+		fileSystem.RandomAccess.Write(handle, new byte[] { 9, 9, 9, 9, 9, }, 0);
+
+		await That(drive).HasAvailableFreeSpace(freeSpace)
+			.Because("the deleted file no longer counts towards the drive, so writes to it must not either");
+	}
+
+	[Test]
+	public async Task Write_AfterTheFileIsDeleted_ShouldNotNotifyAboutItsFormerPath()
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllBytes("f.txt", [1, 2, 3,]);
+
+		using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+		fileSystem.File.Delete("f.txt");
+		bool isNotified = false;
+		fileSystem.Notify.OnEvent(_ => isNotified = true);
+
+		fileSystem.RandomAccess.Write(handle, new byte[] { 9, }, 0);
+
+		await That(isNotified).IsFalse()
+			.Because("the path no longer names the file the handle writes to");
 	}
 
 	[Test]
@@ -150,8 +368,37 @@ public class MockSafeFileHandleTests
 			.Because("the write was vetoed before it was published");
 	}
 
+	[Test]
+	public async Task Write_AfterTheFileIsDeleted_WhenAChangingInterceptionThrows_ShouldLeaveTheContentUnchanged()
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllBytes("f.txt", [1, 2, 3,]);
+
+		using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+		fileSystem.File.Delete("f.txt");
+
+		using (fileSystem.Intercept.Changing(FileSystemTypes.File,
+			       _ => throw new InvalidOperationException("vetoed")))
+		{
+			void Act() => fileSystem.RandomAccess.Write(handle, new byte[] { 9, }, 0);
+
+			await That(Act).Throws<InvalidOperationException>()
+				.Because("an interception can veto a write through a handle, whether or not the file still has a name");
+		}
+
+		byte[] buffer = new byte[3];
+		fileSystem.RandomAccess.Read(handle, buffer, 0);
+		await That(buffer).IsEqualTo(new byte[] { 1, 2, 3, });
+	}
+
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private static void OpenAndDrop(MockFileSystem fileSystem, string path)
 		=> _ = fileSystem.File.OpenHandle(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	private static void OpenUseAndDrop(MockFileSystem fileSystem, string path)
+		=> _ = fileSystem.RandomAccess.GetLength(
+			fileSystem.File.OpenHandle(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None));
 }
 #endif

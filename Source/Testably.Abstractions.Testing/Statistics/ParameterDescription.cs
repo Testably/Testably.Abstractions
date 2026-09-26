@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Linq;
 
 namespace Testably.Abstractions.Testing.Statistics;
@@ -129,16 +130,52 @@ public abstract class ParameterDescription
 
 	private sealed class GenericParameterDescription<T> : ParameterDescription
 	{
-		public T Value { get; }
+		/// <summary>
+		///     A <see cref="SafeFileHandle" /> is only held weakly, so that recording it does not prevent the
+		///     <see cref="MockFileSystem" /> from releasing a handle that was dropped without being disposed.
+		/// </summary>
+		private readonly WeakReference<SafeFileHandle>? _handle;
+
+		private readonly T _value = default!;
+
+		/// <summary>
+		///     The parameter value, or <see langword="null" /> once a <see cref="SafeFileHandle" /> parameter was collected.
+		/// </summary>
+		public T Value
+		{
+			get
+			{
+				if (_handle is null)
+				{
+					return _value;
+				}
+
+				return _handle.TryGetTarget(out SafeFileHandle? handle)
+					? (T)(object)handle
+					: default!;
+			}
+		}
 
 		public GenericParameterDescription(T value, bool isOutParameter) : base(isOutParameter)
 		{
-			Value = value;
+			if (value is SafeFileHandle handle)
+			{
+				_handle = new WeakReference<SafeFileHandle>(handle);
+			}
+			else
+			{
+				_value = value;
+			}
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string? ToString()
 		{
+			if (_handle is not null)
+			{
+				return typeof(SafeFileHandle).ToString();
+			}
+
 			if (Value is string)
 			{
 				return $"\"{Value}\"";

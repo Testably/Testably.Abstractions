@@ -36,8 +36,8 @@ internal sealed class RandomAccessMock : IRandomAccess
 			.RandomAccess.RegisterMethod(nameof(FlushToDisk), handle);
 
 		// Nothing to flush without a write-back cache, but the handle is still resolved and the call counted, so a
-		// test can assert that a durability barrier was requested.
-		_ = GetContainer(handle, FileAccess.Write);
+		// test can assert that a durability barrier was requested. The runtime accepts read-only handles on every OS.
+		_ = GetContainer(handle, required: null);
 	}
 #endif
 
@@ -57,6 +57,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.RandomAccess.RegisterMethod<SafeFileHandle, byte, long>(nameof(Read), handle, buffer, fileOffset);
 
+		ValidateInput(handle, fileOffset);
 		return ReadInto(handle, buffer, fileOffset);
 	}
 
@@ -66,6 +67,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.RandomAccess.RegisterMethod(nameof(Read), handle, buffers, fileOffset);
 
+		ValidateInput(handle, fileOffset);
 		if (buffers is null)
 		{
 			throw new ArgumentNullException(nameof(buffers));
@@ -78,14 +80,15 @@ internal sealed class RandomAccessMock : IRandomAccess
 	public ValueTask<int> ReadAsync(SafeFileHandle handle, Memory<byte> buffer, long fileOffset,
 		CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.RandomAccess.RegisterMethod(nameof(ReadAsync), handle, buffer, fileOffset,
+				cancellationToken);
+
+		ValidateInput(handle, fileOffset);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			return ValueTask.FromCanceled<int>(cancellationToken);
 		}
-
-		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(ReadAsync), handle, buffer, fileOffset,
-				cancellationToken);
 
 		return new ValueTask<int>(Read(handle, buffer.Span, fileOffset));
 	}
@@ -94,14 +97,20 @@ internal sealed class RandomAccessMock : IRandomAccess
 	public ValueTask<long> ReadAsync(SafeFileHandle handle, IReadOnlyList<Memory<byte>> buffers,
 		long fileOffset, CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.RandomAccess.RegisterMethod(nameof(ReadAsync), handle, buffers, fileOffset,
+				cancellationToken);
+
+		ValidateInput(handle, fileOffset);
+		if (buffers is null)
+		{
+			throw new ArgumentNullException(nameof(buffers));
+		}
+
 		if (cancellationToken.IsCancellationRequested)
 		{
 			return ValueTask.FromCanceled<long>(cancellationToken);
 		}
-
-		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(ReadAsync), handle, buffers, fileOffset,
-				cancellationToken);
 
 		return new ValueTask<long>(Read(handle, buffers, fileOffset));
 	}
@@ -113,12 +122,19 @@ internal sealed class RandomAccessMock : IRandomAccess
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.RandomAccess.RegisterMethod(nameof(SetLength), handle, length);
 
+		ValidateInput(handle, 0);
 		if (length < 0)
 		{
 			throw ExceptionFactory.NonNegativeNumberRequired(nameof(length));
 		}
 
 		IStorageContainer container = GetContainerForResize(handle);
+		if (length > Array.MaxLength)
+		{
+			throw ExceptionFactory.FileTooLarge(
+				_fileSystem.SafeFileHandleRegistry.Map(handle).Path);
+		}
+
 		lock (Gate(container))
 		{
 			byte[] bytes = container.GetBytes();
@@ -135,6 +151,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.RandomAccess.RegisterMethod<SafeFileHandle, byte, long>(nameof(Write), handle, buffer, fileOffset);
 
+		ValidateInput(handle, fileOffset);
 		WriteBytes(handle, buffer.ToArray(), fileOffset);
 	}
 
@@ -145,6 +162,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.RandomAccess.RegisterMethod(nameof(Write), handle, buffers, fileOffset);
 
+		ValidateInput(handle, fileOffset);
 		if (buffers is null)
 		{
 			throw new ArgumentNullException(nameof(buffers));
@@ -157,14 +175,15 @@ internal sealed class RandomAccessMock : IRandomAccess
 	public ValueTask WriteAsync(SafeFileHandle handle, ReadOnlyMemory<byte> buffer,
 		long fileOffset, CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.RandomAccess.RegisterMethod(nameof(WriteAsync), handle, buffer, fileOffset,
+				cancellationToken);
+
+		ValidateInput(handle, fileOffset);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			return ValueTask.FromCanceled(cancellationToken);
 		}
-
-		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(WriteAsync), handle, buffer, fileOffset,
-				cancellationToken);
 
 		Write(handle, buffer.Span, fileOffset);
 		return default;
@@ -175,14 +194,20 @@ internal sealed class RandomAccessMock : IRandomAccess
 		IReadOnlyList<ReadOnlyMemory<byte>> buffers,
 		long fileOffset, CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.RandomAccess.RegisterMethod(nameof(WriteAsync), handle, buffers, fileOffset,
+				cancellationToken);
+
+		ValidateInput(handle, fileOffset);
+		if (buffers is null)
+		{
+			throw new ArgumentNullException(nameof(buffers));
+		}
+
 		if (cancellationToken.IsCancellationRequested)
 		{
 			return ValueTask.FromCanceled(cancellationToken);
 		}
-
-		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.RandomAccess.RegisterMethod(nameof(WriteAsync), handle, buffers, fileOffset,
-				cancellationToken);
 
 		Write(handle, buffers, fileOffset);
 		return default;
@@ -254,11 +279,6 @@ internal sealed class RandomAccessMock : IRandomAccess
 
 	private int ReadInto(SafeFileHandle handle, Span<byte> buffer, long fileOffset)
 	{
-		if (fileOffset < 0)
-		{
-			throw ExceptionFactory.NonNegativeNumberRequired(nameof(fileOffset));
-		}
-
 		IStorageContainer container = GetContainer(handle, FileAccess.Read);
 		lock (Gate(container))
 		{
@@ -277,11 +297,6 @@ internal sealed class RandomAccessMock : IRandomAccess
 	private long ReadInto(SafeFileHandle handle, IReadOnlyList<Memory<byte>> buffers,
 		long fileOffset)
 	{
-		if (fileOffset < 0)
-		{
-			throw ExceptionFactory.NonNegativeNumberRequired(nameof(fileOffset));
-		}
-
 		IStorageContainer container = GetContainer(handle, FileAccess.Read);
 		lock (Gate(container))
 		{
@@ -304,13 +319,35 @@ internal sealed class RandomAccessMock : IRandomAccess
 		}
 	}
 
-	private void WriteBytes(SafeFileHandle handle, byte[] buffer, long fileOffset)
+	/// <summary>
+	///     Validates in the order of the runtime's <c>RandomAccess.ValidateInput</c>, so that a call with more than one
+	///     invalid argument reports the same one, before any buffers, cancellation or file access are checked.
+	/// </summary>
+	private static void ValidateInput(SafeFileHandle handle, long fileOffset)
 	{
+		if (handle is null)
+		{
+			throw new ArgumentNullException(nameof(handle));
+		}
+
+		if (handle.IsInvalid)
+		{
+			throw ExceptionFactory.HandleIsInvalid();
+		}
+
+		if (handle.IsClosed)
+		{
+			throw ExceptionFactory.HandleIsClosed();
+		}
+
 		if (fileOffset < 0)
 		{
 			throw ExceptionFactory.NonNegativeNumberRequired(nameof(fileOffset));
 		}
+	}
 
+	private void WriteBytes(SafeFileHandle handle, byte[] buffer, long fileOffset)
+	{
 		IStorageContainer container = GetContainer(handle, FileAccess.Write);
 		if (buffer.Length == 0)
 		{

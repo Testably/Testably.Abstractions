@@ -16,6 +16,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 	private readonly FileSystemExtensibility _extensibility = new();
 	private readonly MockFileSystem _fileSystem;
 	private bool _isEncrypted;
+	private bool _isUnlinked;
 	private IStorageLocation _location;
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
@@ -120,12 +121,11 @@ internal sealed class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.BytesChanged" />
 	public event EventHandler? BytesChanged;
 
-	/// <inheritdoc cref="IStorageContainer.ClearBytes()" />
-	public void ClearBytes()
+	/// <inheritdoc cref="IStorageContainer.Unlink()" />
+	public void Unlink()
 	{
 		_location.Drive?.ChangeUsedBytes(0 - _bytes.Length);
-		_bytes = Array.Empty<byte>();
-		BytesChanged?.Invoke(this, EventArgs.Empty);
+		_isUnlinked = true;
 	}
 
 	/// <inheritdoc cref="IStorageContainer.Decrypt()" />
@@ -267,6 +267,14 @@ internal sealed class InMemoryContainer : IStorageContainer
 				FileSystemTypes.File,
 				notifyFilters,
 				_location);
+		if (_isUnlinked)
+		{
+			_bytes = bytes;
+			this.AdjustTimes(timeAdjustment);
+			BytesChanged?.Invoke(this, eventArgs);
+			return;
+		}
+
 		_location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
 		_bytes = bytes;
 		this.AdjustTimes(timeAdjustment);

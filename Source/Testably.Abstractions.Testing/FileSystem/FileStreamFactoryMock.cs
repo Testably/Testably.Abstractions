@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32.SafeHandles;
+using Microsoft.Win32.SafeHandles;
 using System;
 using System.IO;
 using Testably.Abstractions.Testing.Helpers;
@@ -153,12 +153,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			.FileStream.RegisterMethod(nameof(New),
 				handle, access);
 
-		SafeFileHandleMock safeFileHandleMock = MapSafeFileHandle(handle);
-		return New(
-			safeFileHandleMock.Path,
-			safeFileHandleMock.Mode,
-			access,
-			safeFileHandleMock.Share);
+		return NewFromHandle(handle, access, DefaultBufferSize, DefaultUseAsync);
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int)" />
@@ -171,13 +166,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			.FileStream.RegisterMethod(nameof(New),
 				handle, access, bufferSize);
 
-		SafeFileHandleMock safeFileHandleMock = MapSafeFileHandle(handle);
-		return New(
-			safeFileHandleMock.Path,
-			safeFileHandleMock.Mode,
-			access,
-			safeFileHandleMock.Share,
-			bufferSize);
+		return NewFromHandle(handle, access, bufferSize, DefaultUseAsync);
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int, bool)" />
@@ -191,14 +180,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			.FileStream.RegisterMethod(nameof(New),
 				handle, access, bufferSize, isAsync);
 
-		SafeFileHandleMock safeFileHandleMock = MapSafeFileHandle(handle);
-		return New(
-			safeFileHandleMock.Path,
-			safeFileHandleMock.Mode,
-			access,
-			safeFileHandleMock.Share,
-			bufferSize,
-			isAsync);
+		return NewFromHandle(handle, access, bufferSize, isAsync);
 	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
@@ -232,10 +214,31 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 
 	#endregion
 
-	private SafeFileHandleMock MapSafeFileHandle(SafeFileHandle handle)
+	/// <summary>
+	///     A handle from the <see cref="ISafeFileHandleStrategy" /> only carries a path and may wrap an operating system
+	///     handle that the caller still uses, so its file is opened by path and the handle is left open.
+	/// </summary>
+	private FileSystemStream NewFromHandle(SafeFileHandle handle, FileAccess access,
+		int bufferSize, bool isAsync)
+	{
 #if FEATURE_FILESYSTEM_RANDOMACCESS
-		=> _fileSystem.SafeFileHandleRegistry.Map(handle);
+		if (_fileSystem.SafeFileHandleRegistry.Find(handle) is { } entry)
+		{
+			return new FileStreamMock(_fileSystem, handle, entry.Container, entry.Location,
+				access, isAsync);
+		}
+
+		SafeFileHandleMock safeFileHandleMock = _fileSystem.SafeFileHandleRegistry.Map(handle);
 #else
-		=> _fileSystem.SafeFileHandleStrategy.MapSafeFileHandle(handle);
+		SafeFileHandleMock safeFileHandleMock =
+			_fileSystem.SafeFileHandleStrategy.MapSafeFileHandle(handle);
 #endif
+		return New(
+			safeFileHandleMock.Path,
+			safeFileHandleMock.Mode,
+			access,
+			safeFileHandleMock.Share,
+			bufferSize,
+			isAsync);
+	}
 }

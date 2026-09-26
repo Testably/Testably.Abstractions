@@ -3,6 +3,7 @@ using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 
@@ -26,6 +27,12 @@ internal sealed class MockSafeFileHandleRegistry
 	/// </summary>
 	private const long FirstHandleValue = 0x4000_0000L;
 
+	/// <summary>
+	///     Shared by all <see cref="MockFileSystem" />s, so that a handle passed to another instance is foreign there
+	///     instead of resolving to an unrelated file that happens to have the same value.
+	/// </summary>
+	private static long _lastHandleValue = FirstHandleValue - 1;
+
 	private const FileOptions ValidFileOptions = FileOptions.WriteThrough |
 	                                             FileOptions.Asynchronous |
 	                                             FileOptions.RandomAccess |
@@ -47,7 +54,6 @@ internal sealed class MockSafeFileHandleRegistry
 	private readonly List<Entry> _pendingDeletes = [];
 
 	private volatile bool _hasWork;
-	private long _nextHandleValue = FirstHandleValue;
 	private bool _sweeping;
 
 	internal MockSafeFileHandleRegistry(MockFileSystem fileSystem)
@@ -74,12 +80,20 @@ internal sealed class MockSafeFileHandleRegistry
 
 		if (mode is FileMode.Create or FileMode.Truncate)
 		{
-			container.WriteBytes([]);
+			try
+			{
+				container.WriteBytes([]);
+			}
+			catch
+			{
+				accessLock.Dispose();
+				throw;
+			}
 		}
 
 		lock (_lock)
 		{
-			IntPtr value = new(_nextHandleValue++);
+			IntPtr value = new(Interlocked.Increment(ref _lastHandleValue));
 			SafeFileHandle handle = new(value, ownsHandle: false);
 			_entries[value] = new Entry(
 				new WeakReference<SafeFileHandle>(handle),
@@ -113,6 +127,12 @@ internal sealed class MockSafeFileHandleRegistry
 		return (container, FileAccess.ReadWrite);
 	}
 
+	/// <summary>
+	///     Returns the entry of a handle this registry created, or <see langword="null" /> for a foreign handle.
+	/// </summary>
+	internal Entry? Find(SafeFileHandle handle)
+		=> Resolve(handle);
+
 	internal SafeFileHandleMock Map(SafeFileHandle handle)
 		=> Resolve(handle)?.Mock ?? MapForeign(handle);
 
@@ -123,7 +143,8 @@ internal sealed class MockSafeFileHandleRegistry
 	/// </summary>
 	/// <remarks>
 	///     A closed handle is released here, together with its share lock and any deletion it requested, and nothing
-	///     here throws: a real file system also ignores a delete-on-close that fails.
+	///     here throws: a real file system also ignores a delete-on-close that fails, so one that an interception vetoes
+	///     is ignored as well instead of surfacing from an unrelated call.
 	/// </remarks>
 	internal void ReleaseClosedHandles()
 	{
@@ -250,14 +271,6 @@ internal sealed class MockSafeFileHandleRegistry
 				return entry;
 			}
 
-			// Handle values are issued sequentially and never reused, so a value within the issued range that is no
-			// longer registered belonged to a handle this registry created and the caller has since closed.
-			long candidate = value.ToInt64();
-			if (candidate >= FirstHandleValue && candidate < _nextHandleValue)
-			{
-				throw ExceptionFactory.HandleIsClosed();
-			}
-
 			return null;
 		}
 	}
@@ -268,13 +281,9 @@ internal sealed class MockSafeFileHandleRegistry
 		{
 			_fileSystem.Storage.DeleteContainer(location, FileSystemTypes.File);
 		}
-		catch (IOException)
+		catch (Exception)
 		{
-			// The name is gone, or its directory is.
-		}
-		catch (UnauthorizedAccessException)
-		{
-			// A directory now has the name.
+			// The name or its directory is gone, a directory now has the name, or an interception vetoed the deletion.
 		}
 	}
 
