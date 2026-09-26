@@ -30,6 +30,26 @@ public class HandleIdentityTests(FileSystemTestData testData) : FileSystemTestBa
 
 	[Test]
 	[AutoArguments]
+	public async Task Handle_ShouldSeeTheNewContent_WhenTheFileIsOverwrittenByCopy(
+		string path, string source)
+	{
+		FileSystem.File.WriteAllBytes(path, [1, 2, 3, 4,]);
+		FileSystem.File.WriteAllBytes(source, [9, 9,]);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+
+		FileSystem.File.Copy(source, path, overwrite: true);
+
+		byte[] buffer = new byte[4];
+		int read = FileSystem.RandomAccess.Read(handle, buffer, 0);
+
+		await That(buffer.AsSpan(0, read).ToArray()).IsEqualTo(new byte[] { 9, 9, })
+			.Because("copying over an existing file overwrites that file instead of replacing it");
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task Handle_ShouldNotFollowTheName_WhenAnotherFileTakesTheOldPath(
 		string path, string other)
 	{
