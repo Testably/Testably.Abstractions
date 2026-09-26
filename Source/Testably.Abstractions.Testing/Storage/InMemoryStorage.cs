@@ -71,16 +71,8 @@ internal sealed class InMemoryStorage : IStorage
 
 		using (_ = sourceContainer.RequestAccess(FileAccess.Read, FileShare.ReadWrite))
 		{
-			if (overwrite &&
-			    _containers.TryRemove(destination,
-				    out IStorageContainer? existingContainer))
-			{
-				existingContainer.Unlink();
-			}
-
-			IStorageContainer copiedContainer =
-				InMemoryContainer.NewFile(destination, _fileSystem);
-			if (_containers.TryAdd(destination, copiedContainer))
+			if (TryGetCopyDestination(destination, overwrite,
+				out IStorageContainer? copiedContainer))
 			{
 				copiedContainer.WriteBytes(sourceContainer.GetBytes().ToArray());
 				if (_fileSystem.Execute.IsMac)
@@ -1183,6 +1175,33 @@ internal sealed class InMemoryStorage : IStorage
 		{
 			throw exceptionCallback(parentLocation);
 		}
+	}
+
+	/// <summary>
+	///     Copying over an existing file overwrites that file instead of replacing it, so handles and streams that hold
+	///     it open see the copied content.
+	/// </summary>
+	private bool TryGetCopyDestination(IStorageLocation destination, bool overwrite,
+		[NotNullWhen(true)] out IStorageContainer? container)
+	{
+		if (overwrite &&
+		    _containers.TryGetValue(destination, out IStorageContainer? existingContainer))
+		{
+			if (existingContainer is { Type: FileSystemTypes.File, LinkTarget: null, })
+			{
+				existingContainer.AdjustTimes(TimeAdjustments.All);
+				container = existingContainer;
+				return true;
+			}
+
+			if (_containers.TryRemove(destination, out IStorageContainer? removed))
+			{
+				removed.Unlink();
+			}
+		}
+
+		container = InMemoryContainer.NewFile(destination, _fileSystem);
+		return _containers.TryAdd(destination, container);
 	}
 
 	private static NotifyFilters ToNotifyFilters(FileSystemTypes type)

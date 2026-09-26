@@ -95,10 +95,9 @@ internal sealed class MockSafeFileHandleRegistry
 		{
 			IntPtr value = new(Interlocked.Increment(ref _lastHandleValue));
 			SafeFileHandle handle = new(value, ownsHandle: false);
-			// The mode was applied above, so a stream on this handle must open the file as it is now.
 			_entries[value] = new Entry(
 				new WeakReference<SafeFileHandle>(handle),
-				new SafeFileHandleMock(location.FullPath, FileMode.Open, share),
+				new SafeFileHandleMock(location.FullPath, mode, share),
 				accessLock,
 				location,
 				container,
@@ -128,8 +127,11 @@ internal sealed class MockSafeFileHandleRegistry
 		return (container, FileAccess.ReadWrite);
 	}
 
-	internal bool IsRegistered(SafeFileHandle handle)
-		=> Resolve(handle) is not null;
+	/// <summary>
+	///     Returns the entry of a handle this registry created, or <see langword="null" /> for a foreign handle.
+	/// </summary>
+	internal Entry? Find(SafeFileHandle handle)
+		=> Resolve(handle);
 
 	internal SafeFileHandleMock Map(SafeFileHandle handle)
 		=> Resolve(handle)?.Mock ?? MapForeign(handle);

@@ -262,6 +262,11 @@ internal sealed class InMemoryContainer : IStorageContainer
 			timeAdjustment |= TimeAdjustments.LastAccessTime;
 		}
 
+		ChangeDescription fileSystemChange =
+			_fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Changed,
+				FileSystemTypes.File,
+				notifyFilters,
+				_location);
 		if (_isUnlinked)
 		{
 			_bytes = bytes;
@@ -270,11 +275,6 @@ internal sealed class InMemoryContainer : IStorageContainer
 			return;
 		}
 
-		ChangeDescription fileSystemChange =
-			_fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Changed,
-				FileSystemTypes.File,
-				notifyFilters,
-				_location);
 		_location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
 		_bytes = bytes;
 		this.AdjustTimes(timeAdjustment);
