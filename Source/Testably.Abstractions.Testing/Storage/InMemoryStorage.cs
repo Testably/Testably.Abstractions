@@ -1,5 +1,4 @@
-﻿using DotNet.Globbing;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -22,7 +21,7 @@ internal sealed class InMemoryStorage : IStorage
 	private readonly ConcurrentDictionary<IStorageLocation, ConcurrentDictionary<Guid, FileHandle>>
 		_fileHandles = new();
 
-	private readonly List<(Glob, bool, FileVersionInfoContainer)>
+	private readonly List<(GlobPattern, bool, FileVersionInfoContainer)>
 		_fileVersions = new();
 
 	private readonly ConcurrentDictionary<string, IStorageDrive> _drives =
@@ -753,7 +752,7 @@ internal sealed class InMemoryStorage : IStorage
 	internal void AddFileVersion(string globPattern, FileVersionInfoContainer container)
 	{
 		_fileVersions.Add((
-			Glob.Parse(globPattern, _fileSystem.Execute.GlobOptions),
+			GlobPattern.Parse(globPattern, !_fileSystem.Execute.IsLinux),
 			globPattern.IndexOfAny([
 				_fileSystem.Execute.Path.DirectorySeparatorChar,
 				_fileSystem.Execute.Path.AltDirectorySeparatorChar,

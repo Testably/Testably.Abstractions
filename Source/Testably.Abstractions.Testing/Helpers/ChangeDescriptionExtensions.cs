@@ -1,5 +1,4 @@
-﻿using DotNet.Globbing;
-using System;
+﻿using System;
 using System.IO;
 using Testably.Abstractions.Testing.FileSystem;
 
@@ -37,7 +36,7 @@ internal static class ChangeDescriptionExtensions
 			return false;
 		}
 
-		Glob? glob = Glob.Parse(globPattern, execute.GlobOptions);
+		GlobPattern glob = GlobPattern.Parse(globPattern, !execute.IsLinux);
 		if (globPattern.IndexOfAny([
 				execute.Path.DirectorySeparatorChar,
 				execute.Path.AltDirectorySeparatorChar,
@@ -48,7 +47,7 @@ internal static class ChangeDescriptionExtensions
 				return false;
 			}
 		}
-		else if (!glob.IsMatch(execute.Path.GetFileName(changeDescription.Name)))
+		else if (!glob.IsMatch(execute.Path.GetFileName(changeDescription.Name) ?? string.Empty))
 		{
 			return false;
 		}
