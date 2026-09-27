@@ -40,58 +40,14 @@ internal sealed class GlobPattern
 	{
 		while (p < _pattern.Length)
 		{
-			char c = _pattern[p];
-			if (c == '*')
+			if (_pattern[p] == '*')
 			{
-				if (IsDirectoryWildcard(p))
-				{
-					if (p + 2 == _pattern.Length)
-					{
-						return true;
-					}
-
-					for (int i = t; i <= text.Length; i++)
-					{
-						if ((i == t || IsSeparator(text[i - 1])) && IsMatch(p + 3, text, i))
-						{
-							return true;
-						}
-					}
-
-					return false;
-				}
-
-				while (p < _pattern.Length && _pattern[p] == '*')
-				{
-					p++;
-				}
-
-				int segmentEnd = t;
-				while (segmentEnd < text.Length && !IsSeparator(text[segmentEnd]))
-				{
-					segmentEnd++;
-				}
-
-				for (int i = t; i <= segmentEnd; i++)
-				{
-					if (IsMatch(p, text, i))
-					{
-						return true;
-					}
-				}
-
-				return false;
+				return IsDirectoryWildcard(p)
+					? MatchesDirectoryWildcard(p, text, t)
+					: MatchesWildcard(p, text, t);
 			}
 
-			if (t == text.Length)
-			{
-				return false;
-			}
-
-			bool isCharacterMatch = c == '[' && TryMatchClass(ref p, text[t], out bool isClassMatch)
-				? isClassMatch
-				: MatchesCharacter(_pattern[p++], text[t]);
-			if (!isCharacterMatch)
+			if (t == text.Length || !MatchesNextCharacter(ref p, text[t]))
 			{
 				return false;
 			}
@@ -118,6 +74,53 @@ internal sealed class GlobPattern
 		}
 
 		return CharEquals(patternChar, textChar);
+	}
+
+	private bool MatchesDirectoryWildcard(int p, string text, int t)
+	{
+		if (p + 2 == _pattern.Length)
+		{
+			return true;
+		}
+
+		for (int i = t; i <= text.Length; i++)
+		{
+			if ((i == t || IsSeparator(text[i - 1])) && IsMatch(p + 3, text, i))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private bool MatchesNextCharacter(ref int p, char textChar)
+		=> _pattern[p] == '[' && TryMatchClass(ref p, textChar, out bool isClassMatch)
+			? isClassMatch
+			: MatchesCharacter(_pattern[p++], textChar);
+
+	private bool MatchesWildcard(int p, string text, int t)
+	{
+		while (p < _pattern.Length && _pattern[p] == '*')
+		{
+			p++;
+		}
+
+		int segmentEnd = t;
+		while (segmentEnd < text.Length && !IsSeparator(text[segmentEnd]))
+		{
+			segmentEnd++;
+		}
+
+		for (int i = t; i <= segmentEnd; i++)
+		{
+			if (IsMatch(p, text, i))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private bool TryMatchClass(ref int p, char c, out bool isMatch)
