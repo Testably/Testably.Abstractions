@@ -195,6 +195,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		,UnixFileMode? unixFileMode = null
 #endif
+		,bool adoptHandle = false
 	)
 		: this(new MemoryStream(),
 			fileSystem,
@@ -207,6 +208,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 			,unixFileMode
 #endif
+			,adoptHandle
 		)
 	{
 	}
@@ -223,6 +225,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		,UnixFileMode? unixFileMode
 #endif
+		,bool adoptHandle
 	)
 		: base(
 			stream,
@@ -254,7 +257,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 #endif
 
-		_accessLock = file.RequestAccess(access, share);
+		_accessLock = adoptHandle
+			? FileHandle.Ignore
+			: file.RequestAccess(access, share);
 
 		_container = file;
 

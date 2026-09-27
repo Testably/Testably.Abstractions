@@ -70,7 +70,8 @@ public partial class NotificationTests
 				await onThreadSleep.WaitAsync(cancellationToken: cts.Token);
 			});
 
-			await That(exception).IsExactly<OperationCanceledException>();
+			await That(exception).Is<OperationCanceledException>()
+				.Because("a token already cancelled when the channel read starts yields a TaskCanceledException");
 			await That(isCalled).IsFalse();
 			ms.Set();
 		}
@@ -149,7 +150,8 @@ public partial class NotificationTests
 					TestContext.Current!.Execution.CancellationToken);
 			});
 
-			await That(exception).IsExactly<OperationCanceledException>();
+			await That(exception).Is<OperationCanceledException>()
+				.Because("a token already cancelled when the channel read starts yields a TaskCanceledException");
 			await That(isCalled).IsFalse();
 			ms.Set();
 		}
