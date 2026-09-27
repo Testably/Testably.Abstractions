@@ -1,5 +1,4 @@
-﻿using DotNet.Globbing;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -8,24 +7,6 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal sealed partial class Execute
 {
-	/// <summary>
-	///     The <see cref="GlobOptions" /> that use case sensitivity depending on the simulated OS.
-	/// </summary>
-	public GlobOptions GlobOptions
-	{
-		get
-		{
-			field ??= new GlobOptions
-			{
-				Evaluation =
-				{
-					CaseInsensitive = !IsLinux,
-				},
-			};
-			return field;
-		}
-	}
-
 	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.Linux" />.
 	/// </summary>

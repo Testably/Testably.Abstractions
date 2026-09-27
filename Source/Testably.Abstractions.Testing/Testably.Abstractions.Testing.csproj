@@ -22,7 +22,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DotNet.Glob" />
 		<PackageReference Include="System.Threading.Channels" />
 	</ItemGroup>
 
