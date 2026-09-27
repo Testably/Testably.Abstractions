@@ -1,0 +1,12 @@
+pull_request_rules:
+  - name: Auto-merge Renovate PRs into main
+    conditions:
+      - base = main
+      - author = renovate[bot]
+      - check-success = Unit tests (ubuntu-latest)
+      - check-success = Unit tests (windows-latest)
+      - check-success = Unit tests (macos-latest)
+      - check-success = API tests
+    actions:
+      merge:
+        method: squash

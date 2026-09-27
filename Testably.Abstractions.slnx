@@ -45,6 +45,7 @@
   <Folder Name="/_/.github/">
     <File Path=".github/copilot-instructions.md" />
     <File Path=".github/coverage-settings.xml" />
+    <File Path=".github/mergify.yml" />
   </Folder>
   <Folder Name="/_/.github/workflows/">
     <File Path=".github/workflows/build.yml" />
