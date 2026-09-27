@@ -66,18 +66,21 @@ internal sealed class GlobPattern
 					p++;
 				}
 
-				for (int i = t;; i++)
+				int segmentEnd = t;
+				while (segmentEnd < text.Length && !IsSeparator(text[segmentEnd]))
+				{
+					segmentEnd++;
+				}
+
+				for (int i = t; i <= segmentEnd; i++)
 				{
 					if (IsMatch(p, text, i))
 					{
 						return true;
 					}
-
-					if (i == text.Length || IsSeparator(text[i]))
-					{
-						return false;
-					}
 				}
+
+				return false;
 			}
 
 			if (t == text.Length)
@@ -134,18 +137,20 @@ internal sealed class GlobPattern
 		}
 
 		bool isFound = false;
-		for (int i = start; i < end && !isFound; i++)
+		int i = start;
+		while (i < end && !isFound)
 		{
 			if (i + 2 < end && _pattern[i + 1] == '-')
 			{
 				isFound = IsInRange(c, _pattern[i], _pattern[i + 2]) ||
 				          (_ignoreCase && (IsInRange(char.ToUpperInvariant(c), _pattern[i], _pattern[i + 2]) ||
 				                           IsInRange(char.ToLowerInvariant(c), _pattern[i], _pattern[i + 2])));
-				i += 2;
+				i += 3;
 			}
 			else
 			{
 				isFound = CharEquals(_pattern[i], c);
+				i++;
 			}
 		}
 
