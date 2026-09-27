@@ -3,6 +3,7 @@ using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
@@ -28,8 +29,7 @@ internal sealed class MockSafeFileHandleRegistry
 	private const long FirstHandleValue = 0x4000_0000L;
 
 	/// <summary>
-	///     Shared by all <see cref="MockFileSystem" />s, so that a handle passed to another instance is foreign there
-	///     instead of resolving to an unrelated file that happens to have the same value.
+	///     Shared by all <see cref="MockFileSystem" />s, so that no two mock handles have the same value.
 	/// </summary>
 	private static long _lastHandleValue = FirstHandleValue - 1;
 
@@ -41,8 +41,14 @@ internal sealed class MockSafeFileHandleRegistry
 	                                             FileOptions.Encrypted |
 	                                             (FileOptions)0x20000000; // NoBuffering
 
-	private readonly Dictionary<IntPtr, Entry> _entries = new();
+	private readonly List<Entry> _entries = [];
 	private readonly MockFileSystem _fileSystem;
+
+	/// <summary>
+	///     Looks up handles by reference instead of by their value, and does not keep them alive, so that a handle
+	///     which is never disposed is still released once it is collected.
+	/// </summary>
+	private readonly ConditionalWeakTable<SafeFileHandle, Entry> _handles = new();
 #if NET9_0_OR_GREATER
 	private readonly System.Threading.Lock _lock = new();
 #else
@@ -95,7 +101,7 @@ internal sealed class MockSafeFileHandleRegistry
 		{
 			IntPtr value = new(Interlocked.Increment(ref _lastHandleValue));
 			SafeFileHandle handle = new(value, ownsHandle: false);
-			_entries[value] = new Entry(
+			Entry entry = new(
 				new WeakReference<SafeFileHandle>(handle),
 				new SafeFileHandleMock(location.FullPath, mode, share),
 				accessLock,
@@ -103,6 +109,8 @@ internal sealed class MockSafeFileHandleRegistry
 				container,
 				access,
 				options);
+			_entries.Add(entry);
+			_handles.Add(handle, entry);
 			_hasWork = true;
 			return handle;
 		}
@@ -154,7 +162,6 @@ internal sealed class MockSafeFileHandleRegistry
 		}
 
 		List<Entry> released = [];
-		List<IntPtr> closed = [];
 		lock (_lock)
 		{
 			if (_sweeping)
@@ -162,24 +169,19 @@ internal sealed class MockSafeFileHandleRegistry
 				return;
 			}
 
-			foreach (KeyValuePair<IntPtr, Entry> item in _entries)
+			for (int i = _entries.Count - 1; i >= 0; i--)
 			{
-				if (!item.Value.Handle.TryGetTarget(out SafeFileHandle? handle) ||
+				if (!_entries[i].Handle.TryGetTarget(out SafeFileHandle? handle) ||
 				    handle.IsClosed)
 				{
-					closed.Add(item.Key);
-					released.Add(item.Value);
+					released.Add(_entries[i]);
+					_entries.RemoveAt(i);
 				}
 			}
 
 			if (released.Count == 0 && _pendingDeletes.Count == 0)
 			{
 				return;
-			}
-
-			foreach (IntPtr value in closed)
-			{
-				_entries.Remove(value);
 			}
 
 			_sweeping = true;
@@ -189,22 +191,7 @@ internal sealed class MockSafeFileHandleRegistry
 		{
 			foreach (Entry entry in released)
 			{
-				entry.AccessLock.Dispose();
-				if (!entry.Options.HasFlag(FileOptions.DeleteOnClose))
-				{
-					continue;
-				}
-
-				if (_fileSystem.Execute.IsWindows)
-				{
-					_pendingDeletes.Add(entry);
-				}
-				else
-				{
-					// Unix unlinks the name that was opened as soon as this handle closes, whatever else still holds
-					// the file open.
-					TryDelete(entry.Location);
-				}
+				Release(entry);
 			}
 
 			// Windows removes the file once the last handle to it closes.
@@ -241,6 +228,26 @@ internal sealed class MockSafeFileHandleRegistry
 		return true;
 	}
 
+	private void Release(Entry entry)
+	{
+		entry.AccessLock.Dispose();
+		if (!entry.Options.HasFlag(FileOptions.DeleteOnClose))
+		{
+			return;
+		}
+
+		if (_fileSystem.Execute.IsWindows)
+		{
+			_pendingDeletes.Add(entry);
+		}
+		else
+		{
+			// Unix unlinks the name that was opened as soon as this handle closes, whatever else still holds
+			// the file open.
+			TryDelete(entry.Location);
+		}
+	}
+
 	private SafeFileHandleMock MapForeign(SafeFileHandle handle)
 	{
 		if (handle.IsClosed)
@@ -260,8 +267,7 @@ internal sealed class MockSafeFileHandleRegistry
 
 		lock (_lock)
 		{
-			IntPtr value = handle.DangerousGetHandle();
-			if (_entries.TryGetValue(value, out Entry? entry))
+			if (_handles.TryGetValue(handle, out Entry? entry))
 			{
 				if (handle.IsClosed)
 				{

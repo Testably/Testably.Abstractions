@@ -226,9 +226,12 @@ public static class AssertionHelpers
 					return value;
 				}
 
-				return string.Concat(
-					indentFirstLine ? indentation : "",
-					value.Replace("\n", $"\n{indentation}"));
+				return (indentFirstLine ? indentation : "") +
+#if NET8_0_OR_GREATER
+					value.Replace("\n", $"\n{indentation}", StringComparison.Ordinal);
+#else
+					value.Replace("\n", $"\n{indentation}");
+#endif
 			}
 
 			static string PrependAOrAn(string value)
