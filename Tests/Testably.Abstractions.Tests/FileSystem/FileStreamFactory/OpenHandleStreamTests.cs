@@ -66,7 +66,7 @@ public class OpenHandleStreamTests(FileSystemTestData testData) : FileSystemTest
 		using StreamReader reader = new(stream);
 
 		await That(stream.IsAsync).IsTrue();
-		await That(await reader.ReadToEndAsync()).IsEqualTo(contents);
+		await That(await reader.ReadToEndAsync(CancellationToken)).IsEqualTo(contents);
 	}
 
 	[Test]

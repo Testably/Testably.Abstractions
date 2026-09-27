@@ -207,7 +207,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	///     handle that the caller still uses, so its file is opened by path and the handle is left open. Like a real
 	///     <see cref="FileStream" />, the stream takes no share of its own, as the handle already holds the file open.
 	/// </summary>
-	private FileSystemStream NewFromHandle(SafeFileHandle handle, FileAccess access,
+	private FileStreamMock NewFromHandle(SafeFileHandle handle, FileAccess access,
 		int bufferSize, bool isAsync)
 	{
 #if FEATURE_FILESYSTEM_RANDOMACCESS
