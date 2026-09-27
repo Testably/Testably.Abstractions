@@ -115,6 +115,46 @@ public class MockSafeFileHandleTests
 	}
 
 	[Test]
+	public async Task RandomAccess_WithHandleFromAnotherFileSystem_ShouldNotBeReportedAsClosed()
+	{
+		MockFileSystem fileSystemA = new();
+		MockFileSystem fileSystemB = new();
+		fileSystemA.File.WriteAllText("a.txt", "a");
+		fileSystemB.File.WriteAllText("b.txt", "b");
+		fileSystemB.File.OpenHandle("b.txt").Dispose();
+		fileSystemB.File.WriteAllText("c.txt", "cc");
+		fileSystemB.WithSafeFileHandleStrategy(
+			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock("c.txt")));
+
+		using SafeFileHandle handleA = fileSystemA.File.OpenHandle("a.txt");
+
+		void Act() => fileSystemB.RandomAccess.GetLength(handleA);
+
+		await That(Act).DoesNotThrow()
+			.Because("a live handle from another file system was never closed");
+	}
+
+	[Test]
+	public async Task RandomAccess_WithHandleFromAnotherFileSystem_ShouldUseTheSafeFileHandleStrategy()
+	{
+		MockFileSystem fileSystemA = new();
+		MockFileSystem fileSystemB = new();
+		fileSystemA.File.WriteAllText("a.txt", "a");
+		fileSystemB.File.WriteAllText("b.txt", "b");
+		fileSystemB.File.WriteAllText("c.txt", "cc");
+		fileSystemB.WithSafeFileHandleStrategy(
+			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock("c.txt")));
+
+		using SafeFileHandle handleA = fileSystemA.File.OpenHandle("a.txt");
+		using SafeFileHandle handleB = fileSystemB.File.OpenHandle("b.txt");
+
+		long result = fileSystemB.RandomAccess.GetLength(handleA);
+
+		await That(result).IsEqualTo(2)
+			.Because("a handle from another file system is foreign and must be mapped by the strategy");
+	}
+
+	[Test]
 	public async Task Write_AtAnOffsetThatOverflows_ShouldThrowIOException()
 	{
 		MockFileSystem fileSystem = new();
@@ -126,6 +166,41 @@ public class MockSafeFileHandleTests
 		void Act() => fileSystem.RandomAccess.Write(handle, new byte[] { 9, }, long.MaxValue);
 
 		await That(Act).Throws<IOException>();
+	}
+
+	[Test]
+	public async Task Write_AfterTheFileIsDeleted_ShouldNotChangeTheUsedBytesOfTheDrive()
+	{
+		MockFileSystem fileSystem = new();
+		IDriveInfo drive = fileSystem.GetDefaultDrive();
+		long freeSpace = drive.AvailableFreeSpace;
+		fileSystem.File.WriteAllBytes("f.txt", [1, 2, 3,]);
+
+		using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+		fileSystem.File.Delete("f.txt");
+		fileSystem.RandomAccess.Write(handle, new byte[] { 9, 9, 9, 9, 9, }, 0);
+
+		await That(drive).HasAvailableFreeSpace(freeSpace)
+			.Because("the deleted file no longer counts towards the drive, so writes to it must not either");
+	}
+
+	[Test]
+	public async Task Write_AfterTheFileIsDeleted_ShouldNotNotifyAboutItsFormerPath()
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllBytes("f.txt", [1, 2, 3,]);
+
+		using SafeFileHandle handle = fileSystem.File.OpenHandle("f.txt",
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+		fileSystem.File.Delete("f.txt");
+		bool isNotified = false;
+		fileSystem.Notify.OnEvent(_ => isNotified = true);
+
+		fileSystem.RandomAccess.Write(handle, new byte[] { 9, }, 0);
+
+		await That(isNotified).IsFalse()
+			.Because("the path no longer names the file the handle writes to");
 	}
 
 	[Test]

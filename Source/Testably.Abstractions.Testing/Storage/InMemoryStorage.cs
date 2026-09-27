@@ -75,7 +75,7 @@ internal sealed class InMemoryStorage : IStorage
 			    _containers.TryRemove(destination,
 				    out IStorageContainer? existingContainer))
 			{
-				existingContainer.ClearBytes();
+				existingContainer.Unlink();
 			}
 
 			IStorageContainer copiedContainer =
@@ -177,7 +177,7 @@ internal sealed class InMemoryStorage : IStorage
 		{
 			if (_containers.TryRemove(location, out IStorageContainer? removed))
 			{
-				removed.ClearBytes();
+				removed.Unlink();
 				_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 				CheckAndAdjustParentDirectoryTimes(location);
 				return true;
@@ -1052,7 +1052,7 @@ internal sealed class InMemoryStorage : IStorage
 				    _containers.TryRemove(destination,
 					    out IStorageContainer? existingContainer))
 				{
-					existingContainer.ClearBytes();
+					existingContainer.Unlink();
 				}
 
 				if (_containers.TryAdd(destination, sourceContainer.UpdateLocation(destination)))
