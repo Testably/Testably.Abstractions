@@ -71,7 +71,7 @@ internal sealed class InMemoryStorage : IStorage
 
 		using (_ = sourceContainer.RequestAccess(FileAccess.Read, FileShare.ReadWrite))
 		{
-			if (TryGetCopyDestination(destination, overwrite,
+			if (TryGetCopyDestination(sourceContainer, destination, overwrite,
 				out IStorageContainer? copiedContainer))
 			{
 				copiedContainer.WriteBytes(sourceContainer.GetBytes().ToArray());
@@ -1179,16 +1179,27 @@ internal sealed class InMemoryStorage : IStorage
 
 	/// <summary>
 	///     Copying over an existing file overwrites that file instead of replacing it, so handles and streams that hold
-	///     it open see the copied content.
+	///     it open see the copied content. On Unix, .NET opens the destination with <see cref="FileShare.None" />, so the
+	///     copy fails while anything holds the file open.
 	/// </summary>
-	private bool TryGetCopyDestination(IStorageLocation destination, bool overwrite,
-		[NotNullWhen(true)] out IStorageContainer? container)
+	private bool TryGetCopyDestination(IStorageContainer source, IStorageLocation destination,
+		bool overwrite, [NotNullWhen(true)] out IStorageContainer? container)
 	{
 		if (overwrite &&
 		    _containers.TryGetValue(destination, out IStorageContainer? existingContainer))
 		{
-			if (existingContainer is { Type: FileSystemTypes.File, LinkTarget: null, })
+			if (existingContainer is { Type: FileSystemTypes.File, LinkTarget: null, } &&
+			    !ReferenceEquals(existingContainer, source))
 			{
+				if (!_fileSystem.Execute.IsWindows &&
+				    _fileHandles.TryGetValue(destination,
+					    out ConcurrentDictionary<Guid, FileHandle>? handles) &&
+				    !handles.IsEmpty)
+				{
+					throw ExceptionFactory.ProcessCannotAccessTheFile(destination.FullPath,
+						-2147024864);
+				}
+
 				existingContainer.AdjustTimes(TimeAdjustments.All);
 				container = existingContainer;
 				return true;

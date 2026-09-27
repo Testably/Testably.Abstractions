@@ -30,9 +30,33 @@ public class HandleIdentityTests(FileSystemTestData testData) : FileSystemTestBa
 
 	[Test]
 	[AutoArguments]
-	public async Task Handle_ShouldSeeTheNewContent_WhenTheFileIsOverwrittenByCopy(
+	public async Task Handle_OnUnix_ShouldPreventOverwritingTheFileByCopy(
 		string path, string source)
 	{
+		Skip.If(Test.RunsOnWindows,
+			"Windows overwrites a file that a handle holds open with sharing");
+
+		FileSystem.File.WriteAllBytes(path, [1, 2, 3, 4,]);
+		FileSystem.File.WriteAllBytes(source, [9, 9,]);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+
+		void Act() => FileSystem.File.Copy(source, path, overwrite: true);
+
+		await That(Act).Throws<IOException>()
+			.Because(".NET opens the destination with FileShare.None on Unix, which conflicts with the open handle");
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(new byte[] { 1, 2, 3, 4, });
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task Handle_OnWindows_ShouldSeeTheNewContent_WhenTheFileIsOverwrittenByCopy(
+		string path, string source)
+	{
+		Skip.IfNot(Test.RunsOnWindows,
+			".NET opens the destination with FileShare.None on Unix, so the copy fails while the handle is open");
+
 		FileSystem.File.WriteAllBytes(path, [1, 2, 3, 4,]);
 		FileSystem.File.WriteAllBytes(source, [9, 9,]);
 
