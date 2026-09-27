@@ -76,11 +76,10 @@ internal sealed class LockableContainer(
 	/// <inheritdoc cref="IStorageContainer.BytesChanged" />
 	public event EventHandler? BytesChanged;
 
-	/// <inheritdoc cref="IStorageContainer.ClearBytes()" />
-	public void ClearBytes()
+	/// <inheritdoc cref="IStorageContainer.Unlink()" />
+	public void Unlink()
 	{
-		_bytes = Array.Empty<byte>();
-		BytesChanged?.Invoke(this, EventArgs.Empty);
+		// Do nothing in LockableContainer
 	}
 
 	/// <inheritdoc cref="IStorageContainer.Decrypt()" />

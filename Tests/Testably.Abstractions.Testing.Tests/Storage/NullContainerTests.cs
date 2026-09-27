@@ -18,12 +18,12 @@ public class NullContainerTests
 	}
 
 	[Test]
-	public async Task ClearBytes_ShouldReturnEmptyArray()
+	public async Task Unlink_ShouldReturnEmptyArray()
 	{
 		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
-		sut.ClearBytes();
+		sut.Unlink();
 
 		await That(sut.GetBytes()).IsEmpty();
 	}
