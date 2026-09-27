@@ -3,7 +3,8 @@ namespace Testably.Abstractions.Testing.Helpers;
 /// <summary>
 ///     A glob pattern supporting <c>*</c> and <c>?</c> within a path segment, <c>**</c> as a whole segment for any
 ///     number of directories and character classes like <c>[abc]</c>, <c>[a-z]</c> or <c>[!a-z]</c>.<br />
-///     Both <c>/</c> and <c>\</c> are treated as path separators.
+///     Both <c>/</c> and <c>\</c> are treated as path separators, which neither <c>*</c>, <c>?</c> nor character
+///     classes match.
 /// </summary>
 internal sealed class GlobPattern
 {
@@ -158,7 +159,7 @@ internal sealed class GlobPattern
 		}
 
 		p = end + 1;
-		isMatch = isFound != isNegated;
+		isMatch = isFound != isNegated && !IsSeparator(c);
 		return true;
 
 		static bool IsInRange(char value, char from, char to)
