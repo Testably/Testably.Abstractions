@@ -3,6 +3,7 @@ using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 
@@ -26,6 +27,12 @@ internal sealed class MockSafeFileHandleRegistry
 	/// </summary>
 	private const long FirstHandleValue = 0x4000_0000L;
 
+	/// <summary>
+	///     Shared by all <see cref="MockFileSystem" />s, so that a handle passed to another instance is foreign there
+	///     instead of resolving to an unrelated file that happens to have the same value.
+	/// </summary>
+	private static long _lastHandleValue = FirstHandleValue - 1;
+
 	private const FileOptions ValidFileOptions = FileOptions.WriteThrough |
 	                                             FileOptions.Asynchronous |
 	                                             FileOptions.RandomAccess |
@@ -47,7 +54,6 @@ internal sealed class MockSafeFileHandleRegistry
 	private readonly List<Entry> _pendingDeletes = [];
 
 	private volatile bool _hasWork;
-	private long _nextHandleValue = FirstHandleValue;
 	private bool _sweeping;
 
 	internal MockSafeFileHandleRegistry(MockFileSystem fileSystem)
@@ -79,7 +85,7 @@ internal sealed class MockSafeFileHandleRegistry
 
 		lock (_lock)
 		{
-			IntPtr value = new(_nextHandleValue++);
+			IntPtr value = new(Interlocked.Increment(ref _lastHandleValue));
 			SafeFileHandle handle = new(value, ownsHandle: false);
 			_entries[value] = new Entry(
 				new WeakReference<SafeFileHandle>(handle),
@@ -248,14 +254,6 @@ internal sealed class MockSafeFileHandleRegistry
 				}
 
 				return entry;
-			}
-
-			// Handle values are issued sequentially and never reused, so a value within the issued range that is no
-			// longer registered belonged to a handle this registry created and the caller has since closed.
-			long candidate = value.ToInt64();
-			if (candidate >= FirstHandleValue && candidate < _nextHandleValue)
-			{
-				throw ExceptionFactory.HandleIsClosed();
 			}
 
 			return null;
