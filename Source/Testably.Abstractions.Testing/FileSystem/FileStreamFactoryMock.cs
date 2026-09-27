@@ -2,9 +2,6 @@ using Microsoft.Win32.SafeHandles;
 using System;
 using System.IO;
 using Testably.Abstractions.Testing.Helpers;
-#if NET6_0_OR_GREATER
-using System.Diagnostics.CodeAnalysis;
-#endif
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -144,9 +141,6 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 #endif
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
@@ -157,9 +151,6 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
@@ -170,9 +161,6 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int, bool)" />
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize,
 		bool isAsync)
 	{
@@ -216,7 +204,8 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 
 	/// <summary>
 	///     A handle from the <see cref="ISafeFileHandleStrategy" /> only carries a path and may wrap an operating system
-	///     handle that the caller still uses, so its file is opened by path and the handle is left open.
+	///     handle that the caller still uses, so its file is opened by path and the handle is left open. Like a real
+	///     <see cref="FileStream" />, the stream takes no share of its own, as the handle already holds the file open.
 	/// </summary>
 	private FileSystemStream NewFromHandle(SafeFileHandle handle, FileAccess access,
 		int bufferSize, bool isAsync)
@@ -233,12 +222,13 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 		SafeFileHandleMock safeFileHandleMock =
 			_fileSystem.SafeFileHandleStrategy.MapSafeFileHandle(handle);
 #endif
-		return New(
+		return new FileStreamMock(_fileSystem,
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
 			access,
 			safeFileHandleMock.Share,
 			bufferSize,
-			isAsync);
+			isAsync ? FileOptions.Asynchronous : FileOptions.None,
+			adoptHandle: true);
 	}
 }

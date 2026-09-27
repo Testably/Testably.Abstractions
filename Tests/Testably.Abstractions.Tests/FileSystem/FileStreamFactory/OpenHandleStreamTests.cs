@@ -54,6 +54,23 @@ public class OpenHandleStreamTests(FileSystemTestData testData) : FileSystemTest
 
 	[Test]
 	[AutoArguments]
+	public async Task New_WithAsynchronousHandleAndIsAsync_ShouldReadTheFileContentAsynchronously(
+		string path, string contents)
+	{
+		FileSystem.File.WriteAllText(path, contents);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.Read, FileShare.ReadWrite, FileOptions.Asynchronous);
+		using FileSystemStream stream =
+			FileSystem.FileStream.New(handle, FileAccess.Read, 1024, true);
+		using StreamReader reader = new(stream);
+
+		await That(stream.IsAsync).IsTrue();
+		await That(await reader.ReadToEndAsync()).IsEqualTo(contents);
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task New_WithHandle_ShouldCreateWritableStream(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
