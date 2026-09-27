@@ -80,17 +80,24 @@ internal sealed class MockSafeFileHandleRegistry
 
 		if (mode is FileMode.Create or FileMode.Truncate)
 		{
-			container.WriteBytes([]);
+			try
+			{
+				container.WriteBytes([]);
+			}
+			catch
+			{
+				accessLock.Dispose();
+				throw;
+			}
 		}
 
 		lock (_lock)
 		{
 			IntPtr value = new(Interlocked.Increment(ref _lastHandleValue));
 			SafeFileHandle handle = new(value, ownsHandle: false);
-			// The mode was applied above, so a stream on this handle must open the file as it is now.
 			_entries[value] = new Entry(
 				new WeakReference<SafeFileHandle>(handle),
-				new SafeFileHandleMock(location.FullPath, FileMode.Open, share),
+				new SafeFileHandleMock(location.FullPath, mode, share),
 				accessLock,
 				location,
 				container,
@@ -120,6 +127,12 @@ internal sealed class MockSafeFileHandleRegistry
 		return (container, FileAccess.ReadWrite);
 	}
 
+	/// <summary>
+	///     Returns the entry of a handle this registry created, or <see langword="null" /> for a foreign handle.
+	/// </summary>
+	internal Entry? Find(SafeFileHandle handle)
+		=> Resolve(handle);
+
 	internal SafeFileHandleMock Map(SafeFileHandle handle)
 		=> Resolve(handle)?.Mock ?? MapForeign(handle);
 
@@ -130,7 +143,8 @@ internal sealed class MockSafeFileHandleRegistry
 	/// </summary>
 	/// <remarks>
 	///     A closed handle is released here, together with its share lock and any deletion it requested, and nothing
-	///     here throws: a real file system also ignores a delete-on-close that fails.
+	///     here throws: a real file system also ignores a delete-on-close that fails, so one that an interception vetoes
+	///     is ignored as well instead of surfacing from an unrelated call.
 	/// </remarks>
 	internal void ReleaseClosedHandles()
 	{
@@ -267,13 +281,9 @@ internal sealed class MockSafeFileHandleRegistry
 		{
 			_fileSystem.Storage.DeleteContainer(location, FileSystemTypes.File);
 		}
-		catch (IOException)
+		catch (Exception)
 		{
-			// The name is gone, or its directory is.
-		}
-		catch (UnauthorizedAccessException)
-		{
-			// A directory now has the name.
+			// The name or its directory is gone, a directory now has the name, or an interception vetoed the deletion.
 		}
 	}
 

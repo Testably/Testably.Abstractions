@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -180,6 +181,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	private readonly IStorageLocation _location;
 	private readonly FileMode _mode;
 	private readonly FileOptions _options;
+	private readonly SafeFileHandle? _ownedHandle;
 	private readonly List<(long Start, long End)> _pendingWrites = new();
 	private readonly MemoryStream _stream;
 
@@ -259,6 +261,44 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		InitializeStream();
 	}
 	#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
+
+	/// <summary>
+	///     Wraps the file that <paramref name="handle" /> holds open instead of opening its path again, so the stream
+	///     works after the file was deleted and shares the handle's lock. Like a <see cref="FileStream" />, the stream
+	///     owns the handle and closes it when disposed.
+	/// </summary>
+	internal FileStreamMock(MockFileSystem fileSystem,
+		SafeFileHandle handle,
+		IStorageContainer container,
+		IStorageLocation location,
+		FileAccess access,
+		bool isAsync)
+		: this(new MemoryStream(), fileSystem, handle, container, location, access, isAsync)
+	{
+	}
+
+	private FileStreamMock(MemoryStream stream,
+		MockFileSystem fileSystem,
+		SafeFileHandle handle,
+		IStorageContainer container,
+		IStorageLocation location,
+		FileAccess access,
+		bool isAsync)
+		: base(stream, location.FullPath, isAsync)
+	{
+		_stream = stream;
+		_fileSystem = fileSystem;
+		_mode = FileMode.Open;
+		_access = access;
+		_options = isAsync ? FileOptions.Asynchronous : FileOptions.None;
+		_initialPosition = base.Position;
+		_location = location;
+		_container = container;
+		_accessLock = FileHandle.Ignore;
+		_ownedHandle = handle;
+
+		InitializeStream();
+	}
 
 	#region IFileSystemExtensibility Members
 
@@ -678,6 +718,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		InternalFlush();
 		base.Dispose(disposing);
 		OnClose();
+		_ownedHandle?.Dispose();
 		_isDisposed = true;
 	}
 
