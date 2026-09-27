@@ -106,6 +106,21 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 
 	[Test]
 	[AutoArguments]
+	public async Task FlushToDisk_OnReadOnlyHandle_ShouldNotThrow(string path)
+	{
+		FileSystem.File.WriteAllBytes(path, [1, 2, 3,]);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.Read);
+
+		void Act() => FileSystem.RandomAccess.FlushToDisk(handle);
+
+		await That(Act).DoesNotThrow()
+			.Because("the runtime ignores ERROR_ACCESS_DENIED from FlushFileBuffers on Windows so that read-only handles can be flushed on every platform");
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task FlushToDisk_OnDisposedHandle_ShouldThrowObjectDisposedException(string path)
 	{
 		FileSystem.File.WriteAllBytes(path, []);
