@@ -1180,7 +1180,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(SetAttributes),
 				fileHandle, fileAttributes);
 
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		IStorageContainer container = GetWritableContainerFromSafeFileHandle(fileHandle);
 		container.Attributes = fileAttributes;
 	}
 #endif
@@ -1205,7 +1205,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(SetCreationTime),
 				fileHandle, creationTime);
 
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		IStorageContainer container = GetWritableContainerFromSafeFileHandle(fileHandle);
 		container.CreationTime.Set(creationTime, DateTimeKind.Local);
 	}
 #endif
@@ -1230,7 +1230,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(SetCreationTimeUtc),
 				fileHandle, creationTimeUtc);
 
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		IStorageContainer container = GetWritableContainerFromSafeFileHandle(fileHandle);
 		container.CreationTime.Set(creationTimeUtc, DateTimeKind.Utc);
 	}
 #endif
@@ -1255,7 +1255,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(SetLastAccessTime),
 				fileHandle, lastAccessTime);
 
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		IStorageContainer container = GetWritableContainerFromSafeFileHandle(fileHandle);
 		container.LastAccessTime.Set(lastAccessTime, DateTimeKind.Local);
 	}
 #endif
@@ -1280,7 +1280,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(SetLastAccessTimeUtc),
 				fileHandle, lastAccessTimeUtc);
 
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		IStorageContainer container = GetWritableContainerFromSafeFileHandle(fileHandle);
 		container.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
 	}
 #endif
@@ -1305,7 +1305,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(SetLastWriteTime),
 				fileHandle, lastWriteTime);
 
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		IStorageContainer container = GetWritableContainerFromSafeFileHandle(fileHandle);
 		container.LastWriteTime.Set(lastWriteTime, DateTimeKind.Local);
 	}
 #endif
@@ -1330,7 +1330,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(SetLastWriteTimeUtc),
 				fileHandle, lastWriteTimeUtc);
 
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		IStorageContainer container = GetWritableContainerFromSafeFileHandle(fileHandle);
 		container.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
 	}
 #endif
@@ -1690,6 +1690,23 @@ internal sealed class FileMock : IFile
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	private IStorageContainer GetContainerFromSafeFileHandle(SafeFileHandle fileHandle)
 		=> _fileSystem.SafeFileHandleRegistry.GetContainer(fileHandle).Container;
+
+	/// <summary>
+	///     Windows requires <c>FILE_WRITE_ATTRIBUTES</c> to change attributes or timestamps, which a handle opened
+	///     without <see cref="FileAccess.Write" /> lacks.
+	/// </summary>
+	private IStorageContainer GetWritableContainerFromSafeFileHandle(SafeFileHandle fileHandle)
+	{
+		(IStorageContainer container, FileAccess access) =
+			_fileSystem.SafeFileHandleRegistry.GetContainer(fileHandle);
+		if (_fileSystem.Execute.IsWindows && !access.HasFlag(FileAccess.Write))
+		{
+			throw ExceptionFactory.AccessToPathDenied(
+				_fileSystem.SafeFileHandleRegistry.Map(fileHandle).Path);
+		}
+
+		return container;
+	}
 #endif
 	
 	private void WriteText(string path, string? contents, Encoding? encoding, bool append = false)
