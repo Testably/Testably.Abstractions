@@ -39,6 +39,9 @@ internal sealed class MockSafeFileHandleRegistry
 	                                             FileOptions.DeleteOnClose |
 	                                             FileOptions.SequentialScan |
 	                                             FileOptions.Encrypted |
+#if NET9_0_OR_GREATER
+	                                             (FileOptions)0x02000000 | // BackupOrRestore, accepted since .NET 9
+#endif
 	                                             (FileOptions)0x20000000; // NoBuffering
 
 	private readonly List<Entry> _entries = [];
