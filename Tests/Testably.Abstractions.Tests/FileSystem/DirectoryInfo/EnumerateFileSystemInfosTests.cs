@@ -101,6 +101,22 @@ public class EnumerateFileSystemInfosTests(FileSystemTestData testData) : FileSy
 			   d is IFileInfo);
 	}
 
+	[Test]
+	[AutoArguments]
+	public async Task EnumerateFileSystemInfos_ShouldReturnInstancesWithStateFromEnumeration(
+		string path, string subdirectoryName)
+	{
+		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectoryName);
+		FileSystem.Directory.CreateDirectory(subdirectoryPath);
+
+		IFileSystemInfo result = FileSystem.DirectoryInfo.New(path).EnumerateFileSystemInfos().Single();
+		FileSystem.Directory.Delete(subdirectoryPath);
+
+		await That(result.Exists).IsTrue();
+		result.Refresh();
+		await That(result.Exists).IsFalse();
+	}
+
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Test]
 	public async Task EnumerateFileSystemInfos_WithEnumerationOptions_ShouldConsiderSetOptions()

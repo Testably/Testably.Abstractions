@@ -60,7 +60,7 @@ internal sealed class FileInfoMock
 				.FileInfo.RegisterPathProperty(Location.FullPath,
 					nameof(Exists), PropertyAccess.Get);
 
-			return base.Exists && FileSystemType == FileSystemTypes.File;
+			return base.Exists && State.Type == FileSystemTypes.File;
 		}
 	}
 
@@ -101,8 +101,7 @@ internal sealed class FileInfoMock
 				.FileInfo.RegisterPathProperty(Location.FullPath,
 					nameof(Length), PropertyAccess.Get);
 
-			if (Container is NullContainer ||
-			    Container.Type != FileSystemTypes.File)
+			if (!State.Exists || State.Type != FileSystemTypes.File)
 			{
 				throw ExceptionFactory.FileNotFound(
 					_fileSystem.Execute.IsNetFramework
@@ -110,7 +109,7 @@ internal sealed class FileInfoMock
 						: Location.FullPath);
 			}
 
-			return Container.GetBytes().Length;
+			return State.Length;
 		}
 	}
 
@@ -138,7 +137,11 @@ internal sealed class FileInfoMock
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(AppendText));
 
-		return new StreamWriter(Open(FileMode.Append, FileAccess.Write));
+		StreamWriter streamWriter = new(Open(FileMode.Append, FileAccess.Write));
+#if NET8_0_OR_GREATER
+		ResetCache(true);
+#endif
+		return streamWriter;
 	}
 
 	/// <inheritdoc cref="IFileInfo.CopyTo(string)" />
@@ -179,12 +182,9 @@ internal sealed class FileInfoMock
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(Create));
 
-		if (!_fileSystem.Execute.IsNetFramework)
-		{
-			Refresh();
-		}
-
-		return _fileSystem.File.Create(FullName);
+		FileSystemStream stream = _fileSystem.File.Create(FullName);
+		ResetCache(!_fileSystem.Execute.IsNetFramework);
+		return stream;
 	}
 
 	/// <inheritdoc cref="IFileInfo.CreateText()" />
@@ -195,7 +195,7 @@ internal sealed class FileInfoMock
 
 		StreamWriter streamWriter = new(_fileSystem.File.Create(FullName));
 #if NET8_0_OR_GREATER
-		Refresh();
+		ResetCache(true);
 #endif
 		return streamWriter;
 	}
@@ -232,6 +232,7 @@ internal sealed class FileInfoMock
 			           _fileSystem.Storage.GetLocation(destFileName
 				           .EnsureValidArgument(_fileSystem, nameof(destFileName))))
 		           ?? throw ExceptionFactory.FileNotFound(FullName);
+		ResetCache(true);
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
@@ -248,6 +249,7 @@ internal sealed class FileInfoMock
 				           .EnsureValidArgument(_fileSystem, nameof(destFileName))),
 			           overwrite)
 		           ?? throw ExceptionFactory.FileNotFound(FullName);
+		ResetCache(true);
 	}
 #endif
 

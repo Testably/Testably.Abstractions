@@ -35,7 +35,7 @@ internal sealed class DirectoryInfoMock
 				.DirectoryInfo.RegisterPathProperty(Location.FullPath,
 					nameof(Exists), PropertyAccess.Get);
 
-			return base.Exists && FileSystemType == FileSystemTypes.Directory;
+			return base.Exists && State.Type == FileSystemTypes.Directory;
 		}
 	}
 
@@ -158,7 +158,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
-			.Select(location => New(location, _fileSystem));
+			.Select(location => WithInitializedState(New(location, _fileSystem)));
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
@@ -175,7 +175,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				enumerationOptions)
-			.Select(location => New(location, _fileSystem));
+			.Select(location => WithInitializedState(New(location, _fileSystem)));
 	}
 #endif
 
@@ -212,7 +212,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
-			.Select(location => FileInfoMock.New(location, _fileSystem));
+			.Select(location => WithInitializedState(FileInfoMock.New(location, _fileSystem)));
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
@@ -228,7 +228,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				enumerationOptions)
-			.Select(location => FileInfoMock.New(location, _fileSystem));
+			.Select(location => WithInitializedState(FileInfoMock.New(location, _fileSystem)));
 	}
 #endif
 
@@ -266,7 +266,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
-			.Select(location => FileSystemInfoMock.New(location, _fileSystem));
+			.Select(location => WithInitializedState(FileSystemInfoMock.New(location, _fileSystem)));
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
@@ -283,7 +283,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				enumerationOptions)
-			.Select(location => FileSystemInfoMock.New(location, _fileSystem));
+			.Select(location => WithInitializedState(FileSystemInfoMock.New(location, _fileSystem)));
 	}
 #endif
 
@@ -431,6 +431,7 @@ internal sealed class DirectoryInfoMock
 				           .EnsureValidFormat(_fileSystem, nameof(destDirName))),
 			           recursive: true)
 		           ?? throw ExceptionFactory.DirectoryNotFound(FullName);
+		ResetCache(true);
 	}
 
 	#endregion
@@ -445,6 +446,13 @@ internal sealed class DirectoryInfoMock
 		}
 
 		return new DirectoryInfoMock(location, fileSystem);
+	}
+
+	private static T WithInitializedState<T>(T fileSystemInfo)
+		where T : FileSystemInfoMock
+	{
+		fileSystemInfo.InitializeState();
+		return fileSystemInfo;
 	}
 
 	private IEnumerable<IStorageLocation> EnumerateInternal(

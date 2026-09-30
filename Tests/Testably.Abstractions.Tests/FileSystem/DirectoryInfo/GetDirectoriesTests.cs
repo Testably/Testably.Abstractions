@@ -67,6 +67,22 @@ public class GetDirectoriesTests(FileSystemTestData testData) : FileSystemTestBa
 		}
 	}
 
+	[Test]
+	[AutoArguments]
+	public async Task GetDirectories_ShouldReturnInstancesWithStateFromEnumeration(
+		string path, string subdirectoryName)
+	{
+		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectoryName);
+		FileSystem.Directory.CreateDirectory(subdirectoryPath);
+
+		IDirectoryInfo result = FileSystem.DirectoryInfo.New(path).GetDirectories().Single();
+		FileSystem.Directory.Delete(subdirectoryPath);
+
+		await That(result.Exists).IsTrue();
+		result.Refresh();
+		await That(result.Exists).IsFalse();
+	}
+
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Test]
 	[AutoArguments]

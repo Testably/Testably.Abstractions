@@ -73,6 +73,25 @@ public class GetFilesTests(FileSystemTestData testData) : FileSystemTestBase(tes
 		}
 	}
 
+	[Test]
+	[AutoArguments]
+	public async Task GetFiles_ShouldReturnInstancesWithStateFromEnumeration(
+		string path, string fileName)
+	{
+		string filePath = FileSystem.Path.Combine(path, fileName);
+		FileSystem.Directory.CreateDirectory(path);
+		FileSystem.File.WriteAllText(filePath, "abc");
+
+		IFileInfo result = FileSystem.DirectoryInfo.New(path).GetFiles().Single();
+		FileSystem.File.WriteAllText(filePath, "abcdefghij");
+
+		await That(result.Length).IsEqualTo(3);
+		FileSystem.File.Delete(filePath);
+		await That(result.Exists).IsTrue();
+		result.Refresh();
+		await That(result.Exists).IsFalse();
+	}
+
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[Test]
 	public async Task GetFiles_WithEnumerationOptions_ShouldConsiderSetOptions()

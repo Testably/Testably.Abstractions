@@ -28,9 +28,13 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		set => _container = value;
 	}
 
-	private bool? _exists;
-	private bool _isInitialized;
 	private IStorageContainer _container;
+	private bool _isInitialized;
+#if FEATURE_FILESYSTEM_LINK
+	private bool _isLinkTargetCached;
+	private string? _linkTarget;
+#endif
+	private CachedState? _state;
 
 	protected FileSystemInfoMock(MockFileSystem fileSystem, IStorageLocation location,
 		FileSystemTypes fileSystemType)
@@ -53,14 +57,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 			using IDisposable registration =
 				RegisterPathProperty(nameof(Attributes), PropertyAccess.Get);
 
-			return Container.Attributes;
+			return State.Attributes;
 		}
 		set
 		{
 			using IDisposable registration =
 				RegisterPathProperty(nameof(Attributes), PropertyAccess.Set);
 
-			Container.Attributes = value;
+			_fileSystem.Storage.GetContainer(Location).Attributes = value;
+			ResetCache(true);
 		}
 	}
 
@@ -86,6 +91,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		{
 			Container = container;
 			container.LinkTarget = pathToTarget;
+			ResetCache(true);
 		}
 		else
 		{
@@ -104,14 +110,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 			using IDisposable registration =
 				RegisterPathProperty(nameof(CreationTime), PropertyAccess.Get);
 
-			return Container.CreationTime.Get(DateTimeKind.Local);
+			return State.CreationTimeLocal;
 		}
 		set
 		{
 			using IDisposable registration =
 				RegisterPathProperty(nameof(CreationTime), PropertyAccess.Set);
 
-			Container.CreationTime.Set(value, DateTimeKind.Local);
+			_fileSystem.Storage.GetContainer(Location).CreationTime.Set(value, DateTimeKind.Local);
+			ResetCache(true);
 		}
 	}
 
@@ -123,14 +130,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 			using IDisposable registration =
 				RegisterPathProperty(nameof(CreationTimeUtc), PropertyAccess.Get);
 
-			return Container.CreationTime.Get(DateTimeKind.Utc);
+			return State.CreationTimeUtc;
 		}
 		set
 		{
 			using IDisposable registration =
 				RegisterPathProperty(nameof(CreationTimeUtc), PropertyAccess.Set);
 
-			Container.CreationTime.Set(value, DateTimeKind.Utc);
+			_fileSystem.Storage.GetContainer(Location).CreationTime.Set(value, DateTimeKind.Utc);
+			ResetCache(true);
 		}
 	}
 
@@ -145,15 +153,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 
 	/// <inheritdoc cref="IFileSystemInfo.Exists" />
 	public virtual bool Exists
-	{
-		get
-		{
-			RefreshInternal();
-			_exists ??= !string.IsNullOrWhiteSpace(Location.FriendlyName) &&
-			            Container is not NullContainer;
-			return _exists.Value;
-		}
-	}
+		=> State.Exists;
 
 	/// <inheritdoc cref="IFileSystemInfo.Extension" />
 	public string Extension
@@ -197,14 +197,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 			using IDisposable registration =
 				RegisterPathProperty(nameof(LastAccessTime), PropertyAccess.Get);
 
-			return Container.LastAccessTime.Get(DateTimeKind.Local);
+			return State.LastAccessTimeLocal;
 		}
 		set
 		{
 			using IDisposable registration =
 				RegisterPathProperty(nameof(LastAccessTime), PropertyAccess.Set);
 
-			Container.LastAccessTime.Set(value, DateTimeKind.Local);
+			_fileSystem.Storage.GetContainer(Location).LastAccessTime.Set(value, DateTimeKind.Local);
+			ResetCache(true);
 		}
 	}
 
@@ -216,14 +217,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 			using IDisposable registration =
 				RegisterPathProperty(nameof(LastAccessTimeUtc), PropertyAccess.Get);
 
-			return Container.LastAccessTime.Get(DateTimeKind.Utc);
+			return State.LastAccessTimeUtc;
 		}
 		set
 		{
 			using IDisposable registration =
 				RegisterPathProperty(nameof(LastAccessTimeUtc), PropertyAccess.Set);
 
-			Container.LastAccessTime.Set(value, DateTimeKind.Utc);
+			_fileSystem.Storage.GetContainer(Location).LastAccessTime.Set(value, DateTimeKind.Utc);
+			ResetCache(true);
 		}
 	}
 
@@ -235,14 +237,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 			using IDisposable registration =
 				RegisterPathProperty(nameof(LastWriteTime), PropertyAccess.Get);
 
-			return Container.LastWriteTime.Get(DateTimeKind.Local);
+			return State.LastWriteTimeLocal;
 		}
 		set
 		{
 			using IDisposable registration =
 				RegisterPathProperty(nameof(LastWriteTime), PropertyAccess.Set);
 
-			Container.LastWriteTime.Set(value, DateTimeKind.Local);
+			_fileSystem.Storage.GetContainer(Location).LastWriteTime.Set(value, DateTimeKind.Local);
+			ResetCache(true);
 		}
 	}
 
@@ -254,14 +257,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 			using IDisposable registration =
 				RegisterPathProperty(nameof(LastWriteTimeUtc), PropertyAccess.Get);
 
-			return Container.LastWriteTime.Get(DateTimeKind.Utc);
+			return State.LastWriteTimeUtc;
 		}
 		set
 		{
 			using IDisposable registration =
 				RegisterPathProperty(nameof(LastWriteTimeUtc), PropertyAccess.Set);
 
-			Container.LastWriteTime.Set(value, DateTimeKind.Utc);
+			_fileSystem.Storage.GetContainer(Location).LastWriteTime.Set(value, DateTimeKind.Utc);
+			ResetCache(true);
 		}
 	}
 
@@ -274,7 +278,13 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 			using IDisposable registration =
 				RegisterPathProperty(nameof(LinkTarget), PropertyAccess.Get);
 
-			return Container.LinkTarget;
+			if (!_isLinkTargetCached)
+			{
+				_linkTarget = _fileSystem.Storage.GetContainer(Location).LinkTarget;
+				_isLinkTargetCached = true;
+			}
+
+			return _linkTarget;
 		}
 	}
 #endif
@@ -306,7 +316,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 			using IDisposable registration =
 				RegisterPathProperty(nameof(UnixFileMode), PropertyAccess.Get);
 
-			return Container.UnixFileMode;
+			return State.UnixFileMode;
 		}
 		[UnsupportedOSPlatform("windows")]
 		set
@@ -319,7 +329,8 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 				throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform();
 			}
 
-			Container.UnixFileMode = value;
+			_fileSystem.Storage.GetContainer(Location).UnixFileMode = value;
+			ResetCache(true);
 		}
 	}
 #endif
@@ -330,6 +341,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		using IDisposable registration = RegisterPathMethod(nameof(Refresh));
 
 		ResetCache(true);
+		_state = CaptureState();
 	}
 
 #if FEATURE_FILESYSTEM_LINK
@@ -389,14 +401,40 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 			FileSystemTypes.DirectoryOrFile);
 	}
 
-	protected void ResetCache(bool resetExistsCache)
+	/// <summary>
+	///     The state of the file or directory, captured on first access and kept until <see cref="Refresh()" />
+	///     or an operation that invalidates it, like <see cref="FileSystemInfo" /> does.
+	/// </summary>
+	protected CachedState State
+		=> _state ??= CaptureState();
+
+	/// <summary>
+	///     Captures the state now, as <see cref="FileSystemInfo" /> instances returned from an enumeration
+	///     already carry the state found during the enumeration.
+	/// </summary>
+	internal void InitializeState()
+		=> _state = CaptureState();
+
+	protected void ResetCache(bool resetState)
 	{
-		if (resetExistsCache)
+		if (resetState)
 		{
-			_exists = null;
+			_state = null;
+#if FEATURE_FILESYSTEM_LINK
+			_isLinkTargetCached = false;
+			_linkTarget = null;
+#endif
 		}
 
 		_isInitialized = false;
+	}
+
+	private CachedState CaptureState()
+	{
+		RefreshInternal();
+		return new CachedState(Container,
+			!string.IsNullOrWhiteSpace(Location.FriendlyName) &&
+			Container is not NullContainer);
 	}
 
 	private void RefreshInternal()
@@ -418,4 +456,38 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 
 	protected virtual IDisposable RegisterPathMethod<T1>(string name, T1 parameter1)
 		=> new NoOpDisposable();
+
+	protected sealed class CachedState
+	{
+		public FileAttributes Attributes { get; }
+		public DateTime CreationTimeLocal { get; }
+		public DateTime CreationTimeUtc { get; }
+		public bool Exists { get; }
+		public DateTime LastAccessTimeLocal { get; }
+		public DateTime LastAccessTimeUtc { get; }
+		public DateTime LastWriteTimeLocal { get; }
+		public DateTime LastWriteTimeUtc { get; }
+		public long Length { get; }
+		public FileSystemTypes Type { get; }
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+		public UnixFileMode UnixFileMode { get; }
+#endif
+
+		public CachedState(IStorageContainer container, bool exists)
+		{
+			Exists = exists;
+			Type = container.Type;
+			Attributes = container.Attributes;
+			CreationTimeLocal = container.CreationTime.Get(DateTimeKind.Local);
+			CreationTimeUtc = container.CreationTime.Get(DateTimeKind.Utc);
+			LastAccessTimeLocal = container.LastAccessTime.Get(DateTimeKind.Local);
+			LastAccessTimeUtc = container.LastAccessTime.Get(DateTimeKind.Utc);
+			LastWriteTimeLocal = container.LastWriteTime.Get(DateTimeKind.Local);
+			LastWriteTimeUtc = container.LastWriteTime.Get(DateTimeKind.Utc);
+			Length = container.GetBytes().Length;
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+			UnixFileMode = container.UnixFileMode;
+#endif
+		}
+	}
 }
