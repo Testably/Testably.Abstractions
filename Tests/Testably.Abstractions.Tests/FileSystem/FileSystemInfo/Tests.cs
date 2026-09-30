@@ -45,6 +45,27 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 
 		await That(sut.LinkTarget).IsEqualTo(pathToTarget);
 	}
+
+	[Test]
+	[AutoArguments]
+	public async Task LinkTarget_ShouldReturnCachedValueUntilRefresh(
+		string path, string pathToTarget1, string pathToTarget2)
+	{
+		FileSystem.File.WriteAllText(pathToTarget1, null);
+		FileSystem.File.WriteAllText(pathToTarget2, null);
+		FileSystem.File.CreateSymbolicLink(path, pathToTarget1);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+		await That(sut.Exists).IsTrue();
+		FileSystem.File.Delete(path);
+		FileSystem.File.CreateSymbolicLink(path, pathToTarget2);
+
+		await That(sut.LinkTarget).IsEqualTo(pathToTarget2);
+		FileSystem.File.Delete(path);
+		FileSystem.File.CreateSymbolicLink(path, pathToTarget1);
+		await That(sut.LinkTarget).IsEqualTo(pathToTarget2);
+		sut.Refresh();
+		await That(sut.LinkTarget).IsEqualTo(pathToTarget1);
+	}
 #endif
 
 	[Test]

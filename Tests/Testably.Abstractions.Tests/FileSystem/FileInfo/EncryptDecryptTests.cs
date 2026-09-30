@@ -56,6 +56,7 @@ public class EncryptDecryptTests(FileSystemTestData testData) : FileSystemTestBa
 		sut.Encrypt();
 		await That(sut).HasAttribute(FileAttributes.Encrypted);
 		sut.Decrypt();
+		sut.Refresh();
 		await That(sut).DoesNotHaveAttribute(FileAttributes.Encrypted);
 	}
 

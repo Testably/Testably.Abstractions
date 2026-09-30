@@ -57,6 +57,31 @@ public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testD
 
 	[Test]
 	[AutoArguments]
+	public async Task Delete_ShouldResetCachedState_ExceptOnNetFramework(string path)
+	{
+		FileSystem.File.WriteAllText(path, "abc");
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+		await That(sut.Length).IsEqualTo(3);
+
+		sut.Delete();
+
+		if (Test.IsNetFramework)
+		{
+			await That(sut.Length).IsEqualTo(3);
+		}
+		else
+		{
+			void Act()
+			{
+				_ = sut.Length;
+			}
+
+			await That(Act).Throws<FileNotFoundException>();
+		}
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task Delete_WithOpenFile_ShouldThrowIOException_OnWindows(string filename)
 	{
 		FileSystem.Initialize();

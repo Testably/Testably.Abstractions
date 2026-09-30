@@ -35,4 +35,31 @@ public class AppendTextTests(FileSystemTestData testData) : FileSystemTestBase(t
 
 		await That(FileSystem).HasFile(path).WithContent(contents + appendText);
 	}
+
+#if NET8_0_OR_GREATER
+	[Test]
+	[AutoArguments]
+	public async Task AppendText_ShouldRefreshExistsCache(string path)
+	{
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		await That(fileInfo.Exists).IsFalse();
+
+		fileInfo.AppendText().Dispose();
+
+		await That(fileInfo.Exists).IsTrue();
+	}
+#else
+	[Test]
+	[AutoArguments]
+	public async Task AppendText_ShouldNotRefreshExistsCache(string path)
+	{
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		await That(fileInfo.Exists).IsFalse();
+
+		fileInfo.AppendText().Dispose();
+
+		await That(fileInfo.Exists).IsFalse();
+		await That(FileSystem.File.Exists(path)).IsTrue();
+	}
+#endif
 }

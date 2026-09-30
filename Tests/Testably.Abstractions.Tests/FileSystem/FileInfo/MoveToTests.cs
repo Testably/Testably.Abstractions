@@ -183,6 +183,20 @@ public class MoveToTests(FileSystemTestData testData) : FileSystemTestBase(testD
 
 	[Test]
 	[AutoArguments]
+	public async Task MoveTo_ShouldResetCachedState(string sourceName, string destinationName)
+	{
+		FileSystem.File.WriteAllText(sourceName, "abc");
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		await That(sut.Length).IsEqualTo(3);
+		FileSystem.File.WriteAllText(sourceName, "abcdefghij");
+
+		sut.MoveTo(destinationName);
+
+		await That(sut.Length).IsEqualTo(10);
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task MoveTo_ShouldMoveFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{

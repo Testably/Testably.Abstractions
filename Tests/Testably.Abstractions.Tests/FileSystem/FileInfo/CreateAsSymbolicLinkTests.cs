@@ -21,6 +21,20 @@ public class CreateAsSymbolicLinkTests(FileSystemTestData testData) : FileSystem
 
 	[Test]
 	[AutoArguments]
+	public async Task CreateAsSymbolicLink_ShouldRefreshExistsCache(
+		string path, string pathToTarget)
+	{
+		FileSystem.File.WriteAllText(pathToTarget, null);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+		await That(sut.Exists).IsFalse();
+
+		sut.CreateAsSymbolicLink(pathToTarget);
+
+		await That(sut.Exists).IsTrue();
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
 	{
