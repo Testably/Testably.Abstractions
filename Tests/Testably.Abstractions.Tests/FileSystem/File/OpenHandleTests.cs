@@ -382,5 +382,39 @@ public class OpenHandleTests(FileSystemTestData testData) : FileSystemTestBase(t
 		await That(FileSystem.File.GetAttributes(handle))
 			.IsEqualTo(FileSystem.File.GetAttributes(path));
 	}
+
+#if NET9_0_OR_GREATER
+	[Test]
+	[AutoArguments]
+	public async Task OpenHandle_WithBackupOrRestoreOption_ShouldOpenTheFile(string path)
+	{
+		FileSystem.File.WriteAllText(path, "x");
+
+		void Act()
+		{
+			using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+				FileMode.Open, FileAccess.Read, FileShare.Read, (FileOptions)0x02000000);
+		}
+
+		await That(Act).DoesNotThrow()
+			.Because("the runtime accepts the undocumented BackupOrRestore option since .NET 9");
+	}
+#else
+	[Test]
+	[AutoArguments]
+	public async Task OpenHandle_WithBackupOrRestoreOption_ShouldThrowArgumentOutOfRangeException(
+		string path)
+	{
+		FileSystem.File.WriteAllText(path, "x");
+
+		void Act()
+		{
+			using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+				FileMode.Open, FileAccess.Read, FileShare.Read, (FileOptions)0x02000000);
+		}
+
+		await That(Act).Throws<ArgumentOutOfRangeException>().WithParamName("options");
+	}
+#endif
 }
 #endif

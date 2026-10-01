@@ -237,5 +237,23 @@ public class OpenHandleStreamTests(FileSystemTestData testData) : FileSystemTest
 		await That(stream.CanRead).IsTrue();
 		await That(stream.CanWrite).IsFalse();
 	}
+
+	[Test]
+	[AutoArguments]
+	public async Task New_WithHandle_FlushAfterTheHandleIsClosed_ShouldThrowObjectDisposedException(
+		string path)
+	{
+		FileSystem.File.WriteAllText(path, "x");
+		SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+		FileSystemStream stream = FileSystem.FileStream.New(handle, FileAccess.ReadWrite);
+		handle.Dispose();
+
+		await That(() => stream.Flush()).Throws<ObjectDisposedException>();
+		await That(() => stream.Flush(true)).Throws<ObjectDisposedException>();
+		await That(() => stream.FlushAsync()).Throws<ObjectDisposedException>();
+		await That(() => stream.Dispose()).DoesNotThrow()
+			.Because("disposing a stream whose handle is already closed succeeds");
+	}
 }
 #endif
