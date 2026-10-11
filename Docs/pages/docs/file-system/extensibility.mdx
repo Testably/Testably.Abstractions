@@ -1,11 +1,11 @@
 ---
-sidebar_position: 11
+sidebar_position: 12
 title: Extensibility
 ---
 
 # Extensibility
 
-`IFileSystemExtensibility` is the hook that custom strategies (ACL, Unix file mode, safe handles, version info) use to attach extra data to the mock without bloating the public `IFileSystem` surface.
+`IFileSystemExtensibility` is the hook that custom strategies (ACL, Unix file mode) use to attach extra data to the mock without bloating the public `IFileSystem` surface.
 
 ```csharp
 public interface IFileSystemExtensibility

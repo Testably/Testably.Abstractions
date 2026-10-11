@@ -95,7 +95,7 @@ Some parts of the BCL surface operate on operating-system shared memory rather t
 - `OpenExisting` *(Windows-only)*
 - A non-null `mapName` in `CreateFromFile` (named mappings are operating-system shared-memory objects)
 
-The `SafeMemoryMappedFileHandle` / `SafeMemoryMappedViewHandle` handle and pointer APIs, as well as the `SafeFileHandle`-based `CreateFromFile` overload, are not exposed at all - mirroring how the `SafeFileHandle`-based `FileStream` construction is excluded elsewhere. Since no unmanaged memory backs a `MemoryMappedFileSystemViewStream`, the members that only exist on its `UnmanagedMemoryStream` base throw `ObjectDisposedException`: the unsafe `PositionPointer`, and `Capacity` when accessed through a reference typed as `UnmanagedMemoryStream` instead of `MemoryMappedFileSystemViewStream`.
+The `SafeMemoryMappedFileHandle` / `SafeMemoryMappedViewHandle` handle and pointer APIs, as well as the `SafeFileHandle`-based `CreateFromFile` overload, are not exposed at all. Since no unmanaged memory backs a `MemoryMappedFileSystemViewStream`, the members that only exist on its `UnmanagedMemoryStream` base throw `ObjectDisposedException`: the unsafe `PositionPointer`, and `Capacity` when accessed through a reference typed as `UnmanagedMemoryStream` instead of `MemoryMappedFileSystemViewStream`.
 
 ## Behaviour on the mock
 

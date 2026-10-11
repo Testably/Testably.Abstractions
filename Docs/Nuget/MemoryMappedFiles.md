@@ -27,6 +27,6 @@ The abstraction is exposed as the extension property `fileSystem.MemoryMappedFil
 Some parts of the BCL surface are intentionally not abstracted, because they have no meaningful in-memory equivalent:
 
 - `CreateNew`, `CreateOrOpen` and `OpenExisting` operate on operating-system shared memory (named or anonymous) rather than a file. They forward normally on `RealFileSystem`, but throw `NotSupportedException` on `MockFileSystem`.
-- The `SafeMemoryMappedFileHandle` / `SafeMemoryMappedViewHandle` handle and pointer APIs, as well as the `SafeFileHandle`-based `CreateFromFile` overload, are not exposed at all (mirroring how the `SafeFileHandle`-based `FileStream` construction is excluded elsewhere).
+- The `SafeMemoryMappedFileHandle` / `SafeMemoryMappedViewHandle` handle and pointer APIs, as well as the `SafeFileHandle`-based `CreateFromFile` overload, are not exposed at all.
 
 On `MockFileSystem` the reads and writes, their capacity handling and the thrown exceptions mirror the real `MemoryMappedViewAccessor` / `MemoryMappedViewStream`. Two details tied to operating-system memory mapping are intentionally simplified: a view created without an explicit size has a `Capacity` of exactly the remaining bytes (the real file system rounds up to the system page size), and `PointerOffset` is always `0`.
