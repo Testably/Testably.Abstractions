@@ -172,6 +172,7 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 		using ManualResetEventSlim ms1 = new();
 		using ManualResetEventSlim ms2 = new();
 		using ManualResetEventSlim ms3 = new();
+		bool ms2TimedOut = false;
 		#pragma warning disable MA0147 // Avoid async void method for delegate
 		// ReSharper disable once AsyncVoidLambda
 		using (ITimer timer1 = TimeSystem.Timer.New(async _ =>
@@ -185,8 +186,10 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 						ms1.Set();
 						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						await That(ms2.Wait(ExpectSuccess, CancellationToken))
-							.IsTrue();
+						if (!ms2.Wait(ExpectSuccess, CancellationToken))
+						{
+							ms2TimedOut = true;
+						}
 						if (triggerTimes.Count > 3)
 						{
 							// ReSharper disable once CancellationToken
@@ -223,6 +226,9 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 				CancellationToken)).IsTrue();
 		}
 
+		await That(ms2TimedOut).IsFalse()
+			.Because("the timer callback should not time out while waiting for the second timer");
+
 		if (triggerTimes[0] < 30 * TimerMultiplier)
 		{
 			triggerTimes.RemoveAt(0);
@@ -247,6 +253,7 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 		using ManualResetEventSlim ms1 = new();
 		using ManualResetEventSlim ms2 = new();
 		using ManualResetEventSlim ms3 = new();
+		bool ms2TimedOut = false;
 		#pragma warning disable MA0147 // Avoid async void method for delegate
 		// ReSharper disable once AsyncVoidLambda
 		using (ITimer timer1 = TimeSystem.Timer.New(async _ =>
@@ -260,8 +267,10 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 						ms1.Set();
 						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						await That(ms2.Wait(ExpectSuccess, CancellationToken))
-							.IsTrue();
+						if (!ms2.Wait(ExpectSuccess, CancellationToken))
+						{
+							ms2TimedOut = true;
+						}
 						if (triggerTimes.Count > 3)
 						{
 							// ReSharper disable once AccessToDisposedClosure
@@ -297,6 +306,9 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 			await That(ms3.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		}
 
+		await That(ms2TimedOut).IsFalse()
+			.Because("the timer callback should not time out while waiting for the second timer");
+
 		if (triggerTimes[0] < 30 * TimerMultiplier)
 		{
 			triggerTimes.RemoveAt(0);
@@ -321,6 +333,7 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 		using ManualResetEventSlim ms1 = new();
 		using ManualResetEventSlim ms2 = new();
 		using ManualResetEventSlim ms3 = new();
+		bool ms2TimedOut = false;
 		#pragma warning disable MA0147 // Avoid async void method for delegate
 		// ReSharper disable once AsyncVoidLambda
 		using (ITimer timer1 = TimeSystem.Timer.New(async _ =>
@@ -334,8 +347,10 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 						ms1.Set();
 						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						await That(ms2.Wait(ExpectSuccess, CancellationToken))
-							.IsTrue();
+						if (!ms2.Wait(ExpectSuccess, CancellationToken))
+						{
+							ms2TimedOut = true;
+						}
 						if (triggerTimes.Count > 3)
 						{
 							// ReSharper disable once AccessToDisposedClosure
@@ -373,6 +388,9 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 
 			await That(ms3.Wait(ExpectSuccess, CancellationToken)).IsTrue();
 		}
+
+		await That(ms2TimedOut).IsFalse()
+			.Because("the timer callback should not time out while waiting for the second timer");
 
 		if (triggerTimes[0] < 30 * TimerMultiplier)
 		{
