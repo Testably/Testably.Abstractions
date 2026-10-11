@@ -48,7 +48,7 @@ public class ReadAllLinesAsyncTests(FileSystemTestData testData) : FileSystemTes
 			await FileSystem.File.ReadAllLinesAsync(path, CancellationToken);
 
 		await That(Act).Throws<FileNotFoundException>()
-			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 			.WithHResult(-2147024894);
 	}
 

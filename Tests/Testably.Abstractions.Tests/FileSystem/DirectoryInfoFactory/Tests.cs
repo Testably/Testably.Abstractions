@@ -19,7 +19,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		}
 
 		await That(Act).Throws<ArgumentException>()
-			.WithMessageContaining(expectedMessage).And
+			.WithMessage().Containing(expectedMessage).And
 #if !NETFRAMEWORK
 			.WithParamName(nameof(path)).And
 #endif

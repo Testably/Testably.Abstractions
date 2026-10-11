@@ -36,7 +36,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 			FileSystem.FileVersionInfo.GetVersionInfo(path);
 
 		await That(Act).Throws<FileNotFoundException>()
-			.WithMessageContaining(FileSystem.Path.GetFullPath(path)).And
+			.WithMessage().Containing(FileSystem.Path.GetFullPath(path)).And
 			.WithHResult(-2147024894);
 	}
 }

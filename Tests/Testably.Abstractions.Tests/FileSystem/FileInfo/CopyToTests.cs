@@ -229,7 +229,7 @@ public class CopyToTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>()
-			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(sourceName)}'").And
+			.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(sourceName)}'").And
 			.WithHResult(-2147024891);
 		await That(FileSystem.Directory.Exists(sourceName)).IsTrue();
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
@@ -282,10 +282,9 @@ public class CopyToTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		}
 
 		await That(Act).Throws<FileNotFoundException>()
-			.WithHResult(-2147024894).And
-			.WithMessageContaining(Test.IsNetFramework
-				? null
-				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
+			.WithHResult(-2147024894)
+			.AndIf(!Test.IsNetFramework,
+				x => x.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(sourceName)}'"));
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 }

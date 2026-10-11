@@ -124,7 +124,7 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		}
 
 		await That(Act).Throws<IOException>()
-			.WithMessageContaining(
+			.WithMessage().Containing(
 				"The filename, directory name, or volume label syntax is incorrect").And
 			.WithHResult(-2147024773);
 	}
@@ -335,10 +335,9 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		}
 
 		await That(Act).Throws<DirectoryNotFoundException>()
-			.WithMessageContaining(Test.IsNetFramework
-				? null
-				: $"'{FileSystem.Path.GetFullPath(source)}'").And
-			.WithHResult(-2147024893);
+			.WithHResult(-2147024893)
+			.AndIf(!Test.IsNetFramework,
+				x => x.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(source)}'"));
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 
@@ -356,7 +355,7 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>()
-			.WithMessageContaining(Test.IsNetFramework
+			.WithMessage().Containing(Test.IsNetFramework
 				? $"'{sourceName}'"
 				: $"'{FileSystem.Path.GetFullPath(sourceName)}'").And
 			.WithHResult(-2147024891);
@@ -391,7 +390,7 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		}
 		else
 		{
-			await That(Act).ThrowsException();
+			await That(Act).Throws();
 			await That(FileSystem.File.Exists(sourceName)).IsTrue();
 			await That(FileSystem.File.Exists(destinationName)).IsFalse();
 		}
@@ -409,10 +408,9 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		}
 
 		await That(Act).Throws<FileNotFoundException>()
-			.WithMessageContaining(Test.IsNetFramework
-				? null
-				: $"'{FileSystem.Path.GetFullPath(sourceName)}'").And
-			.WithHResult(-2147024894);
+			.WithHResult(-2147024894)
+			.AndIf(!Test.IsNetFramework,
+				x => x.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(sourceName)}'"));
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 }

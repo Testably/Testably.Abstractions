@@ -87,8 +87,8 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries.Single())
-			.For(x => x.Length, l => l.IsEqualTo(9)).And
-			.For(x => x.CompressedLength, l => l.IsEqualTo(9));
+			.Whose(x => x.Length, l => l.IsEqualTo(9)).And
+			.Whose(x => x.CompressedLength, l => l.IsEqualTo(9));
 	}
 
 	[Test]
@@ -106,8 +106,8 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries.Single())
-			.For(x => x.Length, l => l.IsEqualTo(9)).And
-			.For(x => x.CompressedLength, l => l.IsLessThan(9));
+			.Whose(x => x.Length, l => l.IsEqualTo(9)).And
+			.Whose(x => x.CompressedLength, l => l.IsLessThan(9));
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED

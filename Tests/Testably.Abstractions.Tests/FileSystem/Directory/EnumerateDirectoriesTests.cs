@@ -36,7 +36,7 @@ public class EnumerateDirectoriesTests(FileSystemTestData testData) : FileSystem
 			_ = FileSystem.Directory.EnumerateDirectories(path).ToList();
 
 		await That(Act).Throws<DirectoryNotFoundException>()
-			.WithMessageContaining($"'{expectedPath}'").And
+			.WithMessage().Containing($"'{expectedPath}'").And
 			.WithHResult(-2147024893);
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
@@ -53,7 +53,7 @@ public class EnumerateDirectoriesTests(FileSystemTestData testData) : FileSystem
 			_ = FileSystem.Directory.EnumerateDirectories(path);
 
 		await That(Act).Throws<DirectoryNotFoundException>()
-			.WithMessageContaining($"'{expectedPath}'").And
+			.WithMessage().Containing($"'{expectedPath}'").And
 			.WithHResult(-2147024893);
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
@@ -326,7 +326,7 @@ public class EnumerateDirectoriesTests(FileSystemTestData testData) : FileSystem
 		else
 		{
 			await That(Act).Throws<UnauthorizedAccessException>()
-				.WithMessageContaining(@"Access to the path 'C:\Windows\System32\").And
+				.WithMessage().Containing(@"Access to the path 'C:\Windows\System32\").And
 				.WithHResult(-2147024891);
 		}
 	}

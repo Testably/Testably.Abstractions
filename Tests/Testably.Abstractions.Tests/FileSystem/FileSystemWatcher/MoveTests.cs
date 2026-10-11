@@ -55,11 +55,11 @@ public partial class MoveTests(FileSystemTestData testData) : FileSystemTestBase
 		await That(renamedMs.Wait(ExpectTimeout, CancellationToken)).IsFalse();
 
 		await That(createdBag).HasSingle().Which
-			.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
+			.Whose(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
 			.And
-			.For(x => x.Name, it => it.IsEqualTo(targetName))
+			.Whose(x => x.Name, it => it.IsEqualTo(targetName))
 			.And
-			.For(x => x.FullPath, it => it.IsEqualTo(insideTarget));
+			.Whose(x => x.FullPath, it => it.IsEqualTo(insideTarget));
 	}
 
 	[Test]
@@ -134,11 +134,11 @@ public partial class MoveTests(FileSystemTestData testData) : FileSystemTestBase
 			await That(deletedBag.TryTake(out FileSystemEventArgs? deletedEvent)).IsTrue();
 
 			await That(deletedEvent!)
-				.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Deleted))
+				.Whose(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Deleted))
 				.And
-				.For(x => x.Name, it => it.IsEqualTo(expectedDeletedName))
+				.Whose(x => x.Name, it => it.IsEqualTo(expectedDeletedName))
 				.And
-				.For(x => x.FullPath, it => it.IsEqualTo(insideTarget));
+				.Whose(x => x.FullPath, it => it.IsEqualTo(insideTarget));
 		}
 	}
 
@@ -218,13 +218,13 @@ public partial class MoveTests(FileSystemTestData testData) : FileSystemTestBase
 			await That(renamedBag.TryTake(out RenamedEventArgs? renamedEvent)).IsTrue();
 
 			await That(renamedEvent!)
-				.For(x => x.OldName, it => it.IsEqualTo(expectedOldName))
+				.Whose(x => x.OldName, it => it.IsEqualTo(expectedOldName))
 				.And
-				.For(x => x.Name, it => it.IsEqualTo(expectedName))
+				.Whose(x => x.Name, it => it.IsEqualTo(expectedName))
 				.And
-				.For(x => x.FullPath, it => it.IsEqualTo(insideTarget2))
+				.Whose(x => x.FullPath, it => it.IsEqualTo(insideTarget2))
 				.And
-				.For(x => x.OldFullPath, it => it.IsEqualTo(insideTarget));
+				.Whose(x => x.OldFullPath, it => it.IsEqualTo(insideTarget));
 		}
 	}
 

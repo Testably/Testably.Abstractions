@@ -77,11 +77,11 @@ public partial class MoveTests
 			await That(createdBag.TryTake(out FileSystemEventArgs? createdEvent)).IsTrue();
 
 			await That(createdEvent!)
-				.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
+				.Whose(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
 				.And
-				.For(x => x.Name, it => it.IsEqualTo(expectedName))
+				.Whose(x => x.Name, it => it.IsEqualTo(expectedName))
 				.And
-				.For(x => x.FullPath, it => it.IsEqualTo(insideTarget));
+				.Whose(x => x.FullPath, it => it.IsEqualTo(insideTarget));
 		}
 	}
 
@@ -165,24 +165,24 @@ public partial class MoveTests
 			await That(renamedBag.TryTake(out RenamedEventArgs? renamedEvent)).IsTrue();
 
 			await That(renamedEvent!)
-				.For(x => x.Name, it => it.IsEqualTo(expectedName))
+				.Whose(x => x.Name, it => it.IsEqualTo(expectedName))
 				.And
-				.For(x => x.FullPath, it => it.IsEqualTo(nestedTarget))
+				.Whose(x => x.FullPath, it => it.IsEqualTo(nestedTarget))
 				.And
-				.For(x => x.OldName, it => it.IsEqualTo(targetName))
+				.Whose(x => x.OldName, it => it.IsEqualTo(targetName))
 				.And
-				.For(x => x.OldFullPath, it => it.IsEqualTo(insideTarget));
+				.Whose(x => x.OldFullPath, it => it.IsEqualTo(insideTarget));
 		}
 		else
 		{
 			await That(deletedBag.TryTake(out FileSystemEventArgs? createdEvent)).IsTrue();
 
 			await That(createdEvent!)
-				.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Deleted))
+				.Whose(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Deleted))
 				.And
-				.For(x => x.Name, it => it.IsEqualTo(targetName))
+				.Whose(x => x.Name, it => it.IsEqualTo(targetName))
 				.And
-				.For(x => x.FullPath, it => it.IsEqualTo(insideTarget));
+				.Whose(x => x.FullPath, it => it.IsEqualTo(insideTarget));
 		}
 	}
 
@@ -271,11 +271,11 @@ public partial class MoveTests
 			await That(createdBag.TryTake(out FileSystemEventArgs? createdEvent)).IsTrue();
 
 			await That(createdEvent!)
-				.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
+				.Whose(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
 				.And
-				.For(x => x.Name, it => it.IsEqualTo(expectedName))
+				.Whose(x => x.Name, it => it.IsEqualTo(expectedName))
 				.And
-				.For(x => x.FullPath, it => it.IsEqualTo(target));
+				.Whose(x => x.FullPath, it => it.IsEqualTo(target));
 		}
 
 		await ThatIsSingleOrEmpty(renamedBag, !includeSubdirectories);
@@ -285,13 +285,13 @@ public partial class MoveTests
 			await That(renamedBag.TryTake(out RenamedEventArgs? renamedEvent)).IsTrue();
 
 			await That(renamedEvent!)
-				.For(x => x.Name, it => it.IsEqualTo(expectedName))
+				.Whose(x => x.Name, it => it.IsEqualTo(expectedName))
 				.And
-				.For(x => x.FullPath, it => it.IsEqualTo(target))
+				.Whose(x => x.FullPath, it => it.IsEqualTo(target))
 				.And
-				.For(x => x.OldName, it => it.IsEqualTo(expectedOldName))
+				.Whose(x => x.OldName, it => it.IsEqualTo(expectedOldName))
 				.And
-				.For(x => x.OldFullPath, it => it.IsEqualTo(source));
+				.Whose(x => x.OldFullPath, it => it.IsEqualTo(source));
 		}
 	}
 
@@ -377,11 +377,11 @@ public partial class MoveTests
 			await That(createdBag.TryTake(out FileSystemEventArgs? createdEvent)).IsTrue();
 
 			await That(createdEvent!)
-				.For(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
+				.Whose(x => x.ChangeType, it => it.IsEqualTo(WatcherChangeTypes.Created))
 				.And
-				.For(x => x.Name, it => it.IsEqualTo(expectedName))
+				.Whose(x => x.Name, it => it.IsEqualTo(expectedName))
 				.And
-				.For(x => x.FullPath, it => it.IsEqualTo(target));
+				.Whose(x => x.FullPath, it => it.IsEqualTo(target));
 		}
 
 		if (includeSubdirectories)
@@ -389,13 +389,13 @@ public partial class MoveTests
 			await That(renamedBag.TryTake(out RenamedEventArgs? renamedEvent)).IsTrue();
 
 			await That(renamedEvent!)
-				.For(x => x.Name, it => it.IsEqualTo(expectedName))
+				.Whose(x => x.Name, it => it.IsEqualTo(expectedName))
 				.And
-				.For(x => x.FullPath, it => it.IsEqualTo(target))
+				.Whose(x => x.FullPath, it => it.IsEqualTo(target))
 				.And
-				.For(x => x.OldName, it => it.IsEqualTo(expectedOldName))
+				.Whose(x => x.OldName, it => it.IsEqualTo(expectedOldName))
 				.And
-				.For(x => x.OldFullPath, it => it.IsEqualTo(source));
+				.Whose(x => x.OldFullPath, it => it.IsEqualTo(source));
 		}
 	}
 }

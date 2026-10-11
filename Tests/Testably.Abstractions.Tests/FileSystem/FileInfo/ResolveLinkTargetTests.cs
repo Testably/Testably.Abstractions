@@ -49,7 +49,7 @@ public class ResolveLinkTargetTests(FileSystemTestData testData) : FileSystemTes
 
 		await That(Act).Throws<IOException>()
 			.WithHResult(Test.RunsOnWindows ? -2147022975 : -2146232800).And
-			.WithMessageContaining($"'{fileInfo.FullName}'");
+			.WithMessage().Containing($"'{fileInfo.FullName}'");
 	}
 
 	[Test]

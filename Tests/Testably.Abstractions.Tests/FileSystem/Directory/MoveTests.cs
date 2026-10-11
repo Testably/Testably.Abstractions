@@ -262,7 +262,7 @@ public class MoveTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		await That(destinationDirectory.GetFiles(initialized[1].Name)).HasSingle();
 		await That(destinationDirectory.GetDirectories(initialized[2].Name)).HasSingle();
 		await That(destinationDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories))
-			.HasSingle().Which.For(x => x.Attributes, a => a.HasFlag(FileAttributes.ReadOnly));
+			.HasSingle().Which.Whose(x => x.Attributes, a => a.HasFlag(FileAttributes.ReadOnly));
 		await That(
 				destinationDirectory.GetDirectories(initialized[4].Name,
 					SearchOption.AllDirectories))

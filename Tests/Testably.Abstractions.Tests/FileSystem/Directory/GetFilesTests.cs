@@ -23,7 +23,7 @@ public class GetFilesTests(FileSystemTestData testData) : FileSystemTestBase(tes
 			=> FileSystem.Directory.GetFiles(path);
 
 		await That(Act).Throws<DirectoryNotFoundException>()
-			.WithMessageContaining(expectedPath).And
+			.WithMessage().Containing(expectedPath).And
 			.WithHResult(-2147024893);
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
@@ -230,10 +230,9 @@ public class GetFilesTests(FileSystemTestData testData) : FileSystemTestBase(tes
 		}
 
 		await That(Act).Throws<ArgumentException>()
-			.WithHResult(-2147024809).And
-			.WithMessageContaining(
-				// The searchPattern is not included in .NET Framework
-				Test.IsNetFramework ? null : $"'{searchPattern}'");
+			.WithHResult(-2147024809)
+			// The searchPattern is not included in .NET Framework
+			.AndIf(!Test.IsNetFramework, x => x.WithMessage().Containing($"'{searchPattern}'"));
 	}
 
 	[Test]

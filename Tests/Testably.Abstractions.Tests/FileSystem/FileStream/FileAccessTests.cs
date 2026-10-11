@@ -38,7 +38,7 @@ public class FileAccessTests(FileSystemTestData testData) : FileSystemTestBase(t
 		if (Test.RunsOnWindows)
 		{
 			await That(Act).Throws<IOException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024864)
 				.Because(
 					$"Access {access1}, Share {share1} of file 1 is incompatible with Access {access2}, Share {share2} of file 2");
@@ -174,7 +174,7 @@ public class FileAccessTests(FileSystemTestData testData) : FileSystemTestBase(t
 		if (Test.RunsOnWindows)
 		{
 			await That(Act).Throws<IOException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024864);
 		}
 		else

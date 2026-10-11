@@ -76,8 +76,8 @@ public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(te
 		}
 
 		await That(Act).Throws<ArgumentException>()
-			.WithHResult(-2147024809).And
-			.WithParamName(ignoreParamCheck || Test.IsNetFramework ? null : paramName)
+			.WithHResult(-2147024809)
+			.AndIf(!ignoreParamCheck && !Test.IsNetFramework, x => x.WithParamName(paramName))
 			.Because(
 				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
@@ -94,7 +94,7 @@ public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(te
 		}
 
 		await That(Act).Throws<ArgumentNullException>()
-			.WithParamName(ignoreParamCheck ? null : paramName)
+			.AndIf(!ignoreParamCheck, x => x.WithParamName(paramName))
 			.Because(
 				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}

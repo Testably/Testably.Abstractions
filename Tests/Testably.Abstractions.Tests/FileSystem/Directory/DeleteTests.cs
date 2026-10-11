@@ -22,7 +22,7 @@ public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		if (Test.RunsOnLinux)
 		{
 			await That(Act).Throws<DirectoryNotFoundException>()
-				.WithMessageContaining($"'{expectedPath}'").And
+				.WithMessage().Containing($"'{expectedPath}'").And
 				.WithHResult(-2147024893);
 		}
 		else
@@ -58,7 +58,7 @@ public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		}
 
 		await That(Act).Throws<DirectoryNotFoundException>()
-			.WithMessageContaining($"'{expectedPath}'").And
+			.WithMessage().Containing($"'{expectedPath}'").And
 			.WithHResult(-2147024893);
 	}
 
@@ -96,7 +96,7 @@ public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		}
 
 		await That(Act).Throws<DirectoryNotFoundException>()
-			.WithMessageContaining($"'{expectedPath}'").And
+			.WithMessage().Containing($"'{expectedPath}'").And
 			.WithHResult(-2147024893);
 	}
 
@@ -146,7 +146,7 @@ public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		if (Test.RunsOnWindows)
 		{
 			await That(Act).Throws<IOException>()
-				.WithMessageContaining($"{filename}'").And
+				.WithMessage().Containing($"{filename}'").And
 				.WithHResult(-2147024864);
 			await That(FileSystem.File.Exists(filePath)).IsTrue();
 		}
@@ -300,10 +300,9 @@ public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		}
 
 		await That(Act).Throws<IOException>()
-			.WithHResult(Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39)).And
-			.WithMessageContaining(!Test.RunsOnWindows || Test.IsNetFramework
-				? null
-				: $"'{FileSystem.Path.Combine(BasePath, path)}'");
+			.WithHResult(Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39))
+			.AndIf(Test.RunsOnWindows && !Test.IsNetFramework,
+				x => x.WithMessage().Containing($"'{FileSystem.Path.Combine(BasePath, path)}'"));
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 

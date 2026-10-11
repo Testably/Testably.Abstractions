@@ -145,6 +145,6 @@ public class ReadAllTextTests(FileSystemTestData testData) : FileSystemTestBase(
 			FileSystem.File.ReadAllText(path.Substring(0, 3) + "*" + path.Substring(8));
 		}
 
-		await That(Act).ThrowsException();
+		await That(Act).Throws();
 	}
 }

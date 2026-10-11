@@ -21,7 +21,7 @@ public class WriteAllTextTests(FileSystemTestData testData) : FileSystemTestBase
 
 		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithHResult(-2147024893).And
-			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(fullPath)}'");
+			.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(fullPath)}'");
 	}
 
 	[Test]
@@ -223,7 +223,7 @@ public class WriteAllTextTests(FileSystemTestData testData) : FileSystemTestBase
 
 		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithHResult(-2147024893).And
-			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(fullPath)}'");
+			.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(fullPath)}'");
 	}
 
 	[Test]

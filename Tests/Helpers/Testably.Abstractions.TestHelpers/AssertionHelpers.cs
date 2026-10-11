@@ -1,11 +1,10 @@
-﻿#if NET8_0_OR_GREATER
-using System.Diagnostics.CodeAnalysis;
-#endif
-using aweXpect.Core;
+﻿using aweXpect.Core;
 using aweXpect.Core.Constraints;
+using aweXpect.Core.Extending;
 using aweXpect.Core.Sources;
 using aweXpect.Delegates;
 using aweXpect.Formatting;
+using aweXpect.Results;
 using System;
 using System.IO;
 using System.Text;
@@ -16,15 +15,48 @@ namespace Testably.Abstractions.TestHelpers;
 public static class AssertionHelpers
 {
 	/// <summary>
+	///     Adds the <paramref name="expectations" /> to the <paramref name="result" /> only when the
+	///     <paramref name="condition" /> is <see langword="true" />.
+	/// </summary>
+	public static AndOrResult<TType, TThat, TSelf> AndIf<TType, TThat, TSelf>(
+		this AndOrResult<TType, TThat, TSelf> result,
+		bool condition,
+		Func<TThat, Expectation> expectations)
+		where TSelf : AndOrResult<TType, TThat, TSelf>
+	{
+		if (condition)
+		{
+			expectations(result.And);
+		}
+
+		return result;
+	}
+
+	/// <inheritdoc cref="AndIf{TType, TThat, TSelf}" />
+	public static ThatDelegateThrows<TException> AndIf<TException>(
+		this ThatDelegateThrows<TException> result,
+		bool condition,
+		Func<IThatDelegateThrows<TException>, Expectation> expectations)
+		where TException : Exception?
+	{
+		if (condition)
+		{
+			expectations(result);
+		}
+
+		return result;
+	}
+
+	/// <summary>
 	///     Verifies that the <paramref name="delegate" /> throws either a <see cref="FileNotFoundException" /> or
 	///     a <see cref="DirectoryNotFoundException" /> with their corresponding HResult values.
 	/// </summary>
 	public static ThatDelegateThrows<Exception> ThrowsAFileOrDirectoryNotFoundException(
-		this ThatDelegate @delegate)
+		this ThatDelegate.WithoutValue @delegate)
 	{
 		ThrowsOption? throwOptions = new();
 		return new ThatDelegateThrows<Exception>(
-			@delegate.ExpectationBuilder.AddConstraint((it, grammars)
+			@delegate.Get().ExpectationBuilder.AddConstraint((it, grammars)
 					=> new DelegateIsNotNullWithinTimeoutConstraint(it, grammars, throwOptions))
 				.ForWhich<DelegateValue, Exception?>(d => d.Exception)
 				.AddConstraint((it, grammars)
@@ -88,14 +120,7 @@ public static class AssertionHelpers
 		public override ConstraintResult Negate()
 			=> this;
 
-#if NET8_0_OR_GREATER
-		public override bool TryGetValue<TValue>([NotNullWhen(true)] out TValue? value)
-			where TValue : default
-#else
-		#pragma warning disable CS8765
-		public override bool TryGetValue<TValue>(out TValue? value) where TValue : default
-		#pragma warning restore CS8765
-#endif
+		public override bool TryGetStoredValue<TValue>(out TValue? value) where TValue : default
 		{
 			value = default;
 			return false;
@@ -184,14 +209,7 @@ public static class AssertionHelpers
 			return this;
 		}
 
-#if NET8_0_OR_GREATER
-		public override bool TryGetValue<TValue>([NotNullWhen(true)] out TValue? value)
-			where TValue : default
-#else
-		#pragma warning disable CS8765
-		public override bool TryGetValue<TValue>(out TValue? value) where TValue : default
-		#pragma warning restore CS8765
-#endif
+		public override bool TryGetStoredValue<TValue>(out TValue? value) where TValue : default
 		{
 			if (_actual is TValue typedValue)
 			{

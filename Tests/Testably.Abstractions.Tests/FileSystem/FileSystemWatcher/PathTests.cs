@@ -48,7 +48,7 @@ public class PathTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 
 		await That(Act).Throws<ArgumentException>()
 			.WithHResult(-2147024809).And
-			.WithMessageContaining(path);
+			.WithMessage().Containing(path);
 	}
 
 	[Test]
@@ -64,7 +64,7 @@ public class PathTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		}
 
 		await That(Act).Throws<ArgumentException>()
-			.WithHResult(-2147024809).And
-			.WithParamName(Test.IsNetFramework ? null : "Path");
+			.WithHResult(-2147024809)
+			.AndIf(!Test.IsNetFramework, x => x.WithParamName("Path"));
 	}
 }
