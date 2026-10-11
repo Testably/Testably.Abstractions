@@ -16,7 +16,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		}
 
 		await That(Act).Throws<ArgumentException>()
-			.WithMessageContaining(nameof(FileMode.Append)).And
+			.WithMessage().Containing(nameof(FileMode.Append)).And
 			.WithHResult(-2147024809).And
 			.WithParamName(Test.IsNetFramework ? null : "access");
 	}
@@ -46,7 +46,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		}
 
 		await That(Act).Throws<IOException>()
-			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 			.WithHResult(Test.RunsOnWindows ? -2147024816 : 17);
 	}
 
@@ -81,7 +81,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		await That(Act).Throws<ArgumentException>()
 			.WithHResult(-2147024809).And
 			.WithParamName(Test.IsNetFramework ? null : "access").And
-			.Which.For(x => x.Message,
+			.Which.Whose(x => x.Message,
 				it => it.Contains(mode.ToString()).And.Contains(access.ToString()));
 	}
 
@@ -97,7 +97,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		}
 
 		await That(Act).Throws<FileNotFoundException>()
-			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 			.WithHResult(-2147024894);
 	}
 
@@ -112,7 +112,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		}
 
 		await That(Act).Throws<FileNotFoundException>()
-			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 			.WithHResult(-2147024894);
 	}
 
@@ -158,13 +158,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		if (Test.RunsOnWindows)
 		{
 			await That(Act).Throws<UnauthorizedAccessException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024891);
 		}
 		else
 		{
 			await That(Act).Throws<IOException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(17);
 		}
 	}

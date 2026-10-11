@@ -1,8 +1,6 @@
-﻿#if NET8_0_OR_GREATER
-using System.Diagnostics.CodeAnalysis;
-#endif
-using aweXpect.Core;
+﻿using aweXpect.Core;
 using aweXpect.Core.Constraints;
+using aweXpect.Core.Extending;
 using aweXpect.Core.Sources;
 using aweXpect.Delegates;
 using aweXpect.Formatting;
@@ -20,11 +18,11 @@ public static class AssertionHelpers
 	///     a <see cref="DirectoryNotFoundException" /> with their corresponding HResult values.
 	/// </summary>
 	public static ThatDelegateThrows<Exception> ThrowsAFileOrDirectoryNotFoundException(
-		this ThatDelegate @delegate)
+		this ThatDelegate.WithoutValue @delegate)
 	{
 		ThrowsOption? throwOptions = new();
 		return new ThatDelegateThrows<Exception>(
-			@delegate.ExpectationBuilder.AddConstraint((it, grammars)
+			@delegate.Get().ExpectationBuilder.AddConstraint((it, grammars)
 					=> new DelegateIsNotNullWithinTimeoutConstraint(it, grammars, throwOptions))
 				.ForWhich<DelegateValue, Exception?>(d => d.Exception)
 				.AddConstraint((it, grammars)
@@ -88,14 +86,7 @@ public static class AssertionHelpers
 		public override ConstraintResult Negate()
 			=> this;
 
-#if NET8_0_OR_GREATER
-		public override bool TryGetValue<TValue>([NotNullWhen(true)] out TValue? value)
-			where TValue : default
-#else
-		#pragma warning disable CS8765
-		public override bool TryGetValue<TValue>(out TValue? value) where TValue : default
-		#pragma warning restore CS8765
-#endif
+		public override bool TryGetStoredValue<TValue>(out TValue? value) where TValue : default
 		{
 			value = default;
 			return false;
@@ -184,14 +175,7 @@ public static class AssertionHelpers
 			return this;
 		}
 
-#if NET8_0_OR_GREATER
-		public override bool TryGetValue<TValue>([NotNullWhen(true)] out TValue? value)
-			where TValue : default
-#else
-		#pragma warning disable CS8765
-		public override bool TryGetValue<TValue>(out TValue? value) where TValue : default
-		#pragma warning restore CS8765
-#endif
+		public override bool TryGetStoredValue<TValue>(out TValue? value) where TValue : default
 		{
 			if (_actual is TValue typedValue)
 			{

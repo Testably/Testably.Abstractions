@@ -282,7 +282,7 @@ public class RandomTests(RandomSystemTestData testData) : RandomSystemTestBase(t
 			results.Add(RandomSystem.Random.Shared.Next());
 		});
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 
 	[Test]
@@ -297,7 +297,7 @@ public class RandomTests(RandomSystemTestData testData) : RandomSystemTestBase(t
 			results.Add(bytes);
 		});
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 
 #if FEATURE_SPAN
@@ -313,7 +313,7 @@ public class RandomTests(RandomSystemTestData testData) : RandomSystemTestBase(t
 			results.Add(bytes.ToArray());
 		});
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 #endif
 
@@ -327,7 +327,7 @@ public class RandomTests(RandomSystemTestData testData) : RandomSystemTestBase(t
 			results.Add(RandomSystem.Random.Shared.NextDouble());
 		});
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 
 #if FEATURE_RANDOM_ADVANCED
@@ -374,7 +374,7 @@ public class RandomTests(RandomSystemTestData testData) : RandomSystemTestBase(t
 			results.Add(RandomSystem.Random.Shared.NextInt64());
 		});
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 #endif
 
@@ -389,7 +389,7 @@ public class RandomTests(RandomSystemTestData testData) : RandomSystemTestBase(t
 			results.Add(RandomSystem.Random.Shared.NextSingle());
 		});
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 #endif
 
@@ -417,7 +417,7 @@ public class RandomTests(RandomSystemTestData testData) : RandomSystemTestBase(t
 
 		RandomSystem.Random.Shared.Shuffle(values);
 
-		await That(values).AreAllUnique();
+		await That(values).All().AreUnique();
 		await That(values).DoesNotContain(originalValues);
 		await That(values.Order()).Contains(originalValues);
 	}
@@ -434,7 +434,7 @@ public class RandomTests(RandomSystemTestData testData) : RandomSystemTestBase(t
 		RandomSystem.Random.Shared.Shuffle(values);
 
 		int[] result = values.ToArray();
-		await That(result).AreAllUnique();
+		await That(result).All().AreUnique();
 		await That(result).DoesNotContain(originalValues);
 		await That(result.Order()).Contains(originalValues);
 	}

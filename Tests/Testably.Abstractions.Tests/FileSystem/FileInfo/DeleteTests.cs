@@ -100,7 +100,7 @@ public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		if (Test.RunsOnWindows)
 		{
 			await That(Act).Throws<IOException>()
-				.WithMessageContaining($"{filename}'").And
+				.WithMessage().Containing($"{filename}'").And
 				.WithHResult(-2147024864);
 			await That(FileSystem.File.Exists(filename)).IsTrue();
 		}

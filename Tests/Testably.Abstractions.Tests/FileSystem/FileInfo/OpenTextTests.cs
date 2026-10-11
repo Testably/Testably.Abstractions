@@ -18,7 +18,7 @@ public class OpenTextTests(FileSystemTestData testData) : FileSystemTestBase(tes
 		}
 
 		await That(Act).Throws<FileNotFoundException>()
-			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+			.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 			.WithHResult(-2147024894);
 	}
 

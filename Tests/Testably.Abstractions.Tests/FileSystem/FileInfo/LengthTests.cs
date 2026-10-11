@@ -20,7 +20,7 @@ public class LengthTests(FileSystemTestData testData) : FileSystemTestBase(testD
 
 		await That(Act).Throws<FileNotFoundException>()
 			.WithHResult(-2147024894).And
-			.WithMessageContaining(Test.IsNetFramework
+			.WithMessage().Containing(Test.IsNetFramework
 				? $"'{path}'"
 				: $"'{FileSystem.Path.GetFullPath(path)}'");
 	}
@@ -38,7 +38,7 @@ public class LengthTests(FileSystemTestData testData) : FileSystemTestBase(testD
 
 		await That(Act).Throws<FileNotFoundException>()
 			.WithHResult(-2147024894).And
-			.WithMessageContaining(Test.IsNetFramework
+			.WithMessage().Containing(Test.IsNetFramework
 				? $"'{path}'"
 				: $"'{FileSystem.Path.GetFullPath(path)}'");
 	}
@@ -57,7 +57,7 @@ public class LengthTests(FileSystemTestData testData) : FileSystemTestBase(testD
 
 		await That(Act).Throws<FileNotFoundException>()
 			.WithHResult(-2147024894).And
-			.WithMessageContaining(Test.IsNetFramework
+			.WithMessage().Containing(Test.IsNetFramework
 				? $"'{path}'"
 				: $"'{FileSystem.Path.GetFullPath(path)}'");
 	}
@@ -121,7 +121,7 @@ public class LengthTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		}
 
 		await That(Act).Throws<FileNotFoundException>()
-			.WithMessageContaining(Test.IsNetFramework
+			.WithMessage().Containing(Test.IsNetFramework
 				? $"'{path}'"
 				: $"'{FileSystem.Path.GetFullPath(path)}'").And
 			.WithHResult(-2147024894);
@@ -134,7 +134,7 @@ public class LengthTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		}
 
 		await That(Act2).Throws<FileNotFoundException>()
-			.WithMessageContaining(Test.IsNetFramework
+			.WithMessage().Containing(Test.IsNetFramework
 				? $"'{path}'"
 				: $"'{FileSystem.Path.GetFullPath(path)}'").And
 			.WithHResult(-2147024894);

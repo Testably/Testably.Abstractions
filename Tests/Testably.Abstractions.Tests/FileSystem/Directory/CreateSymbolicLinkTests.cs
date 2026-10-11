@@ -35,13 +35,13 @@ public class CreateSymbolicLinkTests(FileSystemTestData testData) : FileSystemTe
 		if (Test.RunsOnWindows)
 		{
 			await That(Act).Throws<IOException>()
-				.WithMessageContaining($"'{path}'").And
+				.WithMessage().Containing($"'{path}'").And
 				.WithHResult(-2147024713);
 		}
 		else
 		{
 			await That(Act).Throws<IOException>()
-				.WithMessageContaining($"'{path}'").And
+				.WithMessage().Containing($"'{path}'").And
 				.WithHResult(17);
 		}
 	}

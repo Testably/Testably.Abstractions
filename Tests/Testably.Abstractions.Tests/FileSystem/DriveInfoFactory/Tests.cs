@@ -34,7 +34,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		}
 
 		await That(Act).Throws<DirectoryNotFoundException>()
-			.WithMessageContaining($"'{path}'").And
+			.WithMessage().Containing($"'{path}'").And
 			.WithHResult(-2147024893);
 	}
 
@@ -55,7 +55,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		}
 
 		await That(Act).Throws<DirectoryNotFoundException>()
-			.WithMessageContaining($"'{path}'").And
+			.WithMessage().Containing($"'{path}'").And
 			.WithHResult(-2147024893);
 	}
 

@@ -23,7 +23,7 @@ public class GuidTests(RandomSystemTestData testData) : RandomSystemTestBase(tes
 			results.Add(RandomSystem.Guid.CreateVersion7());
 		});
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 #endif
 
@@ -38,7 +38,7 @@ public class GuidTests(RandomSystemTestData testData) : RandomSystemTestBase(tes
 			results.Add(RandomSystem.Guid.CreateVersion7(DateTimeOffset.UtcNow));
 		});
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 #endif
 	[Test]
@@ -57,7 +57,7 @@ public class GuidTests(RandomSystemTestData testData) : RandomSystemTestBase(tes
 			results.Add(RandomSystem.Guid.NewGuid());
 		});
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 
 #if FEATURE_GUID_PARSE

@@ -18,7 +18,7 @@ public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		}
 
 		await That(Act).Throws<DirectoryNotFoundException>()
-			.WithMessageContaining($"'{sut.FullName}'").And
+			.WithMessage().Containing($"'{sut.FullName}'").And
 			.WithHResult(-2147024893);
 	}
 
@@ -66,7 +66,7 @@ public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		if (Test.RunsOnWindows)
 		{
 			await That(Act).Throws<IOException>()
-				.WithMessageContaining($"{filename}'").And
+				.WithMessage().Containing($"{filename}'").And
 				.WithHResult(-2147024864);
 			await That(FileSystem.File.Exists(filePath)).IsTrue();
 		}
@@ -132,13 +132,18 @@ public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testD
 			sut.Delete();
 		}
 
-		await That(Act).Throws<IOException>()
-			.WithHResult(Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39)).And
-			.WithMessageContaining(
-				// Path information only included in exception message on Windows and not in .NET Framework
-				!Test.RunsOnWindows || Test.IsNetFramework
-					? null
-					: $"'{sut.FullName}'");
+		// Path information only included in exception message on Windows and not in .NET Framework
+		if (!Test.RunsOnWindows || Test.IsNetFramework)
+		{
+			await That(Act).Throws<IOException>()
+				.WithHResult(Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39));
+		}
+		else
+		{
+			await That(Act).Throws<IOException>()
+				.WithHResult(Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39)).And
+				.WithMessage().Containing($"'{sut.FullName}'");
+		}
 
 		await That(sut.Exists).IsTrue();
 		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();

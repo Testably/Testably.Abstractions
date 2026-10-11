@@ -20,7 +20,7 @@ public class EnumerateFilesTests(FileSystemTestData testData) : FileSystemTestBa
 			_ = FileSystem.Directory.EnumerateFiles(path).ToList();
 
 		await That(Act).Throws<DirectoryNotFoundException>()
-			.WithMessageContaining($"'{expectedPath}'").And
+			.WithMessage().Containing($"'{expectedPath}'").And
 			.WithHResult(-2147024893);
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
@@ -37,7 +37,7 @@ public class EnumerateFilesTests(FileSystemTestData testData) : FileSystemTestBa
 			_ = FileSystem.Directory.EnumerateFiles(path);
 
 		await That(Act).Throws<DirectoryNotFoundException>()
-			.WithMessageContaining($"'{expectedPath}'").And
+			.WithMessage().Containing($"'{expectedPath}'").And
 			.WithHResult(-2147024893);
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}
@@ -355,11 +355,18 @@ public class EnumerateFilesTests(FileSystemTestData testData) : FileSystemTestBa
 				.FirstOrDefault();
 		}
 
-		await That(Act).Throws<ArgumentException>()
-			.WithHResult(-2147024809).And
-			.WithMessageContaining(
-				// The searchPattern is not included in .NET Framework
-				Test.IsNetFramework ? null : $"'{searchPattern}'");
+		// The searchPattern is not included in .NET Framework
+		if (Test.IsNetFramework)
+		{
+			await That(Act).Throws<ArgumentException>()
+				.WithHResult(-2147024809);
+		}
+		else
+		{
+			await That(Act).Throws<ArgumentException>()
+				.WithHResult(-2147024809).And
+				.WithMessage().Containing($"'{searchPattern}'");
+		}
 	}
 
 	[Test]

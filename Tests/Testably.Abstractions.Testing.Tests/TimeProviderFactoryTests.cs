@@ -92,7 +92,7 @@ public class TimeProviderFactoryTests
 			results.Add(TimeProviderFactory.Random().Create(_ => { }).Read());
 		});
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 
 	[Test]

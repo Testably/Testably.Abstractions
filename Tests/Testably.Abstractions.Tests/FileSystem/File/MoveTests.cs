@@ -169,7 +169,7 @@ public class MoveTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		}
 
 		await That(Act).Throws<FileNotFoundException>()
-			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(sourcePath)}'").And
+			.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(sourcePath)}'").And
 			.WithHResult(-2147024894);
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
@@ -228,7 +228,7 @@ public class MoveTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		}
 
 		await That(Act).Throws<FileNotFoundException>()
-			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(sourceName)}'").And
+			.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(sourceName)}'").And
 			.WithHResult(-2147024894);
 	}
 
@@ -244,7 +244,7 @@ public class MoveTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		}
 
 		await That(Act).Throws<FileNotFoundException>()
-			.WithMessageContaining($"'{FileSystem.Path.GetFullPath(sourceName)}'").And
+			.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(sourceName)}'").And
 			.WithHResult(-2147024894);
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}

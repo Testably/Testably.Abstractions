@@ -19,7 +19,7 @@ public partial class RandomProviderTests
 			results.Add(randomProvider.GetGuid());
 		}
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 
 	[Test]
@@ -34,7 +34,7 @@ public partial class RandomProviderTests
 			results.Add(randomProvider.GetRandom(i).Next());
 		}
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 
 	[Test]
@@ -178,7 +178,7 @@ public partial class RandomProviderTests
 			results.Add(random.Next());
 		}
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 
 	[Test]
@@ -241,7 +241,7 @@ public partial class RandomProviderTests
 			results.Add(buffer);
 		}
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 #endif
 
@@ -288,7 +288,7 @@ public partial class RandomProviderTests
 			results.Add(buffer);
 		}
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 
 	[Test]
@@ -349,7 +349,7 @@ public partial class RandomProviderTests
 			results.Add(random.NextDouble());
 		}
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 
 #if FEATURE_RANDOM_ADVANCED
@@ -455,7 +455,7 @@ public partial class RandomProviderTests
 			results.Add(random.NextInt64());
 		}
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 #endif
 
@@ -495,7 +495,7 @@ public partial class RandomProviderTests
 			results.Add(random.NextSingle());
 		}
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 #endif
 

@@ -48,7 +48,7 @@ public class PathTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 
 		await That(Act).Throws<ArgumentException>()
 			.WithHResult(-2147024809).And
-			.WithMessageContaining(path);
+			.WithMessage().Containing(path);
 	}
 
 	[Test]

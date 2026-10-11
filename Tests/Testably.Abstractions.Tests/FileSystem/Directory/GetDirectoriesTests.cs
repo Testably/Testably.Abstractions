@@ -19,7 +19,7 @@ public class GetDirectoriesTests(FileSystemTestData testData) : FileSystemTestBa
 			=> FileSystem.Directory.GetDirectories(path);
 
 		await That(Act).Throws<DirectoryNotFoundException>()
-			.WithMessageContaining($"'{expectedPath}'").And
+			.WithMessage().Containing($"'{expectedPath}'").And
 			.WithHResult(-2147024893);
 		await That(FileSystem.Directory.Exists(path)).IsFalse();
 	}

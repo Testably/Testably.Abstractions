@@ -170,13 +170,13 @@ public partial class Tests
 		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
 			await That(Act).Throws<FileNotFoundException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024894);
 		}
 		else
 		{
 			await That(Act).Throws<DirectoryNotFoundException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024893);
 		}
 	}
@@ -231,13 +231,13 @@ public partial class Tests
 		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
 			await That(Act).Throws<FileNotFoundException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024894);
 		}
 		else
 		{
 			await That(Act).Throws<DirectoryNotFoundException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024893);
 		}
 	}
@@ -292,13 +292,13 @@ public partial class Tests
 		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			await That(Act).Throws<FileNotFoundException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024894);
 		}
 		else
 		{
 			await That(Act).Throws<DirectoryNotFoundException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024893);
 		}
 	}
@@ -347,13 +347,13 @@ public partial class Tests
 		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			await That(Act).Throws<FileNotFoundException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024894);
 		}
 		else
 		{
 			await That(Act).Throws<DirectoryNotFoundException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024893);
 		}
 	}
@@ -402,13 +402,13 @@ public partial class Tests
 		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			await That(Act).Throws<FileNotFoundException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024894);
 		}
 		else
 		{
 			await That(Act).Throws<DirectoryNotFoundException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024893);
 		}
 	}
@@ -457,13 +457,13 @@ public partial class Tests
 		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			await That(Act).Throws<FileNotFoundException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024894);
 		}
 		else
 		{
 			await That(Act).Throws<DirectoryNotFoundException>()
-				.WithMessageContaining($"'{FileSystem.Path.GetFullPath(path)}'").And
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(path)}'").And
 				.WithHResult(-2147024893);
 		}
 	}

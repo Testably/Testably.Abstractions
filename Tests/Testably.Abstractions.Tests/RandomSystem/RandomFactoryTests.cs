@@ -16,7 +16,7 @@ public class RandomFactoryTests(RandomSystemTestData testData) : RandomSystemTes
 			results.Add(RandomSystem.Random.New().Next());
 		}
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 
 	[Test]
@@ -43,7 +43,7 @@ public class RandomFactoryTests(RandomSystemTestData testData) : RandomSystemTes
 			results.Add(RandomSystem.Random.Shared.Next());
 		}
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 
 	[Test]

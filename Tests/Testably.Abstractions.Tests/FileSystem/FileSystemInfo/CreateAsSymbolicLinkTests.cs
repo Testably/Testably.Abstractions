@@ -35,7 +35,7 @@ public class CreateAsSymbolicLinkTests(FileSystemTestData testData) : FileSystem
 		}
 
 		await That(Act).Throws<IOException>()
-			.WithMessageContaining($"'{path}'").And
+			.WithMessage().Containing($"'{path}'").And
 			.WithHResult(Test.RunsOnWindows ? -2147024713 : 17);
 	}
 }

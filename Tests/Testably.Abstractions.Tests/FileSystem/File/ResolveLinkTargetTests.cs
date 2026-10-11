@@ -130,7 +130,7 @@ public class ResolveLinkTargetTests(FileSystemTestData testData) : FileSystemTes
 		}
 
 		await That(Act).Throws<IOException>()
-			.WithMessageContaining($"'{previousPath}'").And
+			.WithMessage().Containing($"'{previousPath}'").And
 			.WithHResult(Test.RunsOnWindows ? -2147022975 : -2146232800);
 	}
 

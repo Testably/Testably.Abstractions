@@ -124,7 +124,7 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		}
 
 		await That(Act).Throws<IOException>()
-			.WithMessageContaining(
+			.WithMessage().Containing(
 				"The filename, directory name, or volume label syntax is incorrect").And
 			.WithHResult(-2147024773);
 	}
@@ -334,11 +334,17 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 			FileSystem.File.Copy(source, destinationName);
 		}
 
-		await That(Act).Throws<DirectoryNotFoundException>()
-			.WithMessageContaining(Test.IsNetFramework
-				? null
-				: $"'{FileSystem.Path.GetFullPath(source)}'").And
-			.WithHResult(-2147024893);
+		if (Test.IsNetFramework)
+		{
+			await That(Act).Throws<DirectoryNotFoundException>()
+				.WithHResult(-2147024893);
+		}
+		else
+		{
+			await That(Act).Throws<DirectoryNotFoundException>()
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(source)}'").And
+				.WithHResult(-2147024893);
+		}
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 
@@ -356,7 +362,7 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		}
 
 		await That(Act).Throws<UnauthorizedAccessException>()
-			.WithMessageContaining(Test.IsNetFramework
+			.WithMessage().Containing(Test.IsNetFramework
 				? $"'{sourceName}'"
 				: $"'{FileSystem.Path.GetFullPath(sourceName)}'").And
 			.WithHResult(-2147024891);
@@ -391,7 +397,7 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 		}
 		else
 		{
-			await That(Act).ThrowsException();
+			await That(Act).Throws();
 			await That(FileSystem.File.Exists(sourceName)).IsTrue();
 			await That(FileSystem.File.Exists(destinationName)).IsFalse();
 		}
@@ -408,11 +414,17 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 			FileSystem.File.Copy(sourceName, destinationName);
 		}
 
-		await That(Act).Throws<FileNotFoundException>()
-			.WithMessageContaining(Test.IsNetFramework
-				? null
-				: $"'{FileSystem.Path.GetFullPath(sourceName)}'").And
-			.WithHResult(-2147024894);
+		if (Test.IsNetFramework)
+		{
+			await That(Act).Throws<FileNotFoundException>()
+				.WithHResult(-2147024894);
+		}
+		else
+		{
+			await That(Act).Throws<FileNotFoundException>()
+				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(sourceName)}'").And
+				.WithHResult(-2147024894);
+		}
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 }

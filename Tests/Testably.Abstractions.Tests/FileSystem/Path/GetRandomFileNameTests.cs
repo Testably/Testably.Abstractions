@@ -35,6 +35,6 @@ public class GetRandomFileNameTests(FileSystemTestData testData) : FileSystemTes
 			results.Add(FileSystem.Path.GetRandomFileName());
 		});
 
-		await That(results).AreAllUnique();
+		await That(results).All().AreUnique();
 	}
 }

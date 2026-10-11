@@ -21,7 +21,7 @@ public class DirectoryMockTests
 			_ = fileSystem.Directory.EnumerateDirectories(path);
 
 		await That(Act).Throws<UnauthorizedAccessException>()
-			.WithMessageContaining($"'{sut.FullName}'").And
+			.WithMessage().Containing($"'{sut.FullName}'").And
 			.WithHResult(-2147024891);
 	}
 
@@ -42,7 +42,7 @@ public class DirectoryMockTests
 			_ = fileSystem.Directory.EnumerateFiles(path);
 
 		await That(Act).Throws<UnauthorizedAccessException>()
-			.WithMessageContaining($"'{sut.FullName}'").And
+			.WithMessage().Containing($"'{sut.FullName}'").And
 			.WithHResult(-2147024891);
 	}
 
@@ -63,7 +63,7 @@ public class DirectoryMockTests
 			_ = fileSystem.Directory.EnumerateFileSystemEntries(path);
 
 		await That(Act).Throws<UnauthorizedAccessException>()
-			.WithMessageContaining($"'{sut.FullName}'").And
+			.WithMessage().Containing($"'{sut.FullName}'").And
 			.WithHResult(-2147024891);
 	}
 }
