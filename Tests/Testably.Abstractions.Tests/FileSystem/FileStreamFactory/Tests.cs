@@ -15,19 +15,10 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 			FileSystem.FileStream.New(path, FileMode.Append, FileAccess.ReadWrite);
 		}
 
-		if (Test.IsNetFramework)
-		{
-			await That(Act).Throws<ArgumentException>()
-				.WithMessage().Containing(nameof(FileMode.Append)).And
-				.WithHResult(-2147024809);
-		}
-		else
-		{
-			await That(Act).Throws<ArgumentException>()
-				.WithMessage().Containing(nameof(FileMode.Append)).And
-				.WithHResult(-2147024809).And
-				.WithParamName("access");
-		}
+		await That(Act).Throws<ArgumentException>()
+			.WithMessage().Containing(nameof(FileMode.Append)).And
+			.WithHResult(-2147024809)
+			.AndIf(!Test.IsNetFramework, x => x.WithParamName("access"));
 	}
 
 	[Test]
@@ -87,21 +78,11 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 			FileSystem.FileStream.New(path, mode, access);
 		}
 
-		if (Test.IsNetFramework)
-		{
-			await That(Act).Throws<ArgumentException>()
-				.WithHResult(-2147024809).And
-				.Which.Whose(x => x.Message,
-					it => it.Contains(mode.ToString()).And.Contains(access.ToString()));
-		}
-		else
-		{
-			await That(Act).Throws<ArgumentException>()
-				.WithHResult(-2147024809).And
-				.WithParamName("access").And
-				.Which.Whose(x => x.Message,
-					it => it.Contains(mode.ToString()).And.Contains(access.ToString()));
-		}
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809)
+			.AndIf(!Test.IsNetFramework, x => x.WithParamName("access")).And
+			.Which.Whose(x => x.Message,
+				it => it.Contains(mode.ToString()).And.Contains(access.ToString()));
 	}
 
 	[Test]

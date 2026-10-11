@@ -4,6 +4,7 @@ using aweXpect.Core.Extending;
 using aweXpect.Core.Sources;
 using aweXpect.Delegates;
 using aweXpect.Formatting;
+using aweXpect.Results;
 using System;
 using System.IO;
 using System.Text;
@@ -13,6 +14,39 @@ namespace Testably.Abstractions.TestHelpers;
 
 public static class AssertionHelpers
 {
+	/// <summary>
+	///     Adds the <paramref name="expectations" /> to the <paramref name="result" /> only when the
+	///     <paramref name="condition" /> is <see langword="true" />.
+	/// </summary>
+	public static AndOrResult<TType, TThat, TSelf> AndIf<TType, TThat, TSelf>(
+		this AndOrResult<TType, TThat, TSelf> result,
+		bool condition,
+		Func<TThat, Expectation> expectations)
+		where TSelf : AndOrResult<TType, TThat, TSelf>
+	{
+		if (condition)
+		{
+			expectations(result.And);
+		}
+
+		return result;
+	}
+
+	/// <inheritdoc cref="AndIf{TType, TThat, TSelf}" />
+	public static ThatDelegateThrows<TException> AndIf<TException>(
+		this ThatDelegateThrows<TException> result,
+		bool condition,
+		Func<IThatDelegateThrows<TException>, Expectation> expectations)
+		where TException : Exception?
+	{
+		if (condition)
+		{
+			expectations(result);
+		}
+
+		return result;
+	}
+
 	/// <summary>
 	///     Verifies that the <paramref name="delegate" /> throws either a <see cref="FileNotFoundException" /> or
 	///     a <see cref="DirectoryNotFoundException" /> with their corresponding HResult values.

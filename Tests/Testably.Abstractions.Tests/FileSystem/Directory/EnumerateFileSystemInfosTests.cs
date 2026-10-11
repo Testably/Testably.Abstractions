@@ -184,18 +184,10 @@ public class EnumerateFileSystemInfosTests(FileSystemTestData testData) : FileSy
 				.FirstOrDefault();
 		}
 
-		// The searchPattern is not included in .NET Framework
-		if (Test.IsNetFramework)
-		{
-			await That(Act).Throws<ArgumentException>()
-				.WithHResult(-2147024809);
-		}
-		else
-		{
-			await That(Act).Throws<ArgumentException>()
-				.WithHResult(-2147024809).And
-				.WithMessage().Containing($"'{searchPattern}'");
-		}
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809)
+			// The searchPattern is not included in .NET Framework
+			.AndIf(!Test.IsNetFramework, x => x.WithMessage().Containing($"'{searchPattern}'"));
 	}
 
 	[Test]

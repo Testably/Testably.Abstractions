@@ -334,17 +334,10 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 			FileSystem.File.Copy(source, destinationName);
 		}
 
-		if (Test.IsNetFramework)
-		{
-			await That(Act).Throws<DirectoryNotFoundException>()
-				.WithHResult(-2147024893);
-		}
-		else
-		{
-			await That(Act).Throws<DirectoryNotFoundException>()
-				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(source)}'").And
-				.WithHResult(-2147024893);
-		}
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithHResult(-2147024893)
+			.AndIf(!Test.IsNetFramework,
+				x => x.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(source)}'"));
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 
@@ -414,17 +407,10 @@ public class CopyTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 			FileSystem.File.Copy(sourceName, destinationName);
 		}
 
-		if (Test.IsNetFramework)
-		{
-			await That(Act).Throws<FileNotFoundException>()
-				.WithHResult(-2147024894);
-		}
-		else
-		{
-			await That(Act).Throws<FileNotFoundException>()
-				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(sourceName)}'").And
-				.WithHResult(-2147024894);
-		}
+		await That(Act).Throws<FileNotFoundException>()
+			.WithHResult(-2147024894)
+			.AndIf(!Test.IsNetFramework,
+				x => x.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(sourceName)}'"));
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 }

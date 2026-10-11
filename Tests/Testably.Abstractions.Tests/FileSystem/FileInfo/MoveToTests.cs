@@ -81,17 +81,10 @@ public class MoveToTests(FileSystemTestData testData) : FileSystemTestBase(testD
 			sut.MoveTo(sourceName);
 		}
 
-		if (Test.IsNetFramework)
-		{
-			await That(Act).Throws<FileNotFoundException>()
-				.WithHResult(-2147024894);
-		}
-		else
-		{
-			await That(Act).Throws<FileNotFoundException>()
-				.WithHResult(-2147024894).And
-				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(sourceName)}'");
-		}
+		await That(Act).Throws<FileNotFoundException>()
+			.WithHResult(-2147024894)
+			.AndIf(!Test.IsNetFramework,
+				x => x.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(sourceName)}'"));
 		await That(FileSystem.File.Exists(sourceName)).IsFalse();
 	}
 
@@ -301,17 +294,10 @@ public class MoveToTests(FileSystemTestData testData) : FileSystemTestBase(testD
 			sut.MoveTo(destinationName);
 		}
 
-		if (Test.IsNetFramework)
-		{
-			await That(Act).Throws<FileNotFoundException>()
-				.WithHResult(-2147024894);
-		}
-		else
-		{
-			await That(Act).Throws<FileNotFoundException>()
-				.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(sourceName)}'").And
-				.WithHResult(-2147024894);
-		}
+		await That(Act).Throws<FileNotFoundException>()
+			.WithHResult(-2147024894)
+			.AndIf(!Test.IsNetFramework,
+				x => x.WithMessage().Containing($"'{FileSystem.Path.GetFullPath(sourceName)}'"));
 		await That(FileSystem.File.Exists(destinationName)).IsFalse();
 	}
 }

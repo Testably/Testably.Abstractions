@@ -132,18 +132,11 @@ public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testD
 			sut.Delete();
 		}
 
-		// Path information only included in exception message on Windows and not in .NET Framework
-		if (!Test.RunsOnWindows || Test.IsNetFramework)
-		{
-			await That(Act).Throws<IOException>()
-				.WithHResult(Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39));
-		}
-		else
-		{
-			await That(Act).Throws<IOException>()
-				.WithHResult(Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39)).And
-				.WithMessage().Containing($"'{sut.FullName}'");
-		}
+		await That(Act).Throws<IOException>()
+			.WithHResult(Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39))
+			// Path information only included in exception message on Windows and not in .NET Framework
+			.AndIf(Test.RunsOnWindows && !Test.IsNetFramework,
+				x => x.WithMessage().Containing($"'{sut.FullName}'"));
 
 		await That(sut.Exists).IsTrue();
 		await That(FileSystem.Directory.Exists(sut.FullName)).IsTrue();

@@ -299,17 +299,10 @@ public class DeleteTests(FileSystemTestData testData) : FileSystemTestBase(testD
 			FileSystem.Directory.Delete(path);
 		}
 
-		if (!Test.RunsOnWindows || Test.IsNetFramework)
-		{
-			await That(Act).Throws<IOException>()
-				.WithHResult(Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39));
-		}
-		else
-		{
-			await That(Act).Throws<IOException>()
-				.WithHResult(Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39)).And
-				.WithMessage().Containing($"'{FileSystem.Path.Combine(BasePath, path)}'");
-		}
+		await That(Act).Throws<IOException>()
+			.WithHResult(Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39))
+			.AndIf(Test.RunsOnWindows && !Test.IsNetFramework,
+				x => x.WithMessage().Containing($"'{FileSystem.Path.Combine(BasePath, path)}'"));
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 
