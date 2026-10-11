@@ -83,11 +83,21 @@ public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(te
 			callback.Compile().Invoke(FileSystem.File);
 		}
 
-		await That(Act).Throws<ArgumentException>()
-			.WithHResult(-2147024809).And
-			.WithParamName(ignoreParamCheck || Test.IsNetFramework ? null : paramName)
-			.Because(
-				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		if (ignoreParamCheck || Test.IsNetFramework)
+		{
+			await That(Act).Throws<ArgumentException>()
+				.WithHResult(-2147024809)
+				.Because(
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		}
+		else
+		{
+			await That(Act).Throws<ArgumentException>()
+				.WithHResult(-2147024809).And
+				.WithParamName(paramName)
+				.Because(
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		}
 	}
 
 	[Test]
@@ -103,10 +113,19 @@ public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(te
 			callback.Compile().Invoke(FileSystem.File);
 		}
 
-		await That(Act).Throws<ArgumentNullException>()
-			.WithParamName(ignoreParamCheck ? null : paramName)
-			.Because(
-				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		if (ignoreParamCheck)
+		{
+			await That(Act).Throws<ArgumentNullException>()
+				.Because(
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		}
+		else
+		{
+			await That(Act).Throws<ArgumentNullException>()
+				.WithParamName(paramName)
+				.Because(
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		}
 	}
 
 	[Test]
@@ -123,11 +142,21 @@ public class ExceptionTests(FileSystemTestData testData) : FileSystemTestBase(te
 			callback.Compile().Invoke(FileSystem.File);
 		}
 
-		await That(Act).Throws<ArgumentException>()
-			.WithHResult(-2147024809).And
-			.WithParamName(ignoreParamCheck || Test.IsNetFramework ? null : paramName)
-			.Because(
-				$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		if (ignoreParamCheck || Test.IsNetFramework)
+		{
+			await That(Act).Throws<ArgumentException>()
+				.WithHResult(-2147024809)
+				.Because(
+					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		}
+		else
+		{
+			await That(Act).Throws<ArgumentException>()
+				.WithHResult(-2147024809).And
+				.WithParamName(paramName)
+				.Because(
+					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		}
 	}
 
 	#region Helpers

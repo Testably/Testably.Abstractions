@@ -63,8 +63,16 @@ public class PathTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 			fileSystemWatcher.Path = "  ";
 		}
 
-		await That(Act).Throws<ArgumentException>()
-			.WithHResult(-2147024809).And
-			.WithParamName(Test.IsNetFramework ? null : "Path");
+		if (Test.IsNetFramework)
+		{
+			await That(Act).Throws<ArgumentException>()
+				.WithHResult(-2147024809);
+		}
+		else
+		{
+			await That(Act).Throws<ArgumentException>()
+				.WithHResult(-2147024809).And
+				.WithParamName("Path");
+		}
 	}
 }
