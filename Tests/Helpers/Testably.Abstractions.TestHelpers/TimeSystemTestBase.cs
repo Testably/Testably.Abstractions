@@ -56,11 +56,11 @@ public abstract class TimeSystemTestBase
 		{
 #if DEBUG
 			aweXpect.Skip.When(
-				condition && Settings.BrittleTests == Settings.TestSettingStatus.AlwaysDisabled,
-				$"Brittle tests are {Settings.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
+				condition && Settings.BrittleTests != Settings.TestSettingStatus.AlwaysEnabled,
+				$"Brittle tests are {Settings.BrittleTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
 #else
-			aweXpect.Skip.When(condition && Settings.BrittleTests != Settings.TestSettingStatus.AlwaysEnabled,
-				$"Brittle tests are {Settings.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
+			aweXpect.Skip.When(condition && Settings.BrittleTests == Settings.TestSettingStatus.AlwaysDisabled,
+				$"Brittle tests are {Settings.BrittleTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
 #endif
 		}
 	}

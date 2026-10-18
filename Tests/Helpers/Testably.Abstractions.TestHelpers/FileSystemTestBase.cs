@@ -83,29 +83,35 @@ public abstract class FileSystemTestBase : IDisposable
 	///     (optional) A condition that must be <see langword="true" /> for the test to be skipped on the
 	///     real file system.
 	/// </param>
-	public static void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+	public void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
 	{
+		if (FileSystem is RealFileSystem)
+		{
 #if DEBUG
-		Skip.If(Settings.BrittleTests == Settings.TestSettingStatus.AlwaysDisabled,
-			$"Brittle tests are {Settings.BrittleTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
+			Skip.If(condition && Settings.BrittleTests != Settings.TestSettingStatus.AlwaysEnabled,
+				$"Brittle tests are {Settings.BrittleTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
 #else
-		Skip.If(Settings.BrittleTests != Settings.TestSettingStatus.AlwaysEnabled,
-			$"Brittle tests are {Settings.BrittleTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
+			Skip.If(condition && Settings.BrittleTests == Settings.TestSettingStatus.AlwaysDisabled,
+				$"Brittle tests are {Settings.BrittleTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
 #endif
+		}
 	}
 
 	/// <summary>
 	///     Specifies, if long-running tests should be skipped on the real file system.
 	/// </summary>
-	public static void SkipIfLongRunningTestsShouldBeSkipped()
+	public void SkipIfLongRunningTestsShouldBeSkipped()
 	{
+		if (FileSystem is RealFileSystem)
+		{
 #if DEBUG
-		Skip.If(Settings.LongRunningTests == Settings.TestSettingStatus.AlwaysDisabled,
-			$"Long-running tests are {Settings.LongRunningTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
+			Skip.If(Settings.LongRunningTests != Settings.TestSettingStatus.AlwaysEnabled,
+				$"Long-running tests are {Settings.LongRunningTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
 #else
-		Skip.If(Settings.LongRunningTests != Settings.TestSettingStatus.AlwaysEnabled,
-			$"Long-running tests are {Settings.LongRunningTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
+			Skip.If(Settings.LongRunningTests == Settings.TestSettingStatus.AlwaysDisabled,
+				$"Long-running tests are {Settings.LongRunningTests}. You can enable them by setting the corresponding settings in Testably.Abstractions.TestHelpers.Settings.");
 #endif
+		}
 	}
 
 	protected virtual void Dispose(bool disposing)
