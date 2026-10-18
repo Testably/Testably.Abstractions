@@ -10,7 +10,7 @@ dotnet build Testably.Abstractions.slnx -p:NetCoreOnly=true
 ```
 
 - Building the solution compiles every target framework of every project and takes a few minutes on a cold start.
-- Source projects have `GeneratePackageOnBuild` and reference their readme through `$(SolutionDir)`. `dotnet build Source/<Project>` therefore compiles but fails in the pack step; build through the solution, or a test project that references the source project.
+- Source projects have `GeneratePackageOnBuild` and reference their readme relative to the project file, so `dotnet build Source/<Project>` also packs the project.
 - Local builds use the placeholder version `255.255.255.255`; the pipeline's `Compile` target sets the real version from GitVersion.
 - `-p:NetCoreOnly=true` removes `net48` from the test projects. `-p:NetFrameworkOnly=true` builds sources for `netstandard2.0` and tests for `net48` only.
 

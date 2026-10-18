@@ -87,6 +87,10 @@
               &lt;Kind Is="Method" /&gt;&#xD;
               &lt;HasAttribute Inherited="True" Name="Xunit.SkippableTheoryAttribute" /&gt;&#xD;
             &lt;/And&gt;&#xD;
+            &lt;And&gt;&#xD;
+              &lt;Kind Is="Method" /&gt;&#xD;
+              &lt;HasAttribute Inherited="True" Name="TUnit.Core.TestAttribute" /&gt;&#xD;
+            &lt;/And&gt;&#xD;
           &lt;/Or&gt;&#xD;
         &lt;/HasMember&gt;&#xD;
       &lt;/And&gt;&#xD;
@@ -164,6 +168,10 @@
           &lt;And&gt;&#xD;
             &lt;Kind Is="Method" /&gt;&#xD;
             &lt;HasAttribute Name="Xunit.SkippableTheoryAttribute" /&gt;&#xD;
+          &lt;/And&gt;&#xD;
+          &lt;And&gt;&#xD;
+            &lt;Kind Is="Method" /&gt;&#xD;
+            &lt;HasAttribute Name="TUnit.Core.TestAttribute" /&gt;&#xD;
           &lt;/And&gt;&#xD;
         &lt;/Or&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;

@@ -28,7 +28,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageDownload Include="coverlet.console" Version="[3.1.2]" />
 	  <PackageDownload Include="dotnet-sonarscanner" Version="[9.0.2]" />
 	  <PackageDownload Include="dotnet-stryker" Version="[5.0.0]" />
 	  <PackageDownload Include="GitVersion.Tool" Version="[6.0.5]" />
