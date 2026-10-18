@@ -1,10 +1,14 @@
 name: Build
 
 on:
-    workflow_dispatch: 
+    workflow_dispatch:
     push:
         branches: [ main ]
         tags: [ 'v[0-9]+.[0-9]+.[0-9]+*', 'core/v[0-9]+.[0-9]+.[0-9]+*' ]
+
+concurrency:
+    group: build-${{ github.ref }}
+    queue: max
 
 jobs:
     unit-tests:
@@ -15,11 +19,11 @@ jobs:
                 os: [ ubuntu-latest, windows-latest, macos-latest ]
         runs-on: ${{ matrix.os }}
         steps:
-            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
                 with:
                     fetch-depth: 0
             -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
+                uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
                 with:
                     dotnet-version: |
                         6.0.x
@@ -34,7 +38,7 @@ jobs:
                 run: ./build.sh CodeCoverage
             -   name: Upload artifacts
                 if: always()
-                uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+                uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
                 with:
                     name: ${{ runner.os }}-artifacts
                     path: |
@@ -47,11 +51,11 @@ jobs:
         env:
             DOTNET_NOLOGO: true
         steps:
-            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
                 with:
                     fetch-depth: 0
             -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
+                uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
                 with:
                     dotnet-version: |
                         6.0.x
@@ -62,7 +66,7 @@ jobs:
                 run: ./build.sh ApiChecks
             -   name: Upload artifacts
                 if: always()
-                uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+                uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
                 with:
                     name: API-tests
                     path: |
@@ -77,11 +81,11 @@ jobs:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
             DOTNET_NOLOGO: true
         steps:
-            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
                 with:
                     fetch-depth: 0
             -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
+                uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
                 with:
                     dotnet-version: |
                         6.0.x
@@ -101,11 +105,11 @@ jobs:
         if: always()
         steps:
             -   name: Download Artifacts
-                uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+                uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
                 with:
                     path: artifacts
             -   name: Publish Test Results
-                uses: EnricoMi/publish-unit-test-result-action@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2
+                uses: EnricoMi/publish-unit-test-result-action@7622c5bf3d112a72ab4fa3951c2aa5723d8ab92d # v2.25.0
                 with:
                     comment_mode: always
                     files: "artifacts/**/**/*.trx"
@@ -113,15 +117,14 @@ jobs:
     pack:
         name: "Pack"
         runs-on: ubuntu-latest
-        needs: [ publish-test-results, static-code-analysis ]
         env:
             DOTNET_NOLOGO: true
         steps:
-            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
                 with:
                     fetch-depth: 0
             -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
+                uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
                 with:
                     dotnet-version: |
                         6.0.x
@@ -132,7 +135,7 @@ jobs:
                 run: ./build.sh Pack
             -   name: Upload packages
                 if: always()
-                uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+                uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
                 with:
                     path: Artifacts/Packages
                     name: Packages
@@ -140,23 +143,22 @@ jobs:
     push_core:
         name: "Push core"
         if: ${{ startsWith(github.ref, 'refs/tags/core/v') }}
-        runs-on: ubuntu-latest
+        runs-on: macos-latest
         environment: production
-        needs: [ pack ]
+        needs: [ pack, unit-tests, api-tests, publish-test-results, static-code-analysis ]
         permissions:
-            contents: write
             id-token: write
         steps:
             -   name: Download packages
-                uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+                uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
                 with:
                     name: Packages
                     path: Artifacts/Packages
             -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
+                uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
             -   name: NuGet login
                 id: login
-                uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1
+                uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
                 with:
                     user: ${{ secrets.NUGET_USER }}
             -   name: Publish
@@ -175,23 +177,23 @@ jobs:
     push:
         name: "Push"
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
-        runs-on: ubuntu-latest
+        runs-on: macos-latest
         environment: production
-        needs: [ pack ]
+        needs: [ pack, unit-tests, api-tests, publish-test-results, static-code-analysis ]
         permissions:
             contents: write
             id-token: write
         steps:
             -   name: Download packages
-                uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+                uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
                 with:
                     name: Packages
                     path: Artifacts/Packages
             -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
+                uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
             -   name: NuGet login
                 id: login
-                uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1
+                uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
                 with:
                     user: ${{ secrets.NUGET_USER }}
             -   name: Publish
@@ -213,14 +215,23 @@ jobs:
                         echo "release=true" >> $GITHUB_OUTPUT
                     fi
             -   name: Create GitHub release
+                id: create-release
                 if: steps.check-pre-release.outputs.release == 'true'
+                # The packages are already pushed at this point and cannot be withdrawn, so a failure here does not
+                # fail the run; the next step reports it.
                 continue-on-error: true
-                uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3
+                uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+                # Without `name` and `tag_name` the action releases the pushed tag and names the release after it.
                 with:
-                    name: ${{ steps.tag.outputs.release_version }}
-                    tag_name: ${{ steps.tag.outputs.release_version }}
                     token: ${{ secrets.GITHUB_TOKEN }}
                     generate_release_notes: true
+            -   name: Report a failed GitHub release
+                if: steps.create-release.outcome == 'failure'
+                run: |
+                    message="The packages of $GITHUB_REF_NAME were pushed to nuget.org, but creating the GitHub release failed. Create the release for the tag manually."
+                    echo "::warning title=GitHub release not created::$message"
+                    echo "> [!WARNING]" >> "$GITHUB_STEP_SUMMARY"
+                    echo "> $message" >> "$GITHUB_STEP_SUMMARY"
     
     finalize-release:
         name: "Finalize release"
