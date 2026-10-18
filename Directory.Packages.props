@@ -48,7 +48,7 @@
 		<PackageVersion Include="aweXpect.Testably" Version="2.0.0"/>
 		<PackageVersion Include="aweXpect.Mockolate" Version="3.3.0"/>
 		<PackageVersion Include="Mockolate" Version="3.6.0"/>
-		<PackageVersion Include="TUnit.Engine" Version="1.74.0"/>
+		<PackageVersion Include="TUnit.Engine" Version="1.75.0"/>
 		<PackageVersion Include="Polyfill" Version="9.24.1"/>
 		<PackageVersion Include="aweXpect.Snapshots.PublicApi" Version="0.3.0"/>
 		<PackageVersion Include="AutoFixture" Version="4.18.1" />
