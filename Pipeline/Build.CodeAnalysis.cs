@@ -20,7 +20,7 @@ partial class Build
 				.SetOrganization("testably")
 				.SetProjectKey("Testably_Testably.Abstractions")
 				.AddVSTestReports(TestResultsDirectory / "*.trx")
-				.AddOpenCoverPaths(TestResultsDirectory / "reports" / "OpenCover.xml")
+				.AddGenericCoveragePaths(TestResultsDirectory / "reports" / "SonarQube.xml")
 				.SetPullRequestOrBranchName(GitHubActions, BranchName)
 				.SetVersion(SemVer)
 				.SetToken(SonarToken));

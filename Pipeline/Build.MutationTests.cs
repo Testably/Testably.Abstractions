@@ -8,8 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 using static Fallout.Common.Tools.DotNet.DotNetTasks;
+using ProductHeaderValue = Octokit.ProductHeaderValue;
 using Project = Fallout.Solutions.Project;
 
 // ReSharper disable AllUnderscoreLocalParameterName
@@ -18,67 +25,169 @@ namespace Build;
 
 partial class Build
 {
-	/// <summary>
-	///     The markdown texts for each project.
-	/// </summary>
-	static readonly Dictionary<string, string> MutationCommentBodies = new();
+	private const long MaxMutationReportSize = 100 * 1024 * 1024;
 
-	Target MutationComment => _ => _
+	Dictionary<Project, Project[]> LinuxMutationTestProjects => new()
+	{
+		{
+			Solution.Testably_Abstractions_Testing, [
+				Solution.Tests.Testably_Abstractions_Testing_Tests,
+				Solution.Tests.Testably_Abstractions_Tests
+			]
+		},
+	};
+
+	Dictionary<Project, Project[]> WindowsMutationTestProjects => new()
+	{
+		{
+			Solution.Testably_Abstractions_AccessControl,
+			[Solution.Tests.Testably_Abstractions_AccessControl_Tests]
+		},
+		{
+			Solution.Testably_Abstractions_Compression,
+			[Solution.Tests.Testably_Abstractions_Compression_Tests]
+		},
+		{
+			Solution.Testably_Abstractions_MemoryMappedFiles,
+			[Solution.Tests.Testably_Abstractions_MemoryMappedFiles_Tests]
+		},
+		{
+			Solution.Core.Testably_Abstractions, [
+				Solution.Tests.Testably_Abstractions_Testing_Tests,
+				Solution.Tests.Testably_Abstractions_Tests
+			]
+		}
+	};
+
+	Target MutationTestsComment => _ => _
 		.After(MutationTestsLinux)
 		.After(MutationTestsWindows)
-		.OnlyWhenDynamic(() => GitHubActions.IsPullRequest)
+		.DependsOn(MutationTestsDashboard)
 		.OnlyWhenDynamic(() => BuildScope == BuildScope.Default)
 		.Executes(async () =>
 		{
-			int? prId = GitHubActions.PullRequestNumber;
-			Log.Debug("Pull request number: {PullRequestId}", prId);
-			if (MutationCommentBodies.Count == 0)
+			// The artifacts are untrusted, because the pull request controls the code that produces them, so the pull
+			// request to comment on comes from the event of the workflow run.
+			int? prId = await BuildExtensions.ResolvePullRequestOfWorkflowRun(GithubToken);
+			if (prId == null)
 			{
+				Log.Information(
+					"The workflow run belongs to no pull request, so there is no mutation comment to write");
 				return;
 			}
 
-			if (prId != null)
+			Dictionary<string, string> mutationCommentBodies = new();
+			foreach (AbsolutePath file in ArtifactsDirectory.GetFiles("MutationTest_*.md", 2))
 			{
-				GitHubClient gitHubClient = new(new ProductHeaderValue("Fallout"));
-				Credentials tokenAuth = new(GithubToken);
-				gitHubClient.Credentials = tokenAuth;
-				IReadOnlyList<IssueComment> comments =
-					await gitHubClient.Issue.Comment.GetAllForIssue("Testably",
-						"Testably.Abstractions", prId.Value);
-				IssueComment? existingComment = null;
-				Log.Information($"Found {comments.Count} comments");
-				foreach (IssueComment comment in comments)
+				string project = Path.GetFileNameWithoutExtension(file).Substring("MutationTest_".Length);
+				mutationCommentBodies[project] = (await File.ReadAllTextAsync(file)).AsUntrustedCommentContent();
+			}
+
+			if (mutationCommentBodies.Count == 0)
+			{
+				Log.Warning("No files matching \"MutationTest_*.md\" found");
+				return;
+			}
+
+			GitHubClient gitHubClient = new(new ProductHeaderValue("Fallout"));
+			Credentials tokenAuth = new(GithubToken);
+			gitHubClient.Credentials = tokenAuth;
+			IReadOnlyList<IssueComment> comments =
+				await gitHubClient.Issue.Comment.GetAllForIssue("Testably",
+					"Testably.Abstractions", prId.Value);
+			IssueComment? existingComment = null;
+			Log.Information($"Found {comments.Count} comments");
+			foreach (IssueComment comment in comments)
+			{
+				if (comment.IsPipelineComment("## :alien: Mutation Results"))
 				{
-					if (comment.Body.Contains("## :alien: Mutation Results"))
-					{
-						Log.Information($"Found comment: {comment.Body}");
-						existingComment = comment;
-					}
+					Log.Information($"Found comment: {comment.Body}");
+					existingComment = comment;
+				}
+			}
+
+			if (existingComment == null)
+			{
+				string body = "## :alien: Mutation Results"
+				              + Environment.NewLine
+				              + $"[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FTestably%2FTestably.Abstractions%2Fpull/{prId}/merge)](https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/pull/{prId}/merge)"
+				              + Environment.NewLine
+				              + string.Join(Environment.NewLine, mutationCommentBodies.Values);
+
+				Log.Information($"Create comment:\n{body}");
+				await gitHubClient.Issue.Comment.Create("Testably", "Testably.Abstractions",
+					prId.Value, body);
+			}
+			else
+			{
+				string body = existingComment.Body;
+				foreach ((string project, string value) in mutationCommentBodies)
+				{
+					body = ReplaceProject(body, project, value);
 				}
 
-				if (existingComment == null)
-				{
-					string body = "## :alien: Mutation Results"
-					              + Environment.NewLine
-					              + $"[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FTestably%2FTestably.Abstractions%2Fpull/{prId}/merge)](https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/pull/{prId}/merge)"
-					              + Environment.NewLine
-					              + string.Join(Environment.NewLine, MutationCommentBodies.Values);
+				Log.Information($"Update comment:\n{body}");
+				await gitHubClient.Issue.Comment.Update("Testably", "Testably.Abstractions",
+					existingComment.Id, body);
+			}
+		});
 
-					Log.Information($"Create comment:\n{body}");
-					await gitHubClient.Issue.Comment.Create("Testably", "Testably.Abstractions",
-						prId.Value, body);
+	Target MutationTestsDashboard => _ => _
+		.After(MutationTestsLinux)
+		.After(MutationTestsWindows)
+		.OnlyWhenDynamic(() => BuildScope == BuildScope.Default)
+		.Executes(async () =>
+		{
+			string? version = await GetMutationDashboardVersion();
+			if (version == null)
+			{
+				Log.Information("The run has no version on the mutation dashboard, so there is nothing to publish");
+				return;
+			}
+
+			await "MutationTests-Linux".DownloadArtifactTo(ArtifactsDirectory, GithubToken);
+			await "MutationTests-Windows".DownloadArtifactTo(ArtifactsDirectory, GithubToken);
+
+			string? apiKey = Environment.GetEnvironmentVariable("STRYKER_DASHBOARD_API_KEY");
+			foreach (Project project in LinuxMutationTestProjects.Keys.Concat(WindowsMutationTestProjects.Keys))
+			{
+				AbsolutePath reportFile = StrykerOutputDirectory / project.Name / "reports" / "mutation-report.json";
+				if (!File.Exists(reportFile))
+				{
+					Log.Information("Skip uploading the mutation report of {ProjectName}, as there is none",
+						project.Name);
+					continue;
+				}
+
+				if (new FileInfo(reportFile).Length > MaxMutationReportSize)
+				{
+					Assert.Fail($"The {project.Name} mutation report is larger than {MaxMutationReportSize} bytes");
+				}
+
+				string reportComment = File.ReadAllText(reportFile);
+				if (JsonNode.Parse(reportComment) is not JsonObject)
+				{
+					Assert.Fail($"The {project.Name} mutation report is no JSON object");
+				}
+
+				using HttpClient client = new();
+				client.DefaultRequestHeaders.Add("X-Api-Key", apiKey);
+				// https://stryker-mutator.io/docs/General/dashboard/#send-a-report-via-curl
+				HttpResponseMessage response = await client.PutAsync(
+					$"https://dashboard.stryker-mutator.io/api/reports/github.com/Testably/Testably.Abstractions/{version}?module={project.Name}",
+					new StringContent(reportComment, new MediaTypeHeaderValue("application/json")));
+				string responseContent = await response.Content.ReadAsStringAsync();
+				if (response.IsSuccessStatusCode)
+				{
+					Log.Information("Uploaded the {Module} mutation report ({Size} bytes): {Response}",
+						project.Name, reportComment.Length, responseContent);
 				}
 				else
 				{
-					string body = existingComment.Body;
-					foreach ((string project, string value) in MutationCommentBodies)
-					{
-						body = ReplaceProject(body, project, value);
-					}
-
-					Log.Information($"Update comment:\n{body}");
-					await gitHubClient.Issue.Comment.Update("Testably", "Testably.Abstractions",
-						existingComment.Id, body);
+					// Without this the job stays green while the dashboard keeps showing the previous score.
+					Assert.Fail(
+						$"Could not upload the {project.Name} mutation report ({reportComment.Length} bytes), " +
+						$"the dashboard answered {(int)response.StatusCode} {response.ReasonPhrase}: {responseContent}");
 				}
 			}
 		});
@@ -91,6 +200,7 @@ partial class Build
 
 			DotNetToolInstall(_ => _
 				.SetPackageName("dotnet-stryker")
+				.SetVersion(GetStrykerVersion())
 				.SetToolInstallationPath(StrykerToolPath));
 
 			StrykerOutputDirectory.CreateOrCleanDirectory();
@@ -99,7 +209,6 @@ partial class Build
 	Target MutationTests => _ => _
 		.DependsOn(MutationTestsWindows)
 		.DependsOn(MutationTestsLinux)
-		.DependsOn(MutationComment)
 		.OnlyWhenDynamic(() => BuildScope == BuildScope.Default);
 
 	Target MutationTestsLinux => _ => _
@@ -109,17 +218,7 @@ partial class Build
 		.Executes(() =>
 		{
 			AbsolutePath configFile = StrykerToolPath / "Stryker.Config.json";
-			Dictionary<Project, Project[]> projects = new()
-			{
-				{
-					Solution.Testably_Abstractions_Testing, [
-						Solution.Tests.Testably_Abstractions_Testing_Tests,
-						Solution.Tests.Testably_Abstractions_Tests
-					]
-				},
-			};
-
-			foreach (KeyValuePair<Project, Project[]> project in projects)
+			foreach (KeyValuePair<Project, Project[]> project in LinuxMutationTestProjects)
 			{
 				string? branchName = GitVersion?.BranchName;
 				if (GitHubActions?.Ref.StartsWith("refs/tags/",
@@ -190,9 +289,8 @@ partial class Build
 				File.WriteAllText(configFile, configText);
 				Log.Debug($"Created '{configFile}':{Environment.NewLine}{configText}");
 
-				string arguments = IsServerBuild
-					? $"-f \"{configFile}\" -O \"{StrykerOutputDirectory}\" -r \"Markdown\" -r \"Dashboard\" -r \"cleartext\""
-					: $"-f \"{configFile}\" -O \"{StrykerOutputDirectory}\" -r \"Markdown\" -r \"cleartext\"";
+				string arguments =
+					$"-f \"{configFile}\" -O \"{StrykerOutputDirectory / project.Key.Name}\" -r \"Markdown\" -r \"json\" -r \"cleartext\"";
 
 				string executable = EnvironmentInfo.IsWin ? "dotnet-stryker.exe" : "dotnet-stryker";
 				IProcess process = ProcessTasks.StartProcess(
@@ -206,7 +304,13 @@ partial class Build
 						$"Stryker did not execute successfully for {project.Key.Name}: (exit code {process.ExitCode}).");
 				}
 
-				MutationCommentBodies.Add(project.Key.Name,
+				if (!File.Exists(StrykerOutputDirectory / project.Key.Name / "reports" / "mutation-report.md"))
+				{
+					Log.Information("Stryker found nothing to mutate in {ProjectName}", project.Key.Name);
+					continue;
+				}
+
+				File.WriteAllText(ArtifactsDirectory / $"MutationTest_{project.Key.Name}.md",
 					CreateMutationCommentBody(project.Key.Name));
 			}
 		});
@@ -218,29 +322,7 @@ partial class Build
 		.Executes(() =>
 		{
 			AbsolutePath configFile = StrykerToolPath / "Stryker.Config.json";
-			Dictionary<Project, Project[]> projects = new()
-			{
-				{
-					Solution.Testably_Abstractions_AccessControl,
-					[Solution.Tests.Testably_Abstractions_AccessControl_Tests]
-				},
-				{
-					Solution.Testably_Abstractions_Compression,
-					[Solution.Tests.Testably_Abstractions_Compression_Tests]
-				},
-				{
-					Solution.Testably_Abstractions_MemoryMappedFiles,
-					[Solution.Tests.Testably_Abstractions_MemoryMappedFiles_Tests]
-				},
-				{
-					Solution.Core.Testably_Abstractions, [
-						Solution.Tests.Testably_Abstractions_Testing_Tests,
-						Solution.Tests.Testably_Abstractions_Tests
-					]
-				}
-			};
-
-			foreach (KeyValuePair<Project, Project[]> project in projects)
+			foreach (KeyValuePair<Project, Project[]> project in WindowsMutationTestProjects)
 			{
 				string? branchName = GitVersion?.BranchName;
 				if (GitHubActions?.Ref.StartsWith("refs/tags/",
@@ -283,9 +365,8 @@ partial class Build
 				File.WriteAllText(configFile, configText);
 				Log.Debug($"Created '{configFile}':{Environment.NewLine}{configText}");
 
-				string arguments = IsServerBuild
-					? $"-f \"{configFile}\" -O \"{StrykerOutputDirectory}\" -r \"Markdown\" -r \"Dashboard\" -r \"cleartext\" --test-runner mtp"
-					: $"-f \"{configFile}\" -O \"{StrykerOutputDirectory}\" -r \"Markdown\" -r \"cleartext\" --test-runner mtp";
+				string arguments =
+					$"-f \"{configFile}\" -O \"{StrykerOutputDirectory / project.Key.Name}\" -r \"Markdown\" -r \"json\" -r \"cleartext\" --test-runner mtp";
 
 				string executable = EnvironmentInfo.IsWin ? "dotnet-stryker.exe" : "dotnet-stryker";
 				IProcess process = ProcessTasks.StartProcess(
@@ -299,7 +380,13 @@ partial class Build
 						$"Stryker did not execute successfully for {project.Key.Name}: (exit code {process.ExitCode}).");
 				}
 
-				MutationCommentBodies.Add(project.Key.Name,
+				if (!File.Exists(StrykerOutputDirectory / project.Key.Name / "reports" / "mutation-report.md"))
+				{
+					Log.Information("Stryker found nothing to mutate in {ProjectName}", project.Key.Name);
+					continue;
+				}
+
+				File.WriteAllText(ArtifactsDirectory / $"MutationTest_{project.Key.Name}.md",
 					CreateMutationCommentBody(project.Key.Name));
 			}
 		});
@@ -307,10 +394,52 @@ partial class Build
 	AbsolutePath StrykerOutputDirectory => ArtifactsDirectory / "Stryker";
 	AbsolutePath StrykerToolPath => TestResultsDirectory / "dotnet-stryker";
 
+	/// <summary>
+	///     The version under which the dashboard stores the mutation reports of the analysed run, or
+	///     <see langword="null" /> when it has none.
+	/// </summary>
+	/// <remarks>
+	///     The artifacts are untrusted, because a pull request controls the code that produces them, so the version
+	///     comes from the event alone, and a run that a pull request triggered can only publish to the version of
+	///     that pull request.
+	/// </remarks>
+	private async Task<string?> GetMutationDashboardVersion()
+	{
+		string? version = null;
+		if (GitHubActions?.EventName != "workflow_run")
+		{
+			// The reports come from this very run, so its own ref identifies them.
+			string gitRef = GitHubActions?.Ref ?? "";
+			if (gitRef.StartsWith("refs/tags/", StringComparison.Ordinal))
+			{
+				version = "release/" + gitRef.Substring("refs/tags/".Length);
+			}
+			else if (gitRef.StartsWith("refs/heads/", StringComparison.Ordinal))
+			{
+				version = gitRef.Substring("refs/heads/".Length);
+			}
+		}
+		else if (Environment.GetEnvironmentVariable("WorkflowRunEvent") == "pull_request")
+		{
+			int? prId = await BuildExtensions.ResolvePullRequestOfWorkflowRun(GithubToken);
+			return prId == null ? null : $"pull/{prId}/merge";
+		}
+		else
+		{
+			version = Environment.GetEnvironmentVariable("WorkflowRunHeadBranch");
+		}
+
+		// The version becomes a part of the path that the report is sent to.
+		return version != null &&
+		       Regex.IsMatch(version, @"\A[A-Za-z0-9][A-Za-z0-9._-]*(/[A-Za-z0-9][A-Za-z0-9._-]*)*\z")
+			? version
+			: null;
+	}
+
 	string CreateMutationCommentBody(string projectName)
 	{
 		string[] fileContent =
-			File.ReadAllLines(ArtifactsDirectory / "Stryker" / "reports" / "mutation-report.md");
+			File.ReadAllLines(StrykerOutputDirectory / projectName / "reports" / "mutation-report.md");
 		StringBuilder sb = new();
 		sb.AppendLine($"<!-- START {projectName} -->");
 		sb.AppendLine($"### {projectName}");
@@ -352,6 +481,16 @@ partial class Build
 		string body = sb.ToString();
 		return body;
 	}
+
+	/// <summary>
+	///     The version of Stryker to install, which is the one that the <c>PackageDownload</c> of the build project
+	///     pins, so that Dependabot keeps it up to date.
+	/// </summary>
+	static string GetStrykerVersion()
+		=> XDocument.Load(RootDirectory / "Pipeline" / "Build.csproj")
+			.Descendants("PackageDownload")
+			.Single(package => package.Attribute("Include")?.Value == "dotnet-stryker")
+			.Attribute("Version")!.Value.Trim('[', ']');
 
 	static string PathForJson(Project project)
 		=> $"\"{project.Path.ToString().Replace(@"\", @"\\")}\"";
