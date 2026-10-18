@@ -1,0 +1,41 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Vienna"
+    commit-message:
+      prefix: chore
+
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Vienna"
+    commit-message:
+      prefix: chore
+    groups:
+      fallout:
+        patterns:
+          - "Fallout*"
+      tunit:
+        patterns:
+          - "tunit*"
+      aweXpect:
+        patterns:
+          - "aweXpect*"
+      testably:
+        patterns:
+          - "testably.abstractions*"
+    # The entries for older target frameworks stay on the line of the assembly that their runtime bundles, but
+    # Dependabot cannot tell them apart from the entry for newer target frameworks, so these lines are frozen for all.
+    ignore:
+      - dependency-name: "System.Threading.Channels"
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "System.Linq.Async"
+        update-types: [ "version-update:semver-major", "version-update:semver-patch" ]

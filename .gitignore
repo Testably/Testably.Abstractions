@@ -373,5 +373,5 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-# Nuke build system temporary files
-.nuke/temp/
+# Fallout temporary files
+.fallout/temp/
