@@ -15,7 +15,8 @@ public class EnumerationOptionsHelperTests
 			EnumerationOptionsHelper.FromSearchOption(invalidSearchOption);
 		}
 
-		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>().WithParamName("searchOption");
+		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>().WithParamName("searchOption").And
+			.WithMessage("Enum value was out of legal range.*").AsWildcard();
 	}
 
 #if NET6_0_OR_GREATER

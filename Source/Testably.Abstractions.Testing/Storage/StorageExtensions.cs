@@ -43,8 +43,7 @@ internal static class StorageExtensions
 
 				parentDirectories.Push(fileSystem.Execute.Path.GetFileName(location.FullPath));
 				location = location.GetParent() ??
-				           throw new UnauthorizedAccessException(
-					           $"The searchPattern '{searchPattern}' has too many '../' for path '{path}'");
+				           throw ExceptionFactory.AccessToPathDenied(location.FullPath);
 				#pragma warning disable CA1846
 				givenPathPrefix.Append(searchPattern, 0, 3);
 				#pragma warning restore CA1846

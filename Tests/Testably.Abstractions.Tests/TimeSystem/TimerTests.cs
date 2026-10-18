@@ -51,7 +51,8 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 			_ = timer.Change(100, 200);
 		}
 
-		await That(Act).ThrowsExactly<ObjectDisposedException>();
+		await That(Act).ThrowsExactly<ObjectDisposedException>()
+			.WithMessage("Cannot access a disposed object.");
 	}
 #endif
 
@@ -103,7 +104,14 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 		}
 
 		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086).And
-			.WithParamName(nameof(dueTime));
+			.WithParamName(nameof(dueTime)).And
+#if NETFRAMEWORK
+			.WithMessage(
+				$"Number must be either non-negative and less than or equal to Int32.MaxValue or -1.{Environment.NewLine}Parameter name: dueTime");
+#else
+			.WithMessage(
+				$"dueTime ('{dueTime}') must be greater than or equal to '-1'. (Parameter 'dueTime'){Environment.NewLine}Actual value was {dueTime}.");
+#endif
 	}
 
 	[Test]
@@ -122,7 +130,14 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 		}
 
 		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086).And
-			.WithParamName(nameof(period));
+			.WithParamName(nameof(period)).And
+#if NETFRAMEWORK
+			.WithMessage(
+				$"Number must be either non-negative and less than or equal to Int32.MaxValue or -1.{Environment.NewLine}Parameter name: period");
+#else
+			.WithMessage(
+				$"period ('{period}') must be greater than or equal to '-1'. (Parameter 'period'){Environment.NewLine}Actual value was {period}.");
+#endif
 	}
 
 	[Test]

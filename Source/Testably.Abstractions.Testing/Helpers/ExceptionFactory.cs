@@ -42,6 +42,9 @@ internal static class ExceptionFactory
 	internal static IOException CannotCreateFileWhenAlreadyExists(int hResult)
 		=> new("Cannot create a file when that file already exists.", hResult);
 
+	internal static IOException DirectoryDeleteAccessDenied(string message)
+		=> new(message);
+
 	internal static ArgumentException DirectoryNameDoesNotExist(
 		string path, string paramName = "path")
 		=> new($"The directory name '{path}' does not exist.", paramName)
@@ -74,6 +77,9 @@ internal static class ExceptionFactory
 
 	internal static IOException FileAlreadyExists(string path, int hResult)
 		=> new($"The file '{path}' already exists.", hResult);
+
+	internal static ObjectDisposedException FileClosed()
+		=> new(null, "Cannot access a closed file.");
 
 	internal static IOException FileNameCannotBeResolved(
 		string path, int hResult = -2147022975)
@@ -186,6 +192,9 @@ internal static class ExceptionFactory
 #else
 		=> new("Illegal characters in path.", paramName);
 #endif
+
+	internal static ObjectDisposedException ObjectDisposed()
+		=> new(null, "Cannot access a disposed object.");
 
 	internal static PlatformNotSupportedException OperationNotSupportedOnThisPlatform()
 		=> new("Operation is not supported on this platform.")
@@ -329,14 +338,19 @@ internal static class ExceptionFactory
 	internal static TimeoutException TimeoutExpired(TimeSpan timeout)
 		=> new($"The timeout of {timeout} expired in the awaitable callback.");
 
-	internal static ArgumentOutOfRangeException TimerArgumentOutOfRange(string propertyName)
-		=> new(propertyName,
-			"Number must be either non-negative and less than or equal to Int32.MaxValue or -1")
+	internal static ArgumentOutOfRangeException TimerArgumentOutOfRange(
+		string paramName, long value)
+#if NET8_0_OR_GREATER
+		=> new(paramName, value, $"{paramName} ('{value}') must be greater than or equal to '-1'.");
+#else
+		=> new(paramName,
+			"Number must be either non-negative and less than or equal to Int32.MaxValue or -1.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
 			HResult = -2146233086,
 #endif
 		};
+#endif
 
 	internal static TimeoutException TimerWaitTimeoutException(int executionCount, int timeout)
 		=> new($"The execution count {executionCount} was not reached in {timeout}ms.");

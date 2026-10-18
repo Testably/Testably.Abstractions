@@ -497,9 +497,7 @@ internal sealed class DirectoryInfoMock
 		}
 		catch (UnauthorizedAccessException ex)
 		{
-#pragma warning disable MA0054 // Embed the caught exception as innerException
-			throw new IOException(ex.Message);
-#pragma warning restore MA0054
+			throw ExceptionFactory.DirectoryDeleteAccessDenied(ex.Message);
 		}
 	}
 }

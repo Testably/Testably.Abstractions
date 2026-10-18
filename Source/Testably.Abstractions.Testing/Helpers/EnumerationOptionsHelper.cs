@@ -72,7 +72,7 @@ internal static class EnumerationOptionsHelper
 		if (searchOption != SearchOption.TopDirectoryOnly &&
 		    searchOption != SearchOption.AllDirectories)
 		{
-			throw new ArgumentOutOfRangeException(nameof(searchOption));
+			throw ExceptionFactory.EnumValueOutOfRange(nameof(searchOption));
 		}
 
 		return searchOption == SearchOption.AllDirectories
