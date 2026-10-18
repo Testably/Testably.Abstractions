@@ -24,6 +24,9 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     Get notified of events in the <see cref="MockFileSystem" /> after they occurred.
 	/// </summary>
+	/// <remarks>
+	///     The <see cref="MockTimeSystem" /> exposes its notifications via <see cref="MockTimeSystem.On" />.
+	/// </remarks>
 	public INotificationHandler Notify => ChangeHandler;
 
 	/// <summary>
