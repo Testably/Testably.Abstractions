@@ -290,7 +290,7 @@ partial class Build
 				Log.Debug($"Created '{configFile}':{Environment.NewLine}{configText}");
 
 				string arguments =
-					$"-f \"{configFile}\" -O \"{StrykerOutputDirectory / project.Key.Name}\" -r \"Markdown\" -r \"json\" -r \"cleartext\"";
+					$"-f \"{configFile}\" -O \"{StrykerOutputDirectory / project.Key.Name}\" -r \"Markdown\" -r \"json\" -r \"cleartext\" --test-runner mtp";
 
 				string executable = EnvironmentInfo.IsWin ? "dotnet-stryker.exe" : "dotnet-stryker";
 				IProcess process = ProcessTasks.StartProcess(
