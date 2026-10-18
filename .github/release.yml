@@ -1,0 +1,23 @@
+changelog:
+  exclude:
+    labels:
+      - changelog-ignore
+  categories:
+    - title: "⚠️ Breaking changes"
+      labels:
+        - "breaking change"
+    - title: "🚀 New features"
+      labels:
+        - enhancement
+    - title: "🐞 Bug fixes"
+      labels:
+        - bug
+    - title: "📖 Documentation"
+      labels:
+        - documentation
+    - title: "🧰 Maintenance"
+      labels:
+        - "*"
+    - title: "⬆️ Dependencies"
+      labels:
+        - dependencies

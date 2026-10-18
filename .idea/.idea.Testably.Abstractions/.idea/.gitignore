@@ -2,10 +2,12 @@
 /shelf/
 /workspace.xml
 # Rider ignored files
-/modules.xml
 /.idea.Testably.Abstractions.iml
-/projectSettingsUpdater.xml
+/modules.xml
 /contentModel.xml
+/projectSettingsUpdater.xml
+/copilot.data.migration.*.xml
+/.name
 # Editor-based HTTP Client requests
 /httpRequests/
 # Datasource local storage ignored files
