@@ -1,0 +1,43 @@
+name: "CI-Analysis"
+
+on:
+    workflow_dispatch:
+    workflow_run:
+        workflows: [ "CI" ]
+        types:
+            - completed
+
+jobs:
+    mutation-tests:
+        name: "Mutation tests"
+        # The mutation tests in the CI workflow are disabled, so there are no reports to publish.
+        if: false
+        runs-on: ubuntu-latest
+        permissions:
+            actions: read
+            contents: read
+            pull-requests: write
+        steps:
+            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+                with:
+                    fetch-depth: 0
+            -   name: Setup .NET SDKs
+                uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+                with:
+                    dotnet-version: |
+                        6.0.x
+                        8.0.x
+                        9.0.x
+                        10.0.x
+            -   name: Upload mutation dashboard and create comment
+                run: ./build.sh MutationTestsComment
+                # The artifacts of the workflow run are untrusted, because a pull request controls the code that
+                # produces them, so the build identifies the pull request by these values of the event alone.
+                env:
+                    GithubToken: ${{ secrets.GITHUB_TOKEN }}
+                    STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+                    WorkflowRunId: ${{ github.event.workflow_run.id }}
+                    WorkflowRunEvent: ${{ github.event.workflow_run.event }}
+                    WorkflowRunHeadOwner: ${{ github.event.workflow_run.head_repository.owner.login }}
+                    WorkflowRunHeadBranch: ${{ github.event.workflow_run.head_branch }}
+                    WorkflowRunHeadSha: ${{ github.event.workflow_run.head_sha }}

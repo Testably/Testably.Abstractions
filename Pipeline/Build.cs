@@ -27,7 +27,7 @@ partial class Build : FalloutBuild
 
 	[Parameter("Github Token")] readonly string? GithubToken;
 
-	[Required] [GitVersion(Framework = "net8.0", NoCache = true, NoFetch = true)] readonly GitVersion? GitVersion;
+	[Required] [GitVersion(Framework = "net10.0", NoCache = true, NoFetch = true)] readonly GitVersion? GitVersion;
 
 	[Solution(GenerateProjects = true)] readonly Solution Solution = null!;
 

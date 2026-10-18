@@ -12,6 +12,7 @@ using Fallout.Common.Utilities;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using static Fallout.Common.Tools.DotNet.DotNetTasks;
 
 // ReSharper disable AllUnderscoreLocalParameterName
@@ -53,12 +54,19 @@ partial class Build
 			}
 			else if (GitHubActions.Ref.StartsWith("refs/tags/", StringComparison.OrdinalIgnoreCase) == true)
 			{
+				if (!Regex.IsMatch(GitHubActions.Ref,
+					    @"\Arefs/tags/(core/)?v\d+\.\d+\.\d+(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?\z"))
+				{
+					Assert.Fail(
+						$"The tag '{GitHubActions.Ref["refs/tags/".Length..]}' is no valid release tag (expected 'v1.2.3' or 'core/v1.2.3', optionally with a pre-release suffix like '-pre.1')");
+				}
+
 				int preReleaseIndex = GitHubActions.Ref.IndexOf('-');
 				preRelease = preReleaseIndex > 0 ? GitHubActions.Ref[preReleaseIndex..] : "";
 			}
 			
 			CoreVersion = AssemblyVersion.FromGitVersion(GitVersionTasks.GitVersion(s => s
-					.SetFramework("net8.0")
+					.SetFramework("net10.0")
 					.SetNoFetch(true)
 					.SetNoCache(true)
 					.DisableProcessOutputLogging()
@@ -67,7 +75,7 @@ partial class Build
 				.Result, preRelease);
 
 			GitVersion gitVersion = GitVersionTasks.GitVersion(s => s
-					.SetFramework("net8.0")
+					.SetFramework("net10.0")
 					.SetNoFetch(true)
 					.SetNoCache(true)
 					.DisableProcessOutputLogging()
