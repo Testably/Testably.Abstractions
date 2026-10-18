@@ -33,7 +33,6 @@
 	  <PackageDownload Include="dotnet-stryker" Version="[5.0.0]" />
 	  <PackageDownload Include="GitVersion.Tool" Version="[6.0.5]" />
 	  <PackageDownload Include="ReportGenerator" Version="[5.4.1]" />
-	  <PackageDownload Include="xunit.runner.console" Version="[2.9.2]" />
 	</ItemGroup>
 
 </Project>
