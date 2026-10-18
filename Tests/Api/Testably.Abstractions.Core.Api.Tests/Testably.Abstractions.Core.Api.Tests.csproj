@@ -5,7 +5,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="PublicApiGenerator" />
+		<PackageReference Include="aweXpect.Snapshots.PublicApi" />
 		<PackageReference Remove="System.Net.Http" />
 	</ItemGroup>
 
@@ -13,5 +13,14 @@
 	  <ProjectReference Include="..\..\..\Source\Testably.Abstractions.FileSystem.Interface\Testably.Abstractions.FileSystem.Interface.csproj" />
 	  <ProjectReference Include="..\..\..\Source\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
 	</ItemGroup>
+
+	<!--
+	    The tests read the builds of all target frameworks of the referenced projects, but a project reference only
+	    builds the one that matches the tests. Without the target framework, the same builds as in the solution are
+	    requested, which MSBuild runs only once; DispatchToInnerBuilds builds them without packing.
+	-->
+	<Target Name="BuildAllTargetFrameworksOfReferencedProjects" AfterTargets="Build">
+		<MSBuild Projects="@(ProjectReference)" Targets="DispatchToInnerBuilds" RemoveProperties="TargetFramework"/>
+	</Target>
 
 </Project>
