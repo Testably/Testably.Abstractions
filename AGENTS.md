@@ -5,7 +5,7 @@ Testably.Abstractions provides injectable abstractions for the static parts of t
 ## Setup and build
 
 - The SDK comes from `global.json` (.NET 10, `rollForward: latestMinor`), which also selects `Microsoft.Testing.Platform` as the `dotnet test` runner. CI installs the 6.0, 8.0, 9.0 and 10.0 runtimes; local test runs need the runtime of each framework you target.
-- Build through the solution: `dotnet build Testably.Abstractions.slnx`. Source projects pack on build and resolve their package readmes via `$(SolutionDir)`, so `dotnet build` on a single source project fails in the pack step.
+- Build through the solution: `dotnet build Testably.Abstractions.slnx`. Source projects pack on build, so `dotnet build` on a single source project also produces its package.
 - Source projects target `net6.0;net8.0;net9.0;net10.0;netstandard2.1;netstandard2.0` (`Source/Directory.Build.props`), tests target `net8.0;net9.0;net10.0;net48` (`Tests/Directory.Build.props`). `-p:NetCoreOnly=true` drops `net48` from the tests; `-p:NetFrameworkOnly=true` reduces sources to `netstandard2.0` and tests to `net48`.
 - API differences between frameworks are expressed with `FEATURE_*` constants defined in `Feature.Flags.props` (plus `NETFRAMEWORK` and `CAN_SIMULATE_OTHER_OS`). For a newly mirrored API, prefer adding a flag there over raw `NETx_0_OR_GREATER` checks.
 - Package versions are central in `Directory.Packages.props`. Sources build with `TreatWarningsAsErrors`, nullable enabled and Meziantou.Analyzer.

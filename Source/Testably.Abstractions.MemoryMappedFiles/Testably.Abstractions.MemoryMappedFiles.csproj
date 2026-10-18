@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="$(SolutionDir)Docs/Nuget/MemoryMappedFiles.md"
+		<None Include="$(MSBuildThisFileDirectory)../../Docs/Nuget/MemoryMappedFiles.md"
 			  Pack="true" PackagePath="/Docs/"
 			  Link="Docs\MemoryMappedFiles.md"/>
 	</ItemGroup>
