@@ -91,7 +91,14 @@ public class TimeFactoryTests(TimeSystemTestData testData) : TimeSystemTestBase(
 		}
 
 		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086).And
-			.WithParamName(nameof(dueTime));
+			.WithParamName(nameof(dueTime)).And
+#if NETFRAMEWORK
+			.WithMessage(
+				$"Number must be either non-negative and less than or equal to Int32.MaxValue or -1.{Environment.NewLine}Parameter name: dueTime");
+#else
+			.WithMessage(
+				$"dueTime ('{dueTime}') must be greater than or equal to '-1'. (Parameter 'dueTime'){Environment.NewLine}Actual value was {dueTime}.");
+#endif
 	}
 
 	[Test]
@@ -107,7 +114,14 @@ public class TimeFactoryTests(TimeSystemTestData testData) : TimeSystemTestBase(
 		}
 
 		await That(Act).Throws<ArgumentOutOfRangeException>().WithHResult(-2146233086).And
-			.WithParamName(nameof(period));
+			.WithParamName(nameof(period)).And
+#if NETFRAMEWORK
+			.WithMessage(
+				$"Number must be either non-negative and less than or equal to Int32.MaxValue or -1.{Environment.NewLine}Parameter name: period");
+#else
+			.WithMessage(
+				$"period ('{period}') must be greater than or equal to '-1'. (Parameter 'period'){Environment.NewLine}Actual value was {period}.");
+#endif
 	}
 
 	[Test]

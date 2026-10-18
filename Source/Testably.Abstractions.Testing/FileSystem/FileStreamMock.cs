@@ -907,7 +907,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		// A stream on a handle cannot be used once the handle is closed, even before the stream is disposed.
 		if (_isDisposed || _ownedHandle is { IsClosed: true })
 		{
-			throw new ObjectDisposedException("", "Cannot access a closed file.");
+			throw ExceptionFactory.FileClosed();
 		}
 	}
 }

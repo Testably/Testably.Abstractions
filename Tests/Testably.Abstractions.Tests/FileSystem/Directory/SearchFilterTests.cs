@@ -8,6 +8,21 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 public class SearchFilterTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	[Test]
+	public async Task SearchOption_Invalid_ShouldThrowArgumentOutOfRangeException()
+	{
+		SearchOption invalidSearchOption = (SearchOption)(-1);
+
+		void Act()
+		{
+			FileSystem.Directory.GetFileSystemEntries(".", "*", invalidSearchOption);
+		}
+
+		await That(Act).ThrowsExactly<ArgumentOutOfRangeException>()
+			.WithParamName("searchOption").And
+			.WithMessage("Enum value was out of legal range.*").AsWildcard();
+	}
+
+	[Test]
 	[AutoArguments("../", 4)]
 	[AutoArguments("../*", 4)]
 	[AutoArguments("../a*", 2)]
@@ -155,7 +170,8 @@ public class SearchFilterTests(FileSystemTestData testData) : FileSystemTestBase
 				.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 		}
 
-		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891).And
+			.WithMessage("Access to the path '*' is denied.").AsWildcard();
 	}
 
 	[Test]

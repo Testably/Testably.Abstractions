@@ -1,5 +1,6 @@
 ﻿#if !FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 using System.Diagnostics.CodeAnalysis;
+using Testably.Abstractions.Testing.Helpers;
 
 // ReSharper disable once CheckNamespace
 namespace System.IO;
@@ -92,7 +93,7 @@ public class EnumerationOptions
 		{
 			if (value < 0)
 			{
-				throw new ArgumentOutOfRangeException(nameof(value));
+				throw ExceptionFactory.NonNegativeNumberRequired(nameof(value));
 			}
 
 			field = value;

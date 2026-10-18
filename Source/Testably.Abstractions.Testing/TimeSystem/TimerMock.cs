@@ -39,12 +39,14 @@ internal sealed class TimerMock : ITimerMock
 	{
 		if (dueTime.TotalMilliseconds < -1)
 		{
-			throw ExceptionFactory.TimerArgumentOutOfRange(nameof(dueTime));
+			throw ExceptionFactory.TimerArgumentOutOfRange(nameof(dueTime),
+				(long)dueTime.TotalMilliseconds);
 		}
 
 		if (period.TotalMilliseconds < -1)
 		{
-			throw new ArgumentOutOfRangeException(nameof(period));
+			throw ExceptionFactory.TimerArgumentOutOfRange(nameof(period),
+				(long)period.TotalMilliseconds);
 		}
 
 		_mockTimeSystem = timeSystem;
@@ -86,18 +88,20 @@ internal sealed class TimerMock : ITimerMock
 #if NET8_0_OR_GREATER
 			return false;
 #else
-			throw new ObjectDisposedException(nameof(Change), "Cannot access a disposed object.");
+			throw ExceptionFactory.ObjectDisposed();
 #endif
 		}
 
 		if (dueTime.TotalMilliseconds < -1)
 		{
-			throw ExceptionFactory.TimerArgumentOutOfRange(nameof(dueTime));
+			throw ExceptionFactory.TimerArgumentOutOfRange(nameof(dueTime),
+				(long)dueTime.TotalMilliseconds);
 		}
 
 		if (period.TotalMilliseconds < -1)
 		{
-			throw new ArgumentOutOfRangeException(nameof(period));
+			throw ExceptionFactory.TimerArgumentOutOfRange(nameof(period),
+				(long)period.TotalMilliseconds);
 		}
 
 		try
