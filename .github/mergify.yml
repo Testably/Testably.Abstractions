@@ -1,8 +1,8 @@
 pull_request_rules:
-  - name: Auto-merge Renovate PRs into main
+  - name: Auto-merge Dependabot PRs into main
     conditions:
       - base = main
-      - author = renovate[bot]
+      - author = dependabot[bot]
       - check-success = Unit tests (ubuntu-latest)
       - check-success = Unit tests (windows-latest)
       - check-success = Unit tests (macos-latest)
