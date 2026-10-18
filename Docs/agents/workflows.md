@@ -70,7 +70,7 @@ dotnet test --project Tests/Api/Testably.Abstractions.Api.Tests --no-build --tre
 | `CodeAnalysis` | SonarCloud begin/end around `Compile` and `CodeCoverage`; needs `SonarToken` |
 | `Pack` | Collect the packages into `Artifacts/Packages/Core` and `Artifacts/Packages/Main` |
 | `MutationTestsWindows`, `MutationTestsLinux`, `MutationTests` | Stryker.NET mutation tests (see below) |
-| `MutationComment` | Post or update the mutation summary on the pull request |
+| `MutationTestsDashboard`, `MutationTestsComment` | Upload the mutation reports to the Stryker dashboard and post or update the mutation summary on the pull request (`ci-analysis.yml`, currently disabled) |
 
 `BuildScope` (`Pipeline/BuildScope.cs`, set in `Pipeline/Build.cs`) is `Default`, `CoreOnly` or `MainOnly`. It limits `Compile`, `Pack` and `ApiChecks` to the Core or main projects and disables unit tests, coverage, Sonar and mutation tests where they do not apply. Use `CoreOnly` while a Core change waits for its release, because the main projects still build against the released `Testably.Abstractions.Interface` package.
 
@@ -83,7 +83,7 @@ dotnet test --project Tests/Api/Testably.Abstractions.Api.Tests --no-build --tre
 ./build.ps1 MutationTestsLinux
 ```
 
-The targets install `dotnet-stryker` into `TestResults/dotnet-stryker` and mutate on `net10.0`; reports go to `Artifacts/Stryker`. `MutationTestsWindows` covers `Testably.Abstractions`, `.AccessControl`, `.Compression` and `.MemoryMappedFiles`; `MutationTestsLinux` covers `Testably.Abstractions.Testing`, with exclusions for OS-specific helpers and exception messages listed in `Pipeline/Build.MutationTests.cs`. Off `main` only changed code is mutated (`since: main`). A full run takes a long time; only run it when asked. The mutation jobs in `ci.yml` are currently disabled (`if: false`).
+The targets install `dotnet-stryker` (version pinned by the `PackageDownload` in `Pipeline/Build.csproj`) into `TestResults/dotnet-stryker` and mutate on `net10.0` with `--test-runner mtp`, because the TUnit test projects run on Microsoft.Testing.Platform; reports go to `Artifacts/Stryker`. `MutationTestsWindows` covers `Testably.Abstractions`, `.AccessControl`, `.Compression` and `.MemoryMappedFiles`; `MutationTestsLinux` covers `Testably.Abstractions.Testing`, with exclusions for OS-specific helpers and exception messages listed in `Pipeline/Build.MutationTests.cs`. Off `main` only changed code is mutated (`since: main`). A full run takes a long time; only run it when asked. The mutation jobs in `ci.yml` are currently disabled (`if: false`).
 
 ## Documentation
 
@@ -100,4 +100,4 @@ The targets install `dotnet-stryker` into `TestResults/dotnet-stryker` and mutat
 | `build.yml` | Push to `main`, `v*` and `core/v*` tags | The same checks plus `Pack`; a `core/v*` tag pushes `Artifacts/Packages/Core`, a `v*` tag pushes `Artifacts/Packages/Main` to nuget.org via trusted publishing and creates a GitHub release for non-prerelease tags |
 | `notify-docs-site.yml` | Push to `main` touching `Docs/pages/docs/**` | Dispatches a rebuild of the docs site |
 
-Renovate keeps dependencies current; `.github/mergify.yml` squash-merges its PRs once the unit and API test checks pass. All checkouts use `fetch-depth: 0` because GitVersion needs the full history.
+Dependabot (`.github/dependabot.yml`) keeps dependencies current; `.github/mergify.yml` squash-merges its PRs once the unit and API test checks pass. All checkouts use `fetch-depth: 0` because GitVersion needs the full history.
