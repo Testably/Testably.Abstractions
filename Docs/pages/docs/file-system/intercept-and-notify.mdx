@@ -53,6 +53,8 @@ The recommended pattern is: register the callback, do the work, then call `Wait`
 
 `OnChanged`, `OnCreated` and `OnDeleted` are all available, with the same `globPattern` / `predicate` filters as `Intercept`.
 
+The time system offers the same kind of callbacks through `MockTimeSystem.On` instead of `Notify`, e.g. `timeSystem.On.ThreadSleep()` (see [time-system notifications](../time-system/notifications)).
+
 ## Streaming events
 
 On .NET 6+ you can stream the same callback as an async sequence:

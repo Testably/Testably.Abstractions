@@ -14,6 +14,9 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <summary>
 	///     The callback handler for the <see cref="MockTimeSystem" />
 	/// </summary>
+	/// <remarks>
+	///     The <see cref="MockFileSystem" /> exposes its notifications via <see cref="MockFileSystem.Notify" />.
+	/// </remarks>
 	public INotificationHandler On
 		=> _callbackHandler;
 

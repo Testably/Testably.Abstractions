@@ -18,7 +18,12 @@ TimeSpan[] requestedSleeps = sleeps.Wait(count: 1);
 await Expect.That(requestedSleeps[0]).IsEqualTo(TimeSpan.FromSeconds(5));
 ```
 
-Like the file-system [notifications](../file-system/intercept-and-notify), each method returns an `IAwaitableCallback<T>` you dispose to unsubscribe and `Wait`/`WaitAsync` to block until enough events arrive.
+Each method returns an `IAwaitableCallback<T>` you dispose to unsubscribe and `Wait`/`WaitAsync` to block until enough events arrive, the same shape as the file-system [notifications](../file-system/intercept-and-notify). Only the entry point differs: the file system uses `Notify`, the time system uses `On`.
+
+```csharp
+using var created = fileSystem.Notify.OnCreated(FileSystemTypes.File);
+using var sleeps = timeSystem.On.ThreadSleep();
+```
 
 ## Available callbacks
 
