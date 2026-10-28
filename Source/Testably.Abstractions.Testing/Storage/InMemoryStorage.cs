@@ -275,9 +275,10 @@ internal sealed class InMemoryStorage : IStorage
 				            !x.Key.Equals(location))
 				.OrderBy(x => x.Key.FullPath))
 			{
-				if (type.HasFlag(item.Value.Type) &&
-				    IncludeItemInEnumeration(item, fullPathWithoutTrailingSlash,
-					    enumerationOptions))
+				// Directories must be checked even when only files are enumerated, as they are recursed into.
+				if (IncludeItemInEnumeration(item, fullPathWithoutTrailingSlash,
+					    enumerationOptions) &&
+				    type.HasFlag(item.Value.Type))
 				{
 					string itemPath = item.Key.FullPath;
 					if (itemPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
@@ -889,12 +890,12 @@ internal sealed class InMemoryStorage : IStorage
 	///     <see cref="EnumerationOptions.AttributesToSkip" />:<br />
 	///     If set, only items with the given attributes are included
 	///     <para />
-	///     If the item is not granted access by the <see cref="IAccessControlStrategy" />:<br />
-	///     When <see cref="EnumerationOptions.IgnoreInaccessible" /> is set, the item is ignored, otherwise this method throws
-	///     an <see cref="UnauthorizedAccessException" />.
+	///     If a directory that is recursed into is not granted access by the <see cref="IAccessControlStrategy" />:<br />
+	///     When <see cref="EnumerationOptions.IgnoreInaccessible" /> is set, the directory and its content are ignored,
+	///     otherwise this method throws an <see cref="UnauthorizedAccessException" />.
 	/// </remarks>
 	/// <exception cref="UnauthorizedAccessException">
-	///     When an item is not granted access by the
+	///     When a directory that is recursed into is not granted access by the
 	///     <see cref="IAccessControlStrategy" /> and <see cref="EnumerationOptions.IgnoreInaccessible" /> is not set to
 	///     <see langword="true" />.
 	/// </exception>
@@ -913,12 +914,12 @@ internal sealed class InMemoryStorage : IStorage
 	///     <see cref="EnumerationOptions.AttributesToSkip" />:<br />
 	///     If set, only items with the given attributes are included
 	///     <para />
-	///     If the item is not granted access by the <see cref="IAccessControlStrategy" />:<br />
-	///     When <see cref="EnumerationOptions.IgnoreInaccessible" /> is set, the item is ignored, otherwise this method throws
-	///     an <see cref="UnauthorizedAccessException" />.
+	///     If a directory that is recursed into is not granted access by the <see cref="IAccessControlStrategy" />:<br />
+	///     When <see cref="EnumerationOptions.IgnoreInaccessible" /> is set, the directory and its content are ignored,
+	///     otherwise this method throws an <see cref="UnauthorizedAccessException" />.
 	/// </remarks>
 	/// <exception cref="UnauthorizedAccessException">
-	///     When an item is not granted access by the
+	///     When a directory that is recursed into is not granted access by the
 	///     <see cref="IAccessControlStrategy" /> and <see cref="EnumerationOptions.IgnoreInaccessible" /> is not set to
 	///     <see langword="true" />.
 	/// </exception>
@@ -938,6 +939,9 @@ internal sealed class InMemoryStorage : IStorage
 			return false;
 		}
 
+#if !NETSTANDARD2_1
+		int recursionDepth = 0;
+#endif
 		if (!parentPath.Equals(directoryPath,
 			_fileSystem.Execute.StringComparisonMode))
 		{
@@ -947,7 +951,7 @@ internal sealed class InMemoryStorage : IStorage
 				return false;
 			}
 #else
-			int recursionDepth = parentPath
+			recursionDepth = parentPath
 				.Substring(directoryPath.Length)
 				.Count(x => x == _fileSystem.Execute.Path.DirectorySeparatorChar);
 			if (!enumerationOptions.RecurseSubdirectories ||
@@ -969,18 +973,52 @@ internal sealed class InMemoryStorage : IStorage
 			return false;
 		}
 
-		if (!_fileSystem.AccessControlStrategy
-			.IsAccessGranted(item.Key.FullPath, item.Value.Extensibility))
+		// Like the real file system, only the directories that are opened for listing require access,
+		// not the listed items themselves.
+		bool isRecursedInto = item.Value.Type == FileSystemTypes.Directory &&
+		                      enumerationOptions.RecurseSubdirectories
+#if !NETSTANDARD2_1
+		                      && recursionDepth < enumerationOptions.MaxRecursionDepth
+#endif
+			;
+		if (isRecursedInto &&
+		    !IsAccessGrantedDuringEnumeration(item.Key.FullPath, item.Value.Extensibility,
+			    enumerationOptions))
 		{
-			if (!enumerationOptions.IgnoreInaccessible)
-			{
-				throw ExceptionFactory.AccessToPathDenied(item.Key.FullPath);
-			}
-
 			return false;
 		}
 
+		for (string? ancestorPath = parentPath;
+		     ancestorPath != null && !ancestorPath.Equals(directoryPath,
+			     _fileSystem.Execute.StringComparisonMode);
+		     ancestorPath = _fileSystem.Execute.Path.GetDirectoryName(ancestorPath))
+		{
+			IStorageContainer ancestor = GetContainer(GetLocation(ancestorPath));
+			if (!IsAccessGrantedDuringEnumeration(ancestorPath, ancestor.Extensibility,
+				enumerationOptions))
+			{
+				return false;
+			}
+		}
+
 		return true;
+	}
+
+	private bool IsAccessGrantedDuringEnumeration(string fullPath,
+		IFileSystemExtensibility extensibility,
+		EnumerationOptions enumerationOptions)
+	{
+		if (_fileSystem.AccessControlStrategy.IsAccessGranted(fullPath, extensibility))
+		{
+			return true;
+		}
+
+		if (!enumerationOptions.IgnoreInaccessible)
+		{
+			throw ExceptionFactory.AccessToPathDenied(fullPath);
+		}
+
+		return false;
 	}
 
 	private IStorageLocation? MoveInternal(IStorageLocation source,
