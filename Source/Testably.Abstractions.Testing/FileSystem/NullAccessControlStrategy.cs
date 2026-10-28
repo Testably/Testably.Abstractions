@@ -1,17 +1,15 @@
-﻿using Testably.Abstractions.Helpers;
+﻿using System.IO;
+using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
 /// <summary>
-///     Null object of an <see cref="IAccessControlStrategy" /> which does not restrict access in any way.
+///     Null object of an <see cref="AccessControlStrategy" /> which does not restrict access in any way.
 /// </summary>
-public class NullAccessControlStrategy : IAccessControlStrategy
+public class NullAccessControlStrategy : AccessControlStrategy
 {
-	#region IAccessControlStrategy Members
-
-	/// <inheritdoc cref="IAccessControlStrategy.IsAccessGranted(string, IFileSystemExtensibility)" />
-	public bool IsAccessGranted(string fullPath, IFileSystemExtensibility extensibility)
+	/// <inheritdoc cref="AccessControlStrategy.IsAccessGranted(string, IFileSystemExtensibility, FileAccess)" />
+	public override bool IsAccessGranted(string fullPath, IFileSystemExtensibility extensibility,
+		FileAccess requestedAccess)
 		=> true;
-
-	#endregion
 }

@@ -201,7 +201,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 #endif
 
 		if (!_fileSystem.AccessControlStrategy
-			.IsAccessGranted(_location.FullPath, Extensibility))
+			.IsAccessGranted(_location.FullPath, Extensibility, access))
 		{
 			throw ExceptionFactory.AccessToPathDenied((onBehalfOfLocation ?? _location).FullPath);
 		}

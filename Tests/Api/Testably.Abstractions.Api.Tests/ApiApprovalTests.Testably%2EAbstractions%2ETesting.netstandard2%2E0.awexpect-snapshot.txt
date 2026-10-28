@@ -224,6 +224,12 @@ namespace Testably.Abstractions.Testing
 }
 namespace Testably.Abstractions.Testing.FileSystem
 {
+    public abstract class AccessControlStrategy : Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy
+    {
+        protected AccessControlStrategy() { }
+        public abstract bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.FileAccess requestedAccess);
+        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility) { }
+    }
     public class ChangeDescription
     {
         public System.IO.WatcherChangeTypes ChangeType { get; }
@@ -235,10 +241,11 @@ namespace Testably.Abstractions.Testing.FileSystem
         public string Path { get; }
         public override string ToString() { }
     }
-    public class DefaultAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy
+    public class DefaultAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.AccessControlStrategy
     {
+        public DefaultAccessControlStrategy(System.Func<string, Testably.Abstractions.Helpers.IFileSystemExtensibility, System.IO.FileAccess, bool> callback) { }
         public DefaultAccessControlStrategy(System.Func<string, Testably.Abstractions.Helpers.IFileSystemExtensibility, bool> callback) { }
-        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility) { }
+        public override bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.FileAccess requestedAccess) { }
     }
     public class DefaultSafeFileHandleStrategy : Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy
     {
@@ -267,10 +274,10 @@ namespace Testably.Abstractions.Testing.FileSystem
         Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.WatcherChangeDescription> OnTriggered(System.Action<Testably.Abstractions.Testing.FileSystem.WatcherChangeDescription>? triggerCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.WatcherChangeDescription, bool>? predicate = null);
         Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.WatcherChangeDescription> OnTriggeredOrReplay(System.Action<Testably.Abstractions.Testing.FileSystem.WatcherChangeDescription>? triggerCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.WatcherChangeDescription, bool>? predicate = null);
     }
-    public class NullAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy
+    public class NullAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.AccessControlStrategy
     {
         public NullAccessControlStrategy() { }
-        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility) { }
+        public override bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.FileAccess requestedAccess) { }
     }
     public class NullSafeFileHandleStrategy : Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy
     {
