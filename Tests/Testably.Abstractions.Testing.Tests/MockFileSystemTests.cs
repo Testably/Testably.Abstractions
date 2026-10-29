@@ -171,7 +171,7 @@ public class MockFileSystemTests
 		sut.Initialize();
 		sut.File.WriteAllText(path, contents);
 		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((_, _, access)
-			=> access == FileAccess.Read));
+			=> !access.HasFlag(FileAccess.Write)));
 
 		string result = sut.File.ReadAllText(path);
 		Exception? exception = Record.Exception(() =>

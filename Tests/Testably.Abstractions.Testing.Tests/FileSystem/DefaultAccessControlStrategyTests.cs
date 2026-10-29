@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using Testably.Abstractions.Helpers;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;

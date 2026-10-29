@@ -18,6 +18,21 @@ fileSystem.File.WriteAllText("secret.txt", "x"); // throws IOException
 fileSystem.File.WriteAllText("public.txt", "x"); // ok
 ```
 
+A second overload of `DefaultAccessControlStrategy` additionally receives the requested `FileAccess`, so you can simulate files and directories that can be read but not written. Enumerating a directory requests `FileAccess.Read`. As `FileAccess` is a flags enum, use `HasFlag` to also cover `FileAccess.ReadWrite`:
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.File.WriteAllText("readonly.txt", "x");
+fileSystem.WithAccessControlStrategy(
+    new DefaultAccessControlStrategy((path, _, access)
+        => !(path.EndsWith("readonly.txt") && access.HasFlag(FileAccess.Write))));
+
+fileSystem.File.ReadAllText("readonly.txt");      // ok
+fileSystem.File.WriteAllText("readonly.txt", "y"); // throws UnauthorizedAccessException
+```
+
+For a custom strategy, derive from the abstract `AccessControlStrategy` base class instead of implementing `IAccessControlStrategy` directly, so that it receives the requested `FileAccess`. Implementations of `IAccessControlStrategy` keep working, but do not receive the requested access.
+
 :::warning[Windows-only]
 `WithAccessControlStrategy` throws `PlatformNotSupportedException` on non-Windows hosts (and when simulating a non-Windows OS). ACL functionality is intentionally tied to Windows behaviour.
 :::
