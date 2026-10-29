@@ -170,8 +170,8 @@ public class MockFileSystemTests
 		MockFileSystem sut = new();
 		sut.Initialize();
 		sut.File.WriteAllText(path, contents);
-		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((_, _, access)
-			=> !access.HasFlag(FileAccess.Write)));
+		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((_, _, request)
+			=> !request.Access.HasFlag(FileAccess.Write)));
 
 		string result = sut.File.ReadAllText(path);
 		Exception? exception = Record.Exception(() =>
@@ -181,6 +181,29 @@ public class MockFileSystemTests
 
 		await That(result).IsEqualTo(contents);
 		await That(exception).IsExactly<UnauthorizedAccessException>();
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task WithAccessControl_ShouldDistinguishDeleteFromWrite(
+		string path, string contents)
+	{
+		Skip.If(!Test.RunsOnWindows);
+
+		MockFileSystem sut = new();
+		sut.Initialize();
+		sut.File.WriteAllText(path, contents);
+		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((_, _, request)
+			=> !request.IsDelete));
+
+		sut.File.WriteAllText(path, "new contents");
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.File.Delete(path);
+		});
+
+		await That(exception).IsExactly<UnauthorizedAccessException>();
+		await That(sut.File.Exists(path)).IsTrue();
 	}
 
 	[Test]
@@ -471,7 +494,8 @@ public class MockFileSystemTests
 		#region IAccessControlStrategy Members
 
 		/// <inheritdoc />
-		public bool IsAccessGranted(string fullPath, IFileSystemExtensibility extensibility)
+		bool IAccessControlStrategy.IsAccessGranted(string fullPath,
+			IFileSystemExtensibility extensibility)
 			=> !string.Equals(fullPath, deniedPath, StringComparison.Ordinal);
 
 		#endregion

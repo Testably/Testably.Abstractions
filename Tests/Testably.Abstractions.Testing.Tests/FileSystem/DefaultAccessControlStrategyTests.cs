@@ -31,7 +31,7 @@ public class DefaultAccessControlStrategyTests
 		void Act()
 		{
 			_ = new DefaultAccessControlStrategy(
-				(Func<string, IFileSystemExtensibility, FileAccess, bool>)null!);
+				(Func<string, IFileSystemExtensibility, AccessRequest, bool>)null!);
 		}
 
 		await That(Act).ThrowsExactly<ArgumentNullException>().WithParamName("callback");
@@ -44,31 +44,39 @@ public class DefaultAccessControlStrategyTests
 
 		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility())).IsTrue();
 		await That(sut.IsAccessGranted("xyz", new FileSystemExtensibility())).IsFalse();
-		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility(), FileAccess.Write)).IsTrue();
-		await That(sut.IsAccessGranted("xyz", new FileSystemExtensibility(), FileAccess.Read)).IsFalse();
+		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility(),
+			new AccessRequest(FileAccess.Write, isDelete: true))).IsTrue();
+		await That(sut.IsAccessGranted("xyz", new FileSystemExtensibility(),
+			new AccessRequest(FileAccess.Read))).IsFalse();
 	}
 
 	[Test]
 	public async Task IsAccessGranted_WithRequestedAccess_ShouldUseCallback()
 	{
-		DefaultAccessControlStrategy sut = new((_, _, access) => access == FileAccess.Read);
+		DefaultAccessControlStrategy sut = new((_, _, request)
+			=> !request.Access.HasFlag(FileAccess.Write) && !request.IsDelete);
 
-		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility(), FileAccess.Read)).IsTrue();
-		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility(), FileAccess.Write)).IsFalse();
+		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility(),
+			new AccessRequest(FileAccess.Read))).IsTrue();
+		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility(),
+			new AccessRequest(FileAccess.ReadWrite))).IsFalse();
+		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility(),
+			new AccessRequest(FileAccess.Read, isDelete: true))).IsFalse();
 	}
 
 	[Test]
 	public async Task IsAccessGranted_WithoutRequestedAccess_ShouldRequestReadWrite()
 	{
-		FileAccess? requestedAccess = null;
-		DefaultAccessControlStrategy sut = new((_, _, access) =>
+		AccessRequest? receivedRequest = null;
+		DefaultAccessControlStrategy sut = new((_, _, request) =>
 		{
-			requestedAccess = access;
+			receivedRequest = request;
 			return true;
 		});
 
 		sut.IsAccessGranted("abc", new FileSystemExtensibility());
 
-		await That(requestedAccess).IsEqualTo(FileAccess.ReadWrite);
+		await That(receivedRequest?.Access).IsEqualTo(FileAccess.ReadWrite);
+		await That(receivedRequest?.IsDelete).IsEqualTo(false);
 	}
 }

@@ -228,7 +228,7 @@ public sealed class MockFileSystem : IFileSystem
 	///     - The full path of the file or directory as first parameter<br />
 	///     - The <see cref="Testably.Abstractions.Helpers.IFileSystemExtensibility" /> as second parameter
 	///     <para />
-	///     An <see cref="FileSystem.AccessControlStrategy" /> additionally receives the requested <see cref="FileAccess" />.
+	///     An <see cref="FileSystem.AccessControlStrategy" /> additionally receives the <see cref="AccessRequest" />.
 	/// </summary>
 	public MockFileSystem WithAccessControlStrategy(IAccessControlStrategy accessControlStrategy)
 	{

@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Testably.Abstractions.Helpers;
+﻿using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -8,8 +7,8 @@ namespace Testably.Abstractions.Testing.FileSystem;
 /// </summary>
 public class NullAccessControlStrategy : AccessControlStrategy
 {
-	/// <inheritdoc cref="AccessControlStrategy.IsAccessGranted(string, IFileSystemExtensibility, FileAccess)" />
+	/// <inheritdoc cref="AccessControlStrategy.IsAccessGranted(string, IFileSystemExtensibility, AccessRequest)" />
 	public override bool IsAccessGranted(string fullPath, IFileSystemExtensibility extensibility,
-		FileAccess requestedAccess)
+		AccessRequest request)
 		=> true;
 }

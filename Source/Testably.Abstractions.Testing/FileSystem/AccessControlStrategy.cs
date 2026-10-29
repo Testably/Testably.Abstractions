@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Testing.FileSystem;
 /// </summary>
 /// <remarks>
 ///     Prefer deriving from this class over implementing <see cref="IAccessControlStrategy" /> directly,
-///     as it receives the requested <see cref="FileAccess" />.
+///     as it receives the <see cref="AccessRequest" />.
 /// </remarks>
 public abstract class AccessControlStrategy : IAccessControlStrategy
 {
@@ -19,7 +19,7 @@ public abstract class AccessControlStrategy : IAccessControlStrategy
 	///     Requests <see cref="FileAccess.ReadWrite" />, so that access is never granted by accident.
 	/// </remarks>
 	public bool IsAccessGranted(string fullPath, IFileSystemExtensibility extensibility)
-		=> IsAccessGranted(fullPath, extensibility, FileAccess.ReadWrite);
+		=> IsAccessGranted(fullPath, extensibility, new AccessRequest(FileAccess.ReadWrite));
 
 	#endregion
 
@@ -28,16 +28,11 @@ public abstract class AccessControlStrategy : IAccessControlStrategy
 	/// </summary>
 	/// <param name="fullPath">The full path to the file or directory.</param>
 	/// <param name="extensibility">The extension container to store additional data.</param>
-	/// <param name="requestedAccess">
-	///     The requested <see cref="FileAccess" /> of the file or directory.<br />
-	///     Enumerating a directory requests <see cref="FileAccess.Read" />. As <see cref="FileAccess" /> is a flags enum,
-	///     check write access with <c>requestedAccess.HasFlag(FileAccess.Write)</c> to also cover
-	///     <see cref="FileAccess.ReadWrite" />.
-	/// </param>
+	/// <param name="request">The requested access to the file or directory.</param>
 	/// <returns>
 	///     <see langword="true" /> if the requested access should be granted, otherwise <see langword="false" />.
 	/// </returns>
 	public abstract bool IsAccessGranted(string fullPath,
 		IFileSystemExtensibility extensibility,
-		FileAccess requestedAccess);
+		AccessRequest request);
 }
