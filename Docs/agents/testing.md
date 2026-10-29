@@ -5,8 +5,16 @@ The tests are the specification of the mocks: the same test runs against the rea
 ## Framework
 
 - TUnit (`TUnit.Engine`) on Microsoft.Testing.Platform, aweXpect assertions (`await That(...)`, with `aweXpect.Testably` and `aweXpect.Chronology`), Mockolate for mocks and AutoFixture through `[AutoArguments]`.
-- Tests are `async Task` methods with `[Test]`; data comes from `[Arguments(...)]`, `[AutoArguments]` or `[MethodDataSource]`.
+- Tests are `async Task` methods with `[Test]`; data comes from `[Arguments(...)]`, `[AutoArguments]` or `[MethodDataSource]`. Prefer `[AutoArguments]` for paths and contents whose value does not matter.
 - A module initializer (`TestCultureInitializer`) runs all tests under the invariant culture, so exception messages are stable on .NET Framework.
+
+## Conventions
+
+- Name tests `<Member>[_<Scenario>]_Should<Outcome>`, e.g. `Copy_SourceAccessedWithReadShare_ShouldNotThrow`.
+- Separate arrange, act and assert with blank lines instead of comments. Name the object under test `sut` when it is not the `FileSystem` of the test base.
+- Capture an expected exception with a local `void Act()` and `await That(Act).Throws…()`, or with `Record.Exception(...)` when the test also asserts the state afterwards.
+- Put the reason an assertion holds into `.Because(...)` instead of into a comment.
+- Test through observable behaviour (return values, exceptions, the file system state, the identity of a statistics entry), not through `ToString()` or other implementation details.
 
 ## File system tests
 
@@ -30,6 +38,7 @@ public class ExistsTests(FileSystemTestData testData) : FileSystemTestBase(testD
 - `[FileSystemTests]` creates one instance of the class per file system: `MockFileSystem`, mocks simulating Linux, macOS and Windows (not on `net48`), and `RealFileSystem`.
 - `FileSystemTestBase` provides `FileSystem`, `TimeSystem`, `Test`, `BasePath` and `CancellationToken`. Each test starts in an empty temporary directory that is deleted afterwards. Real file system instances never run in parallel with each other, and every test is retried once (`[Retry(1)]`).
 - Use relative paths or paths below `BasePath`. Never touch fixed locations on the real file system.
+- A test that changes the current directory restores it in a `finally` block. The real file system tests share the process, and on Linux and macOS deleting the test directory succeeds even while it is the current directory, which breaks every later call that reads the current directory of the process.
 - Time and random tests use `[TimeSystemTests]`/`TimeSystemTestBase` and `[RandomSystemTests]`/`RandomSystemTestBase` in the same way.
 - Mock-only features (`Initialize()`, notifications, interception, statistics, `SimulationMode`) belong in `Tests/Testably.Abstractions.Testing.Tests` and use `MockFileSystem` directly.
 
