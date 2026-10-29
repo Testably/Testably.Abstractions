@@ -25,10 +25,7 @@ public sealed class AccessRequest
 	/// </remarks>
 	public bool IsDelete { get; }
 
-	/// <summary>
-	///     Initializes a new instance of <see cref="AccessRequest" />.
-	/// </summary>
-	public AccessRequest(FileAccess access, bool isDelete = false)
+	internal AccessRequest(FileAccess access, bool isDelete)
 	{
 		Access = access;
 		IsDelete = isDelete;

@@ -19,7 +19,7 @@ public abstract class AccessControlStrategy : IAccessControlStrategy
 	///     Requests <see cref="FileAccess.ReadWrite" />, so that access is never granted by accident.
 	/// </remarks>
 	public bool IsAccessGranted(string fullPath, IFileSystemExtensibility extensibility)
-		=> IsAccessGranted(fullPath, extensibility, new AccessRequest(FileAccess.ReadWrite));
+		=> IsAccessGranted(fullPath, extensibility, new AccessRequest(FileAccess.ReadWrite, isDelete: false));
 
 	#endregion
 

@@ -8,7 +8,8 @@ namespace Testably.Abstractions.Testing.FileSystem;
 public class NullAccessControlStrategy : AccessControlStrategy
 {
 	/// <inheritdoc cref="AccessControlStrategy.IsAccessGranted(string, IFileSystemExtensibility, AccessRequest)" />
-	public override bool IsAccessGranted(string fullPath, IFileSystemExtensibility extensibility,
+	public override bool IsAccessGranted(string fullPath,
+		IFileSystemExtensibility extensibility,
 		AccessRequest request)
 		=> true;
 }

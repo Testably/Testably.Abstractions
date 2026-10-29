@@ -47,7 +47,7 @@ public class DefaultAccessControlStrategyTests
 		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility(),
 			new AccessRequest(FileAccess.Write, isDelete: true))).IsTrue();
 		await That(sut.IsAccessGranted("xyz", new FileSystemExtensibility(),
-			new AccessRequest(FileAccess.Read))).IsFalse();
+			new AccessRequest(FileAccess.Read, isDelete: false))).IsFalse();
 	}
 
 	[Test]
@@ -57,9 +57,9 @@ public class DefaultAccessControlStrategyTests
 			=> !request.Access.HasFlag(FileAccess.Write) && !request.IsDelete);
 
 		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility(),
-			new AccessRequest(FileAccess.Read))).IsTrue();
+			new AccessRequest(FileAccess.Read, isDelete: false))).IsTrue();
 		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility(),
-			new AccessRequest(FileAccess.ReadWrite))).IsFalse();
+			new AccessRequest(FileAccess.ReadWrite, isDelete: false))).IsFalse();
 		await That(sut.IsAccessGranted("abc", new FileSystemExtensibility(),
 			new AccessRequest(FileAccess.Read, isDelete: true))).IsFalse();
 	}

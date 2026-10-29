@@ -195,7 +195,6 @@ namespace Testably.Abstractions.Testing.FileSystem
     }
     public sealed class AccessRequest
     {
-        public AccessRequest(System.IO.FileAccess access, bool isDelete = false) { }
         public System.IO.FileAccess Access { get; }
         public bool IsDelete { get; }
     }

@@ -1009,7 +1009,7 @@ internal sealed class InMemoryStorage : IStorage
 		EnumerationOptions enumerationOptions)
 	{
 		if (_fileSystem.AccessControlStrategy.IsAccessGranted(fullPath, extensibility,
-			new AccessRequest(FileAccess.Read)))
+			new AccessRequest(FileAccess.Read, isDelete: false)))
 		{
 			return true;
 		}
