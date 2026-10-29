@@ -13,15 +13,15 @@ Testably.Abstractions provides injectable abstractions for the static parts of t
 
 ## Design goals
 
-Correctness is a must. The other goals are strong defaults and win in this order when they conflict: stable and compatible, AOT and trimming friendly, a consistent and pleasant API, a fast happy path, extensible, errors at compile time, documented. [Docs/agents/design-goals.md](Docs/agents/design-goals.md) explains each goal, the code rules, the checks before a commit and the goals of this repository.
+Behaving like the real system is a must. The other goals are strong defaults and win in this order when they conflict: stable and compatible, a minimal public API, a consistent and pleasant mock-only API, extensible, thread-safe mock state, a fast happy path, documented. [Docs/agents/design-goals.md](Docs/agents/design-goals.md) explains each goal, the code rules and the checks before a commit.
 
 ## Project constraints
 
-- **Mirror the real API per target framework.** `IFileSystem`, `ITimeSystem` and `IRandomSystem` follow the shape of `System.IO`, `DateTime`/timers/`TimeProvider` and `Random`/`Guid` for each target framework. `Testably.Abstractions.Parity.Tests` fails when a member is missing; intentional gaps are excluded in `TestHelpers/Parity.cs` or a `Net*ParityTests` class.
-- **The mock must behave like the real file system** on Windows, Linux and macOS, and on .NET Framework where it differs. Branch on the mock's `Execute` (`IsWindows`, `IsLinux`, `IsMac`, `IsNetFramework`), which honours `SimulationMode`, instead of on the host OS. Check behaviour against the real file system, not against assumptions.
+- **Mirror the real API per target framework, and nothing more.** `IFileSystem`, `ITimeSystem` and `IRandomSystem` follow the shape of `System.IO`, `DateTime`/timers/`TimeProvider` and `Random`/`Guid` for each target framework. `Testably.Abstractions.Parity.Tests` fails when a member is missing; intentional gaps are excluded in `TestHelpers/Parity.cs` or a `Net*ParityTests` class. Keep the rest of the public API minimal: anything not meant for users is `internal`.
+- **The mock must behave like the real file system** on Windows, Linux and macOS, and on .NET Framework where it differs. Use the mock's own context instead of the host: branch on the mock's `Execute` (`IsWindows`, `IsLinux`, `IsMac`, `IsNetFramework`), which honours `SimulationMode`, resolve paths with `Execute.Path`, and create exceptions in `ExceptionFactory`. Check behaviour against the real file system, not against assumptions.
 - **Core and main packages are versioned separately.** Core = `Testably.Abstractions`, `Testably.Abstractions.Interface`, `Testably.Abstractions.FileSystem.Interface`, released from `core/v*` tags. Main = `Testably.Abstractions.Testing`, `.Compression`, `.AccessControl`, `.MemoryMappedFiles`, released from `v*` tags. Main projects consume `Testably.Abstractions.Interface` as a NuGet package (version range in `Directory.Packages.props`), so an interface change is invisible to them until a Core release is published and the range is bumped. For such a change set `BuildScope` in `Pipeline/Build.cs` to `CoreOnly`, release Core, bump the range, then reset it (`MainOnly` covers the reverse case).
-- **Public API is reviewed.** Every public change shows up in the snapshot files under `Tests/Api/*/Expected/`; update them deliberately and keep them in the same PR. New public members need XML docs (`GenerateDocumentationFile` is on and warnings are errors).
-- `netstandard2.0` sources have no polyfill package: records, `init` and `Index`/`Range` (`^1`, `..`) only compile behind a `FEATURE_*` or `NET*` guard there. Test projects use the `Polyfill` package and may use them on `net48`.
+- **Public API is reviewed.** Every public change shows up in the `*.awexpect-snapshot.txt` files under `Tests/Api/`; update them deliberately and keep them in the same PR. New public members need XML docs (`GenerateDocumentationFile` is on and warnings are errors).
+- `netstandard2.0` sources have no polyfill package: hand-written polyfills live in `Source/Testably.Abstractions.Testing/Polyfills/`, and records, `init` and `Index`/`Range` (`^1`, `..`) only compile behind a `FEATURE_*` or `NET*` guard there. Test projects use the `Polyfill` package and may use them on `net48`.
 
 ## Validation
 
@@ -29,7 +29,7 @@ Correctness is a must. The other goals are strong defaults and win in this order
 - Run only the relevant project and framework: `dotnet test --project Tests/Testably.Abstractions.Tests -f net10.0 --treenode-filter "/*/*/ExistsTests/*"`. The full suite is large; leave it to CI.
 - File system tests carry `[FileSystemTests]` and run against `MockFileSystem`, simulated Linux/macOS/Windows mocks (not on `net48`) and the `RealFileSystem`. In Debug the real file system rows are off by default (`Tests/Helpers/Testably.Abstractions.TestHelpers/Settings.cs`); Release and CI run them. A behaviour change is only verified once it passes against the real file system on every OS; CI covers Windows, Linux and macOS.
 - Guard OS- or framework-specific expectations with `Skip.If(...)`/`Skip.IfNot(...)` on `Test.RunsOnWindows`, `RunsOnLinux`, `RunsOnMac` or `IsNetFramework`, and assert the behaviour of each platform rather than skipping the mock.
-- Public API changes: build the solution, run `Tests/Api/Testably.Abstractions.Api.Tests` and `Tests/Api/Testably.Abstractions.Core.Api.Tests`, and if the change is intended run the explicit `ApiAcceptance.AcceptApiChanges` test to rewrite the expected files.
+- Public API changes: build the solution, run `Tests/Api/Testably.Abstractions.Api.Tests` and `Tests/Api/Testably.Abstractions.Core.Api.Tests`, and if the change is intended run the explicit `ApiApprovalTests.AcceptApiChanges` test of the affected project to rewrite the snapshots.
 - New parity-relevant APIs: run `Tests/Testably.Abstractions.Parity.Tests` on each affected framework.
 - Encoding and formatting: tabs, CRLF in the working tree (`.editorconfig`), LF in the index (`.gitattributes`). Most `.cs` files start with a UTF-8 BOM, some do not; keep each file's existing BOM state. PowerShell rewrites change it, so prefer targeted edits and check `git diff` for a changed first line (U+FEFF).
 - Do not add em-dashes to docs, XML docs or other Markdown.
@@ -43,7 +43,7 @@ Correctness is a must. The other goals are strong defaults and win in this order
 
 ## References
 
-- [`Docs/agents/design-goals.md`](Docs/agents/design-goals.md): the goals and code rules for every change, the checks before a commit and the goals of this repository.
+- [`Docs/agents/design-goals.md`](Docs/agents/design-goals.md): the goals and code rules for every change and the checks before a commit.
 - [`Docs/agents/workflows.md`](Docs/agents/workflows.md): build, test, API, mutation and documentation commands, pipeline targets, CI and release workflows.
 - [`Docs/agents/project-structure.md`](Docs/agents/project-structure.md): projects, architecture of the mocks and where things live.
 - [`Docs/agents/testing.md`](Docs/agents/testing.md): writing tests against the real and the mock file system, test settings and OS-specific behaviour.

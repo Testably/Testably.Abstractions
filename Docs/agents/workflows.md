@@ -43,7 +43,7 @@ dotnet test --project Tests/Testably.Abstractions.Testing.Tests -f net10.0 --no-
 
 ## Public API snapshots
 
-The API tests load the compiled assemblies from `Source/<Assembly>/bin/<Configuration>/<framework>/` for every framework listed in `Source/Directory.Build.props` and compare them with `Tests/Api/<Project>/Expected/<Assembly>_<framework>.txt`. Build the solution first; otherwise frameworks that the test project does not reference fail with `FileNotFoundException`.
+The API tests load the compiled assemblies from `Source/<Assembly>/bin/<Configuration>/<framework>/` for every framework listed in `Source/Directory.Build.props` and compare them with the aweXpect snapshots `Tests/Api/<Project>/ApiApprovalTests.<Assembly>.<framework>.awexpect-snapshot.txt` (the dots in the file name are URL-encoded). Build the solution first; otherwise frameworks that the test project does not reference fail with `FileNotFoundException`.
 
 ```ps
 dotnet build Testably.Abstractions.slnx
@@ -51,10 +51,11 @@ dotnet test --project Tests/Api/Testably.Abstractions.Api.Tests --no-build
 dotnet test --project Tests/Api/Testably.Abstractions.Core.Api.Tests --no-build
 ```
 
-When a change to the public API is intended, run the explicit acceptance test of the affected project to rewrite the expected files, then review the diff:
+When a change to the public API is intended, run the explicit acceptance test of the affected project to rewrite the snapshots, then review the diff:
 
 ```ps
-dotnet test --project Tests/Api/Testably.Abstractions.Api.Tests --no-build --treenode-filter "/*/*/ApiAcceptance/AcceptApiChanges"
+dotnet test --project Tests/Api/Testably.Abstractions.Api.Tests --no-build --treenode-filter "/*/*/ApiApprovalTests/AcceptApiChanges"
+dotnet test --project Tests/Api/Testably.Abstractions.Core.Api.Tests --no-build --treenode-filter "/*/*/ApiApprovalTests/AcceptApiChanges"
 ```
 
 ## Build pipeline
@@ -98,6 +99,7 @@ The targets install `dotnet-stryker` (version pinned by the `PackageDownload` in
 |---|---|---|
 | `ci.yml` | Pull requests to `main` | Unit tests (`CodeCoverage`) on Ubuntu, Windows and macOS, `ApiChecks`, SonarCloud (same-repo PRs only), test result publishing; mutation jobs disabled |
 | `build.yml` | Push to `main`, `v*` and `core/v*` tags | The same checks plus `Pack`; a `core/v*` tag pushes `Artifacts/Packages/Core`, a `v*` tag pushes `Artifacts/Packages/Main` to nuget.org via trusted publishing and creates a GitHub release for non-prerelease tags |
+| `ci-analysis.yml` | Completion of `ci.yml` | Uploads the mutation reports and comments on the pull request; currently disabled together with the mutation jobs |
 | `notify-docs-site.yml` | Push to `main` touching `Docs/pages/docs/**` | Dispatches a rebuild of the docs site |
 
 Dependabot (`.github/dependabot.yml`) keeps dependencies current; `.github/mergify.yml` squash-merges its PRs once the unit and API test checks pass. All checkouts use `fetch-depth: 0` because GitVersion needs the full history.

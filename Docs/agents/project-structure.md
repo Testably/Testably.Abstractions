@@ -60,6 +60,6 @@ Key design points:
 | `Tests/Testably.Abstractions.Tests` | Folders mirror the interfaces: `FileSystem/<Type>/`, `TimeSystem/`, `RandomSystem/`; `TestHelpers/` holds project-specific helpers |
 | `Tests/Testably.Abstractions.Testing.Tests` | Tests of the mock-only API, mirroring `Source/Testably.Abstractions.Testing` |
 | `Tests/Testably.Abstractions.Parity.Tests` | `ParityTests`, one `Net*ParityTests` subclass per framework, shared exclusions in `TestHelpers/Parity.cs` |
-| `Tests/Api/*` | API snapshot tests with `Expected/*.txt` per assembly and framework |
+| `Tests/Api/*` | API snapshot tests with one `ApiApprovalTests.<Assembly>.<framework>.awexpect-snapshot.txt` per assembly and framework |
 
 The test helpers reference the released `Testably.Abstractions` package and the `Testably.Abstractions.Testing` project.
