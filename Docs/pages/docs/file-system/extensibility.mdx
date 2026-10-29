@@ -1,11 +1,16 @@
 ---
 sidebar_position: 12
 title: Extensibility
+description: Attach custom metadata to entries of the MockFileSystem when writing strategies or extension methods.
 ---
 
 # Extensibility
 
 `IFileSystemExtensibility` is the hook that custom strategies (ACL, Unix file mode) use to attach extra data to the mock without bloating the public `IFileSystem` surface.
+
+:::info
+You only need `IFileSystemExtensibility` when you write a custom strategy or extension method. Day-to-day test code never touches it.
+:::
 
 ```csharp
 public interface IFileSystemExtensibility
@@ -40,5 +45,3 @@ public void OnSetUnixFileMode(string fullPath,
     extensibility.StoreMetadata("owner", CurrentUser);
 }
 ```
-
-You only need to think about `IFileSystemExtensibility` when you are writing a custom strategy or extension method - day-to-day test code uses the higher-level APIs above and never touches it directly.

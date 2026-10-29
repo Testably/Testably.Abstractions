@@ -1,6 +1,7 @@
 ---
 sidebar_position: 5
 title: Intercept & notify
+description: Abort file system operations before they complete, or wait for them after they completed.
 ---
 
 # Intercept & notify
@@ -11,13 +12,13 @@ title: Intercept & notify
 - **`Notify`** runs **after** an operation completes and supports awaiting the next event.
 - **`Watcher`** runs **after** the `IFileSystemWatcher` raised an event - see [FileSystemWatcher](./file-system-watcher#reacting-to-triggered-events-from-a-test).
 
-All three return an `IAwaitableCallback<ChangeDescription>` with the same shape:
+All three return an `IAwaitableCallback<T>` (with `T` being `ChangeDescription` for `Intercept` and `Notify`, and `WatcherChangeDescription` for `Watcher`):
 
 - `Dispose()` removes the subscription.
 - `Wait(int count = 1, TimeSpan? timeout = null)` blocks until `count` events arrived; defaults to a 30-second timeout.
 - `WaitAsync(...)` is the async counterpart and additionally accepts a `CancellationToken`.
 
-This page describes that `count`/`timeout` shape once and just shows the registration calls below.
+The time system's [notifications](../time-system/notifications) use the same `IAwaitableCallback<T>`.
 
 ## Intercept - abort an operation
 
@@ -43,19 +44,42 @@ MockFileSystem fileSystem = new();
 using var notify = fileSystem.Notify
     .OnCreated(FileSystemTypes.File);
 
-fileSystem.File.Create("some-file.txt");
+fileSystem.File.WriteAllText("some-file.txt", "x");
 
 ChangeDescription[] events = notify.Wait(count: 1);
-// events[0].Path == "some-file.txt"
+await Expect.That(events[0].Name).IsEqualTo("some-file.txt");
 ```
 
-The recommended pattern is: register the callback, do the work, then call `Wait` (or `WaitAsync` for an async test).
+:::tip
+Register the callback first, then do the work, then call `Wait` (or `WaitAsync` in an async test). This is deterministic, unlike polling with `Task.Delay`.
+:::
 
 `OnChanged`, `OnCreated` and `OnDeleted` are all available, with the same `globPattern` / `predicate` filters as `Intercept`.
 
+## Events that happened before subscribing
+
+`OnEventOrReplay` works like `OnEvent`, but also replays the matching changes that happened before the subscription, in their original order. That helps when the work is already done by the time the test can subscribe:
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.File.WriteAllText("early.txt", "x");
+
+using var notify = fileSystem.Notify.OnEventOrReplay(
+    predicate: c => c.ChangeType == WatcherChangeTypes.Created);
+
+ChangeDescription[] events = notify.Wait(count: 1);
+await Expect.That(events[0].Name).IsEqualTo("early.txt");
+```
+
+`fileSystem.Watcher.OnTriggeredOrReplay(...)` does the same for watcher events. The history is recorded by default; `new MockFileSystem(o => o.WithoutNotificationHistory())` turns it off, and both methods then throw `InvalidOperationException`.
+
 ## Streaming events
 
-On .NET 6+ you can stream the same callback as an async sequence:
+:::note[.NET 6 or later]
+`ToAsyncEnumerable` is only available on .NET 6 and later.
+:::
+
+You can stream the same callback as an async sequence:
 
 ```csharp
 await foreach (ChangeDescription change in
@@ -65,4 +89,4 @@ await foreach (ChangeDescription change in
 }
 ```
 
-A 30-second default timeout prevents the loop from hanging forever when no events arrive; pass an explicit `timeout` (`TimeSpan?` or `int` milliseconds) or a `CancellationToken` to override it.
+The sequence ends without an exception after 30 seconds, so the loop cannot hang forever. Pass an explicit `timeout` (`TimeSpan?` or `int` milliseconds) or a `CancellationToken` to end it earlier or later.

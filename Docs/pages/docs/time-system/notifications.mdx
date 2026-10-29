@@ -1,6 +1,7 @@
 ---
 sidebar_position: 6
 title: Notifications
+description: Observe and wait for sleeps, delays, clock reads and timer ticks of the code under test.
 ---
 
 # Notifications
@@ -29,7 +30,7 @@ Like the file-system [notifications](../file-system/intercept-and-notify), each 
 | `TaskDelay()`      | `Task.Delay` (any overload) is called                   | `TimeSpan`  |
 | `ThreadSleep()`    | `Thread.Sleep` (any overload) is called                 | `TimeSpan`  |
 | `TimeChanged()`    | the simulated time advanced (auto-advance or manual)    | `DateTime`  |
-| `PeriodicTimer.WaitingForNextTick()` | a `PeriodicTimer` is waiting for its next tick | `IPeriodicTimer` |
+| `PeriodicTimer.WaitingForNextTick()` | a `PeriodicTimer` is waiting for its next tick (.NET 8 or later) | `IPeriodicTimer` |
 
 Each accepts an optional `callback` (run synchronously when the event fires) and an optional `predicate` to filter events before they are recorded.
 

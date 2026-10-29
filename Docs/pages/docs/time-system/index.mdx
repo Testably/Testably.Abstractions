@@ -1,6 +1,9 @@
 ---
 title: Time system
+description: ITimeSystem abstracts the clock, timers and waiting; MockTimeSystem lets tests fast-forward time.
 ---
+
+import DocCardList from '@theme/DocCardList';
 
 # ITimeSystem
 
@@ -15,7 +18,7 @@ title: Time system
 | `Stopwatch`       | [`System.Diagnostics.Stopwatch`](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.stopwatch)                   |
 | `Task`            | [`Task.Delay`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.delay)                                |
 | `Thread`          | [`Thread.Sleep`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.thread.sleep)                                  |
-| `PeriodicTimer`   | [`System.Threading.PeriodicTimer`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.periodictimer)               |
+| `PeriodicTimer`   | [`System.Threading.PeriodicTimer`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.periodictimer) (.NET 8 or later) |
 | `Timer`           | [`System.Threading.Timer`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.timer)                               |
 | `TimeZoneInfo`    | [`System.TimeZoneInfo`](https://learn.microsoft.com/en-us/dotnet/api/system.timezoneinfo) (`Local`, `Utc`, `FindSystemTimeZoneById`, `GetSystemTimeZones`) |
 
@@ -34,4 +37,6 @@ timeSystem.Thread.Sleep(TimeSpan.FromMinutes(5));
 DateTime now = timeSystem.DateTime.Now; // advanced by 5 minutes
 ```
 
-The remaining pages cover how to configure the underlying time provider, control auto-advance, drive timers and periodic timers, and react to time-related events.
+## In this section
+
+<DocCardList />

@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 title: Access control
+description: GetAccessControl and SetAccessControl on IFileSystem, so ACL code runs against the real and the mocked file system.
 ---
 
 # Testably.Abstractions.AccessControl
@@ -39,7 +40,7 @@ FileSecurity fileAcl = fileSystem.File.GetAccessControl("secret.txt");
 
 On `RealFileSystem` the calls forward to `System.IO.FileSystemAclExtensions`. On `MockFileSystem` the ACL object is stored as metadata via [`IFileSystemExtensibility`](../file-system/extensibility) and round-tripped - set it, read it back, and it will be the same object.
 
-To simulate *enforcement* (denying a read or write based on the ACL), combine the package with [`MockFileSystem.WithAccessControlStrategy(...)`](../file-system/access-control).
+The mock does not enforce the stored ACL. To simulate denied access, combine the package with [`MockFileSystem.WithAccessControlStrategy(...)`](../file-system/access-control).
 
 :::warning[Windows-only]
 All ACL APIs are marked `[SupportedOSPlatform("windows")]`. Calling them on Linux/macOS throws `PlatformNotSupportedException`.

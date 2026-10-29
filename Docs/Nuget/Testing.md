@@ -17,7 +17,7 @@ The test suite runs every assertion against both the real and the mocked file sy
 
 - **MockFileSystem** - fluent `Initialize()` API, multiple drives with size limits, `FileSystemWatcher`, `SafeFileHandle`, file-version metadata and unix file modes.
 - **Cross-platform simulation** - run a Linux, macOS or Windows file system regardless of the host via `new MockFileSystem(o => o.SimulatingOperatingSystem(SimulationMode.Linux))`.
-- **Intercept and Notify** - inject exceptions before a file-system or time-system operation completes, or react to them after the fact (including replay of events that fired before the subscription).
+- **Intercept and Notify** - inject exceptions before a file-system operation completes, or react to it after the fact (including replay of events that fired before the subscription). The time system offers the same notifications for sleeps, delays and timer ticks.
 - **MockTimeSystem** - control `DateTime.Now`, advance time manually or via auto-advance, mock `Timer`/`PeriodicTimer` with persistent execution counters.
 - **MockRandomSystem** - seed `Random` and `Guid.NewGuid()` for reproducible tests.
 - **Statistics** - inspect how the system-under-test used each abstraction (`fileSystem.Statistics`).

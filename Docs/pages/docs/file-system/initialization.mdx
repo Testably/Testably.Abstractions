@@ -1,18 +1,25 @@
 ---
 sidebar_position: 1
 title: Initialization
+description: Seed a MockFileSystem declaratively, fluently, from a real directory or from embedded resources.
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Initialization
 
 You can seed a `MockFileSystem` declaratively (with descriptions), fluently (with a builder), or by copying data in from outside the test.
 
-The first two snippets create:
+## Declarative or fluent
+
+Both styles below create:
 
 - a directory `foo/` containing a sub-directory `bar/` and an empty file `bar.txt`
 - a file `foo.txt` with content `"some file content"`
 
-## Declarative
+<Tabs groupId="initializationStyle">
+<TabItem value="declarative" label="Declarative" default>
 
 ```csharp
 var fileSystem = new MockFileSystem();
@@ -32,9 +39,8 @@ fileSystem.Initialize().With(
     new FileDescription("config.json", "{ \"x\": 1 }") { IsReadOnly = true });
 ```
 
-Pass a `byte[]` to seed binary content, and set `IsReadOnly = true` to create the file with the read-only attribute.
-
-## Fluent
+</TabItem>
+<TabItem value="fluent" label="Fluent">
 
 ```csharp
 var fileSystem = new MockFileSystem();
@@ -46,6 +52,9 @@ fileSystem.Initialize()
 ```
 
 Use `HasStringContent(string)` or `HasBytesContent(byte[])` on the file manipulator to set content.
+
+</TabItem>
+</Tabs>
 
 ## Initializing inside a specific directory
 

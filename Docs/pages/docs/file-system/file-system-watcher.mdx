@@ -1,7 +1,11 @@
 ---
 sidebar_position: 4
 title: FileSystemWatcher
+description: Use the mocked FileSystemWatcher, which raises the same OS-specific events as the real one.
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # FileSystemWatcher
 
@@ -12,6 +16,7 @@ title: FileSystemWatcher
 ```csharp
 var fileSystem = new MockFileSystem();
 fileSystem.Initialize().WithSubdirectory("watched");
+fileSystem.File.WriteAllText("watched/a.txt", "hi");
 
 using var watcher = fileSystem.FileSystemWatcher.New("watched");
 var deleted = new ManualResetEventSlim();
@@ -19,14 +24,14 @@ var deleted = new ManualResetEventSlim();
 watcher.Deleted += (_, _) => deleted.Set();
 watcher.EnableRaisingEvents = true;
 
-fileSystem.Directory.Delete("watched");
+fileSystem.File.Delete("watched/a.txt");
 
 await Expect.That(deleted.Wait(TimeSpan.FromSeconds(1))).IsTrue();
 ```
 
 ## Reacting to triggered events from a test
 
-`MockFileSystem.Watcher.OnTriggered(...)` returns an awaitable callback that fires after every `IFileSystemWatcher` event. Use it to assert what a watcher saw without subscribing to the event yourself:
+`MockFileSystem.Watcher.OnTriggered(...)` returns an [awaitable callback](./intercept-and-notify) that fires after every `IFileSystemWatcher` event. Use it to assert what a watcher saw without subscribing to the event yourself:
 
 ```csharp
 MockFileSystem fileSystem = new();
@@ -35,47 +40,84 @@ fileSystem.Initialize().WithSubdirectory("watched");
 using var watcher = fileSystem.FileSystemWatcher.New("watched");
 watcher.EnableRaisingEvents = true;
 
-using var triggered = fileSystem.Watcher.OnTriggered(
-    change => { /* inspect ChangeDescription */ });
+// highlight-next-line
+using var triggered = fileSystem.Watcher.OnTriggered();
 
 fileSystem.File.WriteAllText("watched/a.txt", "hi");
-ChangeDescription[] events = triggered.Wait(count: 1);
+WatcherChangeDescription[] events = triggered.Wait(count: 1);
 ```
 
-## Event tables (per OS)
+## Which events are raised
 
-The watcher fires different events depending on whether the source/target is **inside**, **nested** under, **deeply nested** under, or **outside** the watched path. The table below lists every combination for both values of `IncludeSubdirectories` - it is also the contract that the `MockFileSystem` watcher honours when simulating other operating systems.
+When an entry is moved, the events depend on where it comes from and where it goes, relative to the watched path:
 
-| Location | Description                                            |
-|----------|--------------------------------------------------------|
-| `_`      | Entry was created or deleted                           |
-| Outside  | Outside the watching path                              |
-| Inside   | Immediately inside the watching path                   |
-| Nested   | Nested under the watching path                         |
-| Deep     | Deeply nested under the watching path                  |
+```text
+outside/              ← Outside
+watched/              ← the watched path
+├── a.txt             ← Inside
+└── sub/
+    ├── b.txt         ← Nested
+    └── deeper/
+        └── c.txt     ← Deep
+```
 
-Each cell is `IncludeSubdirectories = false / IncludeSubdirectories = true`. When both values match, only one is shown. `–` means no event is raised.
+`_` stands for "nothing", i.e. the entry is created (`_ → Inside`) or deleted (`Inside → _`), and `-` means no event is raised. Pick the value of `IncludeSubdirectories`:
 
-| From → To         | Linux                     | Windows                             | Mac                       |
-|-------------------|---------------------------|-------------------------------------|---------------------------|
-| `_` → Inside      | `Created`                 | `Created`                           | `Created`                 |
-| Inside → `_`      | `Deleted`                 | `Deleted`                           | `Deleted`                 |
-| `_` → Nested      | – / `Created`             | – / `Created`                       | – / `Created`             |
-| Nested → `_`      | – / `Deleted`             | – / `Deleted`                       | – / `Deleted`             |
-| `_` → Deep        | – / `Created`             | – / `Created`                       | – / `Created`             |
-| Deep → `_`        | – / `Deleted`             | – / `Deleted`                       | – / `Deleted`             |
-| Outside → Inside  | `Created`                 | `Created`                           | `Created`                 |
-| Inside → Inside   | `Renamed`                 | `Renamed`                           | `Renamed`                 |
-| Inside → Outside  | `Deleted`                 | `Deleted`                           | `Deleted`                 |
-| Outside → Nested  | – / `Created`             | – / `Created`                       | – / `Created`             |
-| Nested → Nested   | – / `Renamed`             | – / `Renamed`                       | – / `Renamed`             |
-| Nested → Outside  | – / `Deleted`             | – / `Deleted`                       | – / `Deleted`             |
-| Outside → Deep    | – / `Created`             | – / `Created`                       | – / `Created`             |
-| Deep → Deep       | – / `Renamed`             | – / `Renamed`                       | – / `Renamed`             |
-| Deep → Outside    | – / `Deleted`             | – / `Deleted`                       | – / `Deleted`             |
-| Inside → Nested   | `Deleted` / `Renamed`     | `Deleted` / `Deleted`+`Created`     | `Renamed`                 |
-| Inside → Deep     | `Deleted` / `Renamed`     | `Deleted` / `Deleted`+`Created`     | `Renamed`                 |
-| Nested → Inside   | `Created` / `Renamed`     | `Created` / `Deleted`+`Created`     | `Created` / `Renamed`     |
-| Deep → Inside     | `Created` / `Renamed`     | `Created` / `Deleted`+`Created`     | `Created` / `Renamed`     |
-| Nested → Deep     | – / `Renamed`             | – / `Deleted`+`Created`             | – / `Renamed`             |
-| Deep → Nested     | – / `Renamed`             | – / `Deleted`+`Created`             | – / `Renamed`             |
+<Tabs groupId="includeSubdirectories">
+<TabItem value="false" label="IncludeSubdirectories = false" default>
+
+| From → To         | Linux     | Windows   | macOS     |
+|-------------------|-----------|-----------|-----------|
+| `_` → Inside      | `Created` | `Created` | `Created` |
+| Inside → `_`      | `Deleted` | `Deleted` | `Deleted` |
+| `_` → Nested      | -         | -         | -         |
+| Nested → `_`      | -         | -         | -         |
+| `_` → Deep        | -         | -         | -         |
+| Deep → `_`        | -         | -         | -         |
+| Outside → Inside  | `Created` | `Created` | `Created` |
+| Inside → Inside   | `Renamed` | `Renamed` | `Renamed` |
+| Inside → Outside  | `Deleted` | `Deleted` | `Deleted` |
+| Outside → Nested  | -         | -         | -         |
+| Nested → Nested   | -         | -         | -         |
+| Nested → Outside  | -         | -         | -         |
+| Outside → Deep    | -         | -         | -         |
+| Deep → Deep       | -         | -         | -         |
+| Deep → Outside    | -         | -         | -         |
+| Inside → Nested   | `Deleted` | `Deleted` | `Renamed` |
+| Inside → Deep     | `Deleted` | `Deleted` | `Renamed` |
+| Nested → Inside   | `Created` | `Created` | `Created` |
+| Deep → Inside     | `Created` | `Created` | `Created` |
+| Nested → Deep     | -         | -         | -         |
+| Deep → Nested     | -         | -         | -         |
+
+</TabItem>
+<TabItem value="true" label="IncludeSubdirectories = true">
+
+| From → To         | Linux     | Windows               | macOS     |
+|-------------------|-----------|-----------------------|-----------|
+| `_` → Inside      | `Created` | `Created`             | `Created` |
+| Inside → `_`      | `Deleted` | `Deleted`             | `Deleted` |
+| `_` → Nested      | `Created` | `Created`             | `Created` |
+| Nested → `_`      | `Deleted` | `Deleted`             | `Deleted` |
+| `_` → Deep        | `Created` | `Created`             | `Created` |
+| Deep → `_`        | `Deleted` | `Deleted`             | `Deleted` |
+| Outside → Inside  | `Created` | `Created`             | `Created` |
+| Inside → Inside   | `Renamed` | `Renamed`             | `Renamed` |
+| Inside → Outside  | `Deleted` | `Deleted`             | `Deleted` |
+| Outside → Nested  | `Created` | `Created`             | `Created` |
+| Nested → Nested   | `Renamed` | `Renamed`             | `Renamed` |
+| Nested → Outside  | `Deleted` | `Deleted`             | `Deleted` |
+| Outside → Deep    | `Created` | `Created`             | `Created` |
+| Deep → Deep       | `Renamed` | `Renamed`             | `Renamed` |
+| Deep → Outside    | `Deleted` | `Deleted`             | `Deleted` |
+| Inside → Nested   | `Renamed` | `Deleted` + `Created` | `Renamed` |
+| Inside → Deep     | `Renamed` | `Deleted` + `Created` | `Renamed` |
+| Nested → Inside   | `Renamed` | `Deleted` + `Created` | `Renamed` |
+| Deep → Inside     | `Renamed` | `Deleted` + `Created` | `Renamed` |
+| Nested → Deep     | `Renamed` | `Deleted` + `Created` | `Renamed` |
+| Deep → Nested     | `Renamed` | `Deleted` + `Created` | `Renamed` |
+
+</TabItem>
+</Tabs>
+
+The mock follows the host OS, or the OS chosen with [`SimulatingOperatingSystem`](./simulating-os).

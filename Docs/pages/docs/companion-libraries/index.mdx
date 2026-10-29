@@ -1,5 +1,6 @@
 ---
 title: Companion libraries
+description: Optional packages that add compression, access control and memory-mapped files to IFileSystem.
 ---
 
 # Companion libraries
@@ -8,8 +9,8 @@ title: Companion libraries
 
 | Package                                  | Adds to `IFileSystem`                                              |
 |------------------------------------------|--------------------------------------------------------------------|
-| `Testably.Abstractions.Compression`      | `ZipFile` and `ZipArchive` extension properties                    |
-| `Testably.Abstractions.AccessControl`    | `GetAccessControl` / `SetAccessControl` on files and directories   |
-| `Testably.Abstractions.MemoryMappedFiles`| `MemoryMappedFile` extension property                              |
+| [`Testably.Abstractions.Compression`](./compression)             | `ZipFile` and `ZipArchive` extension properties                    |
+| [`Testably.Abstractions.AccessControl`](./access-control)        | `GetAccessControl` / `SetAccessControl` on files and directories   |
+| [`Testably.Abstractions.MemoryMappedFiles`](./memory-mapped-files)| `MemoryMappedFile` extension property                              |
 
 All packages target the `IFileSystem` interface, so they work transparently against either `RealFileSystem` or `MockFileSystem`.

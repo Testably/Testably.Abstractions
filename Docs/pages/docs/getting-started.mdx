@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 title: Getting Started
+description: Install the packages, register the real implementations and replace them with mocks in tests.
 ---
 
 # Getting Started
@@ -14,7 +15,16 @@ dotnet add package Testably.Abstractions
 dotnet add package Testably.Abstractions.Testing
 ```
 
-Optional companion packages:
+| Package                                     | Install it in                                                                                     |
+|---------------------------------------------|---------------------------------------------------------------------------------------------------|
+| `Testably.Abstractions`                     | Production code - contains `RealFileSystem`, `RealTimeSystem` and `RealRandomSystem`              |
+| `Testably.Abstractions.Testing`             | Test projects - contains `MockFileSystem`, `MockTimeSystem` and `MockRandomSystem`                |
+| `Testably.Abstractions.Interface`           | Libraries that only consume `IFileSystem`, `ITimeSystem` or `IRandomSystem` and leave the choice of implementation to the application |
+| `Testably.Abstractions.FileSystem.Interface`| Libraries that only need `IFileSystem`                                                            |
+
+Both `Testably.Abstractions` and `Testably.Abstractions.Testing` pull in the interface packages transitively.
+
+Optional [companion packages](./companion-libraries):
 
 ```powershell
 dotnet add package Testably.Abstractions.Compression
@@ -26,7 +36,7 @@ dotnet add package Testably.Abstractions.MemoryMappedFiles
 
 With `Microsoft.Extensions.DependencyInjection`:
 
-```csharp
+```csharp title="Program.cs"
 builder.Services
     .AddSingleton<IFileSystem, RealFileSystem>()
     .AddSingleton<IRandomSystem, RealRandomSystem>()
@@ -35,37 +45,39 @@ builder.Services
 
 ## 3. Use the interfaces in your services
 
-```csharp
-public class MyService(IFileSystem fileSystem)
+```csharp title="ReportService.cs"
+public class ReportService(IFileSystem fileSystem)
 {
-    private readonly IFileSystem _fileSystem = fileSystem;
-
-    public void StoreData()
+    public void Save(string content)
     {
-        _fileSystem.File.WriteAllText("result.xml", GetFileContent());
+        fileSystem.Directory.CreateDirectory("reports");
+        fileSystem.File.WriteAllText("reports/latest.xml", content);
     }
-
-    private string GetFileContent() => /* ... */;
 }
 ```
 
 ## 4. Replace the real implementations in tests
 
-```csharp
-[Test]
-public void StoreData_ShouldWriteValidFile()
+```csharp title="ReportServiceTests.cs"
+[Fact]
+public async Task Save_WritesReportToReportsFolder()
 {
-    IFileSystem fileSystem = new MockFileSystem();
-    var sut = new MyService(fileSystem);
+    // highlight-next-line
+    var fileSystem = new MockFileSystem();
+    var sut = new ReportService(fileSystem);
 
-    sut.StoreData();
+    sut.Save("<report />");
 
-    var content = fileSystem.File.ReadAllText("result.xml");
-    // assert on content
+    await Expect.That(fileSystem.File.ReadAllText("reports/latest.xml"))
+        .IsEqualTo("<report />");
 }
 ```
 
 That's it - your code now runs against an in-memory file system in tests, and against the real one in production.
+
+:::info[Test framework]
+The examples in this documentation use [xUnit](https://xunit.net/) and [aweXpect](https://docs.testably.org/aweXpect/) assertions. The mocks do not depend on either, so any test framework and assertion library works.
+:::
 
 ## Next steps
 

@@ -1,26 +1,51 @@
 ---
 sidebar_position: 2
 title: Simulating other operating systems
+description: Run the MockFileSystem with Linux, macOS or Windows semantics, independent of the host.
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Simulating other operating systems
 
 `MockFileSystem` can pretend to be a different operating system than the host it runs on. Pass a `SimulationMode` in the constructor:
 
+<Tabs groupId="os">
+<TabItem value="linux" label="Linux" default>
+
 ```csharp
-var linuxFileSystem = new MockFileSystem(o =>
+var fileSystem = new MockFileSystem(o =>
     o.SimulatingOperatingSystem(SimulationMode.Linux));
 // case-sensitive, '/' separator, single root
-
-var windowsFileSystem = new MockFileSystem(o =>
-    o.SimulatingOperatingSystem(SimulationMode.Windows));
-// case-insensitive, '\\' separator, drive letters
-
-var macFileSystem = new MockFileSystem(o =>
-    o.SimulatingOperatingSystem(SimulationMode.MacOS));
 ```
 
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+```csharp
+var fileSystem = new MockFileSystem(o =>
+    o.SimulatingOperatingSystem(SimulationMode.Windows));
+// case-insensitive, '\' separator, drive letters
+```
+
+</TabItem>
+<TabItem value="macos" label="macOS">
+
+```csharp
+var fileSystem = new MockFileSystem(o =>
+    o.SimulatingOperatingSystem(SimulationMode.MacOS));
+// case-insensitive, '/' separator, single root
+```
+
+</TabItem>
+</Tabs>
+
 Because the entire test suite runs against the **real** file system on Linux, macOS and Windows _and_ against each `SimulationMode` in CI, the simulated behaviour stays in lock-step with the genuine platform behaviour over time.
+
+:::note[.NET 6 or later]
+`SimulatingOperatingSystem` is only available on .NET 6 and later. On older targets, the mock always uses the host OS.
+:::
 
 ## Why simulate
 
@@ -29,5 +54,3 @@ Because the entire test suite runs against the **real** file system on Linux, ma
 - Test drive-letter handling without spinning up a Windows job.
 
 If you only need the host's own behaviour, omit `SimulatingOperatingSystem` - `MockFileSystem` defaults to whichever OS it is running on.
-
-`SimulatingOperatingSystem` is only available when running on .NET 6 or newer. On earlier targets, the mock always uses the host OS.
