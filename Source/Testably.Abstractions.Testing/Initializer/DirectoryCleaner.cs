@@ -45,9 +45,9 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		{
 			// It is important to reset the current directory, as otherwise deleting the BasePath
 			// results in a IOException, because the process cannot access the file.
-			if (string.Equals(
-				_fileSystem.Directory.GetCurrentDirectory(),
-				BasePath,
+			// On Unix the deletion succeeds and leaves the process in a deleted current directory.
+			if (_fileSystem.Directory.GetCurrentDirectory().StartsWith(
+				_pathToDelete,
 				_fileSystem.ExecuteOrDefault().StringComparisonMode))
 			{
 				_fileSystem.Directory.SetCurrentDirectory(_fileSystem.Path.GetTempPath());

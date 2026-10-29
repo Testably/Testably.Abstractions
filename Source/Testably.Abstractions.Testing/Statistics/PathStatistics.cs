@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.IO;
 using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Statistics;
@@ -238,7 +237,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		return release;
 	}
 
-	private static string CreateKey(string currentDirectory, string path)
+	private string CreateKey(string currentDirectory, string path)
 	{
 		string key = string.Empty;
 		if (string.IsNullOrEmpty(path))
@@ -254,7 +253,8 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		}
 		else
 		{
-			key = Path.GetFullPath(Path.Combine(currentDirectory, path));
+			IPath mockPath = _fileSystem.Execute.Path;
+			key = mockPath.GetFullPath(mockPath.Combine(currentDirectory, path));
 		}
 
 		return key.TrimEnd('/', '\\');
