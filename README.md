@@ -50,9 +50,9 @@ Then register the implementations in your DI container - see [Getting Started](h
 
 | Package                              | Purpose                                                                 |
 |--------------------------------------|-------------------------------------------------------------------------|
-| `Testably.Abstractions`              | Production interfaces (`IFileSystem`, `ITimeSystem`, `IRandomSystem`)   |
+| `Testably.Abstractions`              | `IFileSystem`, `ITimeSystem`, `IRandomSystem` and their real implementations |
 | `Testably.Abstractions.Testing`      | `MockFileSystem`, `MockTimeSystem`, `MockRandomSystem`                  |
-| `Testably.Abstractions.Compression`  | Zip / `ZipArchive` extension methods on `IFileSystem`                   |
+| `Testably.Abstractions.Compression`  | `ZipFile` / `ZipArchive` extension properties on `IFileSystem`          |
 | `Testably.Abstractions.AccessControl`| `GetAccessControl` / `SetAccessControl` on files and directories        |
 | `Testably.Abstractions.MemoryMappedFiles` | `MemoryMappedFile` support on `IFileSystem`                        |
 

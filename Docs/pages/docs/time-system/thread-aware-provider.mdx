@@ -1,15 +1,19 @@
 ---
 sidebar_position: 7
 title: Thread-aware time provider
+description: Give each async context its own simulated clock with a custom ITimeProvider.
 ---
 
 # Thread-aware time provider
 
-The default `ITimeProvider` stores the simulated time in a single `DateTime` field. Two parallel threads each calling `Sleep(5s)` therefore advance the shared clock by **10 seconds total**, which doesn't match what would happen in the real world (where they'd both finish after roughly 5 seconds of wall time).
+By default, all threads share one simulated clock. Two parallel threads each calling `Sleep(5s)` therefore advance it by **10 seconds total**, which doesn't match what would happen in the real world (where they'd both finish after roughly 5 seconds of wall time).
 
-The fix is a custom `ITimeProvider` that stores the clock per logical thread using `AsyncLocal<DateTime>`.
+The fix is a custom `ITimeProvider` that stores the clock per logical thread using `AsyncLocal<DateTime>`. The library does not ship one; copy and adapt the example below.
 
-## A reference implementation
+## Example implementation
+
+<details>
+<summary>`ThreadAwareTimeProvider`</summary>
 
 ```csharp
 public sealed class ThreadAwareTimeProvider : ITimeProvider
@@ -52,6 +56,8 @@ public sealed class ThreadAwareTimeProvider : ITimeProvider
     // The remaining ITimeProvider members are boilerplate and omitted here.
 }
 ```
+
+</details>
 
 `AsyncLocal<T>` flows with the async context, so each `Task.Run` (or `new Thread`) starts with its own copy of the current time. `SynchronizeClock()` lets you re-merge the per-thread clocks when you need to compare them.
 

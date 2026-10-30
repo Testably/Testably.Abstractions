@@ -1,5 +1,6 @@
 ---
 title: Random system
+description: IRandomSystem abstracts Random and Guid; MockRandomSystem makes them predictable in tests.
 ---
 
 # IRandomSystem
@@ -27,4 +28,4 @@ int n = randomSystem.Random.Shared.Next(100);
 Guid id = randomSystem.Guid.NewGuid();
 ```
 
-By default the mock seeds itself fresh per test and produces unpredictable values - useful for catching code that accidentally depends on a specific output. See [Deterministic randomness](./deterministic-randomness) for how to drive `Random` and `Guid` from a known sequence.
+By default the mock produces unpredictable values, like the real system - useful for catching code that accidentally depends on a specific output. See [Deterministic randomness](./deterministic-randomness) for how to drive `Random` and `Guid` from a known sequence.

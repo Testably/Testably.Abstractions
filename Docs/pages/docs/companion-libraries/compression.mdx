@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: Compression
+description: ZipFile and ZipArchive on IFileSystem, so zip code runs against the real and the mocked file system.
 ---
 
 # Testably.Abstractions.Compression
@@ -15,7 +16,7 @@ dotnet add package Testably.Abstractions.Compression
 
 ## Why this package exists
 
-`System.IO.Compression.ZipFile` operates on real `string` paths and `System.IO.Compression.ZipArchive` operates on `Stream`s - neither knows about `IFileSystem`. Without the companion package, bridging the two means writing your own glue:
+`System.IO.Compression.ZipFile` operates on real `string` paths and `System.IO.Compression.ZipArchive` operates on `Stream`s - neither knows about `IFileSystem`. The package bridges the two:
 
 ```csharp
 // With Testably.Abstractions.Compression - one line:
@@ -58,18 +59,9 @@ Extraction looks similar: open a `ZipArchive` in `Read` mode, loop the entries, 
 
 The package replaces this glue with a one-line call. Beyond brevity, it also gives you stream/path overloads on both sides, async variants on .NET 10+, and an `IZipArchive` / `IZipArchiveEntry` wrapper so the abstraction extends through the archive itself rather than stopping at the zip boundary.
 
-### Production uses the real BCL implementation
-
-The wrapper isn't just a uniform façade - at runtime it forwards every call to the matching `System.IO.Compression.ZipFile` / `ZipArchive` method when `IFileSystem` is a `RealFileSystem`, and to an in-memory equivalent only when it's a `MockFileSystem`:
-
-```csharp
-// Inside ZipFileWrapper.CreateFromDirectory:
-Execute.WhenRealFileSystem(FileSystem,
-    () => ZipFile.CreateFromDirectory(sourceDirectoryName, destination),  // real → BCL
-    () => ZipUtilities.CreateFromDirectory(FileSystem, sourceDirectoryName, destination)); // mock → in-memory
-```
-
-That means production code keeps every native optimisation the BCL ships - kernel-level streaming, no extra `MemoryStream` allocation, the latest deflate tuning - while tests run against a deterministic in-memory implementation. You don't trade performance for testability.
+:::info[Production uses the real implementation]
+On `RealFileSystem`, every call forwards to the matching `System.IO.Compression` method, so production code keeps the performance of the base class library (BCL). Only `MockFileSystem` uses an in-memory implementation.
+:::
 
 ## ZipFile
 

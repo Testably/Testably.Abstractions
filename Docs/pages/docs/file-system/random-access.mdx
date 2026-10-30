@@ -1,6 +1,7 @@
 ---
 sidebar_position: 10
 title: RandomAccess
+description: Read and write files at explicit offsets through a SafeFileHandle, on the real and the mocked file system.
 ---
 
 # RandomAccess
@@ -44,12 +45,12 @@ Get the handle from [`IFile.OpenHandle`](./safe-file-handles), so the file syste
 - A write past the end grows the file and zero-fills the gap.
 - `SetLength` truncates, or grows with zeroes.
 - `GetLength` is metadata and works on a write-only handle. Reading a write-only handle, or writing a read-only one, throws `UnauthorizedAccessException`.
-- On a handle opened with `FileMode.Append` the offset is still honoured — `RandomAccess` does not append for you.
+- On a handle opened with `FileMode.Append` the offset is still honoured - `RandomAccess` does not append for you.
 - Operations on a disposed handle throw `ObjectDisposedException`.
 
 ## `FlushToDisk` against the mock
 
-`FlushToDisk` asks the operating system to make prior writes durable. The `MockFileSystem` keeps its files in memory and has no write-back cache, so there is nothing to flush — but the call is still resolved against the handle and recorded, so a test can assert that a durability barrier was requested:
+`FlushToDisk` asks the operating system to make prior writes durable. The `MockFileSystem` keeps its files in memory and has no write-back cache, so there is nothing to flush - but the call is still resolved against the handle and recorded, so a test can assert that a durability barrier was requested:
 
 ```csharp
 MockFileSystem fileSystem = new();

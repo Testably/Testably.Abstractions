@@ -1,6 +1,7 @@
 ---
 sidebar_position: 3
 title: Memory-mapped files
+description: MemoryMappedFile on IFileSystem, so memory-mapped file code can be tested against the MockFileSystem.
 ---
 
 # Testably.Abstractions.MemoryMappedFiles
@@ -30,22 +31,9 @@ int value = accessor.ReadInt32(0);
 
 The same code runs unchanged against `RealFileSystem` and `MockFileSystem`.
 
-### Production uses the real base class library (BCL) implementation
-
-The abstraction isn't just a uniform façade. When `IFileSystem` is a `RealFileSystem`, every call forwards to the underlying BCL `MemoryMappedFile`, so production keeps the native memory-mapping semantics unchanged. Only when `IFileSystem` is a `MockFileSystem` are the views built directly over the in-memory file bytes:
-
-```csharp
-// Inside MemoryMappedFileFactory.CreateFromFile:
-if (extensibility.TryGetWrappedInstance(out FileStream? realStream))
-{
-    // real → BCL MemoryMappedFile over the real FileStream
-    return new MemoryMappedFileWrapper(FileSystem,
-        MemoryMappedFile.CreateFromFile(realStream, ...), backingStream);
-}
-
-// mock → view over the in-memory file bytes
-return new MemoryMappedFileMock(FileSystem, stream, capacity, access, ownsStream);
-```
+:::info[Production uses the real implementation]
+On `RealFileSystem`, every call forwards to the base class library (BCL) `MemoryMappedFile`, so production keeps the native memory-mapping semantics. Only on `MockFileSystem` are the views built over the in-memory file bytes.
+:::
 
 ## Creating a memory-mapped file
 
@@ -84,18 +72,7 @@ stream.Write([1, 2, 3, 4], 0, 4);
 
 `IMemoryMappedViewAccessor` mirrors `MemoryMappedViewAccessor`: the primitive `Read*`/`Write` overloads, the generic `Read<T>`/`Write<T>` for structs, `ReadArray<T>`/`WriteArray<T>`, plus `Capacity`, `CanRead`, `CanWrite`, `PointerOffset` and `Flush`.
 
-`MemoryMappedFileSystemViewStream` derives from `UnmanagedMemoryStream` - the same base class as the real `MemoryMappedViewStream` - and re-declares the `Capacity` member on top of the stream members (the base is not backed by unmanaged memory), plus the `PointerOffset` member specific to `MemoryMappedViewStream`.
-
-## Not supported on the mock
-
-Some parts of the BCL surface operate on operating-system shared memory rather than a file, so they have no meaningful in-memory equivalent. They forward normally on `RealFileSystem`, but throw `NotSupportedException` on `MockFileSystem`:
-
-- `CreateNew`
-- `CreateOrOpen` *(Windows-only)*
-- `OpenExisting` *(Windows-only)*
-- A non-null `mapName` in `CreateFromFile` (named mappings are operating-system shared-memory objects)
-
-The `SafeMemoryMappedFileHandle` / `SafeMemoryMappedViewHandle` handle and pointer APIs, as well as the `SafeFileHandle`-based `CreateFromFile` overload, are not exposed at all. Since no unmanaged memory backs a `MemoryMappedFileSystemViewStream`, the members that only exist on its `UnmanagedMemoryStream` base throw `ObjectDisposedException`: the unsafe `PositionPointer`, and `Capacity` when accessed through a reference typed as `UnmanagedMemoryStream` instead of `MemoryMappedFileSystemViewStream`.
+`MemoryMappedFileSystemViewStream` derives from `UnmanagedMemoryStream`, like the real `MemoryMappedViewStream`, and adds its `Capacity` and `PointerOffset` members.
 
 ## Behaviour on the mock
 
@@ -103,13 +80,30 @@ On `MockFileSystem` the reads and writes, the capacity handling and the thrown e
 
 - **Default view access is `ReadWrite`** - creating a writable view over a read-only mapping throws `UnauthorizedAccessException`, exactly as the BCL does.
 - **The file and its views have independent lifetimes** - a view stays usable after the `IMemoryMappedFile` is disposed.
-- **`CopyOnWrite` views privatize pages on write** - writes are neither persisted to the underlying file nor visible to other views, while pages the view has not written keep reflecting later changes made through other views, matching the lazy page privatization (4096-byte granularity) of real copy-on-write views.
+- **`CopyOnWrite` views privatize pages on write** - their writes are neither persisted nor visible to other views, while pages they have not written keep reflecting changes made through other views.
 
-Some details tied to operating-system memory mapping are intentionally simplified:
+### Not supported
 
-- A view created without an explicit size has a `Capacity` of exactly the remaining bytes (the real file system rounds up to the system page size), and `PointerOffset` is always `0`.
-- The views of the mock read and write through the backing stream instead of mapped memory. Writes are immediately visible to all views of the same mapping, but reach the underlying file (and other open streams of it) only when a view is flushed or disposed, or earlier when the backing stream persists its pending writes on a reposition - the real operating system makes them visible to other readers immediately. For the same reason, when the stream passed to `CreateFromFile` with `leaveOpen: true` is disposed while views are still open, operations on those views throw `ObjectDisposedException` (disposing them stays safe), whereas real views keep operating on the mapped pages without the file handle.
-- The mock does not track the open mappings of a file, so truncating the backing stream (for example via `SetLength` on a stream passed with `leaveOpen: true`) while views are open succeeds, and reads of the truncated range afterwards return zeros. The real operating system rejects such a truncation (on Windows with an `IOException` about an open user-mapped section).
-- The mocked file system stores the complete file content in memory, which limits the size of a memory-mapped file to 2 GB. Growing a file beyond that throws a `NotSupportedException`, whereas the real file system creates sparse multi-gigabyte mappings.
-- Exception types and messages of the mock follow the Windows behaviour of the BCL, regardless of the operating system the tests run on and of the simulated operating system of the `MockFileSystem`. On Linux and macOS the real file system can throw different exception types for the same invalid call (for example when creating a view with execute access or growing a read-only mapping).
-- Structs in `Read<T>`/`Write<T>`/`ReadArray<T>`/`WriteArray<T>` are sized by their managed layout (`Unsafe.SizeOf<T>`), matching the BCL on .NET (Core). The real `MemoryMappedViewAccessor` of the .NET Framework uses the marshalled size instead, so on .NET Framework the mock and the real accessor disagree for structs whose marshalled size differs from the managed one (for example a struct containing a `bool`: 1 byte managed, 4 bytes marshalled).
+These parts of the BCL operate on operating-system shared memory rather than a file. They forward normally on `RealFileSystem`, but throw `NotSupportedException` on `MockFileSystem`:
+
+- `CreateNew`
+- `CreateOrOpen` *(Windows-only)*
+- `OpenExisting` *(Windows-only)*
+- A non-null `mapName` in `CreateFromFile` (named mappings are shared-memory objects)
+
+The `SafeMemoryMappedFileHandle` / `SafeMemoryMappedViewHandle` handle and pointer APIs, and the `SafeFileHandle`-based `CreateFromFile` overload, are not exposed at all. The unsafe `PositionPointer` of a view stream throws `ObjectDisposedException`, because no unmanaged memory backs it.
+
+### Differences from the real file system
+
+<details>
+<summary>Details tied to operating-system memory mapping that the mock simplifies</summary>
+
+- **View size:** a view created without an explicit size has a `Capacity` of exactly the remaining bytes (the real file system rounds up to the page size), and `PointerOffset` is always `0`.
+- **Visibility of writes:** writes are immediately visible to all views of the same mapping, but reach the underlying file (and other streams of it) only through the backing stream, at the latest when a view is flushed or disposed. The real operating system makes them visible to other readers immediately.
+- **Disposed backing stream:** when the stream passed to `CreateFromFile` with `leaveOpen: true` is disposed while views are open, operations on those views throw `ObjectDisposedException`. Real views keep working.
+- **Truncation:** truncating the backing stream while views are open succeeds, and reads of the truncated range return zeros. The real operating system rejects the truncation.
+- **Size:** the mock keeps the whole file in memory, so a memory-mapped file is limited to 2 GB. Growing it beyond that throws `NotSupportedException`.
+- **Exceptions:** exception types and messages follow the Windows behaviour of the BCL, also on Linux and macOS and for every simulated operating system.
+- **Struct size on .NET Framework:** `Read<T>`/`Write<T>`/`ReadArray<T>`/`WriteArray<T>` size structs by their managed layout, like .NET (Core). The .NET Framework uses the marshalled size, so the two disagree for structs such as one containing a `bool`.
+
+</details>

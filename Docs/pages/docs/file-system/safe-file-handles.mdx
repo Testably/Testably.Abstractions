@@ -1,6 +1,7 @@
 ---
 sidebar_position: 9
 title: SafeFileHandle
+description: Use SafeFileHandle overloads against the MockFileSystem, including handles that come from outside the mock.
 ---
 
 # SafeFileHandle
@@ -22,13 +23,15 @@ await Expect.That(fileSystem.File.GetLastAccessTime(handle))
 await Expect.That(fileSystem.RandomAccess.GetLength(handle)).IsEqualTo(12);
 ```
 
-The handle refers to the file it was opened on rather than to its name, so reads and writes keep working after the file is renamed, and do not start addressing whatever is later created under the original path.
+Like a real handle, it refers to the file it was opened on rather than to its name, so it keeps working after the file is renamed. It also honours the `FileShare` and `FileOptions` (including `DeleteOnClose`) it was opened with, following the rules of the simulated operating system.
 
-It also carries the file share and the `FileOptions` it was opened with. `FileOptions.DeleteOnClose` follows the platform: on Unix the name that was opened is unlinked as soon as that handle closes, whatever else still holds the file open, so a file renamed in the meantime survives and a replacement under the old name does not; on Windows the file is removed once nothing holds it open any more, streams included.
+:::warning[Only for the abstraction]
+A handle the `MockFileSystem` created is not a real OS handle, so passing it to `System.IO.RandomAccess` or to another process fails. Use `IFileSystem.RandomAccess` and the `IFile` overloads instead.
+:::
 
-Because `SafeFileHandle` is sealed, the mock cannot be notified when one is closed, so released share locks and `DeleteOnClose` take effect the next time the file system is asked whether a file exists or may be opened, rather than at the moment of disposal. A handle that is dropped without being disposed releases its share lock once it is garbage collected, as a real handle does when it is finalized.
-
-A handle the `MockFileSystem` created is not a real OS handle, so passing it to `System.IO.RandomAccess` or to another process fails. Use `IFileSystem.RandomAccess` and the `IFile` overloads instead, which is the point of the abstraction.
+:::note
+The mock cannot observe the moment a handle is disposed, so a released share lock or `DeleteOnClose` takes effect the next time the file system checks whether the file exists or may be opened.
+:::
 
 ## Handles from elsewhere
 
@@ -38,9 +41,12 @@ When a handle comes from somewhere the mock knows nothing about - platform invoc
 
 The default strategy (`NullSafeFileHandleStrategy`) is registered automatically and throws `NotSupportedException` for any handle - install a custom strategy as soon as your code under test reaches for a handle from outside.
 
-## A complete reference implementation
+## Example: mapping handles of the real file system
 
-This strategy keeps an explicit map from `SafeFileHandle` to (real path, mock path). On every lookup it copies the real file's attributes and timestamps into the mock, so the test sees fresh data without having to write a fixture by hand:
+The strategy below keeps an explicit map from `SafeFileHandle` to (real path, mock path). On every lookup it copies the real file's attributes and timestamps into the mock, so the test sees fresh data without having to write a fixture by hand.
+
+<details>
+<summary>`CustomSafeFileHandleStrategy`</summary>
 
 ```csharp
 public class CustomSafeFileHandleStrategy : ISafeFileHandleStrategy
@@ -85,6 +91,8 @@ public class CustomSafeFileHandleStrategy : ISafeFileHandleStrategy
     }
 }
 ```
+
+</details>
 
 ### Wiring it into a test
 

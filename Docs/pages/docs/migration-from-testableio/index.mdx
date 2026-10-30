@@ -1,6 +1,7 @@
 ---
 sidebar_position: 7
 title: Migration from TestableIO
+description: Switch the tests from TestableIO.System.IO.Abstractions.TestingHelpers to Testably.Abstractions.Testing.
 ---
 
 # Migration from TestableIO
@@ -15,11 +16,11 @@ Pick **Testably.Abstractions** when you need a watcher, `SafeFileHandle`, multip
 
 ## How to migrate
 
-The migration only affects your **test** projects. There are two paths — pick one.
+The migration only affects your **test** projects. There are two paths - pick one.
 
 ### Automated (recommended)
 
-The [`Testably.Abstractions.Migration`](./Migration/) analyzer rewrites the supported call sites for you. Install it alongside `Testably.Abstractions.Testing`, apply the code fix from your IDE or `dotnet format analyzers`, then uninstall it. Patterns it cannot rewrite safely are still reported so you can address them by hand — see the [analyzer page](./Migration/) for the full mapping table and recommended workflow.
+The [`Testably.Abstractions.Migration`](./Migration/) analyzer rewrites the supported call sites for you. Install it alongside `Testably.Abstractions.Testing`, apply the code fix from your IDE or `dotnet format analyzers`, then uninstall it. Patterns it cannot rewrite safely are still reported so you can address them by hand - see the [analyzer page](./Migration/) for the full mapping table and recommended workflow.
 
 ### Manual
 

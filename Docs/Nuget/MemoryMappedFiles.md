@@ -11,6 +11,8 @@ Memory-mapped file extensions for [`Testably.Abstractions`](https://www.nuget.or
 dotnet add package Testably.Abstractions.MemoryMappedFiles
 ```
 
+**Full documentation: [docs.testably.org/Abstractions/companion-libraries/memory-mapped-files](https://docs.testably.org/Abstractions/companion-libraries/memory-mapped-files)**
+
 ```csharp
 IFileSystem fileSystem; // injected
 

@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: Configuring time
+description: Choose the start time and the local time zone of the MockTimeSystem, or plug in a custom time provider.
 ---
 
 # Configuring time
@@ -27,11 +28,13 @@ new MockTimeSystem(TimeProviderFactory.Now());
 The factory picks the initial local time zone:
 
 ```csharp
-// Now() and Use(DateTime) default the local time zone to TimeZoneInfo.Local
+// The parameterless constructor, Now() and Use(DateTime) default the local
+// time zone to the host's TimeZoneInfo.Local
+new MockTimeSystem();
 new MockTimeSystem(TimeProviderFactory.Now());
 
-// Random() also picks a random local time zone from a curated, cross-platform
-// set (including one with daylight-saving-time transitions)
+// TimeProviderFactory.Random() also picks a random local time zone from a curated,
+// cross-platform set (including one with daylight-saving-time transitions)
 new MockTimeSystem(TimeProviderFactory.Random());
 
 // Pin both the instant and the local time zone
@@ -73,7 +76,7 @@ ITimeProviderFactory factory = new MyTimeProviderFactory(...);
 MockTimeSystem timeSystem = new(factory);
 ```
 
-The factory hands the mock an `Action<DateTime>` callback to invoke whenever the simulated time changes. That callback drives the [notifications](./notifications) and the auto-advance behaviour.
+`ITimeProviderFactory` receives a callback that your provider must invoke whenever the simulated time changes; the [notifications](./notifications) and waiting timers depend on it.
 
 ## Sharing the time system
 

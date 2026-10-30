@@ -16,5 +16,5 @@ dotnet add package Testably.Abstractions.Interface
 > Most users install [`Testably.Abstractions`](https://www.nuget.org/packages/Testably.Abstractions) (production) and [`Testably.Abstractions.Testing`](https://www.nuget.org/packages/Testably.Abstractions.Testing) (tests) instead - both pull these interfaces in transitively.
 
 - `IFileSystem` mirrors `System.IO` (`File`, `Directory`, `FileInfo`, `DirectoryInfo`, `FileStream`, `Path`, `DriveInfo`, `FileSystemWatcher`, `FileVersionInfo`). Constructors are exposed as factory methods (e.g. `fileSystem.FileInfo.New(path)`). Lives in the `System.IO.Abstractions` namespace, so it is source-compatible with [`TestableIO.System.IO.Abstractions`](https://github.com/TestableIO/System.IO.Abstractions).
-- `ITimeSystem` covers `DateTime`, `Stopwatch`, `Task.Delay`, `Thread.Sleep`, `Timer` and (on supported targets) `PeriodicTimer`.
+- `ITimeSystem` covers `DateTime`, `DateTimeOffset`, `Stopwatch`, `Task.Delay`, `Thread.Sleep`, `Timer`, `TimeZoneInfo` and (on .NET 8 or later) `PeriodicTimer`.
 - `IRandomSystem` covers `Random` (with a thread-safe `Shared` instance on all targets) and `Guid`.

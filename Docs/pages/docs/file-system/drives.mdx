@@ -1,6 +1,7 @@
 ---
 sidebar_position: 3
 title: Drives
+description: Add drives with size limits, UNC shares and removable drives to the MockFileSystem.
 ---
 
 # Drives
@@ -40,35 +41,39 @@ When a drive runs out of space, every file operation that writes content throws 
 
 ```csharp
 MockFileSystem fileSystem = new MockFileSystem()
-    .WithDrive("C:\\", d => d.SetTotalSize(100));
+    .WithDrive(d => d.SetTotalSize(100));
 IDriveInfo drive = fileSystem.GetDefaultDrive();
 
-drive.AvailableFreeSpace; // 100
+await Expect.That(drive.AvailableFreeSpace).IsEqualTo(100);
 
 fileSystem.File.WriteAllText("foo.txt", "This is a text with 29 bytes.");
-drive.AvailableFreeSpace; // 71
+await Expect.That(drive.AvailableFreeSpace).IsEqualTo(71);
 
 fileSystem.File.AppendAllText("foo.txt", "Another 17 bytes.");
-drive.AvailableFreeSpace; // 54
+await Expect.That(drive.AvailableFreeSpace).IsEqualTo(54);
 
-fileSystem.File.WriteAllBytes("bar.bin", new byte[90]); // throws IOException
-drive.AvailableFreeSpace; // still 54 - the failed write did not consume space
+void WriteTooMuch() => fileSystem.File.WriteAllBytes("bar.bin", new byte[90]);
+await Expect.That(WriteTooMuch).Throws<IOException>();
+await Expect.That(drive.AvailableFreeSpace).IsEqualTo(54)
+    .Because("the failed write did not consume space");
 
 fileSystem.File.Delete("foo.txt");
-drive.AvailableFreeSpace; // back to 100
+await Expect.That(drive.AvailableFreeSpace).IsEqualTo(100);
 ```
 
 ## UNC drives
 
-`WithUncDrive("//server")` registers a Universal Naming Convention path so reads and writes against `\\server\share\...` succeed in the mock:
+`WithUncDrive("server")` registers a Universal Naming Convention (UNC) server, so paths like `\\server\share\...` resolve in the mock. Like a local drive, it starts empty, so create the share directory before writing into it:
 
 ```csharp
 MockFileSystem fileSystem = new();
-fileSystem.WithUncDrive(@"//build-server");
+fileSystem.WithUncDrive("build-server");
 
-fileSystem.File.WriteAllText(@"//build-server/share/foo.txt", "hi");
-IDriveInfo drive = fileSystem.DriveInfo.New(@"//build-server");
-drive.IsReady; // true
+fileSystem.Directory.CreateDirectory("//build-server/share");
+fileSystem.File.WriteAllText("//build-server/share/foo.txt", "hi");
+
+IDriveInfo drive = fileSystem.DriveInfo.New("//build-server");
+await Expect.That(drive.IsReady).IsTrue();
 ```
 
 UNC drives don't appear in `DriveInfo.GetDrives()` - they're addressable but not enumerated, matching the real behaviour.
@@ -85,11 +90,11 @@ The callback passed to `WithDrive(...)` receives an `IStorageDrive` whose setter
 
 | Setter                         | What it changes                                                                  |
 |--------------------------------|----------------------------------------------------------------------------------|
-| `SetTotalSize(long)`           | Total disk capacity (default reset value: a generous default size)               |
+| `SetTotalSize(long)`           | Total disk capacity (defaults to 1 GB)                                           |
 | `SetDriveFormat(string)`       | The reported `DriveFormat` (e.g. `"NTFS"`, `"ext4"`)                             |
 | `SetDriveType(DriveType)`      | The reported `DriveType` (Fixed, Removable, Network, …)                          |
 | `SetIsReady(bool)`             | Whether the drive reports itself as ready - simulate a removable drive ejecting  |
-| `ChangeUsedBytes(long delta)`  | Adjust used space by a delta. Throws `IOException` if free space goes negative   |
+| `ChangeUsedBytes(long delta)`  | Mark space as used (or free) without writing files. Throws `IOException` if free space goes negative |
 
 ```csharp
 MockFileSystem fileSystem = new();
