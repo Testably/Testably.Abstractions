@@ -148,9 +148,11 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	{
 		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&
 		           mockFileSystem.SimulationMode != SimulationMode.Native);
-		Skip.If(Test.RunsOnMac, "GetDrives() can cause a native crash on macOS.");
 
-		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives()[0];
+		// Avoid DriveInfo.GetDrives(), which can cause a native crash on a macOS host; in simulated
+		// rows Test.RunsOnMac reflects the simulated OS and cannot be used to skip on the host.
+		System.IO.DriveInfo driveInfo =
+			new(System.IO.Path.GetPathRoot(System.IO.Path.GetTempPath())!);
 
 		void Act()
 		{
