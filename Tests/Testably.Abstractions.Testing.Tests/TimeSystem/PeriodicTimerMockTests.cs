@@ -1,5 +1,6 @@
 ﻿#if FEATURE_PERIODIC_TIMER
 using aweXpect.Chronology;
+using System.Collections.ObjectModel;
 using System.Threading;
 using Testably.Abstractions.Testing.TimeSystem;
 using Testably.Abstractions.TimeSystem;
@@ -72,6 +73,34 @@ public class PeriodicTimerMockTests
 		await That(Volatile.Read(ref timerCount)).IsEqualTo(14);
 		cts.Cancel();
 		await timerTask;
+	}
+
+	[Test]
+	public async Task
+		WaitForNextTickAsync_DisableAutoAdvance_WhenClockAdvancesWhileStartingToWait_ShouldTick()
+	{
+		InterleavingTimeProviderFactory factory = new(
+			new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+		MockTimeSystem timeSystem = new(factory, o => o.DisableAutoAdvance());
+		using CancellationTokenSource cts = CancellationTokenSource
+			.CreateLinkedTokenSource(TestContext.Current!.Execution.CancellationToken);
+		cts.CancelAfter(5.Seconds());
+		CancellationToken token = cts.Token;
+		using IPeriodicTimer timer = timeSystem.PeriodicTimer.New(30.Seconds());
+		using IAwaitableCallback<IPeriodicTimer> onWaiting = timeSystem.On.PeriodicTimer
+			.WaitingForNextTick(_ => factory.Provider!.AdvanceOnNextRead = 30.Seconds());
+		long start = timeSystem.TimeProvider.ElapsedTicks;
+
+		bool result = false;
+		async Task Act()
+			=> result = await timer.WaitForNextTickAsync(token);
+
+		await That(Act).DoesNotThrow()
+			.Because("the clock was advanced to the next tick while the timer started to wait");
+		await That(result).IsTrue();
+		await That(timeSystem.TimeProvider.ElapsedTicks - start)
+			.IsEqualTo(TimeSpan.FromSeconds(30).Ticks)
+			.Because("the clock was advanced by exactly one period");
 	}
 
 	[Test]
@@ -245,6 +274,83 @@ public class PeriodicTimerMockTests
 		}
 
 		await That(receivedTimer).IsNull();
+	}
+
+	private sealed class InterleavingTimeProviderFactory(DateTime start) : ITimeProviderFactory
+	{
+		public InterleavingTimeProvider? Provider { get; private set; }
+
+		public ITimeProvider Create(Action<DateTime> onTimeChanged)
+			=> Provider = new InterleavingTimeProvider(
+				TimeProviderFactory.Use(start).Create(onTimeChanged));
+	}
+
+	/// <summary>
+	///     Simulates another thread advancing the clock right after the next read of
+	///     <see cref="ElapsedTicks" />.
+	/// </summary>
+	private sealed class InterleavingTimeProvider(ITimeProvider inner) : ITimeProvider
+	{
+		public TimeSpan? AdvanceOnNextRead { get; set; }
+
+		public long ElapsedTicks
+		{
+			get
+			{
+				long value = inner.ElapsedTicks;
+				if (AdvanceOnNextRead is { } interval)
+				{
+					AdvanceOnNextRead = null;
+					inner.AdvanceBy(interval);
+				}
+
+				return value;
+			}
+		}
+
+		public TimeZoneInfo LocalTimeZone
+		{
+			get => inner.LocalTimeZone;
+			set => inner.LocalTimeZone = value;
+		}
+
+		public DateTime MaxValue
+		{
+			get => inner.MaxValue;
+			set => inner.MaxValue = value;
+		}
+
+		public DateTime MinValue
+		{
+			get => inner.MinValue;
+			set => inner.MinValue = value;
+		}
+
+		public DateTime StartTime => inner.StartTime;
+
+		public DateTime UnixEpoch
+		{
+			get => inner.UnixEpoch;
+			set => inner.UnixEpoch = value;
+		}
+
+		public void AdvanceBy(TimeSpan interval)
+			=> inner.AdvanceBy(interval);
+
+		public TimeZoneInfo FindSystemTimeZoneById(string id)
+			=> inner.FindSystemTimeZoneById(id);
+
+		public ReadOnlyCollection<TimeZoneInfo> GetSystemTimeZones()
+			=> inner.GetSystemTimeZones();
+
+		public DateTime Read()
+			=> inner.Read();
+
+		public void RegisterTimeZone(TimeZoneInfo timeZone)
+			=> inner.RegisterTimeZone(timeZone);
+
+		public void SetTo(DateTime value)
+			=> inner.SetTo(value);
 	}
 }
 #endif
