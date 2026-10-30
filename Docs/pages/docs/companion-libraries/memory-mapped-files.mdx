@@ -22,7 +22,7 @@ dotnet add package Testably.Abstractions.MemoryMappedFiles
 IFileSystem fileSystem = //...
 
 using IMemoryMappedFile mappedFile = fileSystem.MemoryMappedFile
-    .CreateFromFile("data.bin");
+    .CreateFromFile("red-square.png");
 
 using IMemoryMappedViewAccessor accessor = mappedFile.CreateViewAccessor();
 accessor.Write(0, 42);
@@ -41,7 +41,7 @@ On `RealFileSystem`, every call forwards to the base class library (BCL) `Memory
 
 ```csharp
 using IMemoryMappedFile fromPath = fileSystem.MemoryMappedFile
-    .CreateFromFile("data.bin", FileMode.Open, mapName: null, capacity: 0,
+    .CreateFromFile("red-square.png", FileMode.Open, mapName: null, capacity: 0,
         MemoryMappedFileAccess.ReadWrite);
 ```
 
@@ -49,7 +49,7 @@ The `FileStream`-based overload is exposed with a `FileSystemStream` instead of 
 
 ```csharp
 using FileSystemStream stream =
-    fileSystem.FileStream.New("data.bin", FileMode.Open, FileAccess.ReadWrite);
+    fileSystem.FileStream.New("red-square.png", FileMode.Open, FileAccess.ReadWrite);
 using IMemoryMappedFile mappedFile = fileSystem.MemoryMappedFile.CreateFromFile(
     stream, mapName: null, capacity: 0, MemoryMappedFileAccess.ReadWrite,
     HandleInheritability.None, leaveOpen: true);

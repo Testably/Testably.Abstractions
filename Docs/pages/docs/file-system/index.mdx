@@ -13,11 +13,11 @@ import DocCardList from '@theme/DocCardList';
 
 | Static / `new` in `System.IO`        | `IFileSystem` member                            |
 |--------------------------------------|-------------------------------------------------|
-| `File.ReadAllText("a.txt")`          | `fileSystem.File.ReadAllText("a.txt")`          |
-| `Directory.CreateDirectory("foo")`   | `fileSystem.Directory.CreateDirectory("foo")`   |
-| `Path.Combine("a", "b")`             | `fileSystem.Path.Combine("a", "b")`             |
-| `new FileInfo("a.txt")`              | `fileSystem.FileInfo.New("a.txt")`              |
-| `new DirectoryInfo("foo")`           | `fileSystem.DirectoryInfo.New("foo")`           |
+| `File.ReadAllText("catalog.json")`   | `fileSystem.File.ReadAllText("catalog.json")`   |
+| `Directory.CreateDirectory("vault")` | `fileSystem.Directory.CreateDirectory("vault")` |
+| `Path.Combine("vault", "red-square.png")` | `fileSystem.Path.Combine("vault", "red-square.png")` |
+| `new FileInfo("catalog.json")`       | `fileSystem.FileInfo.New("catalog.json")`       |
+| `new DirectoryInfo("vault")`         | `fileSystem.DirectoryInfo.New("vault")`         |
 | `new FileStream(...)`                | `fileSystem.FileStream.New(...)`                |
 | `new FileSystemWatcher(...)`         | `fileSystem.FileSystemWatcher.New(...)`         |
 | `DriveInfo.GetDrives()`              | `fileSystem.DriveInfo.GetDrives()`              |
@@ -37,8 +37,8 @@ Static methods stay static on the sub-properties; constructors become factory me
 ```csharp
 IFileSystem fileSystem = new MockFileSystem();
 
-fileSystem.File.WriteAllText("hello.txt", "world");
-string content = fileSystem.File.ReadAllText("hello.txt"); // "world"
+fileSystem.File.WriteAllText("red-square.txt", "Oil on canvas");
+string content = fileSystem.File.ReadAllText("red-square.txt"); // "Oil on canvas"
 ```
 
 ## Configuring the mock
@@ -47,7 +47,7 @@ string content = fileSystem.File.ReadAllText("hello.txt"); // "world"
 
 ```csharp
 MockFileSystem fileSystem = new(o => o
-    .UseCurrentDirectory("/work")                      // sets CurrentDirectory to "/work"
+    .UseCurrentDirectory("/gallery")                   // sets CurrentDirectory to "/gallery"
     .UseTimeSystem(timeSystem)                         // share an existing MockTimeSystem
     .UseRandomProvider(randomProvider)                 // share an existing IRandomProvider
     .SimulatingOperatingSystem(SimulationMode.Linux)); // simulate Linux semantics

@@ -15,11 +15,11 @@ The built-in `DefaultAccessControlStrategy` takes a callback `(fullPath, extensi
 MockFileSystem fileSystem = new();
 // highlight-start
 fileSystem.WithAccessControlStrategy(
-    new DefaultAccessControlStrategy((path, _) => !path.EndsWith("secret.txt")));
+    new DefaultAccessControlStrategy((path, _) => !path.EndsWith("provenance.txt")));
 // highlight-end
 
-fileSystem.File.WriteAllText("public.txt", "x"); // ok
-fileSystem.File.WriteAllText("secret.txt", "x"); // throws UnauthorizedAccessException
+fileSystem.File.WriteAllText("catalog.json", "[]");   // ok
+fileSystem.File.WriteAllText("provenance.txt", ""); // throws UnauthorizedAccessException
 ```
 
 A second overload of `DefaultAccessControlStrategy` additionally receives an `AccessRequest`, so you can simulate files and directories that can be read but not written, or written but not deleted:
@@ -29,13 +29,13 @@ A second overload of `DefaultAccessControlStrategy` additionally receives an `Ac
 
 ```csharp
 MockFileSystem fileSystem = new();
-fileSystem.File.WriteAllText("readonly.txt", "x");
+fileSystem.File.WriteAllText("catalog.json", "[]");
 fileSystem.WithAccessControlStrategy(
     new DefaultAccessControlStrategy((path, _, request)
-        => !(path.EndsWith("readonly.txt") && request.Access.HasFlag(FileAccess.Write))));
+        => !(path.EndsWith("catalog.json") && request.Access.HasFlag(FileAccess.Write))));
 
-fileSystem.File.ReadAllText("readonly.txt");      // ok
-fileSystem.File.WriteAllText("readonly.txt", "y"); // throws UnauthorizedAccessException
+fileSystem.File.ReadAllText("catalog.json");       // ok
+fileSystem.File.WriteAllText("catalog.json", "[]"); // throws UnauthorizedAccessException
 ```
 
 For a custom strategy, derive from the abstract `AccessControlStrategy` base class instead of implementing `IAccessControlStrategy` directly, so that it receives the `AccessRequest`. Implementations of `IAccessControlStrategy` keep working, but do not receive the request.

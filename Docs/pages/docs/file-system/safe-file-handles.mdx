@@ -14,12 +14,12 @@ description: Use SafeFileHandle overloads against the MockFileSystem, including 
 
 ```csharp
 MockFileSystem fileSystem = new();
-fileSystem.File.WriteAllText("file.txt", "some content");
+fileSystem.File.WriteAllText("red-square.txt", "Oil on board");
 
-using SafeFileHandle handle = fileSystem.File.OpenHandle("file.txt");
+using SafeFileHandle handle = fileSystem.File.OpenHandle("red-square.txt");
 
 await Expect.That(fileSystem.File.GetLastAccessTime(handle))
-    .IsEqualTo(fileSystem.File.GetLastAccessTime("file.txt"));
+    .IsEqualTo(fileSystem.File.GetLastAccessTime("red-square.txt"));
 await Expect.That(fileSystem.RandomAccess.GetLength(handle)).IsEqualTo(12);
 ```
 
@@ -106,8 +106,8 @@ mockFileSystem.WithSafeFileHandleStrategy(strategy);
 using IDirectoryCleaner _ = realFileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 
 // Create the same file on both sides
-mockFileSystem.File.WriteAllText("mock", "some content");
-realFileSystem.File.WriteAllText("real", "some content");
+mockFileSystem.File.WriteAllText("mock", "Oil on board");
+realFileSystem.File.WriteAllText("real", "Oil on board");
 
 // Mutate the real file's last-access time
 DateTime expected = new DateTime(2026, 1, 1);

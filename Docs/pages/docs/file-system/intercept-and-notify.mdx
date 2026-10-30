@@ -26,10 +26,11 @@ The time system's [notifications](../time-system/notifications) use the same `IA
 MockFileSystem fileSystem = new();
 
 fileSystem.Intercept.Creating(FileSystemTypes.File,
-    _ => throw new IOException("disk full"));
+    _ => throw new IOException("The vault is full."),
+    globPattern: "*.png");
 
-// Throws "disk full"
-fileSystem.File.WriteAllText("a.txt", "x");
+fileSystem.File.WriteAllText("catalog.json", "[]");   // ok
+fileSystem.File.WriteAllBytes("red-square.png", []); // throws "The vault is full."
 ```
 
 Useful for simulating disk errors, permission failures or race conditions.
@@ -38,16 +39,18 @@ Useful for simulating disk errors, permission failures or race conditions.
 
 ## Notify - await an event
 
+The examples below use the `CatalogService` from [Getting Started](../getting-started), which writes `exports/catalog.json`.
+
 ```csharp
 MockFileSystem fileSystem = new();
 
 using var notify = fileSystem.Notify
     .OnCreated(FileSystemTypes.File);
 
-fileSystem.File.WriteAllText("some-file.txt", "x");
+new CatalogService(fileSystem).Export("[]");
 
 ChangeDescription[] events = notify.Wait(count: 1);
-await Expect.That(events[0].Name).IsEqualTo("some-file.txt");
+await Expect.That(events[0].Path).EndsWith("catalog.json");
 ```
 
 :::tip
@@ -62,13 +65,14 @@ Register the callback first, then do the work, then call `Wait` (or `WaitAsync` 
 
 ```csharp
 MockFileSystem fileSystem = new();
-fileSystem.File.WriteAllText("early.txt", "x");
+new CatalogService(fileSystem).Export("[]");
 
 using var notify = fileSystem.Notify.OnEventOrReplay(
-    predicate: c => c.ChangeType == WatcherChangeTypes.Created);
+    predicate: c => c.ChangeType == WatcherChangeTypes.Created
+                    && c.FileSystemType == FileSystemTypes.File);
 
 ChangeDescription[] events = notify.Wait(count: 1);
-await Expect.That(events[0].Name).IsEqualTo("early.txt");
+await Expect.That(events[0].Path).EndsWith("catalog.json");
 ```
 
 `fileSystem.Watcher.OnTriggeredOrReplay(...)` does the same for watcher events. The history is recorded by default; `new MockFileSystem(o => o.WithoutNotificationHistory())` turns it off, and both methods then throw `InvalidOperationException`.

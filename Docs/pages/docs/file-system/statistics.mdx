@@ -11,8 +11,8 @@ description: Assert which file system methods and properties the code under test
 ```csharp
 MockFileSystem fileSystem = new();
 
-fileSystem.File.WriteAllText("a.txt", "hi");
-fileSystem.File.ReadAllText("a.txt");
+fileSystem.File.WriteAllText("catalog.json", "[]");
+fileSystem.File.ReadAllText("catalog.json");
 
 IFileSystemStatistics stats = fileSystem.Statistics;
 await Expect.That(stats.TotalCount).IsEqualTo(2);
@@ -25,12 +25,12 @@ await Expect.That(stats.File.Methods).Contains(m => m.Name == nameof(IFile.Write
 
 Each of them has `Methods` and `Properties` collections. An entry carries the call's name, its parameters and a global `Counter` that tells the order of the calls.
 
-The properties for types created by a factory (`DirectoryInfo`, `DriveInfo`, `FileInfo`, `FileStream`, `FileSystemWatcher`, `FileVersionInfo`) also have an indexer keyed by path - `stats.FileInfo["a.txt"]` returns just the calls made on the `IFileInfo` for that path:
+The properties for types created by a factory (`DirectoryInfo`, `DriveInfo`, `FileInfo`, `FileStream`, `FileSystemWatcher`, `FileVersionInfo`) also have an indexer keyed by path - `stats.FileInfo["catalog.json"]` returns just the calls made on the `IFileInfo` for that path:
 
 ```csharp
-_ = fileSystem.FileInfo.New("a.txt").Exists;
+_ = fileSystem.FileInfo.New("catalog.json").Exists;
 
-await Expect.That(stats.FileInfo["a.txt"].Properties)
+await Expect.That(stats.FileInfo["catalog.json"].Properties)
     .Contains(p => p.Name == nameof(IFileInfo.Exists));
 ```
 

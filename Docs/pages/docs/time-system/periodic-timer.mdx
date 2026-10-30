@@ -12,17 +12,17 @@ description: Test loops built on PeriodicTimer without waiting for real time to 
 `ITimeSystem.PeriodicTimer` is only available on .NET 8 and later.
 :::
 
-Typical use case: a hosted/background service that does work on a fixed cadence - every 30 seconds, every 5 minutes - and needs to be testable without actually sleeping for that long.
+Typical use case: a hosted/background service that does work on a fixed cadence and needs to be testable without actually waiting that long - like a night guard who walks a round through the gallery every 30 minutes:
 
-```csharp title="HeartbeatWorker.cs"
-public class HeartbeatWorker(ITimeSystem timeSystem, IFileSystem fileSystem)
+```csharp title="NightGuard.cs"
+public class NightGuard(ITimeSystem timeSystem, IFileSystem fileSystem)
 {
-    public async Task RunAsync(CancellationToken cancellationToken)
+    public async Task PatrolAsync(CancellationToken cancellationToken)
     {
-        using IPeriodicTimer timer = timeSystem.PeriodicTimer.New(TimeSpan.FromSeconds(30));
+        using IPeriodicTimer timer = timeSystem.PeriodicTimer.New(TimeSpan.FromMinutes(30));
         while (await timer.WaitForNextTickAsync(cancellationToken))
         {
-            fileSystem.File.AppendAllText("heartbeat.log", $"{timeSystem.DateTime.UtcNow:o}\n");
+            fileSystem.File.AppendAllText("guard-rounds.log", $"{timeSystem.DateTime.UtcNow:o}\n");
         }
     }
 }
@@ -32,29 +32,29 @@ public class HeartbeatWorker(ITimeSystem timeSystem, IFileSystem fileSystem)
 
 To assert exactly how often the loop ran, turn auto-advance off and advance the clock by hand. `WaitForNextTickAsync` then stays pending until the simulated time reaches the next tick.
 
-`On.PeriodicTimer.WaitingForNextTick()` fires every time the worker calls `WaitForNextTickAsync`, so waiting for it tells the test that the worker finished the previous iteration and is idle again:
+`On.PeriodicTimer.WaitingForNextTick()` fires every time the guard calls `WaitForNextTickAsync`, so waiting for it tells the test that the guard finished the previous round and is waiting for the next one:
 
 ```csharp
 MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
 MockFileSystem fileSystem = new(o => o.UseTimeSystem(timeSystem));
-HeartbeatWorker worker = new(timeSystem, fileSystem);
+NightGuard guard = new(timeSystem, fileSystem);
 using CancellationTokenSource cts = new();
 using IAwaitableCallback<IPeriodicTimer> waiting =
     timeSystem.On.PeriodicTimer.WaitingForNextTick();
 
-Task run = worker.RunAsync(cts.Token);
+Task patrol = guard.PatrolAsync(cts.Token);
 
-// The worker is waiting for its first tick - nothing was written yet
+// The guard is waiting for the first round - nothing was logged yet
 waiting.Wait();
-await Expect.That(fileSystem.File.Exists("heartbeat.log")).IsFalse();
+await Expect.That(fileSystem.File.Exists("guard-rounds.log")).IsFalse();
 
 // highlight-next-line
-timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromSeconds(30));
+timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromMinutes(30));
 waiting.Wait();
-await Expect.That(fileSystem.File.ReadAllLines("heartbeat.log")).HasCount(1);
+await Expect.That(fileSystem.File.ReadAllLines("guard-rounds.log")).HasCount(1);
 
 cts.Cancel();
-await Expect.That(async () => await run).Throws<OperationCanceledException>();
+await Expect.That(async () => await patrol).Throws<OperationCanceledException>();
 ```
 
 Like the real `PeriodicTimer`, advancing the clock by several periods at once results in a single tick, not one tick per elapsed period.
@@ -68,17 +68,17 @@ With auto-advance on (the default), every `WaitForNextTickAsync` returns immedia
 ```csharp
 MockTimeSystem timeSystem = new();
 MockFileSystem fileSystem = new(o => o.UseTimeSystem(timeSystem));
-HeartbeatWorker worker = new(timeSystem, fileSystem);
+NightGuard guard = new(timeSystem, fileSystem);
 using CancellationTokenSource cts = new();
 using IAwaitableCallback<IPeriodicTimer> waiting =
     timeSystem.On.PeriodicTimer.WaitingForNextTick();
 
-Task run = worker.RunAsync(cts.Token);
-waiting.Wait(count: 5); // the worker finished at least four iterations
+Task patrol = guard.PatrolAsync(cts.Token);
+waiting.Wait(count: 5); // the guard finished at least four rounds
 cts.Cancel();
-await Expect.That(async () => await run).Throws<OperationCanceledException>();
+await Expect.That(async () => await patrol).Throws<OperationCanceledException>();
 
-await Expect.That(fileSystem.File.ReadAllLines("heartbeat.log").Length)
+await Expect.That(fileSystem.File.ReadAllLines("guard-rounds.log").Length)
     .IsGreaterThanOrEqualTo(4);
 ```
 

@@ -45,42 +45,43 @@ builder.Services
 
 ## 3. Use the interfaces in your services
 
-```csharp title="ReportService.cs"
-public class ReportService(IFileSystem fileSystem)
+```csharp title="CatalogService.cs"
+public class CatalogService(IFileSystem fileSystem)
 {
-    public void Save(string content)
+    public void Export(string json)
     {
-        fileSystem.Directory.CreateDirectory("reports");
-        fileSystem.File.WriteAllText("reports/latest.xml", content);
+        fileSystem.Directory.CreateDirectory("exports");
+        fileSystem.File.WriteAllText("exports/catalog.json", json);
     }
 }
 ```
 
 ## 4. Replace the real implementations in tests
 
-```csharp title="ReportServiceTests.cs"
+```csharp title="CatalogServiceTests.cs"
 [Fact]
-public async Task Save_WritesReportToReportsFolder()
+public async Task Export_WritesCatalogToExportsFolder()
 {
     // highlight-next-line
     var fileSystem = new MockFileSystem();
-    var sut = new ReportService(fileSystem);
+    var sut = new CatalogService(fileSystem);
 
-    sut.Save("<report />");
+    sut.Export("""{ "title": "Red Square" }""");
 
-    await Expect.That(fileSystem.File.ReadAllText("reports/latest.xml"))
-        .IsEqualTo("<report />");
+    await Expect.That(fileSystem.File.ReadAllText("exports/catalog.json"))
+        .IsEqualTo("""{ "title": "Red Square" }""");
 }
 ```
 
 That's it - your code now runs against an in-memory file system in tests, and against the real one in production.
 
-:::info[Test framework]
-The examples in this documentation use [xUnit](https://xunit.net/) and [aweXpect](https://docs.testably.org/aweXpect/) assertions. The mocks do not depend on either, so any test framework and assertion library works.
+:::info[About the examples]
+The examples in this documentation are set in a gallery of abstract art: a catalogue of artworks, exhibitions that open and close, and a night guard on patrol. They use [xUnit](https://xunit.net/) and [aweXpect](https://docs.testably.org/aweXpect/) assertions, but the mocks do not depend on either, so any test framework and assertion library works.
 :::
 
 ## Next steps
 
+- [A complete example](./complete-example) - one gallery service tested with the file system, time and random system together.
 - [File system](./file-system) - `IFileSystem`, `MockFileSystem`, drives, watcher, statistics, strategies.
 - [Time system](./time-system) - `ITimeSystem`, time providers, timers, auto-advance, notifications.
 - [Random system](./random-system) - `IRandomSystem` and deterministic generators.

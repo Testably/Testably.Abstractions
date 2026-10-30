@@ -15,18 +15,18 @@ import TabItem from '@theme/TabItem';
 
 ```csharp
 var fileSystem = new MockFileSystem();
-fileSystem.Initialize().WithSubdirectory("watched");
-fileSystem.File.WriteAllText("watched/a.txt", "hi");
+fileSystem.Initialize().WithSubdirectory("vault");
+fileSystem.File.WriteAllBytes("vault/red-square.png", []);
 
-using var watcher = fileSystem.FileSystemWatcher.New("watched");
-var deleted = new ManualResetEventSlim();
+using var watcher = fileSystem.FileSystemWatcher.New("vault");
+var artworkRemoved = new ManualResetEventSlim();
 
-watcher.Deleted += (_, _) => deleted.Set();
+watcher.Deleted += (_, _) => artworkRemoved.Set();
 watcher.EnableRaisingEvents = true;
 
-fileSystem.File.Delete("watched/a.txt");
+fileSystem.File.Delete("vault/red-square.png");
 
-await Expect.That(deleted.Wait(TimeSpan.FromSeconds(1))).IsTrue();
+await Expect.That(artworkRemoved.Wait(TimeSpan.FromSeconds(1))).IsTrue();
 ```
 
 ## Reacting to triggered events from a test
@@ -35,15 +35,15 @@ await Expect.That(deleted.Wait(TimeSpan.FromSeconds(1))).IsTrue();
 
 ```csharp
 MockFileSystem fileSystem = new();
-fileSystem.Initialize().WithSubdirectory("watched");
+fileSystem.Initialize().WithSubdirectory("vault");
 
-using var watcher = fileSystem.FileSystemWatcher.New("watched");
+using var watcher = fileSystem.FileSystemWatcher.New("vault");
 watcher.EnableRaisingEvents = true;
 
 // highlight-next-line
 using var triggered = fileSystem.Watcher.OnTriggered();
 
-fileSystem.File.WriteAllText("watched/a.txt", "hi");
+fileSystem.File.WriteAllBytes("vault/blue-circles.png", []);
 WatcherChangeDescription[] events = triggered.Wait(count: 1);
 ```
 
@@ -52,13 +52,13 @@ WatcherChangeDescription[] events = triggered.Wait(count: 1);
 When an entry is moved, the events depend on where it comes from and where it goes, relative to the watched path:
 
 ```text
-outside/              ← Outside
-watched/              ← the watched path
-├── a.txt             ← Inside
-└── sub/
-    ├── b.txt         ← Nested
-    └── deeper/
-        └── c.txt     ← Deep
+storage/                     ← Outside
+vault/                       ← the watched path
+├── red-square.png           ← Inside
+└── sketches/
+    ├── blue-circles.png     ← Nested
+    └── drafts/
+        └── yellow-lines.png ← Deep
 ```
 
 `_` stands for "nothing", i.e. the entry is created (`_ → Inside`) or deleted (`Inside → _`), and `-` means no event is raised. Pick the value of `IncludeSubdirectories`:

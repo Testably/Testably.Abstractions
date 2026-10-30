@@ -13,16 +13,16 @@ To make a version-info-driven test deterministic, register a builder against a g
 ```csharp
 MockFileSystem fileSystem = new();
 fileSystem.WithFileVersionInfo("*.dll", v => v
-    .SetCompanyName("Acme")
-    .SetProductName("Acme Widgets")
+    .SetCompanyName("Abstract Arts")
+    .SetProductName("Gallery Kiosk")
     .SetProductVersion("1.2.3.4")
     .SetFileVersion("1.2.3.0")
     .SetIsDebug(false));
 
-fileSystem.File.WriteAllText("Acme.Widgets.dll", "");
+fileSystem.File.WriteAllText("Gallery.Kiosk.dll", "");
 
-IFileVersionInfo info = fileSystem.FileVersionInfo.GetVersionInfo("Acme.Widgets.dll");
-await Expect.That(info.CompanyName).IsEqualTo("Acme");
+IFileVersionInfo info = fileSystem.FileVersionInfo.GetVersionInfo("Gallery.Kiosk.dll");
+await Expect.That(info.CompanyName).IsEqualTo("Abstract Arts");
 await Expect.That(info.ProductVersion).IsEqualTo("1.2.3.4");
 ```
 
