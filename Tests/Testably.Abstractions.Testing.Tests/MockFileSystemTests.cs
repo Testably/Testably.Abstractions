@@ -161,6 +161,73 @@ public class MockFileSystemTests
 	}
 
 	[Test]
+	[AutoArguments]
+	public async Task WithAccessControl_ShouldConsiderRequestedAccess(
+		string path, string contents)
+	{
+		Skip.If(!Test.RunsOnWindows);
+
+		MockFileSystem sut = new();
+		sut.Initialize();
+		sut.File.WriteAllText(path, contents);
+		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((_, _, request)
+			=> !request.Access.HasFlag(FileAccess.Write)));
+
+		string result = sut.File.ReadAllText(path);
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.File.WriteAllText(path, "new contents");
+		});
+
+		await That(result).IsEqualTo(contents);
+		await That(exception).IsExactly<UnauthorizedAccessException>();
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task WithAccessControl_ShouldDistinguishDeleteFromWrite(
+		string path, string contents)
+	{
+		Skip.If(!Test.RunsOnWindows);
+
+		MockFileSystem sut = new();
+		sut.Initialize();
+		sut.File.WriteAllText(path, contents);
+		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((_, _, request)
+			=> !request.IsDelete));
+
+		sut.File.WriteAllText(path, "new contents");
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.File.Delete(path);
+		});
+
+		await That(exception).IsExactly<UnauthorizedAccessException>();
+		await That(sut.File.Exists(path)).IsTrue();
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task WithAccessControl_CustomInterfaceImplementation_ShouldBeUsed(
+		string allowedPath, string deniedPath)
+	{
+		Skip.If(!Test.RunsOnWindows);
+
+		MockFileSystem sut = new();
+		sut.Initialize();
+		sut.WithAccessControlStrategy(
+			new DummyAccessControlStrategy(sut.Path.GetFullPath(deniedPath)));
+
+		sut.Directory.CreateDirectory(allowedPath);
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.Directory.CreateDirectory(deniedPath);
+		});
+
+		await That(exception).IsExactly<UnauthorizedAccessException>();
+	}
+
+	[Test]
 	public async Task
 		WithAccessControlStrategy_OutsideWindows_ShouldThrowPlatformNotSupportedException()
 	{
@@ -420,6 +487,18 @@ public class MockFileSystemTests
 		});
 
 		await That(exception).IsExactly<DirectoryNotFoundException>();
+	}
+
+	private sealed class DummyAccessControlStrategy(string deniedPath) : IAccessControlStrategy
+	{
+		#region IAccessControlStrategy Members
+
+		/// <inheritdoc />
+		bool IAccessControlStrategy.IsAccessGranted(string fullPath,
+			IFileSystemExtensibility extensibility)
+			=> !string.Equals(fullPath, deniedPath, StringComparison.Ordinal);
+
+		#endregion
 	}
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE

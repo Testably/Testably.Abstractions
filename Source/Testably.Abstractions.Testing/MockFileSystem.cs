@@ -66,7 +66,7 @@ public sealed class MockFileSystem : IFileSystem
 	/// </summary>
 	public IWatcherTriggeredHandler Watcher => ChangeHandler;
 
-	internal IAccessControlStrategy AccessControlStrategy
+	internal AccessControlStrategy AccessControlStrategy
 	{
 		get;
 		private set;
@@ -227,6 +227,8 @@ public sealed class MockFileSystem : IFileSystem
 	///     <br />
 	///     - The full path of the file or directory as first parameter<br />
 	///     - The <see cref="Testably.Abstractions.Helpers.IFileSystemExtensibility" /> as second parameter
+	///     <para />
+	///     An <see cref="FileSystem.AccessControlStrategy" /> additionally receives the <see cref="AccessRequest" />.
 	/// </summary>
 	public MockFileSystem WithAccessControlStrategy(IAccessControlStrategy accessControlStrategy)
 	{
@@ -236,7 +238,8 @@ public sealed class MockFileSystem : IFileSystem
 				"Access control lists are only supported on Windows.");
 		}
 
-		AccessControlStrategy = accessControlStrategy;
+		AccessControlStrategy = accessControlStrategy as AccessControlStrategy
+		                        ?? new DefaultAccessControlStrategy(accessControlStrategy.IsAccessGranted);
 		return this;
 	}
 
