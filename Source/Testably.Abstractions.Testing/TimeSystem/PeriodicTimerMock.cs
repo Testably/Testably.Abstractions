@@ -82,9 +82,13 @@ internal sealed class PeriodicTimerMock : IPeriodicTimerMock
 			{
 				using IAwaitableCallback<DateTime> onTimeChanged = _timeSystem.On
 					.TimeChanged(predicate: _ => _timeSystem.TimeProvider.ElapsedTicks >= nextTime);
-				await onTimeChanged.WaitAsync(
-					timeout: Timeout.InfiniteTimeSpan,
-					cancellationToken: cancellationToken).ConfigureAwait(false);
+				if (_timeSystem.TimeProvider.ElapsedTicks < nextTime)
+				{
+					await onTimeChanged.WaitAsync(
+						timeout: Timeout.InfiniteTimeSpan,
+						cancellationToken: cancellationToken).ConfigureAwait(false);
+				}
+
 				_lastTime = _timeSystem.TimeProvider.ElapsedTicks;
 			}
 		}
