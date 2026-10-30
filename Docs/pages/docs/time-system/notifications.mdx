@@ -13,7 +13,7 @@ MockTimeSystem timeSystem = new();
 
 using var sleeps = timeSystem.On.ThreadSleep();
 
-DoWorkThatSleeps(timeSystem);
+new Gallery(timeSystem).CloseForTheNight(); // waits 5 seconds before switching off the lights
 
 TimeSpan[] requestedSleeps = sleeps.Wait(count: 1);
 await Expect.That(requestedSleeps[0]).IsEqualTo(TimeSpan.FromSeconds(5));

@@ -15,13 +15,13 @@ var fileSystem = new MockFileSystem();
 fileSystem
     .WithDrive("D:", d => d.SetTotalSize(1024 * 1024)) // 1 MiB total
     .InitializeIn("D:")
-    .WithFile("foo.txt")
-    .WithSubdirectory("sub-dir").Initialized(s => s
+    .WithFile("inventory.txt")
+    .WithSubdirectory("vault").Initialized(s => s
         .WithAFile(".json").Which(
-            f => f.HasStringContent("{\"count\":1}")));
+            f => f.HasStringContent("{\"artworks\":1}")));
 ```
 
-This adds a `D:` drive limited to 1 MiB and seeds it with an empty `foo.txt` and a sub-directory containing one randomly named JSON file.
+This adds a `D:` drive limited to 1 MiB and seeds it with an empty `inventory.txt` and a `vault` sub-directory containing one randomly named JSON file.
 
 ## Limiting the main drive
 
@@ -32,7 +32,7 @@ var fileSystem = new MockFileSystem();
 fileSystem.WithDrive(d => d.SetTotalSize(20));
 
 // Throws IOException - not enough space on the disk
-fileSystem.File.WriteAllText("foo", "some text longer than 20 bytes");
+fileSystem.File.WriteAllText("catalog.txt", "a catalogue longer than 20 bytes");
 ```
 
 When a drive runs out of space, every file operation that writes content throws `IOException`, exactly as on the real system.
@@ -46,18 +46,18 @@ IDriveInfo drive = fileSystem.GetDefaultDrive();
 
 await Expect.That(drive.AvailableFreeSpace).IsEqualTo(100);
 
-fileSystem.File.WriteAllText("foo.txt", "This is a text with 29 bytes.");
+fileSystem.File.WriteAllText("catalog.txt", "A catalogue entry of 29 bytes");
 await Expect.That(drive.AvailableFreeSpace).IsEqualTo(71);
 
-fileSystem.File.AppendAllText("foo.txt", "Another 17 bytes.");
+fileSystem.File.AppendAllText("catalog.txt", "And 17 more bytes");
 await Expect.That(drive.AvailableFreeSpace).IsEqualTo(54);
 
-void WriteTooMuch() => fileSystem.File.WriteAllBytes("bar.bin", new byte[90]);
+void WriteTooMuch() => fileSystem.File.WriteAllBytes("red-square.png", new byte[90]);
 await Expect.That(WriteTooMuch).Throws<IOException>();
 await Expect.That(drive.AvailableFreeSpace).IsEqualTo(54)
     .Because("the failed write did not consume space");
 
-fileSystem.File.Delete("foo.txt");
+fileSystem.File.Delete("catalog.txt");
 await Expect.That(drive.AvailableFreeSpace).IsEqualTo(100);
 ```
 
@@ -70,7 +70,7 @@ MockFileSystem fileSystem = new();
 fileSystem.WithUncDrive("build-server");
 
 fileSystem.Directory.CreateDirectory("//build-server/share");
-fileSystem.File.WriteAllText("//build-server/share/foo.txt", "hi");
+fileSystem.File.WriteAllText("//build-server/share/catalog.json", "[]");
 
 IDriveInfo drive = fileSystem.DriveInfo.New("//build-server");
 await Expect.That(drive.IsReady).IsTrue();

@@ -40,20 +40,20 @@ If you'd rather not introduce a build-time analyzer, swap the package and rewrit
    ```csharp
    // Before (TestableIO)
    var fileSystem = new MockFileSystem();
-   fileSystem.AddDirectory("some-directory");
-   fileSystem.AddFile("some-file.txt", new MockFileData("content"));
+   fileSystem.AddDirectory("artworks");
+   fileSystem.AddFile("artworks/red-square.txt", new MockFileData("Oil on canvas"));
 
    // After (Testably) - option A: imperative
    var fileSystem = new MockFileSystem();
-   fileSystem.Directory.CreateDirectory("some-directory");
-   fileSystem.File.WriteAllText("some-file.txt", "content");
+   fileSystem.Directory.CreateDirectory("artworks");
+   fileSystem.File.WriteAllText("artworks/red-square.txt", "Oil on canvas");
 
    // After (Testably) - option B: fluent initialization
    var fileSystem = new MockFileSystem();
    fileSystem.Initialize()
-       .WithSubdirectory("some-directory")
-       .WithFile("some-file.txt").Which(f => f
-           .HasStringContent("content"));
+       .WithSubdirectory("artworks").Initialized(d => d
+           .WithFile("red-square.txt").Which(f => f
+               .HasStringContent("Oil on canvas")));
    ```
 
 Production code keeps using `IFileSystem` exactly as before - no changes there.

@@ -15,8 +15,8 @@ You can seed a `MockFileSystem` declaratively (with descriptions), fluently (wit
 
 Both styles below create:
 
-- a directory `foo/` containing a sub-directory `bar/` and an empty file `bar.txt`
-- a file `foo.txt` with content `"some file content"`
+- a directory `artworks/` containing a sub-directory `sketches/` and an empty file `red-square.png`
+- a file `about.txt` with content `"Welcome to the gallery"`
 
 <Tabs groupId="initializationStyle">
 <TabItem value="declarative" label="Declarative" default>
@@ -24,10 +24,10 @@ Both styles below create:
 ```csharp
 var fileSystem = new MockFileSystem();
 fileSystem.Initialize().With(
-    new DirectoryDescription("foo",
-        new DirectoryDescription("bar"),
-        new FileDescription("bar.txt")),
-    new FileDescription("foo.txt", "some file content"));
+    new DirectoryDescription("artworks",
+        new DirectoryDescription("sketches"),
+        new FileDescription("red-square.png")),
+    new FileDescription("about.txt", "Welcome to the gallery"));
 ```
 
 `FileDescription` also accepts binary content and can mark a file read-only:
@@ -35,8 +35,8 @@ fileSystem.Initialize().With(
 ```csharp
 var fileSystem = new MockFileSystem();
 fileSystem.Initialize().With(
-    new FileDescription("data.bin", new byte[] { 1, 2, 3 }),
-    new FileDescription("config.json", "{ \"x\": 1 }") { IsReadOnly = true });
+    new FileDescription("blue-circles.png", new byte[] { 0x89, 0x50, 0x4E, 0x47 }),
+    new FileDescription("catalog.json", "[]") { IsReadOnly = true });
 ```
 
 </TabItem>
@@ -45,10 +45,10 @@ fileSystem.Initialize().With(
 ```csharp
 var fileSystem = new MockFileSystem();
 fileSystem.Initialize()
-    .WithSubdirectory("foo").Initialized(d => d
-        .WithSubdirectory("bar")
-        .WithFile("bar.txt"))
-    .WithFile("foo.txt").Which(f => f.HasStringContent("some file content"));
+    .WithSubdirectory("artworks").Initialized(d => d
+        .WithSubdirectory("sketches")
+        .WithFile("red-square.png"))
+    .WithFile("about.txt").Which(f => f.HasStringContent("Welcome to the gallery"));
 ```
 
 Use `HasStringContent(string)` or `HasBytesContent(byte[])` on the file manipulator to set content.
@@ -59,18 +59,18 @@ Use `HasStringContent(string)` or `HasBytesContent(byte[])` on the file manipula
 ## Initializing inside a specific directory
 
 ```csharp
-fileSystem.InitializeIn("current-directory")
+fileSystem.InitializeIn("gallery")
     .WithASubdirectory()
-    .WithSubdirectory("foo").Initialized(s => s
+    .WithSubdirectory("artworks").Initialized(s => s
         .WithAFile())
-    .WithFile("bar.txt");
+    .WithFile("about.txt");
 ```
 
-This sets `current-directory` as the working directory and seeds it with:
+This sets `gallery` as the working directory and seeds it with:
 
 - a randomly named sub-directory
-- a `foo/` sub-directory containing one randomly named file
-- a `bar.txt` file
+- an `artworks/` sub-directory containing one randomly named file
+- an `about.txt` file
 
 `WithASubdirectory()` / `WithAFile()` use generated names when you don't care about the exact value - useful for tests that operate over whatever they find. `WithAFile(string extension)` lets you constrain the random name to a specific extension.
 
@@ -80,7 +80,7 @@ This sets `current-directory` as the working directory and seeds it with:
 
 ```csharp
 fileSystem.Initialize()
-    .WithSubdirectories("a/b/c", "x/y", "logs");
+    .WithSubdirectories("artworks/sketches/2026", "vault/restricted", "exports");
 ```
 
 Creates each path (and any missing parents) in one call.
@@ -95,11 +95,11 @@ Creates each path (and any missing parents) in one call.
 
 ```csharp
 var init = fileSystem.Initialize()
-    .WithFile("foo.txt")
-    .WithSubdirectory("bar");
+    .WithFile("catalog.json")
+    .WithSubdirectory("artworks");
 
-var foo = (IFileInfo)init[0];
-var bar = (IDirectoryInfo)init[1];
+var catalog = (IFileInfo)init[0];
+var artworks = (IDirectoryInfo)init[1];
 ```
 
 ## Seeding from a real directory
@@ -107,7 +107,7 @@ var bar = (IDirectoryInfo)init[1];
 ```csharp
 fileSystem.InitializeFromRealDirectory("test-data");
 // or copy the source directory into a different target on the mock:
-fileSystem.InitializeFromRealDirectory(@"C:\fixtures\sample-project", "project");
+fileSystem.InitializeFromRealDirectory(@"C:\fixtures\sample-collection", "collection");
 ```
 
 Recursively copies every file and sub-directory from the real path into the mock, preserving creation/last-write/last-access time and attributes. With large fixtures this can be slow - prefer it for small, hand-curated test data.
@@ -117,13 +117,13 @@ Recursively copies every file and sub-directory from the real path into the mock
 ```csharp
 fileSystem.InitializeEmbeddedResourcesFromAssembly(
     directoryPath: "fixtures",
-    assembly: typeof(MyTests).Assembly,
+    assembly: typeof(GalleryTests).Assembly,
     relativePath: "TestData",
     searchPattern: "*.json",
     searchOption: SearchOption.AllDirectories);
 ```
 
-Materializes embedded resources as files inside the mock. Resource names are split on the last `.` to recover an extension (e.g. `MyTests.TestData.users.json` becomes `fixtures/users.json`). `relativePath` filters which resources are included; `searchPattern` and `searchOption` work like `Directory.EnumerateFiles`.
+Materializes embedded resources as files inside the mock. Resource names are split on the last `.` to recover an extension (e.g. `GalleryTests.TestData.artworks.json` becomes `fixtures/artworks.json`). `relativePath` filters which resources are included; `searchPattern` and `searchOption` work like `Directory.EnumerateFiles`.
 
 ## Skipping the implicit temp directory
 
@@ -135,7 +135,7 @@ fileSystem.Initialize(o => o.InitializeTempDirectory = false);
 
 ## Errors during initialization
 
-The fluent builders throw `TestingException` (in `Testably.Abstractions.Testing.Initializer`) when used incorrectly - for example calling `WithFile("foo")` twice in the same parent scope. Catch this type if you need to surface a friendly assertion in a custom helper.
+The fluent builders throw `TestingException` (in `Testably.Abstractions.Testing.Initializer`) when used incorrectly - for example calling `WithFile("catalog.json")` twice in the same parent scope. Catch this type if you need to surface a friendly assertion in a custom helper.
 
 ## Real file system: temporary directory with auto-cleanup
 
@@ -144,7 +144,7 @@ For integration tests that hit the real disk, `SetCurrentDirectoryToEmptyTempora
 ```csharp
 IFileSystem fileSystem = new RealFileSystem();
 using IDirectoryCleaner cleaner =
-    fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory(prefix: "MyTests-");
+    fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory(prefix: "GalleryTests-");
 
 // fileSystem.Directory.GetCurrentDirectory() is now an empty temp directory
 // On dispose: the directory is force-deleted (read-only flag and all)
@@ -157,7 +157,7 @@ If you need a temporary directory but want to leave `Directory.GetCurrentDirecto
 ```csharp
 IFileSystem fileSystem = new RealFileSystem();
 using IDirectoryCleaner cleaner =
-    fileSystem.CreateEmptyTemporaryDirectory(prefix: "MyTests-");
+    fileSystem.CreateEmptyTemporaryDirectory(prefix: "GalleryTests-");
 
 // fileSystem.Directory.GetCurrentDirectory() is unchanged
 // Use cleaner.BasePath to access the empty temp directory

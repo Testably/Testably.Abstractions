@@ -89,27 +89,27 @@ MockFileSystem fileSystem = new MockFileSystem(o => o
         .SimulatingOperatingSystem(SimulationMode.Linux))
     .WithUnixFileModeStrategy(strategy);
 
-// "alice" creates a directory readable only by its group "editors"
-strategy.SimulateUser("alice").SimulateGroup("editors");
-fileSystem.Directory.CreateDirectory("foo", UnixFileMode.GroupRead);
+// "alice" creates a directory readable only by the group "curators"
+strategy.SimulateUser("alice").SimulateGroup("curators");
+fileSystem.Directory.CreateDirectory("restoration", UnixFileMode.GroupRead);
 
-// "bob" (also "editors") can read it
-strategy.SimulateUser("bob").SimulateGroup("editors");
-fileSystem.Directory.GetFiles("foo"); // no exception
+// "bob" (also a curator) can read it
+strategy.SimulateUser("bob").SimulateGroup("curators");
+fileSystem.Directory.GetFiles("restoration"); // no exception
 
 // switch to a different group → read denied
-strategy.SimulateGroup("guests");
-fileSystem.Directory.GetFiles("foo"); // throws UnauthorizedAccessException
+strategy.SimulateGroup("visitors");
+fileSystem.Directory.GetFiles("restoration"); // throws UnauthorizedAccessException
 ```
 
 ### Asserting denial
 
 ```csharp
 strategy.SimulateUser("alice");
-fileSystem.Directory.CreateDirectory("private", UnixFileMode.UserWrite);
+fileSystem.Directory.CreateDirectory("vault", UnixFileMode.UserWrite);
 
 strategy.SimulateUser("bob");
-Action act = () => fileSystem.Directory.CreateDirectory("private/sub");
+Action act = () => fileSystem.Directory.CreateDirectory("vault/drafts");
 
 await Expect.That(act).Throws<UnauthorizedAccessException>();
 ```

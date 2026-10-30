@@ -41,7 +41,7 @@ Generator<int> g2 = new[] { 1, 2, 3 };
 Generator<int> g3 = Generator.FromCallback(() => DateTime.Now.Millisecond);
 
 // From any IEnumerable (loops once exhausted)
-Generator<Guid> g4 = Generator.FromEnumerable(MyKnownGuids);
+Generator<Guid> g4 = Generator.FromEnumerable(catalogNumbers);
 ```
 
 If you have a `Generator<T>` directly, `g.GetNext()` returns the next value - useful when you build the generator yourself outside a `MockRandomSystem` (e.g. for parameterised test-data generation).

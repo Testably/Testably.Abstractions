@@ -12,16 +12,16 @@ Every method is positionless: the offset is a parameter, not state carried on th
 
 ```csharp
 MockFileSystem fileSystem = new();
-fileSystem.File.WriteAllBytes("data.bin", [1, 2, 3, 4]);
+fileSystem.File.WriteAllBytes("red-square.png", [1, 2, 3, 4]);
 
-using SafeFileHandle handle = fileSystem.File.OpenHandle("data.bin",
+using SafeFileHandle handle = fileSystem.File.OpenHandle("red-square.png",
     FileMode.Open, FileAccess.ReadWrite);
 
 byte[] buffer = new byte[2];
 fileSystem.RandomAccess.Read(handle, buffer, fileOffset: 1);   // buffer is [2, 3]
 
 fileSystem.RandomAccess.Write(handle, new byte[] { 9 }, fileOffset: 0);
-await Expect.That(fileSystem.File.ReadAllBytes("data.bin"))
+await Expect.That(fileSystem.File.ReadAllBytes("red-square.png"))
     .IsEqualTo(new byte[] { 9, 2, 3, 4 });
 ```
 
@@ -54,12 +54,12 @@ Get the handle from [`IFile.OpenHandle`](./safe-file-handles), so the file syste
 
 ```csharp
 MockFileSystem fileSystem = new();
-fileSystem.File.WriteAllText("log", null);
+fileSystem.File.WriteAllText("guard-rounds.log", null);
 
-using (SafeFileHandle handle = fileSystem.File.OpenHandle("log",
+using (SafeFileHandle handle = fileSystem.File.OpenHandle("guard-rounds.log",
     FileMode.Open, FileAccess.Write))
 {
-    fileSystem.RandomAccess.Write(handle, "entry"u8.ToArray(), 0);
+    fileSystem.RandomAccess.Write(handle, "round"u8.ToArray(), 0);
     fileSystem.RandomAccess.FlushToDisk(handle);
 }
 

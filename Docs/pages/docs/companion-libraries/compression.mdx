@@ -20,7 +20,7 @@ dotnet add package Testably.Abstractions.Compression
 
 ```csharp
 // With Testably.Abstractions.Compression - one line:
-fileSystem.ZipFile.CreateFromDirectory("source", "out.zip");
+fileSystem.ZipFile.CreateFromDirectory("artworks", "artworks.zip");
 ```
 
 <details>
@@ -30,7 +30,7 @@ fileSystem.ZipFile.CreateFromDirectory("source", "out.zip");
 using MemoryStream buffer = new();
 using (ZipArchive archive = new(buffer, ZipArchiveMode.Create, leaveOpen: true))
 {
-    AddDirectory("", "source");
+    AddDirectory("", "artworks");
 
     void AddDirectory(string prefix, string directory)
     {
@@ -49,7 +49,7 @@ using (ZipArchive archive = new(buffer, ZipArchiveMode.Create, leaveOpen: true))
     }
 }
 buffer.Position = 0;
-using FileSystemStream output = fileSystem.File.Create("out.zip");
+using FileSystemStream output = fileSystem.File.Create("artworks.zip");
 buffer.CopyTo(output);
 ```
 
@@ -69,13 +69,13 @@ On `RealFileSystem`, every call forwards to the matching `System.IO.Compression`
 
 ```csharp
 fileSystem.ZipFile
-    .CreateFromDirectory("your-directory", "your-file.zip");
+    .CreateFromDirectory("artworks", "artworks.zip");
 
 fileSystem.ZipFile
-    .ExtractToDirectory("your-file.zip", "your-destination");
+    .ExtractToDirectory("artworks.zip", "vault");
 
 using IZipArchive archive = fileSystem.ZipFile
-    .Open("your-file.zip", ZipArchiveMode.Update);
+    .Open("artworks.zip", ZipArchiveMode.Update);
 ```
 
 All overloads from the BCL are present, including the async variants on .NET 10+ (`CreateFromDirectoryAsync`, `ExtractToDirectoryAsync`, `OpenAsync`, `OpenReadAsync`).
@@ -85,7 +85,7 @@ All overloads from the BCL are present, including the async variants on .NET 10+
 `fileSystem.ZipArchive` is a factory for `IZipArchive` from a `Stream` (matches the `new ZipArchive(...)` constructors):
 
 ```csharp
-using FileSystemStream stream = fileSystem.File.OpenRead("your-file.zip");
+using FileSystemStream stream = fileSystem.File.OpenRead("artworks.zip");
 using IZipArchive archive = fileSystem.ZipArchive
     .New(stream, ZipArchiveMode.Read);
 

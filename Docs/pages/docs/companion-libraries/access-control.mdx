@@ -29,11 +29,11 @@ Each `GetAccessControl` overload accepts an optional `AccessControlSections` mas
 ```csharp
 IFileSystem fileSystem; // injected
 
-DirectorySecurity acl = fileSystem.Directory.GetAccessControl("data");
-fileSystem.Directory.SetAccessControl("backup", acl);
+DirectorySecurity acl = fileSystem.Directory.GetAccessControl("archive");
+fileSystem.Directory.SetAccessControl("vault", acl);
 
-fileSystem.File.WriteAllText("secret.txt", "x");
-FileSecurity fileAcl = fileSystem.File.GetAccessControl("secret.txt");
+fileSystem.File.WriteAllText("provenance.txt", "");
+FileSecurity fileAcl = fileSystem.File.GetAccessControl("provenance.txt");
 ```
 
 ## Behaviour on the mock

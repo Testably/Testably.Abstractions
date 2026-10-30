@@ -1,0 +1,116 @@
+---
+sidebar_position: 5.5
+title: A complete example
+description: One gallery service, tested with the mocked file system, time system and random system together.
+---
+
+# A complete example
+
+When an exhibition closes, the gallery moves its artworks into the vault. The `ExhibitionArchiver` below does that, and depends on all three abstractions:
+
+- `IFileSystem` to move the exhibition folder and write a note,
+- `ITimeSystem` to decide whether the exhibition has closed,
+- `IRandomSystem` to generate the archive number.
+
+```csharp title="ExhibitionArchiver.cs"
+public record Exhibition(string Folder, DateTime ClosesAt);
+
+public class ExhibitionArchiver(
+    IFileSystem fileSystem, ITimeSystem timeSystem, IRandomSystem randomSystem)
+{
+    public string? ArchiveIfClosed(Exhibition exhibition)
+    {
+        if (timeSystem.DateTime.UtcNow < exhibition.ClosesAt)
+        {
+            return null;
+        }
+
+        string archiveNumber = randomSystem.Guid.NewGuid().ToString("N").Substring(0, 8);
+        string target = fileSystem.Path.Combine("vault", archiveNumber);
+
+        fileSystem.Directory.CreateDirectory("vault");
+        fileSystem.Directory.Move(exhibition.Folder, target);
+        fileSystem.File.WriteAllText(fileSystem.Path.Combine(target, "archived-at.txt"),
+            timeSystem.DateTime.UtcNow.ToString("O"));
+        return archiveNumber;
+    }
+}
+```
+
+In production, register `RealFileSystem`, `RealTimeSystem` and `RealRandomSystem` as shown in [Getting Started](./getting-started).
+
+## The tests
+
+The test class creates one mock of each system. The time system starts on the closing day of the exhibition, the random system returns a fixed `Guid`, and the file system contains the exhibition with two artworks:
+
+```csharp title="ExhibitionArchiverTests.cs"
+public class ExhibitionArchiverTests
+{
+    private static readonly DateTime ClosingDay = new(2026, 4, 15, 18, 0, 0, DateTimeKind.Utc);
+
+    private readonly MockFileSystem _fileSystem;
+    private readonly MockTimeSystem _timeSystem;
+    private readonly ExhibitionArchiver _sut;
+    private readonly Exhibition _exhibition = new("squares", ClosingDay);
+
+    public ExhibitionArchiverTests()
+    {
+        _timeSystem = new MockTimeSystem(ClosingDay.AddHours(-1));
+        // highlight-next-line
+        _fileSystem = new MockFileSystem(o => o.UseTimeSystem(_timeSystem));
+        _fileSystem.Initialize()
+            .WithSubdirectory("squares").Initialized(d => d
+                .WithFile("red-square.png")
+                .WithFile("yellow-square.png"));
+
+        MockRandomSystem randomSystem = new(RandomProvider.Generate(
+            guidGenerator: Guid.Parse("a1b2c3d4-0000-0000-0000-000000000000")));
+        _sut = new ExhibitionArchiver(_fileSystem, _timeSystem, randomSystem);
+    }
+
+    [Fact]
+    public async Task ArchiveIfClosed_WhileOpen_ShouldNotTouchTheFileSystem()
+    {
+        string? archiveNumber = _sut.ArchiveIfClosed(_exhibition);
+
+        await Expect.That(archiveNumber).IsNull();
+        await Expect.That(_fileSystem.Statistics.TotalCount).IsEqualTo(0)
+            .Because("seeding with Initialize() is not recorded in the statistics");
+    }
+
+    [Fact]
+    public async Task ArchiveIfClosed_AfterClosing_ShouldMoveTheArtworksIntoTheVault()
+    {
+        _timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromHours(2));
+
+        string? archiveNumber = _sut.ArchiveIfClosed(_exhibition);
+
+        await Expect.That(archiveNumber).IsEqualTo("a1b2c3d4");
+        await Expect.That(_fileSystem.Directory.Exists("squares")).IsFalse();
+        await Expect.That(_fileSystem.Directory.GetFiles("vault/a1b2c3d4").Select(Path.GetFileName))
+            .IsEqualTo(new[] { "archived-at.txt", "red-square.png", "yellow-square.png" }).InAnyOrder();
+        await Expect.That(_fileSystem.File.ReadAllText("vault/a1b2c3d4/archived-at.txt"))
+            .IsEqualTo("2026-04-15T19:00:00.0000000Z");
+    }
+
+    [Fact]
+    public async Task ArchiveIfClosed_WhenTheVaultIsFull_ShouldKeepTheExhibition()
+    {
+        _timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromHours(2));
+        // highlight-next-line
+        _fileSystem.Intercept.Creating(FileSystemTypes.Directory,
+            _ => throw new IOException("The vault is full."));
+
+        void Act() => _sut.ArchiveIfClosed(_exhibition);
+
+        await Expect.That(Act).Throws<IOException>().WithMessage("The vault is full.");
+        await Expect.That(_fileSystem.Directory.GetFiles("squares")).HasCount(2);
+    }
+}
+```
+
+What each mock contributes:
+
+- **[Time system](./time-system):** the test starts an hour before closing and moves the clock with `AdvanceBy`, instead of waiting or depending on today's date. The `MockFileSystem` shares the same clock via `UseTimeSystem`, so file timestamps match the simulated time.
+- **[Random system](./random-system/deterministic-randomness):** the fixed `Guid` makes the archive number predictable, so the test can assert the exact target folder.
+- **[File system](./file-system):** [`Initialize()`](./file-system/initialization) seeds the exhibition, [`Statistics`](./file-system/statistics) proves that nothing happened while the exhibition was open, and [`Intercept`](./file-system/intercept-and-notify) simulates a full vault without filling a real disk.

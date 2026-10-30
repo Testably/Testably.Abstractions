@@ -72,7 +72,7 @@ Implement `ITimeProvider` directly when you need something more interesting than
 Wrap your provider in a factory and pass it in:
 
 ```csharp
-ITimeProviderFactory factory = new MyTimeProviderFactory(...);
+ITimeProviderFactory factory = new GalleryClockFactory(...);
 MockTimeSystem timeSystem = new(factory);
 ```
 
@@ -86,7 +86,7 @@ Pass an existing `MockTimeSystem` into a `MockFileSystem` so file-system timesta
 MockTimeSystem timeSystem = new(new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 MockFileSystem fileSystem = new(o => o.UseTimeSystem(timeSystem));
 
-fileSystem.File.WriteAllText("a.txt", "hi");
-DateTime created = fileSystem.File.GetCreationTimeUtc("a.txt");
+fileSystem.File.WriteAllText("catalog.json", "[]");
+DateTime created = fileSystem.File.GetCreationTimeUtc("catalog.json");
 // created is anchored to 2026-01-01
 ```
