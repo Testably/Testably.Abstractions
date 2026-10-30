@@ -235,9 +235,9 @@ internal sealed class TimerMock : ITimerMock
 	}
 
 	#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
-	private async Task RunTimer(CancellationToken cancellationToken = default)
+	private async Task RunTimer(long startTicks, CancellationToken cancellationToken = default)
 	{
-		long nextPlannedExecution = _mockTimeSystem.TimeProvider.ElapsedTicks + _dueTime.Ticks;
+		long nextPlannedExecution = startTicks + _dueTime.Ticks;
 
 		if (_dueTime.TotalMilliseconds < 0)
 		{
@@ -330,6 +330,9 @@ internal sealed class TimerMock : ITimerMock
 		}
 
 		CancellationToken token = runningCancellationTokenSource.Token;
+		// Read the clock on the calling thread, as the due time is relative to the call; reading it
+		// on the background thread would miss a time change before that thread is scheduled.
+		long startTicks = _mockTimeSystem.TimeProvider.ElapsedTicks;
 		using ManualResetEventSlim startCreateTimerThreads = new();
 		_ = Task.Run(
 				async () =>
@@ -344,7 +347,7 @@ internal sealed class TimerMock : ITimerMock
 						// Ignore any ObjectDisposedException
 					}
 
-					await RunTimer(token).ConfigureAwait(false);
+					await RunTimer(startTicks, token).ConfigureAwait(false);
 				},
 				cancellationToken: token)
 			.ContinueWith(_ =>
