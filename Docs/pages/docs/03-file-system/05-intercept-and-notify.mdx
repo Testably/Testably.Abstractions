@@ -1,0 +1,94 @@
+---
+description: Abort file system operations before they complete, or wait for them after they completed.
+---
+
+# Intercept & notify
+
+`MockFileSystem` exposes three hooks for reacting to file system activity in tests:
+
+- **`Intercept`** runs **before** an operation completes and can throw to abort it.
+- **`Notify`** runs **after** an operation completes and supports awaiting the next event.
+- **`Watcher`** runs **after** the `IFileSystemWatcher` raised an event; see [FileSystemWatcher](./04-file-system-watcher.mdx#reacting-to-triggered-events-from-a-test).
+
+All three return an `IAwaitableCallback<T>` (with `T` being `ChangeDescription` for `Intercept` and `Notify`, and `WatcherChangeDescription` for `Watcher`):
+
+- `Dispose()` removes the subscription.
+- `Wait(int count = 1, TimeSpan? timeout = null)` blocks until `count` events arrived; defaults to a 30-second timeout.
+- `WaitAsync(...)` is the async counterpart and additionally accepts a `CancellationToken`.
+
+The time system's [notifications](../04-time-system/06-notifications.mdx) use the same `IAwaitableCallback<T>`.
+
+## Intercept: abort an operation
+
+```csharp
+MockFileSystem fileSystem = new();
+
+fileSystem.Intercept.Creating(FileSystemTypes.File,
+    _ => throw new IOException("The vault is full."),
+    globPattern: "*.png");
+
+fileSystem.File.WriteAllText("catalog.json", "[]");   // ok
+fileSystem.File.WriteAllBytes("red-square.png", []); // throws "The vault is full."
+```
+
+Useful for simulating disk errors, permission failures or race conditions.
+
+`IInterceptionHandler` exposes `Changing`, `Creating` and `Deleting` extensions. Each takes a `FileSystemTypes` (`File`, `Directory` or `DirectoryOrFile`), an optional `globPattern` (defaults to `"*"`) and an optional `predicate` for finer filtering.
+
+## Notify: await an event
+
+The examples below use the `CatalogService` from [Getting started](../01-getting-started.mdx#write-your-first-test), which writes `exports/catalog.json`.
+
+```csharp
+MockFileSystem fileSystem = new();
+
+using IAwaitableCallback<ChangeDescription> notify = fileSystem.Notify
+    .OnCreated(FileSystemTypes.File);
+
+new CatalogService(fileSystem).Export("[]");
+
+ChangeDescription[] events = notify.Wait(count: 1);
+await That(events[0].Path).EndsWith("catalog.json");
+```
+
+:::tip
+Register the callback first, then do the work, then call `Wait` (or `WaitAsync` in an async test). This is deterministic, unlike polling with `Task.Delay`.
+:::
+
+`OnChanged`, `OnCreated` and `OnDeleted` are all available, with the same `globPattern` / `predicate` filters as `Intercept`.
+
+## Events that happened before subscribing
+
+`OnEventOrReplay` works like `OnEvent`, but also replays the matching changes that happened before the subscription, in their original order. That helps when the work is already done by the time the test can subscribe:
+
+```csharp
+MockFileSystem fileSystem = new();
+new CatalogService(fileSystem).Export("[]");
+
+using IAwaitableCallback<ChangeDescription> notify = fileSystem.Notify.OnEventOrReplay(
+    predicate: c => c.ChangeType == WatcherChangeTypes.Created
+                    && c.FileSystemType == FileSystemTypes.File);
+
+ChangeDescription[] events = notify.Wait(count: 1);
+await That(events[0].Path).EndsWith("catalog.json");
+```
+
+`fileSystem.Watcher.OnTriggeredOrReplay(...)` does the same for watcher events. The history is recorded by default; `new MockFileSystem(o => o.WithoutNotificationHistory())` turns it off, and both methods then throw `InvalidOperationException`.
+
+## Streaming events
+
+:::info[.NET 6 or later]
+`ToAsyncEnumerable` is only available on .NET 6 and later.
+:::
+
+You can stream the same callback as an async sequence:
+
+```csharp
+await foreach (ChangeDescription change in
+    fileSystem.Notify.OnCreated(FileSystemTypes.File).ToAsyncEnumerable())
+{
+    // process every file creation as it happens
+}
+```
+
+The sequence ends without an exception after 30 seconds, so the loop cannot hang forever. Pass an explicit `timeout` (`TimeSpan?` or `int` milliseconds) or a `CancellationToken` to end it earlier or later.

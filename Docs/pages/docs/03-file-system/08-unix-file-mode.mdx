@@ -1,0 +1,114 @@
+---
+description: Simulate POSIX users, groups and permissions in the MockFileSystem.
+---
+
+# Unix file mode
+
+To simulate POSIX permissions in the mock, plug in an `IUnixFileModeStrategy` via `WithUnixFileModeStrategy(...)`. Without one, the mock grants access to every entry whose `UnixFileMode` is not `None`.
+
+The strategy decides:
+
+- whether a given user/group is allowed to read or write a path (`IsAccessGranted`)
+- what to record when the file mode is set, for example by `File.SetUnixFileMode(...)` (`OnSetUnixFileMode`)
+
+A typical implementation stores the file's user and group alongside the file via [`IFileSystemExtensibility`](./12-extensibility.mdx), then uses that data plus the file's `UnixFileMode` to decide whether to grant access. When access is denied, the mock throws `UnauthorizedAccessException`.
+
+:::warning[Not on Windows]
+`WithUnixFileModeStrategy` throws `PlatformNotSupportedException` when the host (or simulated OS) is Windows. On a Windows machine, [simulate Linux or macOS](./02-simulating-os.mdx).
+:::
+
+## Example: simulating users and groups
+
+The strategy below is not part of the library; copy and adapt it. It lets a test simulate "running as user X in group Y" via fluent setters and records the simulated user and group as the owner whenever the mode of an entry is set. It grants read access when:
+
+- the mode includes `OtherRead`, **or**
+- the mode includes `GroupRead` and the owner's group matches the simulated group, **or**
+- the mode includes `UserRead` and the owner matches the simulated user
+
+The same rules apply to write access with the `*Write` flags.
+
+<details>
+<summary>`SimulatedUserStrategy`</summary>
+
+```csharp
+public class SimulatedUserStrategy : IUnixFileModeStrategy
+{
+    private string _user = "";
+    private string _group = "";
+
+    public SimulatedUserStrategy SimulateUser(string user)   { _user = user; return this; }
+    public SimulatedUserStrategy SimulateGroup(string group) { _group = group; return this; }
+
+    public void OnSetUnixFileMode(string fullPath,
+        IFileSystemExtensibility extensibility, UnixFileMode mode)
+    {
+        // Record the simulated owner at the moment the file's mode was set
+        extensibility.StoreMetadata(nameof(SimulatedUserStrategy),
+            new UserGroup(_user, _group));
+    }
+
+    public bool IsAccessGranted(string fullPath,
+        IFileSystemExtensibility extensibility,
+        UnixFileMode mode, FileAccess requestedAccess)
+    {
+        UserGroup owner = extensibility
+            .RetrieveMetadata<UserGroup>(nameof(SimulatedUserStrategy))
+            ?? new UserGroup(_user, _group);
+
+        bool readOk =
+            mode.HasFlag(UnixFileMode.OtherRead) ||
+            (mode.HasFlag(UnixFileMode.GroupRead) && owner.Group == _group) ||
+            (mode.HasFlag(UnixFileMode.UserRead)  && owner.User  == _user);
+
+        bool writeOk =
+            mode.HasFlag(UnixFileMode.OtherWrite) ||
+            (mode.HasFlag(UnixFileMode.GroupWrite) && owner.Group == _group) ||
+            (mode.HasFlag(UnixFileMode.UserWrite)  && owner.User  == _user);
+
+        return requestedAccess switch
+        {
+            FileAccess.Read  => readOk,
+            FileAccess.Write => writeOk,
+            _                => readOk && writeOk,
+        };
+    }
+
+    private record UserGroup(string User, string Group);
+}
+```
+
+</details>
+
+### Wiring it into a test
+
+```csharp
+SimulatedUserStrategy strategy = new();
+MockFileSystem fileSystem = new MockFileSystem(o => o
+        .SimulatingOperatingSystem(SimulationMode.Linux))
+    .WithUnixFileModeStrategy(strategy);
+
+// "alice" creates a directory readable only by the group "curators"
+strategy.SimulateUser("alice").SimulateGroup("curators");
+fileSystem.Directory.CreateDirectory("restoration", UnixFileMode.GroupRead);
+
+// "bob" (also a curator) can read it
+strategy.SimulateUser("bob").SimulateGroup("curators");
+fileSystem.Directory.GetFiles("restoration"); // no exception
+
+// switch to a different group → read denied
+strategy.SimulateGroup("visitors");
+fileSystem.Directory.GetFiles("restoration"); // throws UnauthorizedAccessException
+```
+
+### Asserting denial
+
+```csharp
+strategy.SimulateUser("alice");
+fileSystem.Directory.CreateDirectory("vault", UnixFileMode.UserWrite);
+
+strategy.SimulateUser("bob");
+Action act = () => fileSystem.Directory.CreateDirectory("vault/drafts");
+
+await That(act).Throws<UnauthorizedAccessException>();
+```
+

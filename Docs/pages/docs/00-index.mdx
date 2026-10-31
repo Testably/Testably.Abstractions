@@ -1,0 +1,107 @@
+---
+description: Injectable abstractions for the file system, time and randomness in .NET, with in-memory mocks for tests.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Testably.Abstractions
+
+`Testably.Abstractions` provides injectable abstractions for the static parts of the .NET base class library (BCL), namely the file system, time and randomness, with feature-complete in-memory mocks for tests.
+
+## Inject. Mock. Test.
+
+Depend on `IFileSystem`, `ITimeSystem` and `IRandomSystem` in production. Swap in the in-memory mocks for tests: deterministic, cross-platform, no temp folders or `Thread.Sleep`.
+
+<Tabs groupId="testablyAbstractionsSample">
+<TabItem value="file" label="File system" default>
+
+```csharp title="CatalogService.cs"
+public class CatalogService(IFileSystem fileSystem)
+{
+    public void Export(string json)
+    {
+        fileSystem.Directory.CreateDirectory("exports");
+        fileSystem.File.WriteAllText("exports/catalog.json", json);
+    }
+}
+```
+
+```csharp title="CatalogServiceTests.cs"
+[Test]
+public async Task Export_WritesCatalogToExportsFolder()
+{
+    MockFileSystem fileSystem = new();
+    CatalogService sut = new(fileSystem);
+
+    sut.Export("""{ "title": "Red Square" }""");
+
+    await That(fileSystem.File.ReadAllText("exports/catalog.json"))
+        .IsEqualTo("""{ "title": "Red Square" }""");
+}
+```
+
+</TabItem>
+<TabItem value="time" label="Time system">
+
+```csharp title="Exhibition.cs"
+public class Exhibition(ITimeSystem timeSystem, DateTime closesAt)
+{
+    public bool IsOpen => timeSystem.DateTime.UtcNow < closesAt;
+}
+```
+
+```csharp title="ExhibitionTests.cs"
+[Test]
+public async Task IsOpen_ReturnsFalse_AfterClosingDate()
+{
+    MockTimeSystem timeSystem = new(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc));
+    Exhibition sut = new(timeSystem, closesAt: new DateTime(2026, 4, 15, 0, 0, 0, DateTimeKind.Utc));
+
+    timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromDays(60));
+
+    await That(sut.IsOpen).IsFalse();
+}
+```
+
+</TabItem>
+<TabItem value="random" label="Random system">
+
+```csharp title="ArtworkOfTheDay.cs"
+public class ArtworkOfTheDay(IRandomSystem randomSystem, string[] artworks)
+{
+    public string Pick() => artworks[randomSystem.Random.Shared.Next(artworks.Length)];
+}
+```
+
+```csharp title="ArtworkOfTheDayTests.cs"
+[Test]
+public async Task Pick_ReturnsTheArtworkAtTheRandomIndex()
+{
+    MockRandomSystem randomSystem = new(RandomProvider.Generate(intGenerator: 1));
+    ArtworkOfTheDay sut = new(randomSystem, ["Red Square", "Blue Circles", "Yellow Lines"]);
+
+    await That(sut.Pick()).IsEqualTo("Blue Circles");
+}
+```
+
+</TabItem>
+</Tabs>
+
+## Why Testably.Abstractions?
+
+`Testably.Abstractions` shares the `IFileSystem` interface with [TestableIO.System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions), so your **production code does not change** when you switch testing libraries. What you get on top:
+
+- Advanced testing scenarios: `FileSystemWatcher`, `SafeFileHandle`, multiple drives with size limits.
+- Cross-platform simulation: run a Linux file system on Windows (and vice versa) to exercise platform-specific behavior from a single CI job.
+- A second abstraction layer for time and randomness.
+
+See [Migration from TestableIO](/Abstractions/migration-from-testableio/) if you are already using TestableIO.
+
+## Where to go next
+
+- **[Getting started](./01-getting-started.mdx)**: install the packages and wire them up.
+- **[A complete example](./02-complete-example.mdx)**: one gallery service tested with all three abstractions.
+- **[File system](/Abstractions/file-system/)**, **[Time system](/Abstractions/time-system/)**, **[Random system](/Abstractions/random-system/)**: explore each abstraction.
+- **[Companion libraries](/Abstractions/companion-libraries/)**: ZIP, ACL and memory-mapped file helpers.
+- **[aweXpect.Testably](/aweXpect/extensions/aweXpect.Testably/)**: expectations for the file system and time system mocks.
