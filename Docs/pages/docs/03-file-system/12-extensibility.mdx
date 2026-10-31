@@ -1,0 +1,45 @@
+---
+description: Attach custom metadata to entries of the MockFileSystem when writing strategies or extension methods.
+---
+
+# Extensibility
+
+`IFileSystemExtensibility` is the hook that custom strategies (ACL, Unix file mode) use to attach extra data to the mock without bloating the public `IFileSystem` surface.
+
+:::note
+You only need `IFileSystemExtensibility` when you write a custom strategy or extension method. Day-to-day test code never touches it.
+:::
+
+```csharp
+public interface IFileSystemExtensibility
+{
+    T? RetrieveMetadata<T>(string key);
+    void StoreMetadata<T>(string key, T? value);
+    bool TryGetWrappedInstance<T>(out T? wrappedInstance);
+}
+```
+
+Any `IFileSystemInfo` (or `FileSystemStream`) on the mock can be cast to `IFileSystemExtensibility` to:
+
+- **Store arbitrary metadata** keyed by a string. Survives for the lifetime of the file/directory entry.
+- **Retrieve it back later** in a strategy callback or another part of the test.
+- **Unwrap the underlying real instance** when the abstraction happens to point at the real file system. `TryGetWrappedInstance<FileInfo>(out FileInfo? fileInfo)` returns `true` and the actual `System.IO.FileInfo` only on `RealFileSystem`.
+
+A typical pattern in a strategy:
+
+```csharp
+public bool IsAccessGranted(string fullPath,
+    IFileSystemExtensibility extensibility,
+    UnixFileMode mode, FileAccess requestedAccess)
+{
+    string? owner = extensibility.RetrieveMetadata<string>("owner");
+    return CheckPermissions(mode, owner, requestedAccess);
+}
+
+public void OnSetUnixFileMode(string fullPath,
+    IFileSystemExtensibility extensibility, UnixFileMode mode)
+{
+    extensibility.StoreMetadata("mode", mode);
+    extensibility.StoreMetadata("owner", CurrentUser);
+}
+```

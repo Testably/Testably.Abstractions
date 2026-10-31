@@ -1,0 +1,163 @@
+---
+description: Seed a MockFileSystem declaratively, fluently, from a real directory or from embedded resources.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Initialization
+
+You can seed a `MockFileSystem` declaratively (with descriptions), fluently (with a builder), or by copying data in from outside the test.
+
+## Declarative or fluent
+
+Both styles below create:
+
+- a directory `artworks/` containing a sub-directory `sketches/` and an empty file `red-square.png`
+- a file `about.txt` with content `"Welcome to the gallery"`
+
+<Tabs groupId="initializationStyle">
+<TabItem value="declarative" label="Declarative" default>
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.Initialize().With(
+    new DirectoryDescription("artworks",
+        new DirectoryDescription("sketches"),
+        new FileDescription("red-square.png")),
+    new FileDescription("about.txt", "Welcome to the gallery"));
+```
+
+`FileDescription` also accepts binary content and can mark a file read-only:
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.Initialize().With(
+    new FileDescription("blue-circles.png", new byte[] { 0x89, 0x50, 0x4E, 0x47 }),
+    new FileDescription("catalog.json", "[]") { IsReadOnly = true });
+```
+
+</TabItem>
+<TabItem value="fluent" label="Fluent">
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.Initialize()
+    .WithSubdirectory("artworks").Initialized(d => d
+        .WithSubdirectory("sketches")
+        .WithFile("red-square.png"))
+    .WithFile("about.txt").Which(f => f.HasStringContent("Welcome to the gallery"));
+```
+
+Use `HasStringContent(string)` or `HasBytesContent(byte[])` on the file manipulator to set content.
+
+</TabItem>
+</Tabs>
+
+## Initializing inside a specific directory
+
+```csharp
+fileSystem.InitializeIn("gallery")
+    .WithASubdirectory()
+    .WithSubdirectory("artworks").Initialized(s => s
+        .WithAFile())
+    .WithFile("about.txt");
+```
+
+This sets `gallery` as the working directory and seeds it with:
+
+- a randomly named sub-directory
+- an `artworks/` sub-directory containing one randomly named file
+- an `about.txt` file
+
+`WithASubdirectory()` / `WithAFile()` use generated names when you don't care about the exact value, which is useful for tests that operate over whatever they find. `WithAFile(string extension)` lets you constrain the random name to a specific extension.
+
+`InitializeIn(absolutePath)` automatically registers the corresponding drive on Windows when the path is rooted.
+
+## Bulk subdirectories
+
+```csharp
+fileSystem.Initialize()
+    .WithSubdirectories("artworks/sketches/2026", "vault/restricted", "exports");
+```
+
+Creates each path (and any missing parents) in one call.
+
+## Accessing what was created
+
+`Initialize()` returns an `IFileSystemInitializer<TFileSystem>` exposing:
+
+- `BaseDirectory`: the `IDirectoryInfo` of the seed root
+- `FileSystem`: the underlying file system
+- `this[int index]`: the created entries in the order they were added
+
+```csharp
+IFileSystemInitializer<MockFileSystem> init = fileSystem.Initialize()
+    .WithFile("catalog.json")
+    .WithSubdirectory("artworks");
+
+IFileInfo catalog = (IFileInfo)init[0];
+IDirectoryInfo artworks = (IDirectoryInfo)init[1];
+```
+
+## Seeding from a real directory
+
+```csharp
+fileSystem.InitializeFromRealDirectory("test-data");
+// or copy the source directory into a different target on the mock:
+fileSystem.InitializeFromRealDirectory(@"C:\fixtures\sample-collection", "collection");
+```
+
+Recursively copies every file and sub-directory from the real path into the mock, preserving creation/last-write/last-access time and attributes. With large fixtures this can be slow, so prefer it for small, hand-curated test data.
+
+## Seeding from embedded resources
+
+```csharp
+fileSystem.InitializeEmbeddedResourcesFromAssembly(
+    directoryPath: "fixtures",
+    assembly: typeof(GalleryTests).Assembly,
+    relativePath: "TestData",
+    searchPattern: "*.json",
+    searchOption: SearchOption.AllDirectories);
+```
+
+Materializes embedded resources as files inside the mock. Resource names are split on the last `.` to recover an extension (e.g. `GalleryTests.TestData.artworks.json` becomes `fixtures/artworks.json`). `relativePath` filters which resources are included; `searchPattern` and `searchOption` work like `Directory.EnumerateFiles`.
+
+## Skipping the implicit temp directory
+
+By default, `Initialize()` and `InitializeIn()` also materialize the system temp directory inside the mock, so code that calls `Path.GetTempPath()` finds something there. Pass an options callback to opt out:
+
+```csharp
+fileSystem.Initialize(o => o.InitializeTempDirectory = false);
+```
+
+## Errors during initialization
+
+The fluent builders throw `TestingException` (in `Testably.Abstractions.Testing.Initializer`) when used incorrectly, for example when calling `WithFile("catalog.json")` twice in the same parent scope. Catch this type if you need to surface a friendly assertion in a custom helper.
+
+## Real file system: temporary directory with auto-cleanup
+
+For integration tests that hit the real disk, `SetCurrentDirectoryToEmptyTemporaryDirectory` creates a fresh temp directory, switches `Directory.GetCurrentDirectory()` to it, and force-deletes everything when the returned `IDirectoryCleaner` is disposed:
+
+```csharp
+IFileSystem fileSystem = new RealFileSystem();
+using IDirectoryCleaner cleaner =
+    fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory(prefix: "GalleryTests-");
+
+// fileSystem.Directory.GetCurrentDirectory() is now an empty temp directory
+// On dispose: the directory is force-deleted (read-only flag and all)
+```
+
+The `prefix` parameter makes leftovers easier to spot in `%TEMP%` if cleanup ever fails. The optional `logger` parameter receives diagnostic messages (e.g. retry attempts when antivirus holds a file open).
+
+If you need a temporary directory but want to leave `Directory.GetCurrentDirectory()` untouched, use `CreateEmptyTemporaryDirectory` instead. It behaves identically (same `prefix` and `logger` parameters, same force-delete on dispose) but does not change the current directory:
+
+```csharp
+IFileSystem fileSystem = new RealFileSystem();
+using IDirectoryCleaner cleaner =
+    fileSystem.CreateEmptyTemporaryDirectory(prefix: "GalleryTests-");
+
+// fileSystem.Directory.GetCurrentDirectory() is unchanged
+// Use cleaner.BasePath to access the empty temp directory
+// On dispose: the directory is force-deleted (read-only flag and all)
+```

@@ -1,0 +1,39 @@
+---
+description: Assert which file system methods and properties the code under test used.
+---
+
+# Statistics
+
+`MockFileSystem.Statistics` records every call made through the mock: which property was accessed, which method was invoked, with what arguments. Use it to assert *what* a system under test did, not just what it produced.
+
+```csharp
+MockFileSystem fileSystem = new();
+
+fileSystem.File.WriteAllText("catalog.json", "[]");
+fileSystem.File.ReadAllText("catalog.json");
+
+IFileSystemStatistics stats = fileSystem.Statistics;
+await That(stats.TotalCount).IsEqualTo(2);
+await That(stats.File.Methods).Contains(m => m.Name == nameof(IFile.WriteAllText));
+```
+
+## What is recorded
+
+`IFileSystemStatistics` exposes one property per `IFileSystem` sub-property (`Directory`, `DirectoryInfo`, `DriveInfo`, `File`, `FileInfo`, `FileStream`, `FileSystemWatcher`, `FileVersionInfo`, `Path` and `RandomAccess`).
+
+Each of them has `Methods` and `Properties` collections. An entry carries the call's name, its parameters and a global `Counter` that tells the order of the calls.
+
+The properties for types created by a factory (`DirectoryInfo`, `DriveInfo`, `FileInfo`, `FileStream`, `FileSystemWatcher`, `FileVersionInfo`) also have an indexer keyed by path: `stats.FileInfo["catalog.json"]` returns just the calls made on the `IFileInfo` for that path:
+
+```csharp
+_ = fileSystem.FileInfo.New("catalog.json").Exists;
+
+await That(stats.FileInfo["catalog.json"].Properties)
+    .Contains(p => p.Name == nameof(IFileInfo.Exists));
+```
+
+`TotalCount` returns the sum across every sub-property, which is handy for "did anything touch the file system at all?" assertions.
+
+## What is *not* recorded
+
+Calls inside the testing helpers themselves (`Initialize`, `InitializeFromRealDirectory`, `SetCurrentDirectoryToEmptyTemporaryDirectory`, …) are excluded from the statistics so seeding does not pollute your assertions.

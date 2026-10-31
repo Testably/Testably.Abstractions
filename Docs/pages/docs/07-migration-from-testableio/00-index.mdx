@@ -1,0 +1,57 @@
+---
+description: Switch the tests from TestableIO.System.IO.Abstractions.TestingHelpers to Testably.Abstractions.Testing.
+---
+
+# Migration from TestableIO
+
+`Testably.Abstractions` and [TestableIO.System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions) share the **same** `IFileSystem` interface, so production code does not need to change when you switch testing libraries.
+
+## When to use which
+
+The shared `IFileSystem` interface means production code is identical either way; this choice only affects tests. The core differentiator: `Testably.Abstractions` runs its full test suite against both `MockFileSystem` and `RealFileSystem` on every supported OS and against each `SimulationMode`, so the mock and the real OS stay in lock-step over time.
+
+Pick **Testably.Abstractions** when you need a watcher, `SafeFileHandle`, multiple drives with size quotas, the `ITimeSystem` / `IRandomSystem` companions, or you want to exercise Linux/macOS/Windows behavior from a single CI job. Pick **TestableIO.System.IO.Abstractions** when you're already using its `MockFileData` / `MockDirectoryData` to inspect or mutate the in-memory store directly; that surface has no equivalent here.
+
+## How to migrate
+
+The migration only affects your **test** projects. There are two paths; pick one.
+
+### Automated (recommended)
+
+The [`Testably.Abstractions.Migration`](/Abstractions/migration-from-testableio/Migration/) analyzer rewrites the supported call sites for you. Install it alongside `Testably.Abstractions.Testing`, apply the code fix from your IDE or `dotnet format analyzers`, then uninstall it. Patterns it cannot rewrite safely are still reported so you can address them by hand; see the [analyzer page](/Abstractions/migration-from-testableio/Migration/) for the full mapping table and recommended workflow.
+
+### Manual
+
+If you'd rather not introduce a build-time analyzer, swap the package and rewrite the call sites yourself.
+
+1. **Swap the package:**
+
+   ```xml
+   <!-- Remove -->
+   <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" />
+   <!-- Add -->
+   <PackageReference Include="Testably.Abstractions.Testing" />
+   ```
+
+2. **Update the test code:**
+
+   ```csharp
+   // Before (TestableIO)
+   MockFileSystem fileSystem = new();
+   fileSystem.AddDirectory("artworks");
+   fileSystem.AddFile("artworks/red-square.txt", new MockFileData("Oil on canvas"));
+
+   // After (Testably), option A: imperative
+   MockFileSystem fileSystem = new();
+   fileSystem.Directory.CreateDirectory("artworks");
+   fileSystem.File.WriteAllText("artworks/red-square.txt", "Oil on canvas");
+
+   // After (Testably), option B: fluent initialization
+   MockFileSystem fileSystem = new();
+   fileSystem.Initialize()
+       .WithSubdirectory("artworks").Initialized(d => d
+           .WithFile("red-square.txt").Which(f => f
+               .HasStringContent("Oil on canvas")));
+   ```
+
+Production code keeps using `IFileSystem` exactly as before; no changes there.

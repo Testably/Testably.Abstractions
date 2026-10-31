@@ -1,0 +1,27 @@
+---
+description: Return deterministic FileVersionInfo values for files in the MockFileSystem.
+---
+
+# FileVersionInfo
+
+`fileSystem.FileVersionInfo.GetVersionInfo(path)` mirrors `System.Diagnostics.FileVersionInfo.GetVersionInfo`. On the mock, the returned `IFileVersionInfo` has every field set to `null`/`false` by default, since the in-memory file has no PE header.
+
+To make a version-info-driven test deterministic, register a builder against a glob pattern with `MockFileSystem.WithFileVersionInfo(...)`:
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.WithFileVersionInfo("*.dll", v => v
+    .SetCompanyName("Abstract Arts")
+    .SetProductName("Gallery Kiosk")
+    .SetProductVersion("1.2.3.4")
+    .SetFileVersion("1.2.3.0")
+    .SetIsDebug(false));
+
+fileSystem.File.WriteAllText("Gallery.Kiosk.dll", "");
+
+IFileVersionInfo info = fileSystem.FileVersionInfo.GetVersionInfo("Gallery.Kiosk.dll");
+await That(info.CompanyName).IsEqualTo("Abstract Arts");
+await That(info.ProductVersion).IsEqualTo("1.2.3.4");
+```
+
+The glob pattern is matched against the file path; the *first* matching registration wins. The builder exposes a setter for every field on `IFileVersionInfo`: `Comments`, `CompanyName`, `FileDescription`, `FileVersion`, `InternalName`, `IsDebug`, `IsPatched`, `IsPreRelease`, `IsPrivateBuild`, `IsSpecialBuild`, `Language`, `LegalCopyright`, `LegalTrademarks`, `OriginalFilename`, `PrivateBuild`, `ProductName`, `ProductVersion`, `SpecialBuild`.

@@ -1,0 +1,15 @@
+---
+description: Optional packages that add compression, access control and memory-mapped files to IFileSystem.
+---
+
+# Companion libraries
+
+`Testably.Abstractions` ships three optional NuGet packages that extend `IFileSystem` with capabilities the base class library (BCL) keeps in separate namespaces.
+
+| Package                                  | Adds to `IFileSystem`                                              |
+|------------------------------------------|--------------------------------------------------------------------|
+| [`Testably.Abstractions.Compression`](./01-compression.mdx)             | `ZipFile` and `ZipArchive` extension properties                    |
+| [`Testably.Abstractions.AccessControl`](./02-access-control.mdx)        | `GetAccessControl` / `SetAccessControl` on files and directories   |
+| [`Testably.Abstractions.MemoryMappedFiles`](./03-memory-mapped-files.mdx)| `MemoryMappedFile` extension property                              |
+
+All packages target the `IFileSystem` interface, so they work transparently against either `RealFileSystem` or `MockFileSystem`.

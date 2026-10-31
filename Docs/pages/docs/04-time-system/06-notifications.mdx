@@ -1,0 +1,39 @@
+---
+description: Observe and wait for sleeps, delays, clock reads and timer ticks of the code under test.
+---
+
+# Notifications
+
+`MockTimeSystem.On` lets a test observe time-related events from the system under test, which is useful for asserting "the code asked to sleep for 5 seconds" without relying on side effects.
+
+```csharp
+MockTimeSystem timeSystem = new();
+
+using IAwaitableCallback<TimeSpan> sleeps = timeSystem.On.ThreadSleep();
+
+new Gallery(timeSystem).CloseForTheNight(); // waits 5 seconds before switching off the lights
+
+TimeSpan[] requestedSleeps = sleeps.Wait(count: 1);
+await That(requestedSleeps[0]).IsEqualTo(TimeSpan.FromSeconds(5));
+```
+
+Like the file-system [notifications](../03-file-system/05-intercept-and-notify.mdx), each method returns an `IAwaitableCallback<T>` you dispose to unsubscribe and `Wait`/`WaitAsync` to block until enough events arrive.
+
+## Available callbacks
+
+| Method on `On`     | Fires when                                              | `T`         |
+|--------------------|---------------------------------------------------------|-------------|
+| `DateTimeRead()`   | `DateTime.Now`, `UtcNow` or `Today` is read             | `DateTime`  |
+| `DateTimeOffsetRead()` | `DateTimeOffset.Now` or `UtcNow` is read            | `DateTimeOffset` |
+| `TaskDelay()`      | `Task.Delay` (any overload) is called                   | `TimeSpan`  |
+| `ThreadSleep()`    | `Thread.Sleep` (any overload) is called                 | `TimeSpan`  |
+| `TimeChanged()`    | the simulated time advanced (auto-advance or manual)    | `DateTime`  |
+| `PeriodicTimer.WaitingForNextTick()` | a `PeriodicTimer` is waiting for its next tick (.NET 8 or later) | `IPeriodicTimer` |
+
+Each accepts an optional `callback` (run synchronously when the event fires) and an optional `predicate` to filter events before they are recorded.
+
+```csharp
+// Only record sleeps longer than 1 second
+using IAwaitableCallback<TimeSpan> longSleeps = timeSystem.On.ThreadSleep(
+    predicate: ts => ts > TimeSpan.FromSeconds(1));
+```
