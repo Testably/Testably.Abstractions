@@ -5,13 +5,17 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=coverage)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 
-ACL extensions for [`Testably.Abstractions`](https://www.nuget.org/packages/Testably.Abstractions) - adds the methods from [`System.IO.FileSystemAclExtensions`](https://learn.microsoft.com/en-us/dotnet/api/system.io.filesystemaclextensions) to `IFileSystem`, so production code that reads or writes ACLs works against both the real and the mocked file system.
+ACL extensions for [`Testably.Abstractions`](https://www.nuget.org/packages/Testably.Abstractions): adds the methods from [`System.IO.FileSystemAclExtensions`](https://learn.microsoft.com/en-us/dotnet/api/system.io.filesystemaclextensions) to `IFileSystem`, so production code that reads or writes ACLs works against both the real and the mocked file system.
 
-```ps
+**Full documentation: [docs.testably.org/Abstractions/companion-libraries/access-control](https://docs.testably.org/Abstractions/companion-libraries/access-control)**
+
+## Installation
+
+```shell
 dotnet add package Testably.Abstractions.AccessControl
 ```
 
-**Full documentation: [docs.testably.org/Abstractions/companion-libraries/access-control](https://docs.testably.org/Abstractions/companion-libraries/access-control)**
+## Usage
 
 ```csharp
 IFileSystem fileSystem; // injected
