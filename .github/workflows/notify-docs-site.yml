@@ -4,15 +4,28 @@ on:
     workflow_run:
         workflows: [ "Build" ]
         types: [ completed ]
-        branches: [ main ]
     workflow_dispatch:
 
 jobs:
     dispatch:
-        if: (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+        if: (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && (github.event.workflow_run.head_branch == 'main' || startsWith(github.event.workflow_run.head_branch, 'v')))
         name: Trigger Site rebuild
         runs-on: ubuntu-latest
         steps:
+            -   name: Wait until the release is listed on NuGet
+                if: github.event_name == 'workflow_run' && startsWith(github.event.workflow_run.head_branch, 'v')
+                env:
+                    TAG: ${{ github.event.workflow_run.head_branch }}
+                run: |
+                    version="${TAG#v}"
+                    for attempt in $(seq 1 30); do
+                        if curl -fsS https://api.nuget.org/v3-flatcontainer/testably.abstractions/index.json | grep -qi "\"$version\""; then
+                            exit 0
+                        fi
+                        sleep 30
+                    done
+                    echo "Testably.Abstractions $version is not listed on NuGet after 15 minutes."
+                    exit 1
             -   name: Dispatch extension-documentation-updated-event to Testably/Testably.Site
                 uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4.0.1
                 with:
