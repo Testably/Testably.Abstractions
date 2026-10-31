@@ -350,6 +350,7 @@ namespace Testably.Abstractions.Testing.Initializer
         Testably.Abstractions.Testing.Initializer.IFileSystemInitializer<out TFileSystem> WithSubdirectories(params string[] paths);
         Testably.Abstractions.Testing.Initializer.IFileSystemDirectoryInitializer<out TFileSystem> WithSubdirectory(string directoryName);
     }
+    [System.Serializable]
     public class TestingException : System.Exception
     {
         protected TestingException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
