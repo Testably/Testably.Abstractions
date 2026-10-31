@@ -4,15 +4,13 @@ title: Memory-mapped files
 description: MemoryMappedFile on IFileSystem, so memory-mapped file code can be tested against the MockFileSystem.
 ---
 
-# Testably.Abstractions.MemoryMappedFiles
+import PackageInstall from '@site/src/components/PackageInstall';
 
-[![NuGet](https://img.shields.io/nuget/v/Testably.Abstractions.MemoryMappedFiles?label=NuGet&logo=nuget)](https://www.nuget.org/packages/Testably.Abstractions.MemoryMappedFiles)
+# Testably.Abstractions.MemoryMappedFiles
 
 Wraps `System.IO.MemoryMappedFiles.MemoryMappedFile` as a `MemoryMappedFile` extension property on `IFileSystem`, so memory-mapped-file code can be tested against the in-memory `MockFileSystem`.
 
-```powershell
-dotnet add package Testably.Abstractions.MemoryMappedFiles
-```
+<PackageInstall package="Testably.Abstractions.MemoryMappedFiles" />
 
 ## Why this package exists
 
