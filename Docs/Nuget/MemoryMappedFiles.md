@@ -5,13 +5,17 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=coverage)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 
-Memory-mapped file extensions for [`Testably.Abstractions`](https://www.nuget.org/packages/Testably.Abstractions) - adds the methods from `System.IO.MemoryMappedFiles.MemoryMappedFile` to `IFileSystem`, so memory-mapped-file code can be tested against the in-memory `MockFileSystem`.
+Memory-mapped file extensions for [`Testably.Abstractions`](https://www.nuget.org/packages/Testably.Abstractions): adds the methods from `System.IO.MemoryMappedFiles.MemoryMappedFile` to `IFileSystem`, so memory-mapped-file code can be tested against the in-memory `MockFileSystem`.
 
-```ps
+**Full documentation: [docs.testably.org/Abstractions/companion-libraries/memory-mapped-files](https://docs.testably.org/Abstractions/companion-libraries/memory-mapped-files)**
+
+## Installation
+
+```shell
 dotnet add package Testably.Abstractions.MemoryMappedFiles
 ```
 
-**Full documentation: [docs.testably.org/Abstractions/companion-libraries/memory-mapped-files](https://docs.testably.org/Abstractions/companion-libraries/memory-mapped-files)**
+## Usage
 
 ```csharp
 IFileSystem fileSystem; // injected

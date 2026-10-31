@@ -5,13 +5,17 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=coverage)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 
-Zip extensions for [`Testably.Abstractions`](https://www.nuget.org/packages/Testably.Abstractions) - adds the static methods from `System.IO.Compression.ZipFile` and `ZipArchive` to `IFileSystem`, so compression code can be tested against the in-memory `MockFileSystem`.
+Zip extensions for [`Testably.Abstractions`](https://www.nuget.org/packages/Testably.Abstractions): adds the static methods from `System.IO.Compression.ZipFile` and `ZipArchive` to `IFileSystem`, so compression code can be tested against the in-memory `MockFileSystem`.
 
-```ps
+**Full documentation: [docs.testably.org/Abstractions/companion-libraries/compression](https://docs.testably.org/Abstractions/companion-libraries/compression)**
+
+## Installation
+
+```shell
 dotnet add package Testably.Abstractions.Compression
 ```
 
-**Full documentation: [docs.testably.org/Abstractions/companion-libraries/compression](https://docs.testably.org/Abstractions/companion-libraries/compression)**
+## Usage
 
 ```csharp
 IFileSystem fileSystem; // injected
