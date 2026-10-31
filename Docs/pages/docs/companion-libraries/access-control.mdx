@@ -4,15 +4,13 @@ title: Access control
 description: GetAccessControl and SetAccessControl on IFileSystem, so ACL code runs against the real and the mocked file system.
 ---
 
-# Testably.Abstractions.AccessControl
+import PackageInstall from '@site/src/components/PackageInstall';
 
-[![NuGet](https://img.shields.io/nuget/v/Testably.Abstractions.AccessControl?label=NuGet&logo=nuget)](https://www.nuget.org/packages/Testably.Abstractions.AccessControl)
+# Testably.Abstractions.AccessControl
 
 Implements the methods from [`FileSystemAclExtensions`](https://learn.microsoft.com/en-us/dotnet/api/system.io.filesystemaclextensions) on the `IFileSystem` interface so production code that reads or writes ACLs works against both real and mocked file systems.
 
-```powershell
-dotnet add package Testably.Abstractions.AccessControl
-```
+<PackageInstall package="Testably.Abstractions.AccessControl" />
 
 ## What it adds
 
