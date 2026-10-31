@@ -1,0 +1,61 @@
+---
+description: IFileSystem abstracts System.IO; MockFileSystem is its in-memory implementation for tests.
+---
+
+import DocCardList from '@theme/DocCardList';
+
+# File system
+
+`IFileSystem` abstracts away every I/O type from `System.IO` so you can inject and replace it. The interface is **API-compatible** with [TestableIO.System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions): production code written against one library works with the other.
+
+## How the BCL maps onto the interface
+
+| Static / `new` in `System.IO`        | `IFileSystem` member                            |
+|--------------------------------------|-------------------------------------------------|
+| `File.ReadAllText("catalog.json")`   | `fileSystem.File.ReadAllText("catalog.json")`   |
+| `Directory.CreateDirectory("vault")` | `fileSystem.Directory.CreateDirectory("vault")` |
+| `Path.Combine("vault", "red-square.png")` | `fileSystem.Path.Combine("vault", "red-square.png")` |
+| `new FileInfo("catalog.json")`       | `fileSystem.FileInfo.New("catalog.json")`       |
+| `new DirectoryInfo("vault")`         | `fileSystem.DirectoryInfo.New("vault")`         |
+| `new FileStream(...)`                | `fileSystem.FileStream.New(...)`                |
+| `new FileSystemWatcher(...)`         | `fileSystem.FileSystemWatcher.New(...)`         |
+| `DriveInfo.GetDrives()`              | `fileSystem.DriveInfo.GetDrives()`              |
+| `FileVersionInfo.GetVersionInfo(...)`| `fileSystem.FileVersionInfo.GetVersionInfo(...)`|
+
+Static methods stay static on the sub-properties; constructors become factory methods (`New`). Everything else mirrors the framework one-to-one.
+
+## Implementations
+
+| Type             | Package                          | Use it for                  |
+|------------------|----------------------------------|-----------------------------|
+| `RealFileSystem` | `Testably.Abstractions`          | Production                  |
+| `MockFileSystem` | `Testably.Abstractions.Testing`  | Unit tests                  |
+
+`MockFileSystem` is the in-memory implementation of `IFileSystem` shipped in `Testably.Abstractions.Testing`. It implements every member of `IFileSystem` and is exercised by the same test suite as `RealFileSystem`: if a test passes against the real file system, it passes against the mock, and vice versa.
+
+```csharp
+IFileSystem fileSystem = new MockFileSystem();
+
+fileSystem.File.WriteAllText("red-square.txt", "Oil on canvas");
+string content = fileSystem.File.ReadAllText("red-square.txt"); // "Oil on canvas"
+```
+
+## Configuring the mock
+
+`MockFileSystem` accepts an options builder (`MockFileSystemOptions`):
+
+```csharp
+MockFileSystem fileSystem = new(o => o
+    .UseCurrentDirectory("/gallery")                   // sets CurrentDirectory to "/gallery"
+    .UseTimeSystem(timeSystem)                         // share an existing MockTimeSystem
+    .UseRandomProvider(randomProvider)                 // share an existing IRandomProvider
+    .SimulatingOperatingSystem(SimulationMode.Linux)); // simulate Linux semantics
+```
+
+`UseCurrentDirectory()` (no argument) seeds the mock with the host's actual working directory, useful when test code uses relative paths and you want them to resolve against the same place the real system would.
+
+The mock also exposes `MockFileSystem.TimeSystem` and `MockFileSystem.RandomSystem` if you didn't wire them in yourself. Use them to assert against the same instances the file system is using internally.
+
+## In this section
+
+<DocCardList />

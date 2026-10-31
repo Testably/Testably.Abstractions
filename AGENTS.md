@@ -34,6 +34,18 @@ Behaving like the real system is a must. The other goals are strong defaults and
 - Encoding and formatting: tabs, CRLF in the working tree (`.editorconfig`), LF in the index (`.gitattributes`). Most `.cs` files start with a UTF-8 BOM, some do not; keep each file's existing BOM state. PowerShell rewrites change it, so prefer targeted edits and check `git diff` for a changed first line (U+FEFF).
 - Do not add em-dashes to docs, XML docs or other Markdown.
 
+## Documentation
+
+Pages under `Docs/pages/docs` are published on docs.testably.org and follow the [docs style guide](https://github.com/Testably/Testably.Site/blob/main/Docs/style-guide.md). The key rules:
+
+- US English, sentence case for headings and labels, no em dashes, one line per paragraph.
+- A `description` in the front matter of every page; the H1 is the title; order with unique `NN-` prefixes.
+- Relative file links within the repository, site-absolute `/Library/...` links across libraries.
+- Install instructions only through `<PackageInstall package="..." />`, never hand-written commands or NuGet badges.
+- Examples check results with `await That(...)`; complete examples use TUnit `[Test]`.
+
+The site renames each `00-index.mdx` to `index.mdx` and rewrites relative links to it, so link to a folder's landing page like to any other file (e.g. `./03-file-system/00-index.mdx`). A folder's `_category_.json` sets only its `label`; the prefix orders it.
+
 ## Git workflow
 
 - Work on a feature branch and open a pull request against `main`; PRs are squash-merged and the PR title becomes the commit subject.

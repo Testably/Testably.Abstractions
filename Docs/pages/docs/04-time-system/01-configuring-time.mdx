@@ -1,0 +1,90 @@
+---
+description: Choose the start time and the local time zone of the MockTimeSystem, or plug in a custom time provider.
+---
+
+# Configuring time
+
+`MockTimeSystem` gets its current time from an `ITimeProvider`. Three factories cover most cases:
+
+```csharp
+// 1. Random instant per test (default, useful for catching tests that pass only "today")
+new MockTimeSystem();
+
+// 2. Pin to a specific instant (UTC if Kind is Unspecified)
+new MockTimeSystem(new DateTime(2026, 1, 15, 10, 0, 0, DateTimeKind.Utc));
+
+// 3. Use the host's current wall clock
+new MockTimeSystem(TimeProviderFactory.Now());
+```
+
+`TimeProviderFactory.Use(DateTime)`, `TimeProviderFactory.Random()` and `TimeProviderFactory.Now()` all return an `ITimeProviderFactory` you can pass to the `MockTimeSystem` constructor.
+
+## Local time zone
+
+`MockTimeSystem` exposes a controllable local time zone through `timeSystem.TimeZoneInfo` (an `ITimeZoneInfo`), and uses it to convert the simulated instant for `DateTime.Now`, `DateTime.Today` and `DateTimeOffset.Now`. This makes time-zone-dependent code deterministic instead of depending on the machine the test runs on.
+
+The factory picks the initial local time zone:
+
+```csharp
+// The parameterless constructor, Now() and Use(DateTime) default the local
+// time zone to the host's TimeZoneInfo.Local
+new MockTimeSystem();
+new MockTimeSystem(TimeProviderFactory.Now());
+
+// TimeProviderFactory.Random() also picks a random local time zone from a curated,
+// cross-platform set (including one with daylight-saving-time transitions)
+new MockTimeSystem(TimeProviderFactory.Random());
+
+// Pin both the instant and the local time zone
+TimeZoneInfo tokyo = TimeZoneInfo.CreateCustomTimeZone(
+    "Test/Tokyo", TimeSpan.FromHours(9), "Test JST", "Test JST");
+new MockTimeSystem(TimeProviderFactory.Use(
+    new DateTime(2026, 1, 15, 0, 0, 0, DateTimeKind.Utc), tokyo));
+```
+
+Change it at runtime (and register additional zones for `FindSystemTimeZoneById` / `GetSystemTimeZones`) through the time provider:
+
+```csharp
+MockTimeSystem timeSystem = new(
+    new DateTime(2026, 1, 15, 0, 0, 0, DateTimeKind.Utc));
+
+TimeZoneInfo tokyo = TimeZoneInfo.CreateCustomTimeZone(
+    "Test/Tokyo", TimeSpan.FromHours(9), "Test JST", "Test JST");
+timeSystem.TimeProvider.LocalTimeZone = tokyo;
+
+DateTime now = timeSystem.DateTime.Now;                   // 2026-01-15 09:00 (JST)
+DateTimeOffset offsetNow = timeSystem.DateTimeOffset.Now; // offset +09:00
+TimeZoneInfo local = timeSystem.TimeZoneInfo.Local;       // Test/Tokyo
+
+// RegisterTimeZone adds zones resolvable via FindSystemTimeZoneById / GetSystemTimeZones
+timeSystem.TimeProvider.RegisterTimeZone(tokyo);
+TimeZoneInfo resolved = timeSystem.TimeZoneInfo.FindSystemTimeZoneById("Test/Tokyo");
+```
+
+The registry is seeded from the host's `TimeZoneInfo.GetSystemTimeZones()`, so well-known ids keep resolving; setting `LocalTimeZone` registers that zone automatically.
+
+## Custom time providers
+
+Implement `ITimeProvider` directly when you need something more interesting than a single `DateTime`, for example a clock that ticks per virtual thread. See [Thread-aware time provider](./07-thread-aware-provider.mdx) for a worked example.
+
+Wrap your provider in a factory and pass it in:
+
+```csharp
+ITimeProviderFactory factory = new GalleryClockFactory(...);
+MockTimeSystem timeSystem = new(factory);
+```
+
+`ITimeProviderFactory` receives a callback that your provider must invoke whenever the simulated time changes; the [notifications](./06-notifications.mdx) and waiting timers depend on it.
+
+## Sharing the time system
+
+Pass an existing `MockTimeSystem` into a `MockFileSystem` so file-system timestamps and time-related assertions stay consistent:
+
+```csharp
+MockTimeSystem timeSystem = new(new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+MockFileSystem fileSystem = new(o => o.UseTimeSystem(timeSystem));
+
+fileSystem.File.WriteAllText("catalog.json", "[]");
+DateTime created = fileSystem.File.GetCreationTimeUtc("catalog.json");
+// created is anchored to 2026-01-01
+```

@@ -6,7 +6,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Testably_Testably.Abstractions)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Testably_Testably.Abstractions)
 
-Injectable abstractions for the static parts of the .NET base class library (BCL) - file system, time and randomness - with feature-complete in-memory mocks for tests.
+Injectable abstractions for the static parts of the .NET base class library (BCL), namely the file system, time and randomness, with feature-complete in-memory mocks for tests.
 
 **📖 Full documentation: [docs.testably.org/Abstractions](https://docs.testably.org/Abstractions/)**
 
@@ -24,27 +24,29 @@ public class ReportService(IFileSystem fileSystem)
 ```
 
 ```csharp
-[Fact]
+[Test]
 public async Task Save_WritesReportToReportsFolder()
 {
-    var fileSystem = new MockFileSystem();
-    var sut = new ReportService(fileSystem);
+    MockFileSystem fileSystem = new();
+    ReportService sut = new(fileSystem);
 
     sut.Save("<report />");
 
-    await Expect.That(fileSystem.File.ReadAllText("reports/latest.xml"))
+    await That(fileSystem.File.ReadAllText("reports/latest.xml"))
         .IsEqualTo("<report />");
 }
 ```
 
-## Install
+The test uses [TUnit](https://tunit.dev/) and [aweXpect](https://docs.testably.org/aweXpect/) (`using static aweXpect.Expect;`), but the mocks work with any test framework and assertion library.
 
-```ps
+## Installation
+
+```shell
 dotnet add package Testably.Abstractions
 dotnet add package Testably.Abstractions.Testing
 ```
 
-Then register the implementations in your DI container - see [Getting Started](https://docs.testably.org/Abstractions/getting-started).
+Then register the implementations in your DI container; see [Getting started](https://docs.testably.org/Abstractions/getting-started#register-the-abstractions).
 
 ## Packages
 
@@ -62,4 +64,4 @@ Then register the implementations in your DI container - see [Getting Started](h
 
 ## Contributing
 
-Issues and pull requests are welcome - see [CONTRIBUTING.md](CONTRIBUTING.md) and the [issue tracker](https://github.com/Testably/Testably.Abstractions/issues).
+Issues and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md) and the [issue tracker](https://github.com/Testably/Testably.Abstractions/issues).
