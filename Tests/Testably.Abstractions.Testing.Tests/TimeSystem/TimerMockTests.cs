@@ -366,6 +366,27 @@ public class TimerMockTests
 	}
 
 	[Test]
+	public async Task Callback_WhenAnotherCallbackBlocks_ShouldStillRun()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		using ManualResetEventSlim release = new();
+		TaskCompletionSource<bool> otherRan = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		using ITimer blocking = timeSystem.Timer.New(_ => release.Wait(TestContext.Current!.Execution.CancellationToken),
+			null, 1.Seconds(), Timeout.InfiniteTimeSpan);
+		using ITimer other = timeSystem.Timer.New(_ => otherRan.TrySetResult(true), null, 2.Seconds(),
+			Timeout.InfiniteTimeSpan);
+
+		Task advance = Task.Run(() => timeSystem.TimeProvider.AdvanceBy(3.Seconds()));
+		bool hasOtherRun = await Task.WhenAny(otherRan.Task,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == otherRan.Task;
+		release.Set();
+		await advance;
+
+		await That(hasOtherRun).IsTrue()
+			.Because("a blocked callback keeps its thread, so the next callback must run on another one");
+	}
+
+	[Test]
 	public async Task Change_Concurrently_ShouldNotKeepAnyScheduleAfterDispose()
 	{
 		for (int i = 0; i < 20; i++)

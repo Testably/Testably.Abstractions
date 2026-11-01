@@ -287,8 +287,9 @@ internal sealed class TimerScheduler
 		=> FiringCallback.Current?.Release();
 
 	/// <summary>
-	///     Runs the callback of the <paramref name="timer" /> on its own thread and waits until it completes, until it
-	///     waits for the clock (<see cref="ReleaseClock" />), or until it blocked for the <see cref="BlockedCallbackLimit" />.
+	///     Runs the callback of the <paramref name="timer" /> on a <see cref="CallbackThread" /> and waits until it
+	///     completes, until it waits for the clock (<see cref="ReleaseClock" />), or until it blocked for the
+	///     <see cref="BlockedCallbackLimit" />.
 	/// </summary>
 	/// <remarks>
 	///     The callback does not run on the thread pool, as the thread that waits for it often is a pool thread itself,
@@ -298,7 +299,8 @@ internal sealed class TimerScheduler
 	private static void Fire(ScheduledTimer timer)
 	{
 		FiringCallback firing = new();
-		Task callback = Task.Factory.StartNew(() =>
+		TaskCompletionSource<bool> completed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		CallbackThread.Run(() =>
 		{
 			FiringCallback.Current = firing;
 			firing.Started.TrySetResult(true);
@@ -309,11 +311,109 @@ internal sealed class TimerScheduler
 			finally
 			{
 				FiringCallback.Current = null;
+				completed.TrySetResult(true);
 			}
-		}, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+		});
 
 		firing.Started.Task.Wait();
-		Task.WaitAny([callback, firing.Released.Task,], BlockedCallbackLimit);
+		Task.WaitAny([completed.Task, firing.Released.Task,], BlockedCallbackLimit);
+	}
+
+	/// <summary>
+	///     A dedicated thread for timer callbacks, which is reused for the next callback once it is idle, so that a
+	///     callback neither waits for the thread pool nor pays for creating a thread.
+	/// </summary>
+	/// <remarks>
+	///     A new thread only starts when all callback threads are busy, e.g. blocked in a callback. The most recently
+	///     idle thread is reused first, so that the others stay idle and end after the <see cref="IdleLimit" />.
+	/// </remarks>
+	private sealed class CallbackThread
+	{
+		private static readonly TimeSpan IdleLimit = TimeSpan.FromSeconds(10);
+		private static readonly LinkedList<CallbackThread> Idle = new();
+		private readonly LinkedListNode<CallbackThread> _idleNode;
+		private readonly SemaphoreSlim _signal = new(0);
+		private Action? _work;
+
+		private CallbackThread()
+		{
+			_idleNode = new LinkedListNode<CallbackThread>(this);
+		}
+
+		/// <summary>
+		///     Runs the <paramref name="work" /> on an idle callback thread, or on a new one, when all are busy.
+		/// </summary>
+		/// <remarks>
+		///     A new thread does not capture the execution context of the code that starts it, as it outlives that code;
+		///     the timer runs its callback with the execution context of its creator.
+		/// </remarks>
+		public static void Run(Action work)
+		{
+			CallbackThread? callbackThread = null;
+			lock (Idle)
+			{
+				if (Idle.Last is { } node)
+				{
+					Idle.Remove(node);
+					callbackThread = node.Value;
+				}
+			}
+
+			if (callbackThread is null)
+			{
+				callbackThread = new CallbackThread();
+				Thread thread = new(callbackThread.Loop) { IsBackground = true, Name = "Testably timer callback", };
+				if (ExecutionContext.IsFlowSuppressed())
+				{
+					thread.Start();
+				}
+				else
+				{
+					using AsyncFlowControl _ = ExecutionContext.SuppressFlow();
+					thread.Start();
+				}
+			}
+
+			callbackThread._work = work;
+			callbackThread._signal.Release();
+		}
+
+		private void Loop()
+		{
+			while (true)
+			{
+				if (!_signal.Wait(IdleLimit))
+				{
+					lock (Idle)
+					{
+						if (_idleNode.List is not null)
+						{
+							Idle.Remove(_idleNode);
+							_signal.Dispose();
+							return;
+						}
+					}
+
+					continue;
+				}
+
+				Action work = _work!;
+				_work = null;
+				try
+				{
+					work();
+				}
+				catch (Exception)
+				{
+					// The timer reports the exception of its callback; nothing else must end the shared thread.
+				}
+
+				lock (Idle)
+				{
+					Idle.AddLast(_idleNode);
+				}
+			}
+		}
 	}
 
 	private void FireDue()
