@@ -33,6 +33,11 @@ public interface IFileInfo : IFileSystemInfo
 	/// <inheritdoc cref="FileInfo.Create()" />
 	FileSystemStream Create();
 
+#if FEATURE_FILESYSTEM_HARDLINK
+	/// <inheritdoc cref="FileInfo.CreateAsHardLink(string)" />
+	void CreateAsHardLink(string pathToTarget);
+#endif
+
 	/// <inheritdoc cref="FileInfo.CreateText()" />
 	StreamWriter CreateText();
 

@@ -52,6 +52,12 @@ internal sealed class FileInfoWrapper : FileSystemInfoWrapper, IFileInfo
 	public FileSystemStream Create()
 		=> new FileStreamWrapper(_instance.Create());
 
+#if FEATURE_FILESYSTEM_HARDLINK
+	/// <inheritdoc cref="IFileInfo.CreateAsHardLink(string)" />
+	public void CreateAsHardLink(string pathToTarget)
+		=> _instance.CreateAsHardLink(pathToTarget);
+#endif
+
 	/// <inheritdoc cref="IFileInfo.CreateText()" />
 	public StreamWriter CreateText()
 		=> _instance.CreateText();

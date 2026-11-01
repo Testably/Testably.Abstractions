@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
-#if FEATURE_FILESYSTEM_SAFEFILEHANDLE || FEATURE_FILESYSTEM_RANDOMACCESS
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE || FEATURE_FILESYSTEM_RANDOMACCESS || FEATURE_FILE_OPENNULLHANDLE
 using Microsoft.Win32.SafeHandles;
 #endif
 #if FEATURE_FILESYSTEM_ASYNC
@@ -149,6 +149,14 @@ internal sealed class FileWrapper : IFile
 	/// <inheritdoc cref="IFile.Create(string, int, FileOptions)" />
 	public FileSystemStream Create(string path, int bufferSize, FileOptions options)
 		=> new FileStreamWrapper(File.Create(path, bufferSize, options));
+
+#if FEATURE_FILESYSTEM_HARDLINK
+	/// <inheritdoc cref="IFile.CreateHardLink(string, string)" />
+	public IFileSystemInfo CreateHardLink(string path, string pathToTarget)
+		=> FileSystemInfoWrapper.FromFileSystemInfo(
+			File.CreateHardLink(path, pathToTarget),
+			FileSystem);
+#endif
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IFile.CreateSymbolicLink(string, string)" />
@@ -302,6 +310,12 @@ internal sealed class FileWrapper : IFile
 		FileOptions options = FileOptions.None,
 		long preallocationSize = 0)
 		=> File.OpenHandle(path, mode, access, share, options, preallocationSize);
+#endif
+
+#if FEATURE_FILE_OPENNULLHANDLE
+	/// <inheritdoc cref="IFile.OpenNullHandle()" />
+	public SafeFileHandle OpenNullHandle()
+		=> File.OpenNullHandle();
 #endif
 
 	/// <inheritdoc cref="IFile.OpenRead(string)" />

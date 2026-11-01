@@ -1,4 +1,7 @@
 ﻿using System;
+#if FEATURE_RANDOM_GENERIC
+using System.Numerics;
+#endif
 using Testably.Abstractions.RandomSystem;
 
 namespace Testably.Abstractions.Helpers;
@@ -69,6 +72,13 @@ public sealed class RandomWrapper : IRandom
 	public int Next(int minValue, int maxValue)
 		=> _instance.Next(minValue, maxValue);
 
+#if FEATURE_RANDOM_GENERIC
+	/// <inheritdoc cref="IRandom.NextBinaryFloat{T}()" />
+	public T NextBinaryFloat<T>()
+		where T : IBinaryFloatingPointIeee754<T>
+		=> _instance.NextBinaryFloat<T>();
+#endif
+
 	/// <inheritdoc cref="IRandom.NextBytes(byte[])" />
 	public void NextBytes(byte[] buffer)
 		=> _instance.NextBytes(buffer);
@@ -87,6 +97,27 @@ public sealed class RandomWrapper : IRandom
 	/// <inheritdoc cref="IRandom.NextInt64()" />
 	public long NextInt64()
 		=> _instance.NextInt64();
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	/// <inheritdoc cref="IRandom.NextInteger{T}()" />
+	public T NextInteger<T>()
+		where T : IBinaryInteger<T>, IMinMaxValue<T>
+		=> _instance.NextInteger<T>();
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	/// <inheritdoc cref="IRandom.NextInteger{T}(T)" />
+	public T NextInteger<T>(T maxValue)
+		where T : IBinaryInteger<T>
+		=> _instance.NextInteger(maxValue);
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	/// <inheritdoc cref="IRandom.NextInteger{T}(T, T)" />
+	public T NextInteger<T>(T minValue, T maxValue)
+		where T : IBinaryInteger<T>
+		=> _instance.NextInteger(minValue, maxValue);
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
