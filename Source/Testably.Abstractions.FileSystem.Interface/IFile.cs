@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 #endif
-#if FEATURE_FILESYSTEM_SAFEFILEHANDLE || FEATURE_FILESYSTEM_RANDOMACCESS
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE || FEATURE_FILESYSTEM_RANDOMACCESS || FEATURE_FILE_OPENNULLHANDLE
 using Microsoft.Win32.SafeHandles;
 #endif
 #if NETSTANDARD2_0 || NETSTANDARD2_1
@@ -120,6 +120,11 @@ public interface IFile : IFileSystemEntity
 
 	/// <inheritdoc cref="File.Create(string, int, FileOptions)" />
 	FileSystemStream Create(string path, int bufferSize, FileOptions options);
+
+#if FEATURE_FILESYSTEM_HARDLINK
+	/// <inheritdoc cref="File.CreateHardLink(string, string)" />
+	IFileSystemInfo CreateHardLink(string path, string pathToTarget);
+#endif
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="File.CreateSymbolicLink(string, string)" />
@@ -242,6 +247,11 @@ public interface IFile : IFileSystemEntity
 		FileShare share = FileShare.Read,
 		FileOptions options = FileOptions.None,
 		long preallocationSize = 0);
+#endif
+
+#if FEATURE_FILE_OPENNULLHANDLE
+	/// <inheritdoc cref="File.OpenNullHandle()" />
+	SafeFileHandle OpenNullHandle();
 #endif
 
 	/// <inheritdoc cref="File.OpenRead(string)" />
