@@ -8,7 +8,6 @@ using aweXpect.Results;
 using System;
 using System.IO;
 using System.Text;
-using static aweXpect.Delegates.ThatDelegate;
 
 namespace Testably.Abstractions.TestHelpers;
 
@@ -51,24 +50,17 @@ public static class AssertionHelpers
 	///     Verifies that the <paramref name="delegate" /> throws either a <see cref="FileNotFoundException" /> or
 	///     a <see cref="DirectoryNotFoundException" /> with their corresponding HResult values.
 	/// </summary>
-	public static ThatDelegateThrows<Exception> ThrowsAFileOrDirectoryNotFoundException(
+	public static ExpectationResult ThrowsAFileOrDirectoryNotFoundException(
 		this ThatDelegate.WithoutValue @delegate)
-	{
-		ThrowsOption? throwOptions = new();
-		return new ThatDelegateThrows<Exception>(
-			@delegate.Get().ExpectationBuilder.AddConstraint((it, grammars)
-					=> new DelegateIsNotNullWithinTimeoutConstraint(it, grammars, throwOptions))
-				.ForWhich<DelegateValue, Exception?>(d => d.Exception)
-				.AddConstraint((it, grammars)
-					=> new ThrowsAFileOrDirectoryNotFoundExceptionConstraint(it, grammars,
-						throwOptions))
-				.And(" "), throwOptions);
-	}
+		=> new(@delegate.Get().ExpectationBuilder.AddConstraint((it, grammars)
+				=> new DelegateIsNotNullConstraint(it, grammars))
+			.ForWhich<DelegateValue, Exception?>(d => d.Exception)
+			.AddConstraint((it, grammars)
+				=> new ThrowsAFileOrDirectoryNotFoundExceptionConstraint(it, grammars)));
 
-	private sealed class DelegateIsNotNullWithinTimeoutConstraint(
+	private sealed class DelegateIsNotNullConstraint(
 		string it,
-		ExpectationGrammars grammars,
-		ThrowsOption options)
+		ExpectationGrammars grammars)
 		: ConstraintResult(grammars),
 			IValueConstraint<DelegateValue>
 	{
@@ -91,13 +83,6 @@ public static class AssertionHelpers
 				return this;
 			}
 
-			if (options.ExecutionTimeOptions is not null &&
-			    !options.ExecutionTimeOptions.IsWithinLimit(value.Duration))
-			{
-				Outcome = Outcome.Failure;
-				return this;
-			}
-
 			Outcome = Outcome.Success;
 			return this;
 		}
@@ -110,15 +95,11 @@ public static class AssertionHelpers
 			{
 				stringBuilder.Append(it).Append(" was <null>");
 			}
-			else if (options.ExecutionTimeOptions is not null)
-			{
-				stringBuilder.Append(it).Append(" took ");
-				options.ExecutionTimeOptions.AppendFailureResult(stringBuilder, _actual.Duration);
-			}
 		}
 
-		public override ConstraintResult Negate()
-			=> this;
+		protected override void NegateInPlace()
+		{
+		}
 
 		public override bool TryGetStoredValue<TValue>(out TValue? value) where TValue : default
 		{
@@ -129,19 +110,19 @@ public static class AssertionHelpers
 
 	private sealed class ThrowsAFileOrDirectoryNotFoundExceptionConstraint(
 		string it,
-		ExpectationGrammars grammars,
-		ThrowsOption throwOptions)
+		ExpectationGrammars grammars)
 		: ConstraintResult(grammars),
 			IValueConstraint<Exception?>
 	{
 		private Exception? _actual;
+		private bool _doCheckThrow = true;
 
 		#region IValueConstraint<Exception?> Members
 
 		public override void AppendExpectation(StringBuilder stringBuilder,
 			string? indentation = null)
 		{
-			if (!throwOptions.DoCheckThrow)
+			if (!_doCheckThrow)
 			{
 				stringBuilder.Append("does not throw any exception");
 			}
@@ -150,12 +131,6 @@ public static class AssertionHelpers
 				stringBuilder.Append(
 					"throws a FileNotFoundException or a DirectoryNotFoundException with correct HResult");
 			}
-
-			if (throwOptions.ExecutionTimeOptions is not null)
-			{
-				stringBuilder.Append(' ');
-				throwOptions.ExecutionTimeOptions.AppendTo(stringBuilder, "in ");
-			}
 		}
 
 		/// <inheritdoc />
@@ -163,7 +138,7 @@ public static class AssertionHelpers
 		{
 			_actual = value;
 
-			if (!throwOptions.DoCheckThrow)
+			if (!_doCheckThrow)
 			{
 				FurtherProcessingStrategy = FurtherProcessingStrategy.IgnoreCompletely;
 				Outcome = value is null ? Outcome.Success : Outcome.Failure;
@@ -192,7 +167,7 @@ public static class AssertionHelpers
 
 		public override void AppendResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			if (throwOptions.DoCheckThrow && _actual is null)
+			if (_doCheckThrow && _actual is null)
 			{
 				stringBuilder.Append(it).Append(" did not throw any exception");
 			}
@@ -203,11 +178,8 @@ public static class AssertionHelpers
 			}
 		}
 
-		public override ConstraintResult Negate()
-		{
-			throwOptions.DoCheckThrow = !throwOptions.DoCheckThrow;
-			return this;
-		}
+		protected override void NegateInPlace()
+			=> _doCheckThrow = !_doCheckThrow;
 
 		public override bool TryGetStoredValue<TValue>(out TValue? value) where TValue : default
 		{

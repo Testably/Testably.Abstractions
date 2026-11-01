@@ -30,17 +30,11 @@ namespace Testably.Abstractions
         Testably.Abstractions.IMemoryMappedFile CreateNew(string? mapName, long capacity);
         Testably.Abstractions.IMemoryMappedFile CreateNew(string? mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access);
         Testably.Abstractions.IMemoryMappedFile CreateNew(string? mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access, System.IO.MemoryMappedFiles.MemoryMappedFileOptions options, System.IO.HandleInheritability inheritability);
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform]
         Testably.Abstractions.IMemoryMappedFile CreateOrOpen(string mapName, long capacity);
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform]
         Testably.Abstractions.IMemoryMappedFile CreateOrOpen(string mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access);
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform]
         Testably.Abstractions.IMemoryMappedFile CreateOrOpen(string mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access, System.IO.MemoryMappedFiles.MemoryMappedFileOptions options, System.IO.HandleInheritability inheritability);
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform]
         Testably.Abstractions.IMemoryMappedFile OpenExisting(string mapName);
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform]
         Testably.Abstractions.IMemoryMappedFile OpenExisting(string mapName, System.IO.MemoryMappedFiles.MemoryMappedFileRights desiredAccessRights);
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform]
         Testably.Abstractions.IMemoryMappedFile OpenExisting(string mapName, System.IO.MemoryMappedFiles.MemoryMappedFileRights desiredAccessRights, System.IO.HandleInheritability inheritability);
     }
     public interface IMemoryMappedViewAccessor : System.IDisposable, System.IO.Abstractions.IFileSystemEntity
