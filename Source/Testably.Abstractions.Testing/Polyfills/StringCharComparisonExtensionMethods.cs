@@ -1,4 +1,4 @@
-﻿#if !FEATURE_STRING_CHAR_COMPARISON
+﻿#if !NET11_0_OR_GREATER
 using System;
 using System.Diagnostics.CodeAnalysis;
 

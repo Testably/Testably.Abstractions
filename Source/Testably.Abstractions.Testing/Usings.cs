@@ -1,4 +1,4 @@
-﻿#if !FEATURE_STRING_CHAR_COMPARISON
+﻿#if !NET11_0_OR_GREATER
 global using Testably.Abstractions.Polyfills;
 #endif
 #if !NETSTANDARD2_0 && !NETSTANDARD2_1

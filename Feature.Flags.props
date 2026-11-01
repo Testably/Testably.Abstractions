@@ -50,7 +50,6 @@
 		<DefineConstants Condition="'$(IS_NET11_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILEINFO_OPEN_INVALIDATES</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET11_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESTREAM_ASYNC_ONLY_ON_WINDOWS</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET11_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_TIMER_DISPOSE_SIGNALS_ONLY_EVENTS_ON_UNIX</DefineConstants>
-		<DefineConstants Condition="'$(IS_NET11_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_STRING_CHAR_COMPARISON</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET11_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_RANDOM_GENERIC</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET11_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_COMPRESSION_ENCRYPTION</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET11_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_COMPRESSION_ENTRY_ACCESS</DefineConstants>	</PropertyGroup>
