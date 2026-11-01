@@ -33,7 +33,7 @@ internal sealed class TimerMock : ITimerMock
 	private Action? _onDispose;
 	private TimeSpan _period;
 	private readonly bool _autoAdvance;
-	private SchedulingTimeProvider.ScheduledTimer? _scheduled;
+	private TimerScheduler.ScheduledTimer? _scheduled;
 	private readonly object? _state;
 	private readonly TimerStrategy _timerStrategy;
 	private WaitHandshake? _waitHandshake;
@@ -260,7 +260,7 @@ internal sealed class TimerMock : ITimerMock
 		    (_state?.GetType() is { IsGenericType: true, } type &&
 		     type.GetGenericTypeDefinition() == WaitAsyncPromiseType));
 
-	private void Execute(SchedulingTimeProvider.ScheduledTimer scheduled, CancellationToken cancellationToken)
+	private void Execute(TimerScheduler.ScheduledTimer scheduled, CancellationToken cancellationToken)
 	{
 		if (!TryExecute(scheduled.DueTicks, cancellationToken))
 		{
@@ -313,7 +313,7 @@ internal sealed class TimerMock : ITimerMock
 			return false;
 		}
 
-		return Schedule(SchedulingTimeProvider.AddTicks(dueTicks, _period.Ticks), cancellationToken);
+		return Schedule(TimerScheduler.AddTicks(dueTicks, _period.Ticks), cancellationToken);
 	}
 
 	/// <summary>
@@ -336,8 +336,8 @@ internal sealed class TimerMock : ITimerMock
 
 	private bool Schedule(long dueTicks, CancellationToken cancellationToken)
 	{
-		SchedulingTimeProvider.ScheduledTimer? scheduled = null;
-		scheduled = new SchedulingTimeProvider.ScheduledTimer(dueTicks, _autoAdvance && !IsTimeout(),
+		TimerScheduler.ScheduledTimer? scheduled = null;
+		scheduled = new TimerScheduler.ScheduledTimer(dueTicks, _autoAdvance && !IsTimeout(),
 			() => Execute(scheduled!, cancellationToken));
 		lock (_lock)
 		{
@@ -362,7 +362,7 @@ internal sealed class TimerMock : ITimerMock
 			return;
 		}
 
-		Schedule(SchedulingTimeProvider.AddTicks(_mockTimeSystem.TimeProvider.ElapsedTicks, _dueTime.Ticks),
+		Schedule(TimerScheduler.AddTicks(_mockTimeSystem.TimeProvider.ElapsedTicks, _dueTime.Ticks),
 			token);
 	}
 
@@ -372,7 +372,7 @@ internal sealed class TimerMock : ITimerMock
 	/// </summary>
 	private void Stop(CancellationTokenSource? next = null)
 	{
-		SchedulingTimeProvider.ScheduledTimer? scheduled;
+		TimerScheduler.ScheduledTimer? scheduled;
 		lock (_lock)
 		{
 			try

@@ -13,7 +13,7 @@ public class TimerMockTests
 	[Test]
 	public async Task AdvanceBy_OnTheProviderOfACustomFactory_ShouldFireTheDueTimers()
 	{
-		ExposingTimeProviderFactory factory = new();
+		InterceptingTimeProviderFactory factory = new();
 		MockTimeSystem timeSystem = new(factory, o => o.DisableAutoAdvance());
 		DateTime start = timeSystem.DateTime.UtcNow;
 		TaskCompletionSource<DateTime> fired = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -651,7 +651,7 @@ public class TimerMockTests
 		InterceptingTimeProviderFactory factory = new();
 		MockTimeSystem timeSystem = new(factory, o => o.DisableAutoAdvance());
 		TaskCompletionSource<bool> fired = new(TaskCreationOptions.RunContinuationsAsynchronously);
-		factory.Provider!.OnNextRead = () => Task.Run(() => timeSystem.TimeProvider.AdvanceBy(2.Seconds())).Wait();
+		factory.Provider!.OnNextRead = () => Task.Run(() => timeSystem.Scheduler.AdvanceBy(2.Seconds())).Wait();
 
 		using ITimer timer = timeSystem.Timer.New(_ => fired.TrySetResult(true), null, 1.Seconds(),
 			Timeout.InfiniteTimeSpan);
@@ -772,6 +772,22 @@ public class TimerMockTests
 		await That(Volatile.Read(ref timerCount)).IsEqualTo(14);
 		cts.Cancel();
 		await timerTask;
+	}
+
+	[Test]
+	public async Task Sleep_WithTheProviderOfACustomFactory_ShouldFireTheTimerAtItsDueTime()
+	{
+		MockTimeSystem timeSystem = new(new InterceptingTimeProviderFactory());
+		DateTime start = timeSystem.DateTime.UtcNow;
+		DateTime? firedAt = null;
+		using CancellationTokenSource cts = new();
+		using ITimer timeout = timeSystem.Timer.New(_ => firedAt = timeSystem.DateTime.UtcNow, cts, 3.Seconds(),
+			Timeout.InfiniteTimeSpan);
+
+		timeSystem.Thread.Sleep(5.Seconds());
+
+		await That(firedAt).IsEqualTo(start + 3.Seconds())
+			.Because("the sleep moves a custom provider through the schedule as well");
 	}
 
 	[Test]
@@ -984,15 +1000,6 @@ public class TimerMockTests
 
 	private sealed class DummyWaitHandle : WaitHandle;
 
-	private sealed class ExposingTimeProviderFactory : ITimeProviderFactory
-	{
-		public ITimeProvider? Provider { get; private set; }
-
-		public ITimeProvider Create(Action<DateTime> onTimeChanged)
-			=> Provider = TimeProviderFactory.Use(new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc))
-				.Create(onTimeChanged);
-	}
-
 	private sealed class InterceptingTimeProviderFactory : ITimeProviderFactory
 	{
 		public InterceptingTimeProvider? Provider { get; private set; }
@@ -1004,8 +1011,9 @@ public class TimerMockTests
 	}
 
 	/// <summary>
-	///     Runs <see cref="OnNextRead" /> once on the next <see cref="Read" />, which scheduling a timer calls after it read
-	///     the clock and before it adds the timer to the schedule.
+	///     A provider that is not the built-in one, which runs <see cref="OnNextRead" /> once on the next
+	///     <see cref="Read" />, which scheduling a timer calls after it read the clock and before it adds the timer to the
+	///     schedule.
 	/// </summary>
 	private sealed class InterceptingTimeProvider(ITimeProvider inner) : ITimeProvider
 	{

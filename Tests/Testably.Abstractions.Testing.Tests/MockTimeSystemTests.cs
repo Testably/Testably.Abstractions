@@ -400,6 +400,17 @@ public class MockTimeSystemTests
 	}
 
 	[Test]
+	public async Task TimeProvider_ShouldBeTheProviderCreatedByTheFactory()
+	{
+		Testing.TimeSystem.ITimeProvider? created = null;
+		MockTimeSystem timeSystem = new(new TimeProviderFactory.Factory(onTimeChanged
+			=> created = TimeProviderFactory.Use(DateTime.UtcNow).Create(onTimeChanged)));
+
+		await That(timeSystem.TimeProvider).IsSameAs(created)
+			.Because("a custom provider must stay reachable through the mock time system");
+	}
+
+	[Test]
 	public async Task TimeProvider_StartTime_ShouldBeSetToInitialTime()
 	{
 		var now = TimeTestHelper.GetRandomTime(DateTimeKind.Utc);
