@@ -42,6 +42,8 @@ internal sealed class TimerScheduler
 #endif
 	private readonly SortedSet<ScheduledTimer> _advancingTimers = new(ScheduledTimer.DueTimeComparer);
 	private readonly ITimeProvider _clock;
+	private readonly object _creatingLock = new();
+	private int _creatingTimers;
 	private bool _isAdvancing;
 	private int _isFiringDuePending;
 #if NET9_0_OR_GREATER
@@ -116,6 +118,32 @@ internal sealed class TimerScheduler
 		lock (_advanceLock)
 		{
 			Step(() => _clock.SetTo(value));
+		}
+	}
+
+	/// <summary>
+	///     Marks that a timer is created, until <see cref="EndCreatingTimer" />, so that the timers that advance the clock
+	///     wait until its creator finished setting it up.
+	/// </summary>
+	public void BeginCreatingTimer()
+	{
+		lock (_creatingLock)
+		{
+			_creatingTimers++;
+		}
+	}
+
+	/// <summary>
+	///     Marks that a timer from <see cref="BeginCreatingTimer" /> is created.
+	/// </summary>
+	public void EndCreatingTimer()
+	{
+		lock (_creatingLock)
+		{
+			if (--_creatingTimers == 0)
+			{
+				Monitor.PulseAll(_creatingLock);
+			}
 		}
 	}
 
@@ -200,7 +228,7 @@ internal sealed class TimerScheduler
 
 		if (startAdvancing)
 		{
-			StartOnDedicatedThread(AdvanceToTheAdvancingTimers);
+			CallbackThread.Run(AdvanceToTheAdvancingTimers);
 		}
 		else if (timer.DueTicks <= _clock.ElapsedTicks)
 		{
@@ -231,6 +259,9 @@ internal sealed class TimerScheduler
 	/// <remarks>
 	///     An exception that a time change callback throws while the clock moves has no caller to report to, so it is
 	///     swallowed, unless the clock stopped moving, which would otherwise repeat it forever.
+	///     <para />
+	///     Before each step, it waits until no timer is being created, as a creator, e.g. of a delay, may cancel or
+	///     dispose its timer only once it holds it.
 	/// </remarks>
 	private void AdvanceToTheAdvancingTimers()
 	{
@@ -238,6 +269,7 @@ internal sealed class TimerScheduler
 		{
 			while (true)
 			{
+				WaitWhileCreatingTimers();
 				long targetTicks;
 				lock (_lock)
 				{
@@ -320,8 +352,9 @@ internal sealed class TimerScheduler
 	}
 
 	/// <summary>
-	///     A dedicated thread for timer callbacks, which is reused for the next callback once it is idle, so that a
-	///     callback neither waits for the thread pool nor pays for creating a thread.
+	///     A dedicated thread for timer callbacks and for the loops that fire them, which is reused for the next one once
+	///     it is idle, so that neither waits for the thread pool nor pays for creating a thread. Starting a loop then
+	///     does not block the code that schedules a timer until a new thread runs.
 	/// </summary>
 	/// <remarks>
 	///     A new thread only starts when all callback threads are busy, e.g. blocked in a callback. The most recently
@@ -429,17 +462,20 @@ internal sealed class TimerScheduler
 	{
 		if (Interlocked.Exchange(ref _isFiringDuePending, 1) == 0)
 		{
-			StartOnDedicatedThread(FireDue);
+			CallbackThread.Run(FireDue);
 		}
 	}
 
-	/// <summary>
-	///     Starts the <paramref name="action" />, which waits for timer callbacks, on its own thread instead of the thread
-	///     pool, so that it does not starve the callbacks it waits for of pool threads.
-	/// </summary>
-	private static void StartOnDedicatedThread(Action action)
-		=> _ = Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning,
-			TaskScheduler.Default);
+	private void WaitWhileCreatingTimers()
+	{
+		lock (_creatingLock)
+		{
+			while (_creatingTimers > 0)
+			{
+				Monitor.Wait(_creatingLock);
+			}
+		}
+	}
 
 	private void MoveTo(long ticks)
 	{

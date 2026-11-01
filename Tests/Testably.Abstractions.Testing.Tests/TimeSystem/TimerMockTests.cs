@@ -344,6 +344,27 @@ public class TimerMockTests
 	}
 
 	[Test]
+	public async Task AutoAdvance_WhileATimerIsCreated_ShouldNotMoveTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+		TaskCompletionSource<bool> fired = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		timeSystem.Scheduler.BeginCreatingTimer();
+		using ITimer timer = timeSystem.Timer.New(_ => fired.TrySetResult(true), null, 1.Seconds(),
+			Timeout.InfiniteTimeSpan);
+
+		Thread.Sleep(50);
+		DateTime whileCreating = timeSystem.DateTime.UtcNow;
+		timeSystem.Scheduler.EndCreatingTimer();
+		bool isFired = await Task.WhenAny(fired.Task,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == fired.Task;
+
+		await That(whileCreating).IsEqualTo(start)
+			.Because("the creator of a timer can finish setting it up, e.g. for its cancellation, before the clock moves");
+		await That(isFired).IsTrue();
+	}
+
+	[Test]
 	public async Task Callback_ShouldRunOnAnotherThreadWithTheExecutionContextOfTheCreator()
 	{
 		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
