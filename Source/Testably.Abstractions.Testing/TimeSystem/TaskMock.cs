@@ -73,7 +73,6 @@ internal sealed class TaskMock : ITask
 			return Task.CompletedTask;
 		}
 
-		TimerScheduler.ReleaseClock();
 		return DelayUntilAdvanced(delay, cancellationToken);
 	}
 
@@ -92,6 +91,7 @@ internal sealed class TaskMock : ITask
 	{
 		bool isInfinite = delay.TotalMilliseconds < 0;
 		long targetTicks = _mockTimeSystem.TimeProvider.ElapsedTicks + delay.Ticks;
+		TimerScheduler.ReleaseClock();
 
 		while (true)
 		{
