@@ -27,10 +27,10 @@ internal sealed class TimerMock : ITimerMock
 	private TimeSpan _period;
 	private readonly bool _autoAdvance;
 	private readonly object? _state;
-	private readonly ITimerStrategy _timerStrategy;
+	private readonly TimerStrategy _timerStrategy;
 
 	internal TimerMock(MockTimeSystem timeSystem,
-		ITimerStrategy timerStrategy,
+		TimerStrategy timerStrategy,
 		TimerCallback callback,
 		object? state,
 		TimeSpan dueTime,

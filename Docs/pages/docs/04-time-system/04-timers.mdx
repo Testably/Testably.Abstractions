@@ -31,7 +31,7 @@ await That(ticks).IsEqualTo(3);
 
 ## Timer strategies
 
-`WithTimerStrategy(ITimerStrategy)` controls when timers start and how exceptions inside callbacks are handled:
+`WithTimerStrategy(TimerStrategy)` controls when timers start and how exceptions inside callbacks are handled:
 
 ```csharp
 MockTimeSystem timeSystem = new();

@@ -106,4 +106,4 @@ timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromHours(2));
 await That(timeProvider.GetUtcNow()).IsEqualTo(new DateTimeOffset(2026, 1, 15, 12, 0, 0, TimeSpan.Zero));
 ```
 
-A timer created through the `TimeProvider` keeps firing when its callback throws, like a real timer, regardless of the `ITimerStrategy` configured on the `MockTimeSystem`.
+A timer created through the `TimeProvider` keeps firing when its callback throws, like a real timer, regardless of the `TimerStrategy` configured on the `MockTimeSystem`.

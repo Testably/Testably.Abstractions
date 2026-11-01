@@ -12,7 +12,7 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 {
 	private readonly MockTimeSystem _mockTimeSystem;
 	private readonly bool _autoAdvance;
-	private ITimerStrategy _timerStrategy;
+	private TimerStrategy _timerStrategy;
 	private readonly ConcurrentDictionary<int, TimerMock> _timers = new();
 	private int _nextIndex = -1;
 
@@ -83,7 +83,7 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 		return timerMock;
 	}
 
-	internal ITimerHandler SetTimerStrategy(ITimerStrategy timerStrategy)
+	internal ITimerHandler SetTimerStrategy(TimerStrategy timerStrategy)
 	{
 		_timerStrategy = timerStrategy;
 		return this;

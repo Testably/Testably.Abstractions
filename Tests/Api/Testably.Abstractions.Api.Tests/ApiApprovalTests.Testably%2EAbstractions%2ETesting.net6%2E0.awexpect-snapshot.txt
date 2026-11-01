@@ -119,7 +119,7 @@ namespace Testably.Abstractions.Testing
         public Testably.Abstractions.TimeSystem.ITimerFactory Timer { get; }
         public Testably.Abstractions.Testing.TimeSystem.ITimerHandler TimerHandler { get; }
         public override string ToString() { }
-        public Testably.Abstractions.Testing.MockTimeSystem WithTimerStrategy(Testably.Abstractions.Testing.TimeSystem.ITimerStrategy timerStrategy) { }
+        public Testably.Abstractions.Testing.MockTimeSystem WithTimerStrategy(Testably.Abstractions.Testing.TimeSystem.TimerStrategy timerStrategy) { }
         public class MockTimeSystemOptions
         {
             public MockTimeSystemOptions() { }
@@ -487,22 +487,17 @@ namespace Testably.Abstractions.Testing.TimeSystem
         long ExecutionCount { get; }
         Testably.Abstractions.Testing.TimeSystem.ITimerMock Wait(int executionCount = 1, int timeout = 10000, System.Action<Testably.Abstractions.Testing.TimeSystem.ITimerMock>? callback = null);
     }
-    public interface ITimerStrategy
-    {
-        Testably.Abstractions.Testing.TimeSystem.TimerMode Mode { get; }
-        bool SwallowExceptions { get; }
-    }
     public enum TimerMode
     {
         StartImmediately = 1,
         StartOnMockWait = 2,
     }
-    public class TimerStrategy : Testably.Abstractions.Testing.TimeSystem.ITimerStrategy
+    public sealed class TimerStrategy
     {
         public TimerStrategy(Testably.Abstractions.Testing.TimeSystem.TimerMode mode = Testably.Abstractions.Testing.TimeSystem.TimerMode.StartImmediately, bool swallowExceptions = false) { }
         public Testably.Abstractions.Testing.TimeSystem.TimerMode Mode { get; }
         public bool SwallowExceptions { get; }
-        public static Testably.Abstractions.Testing.TimeSystem.ITimerStrategy Default { get; }
+        public static Testably.Abstractions.Testing.TimeSystem.TimerStrategy Default { get; }
     }
 }
 
