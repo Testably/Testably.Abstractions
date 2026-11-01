@@ -73,6 +73,7 @@ internal sealed class TaskMock : ITask
 			return Task.CompletedTask;
 		}
 
+		TimerScheduler.ReleaseClock();
 		return DelayUntilAdvanced(delay, cancellationToken);
 	}
 

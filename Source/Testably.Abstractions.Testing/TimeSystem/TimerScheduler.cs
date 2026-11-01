@@ -14,14 +14,22 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 ///     Taking the next timer and moving the clock to its due time is one step, but the callback runs after it, so that a
 ///     callback may wait for another thread that moves the clock. Such a thread may move the clock past the due time of
 ///     a running callback, so the order holds for the timers that one thread fires. All timers that advance the clock
-///     share one thread. Like a real timer, the callback runs on the thread pool. The thread that fires it waits until
-///     the callback completes or blocks, as a blocked callback may wait for the clock or for the thread that moves it.
+///     share one thread. Like a real timer, the callback runs on another thread. The thread that fires it waits until
+///     the callback completes, so that the clock stands still while it runs. A callback that waits for the clock
+///     releases that thread, and a callback that blocks on anything else holds it for at most
+///     <see cref="BlockedCallbackLimit" />, as it may wait for the thread that moves the clock.
 ///     The built-in <see cref="TimeProviderMock" /> moves its clock through the scheduler. When any other provider is
-///     moved directly, the timers that became due are fired afterward on the thread pool, as the clock is already past
+///     moved directly, the timers that became due are fired afterward in the background, as the clock is already past
 ///     them.
 /// </remarks>
 internal sealed class TimerScheduler
 {
+	/// <summary>
+	///     How long the thread that fired a callback waits for it, when the callback blocks on something else than the
+	///     clock, e.g. on a lock held by the code that moves the clock.
+	/// </summary>
+	private static readonly TimeSpan BlockedCallbackLimit = TimeSpan.FromSeconds(1);
+
 	/// <summary>
 	///     The scheduler that moves the clock on the current thread and did not get notified about the change yet.
 	/// </summary>
@@ -160,7 +168,7 @@ internal sealed class TimerScheduler
 
 	/// <summary>
 	///     Schedules the <paramref name="timer" />, unless the <paramref name="cancellationToken" /> is canceled or its due
-	///     time lies beyond the end of the clock. A timer that is already due fires on the thread pool.
+	///     time lies beyond the end of the clock. A timer that is already due fires in the background.
 	/// </summary>
 	/// <returns><see langword="true" />, when the <paramref name="timer" /> is scheduled.</returns>
 	public bool Schedule(ScheduledTimer timer, CancellationToken cancellationToken)
@@ -268,30 +276,44 @@ internal sealed class TimerScheduler
 	}
 
 	/// <summary>
-	///     Runs the callback of the <paramref name="timer" /> on the thread pool and waits until it completes, or until its
-	///     thread blocks, e.g. on another timer or on a lock held by the thread that moves the clock.
+	///     Lets a callback that waits for the clock release the thread that fired it, so that the clock can move on.
 	/// </summary>
 	/// <remarks>
-	///     The thread has to block on two checks in a row, so that briefly waiting for a contended lock does not move the
-	///     clock while the callback still runs.
+	///     Only the waits of the <see cref="MockTimeSystem" /> that end when the clock moves release it. Waiting in the
+	///     handshake of <see cref="ITimerMock.Wait(int, int, Action{ITimerMock})" /> does not, so that the clock stands still
+	///     while its callback runs.
+	/// </remarks>
+	public static void ReleaseClock()
+		=> FiringCallback.Current?.Release();
+
+	/// <summary>
+	///     Runs the callback of the <paramref name="timer" /> on its own thread and waits until it completes, until it
+	///     waits for the clock (<see cref="ReleaseClock" />), or until it blocked for the <see cref="BlockedCallbackLimit" />.
+	/// </summary>
+	/// <remarks>
+	///     The callback does not run on the thread pool, as the thread that waits for it often is a pool thread itself,
+	///     so that waiting callbacks would starve each other of threads. The limit only counts from the start of the
+	///     callback.
 	/// </remarks>
 	private static void Fire(ScheduledTimer timer)
 	{
-		Thread? callbackThread = null;
-		Task callback = Task.Run(() =>
+		FiringCallback firing = new();
+		Task callback = Task.Factory.StartNew(() =>
 		{
-			Volatile.Write(ref callbackThread, Thread.CurrentThread);
-			timer.Fire();
-		});
+			FiringCallback.Current = firing;
+			firing.Started.TrySetResult(true);
+			try
+			{
+				timer.Fire();
+			}
+			finally
+			{
+				FiringCallback.Current = null;
+			}
+		}, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
-		int blockedChecks = 0;
-		while (!callback.Wait(1) && blockedChecks < 2)
-		{
-			Thread? thread = Volatile.Read(ref callbackThread);
-			blockedChecks = thread is not null && (thread.ThreadState & ThreadState.WaitSleepJoin) != 0
-				? blockedChecks + 1
-				: 0;
-		}
+		firing.Started.Task.Wait();
+		Task.WaitAny([callback, firing.Released.Task,], BlockedCallbackLimit);
 	}
 
 	private void FireDue()
@@ -387,6 +409,31 @@ internal sealed class TimerScheduler
 				}
 			}
 		}
+	}
+
+	/// <summary>
+	///     A timer callback that runs on its own thread, while the thread that fired it waits.
+	/// </summary>
+	private sealed class FiringCallback
+	{
+		/// <summary>
+		///     The callback that runs on the current thread.
+		/// </summary>
+		[ThreadStatic] public static FiringCallback? Current;
+
+		/// <summary>
+		///     Completed when the callback waits for the clock.
+		/// </summary>
+		public TaskCompletionSource<bool> Released { get; } =
+			new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+		/// <summary>
+		///     Completed when the callback got a thread and starts.
+		/// </summary>
+		public TaskCompletionSource<bool> Started { get; } =
+			new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+		public void Release() => Released.TrySetResult(true);
 	}
 
 	/// <summary>

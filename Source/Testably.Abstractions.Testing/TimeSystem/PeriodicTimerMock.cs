@@ -89,6 +89,7 @@ internal sealed class PeriodicTimerMock : IPeriodicTimerMock
 					.TimeChanged(predicate: _ => _timeSystem.TimeProvider.ElapsedTicks >= nextTime);
 				if (_timeSystem.TimeProvider.ElapsedTicks < nextTime)
 				{
+					TimerScheduler.ReleaseClock();
 					await onTimeChanged.WaitAsync(
 						timeout: Timeout.InfiniteTimeSpan,
 						cancellationToken: cancellationToken).ConfigureAwait(false);

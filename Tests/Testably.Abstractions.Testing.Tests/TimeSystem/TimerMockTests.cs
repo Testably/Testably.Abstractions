@@ -1,6 +1,7 @@
 ﻿using aweXpect.Chronology;
 using aweXpect.Core;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using Testably.Abstractions.Testing.TimeSystem;
 using ITimer = Testably.Abstractions.TimeSystem.ITimer;
@@ -151,6 +152,45 @@ public class TimerMockTests
 		await That(isCompleted).IsTrue();
 		await That(callbackTimes).IsEqualTo([1.Seconds(), 2.Seconds(), 3.Seconds(),])
 			.Because("all auto-advancing timers move the clock on one thread, in the order of their due time");
+	}
+
+	[Test]
+	public async Task AutoAdvance_WhenACallbackBlocksBriefly_ShouldHoldTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		List<string> events = [];
+		using SemaphoreSlim gate = new(0);
+		TaskCompletionSource<bool> secondFired = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		using ITimer first = timeSystem.Timer.New(_ =>
+		{
+			gate.Wait(5000);
+			lock (events)
+			{
+				events.Add("first");
+			}
+		}, null, 1.Seconds(), Timeout.InfiniteTimeSpan);
+		using ITimer second = timeSystem.Timer.New(_ =>
+		{
+			lock (events)
+			{
+				events.Add("second");
+			}
+
+			secondFired.TrySetResult(true);
+		}, null, 2.Seconds(), Timeout.InfiniteTimeSpan);
+
+		Thread releaser = new(() =>
+		{
+			Thread.Sleep(100);
+			gate.Release();
+		});
+		releaser.Start();
+		bool isFired = await Task.WhenAny(secondFired.Task,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == secondFired.Task;
+
+		await That(isFired).IsTrue();
+		await That(events).IsEqualTo(["first", "second",])
+			.Because("the clock waits for a callback that briefly blocks on something else than the clock");
 	}
 
 	[Test]
@@ -320,7 +360,7 @@ public class TimerMockTests
 		timeSystem.TimeProvider.AdvanceBy(2.Seconds());
 
 		await That(callbackThreadId).IsNotNull().And.IsNotEqualTo(Environment.CurrentManagedThreadId)
-			.Because("like a real timer, the callback runs on the thread pool and not on the thread that moves the clock");
+			.Because("like a real timer, the callback runs on another thread than the one that moves the clock");
 		await That(observedContext).IsEqualTo("creator")
 			.Because("like a real timer, the callback flows the execution context of its creator");
 	}
@@ -443,6 +483,29 @@ public class TimerMockTests
 
 		await That(callbackTime).IsEqualTo(start + 1.Seconds())
 			.Because("the callback runs while the clock is at the due time of the timer");
+	}
+
+	[Test]
+	public async Task DisableAutoAdvance_WhenACallbackWaitsForADelay_ShouldReleaseTheClockAtOnce()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		TaskCompletionSource<bool> completed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			timeSystem.Task.Delay(1.Seconds()).Wait();
+			completed.TrySetResult(true);
+		}, null, 1.Seconds(), Timeout.InfiniteTimeSpan);
+		Stopwatch stopwatch = Stopwatch.StartNew();
+
+		timeSystem.TimeProvider.AdvanceBy(1.Seconds());
+		TimeSpan released = stopwatch.Elapsed;
+		timeSystem.TimeProvider.AdvanceBy(1.Seconds());
+		bool isCompleted = await Task.WhenAny(completed.Task,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == completed.Task;
+
+		await That(released).IsLessThan(900.Milliseconds())
+			.Because("a callback that waits for a delay of the time system releases the clock without the limit for blocked callbacks");
+		await That(isCompleted).IsTrue();
 	}
 
 	[Test]
@@ -953,6 +1016,29 @@ public class TimerMockTests
 
 		await That(Act).DoesNotThrow();
 		await That(timerMock.ExecutionCount).IsEqualTo(executionCount + 2);
+	}
+
+	[Test]
+	public async Task Wait_WhileItsCallbackRuns_ShouldHoldTheClock()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 1.Seconds(), 1.Seconds());
+		using ITimer other = timeSystem.Timer.New(_ => { }, null, 100.Milliseconds(), 100.Milliseconds());
+		ITimerMock timerMock = timeSystem.TimerHandler[0];
+		DateTime? before = null;
+		DateTime? after = null;
+		Task wait = Task.Run(() => timerMock.Wait(timeout: 5000, callback: _ =>
+		{
+			before = timeSystem.DateTime.UtcNow;
+			Thread.Sleep(100);
+			after = timeSystem.DateTime.UtcNow;
+		}));
+
+		await AdvanceUntilCompleted(timeSystem, wait);
+
+		await That(before).IsNotNull();
+		await That(after).IsEqualTo(before)
+			.Because("the timer waits in the handshake of the wait, which does not release the clock to the other timer");
 	}
 
 	[Test]

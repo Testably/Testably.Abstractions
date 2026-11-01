@@ -219,6 +219,7 @@ internal sealed class TimerMock : ITimerMock
 			Start();
 		}
 
+		TimerScheduler.ReleaseClock();
 		try
 		{
 			if (!handshake.Reached.Task.Wait(timeout))
