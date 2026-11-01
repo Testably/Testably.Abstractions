@@ -53,14 +53,17 @@ internal sealed class TaskMock : ITask
 
 		if (cancellationToken.IsCancellationRequested)
 		{
-			throw ExceptionFactory.TaskWasCanceled();
+			return Task.FromCanceled(cancellationToken);
 		}
 
 		if (_autoAdvance)
 		{
-			_mockTimeSystem.TimeProvider.AdvanceBy(delay);
+			bool isCompleted = delay < TimeSpan.Zero ||
+			                   _mockTimeSystem.Scheduler.AdvanceBy(delay,
+				                   _ => cancellationToken.IsCancellationRequested);
+
 			_callbackHandler.InvokeTaskDelayCallbacks(delay);
-			return Task.CompletedTask;
+			return isCompleted ? Task.CompletedTask : Task.FromCanceled(cancellationToken);
 		}
 
 		_callbackHandler.InvokeTaskDelayCallbacks(delay);
@@ -88,6 +91,7 @@ internal sealed class TaskMock : ITask
 	{
 		bool isInfinite = delay.TotalMilliseconds < 0;
 		long targetTicks = _mockTimeSystem.TimeProvider.ElapsedTicks + delay.Ticks;
+		TimerScheduler.ReleaseClock();
 
 		while (true)
 		{

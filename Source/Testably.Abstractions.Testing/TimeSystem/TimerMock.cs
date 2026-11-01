@@ -11,10 +11,9 @@ internal sealed class TimerMock : ITimerMock
 {
 	private readonly TimerCallback _callback;
 	private CancellationTokenSource? _cancellationTokenSource;
-	private readonly ManualResetEventSlim _continueEvent = new();
-	private CountdownEvent? _countdownEvent;
 	private TimeSpan _dueTime;
 	private Exception? _exception;
+	private readonly ExecutionContext? _executionContext;
 	private long _executionCount;
 	private bool _isDisposed;
 #if NET9_0_OR_GREATER
@@ -26,8 +25,10 @@ internal sealed class TimerMock : ITimerMock
 	private Action? _onDispose;
 	private TimeSpan _period;
 	private readonly bool _autoAdvance;
+	private TimerScheduler.ScheduledTimer? _scheduled;
 	private readonly object? _state;
 	private readonly TimerStrategy _timerStrategy;
+	private WaitHandshake? _waitHandshake;
 
 	internal TimerMock(MockTimeSystem timeSystem,
 		TimerStrategy timerStrategy,
@@ -56,6 +57,7 @@ internal sealed class TimerMock : ITimerMock
 		_dueTime = dueTime;
 		_period = period;
 		_autoAdvance = autoAdvance;
+		_executionContext = ExecutionContext.Capture();
 		if (_timerStrategy.Mode == TimerMode.StartImmediately)
 		{
 			Start();
@@ -130,7 +132,6 @@ internal sealed class TimerMock : ITimerMock
 			{
 				_cancellationTokenSource?.Dispose();
 				_cancellationTokenSource = null;
-				_continueEvent.Dispose();
 			}
 		}
 	}
@@ -203,32 +204,33 @@ internal sealed class TimerMock : ITimerMock
 			throw new ArgumentOutOfRangeException(nameof(timeout));
 		}
 
-		try
-		{
-			_countdownEvent = new CountdownEvent(executionCount);
-		}
-		catch (ArgumentOutOfRangeException)
-		{
-			// In case of an ArgumentOutOfRangeException, the executionCount is already reached.
-		}
-
+		WaitHandshake handshake = new(executionCount);
+		Volatile.Write(ref _waitHandshake, handshake);
 		if (_timerStrategy.Mode != TimerMode.StartImmediately)
 		{
 			Start();
 		}
 
-		if (_countdownEvent?.Wait(timeout, CancellationToken.None) == false)
+		TimerScheduler.ReleaseClock();
+		try
 		{
-			throw ExceptionFactory.TimerWaitTimeoutException(executionCount, timeout);
-		}
+			if (!handshake.Reached.Task.Wait(timeout, CancellationToken.None))
+			{
+				throw ExceptionFactory.TimerWaitTimeoutException(executionCount, timeout);
+			}
 
-		if (_exception != null)
+			if (_exception != null)
+			{
+				throw _exception;
+			}
+
+			callback?.Invoke(this);
+		}
+		finally
 		{
-			throw _exception;
+			Interlocked.CompareExchange(ref _waitHandshake, null, handshake);
+			handshake.Continue.TrySetResult(true);
 		}
-
-		callback?.Invoke(this);
-		_continueEvent.Set();
 
 		return this;
 	}
@@ -240,152 +242,198 @@ internal sealed class TimerMock : ITimerMock
 		_onDispose = onDispose;
 	}
 
-	#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
-	private async Task RunTimer(long startTicks, CancellationToken cancellationToken = default)
+	/// <summary>
+	///     Whether the timer is a timeout, like the one of <c>new CancellationTokenSource(TimeSpan, TimeProvider)</c> or of
+	///     <c>Task.WaitAsync(TimeSpan, TimeProvider)</c>, which must not move the clock on its own, so that the operation it
+	///     guards is not canceled before it starts. A timeout fires once, so a periodic timer is never one.
+	/// </summary>
+	/// <remarks>
+	///     <c>Task.WaitAsync</c> passes its private <c>Task.CancellationPromise&lt;TResult&gt;</c> as state, which is
+	///     recognized by its name, as it cannot be referenced.
+	/// </remarks>
+	private bool IsTimeout()
+		=> _period.TotalMilliseconds <= 0 &&
+		   (_state is CancellationTokenSource ||
+		    (_state?.GetType() is { IsGenericType: true, Name: "CancellationPromise`1", } type &&
+		     type.DeclaringType == typeof(Task)));
+
+	private void Execute(TimerScheduler.ScheduledTimer scheduled, CancellationToken cancellationToken)
 	{
-		long nextPlannedExecution = startTicks + _dueTime.Ticks;
-
-		if (_dueTime.TotalMilliseconds < 0)
-		{
-			cancellationToken.WaitHandle.WaitOne(_dueTime);
-		}
-		else
-		{
-			await WaitUntil(nextPlannedExecution).ConfigureAwait(false);
-		}
-
-		while (!cancellationToken.IsCancellationRequested)
-		{
-			try
-			{
-				_callback(_state);
-			}
-			catch (Exception swallowedException)
-			{
-				_exception = swallowedException;
-			}
-
-			Interlocked.Increment(ref _executionCount);
-
-			if (_countdownEvent?.Signal() == true)
-			{
-				_continueEvent.Wait(cancellationToken);
-				_continueEvent.Reset();
-			}
-
-			if (_exception != null && !_timerStrategy.SwallowExceptions)
-			{
-				break;
-			}
-
-			if (_period.TotalMilliseconds <= 0 ||
-			    cancellationToken.IsCancellationRequested)
-			{
-				return;
-			}
-
-			nextPlannedExecution += _period.Ticks;
-			await WaitUntil(nextPlannedExecution).ConfigureAwait(false);
-		}
-
-		async Task WaitUntil(long targetTicks)
-		{
-			if (_autoAdvance)
-			{
-				long nowTicks = _mockTimeSystem.TimeProvider.ElapsedTicks;
-				if (targetTicks > nowTicks)
-				{
-					await _mockTimeSystem.Task
-						.Delay(TimeSpan.FromTicks(targetTicks - nowTicks),
-							cancellationToken)
-						.ConfigureAwait(false);
-				}
-			}
-			else
-			{
-				while (true)
-				{
-					long executeAfter = targetTicks;
-					using IAwaitableCallback<DateTime> onTimeChanged = _mockTimeSystem.On
-						.TimeChanged(predicate: _
-							=> _mockTimeSystem.TimeProvider.ElapsedTicks >= executeAfter);
-					// Check AFTER registering the callback to avoid missing a time change
-					// that occurred between reading ElapsedTicks and subscribing.
-					if (_mockTimeSystem.TimeProvider.ElapsedTicks >= targetTicks)
-					{
-						break;
-					}
-
-					await onTimeChanged.WaitAsync(
-						timeout: null,
-						cancellationToken: cancellationToken).ConfigureAwait(false);
-				}
-			}
-		}
-	}
-	#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
-
-	private void Start()
-	{
-		Stop();
-		CancellationTokenSource runningCancellationTokenSource;
-		lock (_lock)
-		{
-			_cancellationTokenSource = new CancellationTokenSource();
-			runningCancellationTokenSource = _cancellationTokenSource;
-		}
-
-		CancellationToken token = runningCancellationTokenSource.Token;
-		// Read the clock on the calling thread, as the due time is relative to the call; reading it
-		// on the background thread would miss a time change before that thread is scheduled.
-		long startTicks = _mockTimeSystem.TimeProvider.ElapsedTicks;
-		using ManualResetEventSlim startCreateTimerThreads = new();
-		_ = Task.Run(
-				async () =>
-				{
-					// ReSharper disable once AccessToDisposedClosure
-					try
-					{
-						startCreateTimerThreads.Set();
-					}
-					catch (ObjectDisposedException)
-					{
-						// Ignore any ObjectDisposedException
-					}
-
-					await RunTimer(startTicks, token).ConfigureAwait(false);
-				},
-				cancellationToken: token)
-			.ContinueWith(_ =>
-			{
-				runningCancellationTokenSource.Dispose();
-				lock (_lock)
-				{
-					if (_cancellationTokenSource == runningCancellationTokenSource)
-					{
-						_cancellationTokenSource.Dispose();
-						_cancellationTokenSource = null;
-					}
-				}
-			}, TaskScheduler.Default);
-		startCreateTimerThreads.Wait(token);
-	}
-
-	private void Stop()
-	{
-		try
+		if (!TryExecute(scheduled.DueTicks, cancellationToken))
 		{
 			lock (_lock)
 			{
-				if (_cancellationTokenSource is { IsCancellationRequested: false })
+				if (_scheduled == scheduled)
 				{
-					_cancellationTokenSource?.Cancel();
+					_scheduled = null;
 				}
 			}
 		}
-		catch (ObjectDisposedException)
+	}
+
+	/// <summary>
+	///     Runs the callback and schedules the next run, if there is one.
+	/// </summary>
+	private bool TryExecute(long dueTicks, CancellationToken cancellationToken)
+	{
+		if (cancellationToken.IsCancellationRequested)
 		{
-			// Ignore if the cancellationTokenSource is already disposed.
+			return false;
+		}
+
+		try
+		{
+			InvokeCallback();
+		}
+		catch (Exception swallowedException)
+		{
+			_exception = swallowedException;
+		}
+
+		Interlocked.Increment(ref _executionCount);
+
+		if (Volatile.Read(ref _waitHandshake) is { } handshake && handshake.Signal())
+		{
+			try
+			{
+				handshake.Continue.Task.Wait(cancellationToken);
+			}
+			catch (OperationCanceledException)
+			{
+				return false;
+			}
+		}
+
+		if ((_exception != null && !_timerStrategy.SwallowExceptions) ||
+		    _period.TotalMilliseconds <= 0)
+		{
+			return false;
+		}
+
+		return Schedule(TimerScheduler.AddTicks(dueTicks, _period.Ticks), cancellationToken);
+	}
+
+	/// <summary>
+	///     Runs the callback with the execution context of the creator of the timer, like a real timer.
+	/// </summary>
+	private void InvokeCallback()
+	{
+		if (_executionContext is null)
+		{
+			_callback(_state);
+			return;
+		}
+
+		ExecutionContext.Run(_executionContext.CreateCopy(), static timer =>
+		{
+			TimerMock timerMock = (TimerMock)timer!;
+			timerMock._callback(timerMock._state);
+		}, this);
+	}
+
+	private bool Schedule(long dueTicks, CancellationToken cancellationToken)
+	{
+		TimerScheduler.ScheduledTimer? scheduled = null;
+		scheduled = new TimerScheduler.ScheduledTimer(dueTicks, _autoAdvance && !IsTimeout(),
+			() => Execute(scheduled!, cancellationToken));
+		lock (_lock)
+		{
+			if (cancellationToken.IsCancellationRequested)
+			{
+				return false;
+			}
+
+			_scheduled = scheduled;
+		}
+
+		return _mockTimeSystem.Scheduler.Schedule(scheduled, cancellationToken);
+	}
+
+	private void Start()
+	{
+		CancellationTokenSource cancellationTokenSource = new();
+		CancellationToken token = cancellationTokenSource.Token;
+		Stop(cancellationTokenSource);
+		if (token.IsCancellationRequested || _dueTime.TotalMilliseconds < 0)
+		{
+			return;
+		}
+
+		Schedule(TimerScheduler.AddTicks(_mockTimeSystem.TimeProvider.ElapsedTicks, _dueTime.Ticks),
+			token);
+	}
+
+	/// <summary>
+	///     Stops the current run and installs the <paramref name="next" /> run in the same step, so that concurrent
+	///     restarts cannot leave a run behind.
+	/// </summary>
+	private void Stop(CancellationTokenSource? next = null)
+	{
+		TimerScheduler.ScheduledTimer? scheduled;
+		lock (_lock)
+		{
+			try
+			{
+				_cancellationTokenSource?.Cancel();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore if the cancellationTokenSource is already disposed.
+			}
+
+			_cancellationTokenSource?.Dispose();
+			_cancellationTokenSource = next;
+			if (_isDisposed && next is not null)
+			{
+				next.Cancel();
+				next.Dispose();
+				_cancellationTokenSource = null;
+			}
+
+			scheduled = _scheduled;
+			_scheduled = null;
+		}
+
+		if (scheduled is not null)
+		{
+			_mockTimeSystem.Scheduler.Unschedule(scheduled);
+		}
+	}
+
+	/// <summary>
+	///     Lets a <see cref="Wait(int, int, Action{ITimerMock})" /> run its callback while the timer is blocked after the
+	///     expected execution. Each wait has its own handshake, so that a late or canceled execution cannot release a later
+	///     wait.
+	/// </summary>
+	private sealed class WaitHandshake(int executionCount)
+	{
+		private int _remaining = executionCount;
+
+		/// <summary>
+		///     Completed by the wait, so that the blocked timer continues.
+		/// </summary>
+		public TaskCompletionSource<bool> Continue { get; } =
+			new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+		/// <summary>
+		///     Completed by the timer at the expected execution.
+		/// </summary>
+		public TaskCompletionSource<bool> Reached { get; } =
+			new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+		/// <summary>
+		///     Counts an execution and returns <see langword="true" /> for the expected one, after which the timer has to
+		///     wait for <see cref="Continue" />.
+		/// </summary>
+		public bool Signal()
+		{
+			if (Interlocked.Decrement(ref _remaining) != 0)
+			{
+				return false;
+			}
+
+			Reached.TrySetResult(true);
+			return true;
 		}
 	}
 }

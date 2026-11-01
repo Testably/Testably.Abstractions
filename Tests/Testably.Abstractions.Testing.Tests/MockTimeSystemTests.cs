@@ -168,6 +168,40 @@ public class MockTimeSystemTests
 	}
 
 	[Test]
+	public async Task Delay_WithCanceledToken_ShouldReturnACanceledTask()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+
+		Task delay = timeSystem.Task.Delay(5.Seconds(), new CancellationToken(true));
+
+		await That(delay.IsCanceled).IsTrue()
+			.Because("Task.Delay reports a canceled token through the task, like the real one");
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start);
+	}
+
+	[Test]
+	public async Task AdvanceBy_MaxValue_ShouldThrowArgumentOutOfRangeException()
+	{
+		MockTimeSystem timeSystem = new();
+
+		void Act() => timeSystem.TimeProvider.AdvanceBy(TimeSpan.MaxValue);
+
+		await That(Act).Throws<ArgumentOutOfRangeException>();
+	}
+
+	[Test]
+	public async Task Delay_InfiniteTimeSpan_ShouldNotMoveTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+
+		await timeSystem.Task.Delay(Timeout.InfiniteTimeSpan, TestContext.Current!.Execution.CancellationToken);
+
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start);
+	}
+
+	[Test]
 	[Arguments(DateTimeKind.Local)]
 	[Arguments(DateTimeKind.Unspecified)]
 	[Arguments(DateTimeKind.Utc)]
@@ -324,6 +358,17 @@ public class MockTimeSystemTests
 	}
 
 	[Test]
+	public async Task Sleep_InfiniteTimeSpan_ShouldNotMoveTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+
+		timeSystem.Thread.Sleep(Timeout.InfiniteTimeSpan);
+
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start);
+	}
+
+	[Test]
 	public async Task Sleep_InfiniteTimeSpan_ShouldNotThrowException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -352,6 +397,17 @@ public class MockTimeSystemTests
 				=> timeSystem.Thread.Sleep(TimeSpan.FromMilliseconds(-2)));
 
 		await That(exception).IsExactly<ArgumentOutOfRangeException>();
+	}
+
+	[Test]
+	public async Task TimeProvider_ShouldBeTheProviderCreatedByTheFactory()
+	{
+		Testing.TimeSystem.ITimeProvider? created = null;
+		MockTimeSystem timeSystem = new(new TimeProviderFactory.Factory(onTimeChanged
+			=> created = TimeProviderFactory.Use(DateTime.UtcNow).Create(onTimeChanged)));
+
+		await That(timeSystem.TimeProvider).IsSameAs(created)
+			.Because("a custom provider must stay reachable through the mock time system");
 	}
 
 	[Test]

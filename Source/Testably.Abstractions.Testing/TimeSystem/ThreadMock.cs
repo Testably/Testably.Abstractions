@@ -36,9 +36,9 @@ internal sealed class ThreadMock : IThread
 			throw ExceptionFactory.ThreadSleepOutOfRange(nameof(timeout));
 		}
 
-		if (_autoAdvance)
+		if (_autoAdvance && timeout >= TimeSpan.Zero)
 		{
-			_mockTimeSystem.TimeProvider.AdvanceBy(timeout);
+			_mockTimeSystem.Scheduler.AdvanceBy(timeout);
 		}
 
 		Thread.Yield();
