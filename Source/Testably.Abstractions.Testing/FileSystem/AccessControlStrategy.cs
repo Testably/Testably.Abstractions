@@ -1,28 +1,12 @@
-﻿using System.IO;
-using Testably.Abstractions.Helpers;
+﻿using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
 /// <summary>
-///     Base class for a strategy to simulate access control (ACL) in the <see cref="MockFileSystem" />.
+///     The strategy to simulate access control (ACL) in the <see cref="MockFileSystem" />.
 /// </summary>
-/// <remarks>
-///     Prefer deriving from this class over implementing <see cref="IAccessControlStrategy" /> directly,
-///     as it receives the <see cref="AccessRequest" />.
-/// </remarks>
-public abstract class AccessControlStrategy : IAccessControlStrategy
+public abstract class AccessControlStrategy
 {
-	#region IAccessControlStrategy Members
-
-	/// <inheritdoc cref="IAccessControlStrategy.IsAccessGranted(string, IFileSystemExtensibility)" />
-	/// <remarks>
-	///     Requests <see cref="FileAccess.ReadWrite" />, so that access is never granted by accident.
-	/// </remarks>
-	public bool IsAccessGranted(string fullPath, IFileSystemExtensibility extensibility)
-		=> IsAccessGranted(fullPath, extensibility, new AccessRequest(FileAccess.ReadWrite, isDelete: false));
-
-	#endregion
-
 	/// <summary>
 	///     Implements a custom strategy to simulate access control (ACL) in the <see cref="MockFileSystem" />.
 	/// </summary>

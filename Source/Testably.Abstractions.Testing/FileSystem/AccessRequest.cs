@@ -3,7 +3,8 @@
 namespace Testably.Abstractions.Testing.FileSystem;
 
 /// <summary>
-///     Describes the access to a file or directory that is checked by an <see cref="AccessControlStrategy" />.
+///     Describes the access to a file or directory that is checked by an <see cref="AccessControlStrategy" /> or a
+///     <c>UnixFileModeStrategy</c>.
 /// </summary>
 public sealed class AccessRequest
 {

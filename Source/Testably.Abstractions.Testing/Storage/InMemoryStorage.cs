@@ -988,13 +988,13 @@ internal sealed class InMemoryStorage : IStorage
 	///     <see cref="EnumerationOptions.AttributesToSkip" />:<br />
 	///     If set, only items with the given attributes are included
 	///     <para />
-	///     If a directory that is recursed into is not granted access by the <see cref="IAccessControlStrategy" />:<br />
+	///     If a directory that is recursed into is not granted access by the <see cref="AccessControlStrategy" />:<br />
 	///     When <see cref="EnumerationOptions.IgnoreInaccessible" /> is set, the directory and its content are ignored,
 	///     otherwise this method throws an <see cref="UnauthorizedAccessException" />.
 	/// </remarks>
 	/// <exception cref="UnauthorizedAccessException">
 	///     When a directory that is recursed into is not granted access by the
-	///     <see cref="IAccessControlStrategy" /> and <see cref="EnumerationOptions.IgnoreInaccessible" /> is not set to
+	///     <see cref="AccessControlStrategy" /> and <see cref="EnumerationOptions.IgnoreInaccessible" /> is not set to
 	///     <see langword="true" />.
 	/// </exception>
 #else
@@ -1012,13 +1012,13 @@ internal sealed class InMemoryStorage : IStorage
 	///     <see cref="EnumerationOptions.AttributesToSkip" />:<br />
 	///     If set, only items with the given attributes are included
 	///     <para />
-	///     If a directory that is recursed into is not granted access by the <see cref="IAccessControlStrategy" />:<br />
+	///     If a directory that is recursed into is not granted access by the <see cref="AccessControlStrategy" />:<br />
 	///     When <see cref="EnumerationOptions.IgnoreInaccessible" /> is set, the directory and its content are ignored,
 	///     otherwise this method throws an <see cref="UnauthorizedAccessException" />.
 	/// </remarks>
 	/// <exception cref="UnauthorizedAccessException">
 	///     When a directory that is recursed into is not granted access by the
-	///     <see cref="IAccessControlStrategy" /> and <see cref="EnumerationOptions.IgnoreInaccessible" /> is not set to
+	///     <see cref="AccessControlStrategy" /> and <see cref="EnumerationOptions.IgnoreInaccessible" /> is not set to
 	///     <see langword="true" />.
 	/// </exception>
 #endif

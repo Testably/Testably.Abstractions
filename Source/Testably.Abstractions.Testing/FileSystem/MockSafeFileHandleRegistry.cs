@@ -16,7 +16,7 @@ namespace Testably.Abstractions.Testing.FileSystem;
 ///     <para />
 ///     A <see cref="SafeFileHandle" /> is sealed and wraps an operating system handle, so the mock cannot create one
 ///     that a real syscall would accept. Instead it hands out a handle with a synthetic value and remembers which file
-///     that value stands for, which is the same indirection that <see cref="ISafeFileHandleStrategy" /> provides for
+///     that value stands for, which is the same indirection that <see cref="SafeFileHandleStrategy" /> provides for
 ///     handles created outside of the <see cref="MockFileSystem" />.
 /// </summary>
 internal sealed class MockSafeFileHandleRegistry

@@ -7,17 +7,15 @@ using System.Diagnostics.CodeAnalysis;
 namespace Testably.Abstractions.Testing.FileSystem;
 
 /// <summary>
-///     Null object of an <see cref="ISafeFileHandleStrategy" /> which throws an exception.
+///     Null object of a <see cref="SafeFileHandleStrategy" /> which throws an exception.
 /// </summary>
-public class NullSafeFileHandleStrategy : ISafeFileHandleStrategy
+public class NullSafeFileHandleStrategy : SafeFileHandleStrategy
 {
-	#region ISafeFileHandleStrategy Members
-
-	/// <inheritdoc cref="ISafeFileHandleStrategy.MapSafeFileHandle(SafeFileHandle)" />
+	/// <inheritdoc cref="SafeFileHandleStrategy.MapSafeFileHandle(SafeFileHandle)" />
 #if NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
 #endif
-	public SafeFileHandleMock MapSafeFileHandle(SafeFileHandle fileHandle)
+	public override SafeFileHandleMock MapSafeFileHandle(SafeFileHandle fileHandle)
 	{
 		if (fileHandle.IsInvalid)
 		{
@@ -26,6 +24,4 @@ public class NullSafeFileHandleStrategy : ISafeFileHandleStrategy
 
 		throw ExceptionFactory.NotSupportedSafeFileHandle();
 	}
-
-	#endregion
 }

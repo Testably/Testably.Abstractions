@@ -35,7 +35,7 @@ The mock cannot observe the moment a handle is disposed, so a released share loc
 
 When a handle comes from somewhere the mock knows nothing about (platform invocation, or a library that hands you one), you still have to tell it which file that handle stands for.
 
-`MockFileSystem.WithSafeFileHandleStrategy(ISafeFileHandleStrategy)` registers the translation. The strategy maps a `SafeFileHandle` to a `SafeFileHandleMock` that points at a location inside the mock, and is consulted for any handle the mock did not create itself.
+`MockFileSystem.WithSafeFileHandleStrategy(SafeFileHandleStrategy)` registers the translation. The strategy maps a `SafeFileHandle` to a `SafeFileHandleMock` that points at a location inside the mock, and is consulted for any handle the mock did not create itself.
 
 The default strategy (`NullSafeFileHandleStrategy`) is registered automatically and throws `NotSupportedException` for any handle. Install a custom strategy as soon as your code under test reaches for a handle from outside.
 
@@ -47,7 +47,7 @@ The strategy below keeps an explicit map from `SafeFileHandle` to (real path, mo
 <summary>`CustomSafeFileHandleStrategy`</summary>
 
 ```csharp
-public class CustomSafeFileHandleStrategy : ISafeFileHandleStrategy
+public class CustomSafeFileHandleStrategy : SafeFileHandleStrategy
 {
     private readonly RealFileSystem _realFileSystem;
     private readonly MockFileSystem _mockFileSystem;
@@ -67,7 +67,7 @@ public class CustomSafeFileHandleStrategy : ISafeFileHandleStrategy
         return this;
     }
 
-    public SafeFileHandleMock MapSafeFileHandle(SafeFileHandle handle)
+    public override SafeFileHandleMock MapSafeFileHandle(SafeFileHandle handle)
     {
         if (!_mapping.TryGetValue(handle, out (string RealPath, SafeFileHandleMock Mock) entry))
             throw new KeyNotFoundException("The provided fileHandle is not mapped!");

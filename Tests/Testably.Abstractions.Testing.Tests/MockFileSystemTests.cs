@@ -129,7 +129,7 @@ public class MockFileSystemTests
 
 		MockFileSystem sut = new();
 		sut.Initialize();
-		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((_, _) => false));
+		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((_, _, _) => false));
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -148,7 +148,7 @@ public class MockFileSystemTests
 
 		MockFileSystem sut = new();
 		sut.Initialize();
-		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((p, _)
+		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((p, _, _)
 			=> !string.Equals(p, sut.Path.GetFullPath(deniedPath), StringComparison.Ordinal)));
 
 		sut.Directory.CreateDirectory(allowedPath);
@@ -207,27 +207,6 @@ public class MockFileSystemTests
 	}
 
 	[Test]
-	[AutoArguments]
-	public async Task WithAccessControl_CustomInterfaceImplementation_ShouldBeUsed(
-		string allowedPath, string deniedPath)
-	{
-		Skip.If(!Test.RunsOnWindows);
-
-		MockFileSystem sut = new();
-		sut.Initialize();
-		sut.WithAccessControlStrategy(
-			new DummyAccessControlStrategy(sut.Path.GetFullPath(deniedPath)));
-
-		sut.Directory.CreateDirectory(allowedPath);
-		Exception? exception = Record.Exception(() =>
-		{
-			sut.Directory.CreateDirectory(deniedPath);
-		});
-
-		await That(exception).IsExactly<UnauthorizedAccessException>();
-	}
-
-	[Test]
 	public async Task
 		WithAccessControlStrategy_OutsideWindows_ShouldThrowPlatformNotSupportedException()
 	{
@@ -237,7 +216,7 @@ public class MockFileSystemTests
 
 		void Act()
 		{
-			sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((_, _) => true));
+			sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((_, _, _) => true));
 		}
 
 		await That(Act).Throws<PlatformNotSupportedException>()
@@ -461,7 +440,7 @@ public class MockFileSystemTests
 
 		MockFileSystem sut = new();
 		sut.Initialize();
-		sut.WithUnixFileModeStrategy(new DummyUnixFileModeStrategy(p =>
+		sut.WithUnixFileModeStrategy(new DummyUnixFileModeStrategy((p, _) =>
 			!p.EndsWith(deniedPath, StringComparison.Ordinal)));
 
 		sut.Directory.CreateDirectory(allowedPath);
@@ -470,6 +449,31 @@ public class MockFileSystemTests
 			sut.Directory.CreateDirectory(deniedPath);
 		});
 
+		await That(exception).IsExactly<UnauthorizedAccessException>();
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	[Test]
+	[AutoArguments]
+	public async Task WithUnixFileModeStrategy_ShouldConsiderRequestedAccess(
+		string path, string contents)
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		MockFileSystem sut = new();
+		sut.Initialize();
+		sut.File.WriteAllText(path, contents);
+		sut.WithUnixFileModeStrategy(new DummyUnixFileModeStrategy((_, request)
+			=> !request.Access.HasFlag(FileAccess.Write)));
+
+		string result = sut.File.ReadAllText(path);
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.File.WriteAllText(path, "new contents");
+		});
+
+		await That(result).IsEqualTo(contents);
 		await That(exception).IsExactly<UnauthorizedAccessException>();
 	}
 #endif
@@ -489,38 +493,17 @@ public class MockFileSystemTests
 		await That(exception).IsExactly<DirectoryNotFoundException>();
 	}
 
-	private sealed class DummyAccessControlStrategy(string deniedPath) : IAccessControlStrategy
-	{
-		#region IAccessControlStrategy Members
-
-		/// <inheritdoc />
-		bool IAccessControlStrategy.IsAccessGranted(string fullPath,
-			IFileSystemExtensibility extensibility)
-			=> !string.Equals(fullPath, deniedPath, StringComparison.Ordinal);
-
-		#endregion
-	}
-
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-	private sealed class DummyUnixFileModeStrategy(Func<string, bool>? pathPredicate = null)
-		: IUnixFileModeStrategy
+	private sealed class DummyUnixFileModeStrategy(
+		Func<string, AccessRequest, bool>? predicate = null)
+		: UnixFileModeStrategy
 	{
-		#region IUnixFileModeStrategy Members
-
 		/// <inheritdoc />
-		public bool IsAccessGranted(string fullPath, IFileSystemExtensibility extensibility,
+		public override bool IsAccessGranted(string fullPath,
+			IFileSystemExtensibility extensibility,
 			UnixFileMode mode,
-			FileAccess requestedAccess)
-			=> pathPredicate?.Invoke(fullPath) ?? false;
-
-		/// <inheritdoc />
-		public void OnSetUnixFileMode(string fullPath, IFileSystemExtensibility extensibility,
-			UnixFileMode mode)
-		{
-			// Do nothing
-		}
-
-		#endregion
+			AccessRequest request)
+			=> predicate?.Invoke(fullPath, request) ?? false;
 	}
 #endif
 }

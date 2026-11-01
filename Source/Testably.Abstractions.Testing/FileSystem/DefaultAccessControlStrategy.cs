@@ -13,21 +13,6 @@ public class DefaultAccessControlStrategy : AccessControlStrategy
 
 	/// <summary>
 	///     Initializes a new instance of <see cref="DefaultAccessControlStrategy" /> which takes a callback to determine if
-	///     access should be granted.
-	/// </summary>
-	public DefaultAccessControlStrategy(
-		Func<string, IFileSystemExtensibility, bool> callback)
-	{
-		if (callback == null)
-		{
-			throw new ArgumentNullException(nameof(callback));
-		}
-
-		_callback = (fullPath, extensibility, _) => callback(fullPath, extensibility);
-	}
-
-	/// <summary>
-	///     Initializes a new instance of <see cref="DefaultAccessControlStrategy" /> which takes a callback to determine if
 	///     the <see cref="AccessRequest" /> should be granted.
 	/// </summary>
 	public DefaultAccessControlStrategy(

@@ -284,7 +284,7 @@ public class CreateDirectoryTests(FileSystemTestData testData) : FileSystemTestB
 			restrictedDirectory = @"C:\Restricted directory";
 			mockFileSystem.Directory.CreateDirectory(restrictedDirectory);
 			mockFileSystem.WithAccessControlStrategy(
-				new DefaultAccessControlStrategy((p, _)
+				new DefaultAccessControlStrategy((p, _, _)
 					=> !restrictedDirectory.Equals(p, StringComparison.Ordinal)));
 		}
 
