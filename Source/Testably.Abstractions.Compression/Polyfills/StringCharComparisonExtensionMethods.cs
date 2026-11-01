@@ -18,7 +18,7 @@ internal static class StringCharComparisonExtensionMethods
 		char value,
 		StringComparison comparisonType)
 	{
-		return @this.EndsWith(value);
+		return @this.Length > 0 && @this[@this.Length - 1] == value;
 	}
 }
 #endif
