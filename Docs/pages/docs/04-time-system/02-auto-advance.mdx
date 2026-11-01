@@ -19,7 +19,7 @@ await That(timeSystem.DateTime.UtcNow)
 
 A timer moves the clock to its due time as well. The timers that are due on the way fire in the order of their due time, on the thread that moves the clock, and each callback sees the clock at its own due time, not at the end of the wait. All timers move the clock on one shared background thread. Another thread that moves the clock at the same time, e.g. a `Task.Delay` or `AdvanceBy` in the test, can move it further while a callback runs, just like the real clock keeps running.
 
-On the [`TimeProvider`](./01-configuring-time.mdx) from `ToTimeProvider()`, a timer without a period whose state is a `CancellationTokenSource`, like the one of `new CancellationTokenSource(TimeSpan, TimeProvider)`, and the timer of `Task.WaitAsync(TimeSpan, TimeProvider)` are timeouts. A timeout never moves the clock on its own: it fires when a wait or `AdvanceBy` moves the clock past its due time, so that an operation with a timeout is not canceled before it starts.
+A timer without a period whose state is a `CancellationTokenSource` is a timeout. This includes the timer of `new CancellationTokenSource(TimeSpan, TimeProvider)` on the [`TimeProvider`](./01-configuring-time.mdx) from `ToTimeProvider()`, a `Timer.New` that cancels the `CancellationTokenSource` it gets as state, and the timer of `Task.WaitAsync(TimeSpan, TimeProvider)`. A timeout never moves the clock on its own: it fires when a wait or `AdvanceBy` moves the clock past its due time, so that an operation with a timeout is not canceled before it starts. A one-shot timer that does other work should therefore not get a `CancellationTokenSource` as state.
 
 ```csharp
 MockTimeSystem timeSystem = new();

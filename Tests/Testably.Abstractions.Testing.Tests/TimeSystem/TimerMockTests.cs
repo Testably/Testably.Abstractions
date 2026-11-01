@@ -127,21 +127,98 @@ public class TimerMockTests
 	}
 
 	[Test]
-	public async Task AutoAdvance_WhenStateIsACancellationTokenSource_ShouldStillMoveTheClock()
+	public async Task AutoAdvance_WhenATimeoutCancelsADelay_ShouldStopTheClockAtTheTimeout()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+		using CancellationTokenSource cts = new();
+		using ITimer timer = timeSystem.Timer.New(s => ((CancellationTokenSource)s!).Cancel(), cts,
+			1.Seconds(), Timeout.InfiniteTimeSpan);
+
+		Task delay = timeSystem.Task.Delay(5.Seconds(), cts.Token);
+
+		await That(delay.IsCanceled).IsTrue();
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 1.Seconds())
+			.Because("the timeout canceled the delay after one second");
+	}
+
+	[Test]
+	public async Task AutoAdvance_WhenATimeoutGetsAPeriod_ShouldMoveTheClock()
 	{
 		MockTimeSystem timeSystem = new();
 		using CancellationTokenSource cts = new();
-		TaskCompletionSource<bool> canceled = new(TaskCreationOptions.RunContinuationsAsynchronously);
-		using CancellationTokenRegistration _ = cts.Token.Register(() => canceled.TrySetResult(true));
+		TaskCompletionSource<bool> executedThreeTimes = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		int executions = 0;
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			if (Interlocked.Increment(ref executions) == 3)
+			{
+				executedThreeTimes.TrySetResult(true);
+			}
+		}, cts, 1.Seconds(), Timeout.InfiniteTimeSpan);
+
+		timer.Change(1.Seconds(), 1.Seconds());
+		bool isCompleted = await Task.WhenAny(executedThreeTimes.Task,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == executedThreeTimes.Task;
+
+		await That(isCompleted).IsTrue()
+			.Because("whether a timer is a timeout depends on its current period");
+	}
+
+	[Test]
+	public async Task AutoAdvance_WhenStateIsACancellationTokenSource_AndAPeriod_ShouldMoveTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		using CancellationTokenSource shutdown = new();
+		TaskCompletionSource<bool> executedThreeTimes = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		int executions = 0;
+
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			if (Interlocked.Increment(ref executions) == 3)
+			{
+				executedThreeTimes.TrySetResult(true);
+			}
+		}, shutdown, 1.Seconds(), 1.Seconds());
+
+		bool isCompleted = await Task.WhenAny(executedThreeTimes.Task,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == executedThreeTimes.Task;
+
+		await That(isCompleted).IsTrue()
+			.Because("a periodic timer is never a timeout, even when its state is a CancellationTokenSource");
+	}
+
+	[Test]
+	public async Task AutoAdvance_WhenStateIsACancellationTokenSource_ShouldFireWhenASleepPassesIt()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+		using CancellationTokenSource cts = new();
+		DateTime? canceledAt = null;
+		using CancellationTokenRegistration _ = cts.Token.Register(() => canceledAt = timeSystem.DateTime.UtcNow);
+		using ITimer timer = timeSystem.Timer.New(s => ((CancellationTokenSource)s!).Cancel(), cts,
+			1.Seconds(), Timeout.InfiniteTimeSpan);
+
+		timeSystem.Thread.Sleep(5.Seconds());
+
+		await That(canceledAt).IsEqualTo(start + 1.Seconds());
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 5.Seconds());
+	}
+
+	[Test]
+	public async Task AutoAdvance_WhenStateIsACancellationTokenSource_ShouldNotMoveTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+		using CancellationTokenSource cts = new();
 
 		using ITimer timer = timeSystem.Timer.New(s => ((CancellationTokenSource)s!).Cancel(), cts,
 			1.Seconds(), Timeout.InfiniteTimeSpan);
 
-		bool isCanceled = await Task.WhenAny(canceled.Task,
-			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == canceled.Task;
-
-		await That(isCanceled).IsTrue()
-			.Because("only the timeouts that the BCL creates on the TimeProvider bridge do not move the clock");
+		await That(timeSystem.Scheduler.IsAdvancing).IsFalse()
+			.Because("a one-shot timer that gets a CancellationTokenSource as state is a timeout");
+		await That(cts.IsCancellationRequested).IsFalse();
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start);
 	}
 
 	[Test]

@@ -68,17 +68,6 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 		return RegisterTimerMock(timerMock);
 	}
 
-	/// <summary>
-	///     Creates a timer that never moves the clock on its own, but fires when something else moves the clock past its
-	///     due time.
-	/// </summary>
-	internal ITimer NewTimeout(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
-	{
-		TimerMock timerMock = new(_mockTimeSystem, _timerStrategy,
-			callback, state, dueTime, period, autoAdvance: false);
-		return RegisterTimerMock(timerMock);
-	}
-
 	/// <inheritdoc cref="ITimerFactory.Wrap(Timer)" />
 	public ITimer Wrap(Timer timer)
 		=> throw ExceptionFactory.NotSupportedTimerWrapping();

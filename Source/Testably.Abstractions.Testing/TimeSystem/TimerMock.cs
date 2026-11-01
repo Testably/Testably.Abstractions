@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Helpers;
@@ -9,6 +10,13 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 
 internal sealed class TimerMock : ITimerMock
 {
+	/// <summary>
+	///     The private type of the promise that <c>Task.WaitAsync(TimeSpan, TimeProvider)</c> passes as state to the timer
+	///     of its timeout.
+	/// </summary>
+	private static readonly Type? WaitAsyncPromiseType =
+		typeof(Task).GetNestedType("CancellationPromise`1", BindingFlags.NonPublic);
+
 	private readonly TimerCallback _callback;
 	private CancellationTokenSource? _cancellationTokenSource;
 	private TimeSpan _dueTime;
@@ -239,6 +247,17 @@ internal sealed class TimerMock : ITimerMock
 		_onDispose = onDispose;
 	}
 
+	/// <summary>
+	///     Whether the timer is a timeout, like the one of <c>new CancellationTokenSource(TimeSpan, TimeProvider)</c> or of
+	///     <c>Task.WaitAsync(TimeSpan, TimeProvider)</c>, which must not move the clock on its own, so that the operation it
+	///     guards is not canceled before it starts. A timeout fires once, so a periodic timer is never one.
+	/// </summary>
+	private bool IsTimeout()
+		=> _period.TotalMilliseconds <= 0 &&
+		   (_state is CancellationTokenSource ||
+		    (_state?.GetType() is { IsGenericType: true, } type &&
+		     type.GetGenericTypeDefinition() == WaitAsyncPromiseType));
+
 	private void Execute(SchedulingTimeProvider.ScheduledTimer scheduled, CancellationToken cancellationToken)
 	{
 		if (!TryExecute(scheduled.DueTicks, cancellationToken))
@@ -298,7 +317,7 @@ internal sealed class TimerMock : ITimerMock
 	private bool Schedule(long dueTicks, CancellationToken cancellationToken)
 	{
 		SchedulingTimeProvider.ScheduledTimer? scheduled = null;
-		scheduled = new SchedulingTimeProvider.ScheduledTimer(dueTicks, _autoAdvance,
+		scheduled = new SchedulingTimeProvider.ScheduledTimer(dueTicks, _autoAdvance && !IsTimeout(),
 			() => Execute(scheduled!, cancellationToken));
 		lock (_lock)
 		{
