@@ -196,6 +196,11 @@ internal sealed class FileInfoMock
 				pathToTarget);
 
 		ValidatePathToTargetOfHardLink(pathToTarget);
+		if (HasInvalidHardLinkCharacters(Location.FriendlyName))
+		{
+			throw ExceptionFactory.PathHasIncorrectSyntax(Location.FriendlyName);
+		}
+
 		Container = _fileSystem.Storage.CreateHardLink(Location,
 			_fileSystem.Storage.GetLocation(pathToTarget));
 		ResetCache(true);
@@ -222,13 +227,20 @@ internal sealed class FileInfoMock
 			throw ExceptionFactory.NullCharacterInPath(nameof(pathToTarget));
 		}
 
-		if (_fileSystem.Execute.IsWindows &&
-		    (pathToTarget.HasIllegalCharacters(_fileSystem) ||
-		     pathToTarget.IndexOfAny(['<', '>', '"']) >= 0))
+		if (HasInvalidHardLinkCharacters(pathToTarget))
 		{
 			throw ExceptionFactory.PathHasIncorrectSyntax(Location.FriendlyName);
 		}
 	}
+
+	/// <summary>
+	///     Windows rejects the characters that are invalid in a file name, which <c>Path.GetInvalidPathChars()</c>
+	///     does not cover, when creating a hard link.
+	/// </summary>
+	private bool HasInvalidHardLinkCharacters(string path)
+		=> _fileSystem.Execute.IsWindows &&
+		   (path.HasIllegalCharacters(_fileSystem) ||
+		    path.IndexOfAny(['<', '>', '"']) >= 0);
 #endif
 
 	/// <inheritdoc cref="IFileInfo.CreateText()" />

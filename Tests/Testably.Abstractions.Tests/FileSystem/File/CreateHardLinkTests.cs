@@ -192,6 +192,29 @@ public class CreateHardLinkTests(FileSystemTestData testData) : FileSystemTestBa
 	}
 
 	[Test]
+	[Arguments("foo|bar")]
+	[Arguments("foo<bar")]
+	[Arguments("foo>bar")]
+	[Arguments("foo\"bar")]
+	public async Task CreateHardLink_PathWithInvalidCharacter_OnWindows_ShouldThrowIOException(
+		string path)
+	{
+		Skip.IfNot(Test.RunsOnWindows, "Only Windows has invalid path characters besides '\\0'.");
+
+		string pathToTarget = "target.txt";
+		FileSystem.File.WriteAllText(pathToTarget, "foo");
+
+		void Act()
+		{
+			FileSystem.File.CreateHardLink(path, pathToTarget);
+		}
+
+		await That(Act).Throws<IOException>()
+			.WithMessage().Containing(path).And
+			.WithHResult(-2147024773);
+	}
+
+	[Test]
 	[AutoArguments]
 	public async Task CreateHardLink_MovingLink_ShouldKeepSharingContent(
 		string path, string pathToTarget, string newPath)

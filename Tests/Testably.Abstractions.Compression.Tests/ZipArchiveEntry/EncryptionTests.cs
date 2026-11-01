@@ -64,6 +64,23 @@ public class EncryptionTests(FileSystemTestData testData) : FileSystemTestBase(t
 	}
 
 	[Test]
+	public async Task ExtractToFile_WithoutPassword_EncryptedEntry_ShouldThrowArgumentException()
+	{
+		CreateArchiveWithEncryptedEntry("foo");
+		using IZipArchive archive = OpenArchive(ZipArchiveMode.Read);
+		IZipArchiveEntry entry = archive.GetEntry("foo.txt")!;
+
+		void Act()
+		{
+			entry.ExtractToFile("dest.txt", new ZipExtractionOptions());
+		}
+
+		await That(Act).Throws<ArgumentException>().WithParamName("password")
+			.Because(
+				"unlike ExtractToDirectory, ExtractToFile opens the entry with the empty password");
+	}
+
+	[Test]
 	public async Task ExtractToFile_WithNullOptions_ShouldThrowArgumentNullException()
 	{
 		CreateArchiveWithEncryptedEntry("foo");
