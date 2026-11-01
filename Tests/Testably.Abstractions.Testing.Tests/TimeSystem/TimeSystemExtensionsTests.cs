@@ -120,7 +120,7 @@ public class TimeSystemExtensionsTests
 		}, null, 1.Seconds(), 1.Seconds());
 
 		bool isCompleted = await Task.WhenAny(executedThreeTimes.Task,
-			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == executedThreeTimes.Task;
+			Task.Delay(5.Seconds(), System.TimeProvider.System, TestContext.Current!.Execution.CancellationToken)) == executedThreeTimes.Task;
 
 		await That(isCompleted).IsTrue()
 			.Because("a timeout that the timer passes does not belong to it");
@@ -234,7 +234,7 @@ public class TimeSystemExtensionsTests
 		}, null, 1.Seconds(), Timeout.InfiniteTimeSpan);
 
 		bool isCompleted = await Task.WhenAny(completed.Task,
-			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == completed.Task;
+			Task.Delay(5.Seconds(), System.TimeProvider.System, TestContext.Current!.Execution.CancellationToken)) == completed.Task;
 
 		await That(isCompleted).IsTrue()
 			.Because("a callback that blocks on a delay of the same time provider must not keep the clock from moving");
@@ -258,7 +258,7 @@ public class TimeSystemExtensionsTests
 		}, shutdown, 1.Seconds(), 1.Seconds());
 
 		bool isCompleted = await Task.WhenAny(executedThreeTimes.Task,
-			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == executedThreeTimes.Task;
+			Task.Delay(5.Seconds(), System.TimeProvider.System, TestContext.Current!.Execution.CancellationToken)) == executedThreeTimes.Task;
 
 		await That(isCompleted).IsTrue()
 			.Because("a periodic timer is never a timeout, even when its state is a CancellationTokenSource");

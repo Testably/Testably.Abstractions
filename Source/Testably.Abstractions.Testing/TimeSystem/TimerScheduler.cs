@@ -98,6 +98,17 @@ internal sealed class TimerScheduler
 	}
 
 	/// <summary>
+	///     Moves the clock by the <paramref name="interval" /> and fires the timers due until then, in the order of their
+	///     due time.
+	/// </summary>
+	/// <returns>
+	///     <see langword="false" />, when the <paramref name="stopAfter" /> predicate stopped the clock after a fired
+	///     timer, otherwise <see langword="true" />.
+	/// </returns>
+	public bool AdvanceBy(TimeSpan interval, Func<ScheduledTimer, bool>? stopAfter)
+		=> AdvanceTo(AddTicks(_clock.ElapsedTicks, interval.Ticks), stopAfter);
+
+	/// <summary>
 	///     Sets the clock to the <paramref name="value" />, which does not change the elapsed ticks the timers depend on.
 	/// </summary>
 	public void SetTo(DateTime value)
@@ -114,17 +125,6 @@ internal sealed class TimerScheduler
 	/// </summary>
 	public static long AddTicks(long dueTicks, long ticks)
 		=> ticks > long.MaxValue - dueTicks ? long.MaxValue : dueTicks + ticks;
-
-	/// <summary>
-	///     Moves the clock by the <paramref name="interval" /> and fires the timers due until then, in the order of their
-	///     due time.
-	/// </summary>
-	/// <returns>
-	///     <see langword="false" />, when the <paramref name="stopAfter" /> predicate stopped the clock after a fired
-	///     timer, otherwise <see langword="true" />.
-	/// </returns>
-	public bool AdvanceBy(TimeSpan interval, Func<ScheduledTimer, bool>? stopAfter)
-		=> AdvanceTo(AddTicks(_clock.ElapsedTicks, interval.Ticks), stopAfter);
 
 	/// <summary>
 	///     Moves the clock to the <paramref name="targetTicks" /> and fires the timers due until then, in the order of

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Helpers;
@@ -10,13 +9,6 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 
 internal sealed class TimerMock : ITimerMock
 {
-	/// <summary>
-	///     The private type of the promise that <c>Task.WaitAsync(TimeSpan, TimeProvider)</c> passes as state to the timer
-	///     of its timeout.
-	/// </summary>
-	private static readonly Type? WaitAsyncPromiseType =
-		typeof(Task).GetNestedType("CancellationPromise`1", BindingFlags.NonPublic);
-
 	private readonly TimerCallback _callback;
 	private CancellationTokenSource? _cancellationTokenSource;
 	private TimeSpan _dueTime;
@@ -222,7 +214,7 @@ internal sealed class TimerMock : ITimerMock
 		TimerScheduler.ReleaseClock();
 		try
 		{
-			if (!handshake.Reached.Task.Wait(timeout))
+			if (!handshake.Reached.Task.Wait(timeout, CancellationToken.None))
 			{
 				throw ExceptionFactory.TimerWaitTimeoutException(executionCount, timeout);
 			}
@@ -255,11 +247,15 @@ internal sealed class TimerMock : ITimerMock
 	///     <c>Task.WaitAsync(TimeSpan, TimeProvider)</c>, which must not move the clock on its own, so that the operation it
 	///     guards is not canceled before it starts. A timeout fires once, so a periodic timer is never one.
 	/// </summary>
+	/// <remarks>
+	///     <c>Task.WaitAsync</c> passes its private <c>Task.CancellationPromise&lt;TResult&gt;</c> as state, which is
+	///     recognized by its name, as it cannot be referenced.
+	/// </remarks>
 	private bool IsTimeout()
 		=> _period.TotalMilliseconds <= 0 &&
 		   (_state is CancellationTokenSource ||
-		    (_state?.GetType() is { IsGenericType: true, } type &&
-		     type.GetGenericTypeDefinition() == WaitAsyncPromiseType));
+		    (_state?.GetType() is { IsGenericType: true, Name: "CancellationPromise`1", } type &&
+		     type.DeclaringType == typeof(Task)));
 
 	private void Execute(TimerScheduler.ScheduledTimer scheduled, CancellationToken cancellationToken)
 	{
