@@ -15,7 +15,7 @@ public class DirectoryMockTests
 		MockFileSystem fileSystem = new();
 		IDirectoryInfo sut = fileSystem.Directory.CreateDirectory(path);
 		fileSystem.WithAccessControlStrategy(
-			new DefaultAccessControlStrategy((p, _)
+			new DefaultAccessControlStrategy((p, _, _)
 				=> !p.EndsWith(path, StringComparison.Ordinal)));
 
 		void Act() =>
@@ -36,7 +36,7 @@ public class DirectoryMockTests
 		MockFileSystem fileSystem = new();
 		IDirectoryInfo sut = fileSystem.Directory.CreateDirectory(path);
 		fileSystem.WithAccessControlStrategy(
-			new DefaultAccessControlStrategy((p, _)
+			new DefaultAccessControlStrategy((p, _, _)
 				=> !p.EndsWith(path, StringComparison.Ordinal)));
 
 		void Act() =>
@@ -58,7 +58,7 @@ public class DirectoryMockTests
 				.WithSubdirectory("foo")
 				.WithSubdirectory("bar"));
 		fileSystem.WithAccessControlStrategy(
-			new DefaultAccessControlStrategy((p, _)
+			new DefaultAccessControlStrategy((p, _, _)
 				=> !p.EndsWith("foo", StringComparison.Ordinal)));
 
 		string[] result = fileSystem.Directory.GetDirectories("root");
@@ -82,7 +82,7 @@ public class DirectoryMockTests
 				.WithSubdirectory("foo").Initialized(f => f.WithFile("denied.txt"))
 				.WithSubdirectory("bar").Initialized(b => b.WithFile("allowed.txt")));
 		fileSystem.WithAccessControlStrategy(
-			new DefaultAccessControlStrategy((p, _)
+			new DefaultAccessControlStrategy((p, _, _)
 				=> !p.EndsWith("foo", StringComparison.Ordinal)));
 
 		string[] result = fileSystem.Directory.GetFiles("root", "*", new EnumerationOptions
@@ -106,7 +106,7 @@ public class DirectoryMockTests
 			.WithSubdirectory("root").Initialized(d => d
 				.WithSubdirectory("foo"));
 		fileSystem.WithAccessControlStrategy(
-			new DefaultAccessControlStrategy((p, _)
+			new DefaultAccessControlStrategy((p, _, _)
 				=> !p.EndsWith("foo", StringComparison.Ordinal)));
 
 		void Act() =>
@@ -128,7 +128,7 @@ public class DirectoryMockTests
 				.WithFile("myFile1.txt")
 				.WithFile("myFile2.txt"));
 		fileSystem.WithAccessControlStrategy(
-			new DefaultAccessControlStrategy((p, _)
+			new DefaultAccessControlStrategy((p, _, _)
 				=> !p.EndsWith("myFile2.txt", StringComparison.Ordinal)));
 
 		string[] result = fileSystem.Directory.GetFiles("root");
@@ -153,7 +153,7 @@ public class DirectoryMockTests
 		MockFileSystem fileSystem = new();
 		IDirectoryInfo sut = fileSystem.Directory.CreateDirectory(path);
 		fileSystem.WithAccessControlStrategy(
-			new DefaultAccessControlStrategy((p, _)
+			new DefaultAccessControlStrategy((p, _, _)
 				=> !p.EndsWith(path, StringComparison.Ordinal)));
 
 		void Act() =>

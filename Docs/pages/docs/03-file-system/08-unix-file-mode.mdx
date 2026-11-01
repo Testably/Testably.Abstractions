@@ -4,12 +4,12 @@ description: Simulate POSIX users, groups and permissions in the MockFileSystem.
 
 # Unix file mode
 
-To simulate POSIX permissions in the mock, plug in an `IUnixFileModeStrategy` via `WithUnixFileModeStrategy(...)`. Without one, the mock grants access to every entry whose `UnixFileMode` is not `None`.
+To simulate POSIX permissions in the mock, derive from the abstract `UnixFileModeStrategy` base class and plug it in via `WithUnixFileModeStrategy(...)`. Without one, the mock grants access to every entry whose `UnixFileMode` is not `None`.
 
 The strategy decides:
 
-- whether a given user/group is allowed to read or write a path (`IsAccessGranted`)
-- what to record when the file mode is set, for example by `File.SetUnixFileMode(...)` (`OnSetUnixFileMode`)
+- whether a given user/group is allowed to read or write a path (`IsAccessGranted`); the `AccessRequest` contains the requested `FileAccess`, and deleting a file or directory is not checked
+- what to record when the file mode is set, for example by `File.SetUnixFileMode(...)` (optionally override `OnSetUnixFileMode`, which does nothing by default)
 
 A typical implementation stores the file's user and group alongside the file via [`IFileSystemExtensibility`](./12-extensibility.mdx), then uses that data plus the file's `UnixFileMode` to decide whether to grant access. When access is denied, the mock throws `UnauthorizedAccessException`.
 
@@ -31,7 +31,7 @@ The same rules apply to write access with the `*Write` flags.
 <summary>`SimulatedUserStrategy`</summary>
 
 ```csharp
-public class SimulatedUserStrategy : IUnixFileModeStrategy
+public class SimulatedUserStrategy : UnixFileModeStrategy
 {
     private string _user = "";
     private string _group = "";
@@ -39,7 +39,7 @@ public class SimulatedUserStrategy : IUnixFileModeStrategy
     public SimulatedUserStrategy SimulateUser(string user)   { _user = user; return this; }
     public SimulatedUserStrategy SimulateGroup(string group) { _group = group; return this; }
 
-    public void OnSetUnixFileMode(string fullPath,
+    public override void OnSetUnixFileMode(string fullPath,
         IFileSystemExtensibility extensibility, UnixFileMode mode)
     {
         // Record the simulated owner at the moment the file's mode was set
@@ -47,9 +47,9 @@ public class SimulatedUserStrategy : IUnixFileModeStrategy
             new UserGroup(_user, _group));
     }
 
-    public bool IsAccessGranted(string fullPath,
+    public override bool IsAccessGranted(string fullPath,
         IFileSystemExtensibility extensibility,
-        UnixFileMode mode, FileAccess requestedAccess)
+        UnixFileMode mode, AccessRequest request)
     {
         UserGroup owner = extensibility
             .RetrieveMetadata<UserGroup>(nameof(SimulatedUserStrategy))
@@ -65,7 +65,7 @@ public class SimulatedUserStrategy : IUnixFileModeStrategy
             (mode.HasFlag(UnixFileMode.GroupWrite) && owner.Group == _group) ||
             (mode.HasFlag(UnixFileMode.UserWrite)  && owner.User  == _user);
 
-        return requestedAccess switch
+        return request.Access switch
         {
             FileAccess.Read  => readOk,
             FileAccess.Write => writeOk,

@@ -68,11 +68,11 @@ namespace Testably.Abstractions.Testing
         public Testably.Abstractions.ITimeSystem TimeSystem { get; }
         public Testably.Abstractions.Testing.FileSystem.IWatcherTriggeredHandler Watcher { get; }
         public override string ToString() { }
-        public Testably.Abstractions.Testing.MockFileSystem WithAccessControlStrategy(Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy accessControlStrategy) { }
+        public Testably.Abstractions.Testing.MockFileSystem WithAccessControlStrategy(Testably.Abstractions.Testing.FileSystem.AccessControlStrategy accessControlStrategy) { }
         public Testably.Abstractions.Testing.MockFileSystem WithDrive(string? drive, System.Action<Testably.Abstractions.Testing.Storage.IStorageDrive>? driveCallback = null) { }
         public Testably.Abstractions.Testing.MockFileSystem WithFileVersionInfo(string globPattern, System.Action<Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder> fileVersionInfoBuilder) { }
-        public Testably.Abstractions.Testing.MockFileSystem WithSafeFileHandleStrategy(Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy safeFileHandleStrategy) { }
-        public Testably.Abstractions.Testing.MockFileSystem WithUnixFileModeStrategy(Testably.Abstractions.Testing.FileSystem.IUnixFileModeStrategy unixFileModeStrategy) { }
+        public Testably.Abstractions.Testing.MockFileSystem WithSafeFileHandleStrategy(Testably.Abstractions.Testing.FileSystem.SafeFileHandleStrategy safeFileHandleStrategy) { }
+        public Testably.Abstractions.Testing.MockFileSystem WithUnixFileModeStrategy(Testably.Abstractions.Testing.FileSystem.UnixFileModeStrategy unixFileModeStrategy) { }
         public class MockFileSystemOptions
         {
             public MockFileSystemOptions() { }
@@ -198,11 +198,10 @@ namespace Testably.Abstractions.Testing
 }
 namespace Testably.Abstractions.Testing.FileSystem
 {
-    public abstract class AccessControlStrategy : Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy
+    public abstract class AccessControlStrategy
     {
         protected AccessControlStrategy() { }
         public abstract bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, Testably.Abstractions.Testing.FileSystem.AccessRequest request);
-        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility) { }
     }
     public sealed class AccessRequest
     {
@@ -223,18 +222,13 @@ namespace Testably.Abstractions.Testing.FileSystem
     public class DefaultAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.AccessControlStrategy
     {
         public DefaultAccessControlStrategy(System.Func<string, Testably.Abstractions.Helpers.IFileSystemExtensibility, Testably.Abstractions.Testing.FileSystem.AccessRequest, bool> callback) { }
-        public DefaultAccessControlStrategy(System.Func<string, Testably.Abstractions.Helpers.IFileSystemExtensibility, bool> callback) { }
         public override bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, Testably.Abstractions.Testing.FileSystem.AccessRequest request) { }
     }
-    public class DefaultSafeFileHandleStrategy : Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy
+    public class DefaultSafeFileHandleStrategy : Testably.Abstractions.Testing.FileSystem.SafeFileHandleStrategy
     {
         public DefaultSafeFileHandleStrategy(System.Func<Microsoft.Win32.SafeHandles.SafeFileHandle, Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock> callback) { }
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-        public Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle) { }
-    }
-    public interface IAccessControlStrategy
-    {
-        bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility);
+        public override Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle) { }
     }
     public interface IInterceptionHandler : System.IO.Abstractions.IFileSystemEntity
     {
@@ -244,15 +238,6 @@ namespace Testably.Abstractions.Testing.FileSystem
     {
         Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnEvent(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
         Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnEventOrReplay(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
-    }
-    public interface ISafeFileHandleStrategy
-    {
-        Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
-    }
-    public interface IUnixFileModeStrategy
-    {
-        bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode, System.IO.FileAccess requestedAccess);
-        void OnSetUnixFileMode(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode);
     }
     public interface IWatcherTriggeredHandler : System.IO.Abstractions.IFileSystemEntity
     {
@@ -264,17 +249,16 @@ namespace Testably.Abstractions.Testing.FileSystem
         public NullAccessControlStrategy() { }
         public override bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, Testably.Abstractions.Testing.FileSystem.AccessRequest request) { }
     }
-    public class NullSafeFileHandleStrategy : Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy
+    public class NullSafeFileHandleStrategy : Testably.Abstractions.Testing.FileSystem.SafeFileHandleStrategy
     {
         public NullSafeFileHandleStrategy() { }
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-        public Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle) { }
+        public override Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle) { }
     }
-    public class NullUnixFileModeStrategy : Testably.Abstractions.Testing.FileSystem.IUnixFileModeStrategy
+    public class NullUnixFileModeStrategy : Testably.Abstractions.Testing.FileSystem.UnixFileModeStrategy
     {
         public NullUnixFileModeStrategy() { }
-        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode, System.IO.FileAccess requestedAccess) { }
-        public void OnSetUnixFileMode(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode) { }
+        public override bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode, Testably.Abstractions.Testing.FileSystem.AccessRequest request) { }
     }
     public class SafeFileHandleMock
     {
@@ -282,6 +266,17 @@ namespace Testably.Abstractions.Testing.FileSystem
         public System.IO.FileMode Mode { get; }
         public string Path { get; }
         public System.IO.FileShare Share { get; }
+    }
+    public abstract class SafeFileHandleStrategy
+    {
+        protected SafeFileHandleStrategy() { }
+        public abstract Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
+    }
+    public abstract class UnixFileModeStrategy
+    {
+        protected UnixFileModeStrategy() { }
+        public abstract bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode, Testably.Abstractions.Testing.FileSystem.AccessRequest request);
+        public virtual void OnSetUnixFileMode(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility, System.IO.UnixFileMode mode) { }
     }
     public sealed class WatcherChangeDescription : Testably.Abstractions.Testing.FileSystem.ChangeDescription
     {

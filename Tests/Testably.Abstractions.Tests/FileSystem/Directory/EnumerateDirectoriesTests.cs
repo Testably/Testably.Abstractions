@@ -309,7 +309,7 @@ public class EnumerateDirectoriesTests(FileSystemTestData testData) : FileSystem
 			FileSystem.Directory.CreateDirectory(
 				FileSystem.Path.Combine(path, "foo"));
 			mockFileSystem.WithAccessControlStrategy(
-				new DefaultAccessControlStrategy((p, _)
+				new DefaultAccessControlStrategy((p, _, _)
 					=> !p.EndsWith("foo", StringComparison.Ordinal)));
 		}
 

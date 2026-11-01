@@ -214,17 +214,17 @@ internal sealed class InMemoryContainer : IStorageContainer
 				? _location.FriendlyName
 				: _location.FullPath);
 		}
+		AccessRequest request = new(access, deleteAccess);
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		if (!deleteAccess && !_fileSystem.UnixFileModeStrategy
-			.IsAccessGranted(_location.FullPath, _data.Extensibility, UnixFileMode, access))
+			.IsAccessGranted(_location.FullPath, _data.Extensibility, UnixFileMode, request))
 		{
 			throw ExceptionFactory.AccessDenied(_location.FullPath);
 		}
 #endif
 
 		if (!_fileSystem.AccessControlStrategy
-			.IsAccessGranted(_location.FullPath, Extensibility,
-				new AccessRequest(access, deleteAccess)))
+			.IsAccessGranted(_location.FullPath, Extensibility, request))
 		{
 			throw ExceptionFactory.AccessToPathDenied((onBehalfOfLocation ?? _location).FullPath);
 		}

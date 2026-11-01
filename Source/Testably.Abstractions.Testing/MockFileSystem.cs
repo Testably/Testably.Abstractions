@@ -88,7 +88,7 @@ public sealed class MockFileSystem : IFileSystem
 	internal MockSafeFileHandleRegistry SafeFileHandleRegistry { get; }
 #endif
 
-	internal ISafeFileHandleStrategy SafeFileHandleStrategy
+	internal SafeFileHandleStrategy SafeFileHandleStrategy
 	{
 		get;
 		private set;
@@ -108,7 +108,7 @@ public sealed class MockFileSystem : IFileSystem
 		=> _storage.GetContainers();
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-	internal IUnixFileModeStrategy UnixFileModeStrategy
+	internal UnixFileModeStrategy UnixFileModeStrategy
 	{
 		get;
 		private set;
@@ -223,14 +223,11 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     Implements a custom access control (ACL) mechanism.
 	///     <para />
-	///     The <see cref="IAccessControlStrategy" /> defines a method that receives two values and allows or denies access:
-	///     <br />
-	///     - The full path of the file or directory as first parameter<br />
-	///     - The <see cref="Testably.Abstractions.Helpers.IFileSystemExtensibility" /> as second parameter
-	///     <para />
-	///     An <see cref="FileSystem.AccessControlStrategy" /> additionally receives the <see cref="AccessRequest" />.
+	///     The <see cref="FileSystem.AccessControlStrategy" /> receives the full path of the file or directory, the
+	///     <see cref="Testably.Abstractions.Helpers.IFileSystemExtensibility" /> and the <see cref="AccessRequest" />
+	///     and allows or denies access.
 	/// </summary>
-	public MockFileSystem WithAccessControlStrategy(IAccessControlStrategy accessControlStrategy)
+	public MockFileSystem WithAccessControlStrategy(AccessControlStrategy accessControlStrategy)
 	{
 		if (!Execute.IsWindows)
 		{
@@ -238,8 +235,7 @@ public sealed class MockFileSystem : IFileSystem
 				"Access control lists are only supported on Windows.");
 		}
 
-		AccessControlStrategy = accessControlStrategy as AccessControlStrategy
-		                        ?? new DefaultAccessControlStrategy(accessControlStrategy.IsAccessGranted);
+		AccessControlStrategy = accessControlStrategy;
 		return this;
 	}
 
@@ -281,7 +277,7 @@ public sealed class MockFileSystem : IFileSystem
 	///     Defaults to <see cref="NullSafeFileHandleStrategy" />, if nothing is provided.
 	/// </summary>
 	public MockFileSystem WithSafeFileHandleStrategy(
-		ISafeFileHandleStrategy safeFileHandleStrategy)
+		SafeFileHandleStrategy safeFileHandleStrategy)
 	{
 		SafeFileHandleStrategy = safeFileHandleStrategy;
 		return this;
@@ -291,7 +287,7 @@ public sealed class MockFileSystem : IFileSystem
 	///     Implements a custom strategy to simulate working with the <see cref="UnixFileMode" /> in the
 	///     <see cref="MockFileSystem" />.
 	/// </summary>
-	public MockFileSystem WithUnixFileModeStrategy(IUnixFileModeStrategy unixFileModeStrategy)
+	public MockFileSystem WithUnixFileModeStrategy(UnixFileModeStrategy unixFileModeStrategy)
 	{
 		if (Execute.IsWindows)
 		{
