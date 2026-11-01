@@ -1,5 +1,6 @@
 ﻿using aweXpect.Chronology;
 using aweXpect.Core;
+using System.Collections.Generic;
 using System.Threading;
 using Testably.Abstractions.Testing.TimeSystem;
 using ITimer = Testably.Abstractions.TimeSystem.ITimer;
@@ -9,6 +10,83 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 // ReSharper disable UseAwaitUsing
 public class TimerMockTests
 {
+	[Test]
+	public async Task AdvanceBy_ShouldFireTimersInTheOrderOfTheirDueTime()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		DateTime start = timeSystem.DateTime.UtcNow;
+		List<TimeSpan> callbackTimes = [];
+		using ITimer timer3 = timeSystem.Timer.New(_ => callbackTimes.Add(timeSystem.DateTime.UtcNow - start),
+			null, 3.Seconds(), Timeout.InfiniteTimeSpan);
+		using ITimer timer1 = timeSystem.Timer.New(_ => callbackTimes.Add(timeSystem.DateTime.UtcNow - start),
+			null, 1.Seconds(), Timeout.InfiniteTimeSpan);
+		using ITimer timer2 = timeSystem.Timer.New(_ => callbackTimes.Add(timeSystem.DateTime.UtcNow - start),
+			null, 2.Seconds(), 2.Seconds());
+
+		timeSystem.TimeProvider.AdvanceBy(5.Seconds());
+
+		await That(callbackTimes).IsEqualTo([1.Seconds(), 2.Seconds(), 3.Seconds(), 4.Seconds(),])
+			.Because("the timers fire on the advancing thread, in order, while the clock is at their due time");
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 5.Seconds());
+	}
+
+	[Test]
+	public async Task AutoAdvance_WhenACancellationFiresBeforeTheDueTime_ShouldStopTheClockUntilTheTimerIsDisposed()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+		using CancellationTokenSource cts = new();
+		TaskCompletionSource<DateTime> canceled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		using CancellationTokenRegistration _ = cts.Token.Register(() => canceled.TrySetResult(timeSystem.DateTime.UtcNow));
+		using ITimer timeout = timeSystem.Timer.New(s => ((CancellationTokenSource)s!).Cancel(), cts,
+			1.Seconds(), Timeout.InfiniteTimeSpan);
+		int executions = 0;
+
+		ITimer wait = timeSystem.Timer.New(_ => Interlocked.Increment(ref executions), null,
+			5.Seconds(), Timeout.InfiniteTimeSpan);
+		DateTime canceledAt = await canceled.Task;
+		await Task.Delay(100, TestContext.Current!.Execution.CancellationToken);
+		wait.Dispose();
+
+		await That(canceledAt).IsEqualTo(start + 1.Seconds());
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 1.Seconds())
+			.Because("the code that waits for the timer usually notices the cancellation asynchronously");
+		await That(executions).IsEqualTo(0);
+	}
+
+	[Test]
+	public async Task AutoAdvance_WhenStateIsACancellationTokenSource_ShouldFireWhenAWaitPassesItsDueTime()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+		using CancellationTokenSource cts = new();
+		DateTime? canceledAt = null;
+		using CancellationTokenRegistration _ = cts.Token.Register(() => canceledAt = timeSystem.DateTime.UtcNow);
+		using ITimer timeout = timeSystem.Timer.New(s => ((CancellationTokenSource)s!).Cancel(), cts,
+			1.Seconds(), Timeout.InfiniteTimeSpan);
+
+		timeSystem.Thread.Sleep(5.Seconds());
+
+		await That(canceledAt).IsEqualTo(start + 1.Seconds());
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 5.Seconds());
+	}
+
+	[Test]
+	public async Task AutoAdvance_WhenStateIsACancellationTokenSource_ShouldNotMoveTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+		using CancellationTokenSource cts = new();
+
+		using ITimer timeout = timeSystem.Timer.New(s => ((CancellationTokenSource)s!).Cancel(), cts,
+			1.Seconds(), Timeout.InfiniteTimeSpan);
+		await Task.Delay(100, TestContext.Current!.Execution.CancellationToken);
+
+		await That(cts.IsCancellationRequested).IsFalse()
+			.Because("a timeout only fires when something else moves the clock past it");
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start);
+	}
+
 	[Test]
 	[Arguments(-1)]
 	[Arguments(0)]
@@ -94,6 +172,7 @@ public class TimerMockTests
 		cts.CancelAfter(30.Seconds());
 		CancellationToken token = cts.Token;
 		using SemaphoreSlim callbackExecuted = new(0);
+		DateTime start = timeSystem.DateTime.UtcNow;
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 			callbackTime = timeSystem.DateTime.UtcNow;
@@ -104,9 +183,9 @@ public class TimerMockTests
 		await Task.Delay(50.Milliseconds(), token);
 		timeSystem.TimeProvider.AdvanceBy(2.Seconds());
 		await callbackExecuted.WaitAsync(token);
-		DateTime after = timeSystem.DateTime.UtcNow;
 
-		await That(callbackTime).IsEqualTo(after);
+		await That(callbackTime).IsEqualTo(start + 1.Seconds())
+			.Because("the callback runs while the clock is at the due time of the timer");
 	}
 
 	[Test]

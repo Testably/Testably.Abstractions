@@ -168,6 +168,22 @@ public class MockTimeSystemTests
 	}
 
 	[Test]
+	public async Task Delay_WhenATimerCancelsTheTokenOnTheWay_ShouldStopTheClockAtItsDueTime()
+	{
+		MockTimeSystem timeSystem = new();
+		using CancellationTokenSource cts = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+		using var timer = timeSystem.Timer.New(s => ((CancellationTokenSource)s!).Cancel(), cts,
+			1.Seconds(), Timeout.InfiniteTimeSpan);
+
+		var delay = timeSystem.Task.Delay(5.Seconds(), cts.Token);
+
+		await That(delay.IsCanceled).IsTrue();
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 1.Seconds())
+			.Because("the timeout canceled the delay after one second");
+	}
+
+	[Test]
 	[Arguments(DateTimeKind.Local)]
 	[Arguments(DateTimeKind.Unspecified)]
 	[Arguments(DateTimeKind.Utc)]

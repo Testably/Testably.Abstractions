@@ -58,9 +58,20 @@ internal sealed class TaskMock : ITask
 
 		if (_autoAdvance)
 		{
-			_mockTimeSystem.TimeProvider.AdvanceBy(delay);
+			bool isCompleted = true;
+			if (delay < TimeSpan.Zero)
+			{
+				_mockTimeSystem.TimeProvider.AdvanceBy(delay);
+			}
+			else
+			{
+				isCompleted = _mockTimeSystem.Scheduler.AdvanceTo(
+					_mockTimeSystem.TimeProvider.ElapsedTicks + delay.Ticks,
+					_ => cancellationToken.IsCancellationRequested);
+			}
+
 			_callbackHandler.InvokeTaskDelayCallbacks(delay);
-			return Task.CompletedTask;
+			return isCompleted ? Task.CompletedTask : Task.FromCanceled(cancellationToken);
 		}
 
 		_callbackHandler.InvokeTaskDelayCallbacks(delay);

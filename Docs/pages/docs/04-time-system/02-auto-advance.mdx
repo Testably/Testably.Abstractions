@@ -15,6 +15,23 @@ await That(timeSystem.DateTime.UtcNow)
     .IsEqualTo(new DateTime(2026, 1, 1, 0, 10, 0, DateTimeKind.Utc));
 ```
 
+## Timers and timeouts
+
+A timer moves the clock to its due time as well. The timers that are due on the way fire in the order of their due time, and each callback sees the clock at its own due time, not at the end of the wait.
+
+A timer whose state is a `CancellationTokenSource` is a timeout, e.g. the timer of `new CancellationTokenSource(TimeSpan, TimeProvider)` on the [`TimeProvider`](./01-configuring-time.mdx) from `ToTimeProvider()`. A timeout never moves the clock on its own: it fires when a wait or `AdvanceBy` moves the clock past its due time, so that an operation with a timeout is not canceled before it starts.
+
+```csharp
+MockTimeSystem timeSystem = new();
+TimeProvider timeProvider = timeSystem.ToTimeProvider();
+using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1), timeProvider);
+
+// Throws an OperationCanceledException, with the clock one second later
+await Task.Delay(TimeSpan.FromSeconds(5), timeProvider, cts.Token);
+```
+
+When a timeout fires within a wait but does not cancel it at once, because the waiting code notices the cancellation asynchronously, the clock stops at the timeout until the wait is disposed.
+
 ## Disabling auto-advance
 
 When you need to assert *that* code waited (instead of just letting it through), turn auto-advance off via `MockTimeSystemOptions.DisableAutoAdvance()` and move the clock yourself with `TimeProvider.AdvanceBy(...)` or `TimeProvider.SetTo(...)`:
@@ -37,6 +54,7 @@ With auto-advance off:
 | `Task.Delay`                          | Stays pending until the clock reaches the end of the delay             |
 | `PeriodicTimer.WaitForNextTickAsync`  | Stays pending until the clock reaches the next tick                    |
 | `Thread.Sleep`                        | Returns immediately without moving the clock                           |
+| `Timer`                               | Fires when `AdvanceBy` reaches its due time, on the advancing thread   |
 
 :::warning[Awaiting a delay with auto-advance off]
 Awaiting `Task.Delay` before anything advances the clock waits forever. Start the delay, advance the clock (or let another task do it), then await it.

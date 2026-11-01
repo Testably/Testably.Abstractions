@@ -26,6 +26,11 @@ public static class TimeSystemExtensions
 	///     keep firing even when the callback throws (the exception is swallowed), matching a real
 	///     <see cref="Timer" /> regardless of the <see cref="TimeSystem.TimerStrategy" /> configured on a
 	///     <see cref="MockTimeSystem" />.
+	///     <para />
+	///     A timer whose state is a <see cref="CancellationTokenSource" />, like the one of
+	///     <c>new CancellationTokenSource(TimeSpan, TimeProvider)</c>, is a timeout of the <see cref="MockTimeSystem" />:
+	///     with auto-advance it does not move the clock on its own, but fires when a wait or
+	///     <see cref="TimeSystem.ITimeProvider.AdvanceBy(TimeSpan)" /> moves the clock past its due time.
 	/// </summary>
 	public static System.TimeProvider ToTimeProvider(this ITimeSystem timeSystem)
 	{

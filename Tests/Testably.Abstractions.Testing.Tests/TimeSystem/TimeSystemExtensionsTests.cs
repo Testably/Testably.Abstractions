@@ -21,6 +21,23 @@ public class TimeSystemExtensionsTests
 	}
 
 	[Test]
+	public async Task ToTimeProvider_CancellationTokenSourceWithDelay_ShouldNotMoveTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		System.TimeProvider provider = timeSystem.ToTimeProvider();
+		DateTimeOffset before = provider.GetUtcNow();
+
+		using CancellationTokenSource cts = new(10.Seconds(), provider);
+		#pragma warning disable MA0166 // Use an overload with a TimeProvider
+		await Task.Delay(100.Milliseconds(), TestContext.Current!.Execution.CancellationToken);
+		#pragma warning restore MA0166
+
+		await That(cts.IsCancellationRequested).IsFalse();
+		await That(provider.GetUtcNow()).IsEqualTo(before)
+			.Because("the timer of a timeout does not move the clock on its own");
+	}
+
+	[Test]
 	public async Task ToTimeProvider_Change_ShouldRescheduleTimer()
 	{
 		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
@@ -109,8 +126,35 @@ public class TimeSystemExtensionsTests
 		timeSystem.TimeProvider.AdvanceBy(2.Seconds());
 		await callbackExecuted.WaitAsync(token);
 
-		await That(observedTime).IsEqualTo(before + 2.Seconds())
-			.Because("the callback observed the advanced mock clock through the bridge");
+		await That(observedTime).IsEqualTo(before + 1.Seconds())
+			.Because("the callback observed the mock clock at its due time through the bridge");
+	}
+
+	[Test]
+	public async Task ToTimeProvider_Delay_ShouldMoveTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		System.TimeProvider provider = timeSystem.ToTimeProvider();
+		DateTimeOffset before = provider.GetUtcNow();
+
+		await Task.Delay(5.Seconds(), provider, TestContext.Current!.Execution.CancellationToken);
+
+		await That(provider.GetUtcNow()).IsEqualTo(before + 5.Seconds());
+	}
+
+	[Test]
+	public async Task ToTimeProvider_Delay_WhenATimeoutCancelsIt_ShouldStopTheClockAtTheTimeout()
+	{
+		MockTimeSystem timeSystem = new();
+		System.TimeProvider provider = timeSystem.ToTimeProvider();
+		DateTimeOffset before = provider.GetUtcNow();
+		using CancellationTokenSource cts = new(1.Seconds(), provider);
+
+		Task Act() => Task.Delay(5.Seconds(), provider, cts.Token);
+
+		await That(Act).Throws<OperationCanceledException>();
+		await That(provider.GetUtcNow()).IsEqualTo(before + 1.Seconds())
+			.Because("the timeout canceled the delay after one second");
 	}
 
 	[Test]

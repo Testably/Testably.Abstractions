@@ -27,6 +27,11 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// </summary>
 	public ITimerHandler TimerHandler => _timerFactoryMock;
 
+	/// <summary>
+	///     The schedule of the timers, which also advances the <see cref="TimeProvider" />.
+	/// </summary>
+	internal SchedulingTimeProvider Scheduler { get; }
+
 	private readonly NotificationHandler _callbackHandler;
 	private readonly DateTimeMock _dateTimeMock;
 	private readonly DateTimeOffsetMock _dateTimeOffsetMock;
@@ -94,7 +99,14 @@ public sealed class MockTimeSystem : ITimeSystem
 		initialization = options(initialization);
 		
 		_callbackHandler = new NotificationHandler(this);
-		TimeProvider = timeProvider.Create(_callbackHandler.InvokeTimeChanged);
+		SchedulingTimeProvider? scheduler = null;
+		scheduler = new SchedulingTimeProvider(timeProvider.Create(now =>
+		{
+			scheduler?.OnTimeChanged();
+			_callbackHandler.InvokeTimeChanged(now);
+		}));
+		Scheduler = scheduler;
+		TimeProvider = scheduler;
 		_dateTimeMock = new DateTimeMock(this, _callbackHandler);
 		_dateTimeOffsetMock = new DateTimeOffsetMock(this, _callbackHandler);
 		_timeZoneInfoMock = new TimeZoneInfoMock(this);
