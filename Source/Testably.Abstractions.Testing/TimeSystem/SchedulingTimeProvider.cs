@@ -31,6 +31,7 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 	private readonly SortedSet<ScheduledTimer> _advancingTimers = new(ScheduledTimer.DueTimeComparer);
 	private readonly ITimeProvider _inner;
 	private bool _isAdvancing;
+	private int _isFiringDuePending;
 #if NET9_0_OR_GREATER
 	private readonly Lock _lock = new();
 #else
@@ -190,7 +191,7 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 	{
 		if (_steppingDepth == 0)
 		{
-			_ = Task.Run(FireDue);
+			StartFiringDue();
 		}
 	}
 
@@ -228,11 +229,11 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 
 		if (startAdvancing)
 		{
-			_ = Task.Run(AdvanceToTheAdvancingTimers);
+			StartOnDedicatedThread(AdvanceToTheAdvancingTimers);
 		}
 		else if (timer.DueTicks <= _inner.ElapsedTicks)
 		{
-			_ = Task.Run(FireDue);
+			StartFiringDue();
 		}
 
 		return true;
@@ -335,7 +336,29 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 	}
 
 	private void FireDue()
-		=> AdvanceBy(TimeSpan.Zero, null);
+	{
+		Volatile.Write(ref _isFiringDuePending, 0);
+		AdvanceBy(TimeSpan.Zero, null);
+	}
+
+	/// <summary>
+	///     Fires the due timers in the background, unless that is already pending, as one run fires all due timers.
+	/// </summary>
+	private void StartFiringDue()
+	{
+		if (Interlocked.Exchange(ref _isFiringDuePending, 1) == 0)
+		{
+			StartOnDedicatedThread(FireDue);
+		}
+	}
+
+	/// <summary>
+	///     Starts the <paramref name="action" />, which waits for timer callbacks, on its own thread instead of the thread
+	///     pool, so that it does not starve the callbacks it waits for of pool threads.
+	/// </summary>
+	private static void StartOnDedicatedThread(Action action)
+		=> _ = Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.LongRunning,
+			TaskScheduler.Default);
 
 	private void MoveTo(long ticks)
 	{
