@@ -136,11 +136,13 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		        mockFileSystem.SimulationMode != SimulationMode.Native);
 		Skip.If(Test.RunsOnMac, "GetDrives() can cause a native crash on macOS.");
 
-		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives()[0];
+		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives()
+			.First(d => d.Name == System.IO.Path.GetPathRoot(d.Name));
 
 		IDriveInfo result = FileSystem.DriveInfo.Wrap(driveInfo);
 
-		await That(result.Name).IsEqualTo(driveInfo.Name);
+		await That(result.Name).IsEqualTo(driveInfo.Name)
+			.Because("the mock has no mount points like '/run' on Linux, so only a root drive keeps its name");
 	}
 
 	[Test]
