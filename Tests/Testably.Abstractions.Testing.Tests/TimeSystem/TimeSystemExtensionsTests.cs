@@ -221,6 +221,26 @@ public class TimeSystemExtensionsTests
 	}
 
 	[Test]
+	public async Task ToTimeProvider_CreateTimer_WhenTheCallbackWaitsForADelay_ShouldNotDeadlock()
+	{
+		MockTimeSystem timeSystem = new();
+		System.TimeProvider provider = timeSystem.ToTimeProvider();
+		TaskCompletionSource<bool> completed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+		using ITimer timer = provider.CreateTimer(_ =>
+		{
+			Task.Delay(1.Seconds(), provider).Wait();
+			completed.TrySetResult(true);
+		}, null, 1.Seconds(), Timeout.InfiniteTimeSpan);
+
+		bool isCompleted = await Task.WhenAny(completed.Task,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == completed.Task;
+
+		await That(isCompleted).IsTrue()
+			.Because("a callback that blocks on a delay of the same time provider must not keep the clock from moving");
+	}
+
+	[Test]
 	public async Task ToTimeProvider_CreateTimer_WithACancellationTokenSourceAndAPeriod_ShouldMoveTheClock()
 	{
 		MockTimeSystem timeSystem = new();

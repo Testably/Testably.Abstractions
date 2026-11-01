@@ -14,8 +14,10 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 ///     Taking the next timer and moving the clock to its due time is one step, but the callback runs after it, so that a
 ///     callback may wait for another thread that moves the clock. Such a thread may move the clock past the due time of
 ///     a running callback, so the order holds for the timers that one thread fires. All timers that advance the clock
-///     share one thread. When the wrapped provider is advanced directly, the timers that became due are fired afterward
-///     on the thread pool, as the clock is already past them.
+///     share one thread. Like a real timer, the callback runs on the thread pool. The thread that fires it waits until
+///     the callback completes or blocks, as a blocked callback may wait for the clock or for the thread that moves it.
+///     When the wrapped provider is advanced directly, the timers that became due are fired afterward on the thread
+///     pool, as the clock is already past them.
 /// </remarks>
 internal sealed class SchedulingTimeProvider : ITimeProvider
 {
@@ -96,8 +98,8 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 
 	/// <inheritdoc cref="ITimeProvider.AdvanceBy(TimeSpan)" />
 	/// <remarks>
-	///     The timers that are due within the <paramref name="interval" /> fire on the calling thread, in the order of
-	///     their due time, while the clock is at their due time.
+	///     The timers that are due within the <paramref name="interval" /> fire in the order of their due time, while the
+	///     clock is at their due time, and the calling thread waits for each callback until it completes or blocks.
 	/// </remarks>
 	public void AdvanceBy(TimeSpan interval)
 	{
@@ -171,7 +173,7 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 	{
 		while (TakeNext(targetTicks) is { } next)
 		{
-			next.Fire();
+			Fire(next);
 			if (stopAfter?.Invoke(next) == true)
 			{
 				return false;
@@ -228,7 +230,7 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 		{
 			_ = Task.Run(AdvanceToTheAdvancingTimers);
 		}
-		else if (timer.DueTicks <= now)
+		else if (timer.DueTicks <= _inner.ElapsedTicks)
 		{
 			_ = Task.Run(FireDue);
 		}
@@ -258,6 +260,10 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 	///     Moves the clock to the earliest timer that advances the clock, one fired timer at a time, until no such timer
 	///     is left.
 	/// </summary>
+	/// <remarks>
+	///     An exception that a time change callback throws while the clock moves has no caller to report to, so it is
+	///     swallowed, unless the clock stopped moving, which would otherwise repeat it forever.
+	/// </remarks>
 	private void AdvanceToTheAdvancingTimers()
 	{
 		try
@@ -276,7 +282,18 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 					targetTicks = _advancingTimers.Min!.DueTicks;
 				}
 
-				TakeNext(targetTicks)?.Fire();
+				long ticksBefore = _inner.ElapsedTicks;
+				try
+				{
+					if (TakeNext(targetTicks) is { } next)
+					{
+						Fire(next);
+					}
+				}
+				catch (Exception) when (_inner.ElapsedTicks != ticksBefore)
+				{
+					// The timer stays scheduled and fires in the next iteration, as the clock already reached it.
+				}
 			}
 		}
 		catch (Exception)
@@ -287,6 +304,33 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 			}
 
 			throw;
+		}
+	}
+
+	/// <summary>
+	///     Runs the callback of the <paramref name="timer" /> on the thread pool and waits until it completes, or until its
+	///     thread blocks, e.g. on another timer or on a lock held by the thread that moves the clock.
+	/// </summary>
+	/// <remarks>
+	///     The thread has to block on two checks in a row, so that briefly waiting for a contended lock does not move the
+	///     clock while the callback still runs.
+	/// </remarks>
+	private static void Fire(ScheduledTimer timer)
+	{
+		Thread? callbackThread = null;
+		Task callback = Task.Run(() =>
+		{
+			Volatile.Write(ref callbackThread, Thread.CurrentThread);
+			timer.Fire();
+		});
+
+		int blockedChecks = 0;
+		while (!callback.Wait(1) && blockedChecks < 2)
+		{
+			Thread? thread = Volatile.Read(ref callbackThread);
+			blockedChecks = thread is not null && (thread.ThreadState & ThreadState.WaitSleepJoin) != 0
+				? blockedChecks + 1
+				: 0;
 		}
 	}
 

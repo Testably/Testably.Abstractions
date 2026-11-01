@@ -21,6 +21,7 @@ internal sealed class TimerMock : ITimerMock
 	private CancellationTokenSource? _cancellationTokenSource;
 	private TimeSpan _dueTime;
 	private Exception? _exception;
+	private readonly ExecutionContext? _executionContext;
 	private long _executionCount;
 	private bool _isDisposed;
 #if NET9_0_OR_GREATER
@@ -64,6 +65,7 @@ internal sealed class TimerMock : ITimerMock
 		_dueTime = dueTime;
 		_period = period;
 		_autoAdvance = autoAdvance;
+		_executionContext = ExecutionContext.Capture();
 		if (_timerStrategy.Mode == TimerMode.StartImmediately)
 		{
 			Start();
@@ -284,7 +286,7 @@ internal sealed class TimerMock : ITimerMock
 
 		try
 		{
-			_callback(_state);
+			InvokeCallback();
 		}
 		catch (Exception swallowedException)
 		{
@@ -312,6 +314,24 @@ internal sealed class TimerMock : ITimerMock
 		}
 
 		return Schedule(SchedulingTimeProvider.AddTicks(dueTicks, _period.Ticks), cancellationToken);
+	}
+
+	/// <summary>
+	///     Runs the callback with the execution context of the creator of the timer, like a real timer.
+	/// </summary>
+	private void InvokeCallback()
+	{
+		if (_executionContext is null)
+		{
+			_callback(_state);
+			return;
+		}
+
+		ExecutionContext.Run(_executionContext.CreateCopy(), static timer =>
+		{
+			TimerMock timerMock = (TimerMock)timer!;
+			timerMock._callback(timerMock._state);
+		}, this);
 	}
 
 	private bool Schedule(long dueTicks, CancellationToken cancellationToken)

@@ -17,7 +17,7 @@ await That(timeSystem.DateTime.UtcNow)
 
 ## Timers and timeouts
 
-A timer moves the clock to its due time as well. The timers that are due on the way fire in the order of their due time, on the thread that moves the clock, and each callback sees the clock at its own due time, not at the end of the wait. All timers move the clock on one shared background thread. Another thread that moves the clock at the same time, e.g. a `Task.Delay` or `AdvanceBy` in the test, can move it further while a callback runs, just like the real clock keeps running.
+A timer moves the clock to its due time as well. The timers that are due on the way fire in the order of their due time, and each callback sees the clock at its own due time, not at the end of the wait. Like a real timer, a callback runs on the thread pool with the execution context of the code that created the timer, while the thread that moves the clock waits for it. When the callback blocks, e.g. because it waits for another timer or for a lock that the waiting code holds, the clock moves on, just like the real clock keeps running. All timers move the clock on one shared background thread. Another thread that moves the clock at the same time, e.g. a `Task.Delay` or `AdvanceBy` in the test, can move it further while a callback runs.
 
 A timer without a period whose state is a `CancellationTokenSource` is a timeout. This includes the timer of `new CancellationTokenSource(TimeSpan, TimeProvider)` on the [`TimeProvider`](./01-configuring-time.mdx) from `ToTimeProvider()`, a `Timer.New` that cancels the `CancellationTokenSource` it gets as state, and the timer of `Task.WaitAsync(TimeSpan, TimeProvider)`. A timeout never moves the clock on its own: it fires when a wait or `AdvanceBy` moves the clock past its due time, so that an operation with a timeout is not canceled before it starts. A one-shot timer that does other work should therefore not get a `CancellationTokenSource` as state.
 
@@ -58,7 +58,7 @@ With auto-advance off:
 | `Task.Delay`                          | Stays pending until the clock reaches the end of the delay             |
 | `PeriodicTimer.WaitForNextTickAsync`  | Stays pending until the clock reaches the next tick                    |
 | `Thread.Sleep`                        | Returns immediately without moving the clock                           |
-| `Timer`                               | Fires when `AdvanceBy` reaches its due time, on the advancing thread   |
+| `Timer`                               | Fires when `AdvanceBy` reaches its due time; `AdvanceBy` waits for it  |
 
 :::warning[Awaiting a delay with auto-advance off]
 Awaiting `Task.Delay` before anything advances the clock waits forever. Start the delay, advance the clock (or let another task do it), then await it.

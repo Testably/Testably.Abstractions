@@ -45,8 +45,35 @@ public class TimerMockTests
 		timeSystem.TimeProvider.AdvanceBy(5.Seconds());
 
 		await That(callbackTimes).IsEqualTo([1.Seconds(), 2.Seconds(), 3.Seconds(), 4.Seconds(),])
-			.Because("the timers fire on the advancing thread, in order, while the clock is at their due time");
+			.Because("the advancing thread waits for each timer, so they fire in order while the clock is at their due time");
 		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 5.Seconds());
+	}
+
+	[Test]
+	public async Task AdvanceBy_WhenTheCallerHoldsALockTheCallbackNeeds_ShouldNotDeadlock()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		using SemaphoreSlim gate = new(1);
+		TaskCompletionSource<bool> fired = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			gate.Wait();
+			gate.Release();
+			fired.TrySetResult(true);
+		}, null, 1.Seconds(), Timeout.InfiniteTimeSpan);
+
+		Task advance = Task.Run(() =>
+		{
+			gate.Wait();
+			timeSystem.TimeProvider.AdvanceBy(5.Seconds());
+			gate.Release();
+		});
+		Task advancedAndFired = Task.WhenAll(advance, fired.Task);
+		bool isCompleted = await Task.WhenAny(advancedAndFired,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == advancedAndFired;
+
+		await That(isCompleted).IsTrue()
+			.Because("a callback that waits for the lock held by the advancing code must not block it");
 	}
 
 	[Test]
@@ -124,6 +151,61 @@ public class TimerMockTests
 		await That(isCompleted).IsTrue();
 		await That(callbackTimes).IsEqualTo([1.Seconds(), 2.Seconds(), 3.Seconds(),])
 			.Because("all auto-advancing timers move the clock on one thread, in the order of their due time");
+	}
+
+	[Test]
+	public async Task AutoAdvance_WhenACallbackWaitsForAnotherTimer_ShouldNotDeadlock()
+	{
+		MockTimeSystem timeSystem = new();
+		TaskCompletionSource<bool> completed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			using ManualResetEventSlim otherFired = new();
+			using ITimer other = timeSystem.Timer.New(_ => otherFired.Set(), null, 1.Seconds(),
+				Timeout.InfiniteTimeSpan);
+			otherFired.Wait();
+			completed.TrySetResult(true);
+		}, null, 1.Seconds(), Timeout.InfiniteTimeSpan);
+
+		bool isCompleted = await Task.WhenAny(completed.Task,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == completed.Task;
+
+		await That(isCompleted).IsTrue()
+			.Because("a blocked callback must not keep the clock from reaching the timer it waits for");
+	}
+
+	[Test]
+	public async Task AutoAdvance_WhenATimeChangedCallbackThrows_ShouldKeepFiringTheTimers()
+	{
+		MockTimeSystem timeSystem = new();
+		int armed = 0;
+		using ManualResetEventSlim thrown = new();
+		using IAwaitableCallback<DateTime> _ = timeSystem.On.TimeChanged(_ =>
+		{
+			if (Interlocked.CompareExchange(ref armed, 2, 1) == 1)
+			{
+				thrown.Set();
+				throw new InvalidOperationException("time changed");
+			}
+		});
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 1.Seconds(), 1.Seconds());
+		ITimerMock timerMock = timeSystem.TimerHandler[0];
+		Volatile.Write(ref armed, 1);
+		thrown.Wait(TestContext.Current!.Execution.CancellationToken);
+		long executionsAfterThrow = timerMock.ExecutionCount;
+
+		Task continued = Task.Run(async () =>
+		{
+			while (timerMock.ExecutionCount <= executionsAfterThrow + 1)
+			{
+				await Task.Delay(10);
+			}
+		});
+		bool isContinued = await Task.WhenAny(continued,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == continued;
+
+		await That(isContinued).IsTrue()
+			.Because("a throwing time change callback must not stop the clock for the auto-advancing timers");
 	}
 
 	[Test]
@@ -219,6 +301,28 @@ public class TimerMockTests
 			.Because("a one-shot timer that gets a CancellationTokenSource as state is a timeout");
 		await That(cts.IsCancellationRequested).IsFalse();
 		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start);
+	}
+
+	[Test]
+	public async Task Callback_ShouldRunOnAnotherThreadWithTheExecutionContextOfTheCreator()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		AsyncLocal<string> context = new() { Value = "creator", };
+		string? observedContext = null;
+		int? callbackThreadId = null;
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			observedContext = context.Value;
+			callbackThreadId = Environment.CurrentManagedThreadId;
+		}, null, 1.Seconds(), Timeout.InfiniteTimeSpan);
+		context.Value = "advancer";
+
+		timeSystem.TimeProvider.AdvanceBy(2.Seconds());
+
+		await That(callbackThreadId).IsNotNull().And.IsNotEqualTo(Environment.CurrentManagedThreadId)
+			.Because("like a real timer, the callback runs on the thread pool and not on the thread that moves the clock");
+		await That(observedContext).IsEqualTo("creator")
+			.Because("like a real timer, the callback flows the execution context of its creator");
 	}
 
 	[Test]
@@ -539,6 +643,26 @@ public class TimerMockTests
 		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 0, 100);
 
 		await That(timerHandler[0].ExecutionCount).IsEqualTo(0L);
+	}
+
+	[Test]
+	public async Task New_WhenAnotherThreadAdvancesPastTheDueTimeWhileScheduling_ShouldFire()
+	{
+		InterceptingTimeProviderFactory factory = new();
+		MockTimeSystem timeSystem = new(factory, o => o.DisableAutoAdvance());
+		TaskCompletionSource<bool> fired = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		factory.Provider!.OnNextRead = () => Task.Run(() => timeSystem.TimeProvider.AdvanceBy(2.Seconds())).Wait();
+
+		using ITimer timer = timeSystem.Timer.New(_ => fired.TrySetResult(true), null, 1.Seconds(),
+			Timeout.InfiniteTimeSpan);
+		bool isFired = await Task.WhenAny(fired.Task,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == fired.Task;
+
+		bool hasMovedTheClockWhileScheduling = factory.Provider.OnNextRead is null;
+
+		await That(hasMovedTheClockWhileScheduling).IsTrue();
+		await That(isFired).IsTrue()
+			.Because("the clock passed the due time while the timer was scheduled, without another move to come");
 	}
 
 	[Test]
@@ -867,5 +991,71 @@ public class TimerMockTests
 		public ITimeProvider Create(Action<DateTime> onTimeChanged)
 			=> Provider = TimeProviderFactory.Use(new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc))
 				.Create(onTimeChanged);
+	}
+
+	private sealed class InterceptingTimeProviderFactory : ITimeProviderFactory
+	{
+		public InterceptingTimeProvider? Provider { get; private set; }
+
+		public ITimeProvider Create(Action<DateTime> onTimeChanged)
+			=> Provider = new InterceptingTimeProvider(TimeProviderFactory
+				.Use(new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc))
+				.Create(onTimeChanged));
+	}
+
+	/// <summary>
+	///     Runs <see cref="OnNextRead" /> once on the next <see cref="Read" />, which scheduling a timer calls after it read
+	///     the clock and before it adds the timer to the schedule.
+	/// </summary>
+	private sealed class InterceptingTimeProvider(ITimeProvider inner) : ITimeProvider
+	{
+		public Action? OnNextRead { get; set; }
+
+		public long ElapsedTicks => inner.ElapsedTicks;
+
+		public TimeZoneInfo LocalTimeZone
+		{
+			get => inner.LocalTimeZone;
+			set => inner.LocalTimeZone = value;
+		}
+
+		public DateTime MaxValue
+		{
+			get => inner.MaxValue;
+			set => inner.MaxValue = value;
+		}
+
+		public DateTime MinValue
+		{
+			get => inner.MinValue;
+			set => inner.MinValue = value;
+		}
+
+		public DateTime StartTime => inner.StartTime;
+
+		public DateTime UnixEpoch
+		{
+			get => inner.UnixEpoch;
+			set => inner.UnixEpoch = value;
+		}
+
+		public void AdvanceBy(TimeSpan interval) => inner.AdvanceBy(interval);
+
+		public TimeZoneInfo FindSystemTimeZoneById(string id) => inner.FindSystemTimeZoneById(id);
+
+		public System.Collections.ObjectModel.ReadOnlyCollection<TimeZoneInfo> GetSystemTimeZones()
+			=> inner.GetSystemTimeZones();
+
+		public DateTime Read()
+		{
+			Action? onRead = OnNextRead;
+			OnNextRead = null;
+			onRead?.Invoke();
+			return inner.Read();
+		}
+
+		public void RegisterTimeZone(TimeZoneInfo timeZone) => inner.RegisterTimeZone(timeZone);
+
+		public void SetTo(DateTime value) => inner.SetTo(value);
 	}
 }
