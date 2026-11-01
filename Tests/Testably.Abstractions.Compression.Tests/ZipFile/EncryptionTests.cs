@@ -26,7 +26,7 @@ public class EncryptionTests(FileSystemTestData testData) : FileSystemTestBase(t
 			});
 
 		using IZipArchive archive = FileSystem.ZipFile.OpenRead("archive.zip");
-		IZipArchiveEntry fileEntry = archive.Entries.Single(e => e.Name == "file.txt");
+		IZipArchiveEntry fileEntry = archive.Entries.Single(e => string.Equals(e.Name, "file.txt", StringComparison.Ordinal));
 		IZipArchiveEntry directoryEntry = archive.Entries.Single(e => e.Name == "");
 		await That(fileEntry.EncryptionMethod).IsEqualTo(encryptionMethod);
 		await That(fileEntry.IsEncrypted).IsTrue();
@@ -80,7 +80,7 @@ public class EncryptionTests(FileSystemTestData testData) : FileSystemTestBase(t
 			});
 
 		using IZipArchive archive = FileSystem.ZipFile.OpenRead("archive.zip");
-		IZipArchiveEntry fileEntry = archive.Entries.Single(e => e.Name == "file.txt");
+		IZipArchiveEntry fileEntry = archive.Entries.Single(e => string.Equals(e.Name, "file.txt", StringComparison.Ordinal));
 		await That(fileEntry.FullName).IsEqualTo("src/file.txt");
 		await That(fileEntry.CompressionMethod).IsEqualTo(ZipCompressionMethod.Stored);
 		await That(fileEntry.EncryptionMethod).IsEqualTo(ZipEncryptionMethod.None);
@@ -101,7 +101,7 @@ public class EncryptionTests(FileSystemTestData testData) : FileSystemTestBase(t
 
 		stream.Position = 0;
 		using IZipArchive archive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
-		IZipArchiveEntry fileEntry = archive.Entries.Single(e => e.Name == "file.txt");
+		IZipArchiveEntry fileEntry = archive.Entries.Single(e => string.Equals(e.Name, "file.txt", StringComparison.Ordinal));
 		await That(fileEntry.EncryptionMethod).IsEqualTo(ZipEncryptionMethod.Aes128);
 		await That(ReadContent(fileEntry, Password)).IsEqualTo("foo");
 	}
@@ -128,9 +128,9 @@ public class EncryptionTests(FileSystemTestData testData) : FileSystemTestBase(t
 		using IZipArchive fileArchive = FileSystem.ZipFile.OpenRead("archive.zip");
 		stream.Position = 0;
 		using IZipArchive streamArchive = FileSystem.ZipArchive.New(stream, ZipArchiveMode.Read);
-		await That(fileArchive.Entries.Single(e => e.Name == "file.txt").EncryptionMethod)
+		await That(fileArchive.Entries.Single(e => string.Equals(e.Name, "file.txt", StringComparison.Ordinal)).EncryptionMethod)
 			.IsEqualTo(ZipEncryptionMethod.Aes256);
-		await That(streamArchive.Entries.Single(e => e.Name == "file.txt").EncryptionMethod)
+		await That(streamArchive.Entries.Single(e => string.Equals(e.Name, "file.txt", StringComparison.Ordinal)).EncryptionMethod)
 			.IsEqualTo(ZipEncryptionMethod.ZipCrypto);
 	}
 

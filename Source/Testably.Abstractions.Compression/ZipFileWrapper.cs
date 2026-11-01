@@ -140,6 +140,46 @@ internal sealed class ZipFileWrapper : IZipFile
 				includeBaseDirectory,
 				entryNameEncoding));
 
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream, ZipFileCreationOptions)" />
+	public void CreateFromDirectory(
+		string sourceDirectoryName,
+		Stream destination,
+		ZipFileCreationOptions options)
+	{
+		ValidateCreationOptions(options);
+		Execute.WhenRealFileSystem(FileSystem,
+			() => ZipFile.CreateFromDirectory(
+				sourceDirectoryName,
+				destination,
+				options),
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destination,
+				options));
+	}
+
+	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string, ZipFileCreationOptions)" />
+	public void CreateFromDirectory(
+		string sourceDirectoryName,
+		string destinationArchiveFileName,
+		ZipFileCreationOptions options)
+	{
+		ValidateCreationOptions(options);
+		Execute.WhenRealFileSystem(FileSystem,
+			() => ZipFile.CreateFromDirectory(
+				sourceDirectoryName,
+				destinationArchiveFileName,
+				options),
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destinationArchiveFileName,
+				options));
+	}
+#endif
+
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream, CompressionLevel, bool, Encoding)" />
 	public async Task CreateFromDirectoryAsync(
@@ -270,6 +310,50 @@ internal sealed class ZipFileWrapper : IZipFile
 				compressionLevel,
 				includeBaseDirectory,
 				entryNameEncoding));
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipFile.CreateFromDirectoryAsync(string, Stream, ZipFileCreationOptions, CancellationToken)" />
+	public Task CreateFromDirectoryAsync(
+		string sourceDirectoryName,
+		Stream destination,
+		ZipFileCreationOptions options,
+		CancellationToken cancellationToken = default)
+	{
+		ValidateCreationOptions(options);
+		return Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.CreateFromDirectoryAsync(
+				sourceDirectoryName,
+				destination,
+				options,
+				cancellationToken),
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destination,
+				options));
+	}
+
+	/// <inheritdoc cref="IZipFile.CreateFromDirectoryAsync(string, string, ZipFileCreationOptions, CancellationToken)" />
+	public Task CreateFromDirectoryAsync(
+		string sourceDirectoryName,
+		string destinationArchiveFileName,
+		ZipFileCreationOptions options,
+		CancellationToken cancellationToken = default)
+	{
+		ValidateCreationOptions(options);
+		return Execute.WhenRealFileSystemAsync(FileSystem,
+			() => ZipFile.CreateFromDirectoryAsync(
+				sourceDirectoryName,
+				destinationArchiveFileName,
+				options,
+				cancellationToken),
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destinationArchiveFileName,
+				options));
+	}
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
@@ -410,6 +494,50 @@ internal sealed class ZipFileWrapper : IZipFile
 				destinationDirectoryName,
 				entryNameEncoding,
 				overwriteFiles));
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipFile.ExtractToDirectory(Stream, string, ZipExtractionOptions)" />
+	public void ExtractToDirectory(
+		Stream source,
+		string destinationDirectoryName,
+		ZipExtractionOptions options)
+	{
+		ArgumentNullException.ThrowIfNull(options);
+		Execute.WhenRealFileSystem(FileSystem,
+			() => ZipFile.ExtractToDirectory(
+				source,
+				destinationDirectoryName,
+				options),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				source,
+				destinationDirectoryName,
+				options.EntryNameEncoding,
+				options.OverwriteFiles,
+				options.Password));
+	}
+
+	/// <inheritdoc cref="IZipFile.ExtractToDirectory(string, string, ZipExtractionOptions)" />
+	public void ExtractToDirectory(
+		string sourceArchiveFileName,
+		string destinationDirectoryName,
+		ZipExtractionOptions options)
+	{
+		ArgumentNullException.ThrowIfNull(options);
+		Execute.WhenRealFileSystem(FileSystem,
+			() => ZipFile.ExtractToDirectory(
+				sourceArchiveFileName,
+				destinationDirectoryName,
+				options),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				sourceArchiveFileName,
+				destinationDirectoryName,
+				options.EntryNameEncoding,
+				options.OverwriteFiles,
+				options.Password));
+	}
 #endif
 	
 #if FEATURE_COMPRESSION_ASYNC
@@ -571,146 +699,8 @@ internal sealed class ZipFileWrapper : IZipFile
 				entryNameEncoding,
 				overwriteFiles));
 #endif
-	
+
 #if FEATURE_COMPRESSION_ENCRYPTION
-	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream, ZipFileCreationOptions)" />
-	public void CreateFromDirectory(
-		string sourceDirectoryName,
-		Stream destination,
-		ZipFileCreationOptions options)
-	{
-		ValidateCreationOptions(options);
-		Execute.WhenRealFileSystem(FileSystem,
-			() => ZipFile.CreateFromDirectory(
-				sourceDirectoryName,
-				destination,
-				options),
-			() => ZipUtilities.CreateFromDirectory(
-				FileSystem,
-				sourceDirectoryName,
-				destination,
-				options.CompressionLevel,
-				options.IncludeBaseDirectory,
-				options.EntryNameEncoding,
-				options.Password,
-				options.EncryptionMethod));
-	}
-
-	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string, ZipFileCreationOptions)" />
-	public void CreateFromDirectory(
-		string sourceDirectoryName,
-		string destinationArchiveFileName,
-		ZipFileCreationOptions options)
-	{
-		ValidateCreationOptions(options);
-		Execute.WhenRealFileSystem(FileSystem,
-			() => ZipFile.CreateFromDirectory(
-				sourceDirectoryName,
-				destinationArchiveFileName,
-				options),
-			() => ZipUtilities.CreateFromDirectory(
-				FileSystem,
-				sourceDirectoryName,
-				destinationArchiveFileName,
-				options.CompressionLevel,
-				options.IncludeBaseDirectory,
-				options.EntryNameEncoding,
-				options.Password,
-				options.EncryptionMethod));
-	}
-
-	/// <inheritdoc cref="IZipFile.CreateFromDirectoryAsync(string, Stream, ZipFileCreationOptions, CancellationToken)" />
-	public Task CreateFromDirectoryAsync(
-		string sourceDirectoryName,
-		Stream destination,
-		ZipFileCreationOptions options,
-		CancellationToken cancellationToken = default)
-	{
-		ValidateCreationOptions(options);
-		return Execute.WhenRealFileSystemAsync(FileSystem,
-			() => ZipFile.CreateFromDirectoryAsync(
-				sourceDirectoryName,
-				destination,
-				options,
-				cancellationToken),
-			() => ZipUtilities.CreateFromDirectory(
-				FileSystem,
-				sourceDirectoryName,
-				destination,
-				options.CompressionLevel,
-				options.IncludeBaseDirectory,
-				options.EntryNameEncoding,
-				options.Password,
-				options.EncryptionMethod));
-	}
-
-	/// <inheritdoc cref="IZipFile.CreateFromDirectoryAsync(string, string, ZipFileCreationOptions, CancellationToken)" />
-	public Task CreateFromDirectoryAsync(
-		string sourceDirectoryName,
-		string destinationArchiveFileName,
-		ZipFileCreationOptions options,
-		CancellationToken cancellationToken = default)
-	{
-		ValidateCreationOptions(options);
-		return Execute.WhenRealFileSystemAsync(FileSystem,
-			() => ZipFile.CreateFromDirectoryAsync(
-				sourceDirectoryName,
-				destinationArchiveFileName,
-				options,
-				cancellationToken),
-			() => ZipUtilities.CreateFromDirectory(
-				FileSystem,
-				sourceDirectoryName,
-				destinationArchiveFileName,
-				options.CompressionLevel,
-				options.IncludeBaseDirectory,
-				options.EntryNameEncoding,
-				options.Password,
-				options.EncryptionMethod));
-	}
-
-	/// <inheritdoc cref="IZipFile.ExtractToDirectory(Stream, string, ZipExtractionOptions)" />
-	public void ExtractToDirectory(
-		Stream source,
-		string destinationDirectoryName,
-		ZipExtractionOptions options)
-	{
-		ArgumentNullException.ThrowIfNull(options);
-		Execute.WhenRealFileSystem(FileSystem,
-			() => ZipFile.ExtractToDirectory(
-				source,
-				destinationDirectoryName,
-				options),
-			() => ZipUtilities.ExtractToDirectory(
-				FileSystem,
-				source,
-				destinationDirectoryName,
-				options.EntryNameEncoding,
-				options.OverwriteFiles,
-				options.Password));
-	}
-
-	/// <inheritdoc cref="IZipFile.ExtractToDirectory(string, string, ZipExtractionOptions)" />
-	public void ExtractToDirectory(
-		string sourceArchiveFileName,
-		string destinationDirectoryName,
-		ZipExtractionOptions options)
-	{
-		ArgumentNullException.ThrowIfNull(options);
-		Execute.WhenRealFileSystem(FileSystem,
-			() => ZipFile.ExtractToDirectory(
-				sourceArchiveFileName,
-				destinationDirectoryName,
-				options),
-			() => ZipUtilities.ExtractToDirectory(
-				FileSystem,
-				sourceArchiveFileName,
-				destinationDirectoryName,
-				options.EntryNameEncoding,
-				options.OverwriteFiles,
-				options.Password));
-	}
-
 	/// <inheritdoc cref="IZipFile.ExtractToDirectoryAsync(Stream, string, ZipExtractionOptions, CancellationToken)" />
 	public Task ExtractToDirectoryAsync(
 		Stream source,
@@ -756,7 +746,9 @@ internal sealed class ZipFileWrapper : IZipFile
 				options.OverwriteFiles,
 				options.Password));
 	}
-
+#endif
+	
+#if FEATURE_COMPRESSION_ENCRYPTION
 	private static void ValidateCreationOptions(ZipFileCreationOptions options)
 	{
 		ArgumentNullException.ThrowIfNull(options);

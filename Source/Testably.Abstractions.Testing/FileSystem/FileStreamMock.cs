@@ -234,7 +234,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		: base(
 			stream,
 			path == null ? "" : fileSystem.Execute.Path.GetFullPath(path),
-			(options & FileOptions.Asynchronous) != 0 && SupportsAsync(fileSystem))
+			options.HasFlag(FileOptions.Asynchronous) && SupportsAsync(fileSystem))
 	{
 		FileModeHelper.ThrowIfInvalidModeAccess(mode, access);
 

@@ -73,7 +73,12 @@ public interface IZipArchiveEntry : IFileSystemEntity
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToFile(ZipArchiveEntry, string, bool)" />
 	void ExtractToFile(string destinationFileName,
 		bool overwrite);
-	
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToFile(ZipArchiveEntry, string, ZipExtractionOptions)" />
+	void ExtractToFile(string destinationFileName, ZipExtractionOptions options);
+#endif
+
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToFileAsync(ZipArchiveEntry, string, CancellationToken)" />
 	Task ExtractToFileAsync(string destinationFileName, CancellationToken cancellationToken = default);
@@ -82,11 +87,6 @@ public interface IZipArchiveEntry : IFileSystemEntity
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToFileAsync(ZipArchiveEntry, string, bool, CancellationToken)" />
 	Task ExtractToFileAsync(string destinationFileName, bool overwrite, CancellationToken cancellationToken = default);
-#endif
-
-#if FEATURE_COMPRESSION_ENCRYPTION
-	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToFile(ZipArchiveEntry, string, ZipExtractionOptions)" />
-	void ExtractToFile(string destinationFileName, ZipExtractionOptions options);
 #endif
 
 #if FEATURE_COMPRESSION_ENCRYPTION

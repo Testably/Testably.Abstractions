@@ -310,7 +310,8 @@ internal sealed class InMemoryStorage : IStorage
 			}
 
 			string fullPathWithoutTrailingSlash = fullPath;
-			if (!fullPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar))
+			if (!fullPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar,
+				StringComparison.Ordinal))
 			{
 				fullPath += _fileSystem.Execute.Path.DirectorySeparatorChar;
 			}
@@ -333,7 +334,8 @@ internal sealed class InMemoryStorage : IStorage
 				}
 
 				string prefix =
-					location.FriendlyName.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar)
+					location.FriendlyName.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar,
+					StringComparison.Ordinal)
 						? location.FriendlyName
 						: location.FriendlyName + _fileSystem.Execute.Path.DirectorySeparatorChar;
 
@@ -361,7 +363,8 @@ internal sealed class InMemoryStorage : IStorage
 				    type.HasFlag(item.Value.Type))
 				{
 					string itemPath = item.Key.FullPath;
-					if (itemPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
+					if (itemPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar,
+						    StringComparison.Ordinal))
 					{
 						itemPath = itemPath.TrimEnd(_fileSystem.Path.DirectorySeparatorChar);
 					}
@@ -451,7 +454,7 @@ internal sealed class InMemoryStorage : IStorage
 		string fullPath;
 		if (path.IsUncPath(_fileSystem) &&
 		    _fileSystem.Execute is { IsNetFramework: true } or { IsWindows: false } &&
-		    path.LastIndexOf(_fileSystem.Path.DirectorySeparatorChar) <= 2)
+		    path.LastIndexOf(_fileSystem.Path.DirectorySeparatorChar, StringComparison.Ordinal) <= 2)
 		{
 			fullPath = path;
 		}
@@ -1308,6 +1311,18 @@ internal sealed class InMemoryStorage : IStorage
 		   searchPattern.StartsWith("*.", StringComparison.Ordinal) &&
 		   extension.StartsWith(searchPattern.Substring(1), StringComparison.OrdinalIgnoreCase);
 
+	private void ThrowIfHeldOpenOnUnix(IStorageContainer container, IStorageLocation location)
+	{
+		if (!_fileSystem.Execute.IsWindows &&
+		    _fileHandles.TryGetValue(GetAccessKey(container),
+			    out ConcurrentDictionary<Guid, FileHandle>? handles) &&
+		    !handles.IsEmpty)
+		{
+			throw ExceptionFactory.ProcessCannotAccessTheFile(location.FullPath,
+				-2147024864);
+		}
+	}
+
 	private void ThrowIfParentDoesNotExist(IStorageLocation location,
 		Func<IStorageLocation, IOException>
 			exceptionCallback)
@@ -1346,14 +1361,7 @@ internal sealed class InMemoryStorage : IStorage
 			if (existingContainer is { Type: FileSystemTypes.File, LinkTarget: null, } &&
 			    !ReferenceEquals(existingContainer, source))
 			{
-				if (!_fileSystem.Execute.IsWindows &&
-				    _fileHandles.TryGetValue(GetAccessKey(existingContainer),
-					    out ConcurrentDictionary<Guid, FileHandle>? handles) &&
-				    !handles.IsEmpty)
-				{
-					throw ExceptionFactory.ProcessCannotAccessTheFile(destination.FullPath,
-						-2147024864);
-				}
+				ThrowIfHeldOpenOnUnix(existingContainer, destination);
 
 				// macOS clones the source to a new file, so other hard links keep the previous content.
 				if (!(_fileSystem.Execute.IsMac &&

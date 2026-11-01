@@ -217,6 +217,24 @@ internal sealed class RandomMock : IRandom
 		=> _longGenerator?.GetNext() ?? _random.NextInt64();
 #endif
 
+#if FEATURE_RANDOM_ADVANCED
+	/// <inheritdoc cref="IRandom.NextInt64(long)" />
+	public long NextInt64(long maxValue)
+		=> Math.Min(
+			_longGenerator?.GetNext() ?? _random.NextInt64(maxValue),
+			maxValue - 1);
+#endif
+
+#if FEATURE_RANDOM_ADVANCED
+	/// <inheritdoc cref="IRandom.NextInt64(long, long)" />
+	public long NextInt64(long minValue, long maxValue)
+		=> Math.Min(
+			Math.Max(
+				_longGenerator?.GetNext() ?? _random.NextInt64(minValue, maxValue),
+				minValue),
+			maxValue - 1);
+#endif
+
 #if FEATURE_RANDOM_GENERIC
 	/// <inheritdoc cref="IRandom.NextInteger{T}()" />
 	public T NextInteger<T>()
@@ -272,24 +290,6 @@ internal sealed class RandomMock : IRandom
 
 		return _random.NextInteger(minValue, maxValue);
 	}
-#endif
-
-#if FEATURE_RANDOM_ADVANCED
-	/// <inheritdoc cref="IRandom.NextInt64(long)" />
-	public long NextInt64(long maxValue)
-		=> Math.Min(
-			_longGenerator?.GetNext() ?? _random.NextInt64(maxValue),
-			maxValue - 1);
-#endif
-
-#if FEATURE_RANDOM_ADVANCED
-	/// <inheritdoc cref="IRandom.NextInt64(long, long)" />
-	public long NextInt64(long minValue, long maxValue)
-		=> Math.Min(
-			Math.Max(
-				_longGenerator?.GetNext() ?? _random.NextInt64(minValue, maxValue),
-				minValue),
-			maxValue - 1);
 #endif
 
 #if FEATURE_RANDOM_ADVANCED

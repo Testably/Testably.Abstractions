@@ -86,70 +86,35 @@ internal static class ZipUtilities
 		string destinationArchiveFileName,
 		CompressionLevel? compressionLevel = null,
 		bool includeBaseDirectory = false,
-		Encoding? entryNameEncoding = null
-#if FEATURE_COMPRESSION_ENCRYPTION
-		, ReadOnlyMemory<char> password = default,
-		ZipEncryptionMethod encryption = ZipEncryptionMethod.None
-#endif
-	)
+		Encoding? entryNameEncoding = null)
 	{
 		sourceDirectoryName = fileSystem.Path.GetFullPath(sourceDirectoryName);
 		destinationArchiveFileName =
 			fileSystem.Path.GetFullPath(destinationArchiveFileName);
 
-		using (ZipArchive archive = Open(fileSystem, destinationArchiveFileName,
-			ZipArchiveMode.Create, entryNameEncoding))
-		{
-			bool directoryIsEmpty = true;
-
-			IDirectoryInfo di =
-				fileSystem.DirectoryInfo.New(sourceDirectoryName);
-
-			string basePath = di.FullName;
-
-			if (includeBaseDirectory && di.Parent != null)
-			{
-				basePath = di.Parent.FullName;
-			}
-
-			foreach (IFileSystemInfo file in di
-				.EnumerateFileSystemInfos(SearchPattern, SearchOption.AllDirectories))
-			{
-				directoryIsEmpty = false;
-
-				if (file is IFileInfo fileInfo)
-				{
-					#pragma warning disable MA0074
-					string entryName = file.FullName
-						.Substring(basePath.Length + 1)
-						.Replace('\\', '/');
-					#pragma warning restore MA0074
-					ZipArchiveEntry entry = CreateFileEntry(archive, entryName, compressionLevel
-#if FEATURE_COMPRESSION_ENCRYPTION
-						, password, encryption
-#endif
-					);
-					using Stream stream = entry.Open();
-					using FileSystemStream fileStream = fileInfo.OpenRead();
-					fileStream.CopyTo(stream);
-				}
-				else if (file is IDirectoryInfo directoryInfo &&
-				         directoryInfo.GetFileSystemInfos().Length == 0)
-				{
-					#pragma warning disable CA1845
-					string entryName = file.FullName.Substring(basePath.Length + 1) + "/";
-					#pragma warning restore CA1845
-					archive.CreateEntry(entryName);
-				}
-			}
-
-			if (includeBaseDirectory && directoryIsEmpty)
-			{
-				string entryName = di.Name + "/";
-				archive.CreateEntry(entryName);
-			}
-		}
+		using ZipArchive archive = Open(fileSystem, destinationArchiveFileName,
+			ZipArchiveMode.Create, entryNameEncoding);
+		AddDirectoryEntries(fileSystem, archive, sourceDirectoryName, compressionLevel,
+			includeBaseDirectory);
 	}
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="CreateFromDirectory(IFileSystem, string, string, CompressionLevel?, bool, Encoding?)" />
+	internal static void CreateFromDirectory(IFileSystem fileSystem,
+		string sourceDirectoryName,
+		string destinationArchiveFileName,
+		ZipFileCreationOptions options)
+	{
+		sourceDirectoryName = fileSystem.Path.GetFullPath(sourceDirectoryName);
+		destinationArchiveFileName =
+			fileSystem.Path.GetFullPath(destinationArchiveFileName);
+
+		using ZipArchive archive = Open(fileSystem, destinationArchiveFileName,
+			ZipArchiveMode.Create, options.EntryNameEncoding);
+		AddDirectoryEntries(fileSystem, archive, sourceDirectoryName, options.CompressionLevel,
+			options.IncludeBaseDirectory, options.Password, options.EncryptionMethod);
+	}
+#endif
 
 #if FEATURE_COMPRESSION_STREAM
 	/// <summary>
@@ -165,76 +130,109 @@ internal static class ZipUtilities
 		Stream destination,
 		CompressionLevel? compressionLevel = null,
 		bool includeBaseDirectory = false,
-		Encoding? entryNameEncoding = null
-#if FEATURE_COMPRESSION_ENCRYPTION
-		, ReadOnlyMemory<char> password = default,
-		ZipEncryptionMethod encryption = ZipEncryptionMethod.None
+		Encoding? entryNameEncoding = null)
+	{
+		ThrowIfUnwritable(destination);
+		sourceDirectoryName = fileSystem.Path.GetFullPath(sourceDirectoryName);
+
+		using ZipArchive archive = new(destination, ZipArchiveMode.Create,
+			leaveOpen: true,
+			entryNameEncoding: entryNameEncoding);
+		AddDirectoryEntries(fileSystem, archive, sourceDirectoryName, compressionLevel,
+			includeBaseDirectory);
+	}
 #endif
-	)
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="CreateFromDirectory(IFileSystem, string, Stream, CompressionLevel?, bool, Encoding?)" />
+	internal static void CreateFromDirectory(
+		IFileSystem fileSystem,
+		string sourceDirectoryName,
+		Stream destination,
+		ZipFileCreationOptions options)
+	{
+		ThrowIfUnwritable(destination);
+		sourceDirectoryName = fileSystem.Path.GetFullPath(sourceDirectoryName);
+
+		using ZipArchive archive = new(destination, ZipArchiveMode.Create,
+			leaveOpen: true,
+			entryNameEncoding: options.EntryNameEncoding);
+		AddDirectoryEntries(fileSystem, archive, sourceDirectoryName, options.CompressionLevel,
+			options.IncludeBaseDirectory, options.Password, options.EncryptionMethod);
+	}
+#endif
+
+#if FEATURE_COMPRESSION_STREAM
+	private static void ThrowIfUnwritable(Stream destination)
 	{
 		ArgumentNullException.ThrowIfNull(destination);
 		if (!destination.CanWrite)
 		{
 			throw new ArgumentException("The stream is unwritable.", nameof(destination));
 		}
-
-		sourceDirectoryName = fileSystem.Path.GetFullPath(sourceDirectoryName);
-
-		using (ZipArchive archive = new(destination, ZipArchiveMode.Create,
-			leaveOpen: true,
-			entryNameEncoding: entryNameEncoding))
-		{
-			bool directoryIsEmpty = true;
-
-			IDirectoryInfo di =
-				fileSystem.DirectoryInfo.New(sourceDirectoryName);
-
-			string basePath = di.FullName;
-
-			if (includeBaseDirectory && di.Parent != null)
-			{
-				basePath = di.Parent.FullName;
-			}
-
-			foreach (IFileSystemInfo file in di
-				.EnumerateFileSystemInfos(SearchPattern, SearchOption.AllDirectories))
-			{
-				directoryIsEmpty = false;
-
-				if (file is IFileInfo fileInfo)
-				{
-					#pragma warning disable MA0074
-					string entryName = file.FullName
-						.Substring(basePath.Length + 1)
-						.Replace('\\', '/');
-					#pragma warning restore MA0074
-					ZipArchiveEntry entry = CreateFileEntry(archive, entryName, compressionLevel
-#if FEATURE_COMPRESSION_ENCRYPTION
-						, password, encryption
+	}
 #endif
-					);
-					using Stream stream = entry.Open();
-					using FileSystemStream fileStream = fileInfo.OpenRead();
-					fileStream.CopyTo(stream);
-				}
-				else if (file is IDirectoryInfo directoryInfo &&
-				         directoryInfo.GetFileSystemInfos().Length == 0)
-				{
-					#pragma warning disable CA1845
-					string entryName = file.FullName.Substring(basePath.Length + 1) + "/";
-					#pragma warning restore CA1845
-					archive.CreateEntry(entryName);
-				}
-			}
 
-			if (includeBaseDirectory && directoryIsEmpty)
+	private static void AddDirectoryEntries(IFileSystem fileSystem,
+		ZipArchive archive,
+		string sourceDirectoryName,
+		CompressionLevel? compressionLevel,
+		bool includeBaseDirectory
+#if FEATURE_COMPRESSION_ENCRYPTION
+		, ReadOnlyMemory<char> password = default,
+		ZipEncryptionMethod encryption = ZipEncryptionMethod.None
+#endif
+	)
+	{
+		bool directoryIsEmpty = true;
+
+		IDirectoryInfo di =
+			fileSystem.DirectoryInfo.New(sourceDirectoryName);
+
+		string basePath = di.FullName;
+
+		if (includeBaseDirectory && di.Parent != null)
+		{
+			basePath = di.Parent.FullName;
+		}
+
+		foreach (IFileSystemInfo file in di
+			.EnumerateFileSystemInfos(SearchPattern, SearchOption.AllDirectories))
+		{
+			directoryIsEmpty = false;
+
+			if (file is IFileInfo fileInfo)
 			{
-				string entryName = di.Name + "/";
+				#pragma warning disable MA0074
+				string entryName = file.FullName
+					.Substring(basePath.Length + 1)
+					.Replace('\\', '/');
+				#pragma warning restore MA0074
+				ZipArchiveEntry entry = CreateFileEntry(archive, entryName, compressionLevel
+#if FEATURE_COMPRESSION_ENCRYPTION
+					, password, encryption
+#endif
+				);
+				using Stream stream = entry.Open();
+				using FileSystemStream fileStream = fileInfo.OpenRead();
+				fileStream.CopyTo(stream);
+			}
+			else if (file is IDirectoryInfo directoryInfo &&
+			         directoryInfo.GetFileSystemInfos().Length == 0)
+			{
+				#pragma warning disable CA1845
+				string entryName = file.FullName.Substring(basePath.Length + 1) + "/";
+				#pragma warning restore CA1845
 				archive.CreateEntry(entryName);
 			}
 		}
+
+		if (includeBaseDirectory && directoryIsEmpty)
+		{
+			string entryName = di.Name + "/";
+			archive.CreateEntry(entryName);
+		}
 	}
-#endif
 
 	/// <summary>
 	///     Creates the entry for a file in <c>CreateFromDirectory</c>, which, unlike the entries for directories, is
@@ -282,7 +280,7 @@ internal static class ZipUtilities
 					source.FileSystem.Path.DirectorySeparatorChar,
 					source.FileSystem.Path.AltDirectorySeparatorChar));
 
-		if (source.FullName.EndsWith('/'))
+		if (source.FullName.EndsWith('/', StringComparison.Ordinal))
 		{
 			if (source.Length != 0)
 			{

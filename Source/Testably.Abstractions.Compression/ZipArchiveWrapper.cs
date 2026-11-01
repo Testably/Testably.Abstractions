@@ -278,6 +278,20 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 	}
 #endif
 
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchive.ExtractToDirectory(string, ZipExtractionOptions)" />
+	public void ExtractToDirectory(string destinationDirectoryName,
+		ZipExtractionOptions options)
+	{
+		ArgumentNullException.ThrowIfNull(destinationDirectoryName);
+		ArgumentNullException.ThrowIfNull(options);
+
+		Execute.WhenRealFileSystem(FileSystem,
+			() => _instance.ExtractToDirectory(destinationDirectoryName, options),
+			() => ExtractEntriesToDirectory(destinationDirectoryName, options));
+	}
+#endif
+
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="IZipArchive.ExtractToDirectoryAsync(string, CancellationToken)" />
 	public Task ExtractToDirectoryAsync(string destinationDirectoryName,
@@ -330,20 +344,6 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 					}
 				});
 		}
-	}
-#endif
-
-#if FEATURE_COMPRESSION_ENCRYPTION
-	/// <inheritdoc cref="IZipArchive.ExtractToDirectory(string, ZipExtractionOptions)" />
-	public void ExtractToDirectory(string destinationDirectoryName,
-		ZipExtractionOptions options)
-	{
-		ArgumentNullException.ThrowIfNull(destinationDirectoryName);
-		ArgumentNullException.ThrowIfNull(options);
-
-		Execute.WhenRealFileSystem(FileSystem,
-			() => _instance.ExtractToDirectory(destinationDirectoryName, options),
-			() => ExtractEntriesToDirectory(destinationDirectoryName, options));
 	}
 #endif
 

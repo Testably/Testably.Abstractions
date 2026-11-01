@@ -122,7 +122,8 @@ internal sealed class FileInfoMock
 				.FileInfo.RegisterPathProperty(Location.FullPath,
 					nameof(Name), PropertyAccess.Get);
 
-			if (Location.FullPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar))
+			if (Location.FullPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar,
+				StringComparison.Ordinal))
 			{
 				return string.Empty;
 			}
@@ -410,13 +411,16 @@ internal sealed class FileInfoMock
 	/// <summary>
 	///     Since .NET 11, opening the file invalidates the cached state, so it is refreshed on the next access.
 	/// </summary>
+#if FEATURE_FILEINFO_OPEN_INVALIDATES
 	private FileSystemStream InvalidateAfterOpen(FileSystemStream stream)
 	{
-#if FEATURE_FILEINFO_OPEN_INVALIDATES
 		ResetCache(true);
-#endif
 		return stream;
 	}
+#else
+	private static FileSystemStream InvalidateAfterOpen(FileSystemStream stream)
+		=> stream;
+#endif
 
 	/// <inheritdoc cref="IFileInfo.Replace(string, string?)" />
 	public IFileInfo Replace(string destinationFileName,

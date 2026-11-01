@@ -124,7 +124,21 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 			() => _instance.ExtractToFile(destinationFileName, overwrite),
 			() => ZipUtilities.ExtractToFile(this, destinationFileName, overwrite));
 	}
-	
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFile(string, ZipExtractionOptions)" />
+	public void ExtractToFile(string destinationFileName, ZipExtractionOptions options)
+	{
+		ArgumentNullException.ThrowIfNull(options);
+		ArgumentNullException.ThrowIfNull(destinationFileName);
+
+		Execute.WhenRealFileSystem(FileSystem,
+			() => _instance.ExtractToFile(destinationFileName, options),
+			() => ZipUtilities.ExtractToFile(this, destinationFileName, options.OverwriteFiles,
+				options.Password));
+	}
+#endif
+
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFileAsync(string, CancellationToken)" />
 	public Task ExtractToFileAsync(string destinationFileName, CancellationToken cancellationToken = default)
@@ -162,20 +176,6 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 				async () => await _instance.ExtractToFileAsync(d, o, c),
 				() => ZipUtilities.ExtractToFile(this, d, o));
 		}
-	}
-#endif
-
-#if FEATURE_COMPRESSION_ENCRYPTION
-	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFile(string, ZipExtractionOptions)" />
-	public void ExtractToFile(string destinationFileName, ZipExtractionOptions options)
-	{
-		ArgumentNullException.ThrowIfNull(options);
-		ArgumentNullException.ThrowIfNull(destinationFileName);
-
-		Execute.WhenRealFileSystem(FileSystem,
-			() => _instance.ExtractToFile(destinationFileName, options),
-			() => ZipUtilities.ExtractToFile(this, destinationFileName, options.OverwriteFiles,
-				options.Password));
 	}
 #endif
 

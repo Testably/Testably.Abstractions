@@ -121,6 +121,12 @@ public interface IZipArchive : IFileSystemEntity, IDisposable
 		bool overwriteFiles);
 #endif
 
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectory(ZipArchive, string, ZipExtractionOptions)" />
+	void ExtractToDirectory(string destinationDirectoryName,
+		ZipExtractionOptions options);
+#endif
+
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectoryAsync(ZipArchive, string, CancellationToken)" />
 	Task ExtractToDirectoryAsync(string destinationDirectoryName,
@@ -132,12 +138,6 @@ public interface IZipArchive : IFileSystemEntity, IDisposable
 	Task ExtractToDirectoryAsync(string destinationDirectoryName,
 		bool overwriteFiles,
 		CancellationToken cancellationToken = default);
-#endif
-
-#if FEATURE_COMPRESSION_ENCRYPTION
-	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectory(ZipArchive, string, ZipExtractionOptions)" />
-	void ExtractToDirectory(string destinationDirectoryName,
-		ZipExtractionOptions options);
 #endif
 
 #if FEATURE_COMPRESSION_ENCRYPTION
