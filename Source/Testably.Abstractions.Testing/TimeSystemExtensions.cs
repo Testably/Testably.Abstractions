@@ -24,7 +24,7 @@ public static class TimeSystemExtensions
 	///     <para />
 	///     Timers created through <see cref="System.TimeProvider.CreateTimer(TimerCallback, object, TimeSpan, TimeSpan)" />
 	///     keep firing even when the callback throws (the exception is swallowed), matching a real
-	///     <see cref="Timer" /> regardless of the <see cref="TimeSystem.ITimerStrategy" /> configured on a
+	///     <see cref="Timer" /> regardless of the <see cref="TimeSystem.TimerStrategy" /> configured on a
 	///     <see cref="MockTimeSystem" />.
 	/// </summary>
 	public static System.TimeProvider ToTimeProvider(this ITimeSystem timeSystem)
@@ -64,7 +64,7 @@ public static class TimeSystemExtensions
 		///     Wraps the <paramref name="callback" /> so that an exception thrown by it is swallowed and does not stop the
 		///     timer. This mirrors a real <see cref="Timer" />, whose schedule keeps firing on subsequent periods regardless
 		///     of a callback exception, and makes the bridged timer behave the same independently of the
-		///     <see cref="TimeSystem.ITimerStrategy" /> configured on a <see cref="MockTimeSystem" />.
+		///     <see cref="TimeSystem.TimerStrategy" /> configured on a <see cref="MockTimeSystem" />.
 		/// </summary>
 		private static TimerCallback WrapCallback(TimerCallback callback)
 			=> state =>
@@ -76,7 +76,7 @@ public static class TimeSystemExtensions
 				catch (Exception)
 				{
 					// Swallow so the timer keeps firing, matching a real timer whose schedule
-					// is not cancelled by a throwing callback (see ITimerStrategy).
+					// is not cancelled by a throwing callback (see TimerStrategy).
 				}
 			};
 	}

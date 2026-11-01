@@ -150,10 +150,10 @@ public sealed class MockTimeSystem : ITimeSystem
 		=> $"MockTimeSystem (provider: {TimeProvider}, now: {DateTime.UtcNow}Z)";
 
 	/// <summary>
-	///     Specifies the <see cref="ITimerStrategy" /> to use when dealing with timers.
+	///     Specifies the <see cref="TimerStrategy" /> to use when dealing with timers.
 	/// </summary>
 	/// <param name="timerStrategy">The timer strategy. </param>
-	public MockTimeSystem WithTimerStrategy(ITimerStrategy timerStrategy)
+	public MockTimeSystem WithTimerStrategy(TimerStrategy timerStrategy)
 	{
 		_timerFactoryMock.SetTimerStrategy(timerStrategy);
 		return this;
