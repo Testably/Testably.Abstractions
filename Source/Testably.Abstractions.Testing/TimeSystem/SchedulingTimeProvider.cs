@@ -11,14 +11,20 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 ///     order of their due time, with the clock at the due time of each timer while its callback runs.
 /// </summary>
 /// <remarks>
-///     <see cref="AdvanceBy(TimeSpan)" /> moves the clock from one due time to the next and runs each callback on the
-///     advancing thread before it moves on. When the wrapped provider is advanced directly, the timers that became due
-///     are fired afterward on the thread pool, as the clock is already past them.
+///     Taking the next timer and moving the clock to its due time is one step, but the callback runs after it, so that a
+///     callback may wait for another thread that moves the clock. Such a thread may move the clock past the due time of
+///     a running callback. When the wrapped provider is advanced directly, the timers that became due are fired
+///     afterward on the thread pool, as the clock is already past them.
 /// </remarks>
 internal sealed class SchedulingTimeProvider : ITimeProvider
 {
 	[ThreadStatic] private static int _steppingDepth;
 
+#if NET9_0_OR_GREATER
+	private readonly Lock _advanceLock = new();
+#else
+	private readonly object _advanceLock = new();
+#endif
 	private readonly ITimeProvider _inner;
 #if NET9_0_OR_GREATER
 	private readonly Lock _lock = new();
@@ -80,11 +86,15 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 	{
 		if (interval < TimeSpan.Zero)
 		{
-			_inner.AdvanceBy(interval);
+			lock (_advanceLock)
+			{
+				Step(() => _inner.AdvanceBy(interval));
+			}
+
 			return;
 		}
 
-		AdvanceTo(_inner.ElapsedTicks + interval.Ticks);
+		AdvanceBy(interval, null);
 	}
 
 	/// <inheritdoc cref="ITimeProvider.FindSystemTimeZoneById(string)" />
@@ -105,9 +115,32 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 
 	/// <inheritdoc cref="ITimeProvider.SetTo(DateTime)" />
 	public void SetTo(DateTime value)
-		=> _inner.SetTo(value);
+	{
+		lock (_advanceLock)
+		{
+			Step(() => _inner.SetTo(value));
+		}
+	}
 
 	#endregion
+
+	/// <summary>
+	///     Adds the <paramref name="ticks" /> to the <paramref name="dueTicks" />, without overflowing past the end of the
+	///     clock.
+	/// </summary>
+	public static long AddTicks(long dueTicks, long ticks)
+		=> ticks > long.MaxValue - dueTicks ? long.MaxValue : dueTicks + ticks;
+
+	/// <summary>
+	///     Moves the clock by the <paramref name="interval" /> and fires the timers due until then, in the order of their
+	///     due time.
+	/// </summary>
+	/// <returns>
+	///     <see langword="false" />, when the <paramref name="stopAfter" /> predicate stopped the clock after a fired
+	///     timer, otherwise <see langword="true" />.
+	/// </returns>
+	public bool AdvanceBy(TimeSpan interval, Func<ScheduledTimer, bool>? stopAfter)
+		=> AdvanceTo(AddTicks(_inner.ElapsedTicks, interval.Ticks), stopAfter);
 
 	/// <summary>
 	///     Moves the clock to the <paramref name="targetTicks" /> and fires the timers due until then, in the order of
@@ -129,26 +162,6 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 		}
 
 		return true;
-	}
-
-	/// <summary>
-	///     The due time of the earliest scheduled cancellation, or <see langword="null" /> when there is none.
-	/// </summary>
-	public long? NextCancellationDueTicks()
-	{
-		lock (_lock)
-		{
-			long? next = null;
-			foreach (ScheduledTimer timer in _timers)
-			{
-				if (timer.IsCancellation && (next is null || timer.DueTicks < next))
-				{
-					next = timer.DueTicks;
-				}
-			}
-
-			return next;
-		}
 	}
 
 	/// <summary>
@@ -200,51 +213,23 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 		=> _inner.ToString();
 
 	private void FireDue()
-		=> AdvanceTo(_inner.ElapsedTicks);
-
-	/// <summary>
-	///     Takes the earliest timer due until the <paramref name="targetTicks" /> from the schedule and moves the clock to
-	///     its due time, or moves the clock to the <paramref name="targetTicks" /> and returns <see langword="null" />.
-	/// </summary>
-	private ScheduledTimer? TakeNext(long targetTicks)
-	{
-		lock (_lock)
-		{
-			ScheduledTimer? next = null;
-			foreach (ScheduledTimer timer in _timers)
-			{
-				if (timer.DueTicks <= targetTicks && (next is null || timer.DueTicks < next.DueTicks ||
-				                                      (timer.DueTicks == next.DueTicks && timer.Sequence < next.Sequence)))
-				{
-					next = timer;
-				}
-			}
-
-			if (next is null)
-			{
-				MoveTo(targetTicks);
-				return null;
-			}
-
-			next.IsScheduled = false;
-			_timers.Remove(next);
-			MoveTo(next.DueTicks);
-			return next;
-		}
-	}
+		=> AdvanceBy(TimeSpan.Zero, null);
 
 	private void MoveTo(long ticks)
 	{
 		long now = _inner.ElapsedTicks;
-		if (ticks <= now)
+		if (ticks > now)
 		{
-			return;
+			Step(() => _inner.AdvanceBy(TimeSpan.FromTicks(ticks - now)));
 		}
+	}
 
+	private static void Step(Action changeTime)
+	{
 		_steppingDepth++;
 		try
 		{
-			_inner.AdvanceBy(TimeSpan.FromTicks(ticks - now));
+			changeTime();
 		}
 		finally
 		{
@@ -253,9 +238,47 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 	}
 
 	/// <summary>
+	///     Takes the earliest timer due until the <paramref name="targetTicks" /> from the schedule and moves the clock to
+	///     its due time, or moves the clock to the <paramref name="targetTicks" /> and returns <see langword="null" />.
+	/// </summary>
+	/// <remarks>
+	///     The schedule is not locked while the clock moves, as moving it notifies about the time change, whose callbacks
+	///     may change timers.
+	/// </remarks>
+	private ScheduledTimer? TakeNext(long targetTicks)
+	{
+		lock (_advanceLock)
+		{
+			ScheduledTimer? next;
+			lock (_lock)
+			{
+				next = null;
+				foreach (ScheduledTimer timer in _timers)
+				{
+					if (timer.DueTicks <= targetTicks && (next is null || timer.DueTicks < next.DueTicks ||
+					                                      (timer.DueTicks == next.DueTicks &&
+					                                       timer.Sequence < next.Sequence)))
+					{
+						next = timer;
+					}
+				}
+
+				if (next is not null)
+				{
+					next.IsScheduled = false;
+					_timers.Remove(next);
+				}
+			}
+
+			MoveTo(next?.DueTicks ?? targetTicks);
+			return next;
+		}
+	}
+
+	/// <summary>
 	///     A timer on the schedule of the <see cref="SchedulingTimeProvider" />.
 	/// </summary>
-	internal sealed class ScheduledTimer(long dueTicks, Action fire, bool isCancellation)
+	internal sealed class ScheduledTimer(long dueTicks, Action fire)
 	{
 		private volatile bool _isScheduled;
 
@@ -263,17 +286,6 @@ internal sealed class SchedulingTimeProvider : ITimeProvider
 		///     The <see cref="ElapsedTicks" /> at which the timer is due.
 		/// </summary>
 		public long DueTicks { get; } = dueTicks;
-
-		/// <summary>
-		///     Whether the timer canceled its <see cref="CancellationTokenSource" /> when it fired, which it does not, when
-		///     the source was already disposed.
-		/// </summary>
-		public bool HasCanceled { get; set; }
-
-		/// <summary>
-		///     Whether the timer only cancels a <see cref="CancellationTokenSource" />, so that it never moves the clock.
-		/// </summary>
-		public bool IsCancellation { get; } = isCancellation;
 
 		/// <summary>
 		///     Whether the timer is on the schedule, i.e. neither fired nor removed.

@@ -75,7 +75,12 @@ internal sealed class PeriodicTimerMock : IPeriodicTimerMock
 		{
 			if (_autoAdvance)
 			{
-				_timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromTicks(nextTime - now));
+				if (!_timeSystem.Scheduler.AdvanceTo(nextTime,
+					    _ => cancellationToken.IsCancellationRequested))
+				{
+					throw ExceptionFactory.TaskWasCanceled();
+				}
+
 				_lastTime = nextTime;
 			}
 			else

@@ -168,19 +168,24 @@ public class MockTimeSystemTests
 	}
 
 	[Test]
-	public async Task Delay_WhenATimerCancelsTheTokenOnTheWay_ShouldStopTheClockAtItsDueTime()
+	public async Task AdvanceBy_MaxValue_ShouldThrowArgumentOutOfRangeException()
 	{
 		MockTimeSystem timeSystem = new();
-		using CancellationTokenSource cts = new();
+
+		void Act() => timeSystem.TimeProvider.AdvanceBy(TimeSpan.MaxValue);
+
+		await That(Act).Throws<ArgumentOutOfRangeException>();
+	}
+
+	[Test]
+	public async Task Delay_InfiniteTimeSpan_ShouldNotMoveTheClock()
+	{
+		MockTimeSystem timeSystem = new();
 		DateTime start = timeSystem.DateTime.UtcNow;
-		using var timer = timeSystem.Timer.New(s => ((CancellationTokenSource)s!).Cancel(), cts,
-			1.Seconds(), Timeout.InfiniteTimeSpan);
 
-		var delay = timeSystem.Task.Delay(5.Seconds(), cts.Token);
+		await timeSystem.Task.Delay(Timeout.InfiniteTimeSpan, TestContext.Current!.Execution.CancellationToken);
 
-		await That(delay.IsCanceled).IsTrue();
-		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 1.Seconds())
-			.Because("the timeout canceled the delay after one second");
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start);
 	}
 
 	[Test]
@@ -337,6 +342,17 @@ public class MockTimeSystemTests
 			Record.Exception(() => timeSystem.Thread.Sleep(Timeout.Infinite));
 
 		await That(exception).IsNull();
+	}
+
+	[Test]
+	public async Task Sleep_InfiniteTimeSpan_ShouldNotMoveTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+
+		timeSystem.Thread.Sleep(Timeout.InfiniteTimeSpan);
+
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start);
 	}
 
 	[Test]

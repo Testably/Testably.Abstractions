@@ -31,60 +31,106 @@ public class TimerMockTests
 	}
 
 	[Test]
-	public async Task AutoAdvance_WhenACancellationFiresBeforeTheDueTime_ShouldStopTheClockUntilTheTimerIsDisposed()
+	public async Task AdvanceBy_WhenATimeChangedCallbackRuns_ShouldNotBlockDisposingATimerOnAnotherThread()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		ITimer other = timeSystem.Timer.New(_ => { }, null, 10.Seconds(), Timeout.InfiniteTimeSpan);
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 1.Seconds(), Timeout.InfiniteTimeSpan);
+		bool? disposedInTime = null;
+		using IAwaitableCallback<DateTime> _ = timeSystem.On.TimeChanged(_ =>
+			disposedInTime ??= Task.Run(() => other.Dispose()).Wait(2000));
+
+		timeSystem.TimeProvider.AdvanceBy(2.Seconds());
+
+		await That(disposedInTime).IsTrue()
+			.Because("the schedule must not stay locked while the clock notifies about a time change");
+	}
+
+	[Test]
+	public async Task AutoAdvance_WhenStateIsACancellationTokenSource_ShouldStillMoveTheClock()
 	{
 		MockTimeSystem timeSystem = new();
-		DateTime start = timeSystem.DateTime.UtcNow;
 		using CancellationTokenSource cts = new();
-		TaskCompletionSource<DateTime> canceled = new(TaskCreationOptions.RunContinuationsAsynchronously);
-		using CancellationTokenRegistration _ = cts.Token.Register(() => canceled.TrySetResult(timeSystem.DateTime.UtcNow));
-		using ITimer timeout = timeSystem.Timer.New(s => ((CancellationTokenSource)s!).Cancel(), cts,
+		TaskCompletionSource<bool> canceled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		using CancellationTokenRegistration _ = cts.Token.Register(() => canceled.TrySetResult(true));
+
+		using ITimer timer = timeSystem.Timer.New(s => ((CancellationTokenSource)s!).Cancel(), cts,
 			1.Seconds(), Timeout.InfiniteTimeSpan);
+
+		bool isCanceled = await Task.WhenAny(canceled.Task,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == canceled.Task;
+
+		await That(isCanceled).IsTrue()
+			.Because("only the timeouts that the BCL creates on the TimeProvider bridge do not move the clock");
+	}
+
+	[Test]
+	public async Task Change_Concurrently_ShouldNotKeepAnyScheduleAfterDispose()
+	{
+		for (int i = 0; i < 20; i++)
+		{
+			MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+			int executions = 0;
+			ITimer timer = timeSystem.Timer.New(_ => Interlocked.Increment(ref executions), null,
+				Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+
+			Parallel.For(0, 50, _ => timer.Change(1.Seconds(), Timeout.InfiniteTimeSpan));
+			timer.Dispose();
+			timeSystem.TimeProvider.AdvanceBy(2.Seconds());
+
+			await That(executions).IsEqualTo(0)
+				.Because($"a disposed timer must not fire, even after concurrent changes (iteration {i})");
+		}
+	}
+
+	[Test]
+	public async Task New_WithMaxValueDueTimeAndPeriod_ShouldNotFire()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
 		int executions = 0;
+		using ITimer timer = timeSystem.Timer.New(_ => Interlocked.Increment(ref executions), null,
+			TimeSpan.MaxValue, TimeSpan.MaxValue);
 
-		ITimer wait = timeSystem.Timer.New(_ => Interlocked.Increment(ref executions), null,
-			5.Seconds(), Timeout.InfiniteTimeSpan);
-		DateTime canceledAt = await canceled.Task;
+		timeSystem.TimeProvider.AdvanceBy(1.Seconds());
 		await Task.Delay(100, TestContext.Current!.Execution.CancellationToken);
-		wait.Dispose();
 
-		await That(canceledAt).IsEqualTo(start + 1.Seconds());
-		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 1.Seconds())
-			.Because("the code that waits for the timer usually notices the cancellation asynchronously");
-		await That(executions).IsEqualTo(0);
+		await That(executions).IsEqualTo(0)
+			.Because("a due time beyond the end of the clock must not overflow into the past");
 	}
 
 	[Test]
-	public async Task AutoAdvance_WhenStateIsACancellationTokenSource_ShouldFireWhenAWaitPassesItsDueTime()
+	public async Task Wait_AfterATimeout_ShouldNotBlockTheThreadThatAdvancesTheClock()
 	{
-		MockTimeSystem timeSystem = new();
-		DateTime start = timeSystem.DateTime.UtcNow;
-		using CancellationTokenSource cts = new();
-		DateTime? canceledAt = null;
-		using CancellationTokenRegistration _ = cts.Token.Register(() => canceledAt = timeSystem.DateTime.UtcNow);
-		using ITimer timeout = timeSystem.Timer.New(s => ((CancellationTokenSource)s!).Cancel(), cts,
-			1.Seconds(), Timeout.InfiniteTimeSpan);
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 1.Seconds(), 1.Seconds());
+		ITimerMock timerMock = timeSystem.TimerHandler[0];
 
-		timeSystem.Thread.Sleep(5.Seconds());
+		void Wait() => timerMock.Wait(executionCount: 2, timeout: 50);
 
-		await That(canceledAt).IsEqualTo(start + 1.Seconds());
-		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 5.Seconds());
+		await That(Wait).ThrowsExactly<TimeoutException>();
+		Task advance = Task.Run(() => timeSystem.TimeProvider.AdvanceBy(5.Seconds()));
+		bool isCompleted = await Task.WhenAny(advance,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == advance;
+
+		await That(isCompleted).IsTrue()
+			.Because("nobody waits for the timer anymore after the wait timed out");
 	}
 
 	[Test]
-	public async Task AutoAdvance_WhenStateIsACancellationTokenSource_ShouldNotMoveTheClock()
+	public async Task Wait_WhenTheTimerExecutesAgainAfterwards_ShouldNotThrow()
 	{
-		MockTimeSystem timeSystem = new();
-		DateTime start = timeSystem.DateTime.UtcNow;
-		using CancellationTokenSource cts = new();
-
-		using ITimer timeout = timeSystem.Timer.New(s => ((CancellationTokenSource)s!).Cancel(), cts,
-			1.Seconds(), Timeout.InfiniteTimeSpan);
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 1.Seconds(), 1.Seconds());
+		ITimerMock timerMock = timeSystem.TimerHandler[0];
+		Task wait = Task.Run(() => timerMock.Wait(timeout: 5000));
 		await Task.Delay(100, TestContext.Current!.Execution.CancellationToken);
+		timeSystem.TimeProvider.AdvanceBy(1.Seconds());
+		await wait;
 
-		await That(cts.IsCancellationRequested).IsFalse()
-			.Because("a timeout only fires when something else moves the clock past it");
-		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start);
+		void Act() => timeSystem.TimeProvider.AdvanceBy(2.Seconds());
+
+		await That(Act).DoesNotThrow();
+		await That(timerMock.ExecutionCount).IsEqualTo(3);
 	}
 
 	[Test]

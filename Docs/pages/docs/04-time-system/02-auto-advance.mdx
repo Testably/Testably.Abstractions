@@ -17,9 +17,9 @@ await That(timeSystem.DateTime.UtcNow)
 
 ## Timers and timeouts
 
-A timer moves the clock to its due time as well. The timers that are due on the way fire in the order of their due time, and each callback sees the clock at its own due time, not at the end of the wait.
+A timer moves the clock to its due time as well. The timers that are due on the way fire in the order of their due time, on the thread that moves the clock, and each callback sees the clock at its own due time, not at the end of the wait. Another thread that moves the clock at the same time, e.g. a second auto-advancing timer, can move it further while a callback runs, just like the real clock keeps running.
 
-A timer whose state is a `CancellationTokenSource` is a timeout, e.g. the timer of `new CancellationTokenSource(TimeSpan, TimeProvider)` on the [`TimeProvider`](./01-configuring-time.mdx) from `ToTimeProvider()`. A timeout never moves the clock on its own: it fires when a wait or `AdvanceBy` moves the clock past its due time, so that an operation with a timeout is not canceled before it starts.
+The timers of `new CancellationTokenSource(TimeSpan, TimeProvider)` and `Task.WaitAsync(TimeSpan, TimeProvider)` on the [`TimeProvider`](./01-configuring-time.mdx) from `ToTimeProvider()` are timeouts. A timeout never moves the clock on its own: it fires when a wait or `AdvanceBy` moves the clock past its due time, so that an operation with a timeout is not canceled before it starts.
 
 ```csharp
 MockTimeSystem timeSystem = new();
@@ -30,7 +30,11 @@ using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1), timeProvider);
 await Task.Delay(TimeSpan.FromSeconds(5), timeProvider, cts.Token);
 ```
 
-When a timeout fires within a wait but does not cancel it at once, because the waiting code notices the cancellation asynchronously, the clock stops at the timeout until the wait is disposed.
+A wait that its timeout cancels on the way stops the clock at the timeout. This applies to `Task.Delay` and `PeriodicTimer.WaitForNextTickAsync` of the `MockTimeSystem` and to `Task.Delay` on the `TimeProvider`.
+
+:::warning[Waiting only for a timeout]
+As a timeout never moves the clock, code that waits for nothing but a timeout, e.g. `Task.Delay(Timeout.InfiniteTimeSpan, timeProvider, cts.Token)`, waits until something else moves the clock.
+:::
 
 ## Disabling auto-advance
 

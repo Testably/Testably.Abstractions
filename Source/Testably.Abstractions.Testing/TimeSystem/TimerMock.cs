@@ -9,12 +9,6 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 
 internal sealed class TimerMock : ITimerMock
 {
-	/// <summary>
-	///     How long an auto-advancing timer waits in real time for being disposed after a cancellation fired before its
-	///     due time, before it continues to move the clock.
-	/// </summary>
-	private static readonly TimeSpan SafetyNet = TimeSpan.FromSeconds(30);
-
 	private readonly TimerCallback _callback;
 	private CancellationTokenSource? _cancellationTokenSource;
 	private readonly ManualResetEventSlim _continueEvent = new();
@@ -31,8 +25,7 @@ internal sealed class TimerMock : ITimerMock
 	private readonly MockTimeSystem _mockTimeSystem;
 	private Action? _onDispose;
 	private TimeSpan _period;
-	private readonly bool _advancesClock;
-	private readonly bool _isCancellation;
+	private readonly bool _autoAdvance;
 	private SchedulingTimeProvider.ScheduledTimer? _scheduled;
 	private readonly object? _state;
 	private readonly TimerStrategy _timerStrategy;
@@ -63,8 +56,7 @@ internal sealed class TimerMock : ITimerMock
 		_state = state;
 		_dueTime = dueTime;
 		_period = period;
-		_isCancellation = state is CancellationTokenSource;
-		_advancesClock = autoAdvance && !_isCancellation;
+		_autoAdvance = autoAdvance;
 		if (_timerStrategy.Mode == TimerMode.StartImmediately)
 		{
 			Start();
@@ -226,18 +218,32 @@ internal sealed class TimerMock : ITimerMock
 			Start();
 		}
 
-		if (_countdownEvent?.Wait(timeout, CancellationToken.None) == false)
+		CountdownEvent? countdownEvent = _countdownEvent;
+		if (countdownEvent?.Wait(timeout, CancellationToken.None) == false)
 		{
+			_countdownEvent = null;
+			if (countdownEvent.IsSet)
+			{
+				_continueEvent.Set();
+			}
+
 			throw ExceptionFactory.TimerWaitTimeoutException(executionCount, timeout);
 		}
 
-		if (_exception != null)
+		try
 		{
-			throw _exception;
-		}
+			if (_exception != null)
+			{
+				throw _exception;
+			}
 
-		callback?.Invoke(this);
-		_continueEvent.Set();
+			callback?.Invoke(this);
+		}
+		finally
+		{
+			_countdownEvent = null;
+			_continueEvent.Set();
+		}
 
 		return this;
 	}
@@ -254,51 +260,23 @@ internal sealed class TimerMock : ITimerMock
 	///     the timer runs.
 	/// </summary>
 	/// <remarks>
-	///     When a cancellation that fires before the due time does not dispose the timer at once, the clock stops at the
-	///     cancellation, as the code that waits for the timer usually notices the cancellation asynchronously. The timer
-	///     continues to move the clock only after the <see cref="SafetyNet" />, so that it never hangs.
+	///     When a timer on the way disposes or changes this timer, the clock stops at that timer.
 	/// </remarks>
 	private async Task AdvanceClock(CancellationToken cancellationToken)
 	{
 		SchedulingTimeProvider scheduler = _mockTimeSystem.Scheduler;
-		while (!cancellationToken.IsCancellationRequested)
+		while (!cancellationToken.IsCancellationRequested &&
+		       Volatile.Read(ref _scheduled) is { } scheduled)
 		{
-			SchedulingTimeProvider.ScheduledTimer? scheduled = Volatile.Read(ref _scheduled);
-			if (scheduled is null)
+			if (scheduled.IsScheduled)
 			{
-				return;
+				scheduler.AdvanceTo(scheduled.DueTicks,
+					fired => fired != scheduled && !scheduled.IsScheduled);
 			}
-
-			if (!scheduled.IsScheduled)
+			else
 			{
 				await WaitForNextRun(cancellationToken).ConfigureAwait(false);
-				continue;
 			}
-
-			if (!scheduler.AdvanceTo(scheduled.DueTicks,
-				    fired => fired != scheduled && (fired.HasCanceled || !scheduled.IsScheduled)))
-			{
-				try
-				{
-					await Task.Delay(SafetyNet, cancellationToken).ConfigureAwait(false);
-				}
-				catch (OperationCanceledException)
-				{
-					return;
-				}
-			}
-		}
-	}
-
-	/// <summary>
-	///     Moves the clock to the earliest scheduled cancellation, as only a cancellation ends a timer without a due time.
-	/// </summary>
-	private void AdvanceClockToNextCancellation()
-	{
-		SchedulingTimeProvider scheduler = _mockTimeSystem.Scheduler;
-		if (scheduler.NextCancellationDueTicks() is { } dueTicks)
-		{
-			scheduler.AdvanceTo(dueTicks, fired => fired.IsCancellation);
 		}
 	}
 
@@ -319,9 +297,7 @@ internal sealed class TimerMock : ITimerMock
 
 	private void Execute(SchedulingTimeProvider.ScheduledTimer scheduled, CancellationToken cancellationToken)
 	{
-		bool isRescheduled = TryExecute(scheduled.DueTicks, cancellationToken);
-		scheduled.HasCanceled = _isCancellation && _state is CancellationTokenSource { IsCancellationRequested: true };
-		if (!isRescheduled)
+		if (!TryExecute(scheduled.DueTicks, cancellationToken))
 		{
 			lock (_lock)
 			{
@@ -373,14 +349,14 @@ internal sealed class TimerMock : ITimerMock
 			return false;
 		}
 
-		return Schedule(dueTicks + _period.Ticks, cancellationToken);
+		return Schedule(SchedulingTimeProvider.AddTicks(dueTicks, _period.Ticks), cancellationToken);
 	}
 
 	private bool Schedule(long dueTicks, CancellationToken cancellationToken)
 	{
 		SchedulingTimeProvider.ScheduledTimer? scheduled = null;
 		scheduled = new SchedulingTimeProvider.ScheduledTimer(dueTicks,
-			() => Execute(scheduled!, cancellationToken), _isCancellation);
+			() => Execute(scheduled!, cancellationToken));
 		lock (_lock)
 		{
 			if (cancellationToken.IsCancellationRequested)
@@ -397,32 +373,27 @@ internal sealed class TimerMock : ITimerMock
 
 	private void Start()
 	{
-		Stop();
 		CancellationTokenSource cancellationTokenSource = new();
-		lock (_lock)
-		{
-			_cancellationTokenSource = cancellationTokenSource;
-		}
-
 		CancellationToken token = cancellationTokenSource.Token;
-		if (_dueTime.TotalMilliseconds < 0)
+		Stop(cancellationTokenSource);
+		if (token.IsCancellationRequested || _dueTime.TotalMilliseconds < 0)
 		{
-			if (_advancesClock)
-			{
-				_ = Task.Run(AdvanceClockToNextCancellation, token);
-			}
-
 			return;
 		}
 
-		Schedule(_mockTimeSystem.TimeProvider.ElapsedTicks + _dueTime.Ticks, token);
-		if (_advancesClock)
+		Schedule(SchedulingTimeProvider.AddTicks(_mockTimeSystem.TimeProvider.ElapsedTicks, _dueTime.Ticks),
+			token);
+		if (_autoAdvance)
 		{
 			_ = Task.Run(() => AdvanceClock(token), token);
 		}
 	}
 
-	private void Stop()
+	/// <summary>
+	///     Stops the current run and installs the <paramref name="next" /> run in the same step, so that concurrent
+	///     restarts cannot leave a run behind.
+	/// </summary>
+	private void Stop(CancellationTokenSource? next = null)
 	{
 		SchedulingTimeProvider.ScheduledTimer? scheduled;
 		lock (_lock)
@@ -437,7 +408,14 @@ internal sealed class TimerMock : ITimerMock
 			}
 
 			_cancellationTokenSource?.Dispose();
-			_cancellationTokenSource = null;
+			_cancellationTokenSource = next;
+			if (_isDisposed && next is not null)
+			{
+				next.Cancel();
+				next.Dispose();
+				_cancellationTokenSource = null;
+			}
+
 			scheduled = _scheduled;
 			_scheduled = null;
 		}

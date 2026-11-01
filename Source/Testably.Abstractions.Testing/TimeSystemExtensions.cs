@@ -1,7 +1,9 @@
 #if FEATURE_TIMEPROVIDER
 using System;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Testing.TimeSystem;
 using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Testing;
@@ -27,10 +29,10 @@ public static class TimeSystemExtensions
 	///     <see cref="Timer" /> regardless of the <see cref="TimeSystem.TimerStrategy" /> configured on a
 	///     <see cref="MockTimeSystem" />.
 	///     <para />
-	///     A timer whose state is a <see cref="CancellationTokenSource" />, like the one of
-	///     <c>new CancellationTokenSource(TimeSpan, TimeProvider)</c>, is a timeout of the <see cref="MockTimeSystem" />:
-	///     with auto-advance it does not move the clock on its own, but fires when a wait or
-	///     <see cref="TimeSystem.ITimeProvider.AdvanceBy(TimeSpan)" /> moves the clock past its due time.
+	///     The timers of <c>new CancellationTokenSource(TimeSpan, TimeProvider)</c> and
+	///     <c>Task.WaitAsync(TimeSpan, TimeProvider)</c> are timeouts of the <see cref="MockTimeSystem" />: with
+	///     auto-advance they do not move the clock on their own, but fire when a wait or
+	///     <see cref="TimeSystem.ITimeProvider.AdvanceBy(TimeSpan)" /> moves the clock past their due time.
 	/// </summary>
 	public static System.TimeProvider ToTimeProvider(this ITimeSystem timeSystem)
 	{
@@ -40,6 +42,13 @@ public static class TimeSystemExtensions
 
 	private sealed class TimeSystemTimeProvider(ITimeSystem timeSystem) : System.TimeProvider
 	{
+		/// <summary>
+		///     The private type of the promise that <c>Task.WaitAsync(TimeSpan, TimeProvider)</c> passes as state to the
+		///     timer of its timeout.
+		/// </summary>
+		private static readonly Type? WaitAsyncPromiseType =
+			typeof(Task).GetNestedType("CancellationPromise`1", BindingFlags.NonPublic);
+
 		/// <inheritdoc cref="System.TimeProvider.LocalTimeZone" />
 		public override TimeZoneInfo LocalTimeZone
 			=> timeSystem.TimeZoneInfo.Local;
@@ -54,8 +63,9 @@ public static class TimeSystemExtensions
 			object? state,
 			TimeSpan dueTime,
 			TimeSpan period)
-			=> new TimerAdapter(
-				timeSystem.Timer.New(WrapCallback(callback), state, dueTime, period));
+			=> new TimerAdapter(timeSystem.Timer is TimerFactoryMock timerFactoryMock && IsTimeout(state)
+				? timerFactoryMock.NewTimeout(WrapCallback(callback), state, dueTime, period)
+				: timeSystem.Timer.New(WrapCallback(callback), state, dueTime, period));
 
 		/// <inheritdoc cref="System.TimeProvider.GetTimestamp()" />
 		public override long GetTimestamp()
@@ -64,6 +74,15 @@ public static class TimeSystemExtensions
 		/// <inheritdoc cref="System.TimeProvider.GetUtcNow()" />
 		public override DateTimeOffset GetUtcNow()
 			=> new(timeSystem.DateTime.UtcNow);
+
+		/// <summary>
+		///     Whether the BCL creates the timer for a timeout, which must not move the clock of the
+		///     <see cref="MockTimeSystem" /> on its own, so that the operation it guards is not canceled before it starts.
+		/// </summary>
+		private static bool IsTimeout(object? state)
+			=> state is CancellationTokenSource ||
+			   (state?.GetType() is { IsGenericType: true, } type &&
+			    type.GetGenericTypeDefinition() == WaitAsyncPromiseType);
 
 		/// <summary>
 		///     Wraps the <paramref name="callback" /> so that an exception thrown by it is swallowed and does not stop the
