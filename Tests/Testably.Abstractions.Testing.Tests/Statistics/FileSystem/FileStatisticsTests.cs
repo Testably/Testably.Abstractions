@@ -366,6 +366,23 @@ public sealed class FileStatisticsTests
 			path);
 	}
 
+#if FEATURE_FILESYSTEM_HARDLINK
+	[Test]
+	public async Task Method_CreateHardLink_String_String_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.Initialize().WithFile("bar");
+		string path = "foo";
+		string pathToTarget = "bar";
+
+		sut.File.CreateHardLink(path, pathToTarget);
+
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.CreateHardLink),
+			path, pathToTarget);
+	}
+#endif
+
 #if FEATURE_FILESYSTEM_LINK
 	[Test]
 	public async Task Method_CreateSymbolicLink_String_String_ShouldRegisterCall()
@@ -839,6 +856,19 @@ public sealed class FileStatisticsTests
 		await That(sut.Statistics.TotalCount).IsEqualTo(1);
 		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.OpenHandle),
 			path, mode, access, share, options, preallocationSize);
+	}
+#endif
+
+#if FEATURE_FILE_OPENNULLHANDLE
+	[Test]
+	public async Task Method_OpenNullHandle_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+
+		using SafeFileHandle handle = sut.File.OpenNullHandle();
+
+		await That(sut.Statistics.TotalCount).IsEqualTo(1);
+		await That(sut.Statistics.File).OnlyContainsMethodCall(nameof(IFile.OpenNullHandle));
 	}
 #endif
 

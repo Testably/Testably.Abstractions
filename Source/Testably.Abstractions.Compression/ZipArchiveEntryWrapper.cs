@@ -41,6 +41,12 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 	public long CompressedLength
 		=> _instance.CompressedLength;
 
+#if FEATURE_COMPRESSION_ENTRY_ACCESS
+	/// <inheritdoc cref="IZipArchiveEntry.CompressionMethod" />
+	public ZipCompressionMethod CompressionMethod
+		=> _instance.CompressionMethod;
+#endif
+
 #if FEATURE_COMPRESSION_ADVANCED
 	/// <inheritdoc cref="IZipArchiveEntry.Crc32" />
 	public uint Crc32
@@ -54,6 +60,12 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 		get => _instance.ExternalAttributes;
 		set => _instance.ExternalAttributes = value;
 	}
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchiveEntry.EncryptionMethod" />
+	public ZipEncryptionMethod EncryptionMethod
+		=> _instance.EncryptionMethod;
 #endif
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
@@ -84,6 +96,12 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 	public string Name
 		=> _instance.Name;
 
+#if FEATURE_COMPRESSION_ENTRY_ACCESS
+	/// <inheritdoc cref="IZipArchiveEntry.VersionMadeBy" />
+	public ushort VersionMadeBy
+		=> _instance.VersionMadeBy;
+#endif
+
 	/// <inheritdoc cref="IZipArchiveEntry.Delete()" />
 	public void Delete()
 		=> _instance.Delete();
@@ -106,7 +124,21 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 			() => _instance.ExtractToFile(destinationFileName, overwrite),
 			() => ZipUtilities.ExtractToFile(this, destinationFileName, overwrite));
 	}
-	
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFile(string, ZipExtractionOptions)" />
+	public void ExtractToFile(string destinationFileName, ZipExtractionOptions options)
+	{
+		ArgumentNullException.ThrowIfNull(options);
+		ArgumentNullException.ThrowIfNull(destinationFileName);
+
+		Execute.WhenRealFileSystem(FileSystem,
+			() => _instance.ExtractToFile(destinationFileName, options),
+			() => ZipUtilities.ExtractToFile(this, destinationFileName, options.OverwriteFiles,
+				options.Password));
+	}
+#endif
+
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFileAsync(string, CancellationToken)" />
 	public Task ExtractToFileAsync(string destinationFileName, CancellationToken cancellationToken = default)
@@ -147,14 +179,67 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 	}
 #endif
 
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFileAsync(string, ZipExtractionOptions, CancellationToken)" />
+	public Task ExtractToFileAsync(string destinationFileName, ZipExtractionOptions options,
+		CancellationToken cancellationToken = default)
+	{
+		ArgumentNullException.ThrowIfNull(options);
+		ArgumentNullException.ThrowIfNull(destinationFileName);
+
+		return Execute.WhenRealFileSystemAsync(FileSystem,
+			() => _instance.ExtractToFileAsync(destinationFileName, options, cancellationToken),
+			() => ZipUtilities.ExtractToFile(this, destinationFileName, options.OverwriteFiles,
+				options.Password));
+	}
+#endif
+
 	/// <inheritdoc cref="IZipArchiveEntry.Open()" />
 	public Stream Open()
 		=> _instance.Open();
+
+#if FEATURE_COMPRESSION_ENTRY_ACCESS
+	/// <inheritdoc cref="IZipArchiveEntry.Open(FileAccess)" />
+	public Stream Open(FileAccess access)
+		=> _instance.Open(access);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchiveEntry.Open(ReadOnlySpan{char})" />
+	public Stream Open(ReadOnlySpan<char> password)
+		=> _instance.Open(password);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchiveEntry.Open(FileAccess, ReadOnlySpan{char})" />
+	public Stream Open(FileAccess access, ReadOnlySpan<char> password)
+		=> _instance.Open(access, password);
+#endif
 
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="IZipArchiveEntry.OpenAsync(CancellationToken)" />
 	public Task<Stream> OpenAsync(CancellationToken cancellationToken = default)
 		=> _instance.OpenAsync(cancellationToken);
+#endif
+
+#if FEATURE_COMPRESSION_ENTRY_ACCESS
+	/// <inheritdoc cref="IZipArchiveEntry.OpenAsync(FileAccess, CancellationToken)" />
+	public Task<Stream> OpenAsync(FileAccess access, CancellationToken cancellationToken = default)
+		=> _instance.OpenAsync(access, cancellationToken);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchiveEntry.OpenAsync(ReadOnlySpan{char}, CancellationToken)" />
+	public Task<Stream> OpenAsync(ReadOnlySpan<char> password,
+		CancellationToken cancellationToken = default)
+		=> _instance.OpenAsync(password, cancellationToken);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchiveEntry.OpenAsync(FileAccess, ReadOnlySpan{char}, CancellationToken)" />
+	public Task<Stream> OpenAsync(FileAccess access, ReadOnlySpan<char> password,
+		CancellationToken cancellationToken = default)
+		=> _instance.OpenAsync(access, password, cancellationToken);
 #endif
 
 	#endregion

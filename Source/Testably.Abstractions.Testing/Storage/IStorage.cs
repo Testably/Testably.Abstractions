@@ -41,6 +41,17 @@ internal interface IStorage
 		IStorageLocation destination,
 		bool overwrite = false);
 
+#if FEATURE_FILESYSTEM_HARDLINK
+	/// <summary>
+	///     Creates a hard link at <paramref name="location" /> to the file at <paramref name="target" />, so that both
+	///     paths share the content and metadata of the file.
+	/// </summary>
+	/// <param name="location">The location of the new hard link.</param>
+	/// <param name="target">The location of the existing file.</param>
+	/// <returns>The container of the new hard link.</returns>
+	IStorageContainer CreateHardLink(IStorageLocation location, IStorageLocation target);
+#endif
+
 	/// <summary>
 	///     Deletes the container stored at <paramref name="location" />.
 	/// </summary>
@@ -214,10 +225,12 @@ internal interface IStorage
 		[NotNullWhen(true)] out IStorageContainer? container);
 
 	/// <summary>
-	///     Tries to get access to the file at <paramref name="location" /> with <paramref name="access" /> and
+	///     Tries to get access to the file stored in <paramref name="container" /> with <paramref name="access" /> and
 	///     <paramref name="share" />.
 	/// </summary>
-	/// <param name="location">The location of the file.</param>
+	/// <param name="container">
+	///     The container of the file. All hard links to the same file share their <see cref="FileShare" /> locks.
+	/// </param>
 	/// <param name="access">The requested file access.</param>
 	/// <param name="share">The requested file share.</param>
 	/// <param name="deleteAccess">Flag, indicating if the access comes from a delete request.</param>
@@ -230,7 +243,7 @@ internal interface IStorage
 	/// <returns>
 	///     <see langword="true" /> if the access to the file was granted, otherwise <see langword="false" />.
 	/// </returns>
-	bool TryGetFileAccess(IStorageLocation location,
+	bool TryGetFileAccess(IStorageContainer container,
 		FileAccess access,
 		FileShare share,
 		bool deleteAccess,

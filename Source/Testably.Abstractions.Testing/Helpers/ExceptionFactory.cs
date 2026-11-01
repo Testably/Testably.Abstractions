@@ -168,6 +168,10 @@ internal static class ExceptionFactory
 	internal static IOException NotEnoughDiskSpace(string name)
 		=> new($"There is not enough space on the disk: '{name}'");
 
+	internal static IOException NotSameDevice(string path)
+		=> new($"The system cannot move the file to a different disk drive. : '{path}'",
+			-2147024879);
+
 	internal static NotSupportedException NotSupportedFileStreamWrapping()
 		=> new("You cannot wrap an existing FileStream in the MockFileSystem instance!");
 
@@ -275,6 +279,9 @@ internal static class ExceptionFactory
 		=> new(
 			"Search pattern cannot contain \"..\" to move up directories and can be contained only internally in file/directory names, as in \"a..b\".");
 	#pragma warning restore MA0015 // Specify the parameter name
+
+	internal static NotSupportedException StreamDoesNotSupportSeeking()
+		=> new("Stream does not support seeking.");
 
 	internal static IOException SeekBackwardNotPossibleInAppendMode()
 		=> new(

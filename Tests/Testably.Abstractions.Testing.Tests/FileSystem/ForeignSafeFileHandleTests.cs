@@ -164,7 +164,12 @@ public class ForeignSafeFileHandleTests
 		using FileSystemStream stream =
 			fileSystem.FileStream.New(handle, FileAccess.Read, 1024, true);
 
+#if FEATURE_FILESTREAM_ASYNC_ONLY_ON_WINDOWS
+		await That(stream.IsAsync).IsEqualTo(Test.RunsOnWindows)
+			.Because("since .NET 11, Unix opens regular files synchronously");
+#else
 		await That(stream.IsAsync).IsTrue();
+#endif
 	}
 }
 #endif

@@ -285,6 +285,53 @@ public class RandomTests(RandomSystemTestData testData) : RandomSystemTestBase(t
 		await That(results).All().AreUnique();
 	}
 
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	public async Task NextBinaryFloat_Double_ShouldBeThreadSafe()
+	{
+		ConcurrentBag<double> results = [];
+
+		Parallel.For(0, 100, _ =>
+		{
+			results.Add(RandomSystem.Random.Shared.NextBinaryFloat<double>());
+		});
+
+		await That(results).All().AreUnique();
+		await That(results).All().Satisfy(r => r is >= 0 and < 1);
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	public async Task NextBinaryFloat_Half_ShouldBeBetweenZeroAndOne()
+	{
+		ConcurrentBag<Half> results = [];
+
+		Parallel.For(0, 100, _ =>
+		{
+			results.Add(RandomSystem.Random.Shared.NextBinaryFloat<Half>());
+		});
+
+		await That(results).All().Satisfy(r => r >= Half.Zero && r < Half.One);
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	public async Task NextBinaryFloat_Single_ShouldBeThreadSafe()
+	{
+		ConcurrentBag<float> results = [];
+
+		Parallel.For(0, 100, _ =>
+		{
+			results.Add(RandomSystem.Random.Shared.NextBinaryFloat<float>());
+		});
+
+		await That(results).All().AreUnique();
+		await That(results).All().Satisfy(r => r is >= 0 and < 1);
+	}
+#endif
+
 	[Test]
 	public async Task NextBytes_ShouldBeThreadSafe()
 	{
@@ -375,6 +422,129 @@ public class RandomTests(RandomSystemTestData testData) : RandomSystemTestBase(t
 		});
 
 		await That(results).All().AreUnique();
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	public async Task NextInteger_Int_ShouldBeThreadSafe()
+	{
+		ConcurrentBag<int> results = [];
+
+		Parallel.For(0, 100, _ =>
+		{
+			results.Add(RandomSystem.Random.Shared.NextInteger<int>());
+		});
+
+		await That(results).All().AreUnique();
+		await That(results).All().Satisfy(r => r >= 0);
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	public async Task NextInteger_Long_ShouldBeThreadSafe()
+	{
+		ConcurrentBag<long> results = [];
+
+		Parallel.For(0, 100, _ =>
+		{
+			results.Add(RandomSystem.Random.Shared.NextInteger<long>());
+		});
+
+		await That(results).All().AreUnique();
+		await That(results).All().Satisfy(r => r >= 0);
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	public async Task NextInteger_SByte_ShouldNotReturnNegativeValues()
+	{
+		ConcurrentBag<sbyte> results = [];
+
+		Parallel.For(0, 100, _ =>
+		{
+			results.Add(RandomSystem.Random.Shared.NextInteger<sbyte>());
+		});
+
+		await That(results).All().Satisfy(r => r >= 0);
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	[Arguments(-1)]
+	[Arguments(-10)]
+	public async Task NextInteger_WithMaxValue_Negative_ShouldThrowArgumentOutOfRangeException(
+		int maxValue)
+	{
+		void Act()
+		{
+			RandomSystem.Random.Shared.NextInteger(maxValue);
+		}
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName(nameof(maxValue));
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	public async Task NextInteger_WithMaxValue_ShouldOnlyReturnValidValues()
+	{
+		ConcurrentBag<int> intResults = [];
+		ConcurrentBag<long> longResults = [];
+		ConcurrentBag<ushort> ushortResults = [];
+
+		Parallel.For(0, 100, _ =>
+		{
+			intResults.Add(RandomSystem.Random.Shared.NextInteger(10));
+			longResults.Add(RandomSystem.Random.Shared.NextInteger(10L));
+			ushortResults.Add(RandomSystem.Random.Shared.NextInteger((ushort)10));
+		});
+
+		await That(intResults).All().Satisfy(r => r is >= 0 and < 10);
+		await That(longResults).All().Satisfy(r => r is >= 0 and < 10);
+		await That(ushortResults).All().Satisfy(r => r < 10);
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	public async Task NextInteger_WithMinAndMaxValue_MinGreaterThanMax_ShouldThrowArgumentOutOfRangeException()
+	{
+		int minValue = 6;
+		int maxValue = 5;
+
+		void Act()
+		{
+			RandomSystem.Random.Shared.NextInteger(minValue, maxValue);
+		}
+
+		await That(Act).Throws<ArgumentOutOfRangeException>()
+			.WithParamName(nameof(minValue));
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	public async Task NextInteger_WithMinAndMaxValue_ShouldOnlyReturnValidValues()
+	{
+		ConcurrentBag<int> intResults = [];
+		ConcurrentBag<long> longResults = [];
+		ConcurrentBag<short> shortResults = [];
+
+		Parallel.For(0, 100, _ =>
+		{
+			intResults.Add(RandomSystem.Random.Shared.NextInteger(-10, 20));
+			longResults.Add(RandomSystem.Random.Shared.NextInteger(-10L, 20L));
+			shortResults.Add(RandomSystem.Random.Shared.NextInteger((short)-10, (short)20));
+		});
+
+		await That(intResults).All().Satisfy(r => r is >= -10 and < 20);
+		await That(longResults).All().Satisfy(r => r is >= -10 and < 20);
+		await That(shortResults).All().Satisfy(r => r is >= -10 and < 20);
 	}
 #endif
 

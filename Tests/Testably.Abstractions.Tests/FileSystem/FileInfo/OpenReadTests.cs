@@ -23,6 +23,24 @@ public class OpenReadTests(FileSystemTestData testData) : FileSystemTestBase(tes
 
 	[Test]
 	[AutoArguments]
+	public async Task OpenRead_ShouldResetCachedStateOnlySinceNet11(string path)
+	{
+		FileSystem.File.WriteAllText(path, "a");
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+		await That(sut.Length).IsEqualTo(1);
+		FileSystem.File.WriteAllText(path, "abc");
+
+		sut.OpenRead().Dispose();
+
+#if FEATURE_FILEINFO_OPEN_INVALIDATES
+		await That(sut.Length).IsEqualTo(3);
+#else
+		await That(sut.Length).IsEqualTo(1);
+#endif
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task OpenRead_ShouldUseReadAccessAndReadShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);

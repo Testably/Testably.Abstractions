@@ -79,7 +79,7 @@ using IZipArchive archive = fileSystem.ZipFile
     .Open("artworks.zip", ZipArchiveMode.Update);
 ```
 
-All overloads from the BCL are present, including the async variants on .NET 10+ (`CreateFromDirectoryAsync`, `ExtractToDirectoryAsync`, `OpenAsync`, `OpenReadAsync`).
+All overloads from the BCL are present, including the async variants on .NET 10+ (`CreateFromDirectoryAsync`, `ExtractToDirectoryAsync`, `OpenAsync`, `OpenReadAsync`) and, on .NET 11+, the overloads that take `ZipFileCreationOptions` or `ZipExtractionOptions` to create and extract password-protected archives.
 
 ## ZipArchive
 
@@ -96,4 +96,4 @@ foreach (IZipArchiveEntry entry in archive.Entries)
 }
 ```
 
-`IZipArchive` exposes `Entries`, `Mode`, `CreateEntry`, `CreateEntryFromFile`, `GetEntry`, `ExtractToDirectory` and, on .NET 10+, the async counterparts `CreateEntryFromFileAsync` and `ExtractToDirectoryAsync`. `IZipArchiveEntry` mirrors `ZipArchiveEntry` (`Open`, `Delete`, `LastWriteTime`, `Length`, `CompressedLength`, …).
+`IZipArchive` exposes `Entries`, `Mode`, `CreateEntry`, `CreateEntryFromFile`, `GetEntry`, `ExtractToDirectory` and, on .NET 10+, the async counterparts `CreateEntryFromFileAsync` and `ExtractToDirectoryAsync`. On .NET 11+ the create methods also accept a password and a `ZipEncryptionMethod`, and the extract methods accept `ZipExtractionOptions`. `IZipArchiveEntry` mirrors `ZipArchiveEntry` (`Open`, `Delete`, `LastWriteTime`, `Length`, `CompressedLength`, …), including the .NET 11+ members `CompressionMethod`, `EncryptionMethod`, `VersionMadeBy` and the `Open` overloads with a `FileAccess` or a password.

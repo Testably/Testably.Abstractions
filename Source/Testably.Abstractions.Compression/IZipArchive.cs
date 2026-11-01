@@ -31,6 +31,21 @@ public interface IZipArchive : IFileSystemEntity, IDisposable
 	/// <inheritdoc cref="ZipArchive.CreateEntry(string, CompressionLevel)" />
 	IZipArchiveEntry CreateEntry(string entryName, CompressionLevel compressionLevel);
 
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="ZipArchive.CreateEntry(string, ReadOnlySpan{char}, ZipEncryptionMethod)" />
+	IZipArchiveEntry CreateEntry(string entryName,
+		ReadOnlySpan<char> password,
+		ZipEncryptionMethod encryptionMethod);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="ZipArchive.CreateEntry(string, CompressionLevel, ReadOnlySpan{char}, ZipEncryptionMethod)" />
+	IZipArchiveEntry CreateEntry(string entryName,
+		CompressionLevel compressionLevel,
+		ReadOnlySpan<char> password,
+		ZipEncryptionMethod encryptionMethod);
+#endif
+
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(ZipArchive, string, string)" />
 	IZipArchiveEntry CreateEntryFromFile(string sourceFileName,
 		string entryName);
@@ -40,7 +55,26 @@ public interface IZipArchive : IFileSystemEntity, IDisposable
 	IZipArchiveEntry CreateEntryFromFile(string sourceFileName,
 		string entryName,
 		CompressionLevel compressionLevel);
-	
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc
+	///     cref="System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(ZipArchive, string, string, ReadOnlySpan{char}, ZipEncryptionMethod)" />
+	IZipArchiveEntry CreateEntryFromFile(string sourceFileName,
+		string entryName,
+		ReadOnlySpan<char> password,
+		ZipEncryptionMethod encryption);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc
+	///     cref="System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(ZipArchive, string, string, CompressionLevel, ReadOnlySpan{char}, ZipEncryptionMethod)" />
+	IZipArchiveEntry CreateEntryFromFile(string sourceFileName,
+		string entryName,
+		CompressionLevel compressionLevel,
+		ReadOnlySpan<char> password,
+		ZipEncryptionMethod encryption);
+#endif
+
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.CreateEntryFromFileAsync(ZipArchive, string, string, CancellationToken)" />
 	Task<IZipArchiveEntry> CreateEntryFromFileAsync(string sourceFileName,
@@ -57,6 +91,27 @@ public interface IZipArchive : IFileSystemEntity, IDisposable
 		CancellationToken cancellationToken = default);
 #endif
 
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc
+	///     cref="System.IO.Compression.ZipFileExtensions.CreateEntryFromFileAsync(ZipArchive, string, string, ReadOnlyMemory{char}, ZipEncryptionMethod, CancellationToken)" />
+	Task<IZipArchiveEntry> CreateEntryFromFileAsync(string sourceFileName,
+		string entryName,
+		ReadOnlyMemory<char> password,
+		ZipEncryptionMethod encryption,
+		CancellationToken cancellationToken = default);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc
+	///     cref="System.IO.Compression.ZipFileExtensions.CreateEntryFromFileAsync(ZipArchive, string, string, CompressionLevel, ReadOnlyMemory{char}, ZipEncryptionMethod, CancellationToken)" />
+	Task<IZipArchiveEntry> CreateEntryFromFileAsync(string sourceFileName,
+		string entryName,
+		CompressionLevel compressionLevel,
+		ReadOnlyMemory<char> password,
+		ZipEncryptionMethod encryption,
+		CancellationToken cancellationToken = default);
+#endif
+
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectory(ZipArchive, string)" />
 	void ExtractToDirectory(string destinationDirectoryName);
 
@@ -64,6 +119,12 @@ public interface IZipArchive : IFileSystemEntity, IDisposable
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectory(ZipArchive, string, bool)" />
 	void ExtractToDirectory(string destinationDirectoryName,
 		bool overwriteFiles);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectory(ZipArchive, string, ZipExtractionOptions)" />
+	void ExtractToDirectory(string destinationDirectoryName,
+		ZipExtractionOptions options);
 #endif
 
 #if FEATURE_COMPRESSION_ASYNC
@@ -76,6 +137,14 @@ public interface IZipArchive : IFileSystemEntity, IDisposable
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectoryAsync(ZipArchive, string, bool, CancellationToken)" />
 	Task ExtractToDirectoryAsync(string destinationDirectoryName,
 		bool overwriteFiles,
+		CancellationToken cancellationToken = default);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc
+	///     cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectoryAsync(ZipArchive, string, ZipExtractionOptions, CancellationToken)" />
+	Task ExtractToDirectoryAsync(string destinationDirectoryName,
+		ZipExtractionOptions options,
 		CancellationToken cancellationToken = default);
 #endif
 

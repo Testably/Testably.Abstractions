@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Testably.Abstractions.Helpers;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
@@ -12,32 +13,45 @@ namespace Testably.Abstractions.Testing.Storage;
 
 internal sealed class InMemoryContainer : IStorageContainer
 {
-	private byte[] _bytes = Array.Empty<byte>();
-	private readonly FileSystemExtensibility _extensibility = new();
+	private readonly FileData _data;
 	private readonly MockFileSystem _fileSystem;
-	private bool _isEncrypted;
 	private bool _isUnlinked;
 	private IStorageLocation _location;
-
-#if FEATURE_FILESYSTEM_UNIXFILEMODE
-#endif
 
 	public InMemoryContainer(FileSystemTypes type,
 		IStorageLocation location,
 		MockFileSystem fileSystem)
+		: this(new FileData(type), location, fileSystem)
 	{
-		_location = location;
-		_fileSystem = fileSystem;
-		Type = type;
 		this.AdjustTimes(TimeAdjustments.All);
 	}
+
+	private InMemoryContainer(FileData data,
+		IStorageLocation location,
+		MockFileSystem fileSystem)
+	{
+		_data = data;
+		_location = location;
+		_fileSystem = fileSystem;
+	}
+
+	/// <summary>
+	///     Identifies the file independent of its path, so that all hard links to it share the same
+	///     <see cref="FileShare" /> locks.
+	/// </summary>
+	internal object AccessKey => _data;
+
+	/// <summary>
+	///     Indicates if the file is also stored at another path as a hard link.
+	/// </summary>
+	internal bool HasOtherLinks => Volatile.Read(ref _data.LinkCount) > 1;
 
 	#region IStorageContainer Members
 
 	/// <inheritdoc cref="IStorageContainer.Attributes" />
 	public FileAttributes Attributes
 	{
-		get => AdjustAttributes(field);
+		get => AdjustAttributes(_data.Attributes);
 		set
 		{
 			if (_fileSystem.Execute.IsWindows)
@@ -64,81 +78,89 @@ internal sealed class InMemoryContainer : IStorageContainer
 				         FileAttributes.ReadOnly;
 			}
 
-			field = value;
+			_data.Attributes = value;
 		}
 	}
 
 	/// <inheritdoc cref="IStorageContainer.CreationTime" />
-	public ITimeContainer CreationTime { get; } = new TimeContainer();
+	public ITimeContainer CreationTime => _data.CreationTime;
 
 	/// <inheritdoc cref="IStorageContainer.Extensibility" />
 	public IFileSystemExtensibility Extensibility
-		=> _extensibility;
+		=> _data.Extensibility;
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem => _fileSystem;
 
 	/// <inheritdoc cref="IStorageContainer.LastAccessTime" />
-	public ITimeContainer LastAccessTime { get; } = new TimeContainer();
+	public ITimeContainer LastAccessTime => _data.LastAccessTime;
 
 	/// <inheritdoc cref="IStorageContainer.LastWriteTime" />
-	public ITimeContainer LastWriteTime { get; } = new TimeContainer();
+	public ITimeContainer LastWriteTime => _data.LastWriteTime;
 
 	/// <inheritdoc cref="IStorageContainer.LinkTarget" />
-	public string? LinkTarget { get; set; }
+	public string? LinkTarget
+	{
+		get => _data.LinkTarget;
+		set => _data.LinkTarget = value;
+	}
 
 	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem => _fileSystem.TimeSystem;
 
 	/// <inheritdoc cref="IStorageContainer.Type" />
-	public FileSystemTypes Type { get; }
+	public FileSystemTypes Type => _data.Type;
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	/// <inheritdoc cref="IStorageContainer.UnixFileMode" />
 	public UnixFileMode UnixFileMode
 	{
-		get;
+		get => _data.UnixFileMode;
 		set
 		{
-			field = value;
+			_data.UnixFileMode = value;
 			_fileSystem.UnixFileModeStrategy.OnSetUnixFileMode(
 				_location.FullPath,
-				_extensibility,
-				field);
+				_data.Extensibility,
+				value);
 		}
-	} = UnixFileMode.OtherRead |
-	    UnixFileMode.GroupRead |
-	    UnixFileMode.UserWrite |
-	    UnixFileMode.UserRead;
+	}
 #endif
 
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
 	public void AppendBytes(byte[] bytes)
 	{
-		WriteBytes(_bytes.Concat(bytes).ToArray());
+		WriteBytes(_data.Bytes.Concat(bytes).ToArray());
 	}
 
 	/// <inheritdoc cref="IStorageContainer.BytesChanged" />
-	public event EventHandler? BytesChanged;
+	public event EventHandler? BytesChanged
+	{
+		add => _data.BytesChanged += value;
+		remove => _data.BytesChanged -= value;
+	}
 
 	/// <inheritdoc cref="IStorageContainer.Unlink()" />
 	public void Unlink()
 	{
-		_location.Drive?.ChangeUsedBytes(0 - _bytes.Length);
 		_isUnlinked = true;
+		if (Interlocked.Decrement(ref _data.LinkCount) == 0)
+		{
+			_location.Drive?.ChangeUsedBytes(0 - _data.Bytes.Length);
+		}
 	}
 
 	/// <inheritdoc cref="IStorageContainer.Decrypt()" />
 	public void Decrypt()
 	{
-		if (!_isEncrypted)
+		if (!_data.IsEncrypted)
 		{
 			return;
 		}
 
 		using (RequestAccess(FileAccess.Write, FileShare.Read))
 		{
-			_isEncrypted = false;
+			_data.IsEncrypted = false;
 			WriteBytes(EncryptionHelper.Decrypt(GetBytes()));
 		}
 	}
@@ -146,20 +168,20 @@ internal sealed class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.Encrypt()" />
 	public void Encrypt()
 	{
-		if (_isEncrypted)
+		if (_data.IsEncrypted)
 		{
 			return;
 		}
 
 		using (RequestAccess(FileAccess.Write, FileShare.Read))
 		{
-			_isEncrypted = true;
+			_data.IsEncrypted = true;
 			WriteBytes(EncryptionHelper.Encrypt(GetBytes()));
 		}
 	}
 
 	/// <inheritdoc cref="IStorageContainer.GetBytes()" />
-	public byte[] GetBytes() => _bytes;
+	public byte[] GetBytes() => _data.Bytes;
 
 	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, bool, int?, IStorageLocation?)" />
 	public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
@@ -194,7 +216,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 		}
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		if (!deleteAccess && !_fileSystem.UnixFileModeStrategy
-			.IsAccessGranted(_location.FullPath, _extensibility, UnixFileMode, access))
+			.IsAccessGranted(_location.FullPath, _data.Extensibility, UnixFileMode, access))
 		{
 			throw ExceptionFactory.AccessDenied(_location.FullPath);
 		}
@@ -208,7 +230,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 		}
 
 		if (_fileSystem.Storage.TryGetFileAccess(
-			_location,
+			this,
 			access,
 			share,
 			deleteAccess,
@@ -236,9 +258,10 @@ internal sealed class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.WriteRange(byte[], long)" />
 	public void WriteRange(byte[] bytes, long offset)
 	{
-		long newLength = Math.Max(_bytes.Length, offset + bytes.Length);
+		byte[] currentBytes = _data.Bytes;
+		long newLength = Math.Max(currentBytes.Length, offset + bytes.Length);
 		byte[] newBytes = new byte[newLength];
-		Array.Copy(_bytes, newBytes, _bytes.Length);
+		Array.Copy(currentBytes, newBytes, currentBytes.Length);
 		Array.Copy(bytes, 0L, newBytes, offset, bytes.Length);
 		WriteBytesInternal(newBytes, new BytesChangedEventArgs(bytes, offset));
 	}
@@ -270,14 +293,20 @@ internal sealed class InMemoryContainer : IStorageContainer
 				_location);
 		if (_isUnlinked)
 		{
-			_bytes = bytes;
+			if (_data.LinkCount > 0)
+			{
+				// The file still exists under another hard link, but no longer at the path of this container.
+				_location.Drive?.ChangeUsedBytes(bytes.Length - _data.Bytes.Length);
+			}
+
+			_data.Bytes = bytes;
 			this.AdjustTimes(timeAdjustment);
-			BytesChanged?.Invoke(this, eventArgs);
+			_data.RaiseBytesChanged(eventArgs);
 			return;
 		}
 
-		_location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
-		_bytes = bytes;
+		_location.Drive?.ChangeUsedBytes(bytes.Length - _data.Bytes.Length);
+		_data.Bytes = bytes;
 		this.AdjustTimes(timeAdjustment);
 		if (_fileSystem.Execute.IsWindows)
 		{
@@ -291,10 +320,47 @@ internal sealed class InMemoryContainer : IStorageContainer
 		}
 
 		_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
-		BytesChanged?.Invoke(this, eventArgs);
+		_data.RaiseBytesChanged(eventArgs);
 	}
 
 	#endregion
+
+	/// <summary>
+	///     Creates a new entry for the same file at the <paramref name="location" />, which shares the content and
+	///     metadata with this container, like a hard link on a real file system.
+	/// </summary>
+	/// <remarks>
+	///     The new entry only counts as a link to the file once it is registered with
+	///     <see cref="TryRegisterLink()" />.
+	/// </remarks>
+	internal InMemoryContainer CreateLink(IStorageLocation location)
+		=> new(_data, location, _fileSystem);
+
+	/// <summary>
+	///     Counts this container as an additional link to the file, so that the content is only released when the
+	///     last link is removed with <see cref="Unlink()" />.
+	/// </summary>
+	/// <returns>
+	///     <see langword="false" />, if the last link to the file was removed in the meantime, so that the file no
+	///     longer exists; otherwise <see langword="true" />.
+	/// </returns>
+	internal bool TryRegisterLink()
+	{
+		int linkCount = Volatile.Read(ref _data.LinkCount);
+		while (linkCount > 0)
+		{
+			int previous = Interlocked.CompareExchange(ref _data.LinkCount, linkCount + 1,
+				linkCount);
+			if (previous == linkCount)
+			{
+				return true;
+			}
+
+			linkCount = previous;
+		}
+
+		return false;
+	}
 
 	/// <summary>
 	///     Create a new directory on the <paramref name="location" />.
@@ -326,7 +392,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 
 		if (Type == FileSystemTypes.File)
 		{
-			return $"{_location.FullPath}: File ({_bytes.Length} bytes)";
+			return $"{_location.FullPath}: File ({_data.Bytes.Length} bytes)";
 		}
 
 		return $"{_location.FullPath}: Unknown Container";
@@ -335,7 +401,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 	internal FileAttributes AdjustAttributes(FileAttributes attributes)
 	{
 		if ((_fileSystem.Execute.IsLinux || _fileSystem.Execute.IsMac)
-		    && _fileSystem.Execute.Path.GetFileName(_location.FullPath).StartsWith('.'))
+		    && _fileSystem.Execute.Path.GetFileName(_location.FullPath).StartsWith('.', StringComparison.Ordinal))
 		{
 			attributes |= FileAttributes.Hidden;
 		}
@@ -347,7 +413,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 		}
 #endif
 
-		if (_isEncrypted)
+		if (_data.IsEncrypted)
 		{
 			attributes |= FileAttributes.Encrypted;
 		}
@@ -367,6 +433,39 @@ internal sealed class InMemoryContainer : IStorageContainer
 		}
 
 		return attributes;
+	}
+
+	/// <summary>
+	///     The content and metadata of a file or directory, independent of the path it is stored at.
+	/// </summary>
+	private sealed class FileData(FileSystemTypes type)
+	{
+		public FileAttributes Attributes;
+		public byte[] Bytes = Array.Empty<byte>();
+		public readonly ITimeContainer CreationTime = new TimeContainer();
+		public readonly FileSystemExtensibility Extensibility = new();
+		public bool IsEncrypted;
+		public readonly ITimeContainer LastAccessTime = new TimeContainer();
+		public readonly ITimeContainer LastWriteTime = new TimeContainer();
+		public string? LinkTarget;
+
+		/// <summary>
+		///     The number of paths in the storage that refer to this file.
+		/// </summary>
+		public int LinkCount = 1;
+
+		public readonly FileSystemTypes Type = type;
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+		public UnixFileMode UnixFileMode = UnixFileMode.OtherRead |
+		                                   UnixFileMode.GroupRead |
+		                                   UnixFileMode.UserWrite |
+		                                   UnixFileMode.UserRead;
+#endif
+
+		public event EventHandler? BytesChanged;
+
+		public void RaiseBytesChanged(EventArgs eventArgs)
+			=> BytesChanged?.Invoke(this, eventArgs);
 	}
 
 	internal sealed class TimeContainer : ITimeContainer

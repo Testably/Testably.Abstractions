@@ -10,14 +10,23 @@ internal sealed class NullContainer : IStorageContainer
 {
 	private readonly MockFileSystem _fileSystem;
 
-	private NullContainer(MockFileSystem fileSystem, ITimeSystem timeSystem)
+	private NullContainer(MockFileSystem fileSystem, ITimeSystem timeSystem, bool isNullDevice)
 	{
 		_fileSystem = fileSystem;
 		TimeSystem = timeSystem;
 		Extensibility = new FileSystemExtensibility();
-		CreationTime = new CreationNullTime(_fileSystem);
-		LastAccessTime = new NullTime(_fileSystem);
-		LastWriteTime = new NullTime(_fileSystem);
+		if (isNullDevice)
+		{
+			CreationTime = new InMemoryContainer.TimeContainer();
+			LastAccessTime = new InMemoryContainer.TimeContainer();
+			LastWriteTime = new InMemoryContainer.TimeContainer();
+		}
+		else
+		{
+			CreationTime = new CreationNullTime(_fileSystem);
+			LastAccessTime = new NullTime(_fileSystem);
+			LastWriteTime = new NullTime(_fileSystem);
+		}
 	}
 
 	#region IStorageContainer Members
@@ -127,7 +136,14 @@ internal sealed class NullContainer : IStorageContainer
 	#endregion
 
 	internal static IStorageContainer New(MockFileSystem fileSystem)
-		=> new NullContainer(fileSystem, fileSystem.TimeSystem);
+		=> new NullContainer(fileSystem, fileSystem.TimeSystem, isNullDevice: false);
+
+	/// <summary>
+	///     Creates a container for the null device, which discards everything written to it and returns no data, but
+	///     unlike a missing file accepts the timestamp updates of reads and writes.
+	/// </summary>
+	internal static IStorageContainer NewNullDevice(MockFileSystem fileSystem)
+		=> new NullContainer(fileSystem, fileSystem.TimeSystem, isNullDevice: true);
 
 	private sealed class NullStorageAccessHandle : IStorageAccessHandle
 	{

@@ -122,7 +122,8 @@ internal sealed class FileInfoMock
 				.FileInfo.RegisterPathProperty(Location.FullPath,
 					nameof(Name), PropertyAccess.Get);
 
-			if (Location.FullPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar))
+			if (Location.FullPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar,
+				StringComparison.Ordinal))
 			{
 				return string.Empty;
 			}
@@ -186,6 +187,62 @@ internal sealed class FileInfoMock
 		ResetCache(!_fileSystem.Execute.IsNetFramework);
 		return stream;
 	}
+
+#if FEATURE_FILESYSTEM_HARDLINK
+	/// <inheritdoc cref="IFileInfo.CreateAsHardLink(string)" />
+	public void CreateAsHardLink(string pathToTarget)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(CreateAsHardLink),
+				pathToTarget);
+
+		ValidatePathToTargetOfHardLink(pathToTarget);
+		if (HasInvalidHardLinkCharacters(Location.FriendlyName))
+		{
+			throw ExceptionFactory.PathHasIncorrectSyntax(Location.FriendlyName);
+		}
+
+		Container = _fileSystem.Storage.CreateHardLink(Location,
+			_fileSystem.Storage.GetLocation(pathToTarget));
+		ResetCache(true);
+	}
+
+	/// <summary>
+	///     The runtime only rejects a missing, empty or <c>'\0'</c>-containing <paramref name="pathToTarget" /> itself;
+	///     any other invalid name is reported by Windows for the path of the hard link.
+	/// </summary>
+	private void ValidatePathToTargetOfHardLink([NotNull] string? pathToTarget)
+	{
+		if (pathToTarget == null)
+		{
+			throw new ArgumentNullException(nameof(pathToTarget));
+		}
+
+		if (pathToTarget.Length == 0)
+		{
+			throw ExceptionFactory.PathCannotBeEmpty(_fileSystem.Execute, nameof(pathToTarget));
+		}
+
+		if (pathToTarget.Contains('\0', StringComparison.Ordinal))
+		{
+			throw ExceptionFactory.NullCharacterInPath(nameof(pathToTarget));
+		}
+
+		if (HasInvalidHardLinkCharacters(pathToTarget))
+		{
+			throw ExceptionFactory.PathHasIncorrectSyntax(Location.FriendlyName);
+		}
+	}
+
+	/// <summary>
+	///     Windows rejects the characters that are invalid in a file name, which <c>Path.GetInvalidPathChars()</c>
+	///     does not cover, when creating a hard link.
+	/// </summary>
+	private bool HasInvalidHardLinkCharacters(string path)
+		=> _fileSystem.Execute.IsWindows &&
+		   (path.HasIllegalCharacters(_fileSystem) ||
+		    path.IndexOfAny(['<', '>', '"']) >= 0);
+#endif
 
 	/// <inheritdoc cref="IFileInfo.CreateText()" />
 	public StreamWriter CreateText()
@@ -265,12 +322,12 @@ internal sealed class FileInfoMock
 			throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode();
 		}
 
-		return new FileStreamMock(
+		return InvalidateAfterOpen(new FileStreamMock(
 			_fileSystem,
 			FullName,
 			mode,
 			mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite,
-			FileShare.None);
+			FileShare.None));
 	}
 
 	/// <inheritdoc cref="IFileInfo.Open(FileMode, FileAccess)" />
@@ -280,12 +337,12 @@ internal sealed class FileInfoMock
 			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(Open),
 				mode, access);
 
-		return new FileStreamMock(
+		return InvalidateAfterOpen(new FileStreamMock(
 			_fileSystem,
 			FullName,
 			mode,
 			access,
-			FileShare.None);
+			FileShare.None));
 	}
 
 	/// <inheritdoc cref="IFileInfo.Open(FileMode, FileAccess, FileShare)" />
@@ -295,12 +352,12 @@ internal sealed class FileInfoMock
 			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(Open),
 				mode, access, share);
 
-		return new FileStreamMock(
+		return InvalidateAfterOpen(new FileStreamMock(
 			_fileSystem,
 			FullName,
 			mode,
 			access,
-			share);
+			share));
 	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
@@ -311,7 +368,7 @@ internal sealed class FileInfoMock
 			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(Open),
 				options);
 
-		return _fileSystem.File.Open(FullName, options);
+		return InvalidateAfterOpen(_fileSystem.File.Open(FullName, options));
 	}
 #endif
 
@@ -321,11 +378,11 @@ internal sealed class FileInfoMock
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(OpenRead));
 
-		return new FileStreamMock(
+		return InvalidateAfterOpen(new FileStreamMock(
 			_fileSystem,
 			FullName,
 			FileMode.Open,
-			FileAccess.Read);
+			FileAccess.Read));
 	}
 
 	/// <inheritdoc cref="IFileInfo.OpenText()" />
@@ -343,13 +400,27 @@ internal sealed class FileInfoMock
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(OpenWrite));
 
-		return new FileStreamMock(
+		return InvalidateAfterOpen(new FileStreamMock(
 			_fileSystem,
 			FullName,
 			FileMode.OpenOrCreate,
 			FileAccess.Write,
-			FileShare.None);
+			FileShare.None));
 	}
+
+	/// <summary>
+	///     Since .NET 11, opening the file invalidates the cached state, so it is refreshed on the next access.
+	/// </summary>
+#if FEATURE_FILEINFO_OPEN_INVALIDATES
+	private FileSystemStream InvalidateAfterOpen(FileSystemStream stream)
+	{
+		ResetCache(true);
+		return stream;
+	}
+#else
+	private static FileSystemStream InvalidateAfterOpen(FileSystemStream stream)
+		=> stream;
+#endif
 
 	/// <inheritdoc cref="IFileInfo.Replace(string, string?)" />
 	public IFileInfo Replace(string destinationFileName,
