@@ -21,6 +21,39 @@ public class TimeSystemExtensionsTests
 	}
 
 	[Test]
+	public async Task ToTimeProvider_CancellationTokenSourceWithDelay_ShouldCancelPeriodicTimerWaitOfTheMockAtItsDueTime()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+		using CancellationTokenSource cts = new(1.Seconds(), timeSystem.ToTimeProvider());
+		using Testably.Abstractions.TimeSystem.IPeriodicTimer periodicTimer = timeSystem.PeriodicTimer.New(5.Seconds());
+
+		async Task Act() => await periodicTimer.WaitForNextTickAsync(cts.Token);
+
+		await That(Act).Throws<OperationCanceledException>();
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 1.Seconds())
+			.Because("the timeout canceled the wait after one second");
+		await That(await periodicTimer.WaitForNextTickAsync(TestContext.Current!.Execution.CancellationToken))
+			.IsTrue();
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 5.Seconds())
+			.Because("the cancellation does not shift the ticks of the periodic timer");
+	}
+
+	[Test]
+	public async Task ToTimeProvider_CancellationTokenSourceWithDelay_ShouldCancelTaskDelayOfTheMockAtItsDueTime()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+		using CancellationTokenSource cts = new(1.Seconds(), timeSystem.ToTimeProvider());
+
+		Task delay = timeSystem.Task.Delay(5.Seconds(), cts.Token);
+
+		await That(delay.IsCanceled).IsTrue();
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 1.Seconds())
+			.Because("the timeout canceled the delay after one second");
+	}
+
+	[Test]
 	public async Task ToTimeProvider_CancellationTokenSourceWithDelay_ShouldNotMoveTheClock()
 	{
 		MockTimeSystem timeSystem = new();
@@ -28,13 +61,11 @@ public class TimeSystemExtensionsTests
 		DateTimeOffset before = provider.GetUtcNow();
 
 		using CancellationTokenSource cts = new(10.Seconds(), provider);
-		#pragma warning disable MA0166 // Use an overload with a TimeProvider
-		await Task.Delay(100.Milliseconds(), TestContext.Current!.Execution.CancellationToken);
-		#pragma warning restore MA0166
 
-		await That(cts.IsCancellationRequested).IsFalse();
-		await That(provider.GetUtcNow()).IsEqualTo(before)
+		await That(timeSystem.Scheduler.IsAdvancing).IsFalse()
 			.Because("the timer of a timeout does not move the clock on its own");
+		await That(cts.IsCancellationRequested).IsFalse();
+		await That(provider.GetUtcNow()).IsEqualTo(before);
 	}
 
 	[Test]
@@ -64,12 +95,10 @@ public class TimeSystemExtensionsTests
 		using System.Threading.ITimer timer = provider.CreateTimer(_ => { }, null,
 			Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 		timer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-		#pragma warning disable MA0166 // Use an overload with a TimeProvider
-		await Task.Delay(100.Milliseconds(), TestContext.Current!.Execution.CancellationToken);
-		#pragma warning restore MA0166
 
-		await That(cts.IsCancellationRequested).IsFalse()
+		await That(timeSystem.Scheduler.IsAdvancing).IsFalse()
 			.Because("a timer that is not armed does not wait for anything");
+		await That(cts.IsCancellationRequested).IsFalse();
 		await That(provider.GetUtcNow()).IsEqualTo(before);
 	}
 
@@ -96,70 +125,6 @@ public class TimeSystemExtensionsTests
 		await That(isCompleted).IsTrue()
 			.Because("a timeout that the timer passes does not belong to it");
 		await That(cts.IsCancellationRequested).IsTrue();
-	}
-
-	[Test]
-	public async Task ToTimeProvider_CancellationTokenSourceWithDelay_ShouldCancelTaskDelayOfTheMockAtItsDueTime()
-	{
-		MockTimeSystem timeSystem = new();
-		DateTime start = timeSystem.DateTime.UtcNow;
-		using CancellationTokenSource cts = new(1.Seconds(), timeSystem.ToTimeProvider());
-
-		Task delay = timeSystem.Task.Delay(5.Seconds(), cts.Token);
-
-		await That(delay.IsCanceled).IsTrue();
-		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 1.Seconds())
-			.Because("the timeout canceled the delay after one second");
-	}
-
-	[Test]
-	public async Task ToTimeProvider_CancellationTokenSourceWithDelay_ShouldCancelPeriodicTimerWaitOfTheMockAtItsDueTime()
-	{
-		MockTimeSystem timeSystem = new();
-		DateTime start = timeSystem.DateTime.UtcNow;
-		using CancellationTokenSource cts = new(1.Seconds(), timeSystem.ToTimeProvider());
-		using Testably.Abstractions.TimeSystem.IPeriodicTimer periodicTimer = timeSystem.PeriodicTimer.New(5.Seconds());
-
-		async Task Act() => await periodicTimer.WaitForNextTickAsync(cts.Token);
-
-		await That(Act).Throws<OperationCanceledException>();
-		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 1.Seconds())
-			.Because("the timeout canceled the wait after one second");
-		await That(await periodicTimer.WaitForNextTickAsync(TestContext.Current!.Execution.CancellationToken))
-			.IsTrue();
-		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 5.Seconds())
-			.Because("the cancellation does not shift the ticks of the periodic timer");
-	}
-
-	[Test]
-	public async Task ToTimeProvider_WaitAsync_ShouldNotTimeOutBeforeTheClockPassesTheTimeout()
-	{
-		MockTimeSystem timeSystem = new();
-		System.TimeProvider provider = timeSystem.ToTimeProvider();
-		DateTimeOffset before = provider.GetUtcNow();
-		TaskCompletionSource<bool> neverCompleted = new();
-
-		Task waiting = neverCompleted.Task.WaitAsync(10.Seconds(), provider);
-		#pragma warning disable MA0166 // Use an overload with a TimeProvider
-		await Task.Delay(100.Milliseconds(), TestContext.Current!.Execution.CancellationToken);
-		#pragma warning restore MA0166
-
-		await That(waiting.IsCompleted).IsFalse()
-			.Because("the timer of a timeout does not move the clock on its own");
-		await That(provider.GetUtcNow()).IsEqualTo(before);
-	}
-
-	[Test]
-	public async Task ToTimeProvider_WaitAsync_WhenADelayPassesTheTimeout_ShouldTimeOut()
-	{
-		MockTimeSystem timeSystem = new();
-		System.TimeProvider provider = timeSystem.ToTimeProvider();
-		TaskCompletionSource<bool> neverCompleted = new();
-		Task waiting = neverCompleted.Task.WaitAsync(1.Seconds(), provider);
-
-		await Task.Delay(5.Seconds(), provider, TestContext.Current!.Execution.CancellationToken);
-
-		await That(() => waiting).ThrowsExactly<TimeoutException>();
 	}
 
 	[Test]
@@ -253,6 +218,30 @@ public class TimeSystemExtensionsTests
 
 		await That(observedTime).IsEqualTo(before + 1.Seconds())
 			.Because("the callback observed the mock clock at its due time through the bridge");
+	}
+
+	[Test]
+	public async Task ToTimeProvider_CreateTimer_WithACancellationTokenSourceAndAPeriod_ShouldMoveTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		System.TimeProvider provider = timeSystem.ToTimeProvider();
+		using CancellationTokenSource shutdown = new();
+		TaskCompletionSource<bool> executedThreeTimes = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		int executions = 0;
+
+		using ITimer timer = provider.CreateTimer(_ =>
+		{
+			if (Interlocked.Increment(ref executions) == 3)
+			{
+				executedThreeTimes.TrySetResult(true);
+			}
+		}, shutdown, 1.Seconds(), 1.Seconds());
+
+		bool isCompleted = await Task.WhenAny(executedThreeTimes.Task,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == executedThreeTimes.Task;
+
+		await That(isCompleted).IsTrue()
+			.Because("a periodic timer is never a timeout, even when its state is a CancellationTokenSource");
 	}
 
 	[Test]
@@ -367,6 +356,35 @@ public class TimeSystemExtensionsTests
 		DateTimeOffset end = DateTimeOffset.UtcNow;
 
 		await That(result).IsOnOrAfter(begin).And.IsOnOrBefore(end);
+	}
+
+	[Test]
+	public async Task ToTimeProvider_WaitAsync_ShouldNotTimeOutBeforeTheClockPassesTheTimeout()
+	{
+		MockTimeSystem timeSystem = new();
+		System.TimeProvider provider = timeSystem.ToTimeProvider();
+		DateTimeOffset before = provider.GetUtcNow();
+		TaskCompletionSource<bool> neverCompleted = new();
+
+		Task waiting = neverCompleted.Task.WaitAsync(10.Seconds(), provider);
+
+		await That(timeSystem.Scheduler.IsAdvancing).IsFalse()
+			.Because("the timer of a timeout does not move the clock on its own");
+		await That(waiting.IsCompleted).IsFalse();
+		await That(provider.GetUtcNow()).IsEqualTo(before);
+	}
+
+	[Test]
+	public async Task ToTimeProvider_WaitAsync_WhenADelayPassesTheTimeout_ShouldTimeOut()
+	{
+		MockTimeSystem timeSystem = new();
+		System.TimeProvider provider = timeSystem.ToTimeProvider();
+		TaskCompletionSource<bool> neverCompleted = new();
+		Task waiting = neverCompleted.Task.WaitAsync(1.Seconds(), provider);
+
+		await Task.Delay(5.Seconds(), provider, TestContext.Current!.Execution.CancellationToken);
+
+		await That(() => waiting).ThrowsExactly<TimeoutException>();
 	}
 
 	private static CancellationToken CreateTimeout(out CancellationTokenSource cts)

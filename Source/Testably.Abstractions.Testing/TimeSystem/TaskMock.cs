@@ -53,7 +53,7 @@ internal sealed class TaskMock : ITask
 
 		if (cancellationToken.IsCancellationRequested)
 		{
-			throw ExceptionFactory.TaskWasCanceled();
+			return Task.FromCanceled(cancellationToken);
 		}
 
 		if (_autoAdvance)

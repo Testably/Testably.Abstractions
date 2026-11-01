@@ -11,6 +11,25 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 public class TimerMockTests
 {
 	[Test]
+	public async Task AdvanceBy_OnTheProviderOfACustomFactory_ShouldFireTheDueTimers()
+	{
+		ExposingTimeProviderFactory factory = new();
+		MockTimeSystem timeSystem = new(factory, o => o.DisableAutoAdvance());
+		DateTime start = timeSystem.DateTime.UtcNow;
+		TaskCompletionSource<DateTime> fired = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		using ITimer timer = timeSystem.Timer.New(_ => fired.TrySetResult(timeSystem.DateTime.UtcNow), null,
+			1.Seconds(), Timeout.InfiniteTimeSpan);
+
+		factory.Provider!.AdvanceBy(2.Seconds());
+		bool isFired = await Task.WhenAny(fired.Task,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == fired.Task;
+
+		await That(isFired).IsTrue();
+		await That(await fired.Task).IsEqualTo(start + 2.Seconds())
+			.Because("the clock was already past the due time when the provider was advanced directly");
+	}
+
+	[Test]
 	public async Task AdvanceBy_ShouldFireTimersInTheOrderOfTheirDueTime()
 	{
 		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
@@ -44,6 +63,67 @@ public class TimerMockTests
 
 		await That(disposedInTime).IsTrue()
 			.Because("the schedule must not stay locked while the clock notifies about a time change");
+	}
+
+	[Test]
+	public async Task AdvanceBy_WhenATimeChangedCallbackThrows_ShouldKeepTheTimerScheduled()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		int executions = 0;
+		using ITimer timer = timeSystem.Timer.New(_ => Interlocked.Increment(ref executions), null,
+			1.Seconds(), Timeout.InfiniteTimeSpan);
+		bool hasThrown = false;
+		using IAwaitableCallback<DateTime> _ = timeSystem.On.TimeChanged(_ =>
+		{
+			if (!hasThrown)
+			{
+				hasThrown = true;
+				throw new InvalidOperationException("time changed");
+			}
+		});
+
+		void Act() => timeSystem.TimeProvider.AdvanceBy(2.Seconds());
+
+		await That(Act).ThrowsExactly<InvalidOperationException>().WithMessage("time changed");
+		timeSystem.TimeProvider.AdvanceBy(1.Seconds());
+		await That(executions).IsEqualTo(1)
+			.Because("the timer stays scheduled when moving the clock to its due time throws");
+	}
+
+	[Test]
+	public async Task AutoAdvance_ShouldFireTimersInTheOrderOfTheirDueTime()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+		List<TimeSpan> callbackTimes = [];
+		List<ITimer> timers = [];
+		TaskCompletionSource<bool> allFired = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+		void AddCallbackTime(object? _)
+		{
+			lock (callbackTimes)
+			{
+				callbackTimes.Add(timeSystem.DateTime.UtcNow - start);
+				if (callbackTimes.Count == 3)
+				{
+					allFired.TrySetResult(true);
+				}
+			}
+		}
+
+		using ITimer starter = timeSystem.Timer.New(_ =>
+		{
+			timers.Add(timeSystem.Timer.New(AddCallbackTime, null, 3.Seconds(), Timeout.InfiniteTimeSpan));
+			timers.Add(timeSystem.Timer.New(AddCallbackTime, null, 1.Seconds(), Timeout.InfiniteTimeSpan));
+			timers.Add(timeSystem.Timer.New(AddCallbackTime, null, 2.Seconds(), Timeout.InfiniteTimeSpan));
+		}, null, TimeSpan.Zero, Timeout.InfiniteTimeSpan);
+		bool isCompleted = await Task.WhenAny(allFired.Task,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == allFired.Task;
+		timers.ForEach(timer => timer.Dispose());
+
+		await That(isCompleted).IsTrue();
+		await That(callbackTimes).IsEqualTo([1.Seconds(), 2.Seconds(), 3.Seconds(),])
+			.Because("all auto-advancing timers move the clock on one thread, in the order of their due time");
 	}
 
 	[Test]
@@ -81,56 +161,6 @@ public class TimerMockTests
 			await That(executions).IsEqualTo(0)
 				.Because($"a disposed timer must not fire, even after concurrent changes (iteration {i})");
 		}
-	}
-
-	[Test]
-	public async Task New_WithMaxValueDueTimeAndPeriod_ShouldNotFire()
-	{
-		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
-		int executions = 0;
-		using ITimer timer = timeSystem.Timer.New(_ => Interlocked.Increment(ref executions), null,
-			TimeSpan.MaxValue, TimeSpan.MaxValue);
-
-		timeSystem.TimeProvider.AdvanceBy(1.Seconds());
-		await Task.Delay(100, TestContext.Current!.Execution.CancellationToken);
-
-		await That(executions).IsEqualTo(0)
-			.Because("a due time beyond the end of the clock must not overflow into the past");
-	}
-
-	[Test]
-	public async Task Wait_AfterATimeout_ShouldNotBlockTheThreadThatAdvancesTheClock()
-	{
-		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
-		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 1.Seconds(), 1.Seconds());
-		ITimerMock timerMock = timeSystem.TimerHandler[0];
-
-		void Wait() => timerMock.Wait(executionCount: 2, timeout: 50);
-
-		await That(Wait).ThrowsExactly<TimeoutException>();
-		Task advance = Task.Run(() => timeSystem.TimeProvider.AdvanceBy(5.Seconds()));
-		bool isCompleted = await Task.WhenAny(advance,
-			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == advance;
-
-		await That(isCompleted).IsTrue()
-			.Because("nobody waits for the timer anymore after the wait timed out");
-	}
-
-	[Test]
-	public async Task Wait_WhenTheTimerExecutesAgainAfterwards_ShouldNotThrow()
-	{
-		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
-		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 1.Seconds(), 1.Seconds());
-		ITimerMock timerMock = timeSystem.TimerHandler[0];
-		Task wait = Task.Run(() => timerMock.Wait(timeout: 5000));
-		await Task.Delay(100, TestContext.Current!.Execution.CancellationToken);
-		timeSystem.TimeProvider.AdvanceBy(1.Seconds());
-		await wait;
-
-		void Act() => timeSystem.TimeProvider.AdvanceBy(2.Seconds());
-
-		await That(Act).DoesNotThrow();
-		await That(timerMock.ExecutionCount).IsEqualTo(3);
 	}
 
 	[Test]
@@ -435,6 +465,33 @@ public class TimerMockTests
 	}
 
 	[Test]
+	public async Task New_WithMaxValueDueTimeAndPeriod_ShouldNotFire()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		int executions = 0;
+		using ITimer timer = timeSystem.Timer.New(_ => Interlocked.Increment(ref executions), null,
+			TimeSpan.MaxValue, TimeSpan.MaxValue);
+
+		timeSystem.TimeProvider.AdvanceBy(1.Seconds());
+
+		await That(executions).IsEqualTo(0)
+			.Because("a due time beyond the end of the clock must not overflow into the past");
+	}
+
+	[Test]
+	public async Task New_WithMaxValueDueTimeAndPeriod_WithAutoAdvance_ShouldNotMoveTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, TimeSpan.MaxValue, TimeSpan.MaxValue);
+
+		await That(timeSystem.Scheduler.IsAdvancing).IsFalse()
+			.Because("a due time beyond the end of the clock is never reached");
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start);
+	}
+
+	[Test]
 	public async Task New_WithStartOnMockWaitMode_ShouldOnlyStartWhenCallingWait()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
@@ -514,6 +571,24 @@ public class TimerMockTests
 		await That(Volatile.Read(ref timerCount)).IsEqualTo(14);
 		cts.Cancel();
 		await timerTask;
+	}
+
+	[Test]
+	public async Task Wait_AfterATimeout_ShouldNotBlockTheThreadThatAdvancesTheClock()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 1.Seconds(), 1.Seconds());
+		ITimerMock timerMock = timeSystem.TimerHandler[0];
+
+		void Wait() => timerMock.Wait(executionCount: 2, timeout: 50);
+
+		await That(Wait).ThrowsExactly<TimeoutException>();
+		Task advance = Task.Run(() => timeSystem.TimeProvider.AdvanceBy(5.Seconds()));
+		bool isCompleted = await Task.WhenAny(advance,
+			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == advance;
+
+		await That(isCompleted).IsTrue()
+			.Because("nobody waits for the timer anymore after the wait timed out");
 	}
 
 	[Test]
@@ -631,6 +706,39 @@ public class TimerMockTests
 	}
 
 	[Test]
+	public async Task Wait_WhenTheCallbackDisposesTheTimer_ShouldNotThrow()
+	{
+		MockTimeSystem timeSystem = new MockTimeSystem(o => o.DisableAutoAdvance())
+			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
+		ITimer? timer = null;
+		timer = timeSystem.Timer.New(_ => timer!.Dispose(), null, 1.Seconds(), 1.Seconds());
+		ITimerMock timerMock = timeSystem.TimerHandler[0];
+		Task wait = Task.Run(() => timerMock.Wait(timeout: 5000));
+
+		await AdvanceUntilCompleted(timeSystem, wait);
+
+		await That(timerMock.ExecutionCount).IsEqualTo(1)
+			.Because("the callback disposed the timer at its first execution");
+	}
+
+	[Test]
+	public async Task Wait_WhenTheTimerExecutesAgainAfterwards_ShouldNotThrow()
+	{
+		MockTimeSystem timeSystem = new MockTimeSystem(o => o.DisableAutoAdvance())
+			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 1.Seconds(), 1.Seconds());
+		ITimerMock timerMock = timeSystem.TimerHandler[0];
+		Task wait = Task.Run(() => timerMock.Wait(timeout: 5000));
+		await AdvanceUntilCompleted(timeSystem, wait);
+		long executionCount = timerMock.ExecutionCount;
+
+		void Act() => timeSystem.TimeProvider.AdvanceBy(2.Seconds());
+
+		await That(Act).DoesNotThrow();
+		await That(timerMock.ExecutionCount).IsEqualTo(executionCount + 2);
+	}
+
+	[Test]
 	public async Task Wait_WithExecutionCount_ShouldWaitForSpecifiedNumberOfExecutions()
 	{
 		int executionCount = 10;
@@ -658,5 +766,29 @@ public class TimerMockTests
 		await That(count).IsEqualTo(executionCount);
 	}
 
+	/// <summary>
+	///     Advances the clock step by step until the <paramref name="task" /> completes, as a <c>Wait</c> on another
+	///     thread starts the timer only after an unknown time.
+	/// </summary>
+	private static async Task AdvanceUntilCompleted(MockTimeSystem timeSystem, Task task)
+	{
+		while (!task.IsCompleted)
+		{
+			timeSystem.TimeProvider.AdvanceBy(1.Seconds());
+			await Task.Delay(1, TestContext.Current!.Execution.CancellationToken);
+		}
+
+		await task;
+	}
+
 	private sealed class DummyWaitHandle : WaitHandle;
+
+	private sealed class ExposingTimeProviderFactory : ITimeProviderFactory
+	{
+		public ITimeProvider? Provider { get; private set; }
+
+		public ITimeProvider Create(Action<DateTime> onTimeChanged)
+			=> Provider = TimeProviderFactory.Use(new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc))
+				.Create(onTimeChanged);
+	}
 }

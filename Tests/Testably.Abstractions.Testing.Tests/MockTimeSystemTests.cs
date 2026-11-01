@@ -168,6 +168,19 @@ public class MockTimeSystemTests
 	}
 
 	[Test]
+	public async Task Delay_WithCanceledToken_ShouldReturnACanceledTask()
+	{
+		MockTimeSystem timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+
+		Task delay = timeSystem.Task.Delay(5.Seconds(), new CancellationToken(true));
+
+		await That(delay.IsCanceled).IsTrue()
+			.Because("Task.Delay reports a canceled token through the task, like the real one");
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start);
+	}
+
+	[Test]
 	public async Task AdvanceBy_MaxValue_ShouldThrowArgumentOutOfRangeException()
 	{
 		MockTimeSystem timeSystem = new();

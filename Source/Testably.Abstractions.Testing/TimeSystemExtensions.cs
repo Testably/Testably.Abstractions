@@ -29,7 +29,8 @@ public static class TimeSystemExtensions
 	///     <see cref="Timer" /> regardless of the <see cref="TimeSystem.TimerStrategy" /> configured on a
 	///     <see cref="MockTimeSystem" />.
 	///     <para />
-	///     The timers of <c>new CancellationTokenSource(TimeSpan, TimeProvider)</c> and
+	///     A timer without a period whose state is a <see cref="CancellationTokenSource" />, like the one of
+	///     <c>new CancellationTokenSource(TimeSpan, TimeProvider)</c>, and the timer of
 	///     <c>Task.WaitAsync(TimeSpan, TimeProvider)</c> are timeouts of the <see cref="MockTimeSystem" />: with
 	///     auto-advance they do not move the clock on their own, but fire when a wait or
 	///     <see cref="TimeSystem.ITimeProvider.AdvanceBy(TimeSpan)" /> moves the clock past their due time.
@@ -63,7 +64,7 @@ public static class TimeSystemExtensions
 			object? state,
 			TimeSpan dueTime,
 			TimeSpan period)
-			=> new TimerAdapter(timeSystem.Timer is TimerFactoryMock timerFactoryMock && IsTimeout(state)
+			=> new TimerAdapter(timeSystem.Timer is TimerFactoryMock timerFactoryMock && IsTimeout(state, period)
 				? timerFactoryMock.NewTimeout(WrapCallback(callback), state, dueTime, period)
 				: timeSystem.Timer.New(WrapCallback(callback), state, dueTime, period));
 
@@ -76,13 +77,15 @@ public static class TimeSystemExtensions
 			=> new(timeSystem.DateTime.UtcNow);
 
 		/// <summary>
-		///     Whether the BCL creates the timer for a timeout, which must not move the clock of the
-		///     <see cref="MockTimeSystem" /> on its own, so that the operation it guards is not canceled before it starts.
+		///     Whether the timer is a timeout, which must not move the clock of the <see cref="MockTimeSystem" /> on its
+		///     own, so that the operation it guards is not canceled before it starts. A timeout fires once, so a periodic
+		///     timer is never one.
 		/// </summary>
-		private static bool IsTimeout(object? state)
-			=> state is CancellationTokenSource ||
-			   (state?.GetType() is { IsGenericType: true, } type &&
-			    type.GetGenericTypeDefinition() == WaitAsyncPromiseType);
+		private static bool IsTimeout(object? state, TimeSpan period)
+			=> period == Timeout.InfiniteTimeSpan &&
+			   (state is CancellationTokenSource ||
+			    (state?.GetType() is { IsGenericType: true, } type &&
+			     type.GetGenericTypeDefinition() == WaitAsyncPromiseType));
 
 		/// <summary>
 		///     Wraps the <paramref name="callback" /> so that an exception thrown by it is swallowed and does not stop the
