@@ -234,7 +234,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		: base(
 			stream,
 			path == null ? "" : fileSystem.Execute.Path.GetFullPath(path),
-			(options & FileOptions.Asynchronous) != 0)
+			(options & FileOptions.Asynchronous) != 0 && SupportsAsync(fileSystem))
 	{
 		FileModeHelper.ThrowIfInvalidModeAccess(mode, access);
 
@@ -296,7 +296,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		FileAccess access,
 		bool isAsync,
 		bool canSeek)
-		: base(stream, location.FullPath, isAsync)
+		: base(stream, location.FullPath, isAsync && SupportsAsync(fileSystem))
 	{
 		_canSeek = canSeek;
 		_stream = stream;
@@ -910,6 +910,19 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 				_fileSystem.Storage.GetLocation(Name),
 				FileSystemTypes.File);
 		}
+	}
+
+	/// <summary>
+	///     Since .NET 11, Unix opens regular files without <c>O_NONBLOCK</c>, so their streams are never asynchronous.
+	/// </summary>
+	private static bool SupportsAsync(MockFileSystem fileSystem)
+	{
+#if FEATURE_FILESTREAM_ASYNC_ONLY_ON_WINDOWS
+		return fileSystem.Execute.IsWindows;
+#else
+		_ = fileSystem;
+		return true;
+#endif
 	}
 
 	private void ThrowIfDisposed()

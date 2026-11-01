@@ -214,7 +214,14 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 		if (_fileSystem.SafeFileHandleRegistry.Find(handle) is { } entry)
 		{
 			return new FileStreamMock(_fileSystem, handle, entry.Container, entry.Location,
-				access, isAsync, entry.CanSeek);
+				access,
+#if FEATURE_FILESTREAM_ASYNC_ONLY_ON_WINDOWS
+				// Since .NET 11, the stream follows the handle and ignores `isAsync`.
+				entry.Options.HasFlag(FileOptions.Asynchronous),
+#else
+				isAsync,
+#endif
+				entry.CanSeek);
 		}
 
 		SafeFileHandleMock safeFileHandleMock = _fileSystem.SafeFileHandleRegistry.Map(handle);

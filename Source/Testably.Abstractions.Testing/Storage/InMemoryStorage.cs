@@ -134,9 +134,11 @@ internal sealed class InMemoryStorage : IStorage
 		if (!_containers.TryGetValue(target, out IStorageContainer? targetContainer))
 		{
 			IStorageLocation? targetParent = target.GetParent();
-			if (_fileSystem.Execute.IsWindows &&
-			    targetParent is { IsRooted: false } &&
-			    !_containers.ContainsKey(targetParent))
+			bool isDirectoryNotFound = _fileSystem.Execute.IsWindows
+				? targetParent is { IsRooted: false } && !_containers.ContainsKey(targetParent)
+				// Unix only checks the parent of the link path exactly as it was passed, which is missing for a bare file name.
+				: string.IsNullOrEmpty(_fileSystem.Execute.Path.GetDirectoryName(location.FriendlyName));
+			if (isDirectoryNotFound)
 			{
 				throw ExceptionFactory.DirectoryNotFound(location.FriendlyName);
 			}

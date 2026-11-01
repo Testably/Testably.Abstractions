@@ -145,6 +145,12 @@ internal sealed class TimerMock : ITimerMock
 
 		switch (notifyObject)
 		{
+#if FEATURE_TIMER_DISPOSE_SIGNALS_ONLY_EVENTS_ON_UNIX
+			case Mutex or Semaphore when !OperatingSystem.IsWindows():
+				// Since .NET 11, Unix disposes the timer and then fails to signal anything but an event.
+				Dispose();
+				throw new InvalidOperationException("The handle is invalid.");
+#endif
 			case Mutex m:
 				m.WaitOne();
 				Dispose();

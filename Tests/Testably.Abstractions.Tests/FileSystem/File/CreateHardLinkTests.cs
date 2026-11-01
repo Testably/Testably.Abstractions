@@ -93,7 +93,7 @@ public class CreateHardLinkTests(FileSystemTestData testData) : FileSystemTestBa
 
 	[Test]
 	[AutoArguments]
-	public async Task CreateHardLink_TargetWithColon_ShouldThrowFileNotFoundException(
+	public async Task CreateHardLink_TargetWithColon_ShouldThrowCorrectException(
 		string path)
 	{
 		void Act()
@@ -101,9 +101,19 @@ public class CreateHardLinkTests(FileSystemTestData testData) : FileSystemTestBa
 			FileSystem.File.CreateHardLink(path, "foo:bar");
 		}
 
-		await That(Act).Throws<FileNotFoundException>()
-			.WithMessage().Containing($"'{path}'").And
-			.WithHResult(-2147024894);
+		if (Test.RunsOnWindows)
+		{
+			await That(Act).Throws<FileNotFoundException>()
+				.WithMessage().Containing($"'{path}'").And
+				.WithHResult(-2147024894);
+		}
+		else
+		{
+			await That(Act).Throws<DirectoryNotFoundException>()
+				.WithMessage().Containing($"'{path}'").And
+				.WithHResult(-2147024893)
+				.Because("Unix only checks the parent of the link path as passed, which a bare file name lacks");
+		}
 	}
 
 	[Test]
@@ -118,18 +128,9 @@ public class CreateHardLinkTests(FileSystemTestData testData) : FileSystemTestBa
 			FileSystem.File.CreateHardLink(path, pathToTarget);
 		}
 
-		if (Test.RunsOnWindows)
-		{
-			await That(Act).Throws<DirectoryNotFoundException>()
-				.WithMessage().Containing($"'{path}'").And
-				.WithHResult(-2147024893);
-		}
-		else
-		{
-			await That(Act).Throws<FileNotFoundException>()
-				.WithMessage().Containing($"'{path}'").And
-				.WithHResult(-2147024894);
-		}
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessage().Containing($"'{path}'").And
+			.WithHResult(-2147024893);
 	}
 
 	[Test]
@@ -519,9 +520,39 @@ public class CreateHardLinkTests(FileSystemTestData testData) : FileSystemTestBa
 
 	[Test]
 	[AutoArguments]
-	public async Task CreateHardLink_TargetMissing_ShouldThrowFileNotFoundException(
+	public async Task CreateHardLink_TargetMissing_ShouldThrowCorrectException(
 		string path, string pathToTarget)
 	{
+		void Act()
+		{
+			FileSystem.File.CreateHardLink(path, pathToTarget);
+		}
+
+		if (Test.RunsOnWindows)
+		{
+			await That(Act).Throws<FileNotFoundException>()
+				.WithMessage().Containing($"'{path}'").And
+				.WithHResult(-2147024894);
+		}
+		else
+		{
+			await That(Act).Throws<DirectoryNotFoundException>()
+				.WithMessage().Containing($"'{path}'").And
+				.WithHResult(-2147024893)
+				.Because("Unix only checks the parent of the link path as passed, which a bare file name lacks");
+		}
+
+		await That(FileSystem.File.Exists(path)).IsFalse();
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task CreateHardLink_TargetMissing_WithDirectoryInPath_ShouldThrowFileNotFoundException(
+		string directory, string fileName, string pathToTarget)
+	{
+		FileSystem.Directory.CreateDirectory(directory);
+		string path = FileSystem.Path.Combine(directory, fileName);
+
 		void Act()
 		{
 			FileSystem.File.CreateHardLink(path, pathToTarget);

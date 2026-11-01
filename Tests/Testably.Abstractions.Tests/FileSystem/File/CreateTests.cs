@@ -99,7 +99,12 @@ public class CreateTests(FileSystemTestData testData) : FileSystemTestBase(testD
 		using FileSystemStream stream =
 			FileSystem.File.Create(path, bufferSize, FileOptions.Asynchronous);
 
+#if FEATURE_FILESTREAM_ASYNC_ONLY_ON_WINDOWS
+		await That(stream.IsAsync).IsEqualTo(Test.RunsOnWindows)
+			.Because("since .NET 11, Unix opens regular files synchronously");
+#else
 		await That(stream.IsAsync).IsTrue();
+#endif
 		await That(FileTestHelper.CheckFileAccess(stream)).IsEqualTo(FileAccess.ReadWrite);
 		await That(FileTestHelper.CheckFileShare(FileSystem, path)).IsEqualTo(FileShare.None);
 	}

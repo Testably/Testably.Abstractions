@@ -18,6 +18,23 @@ public class OpenWriteTests(FileSystemTestData testData) : FileSystemTestBase(te
 
 	[Test]
 	[AutoArguments]
+	public async Task OpenWrite_ShouldResetCachedStateOnlySinceNet11(string path)
+	{
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+		await That(sut.Exists).IsFalse();
+
+		sut.OpenWrite().Dispose();
+
+#if FEATURE_FILEINFO_OPEN_INVALIDATES
+		await That(sut.Exists).IsTrue();
+#else
+		await That(sut.Exists).IsFalse();
+#endif
+		await That(FileSystem.File.Exists(path)).IsTrue();
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task OpenWrite_ShouldUseWriteAccessAndNoneShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);

@@ -452,6 +452,14 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 		{
 		}, null, 100, 200);
 		using Mutex waitHandle = new(false);
+#if FEATURE_TIMER_DISPOSE_SIGNALS_ONLY_EVENTS_ON_UNIX
+		if (!OperatingSystem.IsWindows())
+		{
+			await That(() => timer.Dispose(waitHandle)).Throws<InvalidOperationException>()
+				.Because("since .NET 11, Unix can only signal an event when the timer is disposed");
+			return;
+		}
+#endif
 		bool result = timer.Dispose(waitHandle);
 
 		await That(waitHandle.WaitOne(1000)).IsTrue();
@@ -477,6 +485,14 @@ public class TimerTests(TimeSystemTestData testData) : TimeSystemTestBase(testDa
 		{
 		}, null, 100, 200);
 		using Semaphore waitHandle = new(1, 1);
+#if FEATURE_TIMER_DISPOSE_SIGNALS_ONLY_EVENTS_ON_UNIX
+		if (!OperatingSystem.IsWindows())
+		{
+			await That(() => timer.Dispose(waitHandle)).Throws<InvalidOperationException>()
+				.Because("since .NET 11, Unix can only signal an event when the timer is disposed");
+			return;
+		}
+#endif
 		bool result = timer.Dispose(waitHandle);
 
 		await That(waitHandle.WaitOne(1000)).IsTrue();

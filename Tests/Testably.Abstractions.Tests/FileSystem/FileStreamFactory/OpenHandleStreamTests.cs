@@ -65,9 +65,31 @@ public class OpenHandleStreamTests(FileSystemTestData testData) : FileSystemTest
 			FileSystem.FileStream.New(handle, FileAccess.Read, 1024, true);
 		using StreamReader reader = new(stream);
 
+#if FEATURE_FILESTREAM_ASYNC_ONLY_ON_WINDOWS
+		await That(stream.IsAsync).IsEqualTo(Test.RunsOnWindows)
+			.Because("since .NET 11, Unix opens regular files synchronously");
+#else
 		await That(stream.IsAsync).IsTrue();
+#endif
 		await That(await reader.ReadToEndAsync(CancellationToken)).IsEqualTo(contents);
 	}
+
+#if FEATURE_FILESTREAM_ASYNC_ONLY_ON_WINDOWS
+	[Test]
+	[AutoArguments]
+	public async Task New_WithSynchronousHandleAndIsAsync_ShouldFollowTheHandle(string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+
+		using SafeFileHandle handle = FileSystem.File.OpenHandle(path,
+			FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+		using FileSystemStream stream =
+			FileSystem.FileStream.New(handle, FileAccess.Read, 1024, true);
+
+		await That(stream.IsAsync).IsFalse()
+			.Because("since .NET 11, the stream follows the handle and ignores isAsync");
+	}
+#endif
 
 	[Test]
 	[AutoArguments]

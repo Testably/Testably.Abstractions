@@ -321,12 +321,12 @@ internal sealed class FileInfoMock
 			throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode();
 		}
 
-		return new FileStreamMock(
+		return InvalidateAfterOpen(new FileStreamMock(
 			_fileSystem,
 			FullName,
 			mode,
 			mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite,
-			FileShare.None);
+			FileShare.None));
 	}
 
 	/// <inheritdoc cref="IFileInfo.Open(FileMode, FileAccess)" />
@@ -336,12 +336,12 @@ internal sealed class FileInfoMock
 			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(Open),
 				mode, access);
 
-		return new FileStreamMock(
+		return InvalidateAfterOpen(new FileStreamMock(
 			_fileSystem,
 			FullName,
 			mode,
 			access,
-			FileShare.None);
+			FileShare.None));
 	}
 
 	/// <inheritdoc cref="IFileInfo.Open(FileMode, FileAccess, FileShare)" />
@@ -351,12 +351,12 @@ internal sealed class FileInfoMock
 			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(Open),
 				mode, access, share);
 
-		return new FileStreamMock(
+		return InvalidateAfterOpen(new FileStreamMock(
 			_fileSystem,
 			FullName,
 			mode,
 			access,
-			share);
+			share));
 	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
@@ -367,7 +367,7 @@ internal sealed class FileInfoMock
 			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(Open),
 				options);
 
-		return _fileSystem.File.Open(FullName, options);
+		return InvalidateAfterOpen(_fileSystem.File.Open(FullName, options));
 	}
 #endif
 
@@ -377,11 +377,11 @@ internal sealed class FileInfoMock
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(OpenRead));
 
-		return new FileStreamMock(
+		return InvalidateAfterOpen(new FileStreamMock(
 			_fileSystem,
 			FullName,
 			FileMode.Open,
-			FileAccess.Read);
+			FileAccess.Read));
 	}
 
 	/// <inheritdoc cref="IFileInfo.OpenText()" />
@@ -399,12 +399,23 @@ internal sealed class FileInfoMock
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(OpenWrite));
 
-		return new FileStreamMock(
+		return InvalidateAfterOpen(new FileStreamMock(
 			_fileSystem,
 			FullName,
 			FileMode.OpenOrCreate,
 			FileAccess.Write,
-			FileShare.None);
+			FileShare.None));
+	}
+
+	/// <summary>
+	///     Since .NET 11, opening the file invalidates the cached state, so it is refreshed on the next access.
+	/// </summary>
+	private FileSystemStream InvalidateAfterOpen(FileSystemStream stream)
+	{
+#if FEATURE_FILEINFO_OPEN_INVALIDATES
+		ResetCache(true);
+#endif
+		return stream;
 	}
 
 	/// <inheritdoc cref="IFileInfo.Replace(string, string?)" />

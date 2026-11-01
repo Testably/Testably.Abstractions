@@ -178,6 +178,11 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 			path, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 1,
 			useAsync);
 
+#if FEATURE_FILESTREAM_ASYNC_ONLY_ON_WINDOWS
+		await That(stream.IsAsync).IsEqualTo(useAsync && Test.RunsOnWindows)
+			.Because("since .NET 11, Unix opens regular files synchronously");
+#else
 		await That(stream.IsAsync).IsEqualTo(useAsync);
+#endif
 	}
 }
