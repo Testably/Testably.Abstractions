@@ -1,5 +1,5 @@
 ---
-description: Choose the start time and the local time zone of the MockTimeSystem, or plug in a custom time provider.
+description: Choose the start time and the local time zone of the MockTimeSystem, plug in a custom time provider, or use it as a .NET TimeProvider.
 ---
 
 # Configuring time
@@ -88,3 +88,22 @@ fileSystem.File.WriteAllText("catalog.json", "[]");
 DateTime created = fileSystem.File.GetCreationTimeUtc("catalog.json");
 // created is anchored to 2026-01-01
 ```
+
+## Use it as a .NET `TimeProvider`
+
+:::info[.NET 8 or later]
+`ToTimeProvider()` needs `System.TimeProvider`, which exists on .NET 8 or later.
+:::
+
+Code that depends on the built-in `System.TimeProvider` instead of `ITimeSystem` can run against the same mock: `ToTimeProvider()` wraps any `ITimeSystem` as a `TimeProvider`. On a `MockTimeSystem`, the simulated clock is visible through `GetUtcNow()` and `GetTimestamp()`, and the timers that the `TimeProvider` creates run on the mock's timers.
+
+```csharp
+MockTimeSystem timeSystem = new(new DateTime(2026, 1, 15, 10, 0, 0, DateTimeKind.Utc));
+TimeProvider timeProvider = timeSystem.ToTimeProvider();
+
+timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromHours(2));
+
+await That(timeProvider.GetUtcNow()).IsEqualTo(new DateTimeOffset(2026, 1, 15, 12, 0, 0, TimeSpan.Zero));
+```
+
+A timer created through the `TimeProvider` keeps firing when its callback throws, like a real timer, regardless of the `ITimerStrategy` configured on the `MockTimeSystem`.
