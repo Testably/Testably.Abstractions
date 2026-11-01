@@ -14,7 +14,12 @@ internal static class ZipUtilities
 		IZipArchive destination,
 		string sourceFileName,
 		string entryName,
-		CompressionLevel? compressionLevel = null)
+		CompressionLevel? compressionLevel = null
+#if FEATURE_COMPRESSION_ENCRYPTION
+		, ReadOnlyMemory<char> password = default,
+		ZipEncryptionMethod encryption = ZipEncryptionMethod.None
+#endif
+	)
 	{
 		if (sourceFileName == null)
 		{
@@ -24,9 +29,31 @@ internal static class ZipUtilities
 		using (FileSystemStream fs = destination.FileSystem.FileStream.New(sourceFileName,
 			FileMode.Open, FileAccess.Read, FileShare.Read))
 		{
+#if FEATURE_COMPRESSION_ENCRYPTION
+			if (encryption != ZipEncryptionMethod.None && password.IsEmpty)
+			{
+				throw EmptyPassword(nameof(password));
+			}
+
+			IZipArchiveEntry entry;
+			if (encryption != ZipEncryptionMethod.None)
+			{
+				entry = compressionLevel.HasValue
+					? destination.CreateEntry(entryName, compressionLevel.Value, password.Span,
+						encryption)
+					: destination.CreateEntry(entryName, password.Span, encryption);
+			}
+			else
+			{
+				entry = compressionLevel.HasValue
+					? destination.CreateEntry(entryName, compressionLevel.Value)
+					: destination.CreateEntry(entryName);
+			}
+#else
 			IZipArchiveEntry entry = compressionLevel.HasValue
 				? destination.CreateEntry(entryName, compressionLevel.Value)
 				: destination.CreateEntry(entryName);
+#endif
 
 			DateTime lastWrite =
 				destination.FileSystem.File.GetLastWriteTime(sourceFileName);
@@ -59,7 +86,12 @@ internal static class ZipUtilities
 		string destinationArchiveFileName,
 		CompressionLevel? compressionLevel = null,
 		bool includeBaseDirectory = false,
-		Encoding? entryNameEncoding = null)
+		Encoding? entryNameEncoding = null
+#if FEATURE_COMPRESSION_ENCRYPTION
+		, ReadOnlyMemory<char> password = default,
+		ZipEncryptionMethod encryption = ZipEncryptionMethod.None
+#endif
+	)
 	{
 		sourceDirectoryName = fileSystem.Path.GetFullPath(sourceDirectoryName);
 		destinationArchiveFileName =
@@ -92,9 +124,11 @@ internal static class ZipUtilities
 						.Substring(basePath.Length + 1)
 						.Replace('\\', '/');
 					#pragma warning restore MA0074
-					ZipArchiveEntry entry = compressionLevel.HasValue
-						? archive.CreateEntry(entryName, compressionLevel.Value)
-						: archive.CreateEntry(entryName);
+					ZipArchiveEntry entry = CreateFileEntry(archive, entryName, compressionLevel
+#if FEATURE_COMPRESSION_ENCRYPTION
+						, password, encryption
+#endif
+					);
 					using Stream stream = entry.Open();
 					using FileSystemStream fileStream = fileInfo.OpenRead();
 					fileStream.CopyTo(stream);
@@ -131,7 +165,12 @@ internal static class ZipUtilities
 		Stream destination,
 		CompressionLevel? compressionLevel = null,
 		bool includeBaseDirectory = false,
-		Encoding? entryNameEncoding = null)
+		Encoding? entryNameEncoding = null
+#if FEATURE_COMPRESSION_ENCRYPTION
+		, ReadOnlyMemory<char> password = default,
+		ZipEncryptionMethod encryption = ZipEncryptionMethod.None
+#endif
+	)
 	{
 		ArgumentNullException.ThrowIfNull(destination);
 		if (!destination.CanWrite)
@@ -169,9 +208,11 @@ internal static class ZipUtilities
 						.Substring(basePath.Length + 1)
 						.Replace('\\', '/');
 					#pragma warning restore MA0074
-					ZipArchiveEntry entry = compressionLevel.HasValue
-						? archive.CreateEntry(entryName, compressionLevel.Value)
-						: archive.CreateEntry(entryName);
+					ZipArchiveEntry entry = CreateFileEntry(archive, entryName, compressionLevel
+#if FEATURE_COMPRESSION_ENCRYPTION
+						, password, encryption
+#endif
+					);
 					using Stream stream = entry.Open();
 					using FileSystemStream fileStream = fileInfo.OpenRead();
 					fileStream.CopyTo(stream);
@@ -195,9 +236,45 @@ internal static class ZipUtilities
 	}
 #endif
 
+	/// <summary>
+	///     Creates the entry for a file in <c>CreateFromDirectory</c>, which, unlike the entries for directories, is
+	///     encrypted when an encryption method is given.
+	/// </summary>
+	private static ZipArchiveEntry CreateFileEntry(ZipArchive archive,
+		string entryName,
+		CompressionLevel? compressionLevel
+#if FEATURE_COMPRESSION_ENCRYPTION
+		, ReadOnlyMemory<char> password,
+		ZipEncryptionMethod encryption
+#endif
+	)
+	{
+#if FEATURE_COMPRESSION_ENCRYPTION
+		if (encryption != ZipEncryptionMethod.None)
+		{
+			return compressionLevel.HasValue
+				? archive.CreateEntry(entryName, compressionLevel.Value, password.Span, encryption)
+				: archive.CreateEntry(entryName, password.Span, encryption);
+		}
+#endif
+
+		return compressionLevel.HasValue
+			? archive.CreateEntry(entryName, compressionLevel.Value)
+			: archive.CreateEntry(entryName);
+	}
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	internal static ArgumentException EmptyPassword(string paramName)
+		=> new("The password cannot be empty.", paramName);
+#endif
+
 	internal static void ExtractRelativeToDirectory(this IZipArchiveEntry source,
 		string destinationDirectoryName,
-		bool overwrite)
+		bool overwrite
+#if FEATURE_COMPRESSION_ENCRYPTION
+		, ReadOnlyMemory<char> password = default
+#endif
+	)
 	{
 		string fileDestinationPath =
 			source.FileSystem.Path.Combine(destinationDirectoryName,
@@ -219,7 +296,12 @@ internal static class ZipUtilities
 		{
 			source.FileSystem.Directory.CreateDirectory(
 				source.FileSystem.Path.GetDirectoryName(fileDestinationPath) ?? ".");
+#if FEATURE_COMPRESSION_ENCRYPTION
+			ExtractToFile(source, fileDestinationPath, overwrite,
+				password.IsEmpty ? (ReadOnlyMemory<char>?)null : password);
+#else
 			ExtractToFile(source, fileDestinationPath, overwrite);
+#endif
 		}
 	}
 
@@ -231,7 +313,11 @@ internal static class ZipUtilities
 		string sourceArchiveFileName,
 		string destinationDirectoryName,
 		Encoding? entryNameEncoding = null,
-		bool overwriteFiles = false)
+		bool overwriteFiles = false
+#if FEATURE_COMPRESSION_ENCRYPTION
+		, ReadOnlyMemory<char> password = default
+#endif
+	)
 	{
 		if (sourceArchiveFileName == null)
 		{
@@ -248,7 +334,11 @@ internal static class ZipUtilities
 				IZipArchiveEntry wrappedEntry = ZipArchiveEntryWrapper.New(
 					fileSystem, wrappedArchive, entry);
 				ExtractRelativeToDirectory(wrappedEntry, destinationDirectoryName,
-					overwriteFiles);
+					overwriteFiles
+#if FEATURE_COMPRESSION_ENCRYPTION
+					, password
+#endif
+				);
 			}
 		}
 	}
@@ -262,7 +352,11 @@ internal static class ZipUtilities
 		Stream source,
 		string destinationDirectoryName,
 		Encoding? entryNameEncoding = null,
-		bool overwriteFiles = false)
+		bool overwriteFiles = false
+#if FEATURE_COMPRESSION_ENCRYPTION
+		, ReadOnlyMemory<char> password = default
+#endif
+	)
 	{
 		ArgumentNullException.ThrowIfNull(source);
 		if (!source.CanRead)
@@ -279,21 +373,42 @@ internal static class ZipUtilities
 				IZipArchiveEntry wrappedEntry = ZipArchiveEntryWrapper.New(
 					fileSystem, wrappedArchive, entry);
 				ExtractRelativeToDirectory(wrappedEntry, destinationDirectoryName,
-					overwriteFiles);
+					overwriteFiles
+#if FEATURE_COMPRESSION_ENCRYPTION
+					, password
+#endif
+				);
 			}
 		}
 	}
 #endif
 
+	/// <summary>
+	///     Extracts the <paramref name="source" /> entry to the <paramref name="destinationFileName" />.
+	/// </summary>
+	/// <remarks>
+	///     When a <c>password</c> is given, even an empty one, the entry is opened with it, like the overloads with
+	///     <c>ZipExtractionOptions</c> do.
+	/// </remarks>
 	internal static void ExtractToFile(IZipArchiveEntry source,
-		string destinationFileName, bool overwrite)
+		string destinationFileName, bool overwrite
+#if FEATURE_COMPRESSION_ENCRYPTION
+		, ReadOnlyMemory<char>? password = null
+#endif
+	)
 	{
 		FileMode mode = overwrite ? FileMode.Create : FileMode.CreateNew;
 
 		using (FileSystemStream fileStream = source.FileSystem.FileStream
 			.New(destinationFileName, mode, FileAccess.Write, FileShare.None))
 		{
+#if FEATURE_COMPRESSION_ENCRYPTION
+			using (Stream entryStream = password.HasValue
+				? source.Open(password.Value.Span)
+				: source.Open())
+#else
 			using (Stream entryStream = source.Open())
+#endif
 			{
 				entryStream.CopyTo(fileStream);
 			}

@@ -187,6 +187,50 @@ internal sealed class FileInfoMock
 		return stream;
 	}
 
+#if FEATURE_FILESYSTEM_HARDLINK
+	/// <inheritdoc cref="IFileInfo.CreateAsHardLink(string)" />
+	public void CreateAsHardLink(string pathToTarget)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileInfo.RegisterPathMethod(Location.FullPath, nameof(CreateAsHardLink),
+				pathToTarget);
+
+		ValidatePathToTargetOfHardLink(pathToTarget);
+		Container = _fileSystem.Storage.CreateHardLink(Location,
+			_fileSystem.Storage.GetLocation(pathToTarget));
+		ResetCache(true);
+	}
+
+	/// <summary>
+	///     The runtime only rejects a missing, empty or <c>'\0'</c>-containing <paramref name="pathToTarget" /> itself;
+	///     any other invalid name is reported by Windows for the path of the hard link.
+	/// </summary>
+	private void ValidatePathToTargetOfHardLink([NotNull] string? pathToTarget)
+	{
+		if (pathToTarget == null)
+		{
+			throw new ArgumentNullException(nameof(pathToTarget));
+		}
+
+		if (pathToTarget.Length == 0)
+		{
+			throw ExceptionFactory.PathCannotBeEmpty(_fileSystem.Execute, nameof(pathToTarget));
+		}
+
+		if (pathToTarget.Contains('\0', StringComparison.Ordinal))
+		{
+			throw ExceptionFactory.NullCharacterInPath(nameof(pathToTarget));
+		}
+
+		if (_fileSystem.Execute.IsWindows &&
+		    (pathToTarget.HasIllegalCharacters(_fileSystem) ||
+		     pathToTarget.IndexOfAny(['<', '>', '"']) >= 0))
+		{
+			throw ExceptionFactory.PathHasIncorrectSyntax(Location.FriendlyName);
+		}
+	}
+#endif
+
 	/// <inheritdoc cref="IFileInfo.CreateText()" />
 	public StreamWriter CreateText()
 	{

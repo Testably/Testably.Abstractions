@@ -18,7 +18,10 @@ internal sealed class InMemoryStorage : IStorage
 	private readonly ConcurrentDictionary<IStorageLocation, IStorageContainer>
 		_containers = new();
 
-	private readonly ConcurrentDictionary<IStorageLocation, ConcurrentDictionary<Guid, FileHandle>>
+	/// <summary>
+	///     The open file handles, keyed by the file instead of its path, so that all hard links to a file share them.
+	/// </summary>
+	private readonly ConcurrentDictionary<object, ConcurrentDictionary<Guid, FileHandle>>
 		_fileHandles = new();
 
 	private readonly List<(GlobPattern, bool, FileVersionInfoContainer)>
@@ -116,6 +119,81 @@ internal sealed class InMemoryStorage : IStorage
 				: 17);
 		}
 	}
+
+#if FEATURE_FILESYSTEM_HARDLINK
+	/// <inheritdoc cref="IStorage.CreateHardLink(IStorageLocation, IStorageLocation)" />
+	public IStorageContainer CreateHardLink(IStorageLocation location, IStorageLocation target)
+	{
+		IStorageLocation? parentLocation = location.GetParent();
+		if (parentLocation is { IsRooted: false } &&
+		    !_containers.ContainsKey(parentLocation))
+		{
+			throw ExceptionFactory.DirectoryNotFound(location.FriendlyName);
+		}
+
+		if (!_containers.TryGetValue(target, out IStorageContainer? targetContainer))
+		{
+			IStorageLocation? targetParent = target.GetParent();
+			if (_fileSystem.Execute.IsWindows &&
+			    targetParent is { IsRooted: false } &&
+			    !_containers.ContainsKey(targetParent))
+			{
+				throw ExceptionFactory.DirectoryNotFound(location.FriendlyName);
+			}
+
+			throw ExceptionFactory.FileNotFound(location.FriendlyName);
+		}
+
+		// Linux creates the new name before it checks the type of the target, Windows and macOS do it the other way round.
+		if (_fileSystem.Execute.IsLinux && _containers.ContainsKey(location))
+		{
+			throw CannotCreateHardLinkAsAlreadyExists(location);
+		}
+
+		if (targetContainer is not InMemoryContainer { Type: FileSystemTypes.File } file)
+		{
+			throw ExceptionFactory.AccessDenied(location.FriendlyName);
+		}
+
+		if (_containers.ContainsKey(location))
+		{
+			throw CannotCreateHardLinkAsAlreadyExists(location);
+		}
+
+		if (location.Drive != target.Drive)
+		{
+			throw ExceptionFactory.NotSameDevice(location.FriendlyName);
+		}
+
+		ChangeDescription fileSystemChange =
+			_fileSystem.ChangeHandler.NotifyPendingChange(
+				WatcherChangeTypes.Created,
+				FileSystemTypes.File,
+				ToNotifyFilters(FileSystemTypes.File),
+				location);
+		InMemoryContainer link = file.CreateLink(location);
+		if (!link.TryRegisterLink())
+		{
+			throw ExceptionFactory.FileNotFound(location.FriendlyName);
+		}
+
+		if (!_containers.TryAdd(location, link))
+		{
+			link.Unlink();
+			throw CannotCreateHardLinkAsAlreadyExists(location);
+		}
+
+		CheckAndAdjustParentDirectoryTimes(location);
+		_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
+		return link;
+	}
+
+	private IOException CannotCreateHardLinkAsAlreadyExists(IStorageLocation location)
+		=> _fileSystem.Execute.IsWindows
+			? ExceptionFactory.CannotCreateFileAsAlreadyExists(_fileSystem.Execute,
+				location.FriendlyName)
+			: ExceptionFactory.FileAlreadyExists(location.FriendlyName, 17);
+#endif
 
 	/// <inheritdoc cref="IStorage.DeleteContainer(IStorageLocation, FileSystemTypes, bool)" />
 	public bool DeleteContainer(
@@ -530,6 +608,13 @@ internal sealed class InMemoryStorage : IStorage
 				destination.FullPath);
 		}
 
+		if (!_fileSystem.Execute.IsWindows &&
+		    ReferenceEquals(GetAccessKey(sourceContainer), GetAccessKey(destinationContainer)))
+		{
+			throw ExceptionFactory.ReplaceSourceMustBeDifferentThanDestination(source.FullPath,
+				destination.FullPath);
+		}
+
 		using (_ = sourceContainer.RequestAccess(
 			FileAccess.ReadWrite,
 			FileShare.None,
@@ -545,9 +630,6 @@ internal sealed class InMemoryStorage : IStorage
 				if (_containers.TryRemove(destination,
 					out IStorageContainer? existingDestinationContainer))
 				{
-					int destinationBytesLength =
-						existingDestinationContainer.GetBytes().Length;
-					destination.Drive?.ChangeUsedBytes(-1 * destinationBytesLength);
 					if (backup != null &&
 					    _containers.TryAdd(backup, existingDestinationContainer.UpdateLocation(backup)))
 					{
@@ -557,7 +639,14 @@ internal sealed class InMemoryStorage : IStorage
 							existingDestinationContainer.Attributes |= FileAttributes.Archive;
 						}
 
+						int destinationBytesLength =
+							existingDestinationContainer.GetBytes().Length;
+						destination.Drive?.ChangeUsedBytes(-1 * destinationBytesLength);
 						backup.Drive?.ChangeUsedBytes(destinationBytesLength);
+					}
+					else
+					{
+						existingDestinationContainer.Unlink();
 					}
 
 					if (_containers.TryRemove(source,
@@ -673,9 +762,9 @@ internal sealed class InMemoryStorage : IStorage
 		return false;
 	}
 
-	/// <inheritdoc cref="IStorage.TryGetFileAccess(IStorageLocation,FileAccess,FileShare,bool,bool,out FileHandle?)" />
+	/// <inheritdoc cref="IStorage.TryGetFileAccess(IStorageContainer,FileAccess,FileShare,bool,bool,out FileHandle?)" />
 	public bool TryGetFileAccess(
-		IStorageLocation location,
+		IStorageContainer container,
 		FileAccess access,
 		FileShare share,
 		bool deleteAccess,
@@ -685,12 +774,13 @@ internal sealed class InMemoryStorage : IStorage
 #if FEATURE_FILESYSTEM_RANDOMACCESS
 		_fileSystem.SafeFileHandleRegistry.ReleaseClosedHandles();
 #endif
-		if (CanGetAccess(location, access, share, deleteAccess, ignoreFileShare))
+		object key = GetAccessKey(container);
+		if (CanGetAccess(key, access, share, deleteAccess, ignoreFileShare))
 		{
 			Guid guid = Guid.NewGuid();
-			FileHandle handle = new(_fileSystem, guid, g => ReleaseAccess(g, location),
+			FileHandle handle = new(_fileSystem, guid, g => ReleaseAccess(g, key),
 				access, share, deleteAccess);
-			_fileHandles.AddOrUpdate(location, _ =>
+			_fileHandles.AddOrUpdate(key, _ =>
 			{
 				ConcurrentDictionary<Guid, FileHandle> dict = new();
 				dict.TryAdd(guid, handle);
@@ -708,26 +798,29 @@ internal sealed class InMemoryStorage : IStorage
 		return false;
 	}
 
-	private void ReleaseAccess(Guid guid, IStorageLocation location)
+	private static object GetAccessKey(IStorageContainer container)
+		=> (container as InMemoryContainer)?.AccessKey ?? container;
+
+	private void ReleaseAccess(Guid guid, object key)
 	{
-		if (_fileHandles.TryGetValue(location, out ConcurrentDictionary<Guid, FileHandle>? dict))
+		if (_fileHandles.TryGetValue(key, out ConcurrentDictionary<Guid, FileHandle>? dict))
 		{
 			dict.TryRemove(guid, out _);
 			if (dict.IsEmpty)
 			{
-				_fileHandles.TryRemove(location, out _);
+				_fileHandles.TryRemove(key, out _);
 			}
 		}
 	}
 
 	private bool CanGetAccess(
-		IStorageLocation location,
+		object key,
 		FileAccess access,
 		FileShare share,
 		bool deleteAccess,
 		bool ignoreFileShare)
 	{
-		if (_fileHandles.TryGetValue(location, out ConcurrentDictionary<Guid, FileHandle>? dict))
+		if (_fileHandles.TryGetValue(key, out ConcurrentDictionary<Guid, FileHandle>? dict))
 		{
 			foreach (KeyValuePair<Guid, FileHandle> fileHandle in dict)
 			{
@@ -1037,6 +1130,20 @@ internal sealed class InMemoryStorage : IStorage
 
 		ValidateMoveHandle(container, source.FullPath);
 
+		if (sourceType == null &&
+		    _containers.TryGetValue(destination, out IStorageContainer? destinationContainer) &&
+		    !ReferenceEquals(destinationContainer, container) &&
+		    ReferenceEquals(GetAccessKey(destinationContainer), GetAccessKey(container)))
+		{
+			// Both names are hard links to the same file: `rename()` does nothing, while Windows removes the source name.
+			if (!_fileSystem.Execute.IsWindows)
+			{
+				return destination;
+			}
+
+			overwrite = true;
+		}
+
 		if (container.Type == FileSystemTypes.Directory &&
 		    source.FullPath.Equals(destination.FullPath, _fileSystem.Execute.IsNetFramework
 			    ? StringComparison.OrdinalIgnoreCase
@@ -1226,11 +1333,19 @@ internal sealed class InMemoryStorage : IStorage
 		if (overwrite &&
 		    _containers.TryGetValue(destination, out IStorageContainer? existingContainer))
 		{
+			// The destination is a hard link to the source, which the copy holds open for reading.
+			if (!ReferenceEquals(existingContainer, source) &&
+			    ReferenceEquals(GetAccessKey(existingContainer), GetAccessKey(source)))
+			{
+				throw ExceptionFactory.ProcessCannotAccessTheFile(destination.FullPath,
+					-2147024864);
+			}
+
 			if (existingContainer is { Type: FileSystemTypes.File, LinkTarget: null, } &&
 			    !ReferenceEquals(existingContainer, source))
 			{
 				if (!_fileSystem.Execute.IsWindows &&
-				    _fileHandles.TryGetValue(destination,
+				    _fileHandles.TryGetValue(GetAccessKey(existingContainer),
 					    out ConcurrentDictionary<Guid, FileHandle>? handles) &&
 				    !handles.IsEmpty)
 				{
@@ -1238,9 +1353,14 @@ internal sealed class InMemoryStorage : IStorage
 						-2147024864);
 				}
 
-				existingContainer.AdjustTimes(TimeAdjustments.All);
-				container = existingContainer;
-				return true;
+				// macOS clones the source to a new file, so other hard links keep the previous content.
+				if (!(_fileSystem.Execute.IsMac &&
+				      existingContainer is InMemoryContainer { HasOtherLinks: true }))
+				{
+					existingContainer.AdjustTimes(TimeAdjustments.All);
+					container = existingContainer;
+					return true;
+				}
 			}
 
 			if (_containers.TryRemove(destination, out IStorageContainer? removed))

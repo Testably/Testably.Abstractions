@@ -39,7 +39,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 				.FileStream.RegisterPathProperty(_location.FullPath,
 					nameof(CanSeek), PropertyAccess.Get);
 
-			return base.CanSeek;
+			return _canSeek && base.CanSeek;
 		}
 	}
 
@@ -91,6 +91,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 				.FileStream.RegisterPathProperty(_location.FullPath,
 					nameof(Length), PropertyAccess.Get);
 
+			ThrowIfNotSeekable();
 			return base.Length;
 		}
 	}
@@ -117,6 +118,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 				.FileStream.RegisterPathProperty(_location.FullPath,
 					nameof(Position), PropertyAccess.Get);
 
+			ThrowIfNotSeekable();
 			return base.Position;
 		}
 		set
@@ -125,6 +127,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 				.FileStream.RegisterPathProperty(_location.FullPath,
 					nameof(Position), PropertyAccess.Set);
 
+			ThrowIfNotSeekable();
 			base.Position = value;
 		}
 	}
@@ -173,6 +176,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 
 	private readonly FileAccess _access;
 	private readonly IDisposable _accessLock;
+	private readonly bool _canSeek = true;
 	private readonly IStorageContainer _container;
 	private readonly MockFileSystem _fileSystem;
 	private readonly long _initialPosition;
@@ -277,8 +281,10 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		IStorageContainer container,
 		IStorageLocation location,
 		FileAccess access,
-		bool isAsync)
-		: this(new MemoryStream(), fileSystem, handle, container, location, access, isAsync)
+		bool isAsync,
+		bool canSeek = true)
+		: this(new MemoryStream(), fileSystem, handle, container, location, access, isAsync,
+			canSeek)
 	{
 	}
 
@@ -288,9 +294,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		IStorageContainer container,
 		IStorageLocation location,
 		FileAccess access,
-		bool isAsync)
+		bool isAsync,
+		bool canSeek)
 		: base(stream, location.FullPath, isAsync)
 	{
+		_canSeek = canSeek;
 		_stream = stream;
 		_fileSystem = fileSystem;
 		_mode = FileMode.Open;
@@ -358,7 +366,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		long position = Position;
+		long position = base.Position;
 		FlushWhenWriteIsDisjoint(position, count);
 		IAsyncResult result = base.BeginWrite(buffer, offset, count, callback, state);
 		TrackWrite(position, count);
@@ -570,6 +578,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			.FileStream.RegisterPathMethod(_location.FullPath, nameof(Seek),
 				offset, origin);
 
+		ThrowIfNotSeekable();
 		if (_mode == FileMode.Append && offset <= _initialPosition)
 		{
 			throw ExceptionFactory.SeekBackwardNotPossibleInAppendMode();
@@ -586,6 +595,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 				value);
 
 		ThrowIfDisposed();
+		ThrowIfNotSeekable();
 		if (!CanWrite)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
@@ -621,7 +631,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		long position = Position;
+		long position = base.Position;
 		FlushWhenWriteIsDisjoint(position, count);
 		base.Write(buffer, offset, count);
 		TrackWrite(position, count);
@@ -641,7 +651,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		long position = Position;
+		long position = base.Position;
 		FlushWhenWriteIsDisjoint(position, buffer.Length);
 		base.Write(buffer);
 		TrackWrite(position, buffer.Length);
@@ -662,7 +672,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		long position = Position;
+		long position = base.Position;
 		FlushWhenWriteIsDisjoint(position, count);
 		await base.WriteAsync(buffer, offset, count, cancellationToken);
 		TrackWrite(position, count);
@@ -683,7 +693,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		long position = Position;
+		long position = base.Position;
 		FlushWhenWriteIsDisjoint(position, buffer.Length);
 		await base.WriteAsync(buffer, cancellationToken);
 		TrackWrite(position, buffer.Length);
@@ -703,7 +713,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
 
-		long position = Position;
+		long position = base.Position;
 		FlushWhenWriteIsDisjoint(position, 1L);
 		base.WriteByte(value);
 		TrackWrite(position, 1L);
@@ -793,7 +803,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 
 		_isContentChanged = false;
-		long length = Length;
+		long length = base.Length;
 		long position = _stream.Position;
 		long containerLength = _container.GetBytes().Length;
 		if (_pendingWrites.Count > 0 &&
@@ -908,6 +918,14 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		if (_isDisposed || _ownedHandle is { IsClosed: true })
 		{
 			throw ExceptionFactory.FileClosed();
+		}
+	}
+
+	private void ThrowIfNotSeekable()
+	{
+		if (!_canSeek)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportSeeking();
 		}
 	}
 }

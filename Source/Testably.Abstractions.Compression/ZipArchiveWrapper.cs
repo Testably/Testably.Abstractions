@@ -52,6 +52,25 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 		=> ZipArchiveEntryWrapper.New(FileSystem, this,
 			_instance.CreateEntry(entryName, compressionLevel));
 
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchive.CreateEntry(string, ReadOnlySpan{char}, ZipEncryptionMethod)" />
+	public IZipArchiveEntry CreateEntry(string entryName,
+		ReadOnlySpan<char> password,
+		ZipEncryptionMethod encryptionMethod)
+		=> ZipArchiveEntryWrapper.New(FileSystem, this,
+			_instance.CreateEntry(entryName, password, encryptionMethod));
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchive.CreateEntry(string, CompressionLevel, ReadOnlySpan{char}, ZipEncryptionMethod)" />
+	public IZipArchiveEntry CreateEntry(string entryName,
+		CompressionLevel compressionLevel,
+		ReadOnlySpan<char> password,
+		ZipEncryptionMethod encryptionMethod)
+		=> ZipArchiveEntryWrapper.New(FileSystem, this,
+			_instance.CreateEntry(entryName, compressionLevel, password, encryptionMethod));
+#endif
+
 	/// <inheritdoc cref="IZipArchive.CreateEntryFromFile(string, string)" />
 	public IZipArchiveEntry CreateEntryFromFile(string sourceFileName, string entryName)
 		=> Execute.WhenRealFileSystem(FileSystem,
@@ -76,6 +95,52 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 				sourceFileName,
 				entryName,
 				compressionLevel));
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchive.CreateEntryFromFile(string, string, ReadOnlySpan{char}, ZipEncryptionMethod)" />
+	public IZipArchiveEntry CreateEntryFromFile(string sourceFileName, string entryName,
+		ReadOnlySpan<char> password, ZipEncryptionMethod encryption)
+	{
+		char[] passwordCharacters = password.ToArray();
+		return Execute.WhenRealFileSystem(FileSystem,
+			() => ZipArchiveEntryWrapper.New(FileSystem, this,
+				_instance.CreateEntryFromFile(
+					sourceFileName,
+					entryName,
+					passwordCharacters,
+					encryption)),
+			() => ZipUtilities.CreateEntryFromFile(this,
+				sourceFileName,
+				entryName,
+				password: passwordCharacters,
+				encryption: encryption));
+	}
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc
+	///     cref="IZipArchive.CreateEntryFromFile(string, string, CompressionLevel, ReadOnlySpan{char}, ZipEncryptionMethod)" />
+	public IZipArchiveEntry CreateEntryFromFile(string sourceFileName, string entryName,
+		CompressionLevel compressionLevel, ReadOnlySpan<char> password,
+		ZipEncryptionMethod encryption)
+	{
+		char[] passwordCharacters = password.ToArray();
+		return Execute.WhenRealFileSystem(FileSystem,
+			() => ZipArchiveEntryWrapper.New(FileSystem, this,
+				_instance.CreateEntryFromFile(
+					sourceFileName,
+					entryName,
+					compressionLevel,
+					passwordCharacters,
+					encryption)),
+			() => ZipUtilities.CreateEntryFromFile(this,
+				sourceFileName,
+				entryName,
+				compressionLevel,
+				passwordCharacters,
+				encryption));
+	}
+#endif
 
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="IZipArchive.CreateEntryFromFileAsync(string, string, CancellationToken)" />
@@ -111,6 +176,55 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 				sourceFileName,
 				entryName,
 				compressionLevel));
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc
+	///     cref="IZipArchive.CreateEntryFromFileAsync(string, string, ReadOnlyMemory{char}, ZipEncryptionMethod, CancellationToken)" />
+	public async Task<IZipArchiveEntry> CreateEntryFromFileAsync(string sourceFileName,
+		string entryName,
+		ReadOnlyMemory<char> password,
+		ZipEncryptionMethod encryption,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			async () => ZipArchiveEntryWrapper.New(FileSystem, this,
+				await _instance.CreateEntryFromFileAsync(
+					sourceFileName,
+					entryName,
+					password,
+					encryption,
+					cancellationToken).ConfigureAwait(false)),
+			() => ZipUtilities.CreateEntryFromFile(this,
+				sourceFileName,
+				entryName,
+				password: password,
+				encryption: encryption)).ConfigureAwait(false);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc
+	///     cref="IZipArchive.CreateEntryFromFileAsync(string, string, CompressionLevel, ReadOnlyMemory{char}, ZipEncryptionMethod, CancellationToken)" />
+	public async Task<IZipArchiveEntry> CreateEntryFromFileAsync(string sourceFileName,
+		string entryName,
+		CompressionLevel compressionLevel,
+		ReadOnlyMemory<char> password,
+		ZipEncryptionMethod encryption,
+		CancellationToken cancellationToken = default)
+		=> await Execute.WhenRealFileSystemAsync(FileSystem,
+			async () => ZipArchiveEntryWrapper.New(FileSystem, this,
+				await _instance.CreateEntryFromFileAsync(
+					sourceFileName,
+					entryName,
+					compressionLevel,
+					password,
+					encryption,
+					cancellationToken).ConfigureAwait(false)),
+			() => ZipUtilities.CreateEntryFromFile(this,
+				sourceFileName,
+				entryName,
+				compressionLevel,
+				password,
+				encryption)).ConfigureAwait(false);
 #endif
 
 	/// <inheritdoc cref="IDisposable.Dispose()" />
@@ -219,11 +333,53 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 	}
 #endif
 
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchive.ExtractToDirectory(string, ZipExtractionOptions)" />
+	public void ExtractToDirectory(string destinationDirectoryName,
+		ZipExtractionOptions options)
+	{
+		ArgumentNullException.ThrowIfNull(destinationDirectoryName);
+		ArgumentNullException.ThrowIfNull(options);
+
+		Execute.WhenRealFileSystem(FileSystem,
+			() => _instance.ExtractToDirectory(destinationDirectoryName, options),
+			() => ExtractEntriesToDirectory(destinationDirectoryName, options));
+	}
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="IZipArchive.ExtractToDirectoryAsync(string, ZipExtractionOptions, CancellationToken)" />
+	public Task ExtractToDirectoryAsync(string destinationDirectoryName,
+		ZipExtractionOptions options,
+		CancellationToken cancellationToken = default)
+	{
+		ArgumentNullException.ThrowIfNull(destinationDirectoryName);
+		ArgumentNullException.ThrowIfNull(options);
+
+		return Execute.WhenRealFileSystemAsync(FileSystem,
+			() => _instance.ExtractToDirectoryAsync(destinationDirectoryName, options,
+				cancellationToken),
+			() => ExtractEntriesToDirectory(destinationDirectoryName, options));
+	}
+#endif
+
 	/// <inheritdoc cref="IZipArchive.GetEntry(string)" />
 	public IZipArchiveEntry? GetEntry(string entryName)
 		=> ZipArchiveEntryWrapper.New(FileSystem, this, _instance.GetEntry(entryName));
 
 	#endregion
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	private void ExtractEntriesToDirectory(string destinationDirectoryName,
+		ZipExtractionOptions options)
+	{
+		foreach (IZipArchiveEntry entry in Entries)
+		{
+			entry.ExtractRelativeToDirectory(destinationDirectoryName, options.OverwriteFiles,
+				options.Password);
+		}
+	}
+#endif
 
 	private ReadOnlyCollection<IZipArchiveEntry> MapToZipArchiveEntries(
 		ReadOnlyCollection<ZipArchiveEntry> zipArchiveEntries)

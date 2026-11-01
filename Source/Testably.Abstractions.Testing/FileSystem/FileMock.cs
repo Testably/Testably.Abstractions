@@ -423,6 +423,21 @@ internal sealed class FileMock : IFile
 			options);
 	}
 
+#if FEATURE_FILESYSTEM_HARDLINK
+	/// <inheritdoc cref="IFile.CreateHardLink(string, string)" />
+	public IFileSystemInfo CreateHardLink(string path, string pathToTarget)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(CreateHardLink),
+				path, pathToTarget);
+
+		path.EnsureValidFormat(_fileSystem, includeIsEmptyCheck: true);
+		IFileInfo fileInfo = _fileSystem.FileInfo.New(path);
+		fileInfo.CreateAsHardLink(pathToTarget);
+		return fileInfo;
+	}
+#endif
+
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IFile.CreateSymbolicLink(string, string)" />
 	public IFileSystemInfo CreateSymbolicLink(
@@ -842,6 +857,17 @@ internal sealed class FileMock : IFile
 
 		return _fileSystem.SafeFileHandleRegistry
 			.Open(path, mode, access, share, options, preallocationSize);
+	}
+#endif
+
+#if FEATURE_FILE_OPENNULLHANDLE
+	/// <inheritdoc cref="IFile.OpenNullHandle()" />
+	public SafeFileHandle OpenNullHandle()
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(OpenNullHandle));
+
+		return _fileSystem.SafeFileHandleRegistry.OpenNullHandle();
 	}
 #endif
 

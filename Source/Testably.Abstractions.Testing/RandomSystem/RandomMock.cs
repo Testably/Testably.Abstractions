@@ -1,4 +1,7 @@
 ﻿using System;
+#if FEATURE_RANDOM_GENERIC
+using System.Numerics;
+#endif
 using Testably.Abstractions.Helpers;
 using Testably.Abstractions.RandomSystem;
 using Testably.Abstractions.Testing.Helpers;
@@ -154,6 +157,25 @@ internal sealed class RandomMock : IRandom
 				minValue),
 			maxValue - 1);
 
+#if FEATURE_RANDOM_GENERIC
+	/// <inheritdoc cref="IRandom.NextBinaryFloat{T}()" />
+	public T NextBinaryFloat<T>()
+		where T : IBinaryFloatingPointIeee754<T>
+	{
+		if (typeof(T) == typeof(float) && _singleGenerator != null)
+		{
+			return (T)(object)_singleGenerator.GetNext();
+		}
+
+		if (typeof(T) == typeof(double) && _doubleGenerator != null)
+		{
+			return (T)(object)_doubleGenerator.GetNext();
+		}
+
+		return _random.NextBinaryFloat<T>();
+	}
+#endif
+
 	/// <inheritdoc cref="IRandom.NextBytes(byte[])" />
 	public void NextBytes(byte[] buffer)
 	{
@@ -193,6 +215,63 @@ internal sealed class RandomMock : IRandom
 	/// <inheritdoc cref="IRandom.NextInt64()" />
 	public long NextInt64()
 		=> _longGenerator?.GetNext() ?? _random.NextInt64();
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	/// <inheritdoc cref="IRandom.NextInteger{T}()" />
+	public T NextInteger<T>()
+		where T : IBinaryInteger<T>, IMinMaxValue<T>
+	{
+		if (typeof(T) == typeof(int) && _intGenerator != null)
+		{
+			return (T)(object)_intGenerator.GetNext();
+		}
+
+		if (typeof(T) == typeof(long) && _longGenerator != null)
+		{
+			return (T)(object)_longGenerator.GetNext();
+		}
+
+		return _random.NextInteger<T>();
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	/// <inheritdoc cref="IRandom.NextInteger{T}(T)" />
+	public T NextInteger<T>(T maxValue)
+		where T : IBinaryInteger<T>
+	{
+		if (typeof(T) == typeof(int) && _intGenerator != null)
+		{
+			return (T)(object)Next((int)(object)maxValue);
+		}
+
+		if (typeof(T) == typeof(long) && _longGenerator != null)
+		{
+			return (T)(object)NextInt64((long)(object)maxValue);
+		}
+
+		return _random.NextInteger(maxValue);
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	/// <inheritdoc cref="IRandom.NextInteger{T}(T, T)" />
+	public T NextInteger<T>(T minValue, T maxValue)
+		where T : IBinaryInteger<T>
+	{
+		if (typeof(T) == typeof(int) && _intGenerator != null)
+		{
+			return (T)(object)Next((int)(object)minValue, (int)(object)maxValue);
+		}
+
+		if (typeof(T) == typeof(long) && _longGenerator != null)
+		{
+			return (T)(object)NextInt64((long)(object)minValue, (long)(object)maxValue);
+		}
+
+		return _random.NextInteger(minValue, maxValue);
+	}
 #endif
 
 #if FEATURE_RANDOM_ADVANCED

@@ -100,18 +100,45 @@ internal sealed class MockSafeFileHandleRegistry
 			}
 		}
 
+		return Register(handle => new Entry(
+			new WeakReference<SafeFileHandle>(handle),
+			new SafeFileHandleMock(location.FullPath, mode, share),
+			accessLock,
+			location,
+			container,
+			access,
+			options));
+	}
+
+#if FEATURE_FILE_OPENNULLHANDLE
+	/// <summary>
+	///     Opens a handle to the null device, which discards everything written to it and returns no data when read.
+	///     <para />
+	///     Only on Windows it cannot seek, as <c>/dev/null</c> accepts <c>lseek</c> on Linux and macOS.
+	/// </summary>
+	internal SafeFileHandle OpenNullHandle()
+	{
+		IStorageLocation location = InMemoryLocation.New(_fileSystem, null,
+			_fileSystem.Execute.IsWindows ? @"\\.\NUL" : "/dev/null");
+		return Register(handle => new Entry(
+			new WeakReference<SafeFileHandle>(handle),
+			new SafeFileHandleMock(location.FullPath, FileMode.Open, FileShare.ReadWrite),
+			FileHandle.Ignore,
+			location,
+			NullContainer.NewNullDevice(_fileSystem),
+			FileAccess.ReadWrite,
+			FileOptions.None,
+			CanSeek: !_fileSystem.Execute.IsWindows));
+	}
+#endif
+
+	private SafeFileHandle Register(Func<SafeFileHandle, Entry> createEntry)
+	{
 		lock (_lock)
 		{
 			IntPtr value = new(Interlocked.Increment(ref _lastHandleValue));
 			SafeFileHandle handle = new(value, ownsHandle: false);
-			Entry entry = new(
-				new WeakReference<SafeFileHandle>(handle),
-				new SafeFileHandleMock(location.FullPath, mode, share),
-				accessLock,
-				location,
-				container,
-				access,
-				options);
+			Entry entry = createEntry(handle);
 			_entries.Add(entry);
 			_handles.Add(handle, entry);
 			_hasWork = true;
@@ -219,7 +246,7 @@ internal sealed class MockSafeFileHandleRegistry
 		}
 
 		// Exclusive access is only granted when nothing else, handle or stream, holds the file.
-		if (!_fileSystem.Storage.TryGetFileAccess(pending.Location, FileAccess.ReadWrite,
+		if (!_fileSystem.Storage.TryGetFileAccess(pending.Container, FileAccess.ReadWrite,
 			FileShare.None, deleteAccess: false, ignoreFileShare: false,
 			out FileHandle? probe))
 		{
@@ -360,6 +387,7 @@ internal sealed class MockSafeFileHandleRegistry
 		IStorageLocation Location,
 		IStorageContainer Container,
 		FileAccess Access,
-		FileOptions Options);
+		FileOptions Options,
+		bool CanSeek = true);
 }
 #endif

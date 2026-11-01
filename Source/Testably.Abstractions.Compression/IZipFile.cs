@@ -59,6 +59,22 @@ public interface IZipFile : IFileSystemEntity
 		bool includeBaseDirectory,
 		Encoding entryNameEncoding);
 
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="ZipFile.CreateFromDirectory(string, Stream, ZipFileCreationOptions)" />
+	void CreateFromDirectory(
+		string sourceDirectoryName,
+		Stream destination,
+		ZipFileCreationOptions options);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="ZipFile.CreateFromDirectory(string, string, ZipFileCreationOptions)" />
+	void CreateFromDirectory(
+		string sourceDirectoryName,
+		string destinationArchiveFileName,
+		ZipFileCreationOptions options);
+#endif
+
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="ZipFile.CreateFromDirectoryAsync(string, Stream, CancellationToken)" />
 	Task CreateFromDirectoryAsync(
@@ -114,6 +130,24 @@ public interface IZipFile : IFileSystemEntity
 		CompressionLevel compressionLevel,
 		bool includeBaseDirectory,
 		Encoding entryNameEncoding,
+		CancellationToken cancellationToken = default);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="ZipFile.CreateFromDirectoryAsync(string, Stream, ZipFileCreationOptions, CancellationToken)" />
+	Task CreateFromDirectoryAsync(
+		string sourceDirectoryName,
+		Stream destination,
+		ZipFileCreationOptions options,
+		CancellationToken cancellationToken = default);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="ZipFile.CreateFromDirectoryAsync(string, string, ZipFileCreationOptions, CancellationToken)" />
+	Task CreateFromDirectoryAsync(
+		string sourceDirectoryName,
+		string destinationArchiveFileName,
+		ZipFileCreationOptions options,
 		CancellationToken cancellationToken = default);
 #endif
 
@@ -176,7 +210,23 @@ public interface IZipFile : IFileSystemEntity
 		Encoding? entryNameEncoding,
 		bool overwriteFiles);
 #endif
-	
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string, ZipExtractionOptions)" />
+	void ExtractToDirectory(
+		Stream source,
+		string destinationDirectoryName,
+		ZipExtractionOptions options);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="ZipFile.ExtractToDirectory(string, string, ZipExtractionOptions)" />
+	void ExtractToDirectory(
+		string sourceArchiveFileName,
+		string destinationDirectoryName,
+		ZipExtractionOptions options);
+#endif
+
 
 #if FEATURE_COMPRESSION_ASYNC
 	/// <inheritdoc cref="ZipFile.ExtractToDirectoryAsync(Stream, string, CancellationToken)" />
@@ -247,6 +297,24 @@ public interface IZipFile : IFileSystemEntity
 		string destinationDirectoryName,
 		Encoding? entryNameEncoding,
 		bool overwriteFiles,
+		CancellationToken cancellationToken = default);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="ZipFile.ExtractToDirectoryAsync(Stream, string, ZipExtractionOptions, CancellationToken)" />
+	Task ExtractToDirectoryAsync(
+		Stream source,
+		string destinationDirectoryName,
+		ZipExtractionOptions options,
+		CancellationToken cancellationToken = default);
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+	/// <inheritdoc cref="ZipFile.ExtractToDirectoryAsync(string, string, ZipExtractionOptions, CancellationToken)" />
+	Task ExtractToDirectoryAsync(
+		string sourceArchiveFileName,
+		string destinationDirectoryName,
+		ZipExtractionOptions options,
 		CancellationToken cancellationToken = default);
 #endif
 

@@ -61,6 +61,23 @@ public class FileInfoStatisticsTests
 			.OnlyContainsMethodCall(nameof(IFileInfo.Create));
 	}
 
+#if FEATURE_FILESYSTEM_HARDLINK
+	[Test]
+	public async Task Method_CreateAsHardLink_String_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.Initialize().WithFile("bar");
+		string pathToTarget = "bar";
+
+		sut.FileInfo.New("foo").CreateAsHardLink(pathToTarget);
+
+		await That(sut.Statistics.TotalCount).IsEqualTo(2);
+		await That(sut.Statistics.FileInfo["foo"])
+			.OnlyContainsMethodCall(nameof(IFileInfo.CreateAsHardLink),
+				pathToTarget);
+	}
+#endif
+
 #if FEATURE_FILESYSTEM_LINK
 	[Test]
 	public async Task Method_CreateAsSymbolicLink_String_ShouldRegisterCall()

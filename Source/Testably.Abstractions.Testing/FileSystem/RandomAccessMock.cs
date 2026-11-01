@@ -48,7 +48,9 @@ internal sealed class RandomAccessMock : IRandomAccess
 			.RandomAccess.RegisterMethod(nameof(GetLength), handle);
 
 		// Querying the length is a metadata operation: it works on a write-only handle too.
-		return GetContainer(handle, required: null).GetBytes().Length;
+		IStorageContainer container = GetContainer(handle, required: null);
+		ThrowIfNotSeekable(handle);
+		return container.GetBytes().Length;
 	}
 
 	/// <inheritdoc cref="IRandomAccess.Read(SafeFileHandle, Span{byte}, long)" />
@@ -123,6 +125,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 			.RandomAccess.RegisterMethod(nameof(SetLength), handle, length);
 
 		ValidateInput(handle, 0);
+		ThrowIfNotSeekable(handle);
 		if (length < 0)
 		{
 			throw ExceptionFactory.NonNegativeNumberRequired(nameof(length));
@@ -372,5 +375,13 @@ internal sealed class RandomAccessMock : IRandomAccess
 
 	private object Gate(IStorageContainer container)
 		=> _gates.GetOrCreateValue(container);
+
+	private void ThrowIfNotSeekable(SafeFileHandle handle)
+	{
+		if (_fileSystem.SafeFileHandleRegistry.Find(handle) is { CanSeek: false })
+		{
+			throw ExceptionFactory.StreamDoesNotSupportSeeking();
+		}
+	}
 }
 #endif

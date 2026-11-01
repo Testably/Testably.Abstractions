@@ -45,6 +45,50 @@ public class InMemoryStorageTests
 			.IsEqualTo(availableFreeSpaceBefore + file2Size - file1Size);
 	}
 
+#if FEATURE_FILESYSTEM_HARDLINK
+	[Test]
+	public async Task CreateHardLink_OnDifferentDrive_ShouldThrowIOException()
+	{
+		MockFileSystem fileSystem = new(o => o.SimulatingOperatingSystem(SimulationMode.Windows));
+		fileSystem.WithUncDrive(@"\\server");
+		string path = @"\\server\link.txt";
+		fileSystem.File.WriteAllText("target.txt", "foo");
+
+		void Act()
+		{
+			fileSystem.File.CreateHardLink(path, "target.txt");
+		}
+
+		await That(Act).Throws<IOException>()
+			.WithMessage($"The system cannot move the file to a different disk drive. : '{path}'").And
+			.WithHResult(-2147024879);
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_HARDLINK
+	[Test]
+	[AutoArguments]
+	public async Task CreateHardLink_ShouldOnlyReleaseUsedSpaceWhenLastLinkIsDeleted(byte[] bytes)
+	{
+		MockFileSystem fileSystem = new();
+		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot(fileSystem));
+		long availableFreeSpaceInitially = mainDrive.AvailableFreeSpace;
+		fileSystem.File.WriteAllBytes("target", bytes);
+
+		fileSystem.File.CreateHardLink("link", "target");
+		long availableFreeSpaceWithLink = mainDrive.AvailableFreeSpace;
+		fileSystem.File.Delete("target");
+		long availableFreeSpaceAfterFirstDelete = mainDrive.AvailableFreeSpace;
+		fileSystem.File.Delete("link");
+
+		await That(availableFreeSpaceWithLink)
+			.IsEqualTo(availableFreeSpaceInitially - bytes.Length)
+			.Because("both links share the same content");
+		await That(availableFreeSpaceAfterFirstDelete).IsEqualTo(availableFreeSpaceWithLink);
+		await That(mainDrive.AvailableFreeSpace).IsEqualTo(availableFreeSpaceInitially);
+	}
+#endif
+
 	[Test]
 	public async Task CurrentDirectory_ShouldBeInitializedToDefaultRoot()
 	{

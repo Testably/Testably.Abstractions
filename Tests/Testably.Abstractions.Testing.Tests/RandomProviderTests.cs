@@ -459,6 +459,86 @@ public partial class RandomProviderTests
 	}
 #endif
 
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	[AutoArguments]
+	public async Task GenerateRandom_NextBinaryFloat_ShouldReturnSpecifiedValue(
+		int seed, float singleValue, double doubleValue)
+	{
+		IRandomProvider randomProvider = RandomProvider.Generate(
+			singleGenerator: singleValue,
+			doubleGenerator: doubleValue);
+
+		IRandom random = randomProvider.GetRandom(seed);
+		float singleResult = random.NextBinaryFloat<float>();
+		double doubleResult = random.NextBinaryFloat<double>();
+
+		await That(singleResult).IsEqualTo(singleValue);
+		await That(doubleResult).IsEqualTo(doubleValue);
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	[AutoArguments]
+	public async Task GenerateRandom_NextInteger_ShouldReturnSpecifiedValue(
+		int seed, int intValue, long longValue)
+	{
+		IRandomProvider randomProvider = RandomProvider.Generate(
+			intGenerator: intValue,
+			longGenerator: longValue);
+
+		IRandom random = randomProvider.GetRandom(seed);
+		int intResult = random.NextInteger<int>();
+		long longResult = random.NextInteger<long>();
+
+		await That(intResult).IsEqualTo(intValue);
+		await That(longResult).IsEqualTo(longValue);
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	[AutoArguments]
+	public async Task GenerateRandom_NextInteger_WithMaxValue_ShouldClampSpecifiedValue(
+		int seed, int intValue, long longValue)
+	{
+		IRandomProvider randomProvider = RandomProvider.Generate(
+			intGenerator: intValue,
+			longGenerator: longValue);
+
+		IRandom random = randomProvider.GetRandom(seed);
+		int intResult = random.NextInteger(intValue - 1);
+		long longResult = random.NextInteger(longValue - 1);
+
+		await That(intResult).IsEqualTo(intValue - 2)
+			.Because("the generated value is clamped below the maximum value, like in Next(int)");
+		await That(longResult).IsEqualTo(longValue - 2)
+			.Because("the generated value is clamped below the maximum value, like in NextInt64(long)");
+	}
+#endif
+
+#if FEATURE_RANDOM_GENERIC
+	[Test]
+	[AutoArguments]
+	public async Task GenerateRandom_NextInteger_WithMinAndMaxValue_ShouldClampSpecifiedValue(
+		int seed, int intValue, long longValue)
+	{
+		IRandomProvider randomProvider = RandomProvider.Generate(
+			intGenerator: intValue,
+			longGenerator: longValue);
+
+		IRandom random = randomProvider.GetRandom(seed);
+		int intResult = random.NextInteger(intValue + 1, intValue + 10);
+		long longResult = random.NextInteger(longValue + 1, longValue + 10);
+
+		await That(intResult).IsEqualTo(intValue + 1)
+			.Because("the generated value is clamped to the minimum value, like in Next(int, int)");
+		await That(longResult).IsEqualTo(longValue + 1)
+			.Because("the generated value is clamped to the minimum value, like in NextInt64(long, long)");
+	}
+#endif
+
 #if FEATURE_RANDOM_ADVANCED
 	[Test]
 	[AutoArguments]

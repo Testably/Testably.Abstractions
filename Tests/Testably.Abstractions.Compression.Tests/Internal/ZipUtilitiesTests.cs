@@ -1,4 +1,7 @@
 ﻿using System.IO;
+#if FEATURE_COMPRESSION_ENTRY_ACCESS
+using System.IO.Compression;
+#endif
 using System.Threading;
 using Testably.Abstractions.Internal;
 
@@ -115,6 +118,54 @@ public sealed class ZipUtilitiesTests
 #if FEATURE_COMPRESSION_ASYNC
 		/// <inheritdoc cref="IZipArchiveEntry.OpenAsync(CancellationToken)" />
 		public Task<Stream> OpenAsync(CancellationToken cancellationToken = default)
+			=> Task.FromResult(Open());
+#endif
+
+#if FEATURE_COMPRESSION_ENTRY_ACCESS
+		/// <inheritdoc cref="IZipArchiveEntry.CompressionMethod" />
+		public ZipCompressionMethod CompressionMethod => ZipCompressionMethod.Stored;
+
+		/// <inheritdoc cref="IZipArchiveEntry.VersionMadeBy" />
+		public ushort VersionMadeBy => 0;
+
+		/// <inheritdoc cref="IZipArchiveEntry.Open(FileAccess)" />
+		public Stream Open(FileAccess access)
+			=> Open();
+
+		/// <inheritdoc cref="IZipArchiveEntry.OpenAsync(FileAccess, CancellationToken)" />
+		public Task<Stream> OpenAsync(FileAccess access, CancellationToken cancellationToken = default)
+			=> Task.FromResult(Open());
+#endif
+
+#if FEATURE_COMPRESSION_ENCRYPTION
+		/// <inheritdoc cref="IZipArchiveEntry.EncryptionMethod" />
+		public ZipEncryptionMethod EncryptionMethod => ZipEncryptionMethod.None;
+
+		/// <inheritdoc cref="IZipArchiveEntry.ExtractToFile(string, ZipExtractionOptions)" />
+		public void ExtractToFile(string destinationFileName, ZipExtractionOptions options)
+			=> throw new NotSupportedException();
+
+		/// <inheritdoc cref="IZipArchiveEntry.ExtractToFileAsync(string, ZipExtractionOptions, CancellationToken)" />
+		public Task ExtractToFileAsync(string destinationFileName, ZipExtractionOptions options,
+			CancellationToken cancellationToken = default)
+			=> throw new NotSupportedException();
+
+		/// <inheritdoc cref="IZipArchiveEntry.Open(ReadOnlySpan{char})" />
+		public Stream Open(ReadOnlySpan<char> password)
+			=> Open();
+
+		/// <inheritdoc cref="IZipArchiveEntry.Open(FileAccess, ReadOnlySpan{char})" />
+		public Stream Open(FileAccess access, ReadOnlySpan<char> password)
+			=> Open();
+
+		/// <inheritdoc cref="IZipArchiveEntry.OpenAsync(ReadOnlySpan{char}, CancellationToken)" />
+		public Task<Stream> OpenAsync(ReadOnlySpan<char> password,
+			CancellationToken cancellationToken = default)
+			=> Task.FromResult(Open());
+
+		/// <inheritdoc cref="IZipArchiveEntry.OpenAsync(FileAccess, ReadOnlySpan{char}, CancellationToken)" />
+		public Task<Stream> OpenAsync(FileAccess access, ReadOnlySpan<char> password,
+			CancellationToken cancellationToken = default)
 			=> Task.FromResult(Open());
 #endif
 
