@@ -52,6 +52,8 @@ internal sealed class TimerScheduler
 	private readonly object _lock = new();
 #endif
 	private long _nextSequence;
+	private int _reservations;
+	private long _reservedTicks = long.MinValue;
 	private readonly SortedSet<ScheduledTimer> _timers = new(ScheduledTimer.DueTimeComparer);
 
 	public TimerScheduler(ITimeProvider clock)
@@ -84,19 +86,41 @@ internal sealed class TimerScheduler
 	///     their due time, while the clock is at their due time, and the calling thread waits for each callback until it
 	///     completes or blocks.
 	/// </summary>
+	/// <remarks>
+	///     Concurrent calls add up, as each one starts where the calls before it end, even before the clock got there.
+	/// </remarks>
 	public void AdvanceBy(TimeSpan interval)
 	{
-		if (interval < TimeSpan.Zero)
+		long targetTicks;
+		lock (_advanceLock)
+		{
+			if (interval < TimeSpan.Zero)
+			{
+				Step(() => _clock.AdvanceBy(interval));
+				return;
+			}
+
+			// The lock that moves the clock also guards the reservation, so that reading the clock keeps the lock
+			// order of moving it.
+			targetTicks = AddTicks(Math.Max(_clock.ElapsedTicks, _reservedTicks), interval.Ticks);
+			_reservedTicks = targetTicks;
+			_reservations++;
+		}
+
+		try
+		{
+			AdvanceTo(targetTicks);
+		}
+		finally
 		{
 			lock (_advanceLock)
 			{
-				Step(() => _clock.AdvanceBy(interval));
+				if (--_reservations == 0)
+				{
+					_reservedTicks = long.MinValue;
+				}
 			}
-
-			return;
 		}
-
-		AdvanceBy(interval, null);
 	}
 
 	/// <summary>

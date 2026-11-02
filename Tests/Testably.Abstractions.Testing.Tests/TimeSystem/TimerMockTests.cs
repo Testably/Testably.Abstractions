@@ -12,6 +12,20 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 public class TimerMockTests
 {
 	[Test]
+	public async Task AdvanceBy_FromATimerCallback_ShouldAddToTheAdvanceInProgress()
+	{
+		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+		DateTime start = timeSystem.DateTime.UtcNow;
+		using ITimer timer = timeSystem.Timer.New(_ => timeSystem.TimeProvider.AdvanceBy(1.Seconds()), null,
+			500.Milliseconds(), Timeout.InfiniteTimeSpan);
+
+		timeSystem.TimeProvider.AdvanceBy(1.Seconds());
+
+		await That(timeSystem.DateTime.UtcNow).IsEqualTo(start + 2.Seconds())
+			.Because("concurrent advances add up, even when one starts before the other reached its target");
+	}
+
+	[Test]
 	public async Task AdvanceBy_OnTheProviderOfACustomFactory_ShouldFireTheDueTimers()
 	{
 		InterceptingTimeProviderFactory factory = new();
