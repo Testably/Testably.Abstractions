@@ -209,6 +209,38 @@ public partial class ExtensionTests(FileSystemTestData testData) : FileSystemTes
 #endif
 
 	[Test]
+	[Arguments("../outside.txt")]
+	[Arguments("foo/../../outside.txt")]
+	[Arguments("/outside.txt")]
+	public async Task ExtractToDirectory_EntryOutsideDestination_ShouldThrowIOException(
+		string entryName)
+	{
+		FileSystem.Initialize();
+		using (IZipArchive createArchive =
+		       FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Create))
+		{
+			using StreamWriter writer = new(createArchive.CreateEntry(entryName).Open());
+			writer.Write("outside");
+		}
+
+		string outsidePath = FileSystem.Path.GetFullPath(
+			FileSystem.Path.Combine(FileSystem.Path.GetFullPath("bar"), entryName));
+		using IZipArchive archive =
+			FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Read);
+
+		void Act()
+		{
+			archive.ExtractToDirectory("bar");
+		}
+
+		await That(Act).Throws<IOException>()
+			.WithHResult(-2146232800).And
+			.WithMessage(
+				"Extracting Zip entry would have resulted in a file outside the specified destination directory.");
+		await That(FileSystem.File.Exists(outsidePath)).IsFalse();
+	}
+
+	[Test]
 	public async Task ExtractToDirectory_ShouldExtractFilesAndDirectories()
 	{
 		FileSystem.Initialize()

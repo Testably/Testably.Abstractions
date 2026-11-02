@@ -274,11 +274,27 @@ internal static class ZipUtilities
 #endif
 	)
 	{
-		string fileDestinationPath =
-			source.FileSystem.Path.Combine(destinationDirectoryName,
-				source.FullName.TrimStart(
-					source.FileSystem.Path.DirectorySeparatorChar,
-					source.FileSystem.Path.AltDirectorySeparatorChar));
+		IPath path = source.FileSystem.Path;
+		string destinationDirectoryFullPath = source.FileSystem.Directory
+			.CreateDirectory(destinationDirectoryName).FullName;
+		if (!destinationDirectoryFullPath.EndsWith(path.DirectorySeparatorChar,
+			StringComparison.Ordinal))
+		{
+			destinationDirectoryFullPath += path.DirectorySeparatorChar;
+		}
+
+		string fileDestinationPath = path.GetFullPath(
+			path.Combine(destinationDirectoryFullPath, source.FullName));
+
+		// The BCL compares case-insensitively on Windows; the separator is the only OS hint available here.
+		StringComparison comparison = path.DirectorySeparatorChar == '\\'
+			? StringComparison.OrdinalIgnoreCase
+			: StringComparison.Ordinal;
+		if (!fileDestinationPath.StartsWith(destinationDirectoryFullPath, comparison))
+		{
+			throw new IOException(
+				"Extracting Zip entry would have resulted in a file outside the specified destination directory.");
+		}
 
 		if (source.FullName.EndsWith('/', StringComparison.Ordinal))
 		{

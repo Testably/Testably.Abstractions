@@ -11,6 +11,36 @@ namespace Testably.Abstractions.Compression.Tests.ZipFile;
 public class ExtractToDirectoryTests(FileSystemTestData testData) : FileSystemTestBase(testData)
 {
 	[Test]
+	[Arguments("../outside.txt")]
+	[Arguments("foo/../../outside.txt")]
+	[Arguments("/outside.txt")]
+	public async Task ExtractToDirectory_EntryOutsideDestination_ShouldThrowIOException(
+		string entryName)
+	{
+		FileSystem.Initialize();
+		using (IZipArchive archive =
+		       FileSystem.ZipFile.Open("destination.zip", ZipArchiveMode.Create))
+		{
+			using StreamWriter writer = new(archive.CreateEntry(entryName).Open());
+			writer.Write("outside");
+		}
+
+		string outsidePath = FileSystem.Path.GetFullPath(
+			FileSystem.Path.Combine(FileSystem.Path.GetFullPath("bar"), entryName));
+
+		void Act()
+		{
+			FileSystem.ZipFile.ExtractToDirectory("destination.zip", "bar");
+		}
+
+		await That(Act).Throws<IOException>()
+			.WithHResult(-2146232800).And
+			.WithMessage(
+				"Extracting Zip entry would have resulted in a file outside the specified destination directory.");
+		await That(FileSystem.File.Exists(outsidePath)).IsFalse();
+	}
+
+	[Test]
 	public async Task ExtractToDirectory_MissingDestinationDirectory_ShouldCreateDirectory()
 	{
 		FileSystem.Initialize()
