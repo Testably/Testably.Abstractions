@@ -70,6 +70,16 @@ public interface IRandom
 	long NextInt64();
 #endif
 
+#if FEATURE_RANDOM_ADVANCED
+	/// <inheritdoc cref="Random.NextInt64(long)" />
+	long NextInt64(long maxValue);
+#endif
+
+#if FEATURE_RANDOM_ADVANCED
+	/// <inheritdoc cref="Random.NextInt64(long, long)" />
+	long NextInt64(long minValue, long maxValue);
+#endif
+
 #if FEATURE_RANDOM_GENERIC
 	/// <inheritdoc cref="Random.NextInteger{T}()" />
 	T NextInteger<T>()
@@ -86,16 +96,6 @@ public interface IRandom
 	/// <inheritdoc cref="Random.NextInteger{T}(T, T)" />
 	T NextInteger<T>(T minValue, T maxValue)
 		where T : IBinaryInteger<T>;
-#endif
-
-#if FEATURE_RANDOM_ADVANCED
-	/// <inheritdoc cref="Random.NextInt64(long)" />
-	long NextInt64(long maxValue);
-#endif
-
-#if FEATURE_RANDOM_ADVANCED
-	/// <inheritdoc cref="Random.NextInt64(long, long)" />
-	long NextInt64(long minValue, long maxValue);
 #endif
 
 #if FEATURE_RANDOM_ADVANCED

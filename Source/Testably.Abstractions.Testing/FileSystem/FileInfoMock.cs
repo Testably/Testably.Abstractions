@@ -73,7 +73,7 @@ internal sealed class FileInfoMock
 				.FileInfo.RegisterPathProperty(Location.FullPath,
 					nameof(IsReadOnly), PropertyAccess.Get);
 
-			return (Attributes & FileAttributes.ReadOnly) != 0;
+			return Attributes.HasFlag(FileAttributes.ReadOnly);
 		}
 		set
 		{

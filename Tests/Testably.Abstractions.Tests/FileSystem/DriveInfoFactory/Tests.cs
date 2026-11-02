@@ -137,7 +137,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		Skip.If(Test.RunsOnMac, "GetDrives() can cause a native crash on macOS.");
 
 		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives()
-			.First(d => d.Name == System.IO.Path.GetPathRoot(d.Name));
+			.First(d => string.Equals(d.Name, System.IO.Path.GetPathRoot(d.Name), StringComparison.Ordinal));
 
 		IDriveInfo result = FileSystem.DriveInfo.Wrap(driveInfo);
 

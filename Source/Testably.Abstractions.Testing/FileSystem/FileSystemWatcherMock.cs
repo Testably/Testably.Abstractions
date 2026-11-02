@@ -449,13 +449,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private bool MatchesFilter(ChangeDescription changeDescription)
 	{
-		if (!MatchesWatcherPath(changeDescription.Path))
+		if (!MatchesWatcherPath(changeDescription.Path) &&
+		    (changeDescription.ChangeType != WatcherChangeTypes.Renamed ||
+		     !MatchesWatcherPath(changeDescription.OldPath)))
 		{
-			if (changeDescription.ChangeType != WatcherChangeTypes.Renamed ||
-			    !MatchesWatcherPath(changeDescription.OldPath))
-			{
-				return false;
-			}
+			return false;
 		}
 
 		if ((NotifyFilter & changeDescription.NotifyFilters) == 0)

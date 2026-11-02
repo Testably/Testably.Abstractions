@@ -47,7 +47,7 @@ internal sealed partial class Execute
 			{
 				extension = "";
 			}
-			else if (!extension.StartsWith('.'))
+			else if (!extension.StartsWith('.', StringComparison.Ordinal))
 			{
 				extension = "." + extension;
 			}
@@ -262,7 +262,7 @@ internal sealed partial class Execute
 			}
 
 			string fileName = GetFileName(path);
-			int lastPeriod = fileName.LastIndexOf('.');
+			int lastPeriod = fileName.LastIndexOf('.', StringComparison.Ordinal);
 			return lastPeriod < 0 ? fileName : fileName.Substring(0, lastPeriod);
 		}
 
@@ -552,8 +552,8 @@ internal sealed partial class Execute
 
 				sb.Append(NormalizePath(path));
 				sb.Append(DirectorySeparatorChar);
-				endsWithDirectorySeparator = path.EndsWith(DirectorySeparatorChar) ||
-				                             path.EndsWith(AltDirectorySeparatorChar);
+				endsWithDirectorySeparator = path.EndsWith(DirectorySeparatorChar, StringComparison.Ordinal) ||
+				                             path.EndsWith(AltDirectorySeparatorChar, StringComparison.Ordinal);
 			}
 
 			if (!endsWithDirectorySeparator)

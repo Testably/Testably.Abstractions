@@ -1,3 +1,5 @@
+using System;
+
 namespace Testably.Abstractions.Testing.Helpers;
 
 /// <summary>
@@ -133,7 +135,7 @@ internal sealed class GlobPattern
 			start++;
 		}
 
-		int end = _pattern.IndexOf(']', start);
+		int end = _pattern.IndexOf(']', start, StringComparison.Ordinal);
 		if (end <= start)
 		{
 			isMatch = false;

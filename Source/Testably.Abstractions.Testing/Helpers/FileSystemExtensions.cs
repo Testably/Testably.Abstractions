@@ -65,7 +65,9 @@ internal static class FileSystemExtensions
 
 			if (givenPath.IsNtDeviceAlias(fileSystem.Execute))
 			{
+				#pragma warning disable CA1845
 				return givenPath.Substring(0, 4) + fullFilePath;
+				#pragma warning restore CA1845
 			}
 
 			return fullFilePath;
@@ -105,7 +107,7 @@ internal static class FileSystemExtensions
 			{
 				parentName = fileSystem.Execute.Path.GetDirectoryName(parentName);
 				int lastIndex =
-					givenPath.LastIndexOf(fileSystem.Execute.Path.DirectorySeparatorChar);
+					givenPath.LastIndexOf(fileSystem.Execute.Path.DirectorySeparatorChar, StringComparison.Ordinal);
 				if (lastIndex >= 0)
 				{
 					givenPath = givenPath.Substring(0, lastIndex);
