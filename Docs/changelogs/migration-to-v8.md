@@ -90,7 +90,7 @@ public class MyStrategy : UnixFileModeStrategy
 }
 ```
 
-See [access control](../pages/docs/03-file-system/07-access-control.mdx), [Unix file mode](../pages/docs/03-file-system/08-unix-file-mode.mdx) and [safe file handles](../pages/docs/03-file-system/09-safe-file-handles.mdx).
+See [access control](../03-file-system/07-access-control.mdx), [Unix file mode](../03-file-system/08-unix-file-mode.mdx) and [safe file handles](../03-file-system/09-safe-file-handles.mdx).
 
 ## `ITimerStrategy` is replaced with `TimerStrategy`
 
@@ -105,4 +105,4 @@ See [access control](../pages/docs/03-file-system/07-access-control.mdx), [Unix 
 - With auto-advance, parallel `Thread.Sleep` and `Task.Delay` waits overlap like real ones instead of adding up: two parallel one-second sleeps move the clock by one second, not two. Explicit `AdvanceBy` calls still add up.
 - `Task.Delay` returns a canceled task for a canceled token instead of throwing, like the real one. Await the task to observe the `OperationCanceledException`.
 
-See [auto-advance](../pages/docs/04-time-system/02-auto-advance.mdx) and [timers](../pages/docs/04-time-system/04-timers.mdx).
+See [auto-advance](../04-time-system/02-auto-advance.mdx) and [timers](../04-time-system/04-timers.mdx).
