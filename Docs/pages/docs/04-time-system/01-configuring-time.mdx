@@ -74,7 +74,7 @@ ITimeProviderFactory factory = new GalleryClockFactory(...);
 MockTimeSystem timeSystem = new(factory);
 ```
 
-`ITimeProviderFactory` receives a callback that your provider must invoke whenever the simulated time changes; the [notifications](./06-notifications.mdx) and waiting timers depend on it.
+`ITimeProviderFactory` receives a callback that your provider must invoke whenever the simulated time changes; the [notifications](./06-notifications.mdx) and waiting timers depend on it. `timeSystem.TimeProvider` returns your provider itself. When you move its clock directly, the timers that became due fire afterward, as the clock is already past them. The waits of the `MockTimeSystem`, e.g. `Task.Delay` or `Thread.Sleep`, still fire them in [order](./02-auto-advance.mdx).
 
 ## Sharing the time system
 

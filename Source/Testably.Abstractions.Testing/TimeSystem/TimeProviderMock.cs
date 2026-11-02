@@ -15,6 +15,7 @@ internal sealed class TimeProviderMock : ITimeProvider
 	private long _elapsedTicks;
 	private readonly Action<DateTime> _onTimeChanged;
 	private readonly string _description;
+	private TimerScheduler? _scheduler;
 	private Dictionary<string, TimeZoneInfo>? _timeZones;
 	private bool _systemTimeZonesSeeded;
 	private TimeZoneInfo _localTimeZone;
@@ -106,6 +107,12 @@ internal sealed class TimeProviderMock : ITimeProvider
 	/// <inheritdoc cref="ITimeProvider.AdvanceBy(TimeSpan)" />
 	public void AdvanceBy(TimeSpan interval)
 	{
+		if (_scheduler is { IsMovingClock: false, } scheduler)
+		{
+			scheduler.AdvanceBy(interval);
+			return;
+		}
+
 		lock (_lock)
 		{
 			_now = _now.Add(interval);
@@ -162,6 +169,12 @@ internal sealed class TimeProviderMock : ITimeProvider
 	/// <inheritdoc cref="ITimeProvider.SetTo(DateTime)" />
 	public void SetTo(DateTime value)
 	{
+		if (_scheduler is { IsMovingClock: false, } scheduler)
+		{
+			scheduler.SetTo(value);
+			return;
+		}
+
 		lock (_lock)
 		{
 			_now = NormalizeToUtc(value, _localTimeZone);
@@ -170,6 +183,13 @@ internal sealed class TimeProviderMock : ITimeProvider
 	}
 
 	#endregion
+
+	/// <summary>
+	///     Moves the clock through the <paramref name="scheduler" />, so that the timers fire in the order of their due
+	///     time, while the clock is at their due time.
+	/// </summary>
+	internal void UseScheduler(TimerScheduler scheduler)
+		=> _scheduler = scheduler;
 
 	/// <summary>
 	///     Returns the time zone registry, allocating and seeding it on first use.

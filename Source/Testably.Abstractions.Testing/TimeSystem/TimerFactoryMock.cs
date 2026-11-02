@@ -38,34 +38,34 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 
 	/// <inheritdoc cref="ITimerFactory.New(TimerCallback)" />
 	public ITimer New(TimerCallback callback)
-	{
-		TimerMock timerMock = new(_mockTimeSystem, _timerStrategy,
-			callback, null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan, _autoAdvance);
-		return RegisterTimerMock(timerMock);
-	}
+		=> New(callback, null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 
 	/// <inheritdoc cref="ITimerFactory.New(TimerCallback, object?, int, int)" />
 	public ITimer New(TimerCallback callback, object? state, int dueTime, int period)
-	{
-		TimerMock timerMock = new(_mockTimeSystem, _timerStrategy,
-			callback, state, TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period), _autoAdvance);
-		return RegisterTimerMock(timerMock);
-	}
+		=> New(callback, state, TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period));
 
 	/// <inheritdoc cref="ITimerFactory.New(TimerCallback, object?, long, long)" />
 	public ITimer New(TimerCallback callback, object? state, long dueTime, long period)
-	{
-		TimerMock timerMock = new(_mockTimeSystem, _timerStrategy,
-			callback, state, TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period), _autoAdvance);
-		return RegisterTimerMock(timerMock);
-	}
+		=> New(callback, state, TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period));
 
 	/// <inheritdoc cref="ITimerFactory.New(TimerCallback, object?, TimeSpan, TimeSpan)" />
+	/// <remarks>
+	///     The clock does not move on its own while the timer is created, so that its creator can finish setting it up,
+	///     e.g. store it to dispose it on a cancellation, before any timer fires.
+	/// </remarks>
 	public ITimer New(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
 	{
-		TimerMock timerMock = new(_mockTimeSystem, _timerStrategy,
-			callback, state, dueTime, period, _autoAdvance);
-		return RegisterTimerMock(timerMock);
+		_mockTimeSystem.Scheduler.BeginCreatingTimer();
+		try
+		{
+			TimerMock timerMock = new(_mockTimeSystem, _timerStrategy,
+				callback, state, dueTime, period, _autoAdvance);
+			return RegisterTimerMock(timerMock);
+		}
+		finally
+		{
+			_mockTimeSystem.Scheduler.EndCreatingTimer();
+		}
 	}
 
 	/// <inheritdoc cref="ITimerFactory.Wrap(Timer)" />

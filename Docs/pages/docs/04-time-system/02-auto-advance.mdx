@@ -15,6 +15,27 @@ await That(timeSystem.DateTime.UtcNow)
     .IsEqualTo(new DateTime(2026, 1, 1, 0, 10, 0, DateTimeKind.Utc));
 ```
 
+## Timers and timeouts
+
+A timer moves the clock to its due time as well. The timers that are due on the way fire in the order of their due time, and each callback sees the clock at its own due time, not at the end of the wait. Like a real timer, a callback runs on another thread with the execution context of the code that created the timer, while the thread that moves the clock waits until it completes. When the callback waits for the clock, i.e. for `Task.Delay`, `PeriodicTimer.WaitForNextTickAsync` or `ITimerMock.Wait` of the `MockTimeSystem`, the clock moves on at once, just like the real clock keeps running. When it blocks on anything else, e.g. on another timer through an event or on a lock that the waiting code holds, the clock moves on after one second of real time. All timers move the clock on one shared background thread. Another thread that moves the clock at the same time, e.g. a `Task.Delay` or `AdvanceBy` in the test, can move it further while a callback runs.
+
+A timer without a period whose state is a `CancellationTokenSource` is a timeout. This includes the timer of `new CancellationTokenSource(TimeSpan, TimeProvider)` on the [`TimeProvider`](./01-configuring-time.mdx) from `ToTimeProvider()`, a `Timer.New` that cancels the `CancellationTokenSource` it gets as state, and the timer of `Task.WaitAsync(TimeSpan, TimeProvider)`. A timeout never moves the clock on its own: it fires when a wait or `AdvanceBy` moves the clock past its due time, so that an operation with a timeout is not canceled before it starts. A one-shot timer that does other work should therefore not get a `CancellationTokenSource` as state.
+
+```csharp
+MockTimeSystem timeSystem = new();
+TimeProvider timeProvider = timeSystem.ToTimeProvider();
+using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1), timeProvider);
+
+// Throws an OperationCanceledException, with the clock one second later
+await Task.Delay(TimeSpan.FromSeconds(5), timeProvider, cts.Token);
+```
+
+A wait that its timeout cancels on the way stops the clock at the timeout. This applies to `Task.Delay` and `PeriodicTimer.WaitForNextTickAsync` of the `MockTimeSystem` and to `Task.Delay` on the `TimeProvider`.
+
+:::warning[Waiting only for a timeout]
+As a timeout never moves the clock, code that waits for nothing but a timeout, e.g. `Task.Delay(Timeout.InfiniteTimeSpan, timeProvider, cts.Token)`, waits until something else moves the clock. Only `Task.Delay(Timeout.InfiniteTimeSpan)` of the `MockTimeSystem` itself returns immediately with auto-advance.
+:::
+
 ## Disabling auto-advance
 
 When you need to assert *that* code waited (instead of just letting it through), turn auto-advance off via `MockTimeSystemOptions.DisableAutoAdvance()` and move the clock yourself with `TimeProvider.AdvanceBy(...)` or `TimeProvider.SetTo(...)`:
@@ -37,6 +58,7 @@ With auto-advance off:
 | `Task.Delay`                          | Stays pending until the clock reaches the end of the delay             |
 | `PeriodicTimer.WaitForNextTickAsync`  | Stays pending until the clock reaches the next tick                    |
 | `Thread.Sleep`                        | Returns immediately without moving the clock                           |
+| `Timer`                               | Fires when `AdvanceBy` reaches its due time; `AdvanceBy` waits for it  |
 
 :::warning[Awaiting a delay with auto-advance off]
 Awaiting `Task.Delay` before anything advances the clock waits forever. Start the delay, advance the clock (or let another task do it), then await it.
