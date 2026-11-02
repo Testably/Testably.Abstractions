@@ -17,6 +17,7 @@ public partial class MoveTests
 	)
 	{
 		Skip.If(Test.RunsOnWindows);
+		SkipIfBrittleTestsShouldBeSkipped(Test.RunsOnMac);
 
 		// Arrange
 
