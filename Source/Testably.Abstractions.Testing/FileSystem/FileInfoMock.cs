@@ -93,6 +93,7 @@ internal sealed class FileInfoMock
 	}
 
 	/// <inheritdoc cref="IFileInfo.Length" />
+	#pragma warning disable S2372 // The real `FileInfo.Length` also throws when the file does not exist.
 	public long Length
 	{
 		get
@@ -112,6 +113,7 @@ internal sealed class FileInfoMock
 			return State.Length;
 		}
 	}
+	#pragma warning restore S2372
 
 	/// <inheritdoc cref="IFileSystemInfo.Name" />
 	public override string Name

@@ -6,7 +6,9 @@ using System.Linq;
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 
 [FileSystemTests]
+#pragma warning disable MA0204 // The other part in ExtensionTests.Async.cs only compiles with FEATURE_COMPRESSION_ASYNC.
 public partial class ExtensionTests(FileSystemTestData testData) : FileSystemTestBase(testData)
+#pragma warning restore MA0204
 {
 	[Test]
 	public async Task

@@ -87,18 +87,22 @@ public abstract class ParameterDescription
 	/// <summary>
 	///     Checks, if the span value of the parameter equals <paramref name="value" />.
 	/// </summary>
+	#pragma warning disable S3060 // The public `Is` overloads for spans have to check which subclass recorded the parameter.
 	public bool Is<T>(Span<T> value)
 		=> this is SpanParameterDescription<T> { IsReadOnly: false } d &&
 		   d.Value.SequenceEqual(value.ToArray());
+	#pragma warning restore S3060
 #endif
 
 #if FEATURE_SPAN
 	/// <summary>
 	///     Checks, if the read-only span value of the parameter equals <paramref name="value" />.
 	/// </summary>
+	#pragma warning disable S3060 // The public `Is` overloads for spans have to check which subclass recorded the parameter.
 	public bool Is<T>(ReadOnlySpan<T> value)
 		=> this is SpanParameterDescription<T> { IsReadOnly: true } d &&
 		   d.Value.SequenceEqual(value.ToArray());
+	#pragma warning restore S3060
 #endif
 
 #if FEATURE_SPAN
