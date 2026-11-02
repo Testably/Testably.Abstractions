@@ -187,7 +187,7 @@ internal sealed class TimerScheduler
 	{
 		if (IsMovingClock)
 		{
-			_movingClock = null;
+			SetMovingClock(null);
 			return;
 		}
 
@@ -338,7 +338,7 @@ internal sealed class TimerScheduler
 			firing.Started.TrySetResult(true);
 			try
 			{
-				timer.Fire();
+				timer.RunCallback();
 			}
 			finally
 			{
@@ -430,11 +430,11 @@ internal sealed class TimerScheduler
 					continue;
 				}
 
-				Action work = _work!;
+				Action? work = _work;
 				_work = null;
 				try
 				{
-					work();
+					work?.Invoke();
 				}
 				catch (Exception)
 				{
@@ -493,17 +493,26 @@ internal sealed class TimerScheduler
 		_advancingTimers.Remove(timer);
 	}
 
-	private void Step(Action changeTime)
+	/// <summary>
+	///     Sets the scheduler that moves the clock on the current thread and returns the previous one.
+	/// </summary>
+	private static TimerScheduler? SetMovingClock(TimerScheduler? scheduler)
 	{
 		TimerScheduler? previous = _movingClock;
-		_movingClock = this;
+		_movingClock = scheduler;
+		return previous;
+	}
+
+	private void Step(Action changeTime)
+	{
+		TimerScheduler? previous = SetMovingClock(this);
 		try
 		{
 			changeTime();
 		}
 		finally
 		{
-			_movingClock = previous;
+			SetMovingClock(previous);
 		}
 	}
 
@@ -614,6 +623,6 @@ internal sealed class TimerScheduler
 		/// <summary>
 		///     Runs the callback of the timer.
 		/// </summary>
-		public void Fire() => fire();
+		public void RunCallback() => fire();
 	}
 }
