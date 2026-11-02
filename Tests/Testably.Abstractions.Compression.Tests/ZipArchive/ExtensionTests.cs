@@ -231,7 +231,10 @@ public partial class ExtensionTests(FileSystemTestData testData) : FileSystemTes
 			archive.ExtractToDirectory("bar");
 		}
 
-		await That(Act).Throws<IOException>();
+		await That(Act).Throws<IOException>()
+			.WithHResult(-2146232800).And
+			.WithMessage(
+				"Extracting Zip entry would have resulted in a file outside the specified destination directory.");
 		await That(FileSystem.File.Exists(outsidePath)).IsFalse();
 	}
 
