@@ -405,6 +405,10 @@ internal sealed class TimerMock : ITimerMock
 	///     expected execution. Each wait has its own handshake, so that a late or canceled execution cannot release a later
 	///     wait.
 	/// </summary>
+	/// <remarks>
+	///     The completion sources are only waited for synchronously, so they do not run their continuations
+	///     asynchronously: on .NET Framework, that would wake each waiting thread through the thread pool.
+	/// </remarks>
 	private sealed class WaitHandshake(int executionCount)
 	{
 		private int _remaining = executionCount;
@@ -412,14 +416,12 @@ internal sealed class TimerMock : ITimerMock
 		/// <summary>
 		///     Completed by the wait, so that the blocked timer continues.
 		/// </summary>
-		public TaskCompletionSource<bool> Continue { get; } =
-			new(TaskCreationOptions.RunContinuationsAsynchronously);
+		public TaskCompletionSource<bool> Continue { get; } = new();
 
 		/// <summary>
 		///     Completed by the timer at the expected execution.
 		/// </summary>
-		public TaskCompletionSource<bool> Reached { get; } =
-			new(TaskCreationOptions.RunContinuationsAsynchronously);
+		public TaskCompletionSource<bool> Reached { get; } = new();
 
 		/// <summary>
 		///     Counts an execution and returns <see langword="true" /> for the expected one, after which the timer has to

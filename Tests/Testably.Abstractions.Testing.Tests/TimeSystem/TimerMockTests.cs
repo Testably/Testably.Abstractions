@@ -99,7 +99,15 @@ public class TimerMockTests
 		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 1.Seconds(), Timeout.InfiniteTimeSpan);
 		bool? disposedInTime = null;
 		using IAwaitableCallback<DateTime> _ = timeSystem.On.TimeChanged(_ =>
-			disposedInTime ??= Task.Run(() => other.Dispose()).Wait(2000));
+		{
+			if (disposedInTime is null)
+			{
+				// A dedicated thread, as a pool thread may start too late under parallel tests on .NET Framework.
+				Thread disposeThread = new(() => other.Dispose());
+				disposeThread.Start();
+				disposedInTime = disposeThread.Join(2000);
+			}
+		});
 
 		timeSystem.TimeProvider.AdvanceBy(2.Seconds());
 

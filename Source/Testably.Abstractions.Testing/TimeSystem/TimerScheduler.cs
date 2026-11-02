@@ -351,11 +351,14 @@ internal sealed class TimerScheduler
 	///     The callback does not run on the thread pool, as the thread that waits for it often is a pool thread itself,
 	///     so that waiting callbacks would starve each other of threads. The limit only counts from the start of the
 	///     callback.
+	///     <para />
+	///     The completion sources are only waited for synchronously, so they do not run their continuations
+	///     asynchronously: on .NET Framework, that would wake each waiting thread through the thread pool.
 	/// </remarks>
 	private static void Fire(ScheduledTimer timer)
 	{
 		FiringCallback firing = new();
-		TaskCompletionSource<bool> completed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		TaskCompletionSource<bool> completed = new();
 		CallbackThread.Run(() =>
 		{
 			FiringCallback.Current = firing;
@@ -593,14 +596,12 @@ internal sealed class TimerScheduler
 		/// <summary>
 		///     Completed when the callback waits for the clock.
 		/// </summary>
-		public TaskCompletionSource<bool> Released { get; } =
-			new(TaskCreationOptions.RunContinuationsAsynchronously);
+		public TaskCompletionSource<bool> Released { get; } = new();
 
 		/// <summary>
 		///     Completed when the callback got a thread and starts.
 		/// </summary>
-		public TaskCompletionSource<bool> Started { get; } =
-			new(TaskCreationOptions.RunContinuationsAsynchronously);
+		public TaskCompletionSource<bool> Started { get; } = new();
 
 		public void Release() => Released.TrySetResult(true);
 	}
