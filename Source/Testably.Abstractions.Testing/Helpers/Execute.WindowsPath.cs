@@ -34,7 +34,9 @@ internal sealed partial class Execute
 			{
 				if (pathRoot[0] == DirectorySeparatorChar && pathRoot.Length == 1)
 				{
+					#pragma warning disable CA1845
 					candidate = directoryRoot + path.Substring(1);
+					#pragma warning restore CA1845
 				}
 				else if (char.ToUpperInvariant(pathRoot[0]) != char.ToUpperInvariant(directoryRoot[0]))
 				{

@@ -1170,7 +1170,7 @@ internal sealed class InMemoryStorage : IStorage
 			ignoreFileShare: true,
 			hResult: sourceType == FileSystemTypes.Directory ? -2147024891 : -2147024864))
 		{
-			if (children.Any() && recursive)
+			if (children.Any())
 			{
 				foreach (IStorageLocation child in children)
 				{

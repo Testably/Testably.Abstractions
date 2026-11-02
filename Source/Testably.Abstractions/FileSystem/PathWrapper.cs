@@ -168,8 +168,10 @@ internal sealed class PathWrapper : IPath
 		"Insecure temporary file creation methods should not be used. Use `Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())` instead.")]
 	[ExcludeFromCodeCoverage]
 #endif
+	#pragma warning disable S5445 // The wrapper has to mirror `Path.GetTempFileName` of the BCL.
 	public string GetTempFileName()
 		=> Path.GetTempFileName();
+	#pragma warning restore S5445
 
 	/// <inheritdoc cref="IPath.GetTempPath()" />
 	public string GetTempPath()

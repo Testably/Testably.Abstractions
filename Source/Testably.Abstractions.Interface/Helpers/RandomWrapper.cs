@@ -99,6 +99,18 @@ public sealed class RandomWrapper : IRandom
 		=> _instance.NextInt64();
 #endif
 
+#if FEATURE_RANDOM_ADVANCED
+	/// <inheritdoc cref="IRandom.NextInt64(long)" />
+	public long NextInt64(long maxValue)
+		=> _instance.NextInt64(maxValue);
+#endif
+
+#if FEATURE_RANDOM_ADVANCED
+	/// <inheritdoc cref="IRandom.NextInt64(long, long)" />
+	public long NextInt64(long minValue, long maxValue)
+		=> _instance.NextInt64(minValue, maxValue);
+#endif
+
 #if FEATURE_RANDOM_GENERIC
 	/// <inheritdoc cref="IRandom.NextInteger{T}()" />
 	public T NextInteger<T>()
@@ -118,18 +130,6 @@ public sealed class RandomWrapper : IRandom
 	public T NextInteger<T>(T minValue, T maxValue)
 		where T : IBinaryInteger<T>
 		=> _instance.NextInteger(minValue, maxValue);
-#endif
-
-#if FEATURE_RANDOM_ADVANCED
-	/// <inheritdoc cref="IRandom.NextInt64(long)" />
-	public long NextInt64(long maxValue)
-		=> _instance.NextInt64(maxValue);
-#endif
-
-#if FEATURE_RANDOM_ADVANCED
-	/// <inheritdoc cref="IRandom.NextInt64(long, long)" />
-	public long NextInt64(long minValue, long maxValue)
-		=> _instance.NextInt64(minValue, maxValue);
 #endif
 
 #if FEATURE_RANDOM_ADVANCED

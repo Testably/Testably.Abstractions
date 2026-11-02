@@ -449,13 +449,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private bool MatchesFilter(ChangeDescription changeDescription)
 	{
-		if (!MatchesWatcherPath(changeDescription.Path))
+		if (!MatchesWatcherPath(changeDescription.Path) &&
+		    (changeDescription.ChangeType != WatcherChangeTypes.Renamed ||
+		     !MatchesWatcherPath(changeDescription.OldPath)))
 		{
-			if (changeDescription.ChangeType != WatcherChangeTypes.Renamed ||
-			    !MatchesWatcherPath(changeDescription.OldPath))
-			{
-				return false;
-			}
+			return false;
 		}
 
 		if ((NotifyFilter & changeDescription.NotifyFilters) == 0)
@@ -557,6 +555,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
 		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
+		#pragma warning disable S3011 // The private field is the only way to simulate the path separator of another OS.
 #if NETFRAMEWORK
 			typeof(FileSystemEventArgs)
 				.GetField("fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
@@ -566,6 +565,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
 			.SetValue(args, fullPath);
 #endif
+		#pragma warning restore S3011
 	}
 
 	private void SetRenamedEventArgsFullPath(RenamedEventArgs args, string oldName)
@@ -579,6 +579,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 		// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
 		// HACK: The combination uses the system separator, so to simulate the behavior, we must override it using reflection!
+		#pragma warning disable S3011 // The private field is the only way to simulate the path separator of another OS.
 #if NETFRAMEWORK
 			typeof(RenamedEventArgs)
 				.GetField("oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
@@ -588,6 +589,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			.GetField("_oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
 			.SetValue(args, fullPath);
 #endif
+		#pragma warning restore S3011
 	}
 
 	private void Start()

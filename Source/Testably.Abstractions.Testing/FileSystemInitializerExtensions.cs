@@ -70,7 +70,7 @@ public static class FileSystemInitializerExtensions
 			}
 
 			fileName = fileName.Replace('.', Path.DirectorySeparatorChar);
-			int lastSeparator = fileName.LastIndexOf(Path.DirectorySeparatorChar);
+			int lastSeparator = fileName.LastIndexOf(Path.DirectorySeparatorChar, StringComparison.Ordinal);
 			if (lastSeparator > 0)
 			{
 				#pragma warning disable CA1845

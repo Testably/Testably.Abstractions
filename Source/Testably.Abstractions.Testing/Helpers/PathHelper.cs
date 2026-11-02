@@ -103,7 +103,7 @@ internal static class PathHelper
 	/// </summary>
 	internal static bool IsNtDeviceAlias(this string path, Execute execute)
 	{
-		if (execute.IsWindows && path.StartsWith('\\'))
+		if (execute.IsWindows && path.StartsWith('\\', StringComparison.Ordinal))
 		{
 			string[] specialPaths = [@"\\?\", @"\??\", @"\\.\",];
 			return specialPaths.Any(specialPath
@@ -226,7 +226,7 @@ internal static class PathHelper
 				fileSystem.Execute.Path.GetFullPath(path), hResult);
 		}
 
-		if (fileSystem.Execute.IsWindows && path.LastIndexOf(':') > 1)
+		if (fileSystem.Execute.IsWindows && path.LastIndexOf(':', StringComparison.Ordinal) > 1)
 		{
 			throw ExceptionFactory.PathHasIncorrectSyntax(
 				fileSystem.Execute.Path.GetFullPath(path), hResult);

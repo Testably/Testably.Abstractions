@@ -55,12 +55,19 @@ internal static class ExceptionFactory
 		};
 
 	internal static IOException DirectoryNotEmpty(Execute execute, string path)
-		=> new($"Directory not empty : '{path}'",
-			execute.IsWindows
-				? -2147024751
-				: execute.IsMac
-					? 66
-					: 39);
+	{
+		int hResult = 39;
+		if (execute.IsWindows)
+		{
+			hResult = -2147024751;
+		}
+		else if (execute.IsMac)
+		{
+			hResult = 66;
+		}
+
+		return new IOException($"Directory not empty : '{path}'", hResult);
+	}
 
 	internal static DirectoryNotFoundException DirectoryNotFound(string? path = null)
 		=> new(path == null

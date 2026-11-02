@@ -273,7 +273,7 @@ public class OpenHandleStreamTests(FileSystemTestData testData) : FileSystemTest
 
 		await That(() => stream.Flush()).Throws<ObjectDisposedException>();
 		await That(() => stream.Flush(true)).Throws<ObjectDisposedException>();
-		await That(() => stream.FlushAsync()).Throws<ObjectDisposedException>();
+		await That(() => stream.FlushAsync(CancellationToken)).Throws<ObjectDisposedException>();
 		await That(() => stream.Dispose()).DoesNotThrow()
 			.Because("disposing a stream whose handle is already closed succeeds");
 	}

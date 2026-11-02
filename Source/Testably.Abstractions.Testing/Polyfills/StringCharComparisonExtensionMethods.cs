@@ -23,6 +23,19 @@ internal static class StringCharComparisonExtensionMethods
 	}
 
 	/// <summary>
+	///     Reports the zero-based index of the first occurrence of the specified character in this string, starting at
+	///     <paramref name="startIndex" />.
+	/// </summary>
+	internal static int IndexOf(
+		this string @this,
+		char value,
+		int startIndex,
+		StringComparison comparisonType)
+	{
+		return @this.IndexOf(value, startIndex);
+	}
+
+	/// <summary>
 	///     Reports the zero-based index of the last occurrence of the specified character in this string.
 	/// </summary>
 	internal static int LastIndexOf(

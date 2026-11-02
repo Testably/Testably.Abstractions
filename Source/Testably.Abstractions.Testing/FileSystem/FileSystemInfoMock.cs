@@ -163,7 +163,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 			using IDisposable registration =
 				RegisterPathProperty(nameof(Extension), PropertyAccess.Get);
 
-			if (Location.FullPath.EndsWith('.') &&
+			if (Location.FullPath.EndsWith('.', StringComparison.Ordinal) &&
 			    !_fileSystem.Execute.IsWindows)
 			{
 				return ".";
