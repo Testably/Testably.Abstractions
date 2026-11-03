@@ -23,6 +23,7 @@ partial class Build
 				.AddGenericCoveragePaths(TestResultsDirectory / "reports" / "SonarQube.xml")
 				.SetPullRequestOrBranchName(GitHubActions, BranchName)
 				.SetVersion(SemVer)
+				.SetQualityGateWait(GitHubActions?.IsPullRequest == true)
 				.SetToken(SonarToken));
 		});
 
