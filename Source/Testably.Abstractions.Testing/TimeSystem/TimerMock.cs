@@ -276,7 +276,9 @@ internal sealed class TimerMock : ITimerMock
 	///     that a timeout which fires before would not cancel it. Its registration is read by reflection, as the type
 	///     cannot be referenced.
 	/// </remarks>
+	#pragma warning disable S1172 // The parameter is only used when `FEATURE_TIMEPROVIDER` is defined.
 	private static Func<bool>? GetIsBeingSetUp(object? state)
+	#pragma warning restore S1172
 	{
 #if FEATURE_TIMEPROVIDER
 		if (DelayRegistrationField is { } field && state is Task delay &&
