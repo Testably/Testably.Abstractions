@@ -1,5 +1,7 @@
 #if FEATURE_TIMEPROVIDER
 using aweXpect.Chronology;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
@@ -274,6 +276,33 @@ public class TimeSystemExtensionsTests
 		await Task.Delay(5.Seconds(), provider, TestContext.Current!.Execution.CancellationToken);
 
 		await That(provider.GetUtcNow()).IsEqualTo(before + 5.Seconds());
+	}
+
+	[Test]
+	public async Task ToTimeProvider_Delay_UntilItRegisteredItsToken_ShouldNotMoveTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		System.TimeProvider provider = timeSystem.ToTimeProvider();
+		DateTimeOffset before = provider.GetUtcNow();
+		using CancellationTokenSource cts = new();
+		Type delayType = typeof(Task).GetNestedType("DelayPromiseWithCancellation", BindingFlags.NonPublic)!;
+		FieldInfo registrationField =
+			delayType.GetField("_registration", BindingFlags.Instance | BindingFlags.NonPublic)!;
+		Task delay = (Task)RuntimeHelpers.GetUninitializedObject(delayType);
+		TaskCompletionSource<DateTimeOffset> fired = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+		using ITimer timer = provider.CreateTimer(_ => fired.TrySetResult(provider.GetUtcNow()), delay,
+			1.Seconds(), Timeout.InfiniteTimeSpan);
+		await Task.Delay(50.Milliseconds(), System.TimeProvider.System,
+			TestContext.Current!.Execution.CancellationToken);
+		bool hasFiredBeforeTheRegistration = fired.Task.IsCompleted;
+		registrationField.SetValue(delay, cts.Token.Register(() => { }));
+
+		await That(hasFiredBeforeTheRegistration).IsFalse()
+			.Because("Task.Delay registers its token only after it created its timer");
+		await That(await fired.Task.WaitAsync(30.Seconds(), System.TimeProvider.System,
+				TestContext.Current!.Execution.CancellationToken))
+			.IsEqualTo(before + 1.Seconds());
 	}
 
 	[Test]

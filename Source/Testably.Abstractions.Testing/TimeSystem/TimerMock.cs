@@ -1,4 +1,7 @@
 ﻿using System;
+#if FEATURE_TIMEPROVIDER
+using System.Reflection;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Helpers;
@@ -9,6 +12,12 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 
 internal sealed class TimerMock : ITimerMock
 {
+#if FEATURE_TIMEPROVIDER
+	private static readonly FieldInfo? DelayRegistrationField = typeof(Task)
+		.GetNestedType("DelayPromiseWithCancellation", BindingFlags.NonPublic)?
+		.GetField("_registration", BindingFlags.Instance | BindingFlags.NonPublic);
+#endif
+
 	private readonly TimerCallback _callback;
 	private CancellationTokenSource? _cancellationTokenSource;
 	private TimeSpan _dueTime;
@@ -257,6 +266,30 @@ internal sealed class TimerMock : ITimerMock
 		    (_state?.GetType() is { IsGenericType: true, Name: "CancellationPromise`1", } type &&
 		     type.DeclaringType == typeof(Task)));
 
+	/// <summary>
+	///     Returns whether the creator of the timer with the <paramref name="state" /> is still setting it up, or
+	///     <see langword="null" /> when it is done once the timer is created.
+	/// </summary>
+	/// <remarks>
+	///     <c>Task.Delay(TimeSpan, TimeProvider, CancellationToken)</c> passes its private
+	///     <c>Task.DelayPromiseWithCancellation</c> as state and registers its token only after it created the timer, so
+	///     that a timeout which fires before would not cancel it. Its registration is read by reflection, as the type
+	///     cannot be referenced.
+	/// </remarks>
+	private static Func<bool>? GetIsBeingSetUp(object? state)
+	{
+#if FEATURE_TIMEPROVIDER
+		if (DelayRegistrationField is { } field && state is Task delay &&
+		    delay.GetType() == field.DeclaringType)
+		{
+			return () => !delay.IsCompleted &&
+			             field.GetValue(delay) is CancellationTokenRegistration registration &&
+			             registration.Equals(default);
+		}
+#endif
+		return null;
+	}
+
 	private void Execute(TimerScheduler.ScheduledTimer scheduled, CancellationToken cancellationToken)
 	{
 		if (!TryExecute(scheduled.DueTicks, cancellationToken))
@@ -335,7 +368,7 @@ internal sealed class TimerMock : ITimerMock
 	{
 		TimerScheduler.ScheduledTimer? scheduled = null;
 		scheduled = new TimerScheduler.ScheduledTimer(dueTicks, _autoAdvance && !IsTimeout(),
-			() => Execute(scheduled!, cancellationToken));
+			() => Execute(scheduled!, cancellationToken), GetIsBeingSetUp(_state));
 		lock (_lock)
 		{
 			if (cancellationToken.IsCancellationRequested)
