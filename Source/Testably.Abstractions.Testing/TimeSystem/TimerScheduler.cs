@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -285,7 +286,8 @@ internal sealed class TimerScheduler
 	///     swallowed, unless the clock stopped moving, which would otherwise repeat it forever.
 	///     <para />
 	///     Before each step, it waits until no timer is being created, as a creator, e.g. of a delay, may cancel or
-	///     dispose its timer only once it holds it.
+	///     dispose its timer only once it holds it, and until the creator of the earliest timer set it up, e.g. registered
+	///     the token that cancels a delay.
 	/// </remarks>
 	private void AdvanceToTheAdvancingTimers()
 	{
@@ -294,7 +296,7 @@ internal sealed class TimerScheduler
 			while (true)
 			{
 				WaitWhileCreatingTimers();
-				long targetTicks;
+				ScheduledTimer earliest;
 				lock (_lock)
 				{
 					if (_advancingTimers.Count == 0)
@@ -303,8 +305,15 @@ internal sealed class TimerScheduler
 						return;
 					}
 
-					targetTicks = _advancingTimers.Min!.DueTicks;
+					earliest = _advancingTimers.Min!;
 				}
+
+				if (earliest.WaitUntilSetUp(BlockedCallbackLimit))
+				{
+					continue;
+				}
+
+				long targetTicks = earliest.DueTicks;
 
 				long ticksBefore = _clock.ElapsedTicks;
 				try
@@ -609,7 +618,18 @@ internal sealed class TimerScheduler
 	/// <summary>
 	///     A timer on the schedule of the <see cref="TimerScheduler" />.
 	/// </summary>
-	internal sealed class ScheduledTimer(long dueTicks, bool advancesClock, Action fire)
+	/// <param name="dueTicks">The <see cref="ITimeProvider.ElapsedTicks" /> at which the timer is due.</param>
+	/// <param name="advancesClock">Whether the timer moves the clock to its due time on its own.</param>
+	/// <param name="fire">Runs the callback of the timer.</param>
+	/// <param name="isBeingSetUp">
+	///     Whether the creator of the timer is still setting it up, or <see langword="null" /> when it is done once the
+	///     timer is created.
+	/// </param>
+	internal sealed class ScheduledTimer(
+		long dueTicks,
+		bool advancesClock,
+		Action fire,
+		Func<bool>? isBeingSetUp = null)
 	{
 		/// <summary>
 		///     Orders the timers by their due time, and timers with the same due time by the order of scheduling.
@@ -619,6 +639,7 @@ internal sealed class TimerScheduler
 				? x.DueTicks.CompareTo(y.DueTicks)
 				: x.Sequence.CompareTo(y.Sequence));
 
+		private Func<bool>? _isBeingSetUp = isBeingSetUp;
 		private volatile bool _isScheduled;
 
 		/// <summary>
@@ -649,5 +670,31 @@ internal sealed class TimerScheduler
 		///     Runs the callback of the timer.
 		/// </summary>
 		public void RunCallback() => fire();
+
+		/// <summary>
+		///     Waits until the creator set the timer up, at most for the <paramref name="limit" />.
+		/// </summary>
+		/// <remarks>
+		///     It checks only once, as a creator sets its timer up only once, and the limit keeps a creator that never
+		///     completes it, e.g. on the token of a disposed source, from stopping the clock.
+		/// </remarks>
+		/// <returns><see langword="true" />, when it waited.</returns>
+		public bool WaitUntilSetUp(TimeSpan limit)
+		{
+			Func<bool>? isSettingUp = Interlocked.Exchange(ref _isBeingSetUp, null);
+			if (isSettingUp?.Invoke() != true)
+			{
+				return false;
+			}
+
+			Stopwatch stopwatch = Stopwatch.StartNew();
+			SpinWait spinWait = default;
+			while (isSettingUp() && stopwatch.Elapsed < limit)
+			{
+				spinWait.SpinOnce();
+			}
+
+			return true;
+		}
 	}
 }
