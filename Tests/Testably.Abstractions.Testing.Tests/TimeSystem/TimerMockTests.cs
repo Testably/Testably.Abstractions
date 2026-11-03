@@ -2,6 +2,7 @@
 using aweXpect.Core;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using Testably.Abstractions.Testing.TimeSystem;
 using ITimer = Testably.Abstractions.TimeSystem.ITimer;
@@ -69,7 +70,8 @@ public class TimerMockTests
 	{
 		MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
 		using SemaphoreSlim gate = new(1);
-		TaskCompletionSource<bool> fired = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		// Waited for synchronously, as an asynchronous continuation would wake the waiting thread through the thread pool.
+		TaskCompletionSource<bool> fired = new();
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 			gate.Wait();
@@ -77,15 +79,15 @@ public class TimerMockTests
 			fired.TrySetResult(true);
 		}, null, 1.Seconds(), Timeout.InfiniteTimeSpan);
 
-		Task advance = Task.Run(() =>
+		// A dedicated thread, as a pool thread may start too late under parallel tests on .NET Framework.
+		Thread advanceThread = new(() =>
 		{
 			gate.Wait();
 			timeSystem.TimeProvider.AdvanceBy(5.Seconds());
 			gate.Release();
 		});
-		Task advancedAndFired = Task.WhenAll(advance, fired.Task);
-		bool isCompleted = await Task.WhenAny(advancedAndFired,
-			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == advancedAndFired;
+		advanceThread.Start();
+		bool isCompleted = advanceThread.Join(5000) && fired.Task.Wait(5000);
 
 		await That(isCompleted).IsTrue()
 			.Because("a callback that waits for the lock held by the advancing code must not block it");
@@ -1057,9 +1059,8 @@ public class TimerMockTests
 		ITimer? timer = null;
 		timer = timeSystem.Timer.New(_ => timer!.Dispose(), null, 1.Seconds(), 1.Seconds());
 		ITimerMock timerMock = timeSystem.TimerHandler[0];
-		Task wait = Task.Run(() => timerMock.Wait(timeout: 5000));
 
-		await AdvanceUntilCompleted(timeSystem, wait);
+		AdvanceUntilCompleted(timeSystem, () => timerMock.Wait(timeout: 5000));
 
 		await That(timerMock.ExecutionCount).IsEqualTo(1)
 			.Because("the callback disposed the timer at its first execution");
@@ -1072,8 +1073,7 @@ public class TimerMockTests
 			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
 		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 1.Seconds(), 1.Seconds());
 		ITimerMock timerMock = timeSystem.TimerHandler[0];
-		Task wait = Task.Run(() => timerMock.Wait(timeout: 5000));
-		await AdvanceUntilCompleted(timeSystem, wait);
+		AdvanceUntilCompleted(timeSystem, () => timerMock.Wait(timeout: 5000));
 		long executionCount = timerMock.ExecutionCount;
 
 		void Act() => timeSystem.TimeProvider.AdvanceBy(2.Seconds());
@@ -1091,14 +1091,12 @@ public class TimerMockTests
 		ITimerMock timerMock = timeSystem.TimerHandler[0];
 		DateTime? before = null;
 		DateTime? after = null;
-		Task wait = Task.Run(() => timerMock.Wait(timeout: 5000, callback: _ =>
+		AdvanceUntilCompleted(timeSystem, () => timerMock.Wait(timeout: 5000, callback: _ =>
 		{
 			before = timeSystem.DateTime.UtcNow;
 			Thread.Sleep(100);
 			after = timeSystem.DateTime.UtcNow;
 		}));
-
-		await AdvanceUntilCompleted(timeSystem, wait);
 
 		await That(before).IsNotNull();
 		await That(after).IsEqualTo(before)
@@ -1134,18 +1132,37 @@ public class TimerMockTests
 	}
 
 	/// <summary>
-	///     Advances the clock step by step until the <paramref name="task" /> completes, as a <c>Wait</c> on another
-	///     thread starts the timer only after an unknown time.
+	///     Runs the <paramref name="wait" /> on another thread and advances the clock step by step until it completes, as
+	///     a <c>Wait</c> on another thread starts the timer only after an unknown time.
 	/// </summary>
-	private static async Task AdvanceUntilCompleted(MockTimeSystem timeSystem, Task task)
+	/// <remarks>
+	///     It uses a dedicated thread and no asynchronous delay, as the thread pool may run them too late under parallel
+	///     tests on .NET Framework.
+	/// </remarks>
+	private static void AdvanceUntilCompleted(MockTimeSystem timeSystem, Action wait)
 	{
-		while (!task.IsCompleted)
+		Exception? exception = null;
+		Thread waitThread = new(() =>
+		{
+			try
+			{
+				wait();
+			}
+			catch (Exception ex)
+			{
+				exception = ex;
+			}
+		});
+		waitThread.Start();
+		while (!waitThread.Join(1))
 		{
 			timeSystem.TimeProvider.AdvanceBy(1.Seconds());
-			await Task.Delay(1, TestContext.Current!.Execution.CancellationToken);
 		}
 
-		await task;
+		if (exception is not null)
+		{
+			ExceptionDispatchInfo.Capture(exception).Throw();
+		}
 	}
 
 	private sealed class DummyWaitHandle : WaitHandle;
