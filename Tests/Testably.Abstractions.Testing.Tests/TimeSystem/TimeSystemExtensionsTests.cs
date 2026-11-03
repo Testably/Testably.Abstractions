@@ -293,13 +293,15 @@ public class TimeSystemExtensionsTests
 
 		using ITimer timer = provider.CreateTimer(_ => fired.TrySetResult(provider.GetUtcNow()), delay,
 			1.Seconds(), Timeout.InfiniteTimeSpan);
-		await Task.Delay(50.Milliseconds(), TestContext.Current!.Execution.CancellationToken);
+		await Task.Delay(50.Milliseconds(), System.TimeProvider.System,
+			TestContext.Current!.Execution.CancellationToken);
 		bool hasFiredBeforeTheRegistration = fired.Task.IsCompleted;
 		registrationField.SetValue(delay, cts.Token.Register(() => { }));
 
 		await That(hasFiredBeforeTheRegistration).IsFalse()
 			.Because("Task.Delay registers its token only after it created its timer");
-		await That(await fired.Task.WaitAsync(30.Seconds(), TestContext.Current!.Execution.CancellationToken))
+		await That(await fired.Task.WaitAsync(30.Seconds(), System.TimeProvider.System,
+				TestContext.Current!.Execution.CancellationToken))
 			.IsEqualTo(before + 1.Seconds());
 	}
 

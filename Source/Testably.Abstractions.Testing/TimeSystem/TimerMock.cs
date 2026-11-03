@@ -267,8 +267,8 @@ internal sealed class TimerMock : ITimerMock
 		     type.DeclaringType == typeof(Task)));
 
 	/// <summary>
-	///     Returns whether the creator of the timer is still setting it up, or <see langword="null" /> when it is done once
-	///     the timer is created.
+	///     Returns whether the creator of the timer with the <paramref name="state" /> is still setting it up, or
+	///     <see langword="null" /> when it is done once the timer is created.
 	/// </summary>
 	/// <remarks>
 	///     <c>Task.Delay(TimeSpan, TimeProvider, CancellationToken)</c> passes its private
@@ -276,10 +276,10 @@ internal sealed class TimerMock : ITimerMock
 	///     that a timeout which fires before would not cancel it. Its registration is read by reflection, as the type
 	///     cannot be referenced.
 	/// </remarks>
-	private Func<bool>? GetIsBeingSetUp()
+	private static Func<bool>? GetIsBeingSetUp(object? state)
 	{
 #if FEATURE_TIMEPROVIDER
-		if (DelayRegistrationField is { } field && _state is Task delay &&
+		if (DelayRegistrationField is { } field && state is Task delay &&
 		    delay.GetType() == field.DeclaringType)
 		{
 			return () => !delay.IsCompleted &&
@@ -368,7 +368,7 @@ internal sealed class TimerMock : ITimerMock
 	{
 		TimerScheduler.ScheduledTimer? scheduled = null;
 		scheduled = new TimerScheduler.ScheduledTimer(dueTicks, _autoAdvance && !IsTimeout(),
-			() => Execute(scheduled!, cancellationToken), GetIsBeingSetUp());
+			() => Execute(scheduled!, cancellationToken), GetIsBeingSetUp(_state));
 		lock (_lock)
 		{
 			if (cancellationToken.IsCancellationRequested)
