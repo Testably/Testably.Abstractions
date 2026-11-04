@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Helpers;
@@ -19,7 +20,9 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 ///     share one thread. Like a real timer, the callback runs on another thread. The thread that fires it waits until
 ///     the callback completes, so that the clock stands still while it runs. A callback that waits for the clock
 ///     releases that thread, and a callback that blocks on anything else holds it for at most
-///     <see cref="BlockedCallbackLimit" />, as it may wait for the thread that moves the clock.
+///     <see cref="BlockedCallbackLimit" />, as it may wait for the thread that moves the clock. With a strict timer order,
+///     the clock never moves on while such a callback blocks: after the strict callback timeout, the scheduler fails, and
+///     every later move of the clock throws.
 ///     The built-in <see cref="TimeProviderMock" /> moves its clock through the scheduler. When any other provider is
 ///     moved directly, the timers that became due are fired afterward in the background, as the clock is already past
 ///     them.
@@ -61,6 +64,11 @@ internal sealed class TimerScheduler
 	private readonly ITimeProvider _clock;
 	private readonly object _creatingLock = new();
 	private int _creatingTimers;
+
+	/// <summary>
+	///     How long the clock waits for the creator of a timer to set it up.
+	/// </summary>
+	private readonly TimeSpan _setUpLimit;
 	private TaskCompletionSource<bool>? _idle;
 	private bool _isAdvancing;
 	private int _isFiringDuePending;
@@ -73,11 +81,20 @@ internal sealed class TimerScheduler
 	private int _reservations;
 	private long _reservedTicks = long.MinValue;
 	private int _runningCallbacks;
+	private readonly TimeSpan? _strictCallbackTimeout;
+	private string? _strictFailure;
 	private readonly SortedSet<ScheduledTimer> _timers = new(ScheduledTimer.DueTimeComparer);
 
-	public TimerScheduler(ITimeProvider clock)
+	/// <param name="clock">The clock that the scheduler moves.</param>
+	/// <param name="strictCallbackTimeout">
+	///     How long to wait for a callback that blocks, before the scheduler fails instead of moving the clock on, or
+	///     <see langword="null" /> to move the clock on after the <see cref="BlockedCallbackLimit" />.
+	/// </param>
+	public TimerScheduler(ITimeProvider clock, TimeSpan? strictCallbackTimeout = null)
 	{
 		_clock = clock;
+		_strictCallbackTimeout = strictCallbackTimeout;
+		_setUpLimit = strictCallbackTimeout ?? BlockedCallbackLimit;
 	}
 
 	/// <summary>
@@ -110,6 +127,7 @@ internal sealed class TimerScheduler
 	/// </remarks>
 	public void AdvanceBy(TimeSpan interval)
 	{
+		ThrowIfFailed();
 		long targetTicks;
 		lock (_advanceLock)
 		{
@@ -158,6 +176,7 @@ internal sealed class TimerScheduler
 	/// </summary>
 	public void SetTo(DateTime value)
 	{
+		ThrowIfFailed();
 		lock (_advanceLock)
 		{
 			Step(() => _clock.SetTo(value));
@@ -315,6 +334,7 @@ internal sealed class TimerScheduler
 	/// </remarks>
 	public bool AdvanceToNextTimer(int timeout)
 	{
+		ThrowIfFailed();
 		while (true)
 		{
 			WaitWhileCreatingTimers();
@@ -329,7 +349,7 @@ internal sealed class TimerScheduler
 				earliest = _timers.Min!;
 			}
 
-			if (earliest.WaitUntilSetUp(BlockedCallbackLimit))
+			if (earliest.WaitUntilSetUp(_setUpLimit))
 			{
 				continue;
 			}
@@ -343,7 +363,13 @@ internal sealed class TimerScheduler
 
 			if (!StartFiring(next).Ended.Task.Wait(timeout))
 			{
-				throw ExceptionFactory.TimerCallbackTimeout(timeout);
+				if (_strictCallbackTimeout is null)
+				{
+					throw ExceptionFactory.TimerCallbackTimeout(timeout);
+				}
+
+				Fail(ExceptionFactory.StrictTimerCallbackTimeout(DueTimeOf(next),
+					TimeSpan.FromMilliseconds(timeout)).Message);
 			}
 
 			return true;
@@ -380,14 +406,15 @@ internal sealed class TimerScheduler
 	/// </summary>
 	/// <remarks>
 	///     The task completes on the thread that made the timers idle, which may be a thread of the scheduler, so it must
-	///     only be waited for synchronously.
+	///     only be waited for synchronously. After a failure with a strict timer order, the task is completed, so that the
+	///     caller reports the failure.
 	/// </remarks>
 	public Task WhenIdle()
 	{
 		long now = _clock.ElapsedTicks;
 		lock (_lock)
 		{
-			if (IsIdle(now))
+			if (_strictFailure is not null || IsIdle(now))
 			{
 				return Task.CompletedTask;
 			}
@@ -430,7 +457,7 @@ internal sealed class TimerScheduler
 					earliest = _advancingTimers.Min!;
 				}
 
-				if (earliest.WaitUntilSetUp(BlockedCallbackLimit))
+				if (earliest.WaitUntilSetUp(_setUpLimit))
 				{
 					continue;
 				}
@@ -489,6 +516,16 @@ internal sealed class TimerScheduler
 	private void Fire(ScheduledTimer timer)
 	{
 		FiringCallback firing = StartFiring(timer);
+		if (_strictCallbackTimeout is { } timeout)
+		{
+			if (!firing.Ended.Task.Wait(timeout))
+			{
+				Fail(ExceptionFactory.StrictTimerCallbackTimeout(DueTimeOf(timer), timeout).Message);
+			}
+
+			return;
+		}
+
 		Stopwatch running = Stopwatch.StartNew();
 		TimeSpan blocked = TimeSpan.Zero;
 		while (!firing.Ended.Task.Wait(CallbackCheckInterval) &&
@@ -498,6 +535,53 @@ internal sealed class TimerScheduler
 			{
 				blocked += CallbackCheckInterval;
 			}
+		}
+	}
+
+	/// <summary>
+	///     Describes the time at which the <paramref name="timer" /> is due, for the message of a failure.
+	/// </summary>
+	/// <remarks>
+	///     Falls back to the elapsed time, when the clock was set so close to the end of its range that the due time
+	///     lies beyond it, so that describing the timer never keeps the failure from being recorded.
+	/// </remarks>
+	private string DueTimeOf(ScheduledTimer timer)
+	{
+		long ticksSinceDue = _clock.ElapsedTicks - timer.DueTicks;
+		DateTime now = _clock.Read();
+		return ticksSinceDue <= now.Ticks && ticksSinceDue >= now.Ticks - DateTime.MaxValue.Ticks
+			? now.AddTicks(-ticksSinceDue).ToString("O", CultureInfo.InvariantCulture)
+			: $"{TimeSpan.FromTicks(timer.DueTicks)} elapsed";
+	}
+
+	/// <summary>
+	///     Lets the scheduler fail with the <paramref name="message" />, so that the clock never moves on, and throws.
+	/// </summary>
+	/// <remarks>
+	///     The waits for idle timers are woken, so that they report the failure instead of their own timeout.
+	/// </remarks>
+	private void Fail(string message)
+	{
+		TaskCompletionSource<bool>? idle;
+		lock (_lock)
+		{
+			_strictFailure ??= message;
+			idle = _idle;
+			_idle = null;
+		}
+
+		idle?.TrySetResult(true);
+		ThrowIfFailed();
+	}
+
+	/// <summary>
+	///     Throws a <see cref="TimeoutException" />, when a callback blocked for longer than the strict callback timeout.
+	/// </summary>
+	public void ThrowIfFailed()
+	{
+		if (Volatile.Read(ref _strictFailure) is { } failure)
+		{
+			throw new TimeoutException(failure);
 		}
 	}
 
@@ -757,6 +841,7 @@ internal sealed class TimerScheduler
 	/// </remarks>
 	private ScheduledTimer? TakeNext(long targetTicks)
 	{
+		ThrowIfFailed();
 		lock (_advanceLock)
 		{
 			while (true)
@@ -924,6 +1009,7 @@ internal sealed class TimerScheduler
 		///     It checks only once, as a creator sets its timer up only once, and the limit keeps a creator that never
 		///     completes it, e.g. on the token of a disposed source, from stopping the clock.
 		/// </remarks>
+		/// <param name="limit">How long to wait at most, or <see cref="Timeout.InfiniteTimeSpan" />.</param>
 		/// <returns><see langword="true" />, when it waited.</returns>
 		public bool WaitUntilSetUp(TimeSpan limit)
 		{
@@ -935,7 +1021,7 @@ internal sealed class TimerScheduler
 
 			Stopwatch stopwatch = Stopwatch.StartNew();
 			SpinWait spinWait = default;
-			while (isSettingUp() && stopwatch.Elapsed < limit)
+			while (isSettingUp() && (limit == Timeout.InfiniteTimeSpan || stopwatch.Elapsed < limit))
 			{
 				spinWait.SpinOnce();
 			}

@@ -105,7 +105,9 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 	public void WaitUntilIdle(int timeout = 10000)
 	{
 		ThrowIfTimeoutIsInvalid(timeout);
-		if (!_mockTimeSystem.Scheduler.WhenIdle().Wait(timeout))
+		bool isIdle = _mockTimeSystem.Scheduler.WhenIdle().Wait(timeout);
+		_mockTimeSystem.Scheduler.ThrowIfFailed();
+		if (!isIdle)
 		{
 			throw ExceptionFactory.TimersNotIdle(timeout, _mockTimeSystem.Scheduler.DescribeBusyTimers());
 		}
@@ -123,6 +125,7 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 		Task idle = _mockTimeSystem.Scheduler.WhenIdle();
 		if (idle.IsCompleted)
 		{
+			_mockTimeSystem.Scheduler.ThrowIfFailed();
 			return;
 		}
 
@@ -134,6 +137,7 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 		Task finished = await Task.WhenAny(idleOnThreadPool, Task.Delay(timeout, delayCancellation.Token))
 			.ConfigureAwait(false);
 		delayCancellation.Cancel();
+		_mockTimeSystem.Scheduler.ThrowIfFailed();
 		if (finished != idleOnThreadPool)
 		{
 			cancellationToken.ThrowIfCancellationRequested();

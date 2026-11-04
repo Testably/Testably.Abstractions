@@ -369,6 +369,10 @@ internal static class ExceptionFactory
 	internal static TimeoutException TimerCallbackTimeout(int timeout)
 		=> new($"The callback of the next timer did not complete in {timeout}ms.");
 
+	internal static TimeoutException StrictTimerCallbackTimeout(string dueTime, TimeSpan timeout)
+		=> new(
+			$"The callback of the timer due at {dueTime} did not complete in {timeout} while the clock waited for it with a strict timer order. It probably waits for something that only the clock can deliver, e.g. another timer of the same MockTimeSystem, which cannot happen while the clock waits for the callback.");
+
 	internal static TimeoutException TimersNotIdle(int timeout, string busyTimers)
 		=> new($"The timers did not become idle in {timeout}ms: {busyTimers}.");
 
