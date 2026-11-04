@@ -508,23 +508,28 @@ internal sealed class TimerScheduler
 	private FiringCallback Start(ScheduledTimer timer)
 	{
 		FiringCallback firing = new(this);
-		CallbackThread.Run(() =>
-		{
-			FiringCallback.Current = firing;
-			firing.Start();
-			try
-			{
-				timer.RunCallback();
-			}
-			finally
-			{
-				FiringCallback.Current = null;
-				firing.End();
-			}
-		});
-
+		CallbackThread.Run(() => RunCallback(firing, timer));
 		firing.Started.Task.Wait();
 		return firing;
+	}
+
+	/// <summary>
+	///     Runs the callback of the <paramref name="timer" /> as the <paramref name="firing" /> callback of the current
+	///     thread.
+	/// </summary>
+	private static void RunCallback(FiringCallback firing, ScheduledTimer timer)
+	{
+		FiringCallback.Current = firing;
+		firing.Start();
+		try
+		{
+			timer.RunCallback();
+		}
+		finally
+		{
+			FiringCallback.Current = null;
+			firing.End();
+		}
 	}
 
 	/// <summary>
