@@ -218,6 +218,44 @@ public class TimerMockTests
 	}
 
 	[Test]
+	public async Task AutoAdvance_WhenACallbackRunsLongerThanTheBlockedCallbackLimit_ShouldHoldTheClock()
+	{
+		MockTimeSystem timeSystem = new();
+		List<string> events = [];
+		TaskCompletionSource<bool> secondFired = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		using ITimer first = timeSystem.Timer.New(_ =>
+		{
+			// Busy instead of blocked, like a callback whose thread does not get scheduled on a loaded machine.
+			Stopwatch stopwatch = Stopwatch.StartNew();
+			while (stopwatch.Elapsed < 1.5.Seconds())
+			{
+				Thread.SpinWait(100);
+			}
+
+			lock (events)
+			{
+				events.Add("first");
+			}
+		}, null, 1.Seconds(), Timeout.InfiniteTimeSpan);
+		using ITimer second = timeSystem.Timer.New(_ =>
+		{
+			lock (events)
+			{
+				events.Add("second");
+			}
+
+			secondFired.TrySetResult(true);
+		}, null, 2.Seconds(), Timeout.InfiniteTimeSpan);
+
+		bool isFired = await Task.WhenAny(secondFired.Task,
+			Task.Delay(10.Seconds(), TestContext.Current!.Execution.CancellationToken)) == secondFired.Task;
+
+		await That(isFired).IsTrue();
+		await That(events).IsEqualTo(["first", "second",])
+			.Because("only the time in which a callback is blocked counts towards the limit after which the clock moves on");
+	}
+
+	[Test]
 	public async Task AutoAdvance_WhenACallbackWaitsForAnotherTimer_ShouldNotDeadlock()
 	{
 		MockTimeSystem timeSystem = new();
