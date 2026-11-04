@@ -19,12 +19,12 @@ jobs:
                 run: |
                     version="${TAG#v}"
                     for attempt in $(seq 1 30); do
-                        if curl -fsS https://api.nuget.org/v3-flatcontainer/testably.abstractions/index.json | grep -qi "\"$version\""; then
+                        if curl -fsS https://api.nuget.org/v3-flatcontainer/testably.abstractions.testing/index.json | grep -qi "\"$version\""; then
                             exit 0
                         fi
                         sleep 30
                     done
-                    echo "Testably.Abstractions $version is not listed on NuGet after 15 minutes."
+                    echo "Testably.Abstractions.Testing $version is not listed on NuGet after 15 minutes."
                     exit 1
             -   name: Dispatch extension-documentation-updated-event to Testably/Testably.Site
                 uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4.0.1
