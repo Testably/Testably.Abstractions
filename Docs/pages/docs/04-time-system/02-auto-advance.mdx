@@ -30,6 +30,8 @@ using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1), timeProvider);
 await Task.Delay(TimeSpan.FromSeconds(5), timeProvider, cts.Token);
 ```
 
+A `Task.Delay` on the `TimeProvider` holds the clock until it registered its cancellation token, so that a timeout due before the delay can still cancel it. This takes up to 5 seconds of real time when the delay never registers, e.g. with the token of a disposed `CancellationTokenSource`.
+
 A wait that its timeout cancels on the way stops the clock at the timeout. This applies to `Task.Delay` and `PeriodicTimer.WaitForNextTickAsync` of the `MockTimeSystem` and to `Task.Delay` on the `TimeProvider`.
 
 :::warning[Waiting only for a timeout]

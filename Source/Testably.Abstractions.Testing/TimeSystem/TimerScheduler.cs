@@ -40,6 +40,17 @@ internal sealed class TimerScheduler
 	private static readonly TimeSpan BlockedCallbackLimit = TimeSpan.FromSeconds(1);
 
 	/// <summary>
+	///     How long the timers that advance the clock wait for the creator of the earliest timer to set it up, e.g. for
+	///     <c>Task.Delay</c> on the <c>TimeProvider</c> to register its cancellation.
+	/// </summary>
+	/// <remarks>
+	///     A creator usually finishes at once, but on a loaded machine its thread may not run for a while, and a timer
+	///     that fires before then cannot be canceled by it. The limit only matters for a creator that never finishes,
+	///     e.g. on the token of a disposed source, which then delays the clock once for each such timer.
+	/// </remarks>
+	private static readonly TimeSpan SetUpLimit = TimeSpan.FromSeconds(5);
+
+	/// <summary>
 	///     How often the thread that fired a callback checks whether the callback is blocked.
 	/// </summary>
 	private static readonly TimeSpan CallbackCheckInterval = TimeSpan.FromMilliseconds(10);
@@ -94,7 +105,7 @@ internal sealed class TimerScheduler
 	{
 		_clock = clock;
 		_strictCallbackTimeout = strictCallbackTimeout;
-		_setUpLimit = strictCallbackTimeout ?? BlockedCallbackLimit;
+		_setUpLimit = strictCallbackTimeout ?? SetUpLimit;
 	}
 
 	/// <summary>
