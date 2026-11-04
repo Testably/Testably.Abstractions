@@ -385,6 +385,7 @@ internal sealed class TimerScheduler
 		TaskCompletionSource<bool> completed = new();
 		CallbackThread.Run(() =>
 		{
+			FiringCallback.Current = firing;
 			firing.Start();
 			try
 			{
@@ -631,7 +632,7 @@ internal sealed class TimerScheduler
 		/// <summary>
 		///     Whether the thread of the callback is blocked in a wait, once it <see cref="Started" />.
 		/// </summary>
-		public bool IsBlocked => (_thread!.ThreadState & System.Threading.ThreadState.WaitSleepJoin) != 0;
+		public bool IsBlocked => _thread!.ThreadState.HasFlag(System.Threading.ThreadState.WaitSleepJoin);
 
 		/// <summary>
 		///     Completed when the callback waits for the clock.
@@ -651,7 +652,6 @@ internal sealed class TimerScheduler
 		public void Start()
 		{
 			_thread = Thread.CurrentThread;
-			Current = this;
 			Started.TrySetResult(true);
 		}
 	}
