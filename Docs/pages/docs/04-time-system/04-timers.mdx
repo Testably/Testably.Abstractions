@@ -29,6 +29,26 @@ await That(ticks).IsEqualTo(3);
 
 `ITimerMock.Wait(int executionCount = 1, int timeout = 10000, Action<ITimerMock>? callback = null)` is the testing-only addition. Note `timeout` is **milliseconds** (not `TimeSpan`; this differs from `IAwaitableCallback<T>.Wait`, which takes a `TimeSpan?`). The optional `callback` runs between executions and receives the timer itself; call `Dispose()` on it to stop early.
 
+## Stepping through the timers
+
+When the code under test creates its timers internally, e.g. through `ToTimeProvider()`, the test cannot wait for a specific one. `timeSystem.TimerHandler.AdvanceToNextTimer()` moves the clock to the earliest scheduled timer, fires it and blocks until its callback completes or waits for the clock. It returns `false` without moving the clock when no timer is scheduled. This lets a test step through the intervals of a retry loop one by one, typically with [auto-advance](./02-auto-advance.mdx) disabled, so that the timers do not move the clock on their own:
+
+```csharp
+MockTimeSystem timeSystem = new(o => o.DisableAutoAdvance());
+DateTime start = timeSystem.DateTime.UtcNow;
+using ITimer timer = timeSystem.Timer.New(_ => { }, null,
+    dueTime: TimeSpan.FromSeconds(1),
+    period: TimeSpan.FromSeconds(2));
+
+timeSystem.TimerHandler.AdvanceToNextTimer();
+await That(timeSystem.DateTime.UtcNow - start).IsEqualTo(TimeSpan.FromSeconds(1));
+
+timeSystem.TimerHandler.AdvanceToNextTimer();
+await That(timeSystem.DateTime.UtcNow - start).IsEqualTo(TimeSpan.FromSeconds(3));
+```
+
+The next timer can also be a timeout, which never moves the clock on its own. The callback has 10 seconds by default to complete (`timeout` in milliseconds), after which a `TimeoutException` is thrown. The timers that the callback schedules are not waited for; follow up with `WaitUntilIdle()` (see [auto-advance](./02-auto-advance.mdx#waiting-until-the-timers-are-idle)) when they matter. With auto-advance on, the timers that move the clock on their own may fire first, and `AdvanceToNextTimer()` fires the earliest remaining one.
+
 ## Timer strategies
 
 `WithTimerStrategy(TimerStrategy)` controls when timers start and how exceptions inside callbacks are handled:

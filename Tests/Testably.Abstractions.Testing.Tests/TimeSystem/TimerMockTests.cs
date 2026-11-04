@@ -37,10 +37,10 @@ public class TimerMockTests
 			1.Seconds(), Timeout.InfiniteTimeSpan);
 
 		factory.Provider!.AdvanceBy(2.Seconds());
-		bool isFired = await Task.WhenAny(fired.Task,
-			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == fired.Task;
+		await timeSystem.TimerHandler.WaitUntilIdleAsync(
+			cancellationToken: TestContext.Current!.Execution.CancellationToken);
 
-		await That(isFired).IsTrue();
+		await That(fired.Task.IsCompleted).IsTrue();
 		await That(await fired.Task).IsEqualTo(start + 2.Seconds())
 			.Because("the clock was already past the due time when the provider was advanced directly");
 	}
@@ -149,17 +149,12 @@ public class TimerMockTests
 		DateTime start = timeSystem.DateTime.UtcNow;
 		List<TimeSpan> callbackTimes = [];
 		List<ITimer> timers = [];
-		TaskCompletionSource<bool> allFired = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
 		void AddCallbackTime(object? _)
 		{
 			lock (callbackTimes)
 			{
 				callbackTimes.Add(timeSystem.DateTime.UtcNow - start);
-				if (callbackTimes.Count == 3)
-				{
-					allFired.TrySetResult(true);
-				}
 			}
 		}
 
@@ -169,11 +164,10 @@ public class TimerMockTests
 			timers.Add(timeSystem.Timer.New(AddCallbackTime, null, 1.Seconds(), Timeout.InfiniteTimeSpan));
 			timers.Add(timeSystem.Timer.New(AddCallbackTime, null, 2.Seconds(), Timeout.InfiniteTimeSpan));
 		}, null, TimeSpan.Zero, Timeout.InfiniteTimeSpan);
-		bool isCompleted = await Task.WhenAny(allFired.Task,
-			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == allFired.Task;
+		await timeSystem.TimerHandler.WaitUntilIdleAsync(
+			cancellationToken: TestContext.Current!.Execution.CancellationToken);
 		timers.ForEach(timer => timer.Dispose());
 
-		await That(isCompleted).IsTrue();
 		await That(callbackTimes).IsEqualTo([1.Seconds(), 2.Seconds(), 3.Seconds(),])
 			.Because("all auto-advancing timers move the clock on one thread, in the order of their due time");
 	}
@@ -418,12 +412,12 @@ public class TimerMockTests
 		Thread.Sleep(50);
 		DateTime whileCreating = timeSystem.DateTime.UtcNow;
 		timeSystem.Scheduler.EndCreatingTimer();
-		bool isFired = await Task.WhenAny(fired.Task,
-			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == fired.Task;
+		await timeSystem.TimerHandler.WaitUntilIdleAsync(
+			cancellationToken: TestContext.Current!.Execution.CancellationToken);
 
 		await That(whileCreating).IsEqualTo(start)
 			.Because("the creator of a timer can finish setting it up, e.g. for its cancellation, before the clock moves");
-		await That(isFired).IsTrue();
+		await That(fired.Task.IsCompleted).IsTrue();
 	}
 
 	[Test]

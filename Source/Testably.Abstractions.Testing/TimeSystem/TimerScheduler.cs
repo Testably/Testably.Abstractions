@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.TimeSystem;
 
@@ -60,6 +61,7 @@ internal sealed class TimerScheduler
 	private readonly ITimeProvider _clock;
 	private readonly object _creatingLock = new();
 	private int _creatingTimers;
+	private TaskCompletionSource<bool>? _idle;
 	private bool _isAdvancing;
 	private int _isFiringDuePending;
 #if NET9_0_OR_GREATER
@@ -70,6 +72,7 @@ internal sealed class TimerScheduler
 	private long _nextSequence;
 	private int _reservations;
 	private long _reservedTicks = long.MinValue;
+	private int _runningCallbacks;
 	private readonly SortedSet<ScheduledTimer> _timers = new(ScheduledTimer.DueTimeComparer);
 
 	public TimerScheduler(ITimeProvider clock)
@@ -285,10 +288,114 @@ internal sealed class TimerScheduler
 	{
 		lock (_lock)
 		{
-			if (timer.IsScheduled)
+			if (!timer.IsScheduled)
 			{
-				Remove(timer);
+				return;
 			}
+
+			Remove(timer);
+		}
+
+		if (Volatile.Read(ref _idle) is not null)
+		{
+			// Not on this thread, as reading the clock waits while the clock notifies about a time change, whose
+			// callback may wait for this thread, e.g. to dispose a timer.
+			CallbackThread.Run(SignalIfIdle);
+		}
+	}
+
+	/// <summary>
+	///     Moves the clock to the earliest scheduled timer, also a timeout, fires it and waits until its callback
+	///     completes or waits for the clock, at most for the <paramref name="timeout" />.
+	/// </summary>
+	/// <returns><see langword="false" />, when no timer is scheduled, otherwise <see langword="true" />.</returns>
+	/// <remarks>
+	///     Like the timers that advance the clock, it waits until no timer is being created and until the creator of
+	///     the earliest timer set it up.
+	/// </remarks>
+	public bool AdvanceToNextTimer(int timeout)
+	{
+		while (true)
+		{
+			WaitWhileCreatingTimers();
+			ScheduledTimer earliest;
+			lock (_lock)
+			{
+				if (_timers.Count == 0)
+				{
+					return false;
+				}
+
+				earliest = _timers.Min!;
+			}
+
+			if (earliest.WaitUntilSetUp(BlockedCallbackLimit))
+			{
+				continue;
+			}
+
+			// The earliest timer may have been fired or removed, or an earlier one scheduled, in the meantime, so the
+			// next attempt checks the timer that is the earliest then.
+			if (TakeEarliest(earliest) is not { } next)
+			{
+				continue;
+			}
+
+			if (!StartFiring(next).Ended.Task.Wait(timeout))
+			{
+				throw ExceptionFactory.TimerCallbackTimeout(timeout);
+			}
+
+			return true;
+		}
+	}
+
+	/// <summary>
+	///     Describes what keeps the timers from being idle, e.g. for the message of a timeout.
+	/// </summary>
+	public string DescribeBusyTimers()
+	{
+		long now = _clock.ElapsedTicks;
+		lock (_lock)
+		{
+			int dueTimers = 0;
+			foreach (ScheduledTimer timer in _timers)
+			{
+				if (timer.DueTicks > now)
+				{
+					break;
+				}
+
+				dueTimers++;
+			}
+
+			return $"{_runningCallbacks} running callback(s), {dueTimers} due timer(s) and " +
+			       $"{_advancingTimers.Count} timer(s) that advance the clock";
+		}
+	}
+
+	/// <summary>
+	///     Returns a task that completes once the timers are idle: no timer is due or advances the clock on its own and no
+	///     timer callback runs, except for callbacks that wait for the clock.
+	/// </summary>
+	/// <remarks>
+	///     The task completes on the thread that made the timers idle, which may be a thread of the scheduler, so it must
+	///     only be waited for synchronously.
+	/// </remarks>
+	public Task WhenIdle()
+	{
+		long now = _clock.ElapsedTicks;
+		lock (_lock)
+		{
+			if (IsIdle(now))
+			{
+				return Task.CompletedTask;
+			}
+
+			// It stays until the timers become idle, also when the wait for it timed out, which only costs the check
+			// for idle when a callback ends or a timer is removed.
+			_idle ??= new TaskCompletionSource<bool>();
+			return _idle.Task;
 		}
 	}
 
@@ -364,7 +471,7 @@ internal sealed class TimerScheduler
 	///     while its callback runs.
 	/// </remarks>
 	public static void ReleaseClock()
-		=> FiringCallback.Current?.Release();
+		=> FiringCallback.Current?.End();
 
 	/// <summary>
 	///     Runs the callback of the <paramref name="timer" /> on a <see cref="CallbackThread" /> and waits until it
@@ -379,36 +486,49 @@ internal sealed class TimerScheduler
 	///     The completion sources are only waited for synchronously, so they do not run their continuations
 	///     asynchronously: on .NET Framework, that would wake each waiting thread through the thread pool.
 	/// </remarks>
-	private static void Fire(ScheduledTimer timer)
+	private void Fire(ScheduledTimer timer)
 	{
-		FiringCallback firing = new();
-		TaskCompletionSource<bool> completed = new();
-		CallbackThread.Run(() =>
-		{
-			FiringCallback.Current = firing;
-			firing.Start();
-			try
-			{
-				timer.RunCallback();
-			}
-			finally
-			{
-				FiringCallback.Current = null;
-				completed.TrySetResult(true);
-			}
-		});
-
-		firing.Started.Task.Wait();
-		Task[] ends = [completed.Task, firing.Released.Task,];
+		FiringCallback firing = StartFiring(timer);
 		Stopwatch running = Stopwatch.StartNew();
 		TimeSpan blocked = TimeSpan.Zero;
-		while (Task.WaitAny(ends, CallbackCheckInterval) < 0 &&
+		while (!firing.Ended.Task.Wait(CallbackCheckInterval) &&
 		       blocked < BlockedCallbackLimit && running.Elapsed < RunningCallbackLimit)
 		{
 			if (firing.IsBlocked)
 			{
 				blocked += CallbackCheckInterval;
 			}
+		}
+	}
+
+	/// <summary>
+	///     Runs the callback of the <paramref name="timer" /> on a <see cref="CallbackThread" /> and waits until it
+	///     started.
+	/// </summary>
+	private FiringCallback StartFiring(ScheduledTimer timer)
+	{
+		FiringCallback firing = new(this);
+		CallbackThread.Run(() => RunFiringCallback(firing, timer));
+		firing.Started.Task.Wait();
+		return firing;
+	}
+
+	/// <summary>
+	///     Runs the callback of the <paramref name="timer" /> as the <paramref name="firing" /> callback of the current
+	///     thread.
+	/// </summary>
+	private static void RunFiringCallback(FiringCallback firing, ScheduledTimer timer)
+	{
+		FiringCallback.Current = firing;
+		firing.Start();
+		try
+		{
+			timer.RunCallback();
+		}
+		finally
+		{
+			FiringCallback.Current = null;
+			firing.End();
 		}
 	}
 
@@ -547,6 +667,55 @@ internal sealed class TimerScheduler
 		}
 	}
 
+	/// <summary>
+	///     Whether the timers are idle at the elapsed ticks <paramref name="now" />. Must be called while holding
+	///     <see cref="_lock" />.
+	/// </summary>
+	private bool IsIdle(long now)
+		=> _runningCallbacks == 0 &&
+		   _advancingTimers.Count == 0 &&
+		   (_timers.Count == 0 || _timers.Min!.DueTicks > now);
+
+	private void OnCallbackEnded()
+	{
+		lock (_lock)
+		{
+			_runningCallbacks--;
+		}
+
+		SignalIfIdle();
+	}
+
+	/// <summary>
+	///     Completes the task of <see cref="WhenIdle" />, when the timers are idle.
+	/// </summary>
+	/// <remarks>
+	///     The clock is read before the schedule is locked, as moving the clock locks it and notifies about the change,
+	///     whose callbacks may schedule timers.
+	/// </remarks>
+	private void SignalIfIdle()
+	{
+		if (Volatile.Read(ref _idle) is null)
+		{
+			return;
+		}
+
+		long now = _clock.ElapsedTicks;
+		TaskCompletionSource<bool>? idle;
+		lock (_lock)
+		{
+			if (_idle is null || !IsIdle(now))
+			{
+				return;
+			}
+
+			idle = _idle;
+			_idle = null;
+		}
+
+		idle.TrySetResult(true);
+	}
+
 	private void Remove(ScheduledTimer timer)
 	{
 		timer.IsScheduled = false;
@@ -605,6 +774,8 @@ internal sealed class TimerScheduler
 					{
 						ScheduledTimer next = _timers.Min;
 						Remove(next);
+						// Counted from here, as the timer is no longer on the schedule, until its callback ends.
+						_runningCallbacks++;
 						return next;
 					}
 				}
@@ -618,9 +789,33 @@ internal sealed class TimerScheduler
 	}
 
 	/// <summary>
+	///     Moves the clock to the <paramref name="expected" /> timer and takes it from the schedule, or returns
+	///     <see langword="null" /> without moving the clock, when it is no longer the earliest scheduled timer.
+	/// </summary>
+	/// <remarks>
+	///     It holds the lock that moves the clock while it checks the earliest timer, so that no other thread moves the
+	///     clock past it in between. A timer that is removed right after the check leaves the clock at its due time.
+	/// </remarks>
+	private ScheduledTimer? TakeEarliest(ScheduledTimer expected)
+	{
+		lock (_advanceLock)
+		{
+			lock (_lock)
+			{
+				if (_timers.Count == 0 || _timers.Min != expected)
+				{
+					return null;
+				}
+			}
+
+			return TakeNext(expected.DueTicks);
+		}
+	}
+
+	/// <summary>
 	///     A timer callback that runs on its own thread, while the thread that fired it waits.
 	/// </summary>
-	private sealed class FiringCallback
+	private sealed class FiringCallback(TimerScheduler scheduler)
 	{
 		/// <summary>
 		///     The callback that runs on the current thread.
@@ -635,16 +830,14 @@ internal sealed class TimerScheduler
 		public bool IsBlocked => _thread!.ThreadState.HasFlag(System.Threading.ThreadState.WaitSleepJoin);
 
 		/// <summary>
-		///     Completed when the callback waits for the clock.
+		///     Completed when the callback completes or waits for the clock.
 		/// </summary>
-		public TaskCompletionSource<bool> Released { get; } = new();
+		public TaskCompletionSource<bool> Ended { get; } = new();
 
 		/// <summary>
 		///     Completed when the callback got a thread and starts.
 		/// </summary>
 		public TaskCompletionSource<bool> Started { get; } = new();
-
-		public void Release() => Released.TrySetResult(true);
 
 		/// <summary>
 		///     Marks that the callback starts on the current thread.
@@ -653,6 +846,18 @@ internal sealed class TimerScheduler
 		{
 			_thread = Thread.CurrentThread;
 			Started.TrySetResult(true);
+		}
+
+		/// <summary>
+		///     Marks that the callback completed or waits for the clock, after which it no longer keeps the timers from
+		///     being idle.
+		/// </summary>
+		public void End()
+		{
+			if (Ended.TrySetResult(true))
+			{
+				scheduler.OnCallbackEnded();
+			}
 		}
 	}
 
