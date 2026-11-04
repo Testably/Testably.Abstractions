@@ -203,6 +203,9 @@ public sealed class MockTimeSystem : ITimeSystem
 		///     5 seconds.
 		/// </summary>
 		/// <remarks>
+		///     Enable it when your tests depend on the order of the timers, e.g. a timeout that must cancel a delay before
+		///     the delay completes, and fail only on a loaded machine, like a busy CI runner.
+		///     <para />
 		///     By default, the clock moves on when a callback blocked for one second of real time, as it may wait for the
 		///     clock. With a strict timer order, the clock waits until the callback completes or waits for the clock
 		///     through the <see cref="MockTimeSystem" />. When that takes longer than the timeout, the scheduler fails: the
@@ -221,6 +224,9 @@ public sealed class MockTimeSystem : ITimeSystem
 		///     the <paramref name="callbackTimeout" />.
 		/// </summary>
 		/// <remarks>
+		///     Enable it when your tests depend on the order of the timers, e.g. a timeout that must cancel a delay before
+		///     the delay completes, and fail only on a loaded machine, like a busy CI runner.
+		///     <para />
 		///     By default, the clock moves on when a callback blocked for one second of real time, as it may wait for the
 		///     clock. With a strict timer order, the clock waits until the callback completes or waits for the clock
 		///     through the <see cref="MockTimeSystem" />. When that takes longer than the
