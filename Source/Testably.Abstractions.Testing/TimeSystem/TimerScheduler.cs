@@ -341,7 +341,7 @@ internal sealed class TimerScheduler
 				continue;
 			}
 
-			if (!Start(next).Ended.Task.Wait(timeout))
+			if (!StartFiring(next).Ended.Task.Wait(timeout))
 			{
 				throw ExceptionFactory.TimerCallbackTimeout(timeout);
 			}
@@ -488,7 +488,7 @@ internal sealed class TimerScheduler
 	/// </remarks>
 	private void Fire(ScheduledTimer timer)
 	{
-		FiringCallback firing = Start(timer);
+		FiringCallback firing = StartFiring(timer);
 		Stopwatch running = Stopwatch.StartNew();
 		TimeSpan blocked = TimeSpan.Zero;
 		while (!firing.Ended.Task.Wait(CallbackCheckInterval) &&
@@ -505,10 +505,10 @@ internal sealed class TimerScheduler
 	///     Runs the callback of the <paramref name="timer" /> on a <see cref="CallbackThread" /> and waits until it
 	///     started.
 	/// </summary>
-	private FiringCallback Start(ScheduledTimer timer)
+	private FiringCallback StartFiring(ScheduledTimer timer)
 	{
 		FiringCallback firing = new(this);
-		CallbackThread.Run(() => RunCallback(firing, timer));
+		CallbackThread.Run(() => RunFiringCallback(firing, timer));
 		firing.Started.Task.Wait();
 		return firing;
 	}
@@ -517,7 +517,7 @@ internal sealed class TimerScheduler
 	///     Runs the callback of the <paramref name="timer" /> as the <paramref name="firing" /> callback of the current
 	///     thread.
 	/// </summary>
-	private static void RunCallback(FiringCallback firing, ScheduledTimer timer)
+	private static void RunFiringCallback(FiringCallback firing, ScheduledTimer timer)
 	{
 		FiringCallback.Current = firing;
 		firing.Start();
