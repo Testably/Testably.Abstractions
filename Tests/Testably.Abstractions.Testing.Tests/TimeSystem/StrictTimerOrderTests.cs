@@ -155,7 +155,7 @@ public class StrictTimerOrderTests
 		try
 		{
 			void WaitForTheFailure() => timeSystem.TimerHandler.WaitUntilIdle();
-			void Act() => timeSystem.Task.Delay(1.Seconds());
+			Task Act() => timeSystem.Task.Delay(1.Seconds());
 
 			await That(WaitForTheFailure).ThrowsExactly<TimeoutException>();
 			await That(Act).ThrowsExactly<TimeoutException>()
