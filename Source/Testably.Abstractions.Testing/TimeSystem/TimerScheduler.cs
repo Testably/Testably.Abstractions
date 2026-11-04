@@ -29,7 +29,22 @@ internal sealed class TimerScheduler
 	///     How long the thread that fired a callback waits for it, when the callback blocks on something else than the
 	///     clock, e.g. on a lock held by the code that moves the clock.
 	/// </summary>
+	/// <remarks>
+	///     Only the time in which the thread of the callback is blocked in a wait counts, as a callback whose thread does
+	///     not get scheduled on a loaded machine would otherwise let the clock pass the next timer while it still runs.
+	/// </remarks>
 	private static readonly TimeSpan BlockedCallbackLimit = TimeSpan.FromSeconds(1);
+
+	/// <summary>
+	///     How often the thread that fired a callback checks whether the callback is blocked.
+	/// </summary>
+	private static readonly TimeSpan CallbackCheckInterval = TimeSpan.FromMilliseconds(10);
+
+	/// <summary>
+	///     How long the thread that fired a callback waits for it at most, also when it never blocks, e.g. when it spins
+	///     until the clock moves.
+	/// </summary>
+	private static readonly TimeSpan RunningCallbackLimit = TimeSpan.FromSeconds(30);
 
 	/// <summary>
 	///     The scheduler that moves the clock on the current thread and did not get notified about the change yet.
@@ -371,7 +386,7 @@ internal sealed class TimerScheduler
 		CallbackThread.Run(() =>
 		{
 			FiringCallback.Current = firing;
-			firing.Started.TrySetResult(true);
+			firing.Start();
 			try
 			{
 				timer.RunCallback();
@@ -384,7 +399,17 @@ internal sealed class TimerScheduler
 		});
 
 		firing.Started.Task.Wait();
-		Task.WaitAny([completed.Task, firing.Released.Task,], BlockedCallbackLimit);
+		Task[] ends = [completed.Task, firing.Released.Task,];
+		Stopwatch running = Stopwatch.StartNew();
+		TimeSpan blocked = TimeSpan.Zero;
+		while (Task.WaitAny(ends, CallbackCheckInterval) < 0 &&
+		       blocked < BlockedCallbackLimit && running.Elapsed < RunningCallbackLimit)
+		{
+			if (firing.IsBlocked)
+			{
+				blocked += CallbackCheckInterval;
+			}
+		}
 	}
 
 	/// <summary>
@@ -602,6 +627,13 @@ internal sealed class TimerScheduler
 		/// </summary>
 		[ThreadStatic] public static FiringCallback? Current;
 
+		private Thread? _thread;
+
+		/// <summary>
+		///     Whether the thread of the callback is blocked in a wait, once it <see cref="Started" />.
+		/// </summary>
+		public bool IsBlocked => _thread!.ThreadState.HasFlag(System.Threading.ThreadState.WaitSleepJoin);
+
 		/// <summary>
 		///     Completed when the callback waits for the clock.
 		/// </summary>
@@ -613,6 +645,15 @@ internal sealed class TimerScheduler
 		public TaskCompletionSource<bool> Started { get; } = new();
 
 		public void Release() => Released.TrySetResult(true);
+
+		/// <summary>
+		///     Marks that the callback starts on the current thread.
+		/// </summary>
+		public void Start()
+		{
+			_thread = Thread.CurrentThread;
+			Started.TrySetResult(true);
+		}
 	}
 
 	/// <summary>
