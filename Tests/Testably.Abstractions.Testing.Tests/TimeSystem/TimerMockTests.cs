@@ -400,6 +400,48 @@ public class TimerMockTests
 	}
 
 	[Test]
+	public async Task AutoAdvance_WhenTheCreatorNeverSetsUpATimer_ShouldFireItAfterTheLimit()
+	{
+		MockTimeSystem timeSystem = new();
+		using ManualResetEventSlim fired = new();
+		TimerScheduler.ScheduledTimer timer = new(
+			timeSystem.TimeProvider.ElapsedTicks + TimeSpan.FromSeconds(1).Ticks, true, () => fired.Set(),
+			() => true);
+
+		timeSystem.Scheduler.Schedule(timer, CancellationToken.None);
+		bool isFired = fired.Wait(15000, TestContext.Current!.Execution.CancellationToken);
+
+		await That(isFired).IsTrue()
+			.Because("a creator that never finishes, e.g. on the token of a disposed source, must not stop the clock");
+	}
+
+	[Test]
+	public async Task AutoAdvance_WhenTheCreatorSetsUpATimerLongerThanOneSecond_ShouldWaitForIt()
+	{
+		MockTimeSystem timeSystem = new();
+		int isSetUp = 0;
+		int wasSetUpWhenFired = -1;
+		using ManualResetEventSlim fired = new();
+		TimerScheduler.ScheduledTimer timer = new(
+			timeSystem.TimeProvider.ElapsedTicks + TimeSpan.FromSeconds(1).Ticks, true,
+			() =>
+			{
+				Volatile.Write(ref wasSetUpWhenFired, Volatile.Read(ref isSetUp));
+				fired.Set();
+			},
+			() => Volatile.Read(ref isSetUp) == 0);
+
+		timeSystem.Scheduler.Schedule(timer, CancellationToken.None);
+		Thread.Sleep(1200);
+		Volatile.Write(ref isSetUp, 1);
+		bool isFired = fired.Wait(10000, TestContext.Current!.Execution.CancellationToken);
+
+		await That(isFired).IsTrue();
+		await That(Volatile.Read(ref wasSetUpWhenFired)).IsEqualTo(1)
+			.Because("a creator whose thread does not run for a while, e.g. on a loaded machine, must finish first");
+	}
+
+	[Test]
 	public async Task AutoAdvance_WhileATimerIsCreated_ShouldNotMoveTheClock()
 	{
 		MockTimeSystem timeSystem = new();
