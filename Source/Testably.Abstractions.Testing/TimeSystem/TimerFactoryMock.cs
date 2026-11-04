@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.TimeSystem;
 using ITimer = Testably.Abstractions.TimeSystem.ITimer;
@@ -92,4 +93,59 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 	/// <inheritdoc cref="ITimerHandler.this[int]" />
 	public ITimerMock this[int index]
 		=> _timers[index];
+
+	/// <inheritdoc cref="ITimerHandler.AdvanceToNextTimer(int)" />
+	public bool AdvanceToNextTimer(int timeout = 10000)
+	{
+		ThrowIfTimeoutIsInvalid(timeout);
+		return _mockTimeSystem.Scheduler.AdvanceToNextTimer(timeout);
+	}
+
+	/// <inheritdoc cref="ITimerHandler.WaitUntilIdle(int)" />
+	public void WaitUntilIdle(int timeout = 10000)
+	{
+		ThrowIfTimeoutIsInvalid(timeout);
+		if (!_mockTimeSystem.Scheduler.WhenIdle().Wait(timeout))
+		{
+			throw ExceptionFactory.TimersNotIdle(timeout, _mockTimeSystem.Scheduler.DescribeBusyTimers());
+		}
+	}
+
+	/// <inheritdoc cref="ITimerHandler.WaitUntilIdleAsync(int, CancellationToken)" />
+	public Task WaitUntilIdleAsync(int timeout = 10000, CancellationToken cancellationToken = default)
+	{
+		ThrowIfTimeoutIsInvalid(timeout);
+		return WaitUntilIdleCoreAsync(timeout, cancellationToken);
+	}
+
+	private async Task WaitUntilIdleCoreAsync(int timeout, CancellationToken cancellationToken)
+	{
+		Task idle = _mockTimeSystem.Scheduler.WhenIdle();
+		if (idle.IsCompleted)
+		{
+			return;
+		}
+
+		// The scheduler completes the task on its own threads, which must not run the continuation of the caller.
+		Task idleOnThreadPool = idle.ContinueWith(static _ => { }, CancellationToken.None,
+			TaskContinuationOptions.None, TaskScheduler.Default);
+		using CancellationTokenSource delayCancellation =
+			CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+		Task finished = await Task.WhenAny(idleOnThreadPool, Task.Delay(timeout, delayCancellation.Token))
+			.ConfigureAwait(false);
+		delayCancellation.Cancel();
+		if (finished != idleOnThreadPool)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			throw ExceptionFactory.TimersNotIdle(timeout, _mockTimeSystem.Scheduler.DescribeBusyTimers());
+		}
+	}
+
+	private static void ThrowIfTimeoutIsInvalid(int timeout)
+	{
+		if (timeout < -1)
+		{
+			throw new ArgumentOutOfRangeException(nameof(timeout));
+		}
+	}
 }

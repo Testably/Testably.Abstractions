@@ -66,6 +66,31 @@ Awaiting `Task.Delay` before anything advances the clock waits forever. Start th
 
 Combine this with the [notifications](./06-notifications.mdx) hooks to assert what your code asked for.
 
+## Waiting until the timers are idle
+
+The timers fire on background threads, so a test that asserts on their effects has to wait for them. Instead of waiting for a margin of real time, wait until the timers are idle with `TimerHandler.WaitUntilIdle()` or `TimerHandler.WaitUntilIdleAsync()`. The timers are idle when no timer is due or moves the clock on its own and no timer callback runs. A callback that waits for the clock does not count, as nothing happens until something else moves the clock. This also holds when only a timeout is left:
+
+```csharp
+MockTimeSystem timeSystem = new();
+TimeProvider timeProvider = timeSystem.ToTimeProvider();
+using CancellationTokenSource cts = new(TimeSpan.FromSeconds(5), timeProvider);
+Task delay = Task.Delay(Timeout.InfiniteTimeSpan, timeProvider, cts.Token);
+
+// highlight-next-line
+await timeSystem.TimerHandler.WaitUntilIdleAsync();
+await That(delay.IsCompleted).IsFalse()
+    .Because("only the timeout is left, and a timeout does not move the clock");
+
+timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromSeconds(5));
+await That(delay.IsCanceled).IsTrue();
+```
+
+With auto-advance off, `AdvanceBy` stops waiting for a callback once it was blocked for one second of real time, or after 30 seconds. Call `WaitUntilIdle()` afterward to also wait for the callbacks that it left running.
+
+Both methods throw a `TimeoutException` that describes the busy timers when they are not idle within the timeout (10 seconds by default). Call them after the code that moves the clock returned, and not from inside a timer callback, which itself keeps the timers busy. A periodic `Timer` with auto-advance never becomes idle, as it keeps moving the clock.
+
+Idle refers to the timers only, including those of the `TimeProvider` from `ToTimeProvider()`. `Task.Delay`, `Thread.Sleep` and `PeriodicTimer` of the `MockTimeSystem` move or wait for the clock on the calling thread and are not tracked. Neither is a callback that continues after it waited for the clock, nor the work that the callbacks start elsewhere, e.g. the continuations of a completed delay on the thread pool.
+
 ## Multi-threaded scenarios
 
 All threads share one simulated clock, so two parallel `Sleep(5s)` calls move it by **10 seconds total**, which can be surprising. If your test exercises real parallelism, swap in the [thread-aware provider](./07-thread-aware-provider.mdx) so each async context has its own clock.

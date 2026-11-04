@@ -366,6 +366,12 @@ internal static class ExceptionFactory
 		};
 #endif
 
+	internal static TimeoutException TimerCallbackTimeout(int timeout)
+		=> new($"The callback of the next timer did not complete in {timeout}ms.");
+
+	internal static TimeoutException TimersNotIdle(int timeout, string busyTimers)
+		=> new($"The timers did not become idle in {timeout}ms: {busyTimers}.");
+
 	internal static TimeoutException TimerWaitTimeoutException(int executionCount, int timeout)
 		=> new($"The execution count {executionCount} was not reached in {timeout}ms.");
 

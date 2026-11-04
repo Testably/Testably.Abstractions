@@ -468,6 +468,9 @@ namespace Testably.Abstractions.Testing.TimeSystem
     public interface ITimerHandler
     {
         Testably.Abstractions.Testing.TimeSystem.ITimerMock this[int index] { get; }
+        bool AdvanceToNextTimer(int timeout = 10000);
+        void WaitUntilIdle(int timeout = 10000);
+        System.Threading.Tasks.Task WaitUntilIdleAsync(int timeout = 10000, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
     }
     public interface ITimerMock : System.IAsyncDisposable, System.IDisposable, Testably.Abstractions.TimeSystem.ITimeSystemEntity, Testably.Abstractions.TimeSystem.ITimer
     {
