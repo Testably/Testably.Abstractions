@@ -149,7 +149,8 @@ public class TimerMockTests
 		DateTime start = timeSystem.DateTime.UtcNow;
 		List<TimeSpan> callbackTimes = [];
 		List<ITimer> timers = [];
-		TaskCompletionSource<bool> allFired = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		// Waited for synchronously, as an asynchronous continuation would wake the waiting thread through the thread pool.
+		TaskCompletionSource<bool> allFired = new();
 
 		void AddCallbackTime(object? _)
 		{
@@ -169,8 +170,7 @@ public class TimerMockTests
 			timers.Add(timeSystem.Timer.New(AddCallbackTime, null, 1.Seconds(), Timeout.InfiniteTimeSpan));
 			timers.Add(timeSystem.Timer.New(AddCallbackTime, null, 2.Seconds(), Timeout.InfiniteTimeSpan));
 		}, null, TimeSpan.Zero, Timeout.InfiniteTimeSpan);
-		bool isCompleted = await Task.WhenAny(allFired.Task,
-			Task.Delay(5.Seconds(), TestContext.Current!.Execution.CancellationToken)) == allFired.Task;
+		bool isCompleted = allFired.Task.Wait(5000);
 		timers.ForEach(timer => timer.Dispose());
 
 		await That(isCompleted).IsTrue();
