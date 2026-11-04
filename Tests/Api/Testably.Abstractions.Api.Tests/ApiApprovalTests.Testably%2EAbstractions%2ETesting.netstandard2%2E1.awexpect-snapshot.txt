@@ -119,6 +119,8 @@ namespace Testably.Abstractions.Testing
         {
             public MockTimeSystemOptions() { }
             public Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions DisableAutoAdvance() { }
+            public Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions EnableStrictTimerOrder() { }
+            public Testably.Abstractions.Testing.MockTimeSystem.MockTimeSystemOptions EnableStrictTimerOrder(System.TimeSpan callbackTimeout) { }
         }
     }
     public static class Notification

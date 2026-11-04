@@ -105,7 +105,7 @@ public sealed class MockTimeSystem : ITimeSystem
 			scheduler?.OnTimeChanged();
 			_callbackHandler.InvokeTimeChanged(now);
 		});
-		scheduler = new TimerScheduler(TimeProvider);
+		scheduler = new TimerScheduler(TimeProvider, initialization.StrictCallbackTimeout);
 		(TimeProvider as TimeProviderMock)?.UseScheduler(scheduler);
 		Scheduler = scheduler;
 		_dateTimeMock = new DateTimeMock(this, _callbackHandler);
@@ -183,11 +183,73 @@ public sealed class MockTimeSystem : ITimeSystem
 		internal bool AutoAdvance { get; private set; } = true;
 
 		/// <summary>
+		///     How long the clock waits for a blocked timer callback with a strict timer order, or <see langword="null" />
+		///     without it.
+		/// </summary>
+		internal TimeSpan? StrictCallbackTimeout { get; private set; }
+
+		/// <summary>
 		///     Disables automatic advancement of the time when waiting for timers, tasks or threads to complete.
 		/// </summary>
 		public MockTimeSystemOptions DisableAutoAdvance()
 		{
 			AutoAdvance = false;
+			return this;
+		}
+
+		/// <summary>
+		///     Lets the thread that moves the clock wait for each timer callback until it completes, so that the timers
+		///     fire in the order of their due time also on a loaded machine. The clock waits for a blocked callback at most
+		///     5 seconds.
+		/// </summary>
+		/// <remarks>
+		///     Enable it when your tests depend on the order of the timers, e.g. a timeout that must cancel a delay before
+		///     the delay completes, and fail only on a loaded machine, like a busy CI runner.
+		///     <para />
+		///     By default, the clock moves on when a callback blocked for one second of real time, as it may wait for the
+		///     clock. With a strict timer order, the clock waits until the callback completes or waits for the clock
+		///     through the <see cref="MockTimeSystem" />. When that takes longer than the timeout, the scheduler fails: the
+		///     code that moves the clock throws a <see cref="TimeoutException" />, and so does every later move of the clock
+		///     and every wait for idle timers. Another thread that moves the clock at the same time can still move it past
+		///     a running callback. The timers that move the clock on their own also wait up to the timeout, instead of one
+		///     second, for the creator of a timer to set it up, e.g. for a delay to register its cancellation, and then
+		///     move on, like the real clock does.
+		/// </remarks>
+		public MockTimeSystemOptions EnableStrictTimerOrder()
+			=> EnableStrictTimerOrder(TimeSpan.FromSeconds(5));
+
+		/// <summary>
+		///     Lets the thread that moves the clock wait for each timer callback until it completes, so that the timers
+		///     fire in the order of their due time also on a loaded machine. The clock waits for a blocked callback at most
+		///     the <paramref name="callbackTimeout" />.
+		/// </summary>
+		/// <remarks>
+		///     Enable it when your tests depend on the order of the timers, e.g. a timeout that must cancel a delay before
+		///     the delay completes, and fail only on a loaded machine, like a busy CI runner.
+		///     <para />
+		///     By default, the clock moves on when a callback blocked for one second of real time, as it may wait for the
+		///     clock. With a strict timer order, the clock waits until the callback completes or waits for the clock
+		///     through the <see cref="MockTimeSystem" />. When that takes longer than the
+		///     <paramref name="callbackTimeout" />, the scheduler fails: the code that moves the clock throws a
+		///     <see cref="TimeoutException" />, and so does every later move of the clock and every wait for idle timers.
+		///     Another thread that moves the clock at the same time can still move it past a running callback. The timers
+		///     that move the clock on their own also wait up to the <paramref name="callbackTimeout" />, instead of one
+		///     second, for the creator of a timer to set it up, e.g. for a delay to register its cancellation, and then
+		///     move on, like the real clock does.
+		/// </remarks>
+		/// <param name="callbackTimeout">
+		///     How long the clock waits for a blocked callback, or <see cref="System.Threading.Timeout.InfiniteTimeSpan" />
+		///     to wait forever.
+		/// </param>
+		public MockTimeSystemOptions EnableStrictTimerOrder(TimeSpan callbackTimeout)
+		{
+			if ((callbackTimeout <= TimeSpan.Zero && callbackTimeout != System.Threading.Timeout.InfiniteTimeSpan) ||
+			    callbackTimeout.TotalMilliseconds > int.MaxValue)
+			{
+				throw new ArgumentOutOfRangeException(nameof(callbackTimeout));
+			}
+
+			StrictCallbackTimeout = callbackTimeout;
 			return this;
 		}
 	}

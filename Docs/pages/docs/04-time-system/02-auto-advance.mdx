@@ -91,6 +91,27 @@ Both methods throw a `TimeoutException` that describes the busy timers when they
 
 Idle refers to the timers only, including those of the `TimeProvider` from `ToTimeProvider()`. `Task.Delay`, `Thread.Sleep` and `PeriodicTimer` of the `MockTimeSystem` move or wait for the clock on the calling thread and are not tracked. Neither is a callback that continues after it waited for the clock, nor the work that the callbacks start elsewhere, e.g. the continuations of a completed delay on the thread pool.
 
+## Strict timer order
+
+By default, the clock moves on when a callback blocked for one second of real time, as the callback might wait for something that only a later timer delivers, and it waits at most one second for the creator of a timer to finish setting it up, e.g. for `Task.Delay` on the `TimeProvider` to register its cancellation. On a loaded machine, both can let a later timer fire before an earlier one completed. When your tests depend on the order of the timers, e.g. a timeout that must cancel a delay before the delay completes, enable a strict timer order via `MockTimeSystemOptions.EnableStrictTimerOrder()`:
+
+```csharp
+MockTimeSystem timeSystem = new(o => o.EnableStrictTimerOrder());
+TimeProvider timeProvider = timeSystem.ToTimeProvider();
+DateTime start = timeSystem.DateTime.UtcNow;
+using CancellationTokenSource cts = new(TimeSpan.FromSeconds(10), timeProvider);
+
+await That(() => Task.Delay(TimeSpan.FromSeconds(30), timeProvider, cts.Token))
+    .Throws<TaskCanceledException>();
+await That(timeSystem.DateTime.UtcNow - start).IsEqualTo(TimeSpan.FromSeconds(10));
+```
+
+With a strict timer order, the thread that moves the clock waits for each callback until it completes or waits for the clock through the `MockTimeSystem`, e.g. with `ITimerMock.Wait`. The timers that move the clock on their own and `AdvanceToNextTimer` also wait up to the timeout, instead of one second, for the creator of a timer to set it up, and then move on like the real clock, e.g. for a `Task.Delay` on the `TimeProvider` with the token of a disposed `CancellationTokenSource`, which never registers. Another thread that moves the clock at the same time, e.g. `AdvanceBy` in the test while the timers advance the clock on their own, can still move it past a running callback. A time change callback (`On.TimeChanged`) that moves the clock again holds the clock while it does, so a timer callback that reads the clock in the meantime cannot complete and fails the strict timer order.
+
+:::warning[A callback that waits for another timer]
+A callback that blocks on something that only the clock can deliver, e.g. an event that another timer of the same `MockTimeSystem` sets, can never complete with a strict timer order. After the timeout (5 seconds by default, `EnableStrictTimerOrder(callbackTimeout)`), the scheduler fails with a `TimeoutException` that names the due time of the timer: the code that moves the clock throws it, and so does every later move of the clock and every `WaitUntilIdle`. When the timers move the clock on their own, nothing else reports the failure, and awaiting a timer, e.g. a delay on the `TimeProvider`, never completes, so wait with `WaitUntilIdle` to see it. Let such a callback wait through the `MockTimeSystem` instead, e.g. with `ITimerMock.Wait`.
+:::
+
 ## Multi-threaded scenarios
 
 All threads share one simulated clock, so two parallel `Sleep(5s)` calls move it by **10 seconds total**, which can be surprising. If your test exercises real parallelism, swap in the [thread-aware provider](./07-thread-aware-provider.mdx) so each async context has its own clock.

@@ -29,7 +29,11 @@ public interface ITimerHandler
 	///     Throws a <see cref="TimeoutException" /> when the timeout is expired.
 	/// </param>
 	/// <returns><see langword="false" />, when no timer is scheduled, otherwise <see langword="true" />.</returns>
-	/// <exception cref="TimeoutException">When the callback does not complete within the <paramref name="timeout" />.</exception>
+	/// <exception cref="TimeoutException">
+	///     When the callback does not complete within the <paramref name="timeout" />, or when the scheduler failed with a
+	///     strict timer order. With a strict timer order, an expired <paramref name="timeout" /> fails the scheduler, so
+	///     that every later move of the clock throws as well.
+	/// </exception>
 	bool AdvanceToNextTimer(int timeout = 10000);
 
 	/// <summary>
@@ -51,7 +55,7 @@ public interface ITimerHandler
 	/// </param>
 	/// <exception cref="TimeoutException">
 	///     When the timers do not become idle within the <paramref name="timeout" />. The message describes what keeps
-	///     them busy.
+	///     them busy. Also when the scheduler failed with a strict timer order.
 	/// </exception>
 	void WaitUntilIdle(int timeout = 10000);
 
@@ -75,7 +79,7 @@ public interface ITimerHandler
 	/// <param name="cancellationToken">A token to cancel the wait.</param>
 	/// <exception cref="TimeoutException">
 	///     When the timers do not become idle within the <paramref name="timeout" />. The message describes what keeps
-	///     them busy.
+	///     them busy. Also when the scheduler failed with a strict timer order.
 	/// </exception>
 	Task WaitUntilIdleAsync(int timeout = 10000, CancellationToken cancellationToken = default);
 }
