@@ -193,17 +193,21 @@ partial class Build
 			version = string.Join('.', fileVersion.Split('.').Take(3));
 			if (version.IndexOf('-') != -1)
 			{
-				version = "v" + version.Substring(0, version.IndexOf('-'));
+				version = version.Substring(0, version.IndexOf('-'));
 			}
+
+			version = (forCore ? "core/v" : "v") + version;
 		}
 		
 		Log.Information("Update readme using '{Version}' as version", version);
 
+		string escapedVersion = version.Replace("/", "%2F");
+		string badgeVersion = escapedVersion.Replace("-", "--");
 		StringBuilder sb = new();
 		string[] lines = File.ReadAllLines(Solution.Directory / "README.md");
 		sb.AppendLine(lines[0]);
 		sb.AppendLine(
-			$"[![Changelog](https://img.shields.io/badge/Changelog-v{version}-blue)](https://github.com/Testably/Testably.Abstractions/releases/tag/v{version})");
+			$"[![Changelog](https://img.shields.io/badge/Changelog-{badgeVersion}-blue)](https://github.com/Testably/Testably.Abstractions/releases/tag/{version})");
 		foreach (string line in lines.Skip(1))
 		{
 			if (line.StartsWith(
@@ -218,15 +222,15 @@ partial class Build
 				"[![Coverage](https://sonarcloud.io/api/project_badges/measure"))
 			{
 				sb.AppendLine(line
-					.Replace(")", $"&branch=release/v{version})"));
+					.Replace(")", $"&branch=release/{version})"));
 				continue;
 			}
 
 			if (line.StartsWith("[![Mutation testing badge](https://img.shields.io/endpoint"))
 			{
 				sb.AppendLine(line
-					.Replace("%2Fmain)", $"%2Frelease%2Fv{version})")
-					.Replace("/main)", $"/release/v{version})"));
+					.Replace("%2Fmain)", $"%2Frelease%2F{escapedVersion})")
+					.Replace("/main)", $"/release/{version})"));
 				continue;
 			}
 
