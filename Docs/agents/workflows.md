@@ -43,7 +43,7 @@ dotnet test --project Tests/Testably.Abstractions.Testing.Tests -f net10.0 --no-
 
 ## Public API snapshots
 
-The API tests load the compiled assemblies from `Source/<Assembly>/bin/<Configuration>/<framework>/` for every framework listed in `Source/Directory.Build.props` and compare them with the aweXpect snapshots `Tests/Api/<Project>/ApiApprovalTests.<Assembly>.<framework>.awexpect-snapshot.txt` (the dots in the file name are URL-encoded). Build the solution first; otherwise frameworks that the test project does not reference fail with `FileNotFoundException`.
+The API tests load the compiled assemblies from `Source/<Assembly>/bin/<Configuration>/<framework>/` for every framework listed in `Source/Directory.Build.props` and compare them with the aweXpect snapshots `Tests/Api/<Project>/ApiApprovalTests/<Assembly>/<framework>.awexpect-snapshot.cs`. Build the solution first; otherwise frameworks that the test project does not reference fail with `FileNotFoundException`.
 
 ```ps
 dotnet build Testably.Abstractions.slnx
