@@ -46,7 +46,7 @@
 		<PackageVersion Include="aweXpect" Version="4.0.0"/>
 		<PackageVersion Include="aweXpect.Snapshots.PublicApi" Version="4.0.0"/>
 		<PackageVersion Include="aweXpect.Chronology" Version="1.1.0"/>
-		<PackageVersion Include="aweXpect.Testably" Version="3.0.0-pre.4"/>
+		<PackageVersion Include="aweXpect.Testably" Version="3.0.0"/>
 		<PackageVersion Include="aweXpect.Mockolate" Version="4.0.0-pre.4"/>
 		<PackageVersion Include="Mockolate" Version="3.6.0"/>
 		<PackageVersion Include="TUnit.Engine" Version="1.80.0"/>
