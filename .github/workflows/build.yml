@@ -224,7 +224,7 @@ jobs:
                 # The packages are already pushed at this point and cannot be withdrawn, so a failure here does not
                 # fail the run; the next step reports it.
                 continue-on-error: true
-                uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+                uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
                 # Without `name` and `tag_name` the action releases the pushed tag and names the release after it.
                 with:
                     token: ${{ secrets.GITHUB_TOKEN }}
