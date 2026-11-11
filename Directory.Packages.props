@@ -49,7 +49,7 @@
 		<PackageVersion Include="aweXpect.Testably" Version="3.0.0"/>
 		<PackageVersion Include="aweXpect.Mockolate" Version="4.0.0-pre.4"/>
 		<PackageVersion Include="Mockolate" Version="3.6.0"/>
-		<PackageVersion Include="TUnit.Engine" Version="1.80.0"/>
+		<PackageVersion Include="TUnit.Engine" Version="1.83.8"/>
 		<PackageVersion Include="Polyfill" Version="11.4.5"/>
 		<PackageVersion Include="AutoFixture" Version="4.18.1" />
 	</ItemGroup>
