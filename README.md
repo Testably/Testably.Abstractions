@@ -60,7 +60,7 @@ Then register the implementations in your DI container; see [Getting started](ht
 
 ## Already on TestableIO?
 
-`Testably.Abstractions` shares the `IFileSystem` interface with [TestableIO.System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions), so production code stays untouched. See the [migration guide](https://docs.testably.org/Abstractions/migration-from-testableio).
+`Testably.Abstractions` shares the `IFileSystem` interface with [TestableIO.System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions), so production code stays untouched. See the [migration guide](https://docs.testably.org/Abstractions/migration/).
 
 ## Contributing
 
