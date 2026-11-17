@@ -5,6 +5,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="aweXpect.Snapshots.DiffEngine"/>
 		<PackageReference Include="aweXpect.Snapshots.PublicApi"/>
 		<PackageReference Remove="System.Net.Http" />
 	</ItemGroup>

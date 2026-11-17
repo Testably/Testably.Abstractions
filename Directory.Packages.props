@@ -43,8 +43,9 @@
 	<ItemGroup>
 		<PackageVersion Include="System.Memory" Version="4.6.3" />
 		<PackageVersion Include="System.Net.Http" Version="4.3.4"/>
-		<PackageVersion Include="aweXpect" Version="4.0.0"/>
-		<PackageVersion Include="aweXpect.Snapshots.PublicApi" Version="4.0.0"/>
+		<PackageVersion Include="aweXpect" Version="4.2.0"/>
+		<PackageVersion Include="aweXpect.Snapshots.DiffEngine" Version="4.2.0"/>
+		<PackageVersion Include="aweXpect.Snapshots.PublicApi" Version="4.2.0"/>
 		<PackageVersion Include="aweXpect.Chronology" Version="1.1.0"/>
 		<PackageVersion Include="aweXpect.Testably" Version="3.0.0"/>
 		<PackageVersion Include="aweXpect.Mockolate" Version="4.0.0-pre.4"/>

@@ -58,6 +58,8 @@ dotnet test --project Tests/Api/Testably.Abstractions.Api.Tests --no-build --tre
 dotnet test --project Tests/Api/Testably.Abstractions.Core.Api.Tests --no-build --treenode-filter "/*/*/ApiApprovalTests/AcceptApiChanges"
 ```
 
+Locally, a failing API test also opens a diff tool through `aweXpect.Snapshots.DiffEngine` (e.g. Rider, Visual Studio or VS Code) that compares the pending file with the snapshot, so the change can be taken over there. It never opens on a build server; set `DiffEngine_Disabled=true` to turn it off locally.
+
 ## Build pipeline
 
 `build.ps1`/`build.sh`/`build.cmd` build and run `Pipeline/Build.csproj`, a [Fallout](https://www.nuget.org/packages/Fallout.Common) build (a NUKE fork). `./build.ps1 --help` lists the targets. Without a target it runs `ApiChecks` and `UnitTests`. The configuration defaults to Debug locally and Release on the server (`--configuration`).
