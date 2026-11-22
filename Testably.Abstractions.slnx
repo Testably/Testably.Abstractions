@@ -17,6 +17,9 @@
     <Project Path="Tests/Testably.Abstractions.Testing.Tests/Testably.Abstractions.Testing.Tests.csproj" />
     <Project Path="Tests/Testably.Abstractions.Tests/Testably.Abstractions.Tests.csproj" />
   </Folder>
+  <Folder Name="/Tests/Aot/">
+    <Project Path="Tests/Aot/Testably.Abstractions.AotCompatibility.TestApp/Testably.Abstractions.AotCompatibility.TestApp.csproj" />
+  </Folder>
   <Folder Name="/Tests/Api/">
     <Project Path="Tests/Api/Testably.Abstractions.Api.Tests/Testably.Abstractions.Api.Tests.csproj" />
     <Project Path="Tests/Api/Testably.Abstractions.Core.Api.Tests/Testably.Abstractions.Core.Api.Tests.csproj" />

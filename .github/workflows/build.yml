@@ -45,7 +45,32 @@ jobs:
                     path: |
                         ./Artifacts/*
                         ./TestResults/*.trx
-    
+
+    aot-smoke-tests:
+        name: "AOT smoke tests"
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ ubuntu-latest, windows-latest, macos-latest ]
+        runs-on: ${{ matrix.os }}
+        steps:
+            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+                with:
+                    fetch-depth: 0
+            -   name: Setup .NET SDKs
+                uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+                with:
+                    dotnet-version: |
+                        8.0.x
+                        10.0.x
+                    global-json-file: global.json
+            -   name: Run AOT smoke tests (windows)
+                if: matrix.os == 'windows-latest'
+                run: ./build.ps1 AotSmokeTests
+            -   name: Run AOT smoke tests (ubuntu|macos)
+                if: matrix.os != 'windows-latest'
+                run: ./build.sh AotSmokeTests
+
     api-tests:
         name: "API tests"
         runs-on: ubuntu-latest
@@ -149,7 +174,7 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags/core/v') }}
         runs-on: macos-latest
         environment: production
-        needs: [ pack, unit-tests, api-tests, publish-test-results, static-code-analysis ]
+        needs: [ pack, unit-tests, aot-smoke-tests, api-tests, publish-test-results, static-code-analysis ]
         permissions:
             id-token: write
         steps:
@@ -183,7 +208,7 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         runs-on: macos-latest
         environment: production
-        needs: [ pack, unit-tests, api-tests, publish-test-results, static-code-analysis ]
+        needs: [ pack, unit-tests, aot-smoke-tests, api-tests, publish-test-results, static-code-analysis ]
         permissions:
             contents: write
             id-token: write
