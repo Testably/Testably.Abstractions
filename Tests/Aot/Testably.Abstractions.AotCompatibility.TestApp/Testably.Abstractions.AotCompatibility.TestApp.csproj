@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<PublishAot>true</PublishAot>
+		<InvariantGlobalization>true</InvariantGlobalization>
+	</PropertyGroup>
+
+	<!--
+	    A warning from the compiler, the trimmer or the AOT compiler fails the build and the publish, and each trim
+	    warning names its site instead of being rolled up per assembly.
+	-->
+	<PropertyGroup>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+		<EnableAotAnalyzer>true</EnableAotAnalyzer>
+		<ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
+		<IlcTreatWarningsAsErrors>true</IlcTreatWarningsAsErrors>
+		<TrimmerSingleWarn>false</TrimmerSingleWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj"/>
+		<ProjectReference Include="..\..\..\Source\Testably.Abstractions.Compression\Testably.Abstractions.Compression.csproj"/>
+		<ProjectReference Include="..\..\..\Source\Testably.Abstractions.AccessControl\Testably.Abstractions.AccessControl.csproj"/>
+		<ProjectReference Include="..\..\..\Source\Testably.Abstractions.MemoryMappedFiles\Testably.Abstractions.MemoryMappedFiles.csproj"/>
+	</ItemGroup>
+
+</Project>

@@ -70,6 +70,7 @@ Locally, a failing API test also opens a diff tool through `aweXpect.Snapshots.D
 | `ApiChecks` | Run the API test projects of the current `BuildScope` |
 | `UnitTests` | Run the six unit test projects for every target framework (`net48` only on Windows) with TRX and Cobertura output; retried once on failure |
 | `CodeCoverage` | `UnitTests` plus an OpenCover report via ReportGenerator |
+| `AotSmokeTests` | Run `Tests/Aot/Testably.Abstractions.AotCompatibility.TestApp` for each of its target frameworks, then publish it with Native AOT for the current platform and run it again; trim and AOT warnings fail the publish. On Windows the native linker needs the Visual Studio C++ build tools and `vswhere.exe` on the `PATH` |
 | `CodeAnalysis` | SonarCloud begin/end around `Compile` and `CodeCoverage`; needs `SonarToken` |
 | `Pack` | Collect the packages into `Artifacts/Packages/Core` and `Artifacts/Packages/Main` |
 | `MutationTestsWindows`, `MutationTestsLinux`, `MutationTests` | Stryker.NET mutation tests (see below) |
@@ -99,7 +100,7 @@ The targets install `dotnet-stryker` (version pinned by the `PackageDownload` in
 
 | Workflow | Trigger | Jobs |
 |---|---|---|
-| `ci.yml` | Pull requests to `main` | Unit tests (`CodeCoverage`) on Ubuntu, Windows and macOS, `ApiChecks`, SonarCloud (same-repo PRs only), test result publishing; mutation jobs disabled |
+| `ci.yml` | Pull requests to `main` | Unit tests (`CodeCoverage`) and `AotSmokeTests` on Ubuntu, Windows and macOS, `ApiChecks`, SonarCloud (same-repo PRs only), test result publishing; mutation jobs disabled |
 | `build.yml` | Push to `main`, `v*` and `core/v*` tags | The same checks plus `Pack`; a `core/v*` tag pushes `Artifacts/Packages/Core`, a `v*` tag pushes `Artifacts/Packages/Main` to nuget.org via trusted publishing and creates a GitHub release for non-prerelease tags |
 | `ci-analysis.yml` | Completion of `ci.yml` | Uploads the mutation reports and comments on the pull request; currently disabled together with the mutation jobs |
 | `notify-docs-site.yml` | Push to `main` touching `Docs/pages/docs/**` | Dispatches a rebuild of the docs site |
