@@ -51,6 +51,8 @@ internal sealed class FileMock : IFile
 			throw ExceptionFactory.AccessToPathDenied(path);
 		}
 
+		ThrowIfReadOnly(container, path);
+
 		using (container.RequestAccess(
 			FileAccess.ReadWrite,
 			FileStreamFactoryMock.DefaultShare))
@@ -1428,6 +1430,8 @@ internal sealed class FileMock : IFile
 			throw ExceptionFactory.AccessToPathDenied();
 		}
 
+		ThrowIfReadOnly(container, path);
+
 		using (container.RequestAccess(
 			FileAccess.Write,
 			FileStreamFactoryMock.DefaultShare))
@@ -1735,6 +1739,18 @@ internal sealed class FileMock : IFile
 	}
 #endif
 	
+	/// <summary>
+	///     Opening a read-only file for writing fails on every operating system, so the write methods that bypass
+	///     <see cref="FileModeHelper" /> throw what a file stream would.
+	/// </summary>
+	private void ThrowIfReadOnly(IStorageContainer container, string path)
+	{
+		if (container.Attributes.HasFlag(FileAttributes.ReadOnly))
+		{
+			throw ExceptionFactory.AccessToPathDenied(_fileSystem.Path.GetFullPath(path));
+		}
+	}
+
 	private void WriteText(string path, string? contents, Encoding? encoding, bool append = false)
 	{
 		IStorageContainer container =
@@ -1751,6 +1767,8 @@ internal sealed class FileMock : IFile
 		{
 			throw ExceptionFactory.AccessToPathDenied(path);
 		}
+
+		ThrowIfReadOnly(container, path);
 
 		if (contents != null)
 		{

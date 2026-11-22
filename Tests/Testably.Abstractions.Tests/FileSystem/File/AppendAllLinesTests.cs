@@ -1,5 +1,6 @@
 using AutoFixture;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -105,6 +106,23 @@ public class AppendAllLinesTests(FileSystemTestData testData) : FileSystemTestBa
 		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
 		await That(FileSystem.Directory.Exists(path)).IsTrue();
 		await That(FileSystem.File.Exists(path)).IsFalse();
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task AppendAllLines_WhenFileIsReadOnly_ShouldThrowUnauthorizedAccessException(
+		string path, string[] contents)
+	{
+		FileSystem.File.WriteAllText(path, "foo");
+		FileSystem.File.SetAttributes(path, FileAttributes.ReadOnly);
+
+		void Act()
+		{
+			FileSystem.File.AppendAllLines(path, contents);
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo("foo");
 	}
 
 	[Test]
