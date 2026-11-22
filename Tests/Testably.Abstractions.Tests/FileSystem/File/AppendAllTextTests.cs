@@ -136,6 +136,23 @@ public class AppendAllTextTests(FileSystemTestData testData) : FileSystemTestBas
 	}
 
 	[Test]
+	[AutoArguments]
+	public async Task AppendAllText_WhenFileIsReadOnly_ShouldThrowUnauthorizedAccessException(
+		string path, string contents)
+	{
+		FileSystem.File.WriteAllText(path, "foo");
+		FileSystem.File.SetAttributes(path, FileAttributes.ReadOnly);
+
+		void Act()
+		{
+			FileSystem.File.AppendAllText(path, contents);
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo("foo");
+	}
+
+	[Test]
 	[MethodDataSource(typeof(TestData), nameof(TestData.GetEncodingDifference))]
 	public async Task AppendAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding)

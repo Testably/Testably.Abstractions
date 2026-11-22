@@ -168,6 +168,40 @@ public class WriteAllTextTests(FileSystemTestData testData) : FileSystemTestBase
 	}
 
 	[Test]
+	[AutoArguments]
+	public async Task WriteAllText_WhenFileIsReadOnlyAndContentIsNull_ShouldThrowUnauthorizedAccessException(
+		string path)
+	{
+		FileSystem.File.WriteAllText(path, "foo");
+		FileSystem.File.SetAttributes(path, FileAttributes.ReadOnly);
+
+		void Act()
+		{
+			FileSystem.File.WriteAllText(path, null);
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo("foo");
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task WriteAllText_WhenFileIsReadOnly_ShouldThrowUnauthorizedAccessException(
+		string path, string contents)
+	{
+		FileSystem.File.WriteAllText(path, "foo");
+		FileSystem.File.SetAttributes(path, FileAttributes.ReadOnly);
+
+		void Act()
+		{
+			FileSystem.File.WriteAllText(path, contents);
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo("foo");
+	}
+
+	[Test]
 	public async Task
 		WriteAllText_WithoutAccessRightsToParentDirectory_ShouldThrowUnauthorizedAccessException()
 	{

@@ -117,6 +117,23 @@ public class WriteAllLinesTests(FileSystemTestData testData) : FileSystemTestBas
 
 	[Test]
 	[AutoArguments]
+	public async Task WriteAllLines_WhenFileIsReadOnly_ShouldThrowUnauthorizedAccessException(
+		string path, string[] contents)
+	{
+		FileSystem.File.WriteAllText(path, "foo");
+		FileSystem.File.SetAttributes(path, FileAttributes.ReadOnly);
+
+		void Act()
+		{
+			FileSystem.File.WriteAllLines(path, contents);
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo("foo");
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task WriteAllLines_WithEncoding_ShouldCreateFileWithText(
 		Encoding encoding, string path, string[] contents)
 	{
