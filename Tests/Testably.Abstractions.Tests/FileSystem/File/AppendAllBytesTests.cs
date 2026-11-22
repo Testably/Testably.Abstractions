@@ -207,5 +207,22 @@ public class AppendAllBytesTests(FileSystemTestData testData) : FileSystemTestBa
 
 		await That(Act).DoesNotThrow();
 	}
+
+	[Test]
+	[AutoArguments]
+	public async Task AppendAllBytes_WhenFileIsReadOnly_ShouldThrowUnauthorizedAccessException(
+		string path, byte[] bytes)
+	{
+		FileSystem.File.WriteAllText(path, "foo");
+		FileSystem.File.SetAttributes(path, FileAttributes.ReadOnly);
+
+		void Act()
+		{
+			FileSystem.File.AppendAllBytes(path, bytes);
+		}
+
+		await That(Act).Throws<UnauthorizedAccessException>().WithHResult(-2147024891);
+		await That(FileSystem.File.ReadAllText(path)).IsEqualTo("foo");
+	}
 }
 #endif
