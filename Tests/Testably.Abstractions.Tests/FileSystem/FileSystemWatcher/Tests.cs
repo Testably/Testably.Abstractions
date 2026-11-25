@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
@@ -125,6 +126,85 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		fileSystemWatcher.InternalBufferSize = bytes;
 
 		await That(fileSystemWatcher.InternalBufferSize).IsEqualTo(expectedBytes);
+	}
+
+	[Test]
+	public async Task InternalBufferSize_ShouldNotBeFilledByChangesOutsideTheWatchedPath()
+	{
+		const int unrelatedChanges = 1000;
+		const string firstFolder = "first";
+		const string lastFolder = "last";
+		FileSystem.Initialize();
+		string watched = FileSystem.Path.Combine(BasePath, "watched");
+		string unrelated = FileSystem.Path.Combine(BasePath, "unrelated");
+		FileSystem.Directory.CreateDirectory(watched);
+		FileSystem.Directory.CreateDirectory(unrelated);
+		using ManualResetEventSlim blocked = new();
+		using ManualResetEventSlim release = new();
+		using ManualResetEventSlim lastCreated = new();
+		List<Exception> errors = [];
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(watched);
+		fileSystemWatcher.InternalBufferSize = 4096;
+		fileSystemWatcher.IncludeSubdirectories = false;
+
+		fileSystemWatcher.Created += (_, args) =>
+		{
+			// ReSharper disable AccessToDisposedClosure
+			switch (args.Name)
+			{
+				case firstFolder:
+					// Blocks the delivery of events, like a starved thread, while the unrelated changes happen.
+					blocked.Set();
+					release.Wait(ExpectSuccess, CancellationToken);
+					break;
+				case lastFolder:
+					lastCreated.Set();
+					break;
+			}
+			// ReSharper restore AccessToDisposedClosure
+		};
+
+		fileSystemWatcher.Error += (_, args) =>
+		{
+			lock (errors)
+			{
+				errors.Add(args.GetException());
+			}
+		};
+
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		try
+		{
+			FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(watched, firstFolder));
+			await That(blocked.Wait(ExpectSuccess, CancellationToken)).IsTrue();
+
+			for (int i = 0; i < unrelatedChanges; i++)
+			{
+				// ReSharper disable once MethodHasAsyncOverload
+				FileSystem.File.WriteAllText(FileSystem.Path.Combine(unrelated, $"file-{i}.txt"), "content");
+			}
+		}
+		finally
+		{
+			release.Set();
+		}
+
+		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(watched, lastFolder));
+
+		await That(lastCreated.Wait(ExpectSuccess, CancellationToken)).IsTrue();
+
+		Exception[] reported;
+
+		lock (errors)
+		{
+			reported = [..errors];
+		}
+
+		// The unrelated changes are outside the watched path, so the real file systems never report them to the
+		// watcher, and they cannot overflow its buffer.
+		await That(reported).IsEmpty();
 	}
 
 	[Test]
