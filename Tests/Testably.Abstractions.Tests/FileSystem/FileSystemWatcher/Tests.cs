@@ -147,6 +147,29 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task IncludeSubdirectories_WhenChangedWhileEventsAreQueued_ShouldDropQueuedEvents()
 	{
+		Skip.If(Test.RunsOnMac);
+
+		const string blockingName = "first";
+		const string pendingName = "pending";
+		const string markerName = "marker";
+		FileSystem.Initialize();
+		string watched = FileSystem.Path.Combine(BasePath, "a");
+		FileSystem.Directory.CreateDirectory(watched);
+
+		string[] names = await CreateWhileDeliveryIsBlocked(
+			watched, blockingName, pendingName,
+			fileSystemWatcher => fileSystemWatcher.IncludeSubdirectories = true,
+			(watched, markerName));
+
+		await That(names).IsEqualTo([blockingName, markerName]);
+	}
+
+	[Test]
+	public async Task IncludeSubdirectories_WhenChangedWhileEventsAreQueued_OnMac_ShouldDropQueuedEvents()
+	{
+		Skip.IfNot(Test.RunsOnMac);
+		SkipIfBrittleTestsShouldBeSkipped();
+
 		const string blockingName = "first";
 		const string pendingName = "pending";
 		const string markerName = "marker";
@@ -260,6 +283,30 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task NotifyFilter_WhenChangedWhileEventsAreQueued_ShouldDropQueuedEvents()
 	{
+		Skip.If(Test.RunsOnMac);
+
+		const string blockingName = "first";
+		const string pendingName = "pending";
+		const string markerName = "marker";
+		FileSystem.Initialize();
+		string watched = FileSystem.Path.Combine(BasePath, "a");
+		FileSystem.Directory.CreateDirectory(watched);
+
+		string[] names = await CreateWhileDeliveryIsBlocked(
+			watched, blockingName, pendingName,
+			fileSystemWatcher => fileSystemWatcher.NotifyFilter =
+				NotifyFilters.DirectoryName | NotifyFilters.FileName,
+			(watched, markerName));
+
+		await That(names).IsEqualTo([blockingName, markerName]);
+	}
+
+	[Test]
+	public async Task NotifyFilter_WhenChangedWhileEventsAreQueued_OnMac_ShouldDropQueuedEvents()
+	{
+		Skip.IfNot(Test.RunsOnMac);
+		SkipIfBrittleTestsShouldBeSkipped();
+
 		const string blockingName = "first";
 		const string pendingName = "pending";
 		const string markerName = "marker";
