@@ -447,11 +447,14 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		return string.Equals(parent, oldParent, _fileSystem.Execute.StringComparisonMode);
 	}
 
+	private bool IsInWatchedPath(ChangeDescription changeDescription)
+		=> MatchesWatcherPath(changeDescription.Path) ||
+		   (changeDescription.ChangeType == WatcherChangeTypes.Renamed &&
+		    MatchesWatcherPath(changeDescription.OldPath));
+
 	private bool MatchesFilter(ChangeDescription changeDescription)
 	{
-		if (!MatchesWatcherPath(changeDescription.Path) &&
-		    (changeDescription.ChangeType != WatcherChangeTypes.Renamed ||
-		     !MatchesWatcherPath(changeDescription.OldPath)))
+		if (!IsInWatchedPath(changeDescription))
 		{
 			return false;
 		}
@@ -611,6 +614,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		CancellationToken token = cancellationTokenSource.Token;
 		_changeHandler = _fileSystem.Notify.OnEvent(c =>
 		{
+			if (!IsInWatchedPath(c))
+			{
+				return;
+			}
+
 			if (!writer.TryWrite(c) &&
 			    !token.IsCancellationRequested)
 			{
