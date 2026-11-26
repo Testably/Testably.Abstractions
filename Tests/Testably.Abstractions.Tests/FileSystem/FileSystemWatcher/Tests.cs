@@ -68,6 +68,38 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	}
 
 	[Test]
+	public async Task Dispose_WhileEventsAreQueued_ShouldDropQueuedEvents()
+	{
+		const string blockingName = "first";
+		const string pendingName = "pending";
+		FileSystem.Initialize();
+		string watched = FileSystem.Path.Combine(BasePath, "a");
+		FileSystem.Directory.CreateDirectory(watched);
+
+		string[] names = await CreateWhileDeliveryIsBlocked(
+			watched, blockingName, pendingName,
+			fileSystemWatcher => fileSystemWatcher.Dispose());
+
+		await That(names).IsEqualTo([blockingName]);
+	}
+
+	[Test]
+	public async Task EnableRaisingEvents_WhenDisabledWhileEventsAreQueued_ShouldDropQueuedEvents()
+	{
+		const string blockingName = "first";
+		const string pendingName = "pending";
+		FileSystem.Initialize();
+		string watched = FileSystem.Path.Combine(BasePath, "a");
+		FileSystem.Directory.CreateDirectory(watched);
+
+		string[] names = await CreateWhileDeliveryIsBlocked(
+			watched, blockingName, pendingName,
+			fileSystemWatcher => fileSystemWatcher.EnableRaisingEvents = false);
+
+		await That(names).IsEqualTo([blockingName]);
+	}
+
+	[Test]
 	[AutoArguments]
 	public async Task EndInit_ShouldRestartListening(string path)
 	{
@@ -110,6 +142,24 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		{
 			ms.Set();
 		}
+	}
+
+	[Test]
+	public async Task IncludeSubdirectories_WhenChangedWhileEventsAreQueued_ShouldDropQueuedEvents()
+	{
+		const string blockingName = "first";
+		const string pendingName = "pending";
+		const string markerName = "marker";
+		FileSystem.Initialize();
+		string watched = FileSystem.Path.Combine(BasePath, "a");
+		FileSystem.Directory.CreateDirectory(watched);
+
+		string[] names = await CreateWhileDeliveryIsBlocked(
+			watched, blockingName, pendingName,
+			fileSystemWatcher => fileSystemWatcher.IncludeSubdirectories = true,
+			(watched, markerName));
+
+		await That(names).IsEqualTo([blockingName, markerName]);
 	}
 
 	[Test]
@@ -208,6 +258,45 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	}
 
 	[Test]
+	public async Task NotifyFilter_WhenChangedWhileEventsAreQueued_ShouldDropQueuedEvents()
+	{
+		const string blockingName = "first";
+		const string pendingName = "pending";
+		const string markerName = "marker";
+		FileSystem.Initialize();
+		string watched = FileSystem.Path.Combine(BasePath, "a");
+		FileSystem.Directory.CreateDirectory(watched);
+
+		string[] names = await CreateWhileDeliveryIsBlocked(
+			watched, blockingName, pendingName,
+			fileSystemWatcher => fileSystemWatcher.NotifyFilter =
+				NotifyFilters.DirectoryName | NotifyFilters.FileName,
+			(watched, markerName));
+
+		await That(names).IsEqualTo([blockingName, markerName]);
+	}
+
+	[Test]
+	public async Task Path_WhenChangedWhileEventsAreQueued_ShouldDropQueuedEvents()
+	{
+		const string blockingName = "first";
+		const string pendingName = "pending";
+		const string markerName = "marker";
+		FileSystem.Initialize();
+		string watched = FileSystem.Path.Combine(BasePath, "a");
+		string other = FileSystem.Path.Combine(BasePath, "b");
+		FileSystem.Directory.CreateDirectory(watched);
+		FileSystem.Directory.CreateDirectory(other);
+
+		string[] names = await CreateWhileDeliveryIsBlocked(
+			watched, blockingName, pendingName,
+			fileSystemWatcher => fileSystemWatcher.Path = other,
+			(other, markerName));
+
+		await That(names).IsEqualTo([blockingName, markerName]);
+	}
+
+	[Test]
 	public async Task Site_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
@@ -251,6 +340,86 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		fileSystemWatcher.SynchronizingObject = synchronizingObject;
 
 		await That(fileSystemWatcher.SynchronizingObject).IsEqualTo(synchronizingObject);
+	}
+
+	/// <summary>
+	///     Blocks the delivery of the <paramref name="blockingName" /> event in <paramref name="watched" />, creates
+	///     <paramref name="pendingName" /> there and applies <paramref name="change" /> while it is blocked, then
+	///     returns the names of all delivered <c>Created</c> events.
+	/// </summary>
+	/// <remarks>
+	///     With a <paramref name="marker" />, the marker is created after the release and its event ends the wait.
+	///     Without one (the watcher no longer raises events), the wait ends after <see cref="ExpectTimeout" />.
+	/// </remarks>
+	private async Task<string[]> CreateWhileDeliveryIsBlocked(
+		string watched, string blockingName, string pendingName,
+		Action<IFileSystemWatcher> change, (string Parent, string Name)? marker = null)
+	{
+		using ManualResetEventSlim blocked = new();
+		using ManualResetEventSlim release = new();
+		using ManualResetEventSlim blockingReturned = new();
+		using ManualResetEventSlim pendingCreated = new();
+		using ManualResetEventSlim markerCreated = new();
+		List<string> names = [];
+		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New(watched);
+		fileSystemWatcher.IncludeSubdirectories = false;
+
+		fileSystemWatcher.Created += (_, args) =>
+		{
+			// ReSharper disable AccessToDisposedClosure
+			lock (names)
+			{
+				names.Add(args.Name ?? "");
+			}
+
+			if (string.Equals(args.Name, blockingName, StringComparison.Ordinal))
+			{
+				blocked.Set();
+				release.Wait(ExpectSuccess, CancellationToken);
+				blockingReturned.Set();
+			}
+			else if (string.Equals(args.Name, pendingName, StringComparison.Ordinal))
+			{
+				pendingCreated.Set();
+			}
+			else if (string.Equals(args.Name, marker?.Name, StringComparison.Ordinal))
+			{
+				markerCreated.Set();
+			}
+			// ReSharper restore AccessToDisposedClosure
+		};
+
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		try
+		{
+			FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(watched, blockingName));
+			await That(blocked.Wait(ExpectSuccess, CancellationToken)).IsTrue();
+
+			FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(watched, pendingName));
+			change(fileSystemWatcher);
+		}
+		finally
+		{
+			release.Set();
+		}
+
+		if (marker is { } m)
+		{
+			FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(m.Parent, m.Name));
+			await That(markerCreated.Wait(ExpectSuccess, CancellationToken)).IsTrue();
+		}
+		else
+		{
+			await That(blockingReturned.Wait(ExpectSuccess, CancellationToken)).IsTrue();
+			// The stopped watcher would deliver the pending event right after the blocking handler returns.
+			_ = pendingCreated.Wait(ExpectTimeout, CancellationToken);
+		}
+
+		lock (names)
+		{
+			return [..names];
+		}
 	}
 
 	private sealed class MockSite : ISite

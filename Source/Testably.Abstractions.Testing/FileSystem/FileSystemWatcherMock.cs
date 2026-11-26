@@ -160,7 +160,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(IncludeSubdirectories), PropertyAccess.Set);
 
-			field = value;
+			if (field != value)
+			{
+				field = value;
+				Restart();
+			}
 		}
 	}
 
@@ -203,7 +207,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(NotifyFilter), PropertyAccess.Set);
 
-			field = value;
+			if (field != value)
+			{
+				field = value;
+				Restart();
+			}
 		}
 	} = NotifyFilters.FileName |
 	    NotifyFilters.DirectoryName |
@@ -232,8 +240,12 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				throw ExceptionFactory.DirectoryNameDoesNotExist(value, nameof(Path));
 			}
 
-			_path = value;
-			FullPath = _path;
+			if (!string.Equals(_path, value, _fileSystem.Execute.StringComparisonMode))
+			{
+				_path = value;
+				FullPath = _path;
+				Restart();
+			}
 		}
 	}
 
@@ -454,11 +466,6 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private bool MatchesFilter(ChangeDescription changeDescription)
 	{
-		if (!IsInWatchedPath(changeDescription))
-		{
-			return false;
-		}
-
 		if ((NotifyFilter & changeDescription.NotifyFilters) == 0)
 		{
 			return false;
@@ -633,7 +640,8 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				{
 					while (await reader.WaitToReadAsync(token).ConfigureAwait(false))
 					{
-						while (reader.TryRead(out ChangeDescription? c))
+						while (!token.IsCancellationRequested &&
+						       reader.TryRead(out ChangeDescription? c))
 						{
 							NotifyChange(c);
 						}
@@ -641,10 +649,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				}
 				catch (OperationCanceledException) when (token.IsCancellationRequested)
 				{
-					while (reader.TryRead(out ChangeDescription? c))
-					{
-						NotifyChange(c);
-					}
+					// Stopped while waiting for events
 				}
 				catch (Exception)
 				{
