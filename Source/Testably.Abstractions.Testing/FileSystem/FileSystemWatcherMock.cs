@@ -331,7 +331,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 		_isInitializing = false;
 
-		if (_path.Length != 0 &&
+		if (!string.IsNullOrEmpty(_path) &&
 		    EnableRaisingEvents &&
 		    _cancellationTokenSource?.IsCancellationRequested != false)
 		{
