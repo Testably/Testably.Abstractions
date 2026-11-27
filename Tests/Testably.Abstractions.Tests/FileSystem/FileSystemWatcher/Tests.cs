@@ -118,6 +118,29 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	}
 
 	[Test]
+	[AutoArguments]
+	public async Task EndInit_WithoutPath_ShouldNotStartListening(string path)
+	{
+		FileSystem.Initialize();
+		using ManualResetEventSlim created = new();
+		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New();
+		fileSystemWatcher.IncludeSubdirectories = true;
+		fileSystemWatcher.Created += (_, _) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			created.Set();
+		};
+		fileSystemWatcher.BeginInit();
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		fileSystemWatcher.EndInit();
+
+		FileSystem.Directory.CreateDirectory(path);
+		await That(created.Wait(ExpectTimeout, CancellationToken)).IsFalse();
+		await That(fileSystemWatcher.EnableRaisingEvents).IsTrue();
+	}
+
+	[Test]
 	public async Task EndInit_WithoutBeginInitWhileEventsAreQueued_ShouldKeepQueuedEvents()
 	{
 		const string blockingName = "first";
