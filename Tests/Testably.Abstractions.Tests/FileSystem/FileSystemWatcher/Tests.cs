@@ -100,6 +100,42 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	}
 
 	[Test]
+	public async Task EnableRaisingEvents_WhenEnabledAgainWhileEventsAreQueued_ShouldKeepQueuedEvents()
+	{
+		const string blockingName = "first";
+		const string pendingName = "pending";
+		const string markerName = "marker";
+		FileSystem.Initialize();
+		string watched = FileSystem.Path.Combine(BasePath, "a");
+		FileSystem.Directory.CreateDirectory(watched);
+
+		string[] names = await CreateWhileDeliveryIsBlocked(
+			watched, blockingName, pendingName,
+			fileSystemWatcher => fileSystemWatcher.EnableRaisingEvents = true,
+			(watched, markerName));
+
+		await That(names).IsEqualTo([blockingName, pendingName, markerName]);
+	}
+
+	[Test]
+	public async Task EndInit_WithoutBeginInitWhileEventsAreQueued_ShouldKeepQueuedEvents()
+	{
+		const string blockingName = "first";
+		const string pendingName = "pending";
+		const string markerName = "marker";
+		FileSystem.Initialize();
+		string watched = FileSystem.Path.Combine(BasePath, "a");
+		FileSystem.Directory.CreateDirectory(watched);
+
+		string[] names = await CreateWhileDeliveryIsBlocked(
+			watched, blockingName, pendingName,
+			fileSystemWatcher => fileSystemWatcher.EndInit(),
+			(watched, markerName));
+
+		await That(names).IsEqualTo([blockingName, pendingName, markerName]);
+	}
+
+	[Test]
 	[AutoArguments]
 	public async Task EndInit_ShouldRestartListening(string path)
 	{
@@ -147,28 +183,7 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	[Test]
 	public async Task IncludeSubdirectories_WhenChangedWhileEventsAreQueued_ShouldDropQueuedEvents()
 	{
-		Skip.If(Test.RunsOnMac);
-
-		const string blockingName = "first";
-		const string pendingName = "pending";
-		const string markerName = "marker";
-		FileSystem.Initialize();
-		string watched = FileSystem.Path.Combine(BasePath, "a");
-		FileSystem.Directory.CreateDirectory(watched);
-
-		string[] names = await CreateWhileDeliveryIsBlocked(
-			watched, blockingName, pendingName,
-			fileSystemWatcher => fileSystemWatcher.IncludeSubdirectories = true,
-			(watched, markerName));
-
-		await That(names).IsEqualTo([blockingName, markerName]);
-	}
-
-	[Test]
-	public async Task IncludeSubdirectories_WhenChangedWhileEventsAreQueued_OnMac_ShouldDropQueuedEvents()
-	{
-		Skip.IfNot(Test.RunsOnMac);
-		SkipIfBrittleTestsShouldBeSkipped();
+		SkipIfBrittleTestsShouldBeSkipped(Test.RunsOnMac);
 
 		const string blockingName = "first";
 		const string pendingName = "pending";
@@ -202,6 +217,25 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	}
 
 	[Test]
+	public async Task InternalBufferSize_WhenSetToSameValueWhileEventsAreQueued_ShouldKeepQueuedEvents()
+	{
+		const string blockingName = "first";
+		const string pendingName = "pending";
+		const string markerName = "marker";
+		FileSystem.Initialize();
+		string watched = FileSystem.Path.Combine(BasePath, "a");
+		FileSystem.Directory.CreateDirectory(watched);
+
+		string[] names = await CreateWhileDeliveryIsBlocked(
+			watched, blockingName, pendingName,
+			fileSystemWatcher => fileSystemWatcher.InternalBufferSize =
+				fileSystemWatcher.InternalBufferSize,
+			(watched, markerName));
+
+		await That(names).IsEqualTo([blockingName, pendingName, markerName]);
+	}
+
+	[Test]
 	public async Task InternalBufferSize_ShouldNotBeFilledByChangesOutsideTheWatchedPath()
 	{
 		const int unrelatedChanges = 1000;
@@ -227,7 +261,6 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 			switch (args.Name)
 			{
 				case firstFolder:
-					// Blocks the delivery of events, like a starved thread, while the unrelated changes happen.
 					blocked.Set();
 					release.Wait(ExpectSuccess, CancellationToken);
 					break;
@@ -251,7 +284,8 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		try
 		{
 			FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(watched, firstFolder));
-			await That(blocked.Wait(ExpectSuccess, CancellationToken)).IsTrue();
+			await That(blocked.Wait(ExpectSuccess, CancellationToken)).IsTrue()
+				.Because("the first handler blocks the delivery of events, like a starved thread, while the unrelated changes happen");
 
 			for (int i = 0; i < unrelatedChanges; i++)
 			{
@@ -275,37 +309,14 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 			reported = [..errors];
 		}
 
-		// The unrelated changes are outside the watched path, so the real file systems never report them to the
-		// watcher, and they cannot overflow its buffer.
-		await That(reported).IsEmpty();
+		await That(reported).IsEmpty()
+			.Because("the unrelated changes are outside the watched path, so the real file systems never report them to the watcher, and they cannot overflow its buffer");
 	}
 
 	[Test]
 	public async Task NotifyFilter_WhenChangedWhileEventsAreQueued_ShouldDropQueuedEvents()
 	{
-		Skip.If(Test.RunsOnMac);
-
-		const string blockingName = "first";
-		const string pendingName = "pending";
-		const string markerName = "marker";
-		FileSystem.Initialize();
-		string watched = FileSystem.Path.Combine(BasePath, "a");
-		FileSystem.Directory.CreateDirectory(watched);
-
-		string[] names = await CreateWhileDeliveryIsBlocked(
-			watched, blockingName, pendingName,
-			fileSystemWatcher => fileSystemWatcher.NotifyFilter =
-				NotifyFilters.DirectoryName | NotifyFilters.FileName,
-			(watched, markerName));
-
-		await That(names).IsEqualTo([blockingName, markerName]);
-	}
-
-	[Test]
-	public async Task NotifyFilter_WhenChangedWhileEventsAreQueued_OnMac_ShouldDropQueuedEvents()
-	{
-		Skip.IfNot(Test.RunsOnMac);
-		SkipIfBrittleTestsShouldBeSkipped();
+		SkipIfBrittleTestsShouldBeSkipped(Test.RunsOnMac);
 
 		const string blockingName = "first";
 		const string pendingName = "pending";
@@ -341,6 +352,24 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 			(other, markerName));
 
 		await That(names).IsEqualTo([blockingName, markerName]);
+	}
+
+	[Test]
+	public async Task Path_WhenSetToSameValueAfterDirectoryWasDeleted_ShouldNotThrow()
+	{
+		FileSystem.Initialize();
+		string watched = FileSystem.Path.Combine(BasePath, "a");
+		FileSystem.Directory.CreateDirectory(watched);
+		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New(watched);
+		FileSystem.Directory.Delete(watched);
+
+		void Act()
+		{
+			fileSystemWatcher.Path = watched;
+		}
+
+		await That(Act).DoesNotThrow();
+		await That(fileSystemWatcher.Path).IsEqualTo(watched);
 	}
 
 	[Test]
@@ -459,8 +488,8 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 		else
 		{
 			await That(blockingReturned.Wait(ExpectSuccess, CancellationToken)).IsTrue();
-			// The stopped watcher would deliver the pending event right after the blocking handler returns.
-			_ = pendingCreated.Wait(ExpectTimeout, CancellationToken);
+			await That(pendingCreated.Wait(ExpectTimeout, CancellationToken)).IsFalse()
+				.Because("a stopped watcher that kept its queue would deliver the pending event right after the blocking handler returns");
 		}
 
 		lock (names)

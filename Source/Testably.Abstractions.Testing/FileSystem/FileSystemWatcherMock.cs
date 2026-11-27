@@ -85,10 +85,16 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(EnableRaisingEvents), PropertyAccess.Set);
 
+			if (field == value)
+			{
+				return;
+			}
+
 			field = value;
+
 			if (field)
 			{
-				Start();
+				Restart();
 			}
 			else
 			{
@@ -185,6 +191,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(InternalBufferSize), PropertyAccess.Set);
 
+			if (field == value)
+			{
+				return;
+			}
+
 			field = Math.Max(value, 4096);
 			Restart();
 		}
@@ -234,18 +245,20 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(value,
 					nameof(Path), PropertyAccess.Set);
 
+			if (string.Equals(_path, value, _fileSystem.Execute.StringComparisonMode))
+			{
+				return;
+			}
+
 			if (!string.IsNullOrEmpty(value) &&
 			    !_fileSystem.Directory.Exists(value))
 			{
 				throw ExceptionFactory.DirectoryNameDoesNotExist(value, nameof(Path));
 			}
 
-			if (!string.Equals(_path, value, _fileSystem.Execute.StringComparisonMode))
-			{
-				_path = value;
-				FullPath = _path;
-				Restart();
-			}
+			_path = value;
+			FullPath = _path;
+			Restart();
 		}
 	}
 
@@ -317,7 +330,12 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			.FileSystemWatcher.RegisterPathMethod(_path, nameof(EndInit));
 
 		_isInitializing = false;
-		Restart();
+
+		if (EnableRaisingEvents &&
+		    _cancellationTokenSource?.IsCancellationRequested != false)
+		{
+			Start();
+		}
 	}
 
 	/// <inheritdoc cref="IFileSystemWatcher.Error" />
@@ -604,12 +622,6 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private void Start()
 	{
-		if (_isInitializing)
-		{
-			return;
-		}
-
-		Stop();
 		CancellationTokenSource cancellationTokenSource = new();
 		_cancellationTokenSource = cancellationTokenSource;
 
