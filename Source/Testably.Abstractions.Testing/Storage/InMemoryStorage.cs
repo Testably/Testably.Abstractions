@@ -791,7 +791,7 @@ internal sealed class InMemoryStorage : IStorage
 				access, share, deleteAccess);
 			_fileHandles.AddOrUpdate(key, _ =>
 			{
-				ConcurrentDictionary<Guid, FileHandle> dict = new();
+				ConcurrentDictionary<Guid, FileHandle> dict = new(1, 1);
 				dict.TryAdd(guid, handle);
 				return dict;
 			}, (_, dict) =>
@@ -1054,14 +1054,7 @@ internal sealed class InMemoryStorage : IStorage
 				return false;
 			}
 #else
-			char separator = _fileSystem.Execute.Path.DirectorySeparatorChar;
-			for (int i = directoryPath.Length; i < parentPath.Length; i++)
-			{
-				if (parentPath[i] == separator)
-				{
-					recursionDepth++;
-				}
-			}
+			recursionDepth = CountSeparators(parentPath, directoryPath.Length);
 			if (!enumerationOptions.RecurseSubdirectories ||
 			    recursionDepth > enumerationOptions.MaxRecursionDepth)
 			{
@@ -1096,6 +1089,14 @@ internal sealed class InMemoryStorage : IStorage
 			return false;
 		}
 
+		return AreAncestorsAccessible(parentPath, directoryPath, enumerationOptions, accessibleAncestors);
+	}
+
+	private bool AreAncestorsAccessible(string parentPath,
+		string directoryPath,
+		EnumerationOptions enumerationOptions,
+		Dictionary<string, bool> accessibleAncestors)
+	{
 		for (string? ancestorPath = parentPath;
 		     ancestorPath != null && !ancestorPath.Equals(directoryPath,
 			     _fileSystem.Execute.StringComparisonMode);
@@ -1118,6 +1119,23 @@ internal sealed class InMemoryStorage : IStorage
 
 		return true;
 	}
+
+#if !NETSTANDARD2_1
+	private int CountSeparators(string path, int startIndex)
+	{
+		char separator = _fileSystem.Execute.Path.DirectorySeparatorChar;
+		int count = 0;
+		for (int i = startIndex; i < path.Length; i++)
+		{
+			if (path[i] == separator)
+			{
+				count++;
+			}
+		}
+
+		return count;
+	}
+#endif
 
 	private bool IsAccessGrantedDuringEnumeration(string fullPath,
 		IFileSystemExtensibility extensibility,

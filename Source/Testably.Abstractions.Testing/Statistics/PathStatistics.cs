@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Threading;
 using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Statistics;
@@ -9,7 +10,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 {
 	private readonly MockFileSystem _fileSystem;
 
-	private readonly ConcurrentDictionary<string, CallStatistics<TType>> _statistics;
+	private ConcurrentDictionary<string, CallStatistics<TType>>? _statistics;
 	private readonly IStatisticsGate _statisticsGate;
 
 	public PathStatistics(
@@ -18,13 +19,16 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		string name)
 		: base(statisticsGate, name)
 	{
-		_statistics = new ConcurrentDictionary<string, CallStatistics<TType>>(
-			fileSystem.Execute.StringComparisonMode == StringComparison.Ordinal
-				? StringComparer.Ordinal
-				: StringComparer.OrdinalIgnoreCase);
 		_statisticsGate = statisticsGate;
 		_fileSystem = fileSystem;
 	}
+
+	private ConcurrentDictionary<string, CallStatistics<TType>> Statistics
+		=> _statistics ?? LazyInitializer.EnsureInitialized(ref _statistics,
+			() => new ConcurrentDictionary<string, CallStatistics<TType>>(
+				_fileSystem.Execute.StringComparisonMode == StringComparison.Ordinal
+					? StringComparer.Ordinal
+					: StringComparer.OrdinalIgnoreCase))!;
 
 	#region IPathStatistics<TFactory,TType> Members
 
@@ -34,7 +38,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		get
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			return _statistics.GetOrAdd(key,
+			return Statistics.GetOrAdd(key,
 				k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
 		}
 	}
@@ -51,7 +55,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
 			CallStatistics<TType> callStatistics =
-				_statistics.GetOrAdd(key,
+				Statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
 			return callStatistics.RegisterMethodWithoutLock(release, name);
 		}
@@ -70,7 +74,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
 			CallStatistics<TType> callStatistics =
-				_statistics.GetOrAdd(key,
+				Statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1));
@@ -91,7 +95,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
 			CallStatistics<TType> callStatistics =
-				_statistics.GetOrAdd(key,
+				Statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1));
@@ -113,7 +117,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
 			CallStatistics<TType> callStatistics =
-				_statistics.GetOrAdd(key,
+				Statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1));
@@ -135,7 +139,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
 			CallStatistics<TType> callStatistics =
-				_statistics.GetOrAdd(key,
+				Statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1),
@@ -157,7 +161,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
 			CallStatistics<TType> callStatistics =
-				_statistics.GetOrAdd(key,
+				Statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1),
@@ -180,7 +184,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
 			CallStatistics<TType> callStatistics =
-				_statistics.GetOrAdd(key,
+				Statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1),
@@ -205,7 +209,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
 			CallStatistics<TType> callStatistics =
-				_statistics.GetOrAdd(key,
+				Statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1),
@@ -229,7 +233,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
 			CallStatistics<TType> callStatistics =
-				_statistics.GetOrAdd(key,
+				Statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
 			return callStatistics.RegisterPropertyWithoutLock(release, name, access);
 		}
