@@ -91,6 +91,27 @@ public class EnableRaisingEventsTests(FileSystemTestData testData) : FileSystemT
 			.Because("a watcher without a path never watches anything");
 	}
 
+#if FEATURE_FILESYSTEMWATCHER_LINUX_THROWS_WITHOUT_PATH
+	[Test]
+	public async Task EnableRaisingEvents_WithoutPath_OnLinux_ShouldThrowArgumentException()
+	{
+		Skip.IfNot(Test.RunsOnLinux);
+
+		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New();
+
+		void Act()
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			fileSystemWatcher.EnableRaisingEvents = true;
+		}
+
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809).And
+			.WithParamName("path");
+		await That(fileSystemWatcher.EnableRaisingEvents).IsFalse()
+			.Because("since .NET 11 the inotify watcher resolves the full path before it marks the watcher as enabled");
+	}
+#else
 	[Test]
 	public async Task EnableRaisingEvents_WithoutPath_OnLinux_ShouldRaiseErrorAndStayEnabled()
 	{
@@ -139,6 +160,7 @@ public class EnableRaisingEventsTests(FileSystemTestData testData) : FileSystemT
 		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue()
 			.Because("the failed start leaves the watcher enabled, so setting the path restarts it");
 	}
+#endif
 
 	[Test]
 	public async Task EnableRaisingEvents_WithoutPath_OnMac_ShouldThrowArgumentException()

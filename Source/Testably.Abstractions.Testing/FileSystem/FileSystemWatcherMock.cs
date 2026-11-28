@@ -422,12 +422,14 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	/// </summary>
 	private void FailToStartWithoutPath()
 	{
+#if !FEATURE_FILESYSTEMWATCHER_LINUX_THROWS_WITHOUT_PATH
 		if (_fileSystem.Execute.IsLinux)
 		{
 			Error?.Invoke(this, new ErrorEventArgs(ExceptionFactory.DirectoryNotFound()));
 			return;
 		}
 
+#endif
 		if (_fileSystem.Execute.IsWindows && !_fileSystem.Execute.IsNetFramework)
 		{
 			throw ExceptionFactory.ErrorReadingTheDirectory(_path);

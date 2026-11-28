@@ -127,6 +127,7 @@ public class WaitForChangedTests(FileSystemTestData testData) : FileSystemTestBa
 			result = fileSystemWatcher.WaitForChanged(WatcherChangeTypes.All, 100);
 		});
 
+#if !FEATURE_FILESYSTEMWATCHER_LINUX_THROWS_WITHOUT_PATH
 		if (Test.RunsOnLinux)
 		{
 			await That(exception).IsNull();
@@ -134,14 +135,17 @@ public class WaitForChangedTests(FileSystemTestData testData) : FileSystemTestBa
 			await That(errors).HasSingle()
 				.Because("inotify_add_watch fails for the empty path");
 			await That(fileSystemWatcher.EnableRaisingEvents).IsFalse();
+			return;
 		}
-		else if (Test.IsNetFramework)
+
+#endif
+		if (Test.IsNetFramework)
 		{
 			await That(exception).IsExactly<ArgumentException>();
 			await That(fileSystemWatcher.EnableRaisingEvents).IsTrue()
 				.Because("the exception skips restoring the previous value");
 		}
-		else if (Test.RunsOnMac)
+		else if (Test.RunsOnMac || Test.RunsOnLinux)
 		{
 			await That(exception).IsExactly<ArgumentException>();
 			await That(fileSystemWatcher.EnableRaisingEvents).IsFalse();
