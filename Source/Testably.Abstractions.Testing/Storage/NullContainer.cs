@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using Testably.Abstractions.Helpers;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.TimeSystem;
@@ -9,12 +10,12 @@ namespace Testably.Abstractions.Testing.Storage;
 internal sealed class NullContainer : IStorageContainer
 {
 	private readonly MockFileSystem _fileSystem;
+	private FileSystemExtensibility? _extensibility;
 
 	private NullContainer(MockFileSystem fileSystem, ITimeSystem timeSystem, bool isNullDevice)
 	{
 		_fileSystem = fileSystem;
 		TimeSystem = timeSystem;
-		Extensibility = new FileSystemExtensibility();
 		if (isNullDevice)
 		{
 			CreationTime = new InMemoryContainer.TimeContainer();
@@ -23,9 +24,14 @@ internal sealed class NullContainer : IStorageContainer
 		}
 		else
 		{
-			CreationTime = new CreationNullTime(_fileSystem);
-			LastAccessTime = new NullTime(_fileSystem);
-			LastWriteTime = new NullTime(_fileSystem);
+#if NET8_0_OR_GREATER
+			CreationTime = NullTime.For(throwDirectoryNotFound: _fileSystem.Execute.IsMac);
+			LastAccessTime = NullTime.For(throwDirectoryNotFound: false);
+#else
+			CreationTime = NullTime.For(throwDirectoryNotFound: !_fileSystem.Execute.IsWindows);
+			LastAccessTime = CreationTime;
+#endif
+			LastWriteTime = LastAccessTime;
 		}
 	}
 
@@ -42,7 +48,20 @@ internal sealed class NullContainer : IStorageContainer
 	public IStorageContainer.ITimeContainer CreationTime { get; }
 
 	/// <inheritdoc cref="IStorageContainer.Extensibility" />
-	public IFileSystemExtensibility Extensibility { get; }
+	public IFileSystemExtensibility Extensibility
+	{
+		get
+		{
+			if (_extensibility != null)
+			{
+				return _extensibility;
+			}
+
+			FileSystemExtensibility extensibility = new();
+			return Interlocked.CompareExchange(ref _extensibility, extensibility, null)
+			       ?? extensibility;
+		}
+	}
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem => _fileSystem;
@@ -181,16 +200,22 @@ internal sealed class NullContainer : IStorageContainer
 	///     A file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed
 	///     since 12:00 A.M. January 1, 1601, Coordinated Universal Time (UTC).
 	/// </summary>
-	private class NullTime : IStorageContainer.ITimeContainer
+	/// <remarks>
+	///     Stateless, so that all missing files share the same two instances.
+	/// </remarks>
+	private sealed class NullTime : IStorageContainer.ITimeContainer
 	{
-		protected readonly MockFileSystem FileSystem;
+		private static readonly NullTime ThrowingDirectoryNotFound = new(true);
+		private static readonly NullTime ThrowingFileNotFound = new(false);
 
-		private readonly DateTime _time =
+		private static readonly DateTime Time =
 			new(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc);
 
-		public NullTime(MockFileSystem fileSystem)
+		private readonly bool _throwDirectoryNotFound;
+
+		private NullTime(bool throwDirectoryNotFound)
 		{
-			FileSystem = fileSystem;
+			_throwDirectoryNotFound = throwDirectoryNotFound;
 		}
 
 		#region ITimeContainer Members
@@ -199,46 +224,25 @@ internal sealed class NullContainer : IStorageContainer
 		public DateTime Get(DateTimeKind kind)
 			=> kind switch
 			{
-				DateTimeKind.Utc => _time.ToUniversalTime(),
-				DateTimeKind.Local => _time.ToLocalTime(),
-				_ => _time,
+				DateTimeKind.Utc => Time.ToUniversalTime(),
+				DateTimeKind.Local => Time.ToLocalTime(),
+				_ => Time,
 			};
 
 		/// <inheritdoc cref="IStorageContainer.ITimeContainer.Set(DateTime, DateTimeKind)" />
-		public virtual void Set(DateTime time, DateTimeKind kind)
+		public void Set(DateTime time, DateTimeKind kind)
 		{
-#if !NET8_0_OR_GREATER
-			if (!FileSystem.Execute.IsWindows)
+			if (_throwDirectoryNotFound)
 			{
 				throw ExceptionFactory.DirectoryNotFound(string.Empty);
 			}
-#endif
+
 			throw ExceptionFactory.FileNotFound(string.Empty);
 		}
 
 		#endregion
-	}
 
-	/// <summary>
-	///     Overrides the setter of <see cref="NullTime" /> as different exceptions are thrown for MacOS starting with .NET 7.
-	/// </summary>
-	private sealed class CreationNullTime : NullTime
-	{
-		public CreationNullTime(MockFileSystem fileSystem) : base(fileSystem) { }
-
-		/// <inheritdoc cref="NullTime.Set(DateTime, DateTimeKind)" />
-		public override void Set(DateTime time, DateTimeKind kind)
-		{
-#if NET8_0_OR_GREATER
-			if (FileSystem.Execute.IsMac)
-#else
-			if (!FileSystem.Execute.IsWindows)
-#endif
-			{
-				throw ExceptionFactory.DirectoryNotFound(string.Empty);
-			}
-
-			throw ExceptionFactory.FileNotFound(string.Empty);
-		}
+		public static NullTime For(bool throwDirectoryNotFound)
+			=> throwDirectoryNotFound ? ThrowingDirectoryNotFound : ThrowingFileNotFound;
 	}
 }
