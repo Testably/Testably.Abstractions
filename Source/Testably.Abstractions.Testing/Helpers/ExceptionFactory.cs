@@ -54,6 +54,15 @@ internal static class ExceptionFactory
 #endif
 		};
 
+	internal static ArgumentException DirectoryNameIsInvalid(
+		string path, string paramName = "path")
+		=> new($"The directory name {path} is invalid.", paramName)
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2147024809,
+#endif
+		};
+
 	internal static IOException DirectoryNotEmpty(Execute execute, string path)
 	{
 		int hResult = 39;
@@ -81,6 +90,14 @@ internal static class ExceptionFactory
 
 	internal static ArgumentOutOfRangeException EnumValueOutOfRange(string paramName)
 		=> new(paramName, "Enum value was out of legal range.");
+
+	internal static FileNotFoundException ErrorReadingTheDirectory(string path)
+		=> new($"Error reading the {path} directory.")
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2147024894,
+#endif
+		};
 
 	internal static IOException FileAlreadyExists(string path, int hResult)
 		=> new($"The file '{path}' already exists.", hResult);
