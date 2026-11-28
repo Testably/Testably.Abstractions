@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
@@ -214,6 +215,20 @@ public sealed class DirectoryStatisticsTests
 		await That(sut.Statistics.Directory).OnlyContainsMethodCall(
 			nameof(IDirectory.EnumerateFiles),
 			path, searchPattern, searchOption);
+	}
+
+	[Test]
+	public async Task Method_EnumerateFiles_WhenEnumerated_ShouldOnlyRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo").Initialized(d => d
+			.WithFile("bar.txt")
+			.WithSubdirectory("baz").Initialized(s => s.WithFile("qux.txt")));
+
+		_ = sut.Directory.EnumerateFiles("foo", "*", SearchOption.AllDirectories).ToList();
+
+		await That(sut.Statistics.TotalCount).IsEqualTo(1)
+			.Because("the enumeration runs after the call returned and must not register its internal calls");
 	}
 
 	[Test]

@@ -1,4 +1,5 @@
 ﻿using System;
+using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Storage;
@@ -25,9 +26,11 @@ internal sealed class InMemoryLocation : IStorageLocation
 			friendlyName = friendlyName.TrimOnWindows(_fileSystem);
 		}
 
-		IsRooted = string.Equals(drive?.Name, fullPath,
+		// The public name would register an access in the statistics of the file system.
+		string? driveName = drive is DriveInfoMock driveInfo ? driveInfo.GetName() : drive?.Name;
+		IsRooted = string.Equals(driveName, fullPath,
 			           StringComparison.OrdinalIgnoreCase) ||
-		           string.Equals(drive?.Name.Substring(1), fullPath,
+		           string.Equals(driveName?.Substring(1), fullPath,
 			           StringComparison.OrdinalIgnoreCase);
 		FriendlyName = friendlyName;
 		Drive = drive;

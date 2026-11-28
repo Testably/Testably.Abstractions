@@ -48,45 +48,68 @@ internal static class FileSystemExtensions
 	}
 
 	/// <summary>
-	///     Returns the relative subdirectory path from <paramref name="fullFilePath" /> to the <paramref name="givenPath" />.
+	///     Creates a function that returns the relative subdirectory path from a full file path and its friendly name to
+	///     the <paramref name="givenPath" />.
 	/// </summary>
-	internal static string GetSubdirectoryPath(this MockFileSystem fileSystem,
-		string fullFilePath,
-		string friendlyName,
+	/// <remarks>
+	///     The parts that only depend on the <paramref name="givenPath" /> are computed once, because the function is
+	///     called for every enumerated item.
+	/// </remarks>
+	internal static Func<string, string, string> CreateSubdirectoryPathResolver(
+		this MockFileSystem fileSystem,
 		string givenPath)
 	{
 		if (fileSystem.Execute.Path.IsPathRooted(givenPath))
 		{
-			if (friendlyName.Equals("/.", StringComparison.Ordinal) ||
-			    friendlyName.Equals("/..", StringComparison.Ordinal))
+			bool isNtDeviceAlias = givenPath.IsNtDeviceAlias(fileSystem.Execute);
+			return (fullFilePath, friendlyName) =>
 			{
-				return friendlyName;
-			}
+				if (friendlyName.Equals("/.", StringComparison.Ordinal) ||
+				    friendlyName.Equals("/..", StringComparison.Ordinal))
+				{
+					return friendlyName;
+				}
 
-			if (givenPath.IsNtDeviceAlias(fileSystem.Execute))
-			{
-				#pragma warning disable CA1845
-				return givenPath.Substring(0, 4) + fullFilePath;
-				#pragma warning restore CA1845
-			}
+				if (isNtDeviceAlias)
+				{
+					#pragma warning disable CA1845
+					return givenPath.Substring(0, 4) + fullFilePath;
+					#pragma warning restore CA1845
+				}
 
-			return fullFilePath;
+				return fullFilePath;
+			};
 		}
 
 		string currentDirectory = fileSystem.Execute.Path.GetFullPath(givenPath);
-		if (string.Equals(currentDirectory, string.Empty.PrefixRoot(fileSystem),
-			fileSystem.Execute.StringComparisonMode))
+		bool isRoot = string.Equals(currentDirectory, string.Empty.PrefixRoot(fileSystem),
+			fileSystem.Execute.StringComparisonMode);
+		string currentDirectoryWithSeparator =
+			currentDirectory + fileSystem.Execute.Path.DirectorySeparatorChar;
+		return (fullFilePath, friendlyName) => GetSubdirectoryPath(fileSystem, fullFilePath,
+			friendlyName, givenPath, currentDirectory, isRoot, currentDirectoryWithSeparator);
+	}
+
+	private static string GetSubdirectoryPath(MockFileSystem fileSystem,
+		string fullFilePath,
+		string friendlyName,
+		string givenPath,
+		string currentDirectory,
+		bool isRoot,
+		string currentDirectoryWithSeparator)
+	{
+		if (isRoot)
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length);
 		}
 		else if (fullFilePath.Equals(
-			currentDirectory + fileSystem.Execute.Path.DirectorySeparatorChar,
+			currentDirectoryWithSeparator,
 			fileSystem.Execute.StringComparisonMode))
 		{
 			fullFilePath = ".";
 		}
 		else if (fullFilePath.StartsWith(
-			currentDirectory + fileSystem.Execute.Path.DirectorySeparatorChar,
+			currentDirectoryWithSeparator,
 			fileSystem.Execute.StringComparisonMode))
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length + 1);

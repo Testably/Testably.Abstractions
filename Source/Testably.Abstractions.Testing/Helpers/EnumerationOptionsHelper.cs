@@ -143,9 +143,10 @@ internal static class EnumerationOptionsHelper
 	///     <seealso
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L37" />
 	/// </summary>
+	private static readonly char[] UnixEscapeChars = ['\\', '"', '<', '>'];
+
 	private static string SimplifyExpression(Execute execute, string searchString)
 	{
-		char[] unixEscapeChars = ['\\', '"', '<', '>'];
 		if (string.Equals(searchString, DefaultSearchPattern, StringComparison.Ordinal))
 		{
 			return searchString;
@@ -163,7 +164,7 @@ internal static class EnumerationOptionsHelper
 		}
 
 		if (!execute.IsWindows &&
-		    searchString.IndexOfAny(unixEscapeChars) != -1)
+		    searchString.IndexOfAny(UnixEscapeChars) != -1)
 		{
 			// Backslash isn't the default separator, need to escape (e.g. Unix)
 			searchString = searchString.Replace("\\", "\\\\", StringComparison.Ordinal);

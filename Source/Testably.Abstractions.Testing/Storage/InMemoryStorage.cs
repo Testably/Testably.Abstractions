@@ -351,6 +351,10 @@ internal sealed class InMemoryStorage : IStorage
 				}
 			}
 
+			Dictionary<string, bool> accessibleAncestors = new(
+				_fileSystem.Execute.StringComparisonMode == StringComparison.Ordinal
+					? StringComparer.Ordinal
+					: StringComparer.OrdinalIgnoreCase);
 			foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
 				.Where(x => x.Key.FullPath.StartsWith(fullPath,
 					            _fileSystem.Execute.StringComparisonMode) &&
@@ -359,14 +363,14 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				// Directories must be checked even when only files are enumerated, as they are recursed into.
 				if (IncludeItemInEnumeration(item, fullPathWithoutTrailingSlash,
-					    enumerationOptions) &&
-				    type.HasFlag(item.Value.Type))
+					    enumerationOptions, accessibleAncestors) &&
+				    (type & item.Value.Type) == item.Value.Type)
 				{
 					string itemPath = item.Key.FullPath;
-					if (itemPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar,
+					if (itemPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar,
 						    StringComparison.Ordinal))
 					{
-						itemPath = itemPath.TrimEnd(_fileSystem.Path.DirectorySeparatorChar);
+						itemPath = itemPath.TrimEnd(_fileSystem.Execute.Path.DirectorySeparatorChar);
 					}
 
 					string name = _fileSystem.Execute.Path.GetFileName(itemPath);
@@ -1026,7 +1030,8 @@ internal sealed class InMemoryStorage : IStorage
 	private bool IncludeItemInEnumeration(
 		KeyValuePair<IStorageLocation, IStorageContainer> item,
 		string directoryPath,
-		EnumerationOptions enumerationOptions)
+		EnumerationOptions enumerationOptions,
+		Dictionary<string, bool> accessibleAncestors)
 	{
 		string? parentPath =
 			_fileSystem.Execute.Path.GetDirectoryName(
@@ -1049,9 +1054,14 @@ internal sealed class InMemoryStorage : IStorage
 				return false;
 			}
 #else
-			recursionDepth = parentPath
-				.Substring(directoryPath.Length)
-				.Count(x => x == _fileSystem.Execute.Path.DirectorySeparatorChar);
+			char separator = _fileSystem.Execute.Path.DirectorySeparatorChar;
+			for (int i = directoryPath.Length; i < parentPath.Length; i++)
+			{
+				if (parentPath[i] == separator)
+				{
+					recursionDepth++;
+				}
+			}
 			if (!enumerationOptions.RecurseSubdirectories ||
 			    recursionDepth > enumerationOptions.MaxRecursionDepth)
 			{
@@ -1091,9 +1101,16 @@ internal sealed class InMemoryStorage : IStorage
 			     _fileSystem.Execute.StringComparisonMode);
 		     ancestorPath = _fileSystem.Execute.Path.GetDirectoryName(ancestorPath))
 		{
-			IStorageContainer ancestor = GetContainer(GetLocation(ancestorPath));
-			if (!IsAccessGrantedDuringEnumeration(ancestorPath, ancestor.Extensibility,
-				enumerationOptions))
+			// Resolving the ancestor is expensive and the same for all its descendants.
+			if (!accessibleAncestors.TryGetValue(ancestorPath, out bool isAccessible))
+			{
+				IStorageContainer ancestor = GetContainer(GetLocation(ancestorPath));
+				isAccessible = IsAccessGrantedDuringEnumeration(ancestorPath, ancestor.Extensibility,
+					enumerationOptions);
+				accessibleAncestors[ancestorPath] = isAccessible;
+			}
+
+			if (!isAccessible)
 			{
 				return false;
 			}
