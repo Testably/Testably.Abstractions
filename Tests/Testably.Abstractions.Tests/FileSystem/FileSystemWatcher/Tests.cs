@@ -128,12 +128,12 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 			// ReSharper disable AccessToDisposedClosure
 			try
 			{
-				if (e.Name == "first")
+				if (string.Equals(e.Name, "first", StringComparison.Ordinal))
 				{
 					blocked.Set();
 					release.Wait(ExpectSuccess, CancellationToken);
 				}
-				else if (e.Name == "last")
+				else if (string.Equals(e.Name, "last", StringComparison.Ordinal))
 				{
 					lastCreated.Set();
 				}
