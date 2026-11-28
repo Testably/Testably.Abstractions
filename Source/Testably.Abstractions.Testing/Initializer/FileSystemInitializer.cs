@@ -178,9 +178,9 @@ internal class FileSystemInitializer<TFileSystem>
 				$"A directory '{fileInfo.FullName}' already exists!");
 		}
 
-		if (fileInfo.Directory != null)
+		if (fileInfo.Directory is { Exists: false, } directory)
 		{
-			FileSystem.Directory.CreateDirectory(fileInfo.Directory.FullName);
+			FileSystem.Directory.CreateDirectory(directory.FullName);
 		}
 
 		if (file.Bytes != null)
