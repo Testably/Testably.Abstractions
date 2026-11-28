@@ -730,7 +730,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 
 		_container.BytesChanged -= OnBytesChanged;
 		_accessLock.Dispose();
-		InternalFlush();
+		InternalFlush(true);
 		base.Dispose(disposing);
 		OnClose();
 		_ownedHandle?.Dispose();
@@ -795,7 +795,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		_pendingWrites.Insert(index, (position, end));
 	}
 
-	private void InternalFlush()
+	/// <param name="isDisposing">
+	///     When the stream is disposed, its buffer is no longer written to, so the container can take it over
+	///     instead of a copy, if it holds exactly the new file content.
+	/// </param>
+	private void InternalFlush(bool isDisposing = false)
 	{
 		if (!_isContentChanged)
 		{
@@ -804,36 +808,42 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 
 		_isContentChanged = false;
 		long length = base.Length;
-		long position = _stream.Position;
 		long containerLength = _container.GetBytes().Length;
+		byte[] buffer = _stream.GetBuffer();
+		bool canAdoptBuffer = isDisposing && buffer.Length == length;
 		if (_pendingWrites.Count > 0 &&
+		    _pendingWrites[_pendingWrites.Count - 1].End <= length &&
 		    (length == containerLength ||
 		     (length > containerLength &&
 		      _pendingWrites[_pendingWrites.Count - 1].End == length)))
 		{
 			long start = _pendingWrites[0].Start;
-			byte[] data = new byte[_pendingWrites[_pendingWrites.Count - 1].End - start];
-			_stream.Position = start;
-			_ = _stream.Read(data, 0, data.Length);
-			_stream.Position = position;
+			int count = (int)(_pendingWrites[_pendingWrites.Count - 1].End - start);
 			_pendingWrites.Clear();
-			_container.WriteRange(data, start);
+			if (!canAdoptBuffer || count != length)
+			{
+				_container.WriteRange(buffer, (int)start, count, start);
+				return;
+			}
+		}
+
+		_pendingWrites.Clear();
+		if (canAdoptBuffer)
+		{
+			// Closed before publishing, so that nothing can write to the adopted buffer, even when publishing throws.
+			_stream.Dispose();
+			_container.WriteBytes(buffer);
 			return;
 		}
 
-		_stream.Seek(0, SeekOrigin.Begin);
-		byte[] content = new byte[length];
-		_ = _stream.Read(content, 0, (int)length);
-		_stream.Seek(position, SeekOrigin.Begin);
-		_pendingWrites.Clear();
-		_container.WriteBytes(content);
+		_container.WriteBytes(_stream.ToArray());
 	}
 
 	private void OnBytesChanged(object? sender, EventArgs e)
 	{
 		if (e is BytesChangedEventArgs rangeUpdate)
 		{
-			ApplyRangeUpdate(rangeUpdate.Bytes, rangeUpdate.Offset);
+			ApplyRangeUpdate(rangeUpdate.Content, rangeUpdate.Offset, rangeUpdate.Count);
 			return;
 		}
 
@@ -871,10 +881,10 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	///     processing the complete file content, preserving the own pending writes that overlap
 	///     the changed range.
 	/// </summary>
-	private void ApplyRangeUpdate(byte[] bytes, long offset)
+	private void ApplyRangeUpdate(byte[] content, long offset, int count)
 	{
 		long position = _stream.Position;
-		long end = offset + bytes.Length;
+		long end = offset + count;
 		List<(long Start, byte[] Data)> pendingWrites = new(_pendingWrites.Count);
 		foreach ((long pendingStart, long pendingEnd) in _pendingWrites)
 		{
@@ -892,7 +902,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 
 		_stream.Position = offset;
-		_stream.Write(bytes, 0, bytes.Length);
+		_stream.Write(content, (int)offset, count);
 		foreach ((long start, byte[] data) in pendingWrites)
 		{
 			_stream.Position = start;

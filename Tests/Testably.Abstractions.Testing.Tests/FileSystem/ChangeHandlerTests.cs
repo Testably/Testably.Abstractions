@@ -123,6 +123,31 @@ public class ChangeHandlerTests
 	}
 
 	[Test]
+	public async Task OnEvent_CallbackThrowsWhileStreamIsDisposed_ShouldNotLeaveStreamWritingToFile()
+	{
+		byte[] contents = new byte[256];
+		FileSystemStream stream = FileSystem.FileStream.New("foo.bin", FileMode.Create);
+		stream.Write(contents, 0, contents.Length);
+		using (FileSystem.Notify.OnEvent(_ => throw new InvalidOperationException("boom"),
+			       c => c.ChangeType == WatcherChangeTypes.Changed))
+		{
+			void Dispose() => stream.Dispose();
+
+			await That(Dispose).Throws<InvalidOperationException>().WithMessage("boom");
+		}
+
+		void Overwrite()
+		{
+			stream.Position = 0;
+			stream.WriteByte(42);
+		}
+
+		await That(Overwrite).Throws<ObjectDisposedException>()
+			.Because("the file took over the buffer of the stream, so the stream must be closed");
+		await That(FileSystem.File.ReadAllBytes("foo.bin")).IsEqualTo(contents);
+	}
+
+	[Test]
 	[AutoArguments]
 	public async Task OnEventOrReplay_ShouldAlsoReceiveFutureEvents(string path1, string path2)
 	{
