@@ -42,6 +42,15 @@ internal static class FileSystemExtensions
 
 		string destinationPath =
 			$"{destination.FullPath}{location.FullPath.Substring(source.FullPath.Length)}";
+		// Both parts are already normalized full paths, so resolving the combination again would not change it,
+		// unless the destination ends with a separator (e.g. a root) or is on a network share.
+		if (!destination.FullPath.EndsWith(fileSystem.Execute.Path.DirectorySeparatorChar) &&
+		    !destinationPath.IsUncPath(fileSystem))
+		{
+			// `GetLocation` also uses the path as the friendly name.
+			return InMemoryLocation.New(fileSystem, destination.Drive, destinationPath, destinationPath);
+		}
+
 		IStorageLocation destinationLocation =
 			fileSystem.Storage.GetLocation(destinationPath, location.FriendlyName);
 		return destinationLocation;
