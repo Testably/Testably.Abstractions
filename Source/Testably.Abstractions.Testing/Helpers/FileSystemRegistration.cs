@@ -6,8 +6,14 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal sealed class FileSystemRegistration : IStatisticsGate
 {
-	private static readonly AsyncLocal<bool> IsDisabled = new();
-	private static readonly AsyncLocal<bool> IsInit = new();
+	/// <summary>
+	///     <see langword="null" /> while registrations are enabled. Shared sentinels instead of a <see langword="bool" />
+	///     avoid boxing, and resetting to <see langword="null" /> removes the entry from the execution context.
+	/// </summary>
+	private static readonly AsyncLocal<object?> State = new();
+
+	private static readonly object Disabled = new();
+	private static readonly object Initializing = new();
 
 	/// <summary>
 	///     The total count of registered statistic calls.
@@ -27,14 +33,14 @@ internal sealed class FileSystemRegistration : IStatisticsGate
 	/// <inheritdoc cref="IStatisticsGate.TryGetLock(out IDisposable)" />
 	public bool TryGetLock(out IDisposable release)
 	{
-		if (IsDisabled.Value)
+		if (State.Value != null)
 		{
 			release = TemporaryDisable.None;
 			return false;
 		}
 
-		IsDisabled.Value = true;
-		release = new TemporaryDisable(() => IsDisabled.Value = false);
+		State.Value = Disabled;
+		release = TemporaryDisable.Instance;
 		return true;
 	}
 
@@ -45,38 +51,27 @@ internal sealed class FileSystemRegistration : IStatisticsGate
 	/// </summary>
 	internal static IDisposable Ignore()
 	{
-		if (IsDisabled.Value)
+		if (State.Value != null)
 		{
 			return TemporaryDisable.None;
 		}
 
-		IsDisabled.Value = true;
-		IsInit.Value = true;
-		return new TemporaryDisable(() =>
-		{
-			IsDisabled.Value = false;
-			IsInit.Value = false;
-		});
+		State.Value = Initializing;
+		return TemporaryDisable.Instance;
 	}
 
 	internal static bool IsInitializing()
-		=> IsInit.Value;
+		=> ReferenceEquals(State.Value, Initializing);
 
 	private sealed class TemporaryDisable : IDisposable
 	{
+		public static IDisposable Instance { get; } = new TemporaryDisable();
 		public static IDisposable None { get; } = new NoOpDisposable();
-
-		private readonly Action _onDispose;
-
-		public TemporaryDisable(Action onDispose)
-		{
-			_onDispose = onDispose;
-		}
 
 		#region IDisposable Members
 
 		/// <inheritdoc cref="IDisposable.Dispose()" />
-		public void Dispose() => _onDispose();
+		public void Dispose() => State.Value = null;
 
 		#endregion
 	}
