@@ -85,10 +85,16 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(EnableRaisingEvents), PropertyAccess.Set);
 
+			if (field == value)
+			{
+				return;
+			}
+
 			field = value;
+
 			if (field)
 			{
-				Start();
+				Restart();
 			}
 			else
 			{
@@ -160,7 +166,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(IncludeSubdirectories), PropertyAccess.Set);
 
-			field = value;
+			if (field != value)
+			{
+				field = value;
+				Restart();
+			}
 		}
 	}
 
@@ -180,6 +190,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			using IDisposable registration = _fileSystem.StatisticsRegistration
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(InternalBufferSize), PropertyAccess.Set);
+
+			if (field == value)
+			{
+				return;
+			}
 
 			field = Math.Max(value, 4096);
 			Restart();
@@ -203,7 +218,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(NotifyFilter), PropertyAccess.Set);
 
-			field = value;
+			if (field != value)
+			{
+				field = value;
+				Restart();
+			}
 		}
 	} = NotifyFilters.FileName |
 	    NotifyFilters.DirectoryName |
@@ -226,6 +245,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(value,
 					nameof(Path), PropertyAccess.Set);
 
+			if (string.Equals(_path, value, _fileSystem.Execute.StringComparisonMode))
+			{
+				return;
+			}
+
 			if (!string.IsNullOrEmpty(value) &&
 			    !_fileSystem.Directory.Exists(value))
 			{
@@ -234,6 +258,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 			_path = value;
 			FullPath = _path;
+			Restart();
 		}
 	}
 
@@ -305,7 +330,13 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			.FileSystemWatcher.RegisterPathMethod(_path, nameof(EndInit));
 
 		_isInitializing = false;
-		Restart();
+
+		if (!string.IsNullOrEmpty(_path) &&
+		    EnableRaisingEvents &&
+		    _cancellationTokenSource?.IsCancellationRequested != false)
+		{
+			Start();
+		}
 	}
 
 	/// <inheritdoc cref="IFileSystemWatcher.Error" />
@@ -447,15 +478,13 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		return string.Equals(parent, oldParent, _fileSystem.Execute.StringComparisonMode);
 	}
 
+	private bool IsInWatchedPath(ChangeDescription changeDescription)
+		=> MatchesWatcherPath(changeDescription.Path) ||
+		   (changeDescription.ChangeType == WatcherChangeTypes.Renamed &&
+		    MatchesWatcherPath(changeDescription.OldPath));
+
 	private bool MatchesFilter(ChangeDescription changeDescription)
 	{
-		if (!MatchesWatcherPath(changeDescription.Path) &&
-		    (changeDescription.ChangeType != WatcherChangeTypes.Renamed ||
-		     !MatchesWatcherPath(changeDescription.OldPath)))
-		{
-			return false;
-		}
-
 		if ((NotifyFilter & changeDescription.NotifyFilters) == 0)
 		{
 			return false;
@@ -594,12 +623,6 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private void Start()
 	{
-		if (_isInitializing)
-		{
-			return;
-		}
-
-		Stop();
 		CancellationTokenSource cancellationTokenSource = new();
 		_cancellationTokenSource = cancellationTokenSource;
 
@@ -611,6 +634,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		CancellationToken token = cancellationTokenSource.Token;
 		_changeHandler = _fileSystem.Notify.OnEvent(c =>
 		{
+			if (!IsInWatchedPath(c))
+			{
+				return;
+			}
+
 			if (!writer.TryWrite(c) &&
 			    !token.IsCancellationRequested)
 			{
@@ -625,7 +653,8 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				{
 					while (await reader.WaitToReadAsync(token).ConfigureAwait(false))
 					{
-						while (reader.TryRead(out ChangeDescription? c))
+						while (!token.IsCancellationRequested &&
+						       reader.TryRead(out ChangeDescription? c))
 						{
 							NotifyChange(c);
 						}
@@ -633,10 +662,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				}
 				catch (OperationCanceledException) when (token.IsCancellationRequested)
 				{
-					while (reader.TryRead(out ChangeDescription? c))
-					{
-						NotifyChange(c);
-					}
+					// Stopped while waiting for events
 				}
 				catch (Exception)
 				{
