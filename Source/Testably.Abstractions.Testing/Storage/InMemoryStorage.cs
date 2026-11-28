@@ -1119,6 +1119,38 @@ internal sealed class InMemoryStorage : IStorage
 		return true;
 	}
 
+	/// <summary>
+	///     Returns the direct children of the <paramref name="location" /> in the same order as a top-level
+	///     <see cref="EnumerateLocations" /> with the default options, which sorts all descendants before it skips the
+	///     nested ones.
+	/// </summary>
+	private List<IStorageLocation> GetDirectChildren(IStorageLocation location)
+	{
+#if FEATURE_FILESYSTEM_RANDOMACCESS
+		_fileSystem.SafeFileHandleRegistry.ReleaseClosedHandles();
+#endif
+		char separator = _fileSystem.Execute.Path.DirectorySeparatorChar;
+		string prefix = location.FullPath.EndsWith(separator)
+			? location.FullPath
+			: location.FullPath + separator;
+		List<IStorageLocation> children = [];
+		// Enumerating the dictionary itself avoids the snapshot of all keys that `Keys` would allocate.
+		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers)
+		{
+			IStorageLocation key = item.Key;
+			string path = key.FullPath;
+			if (path.Length > prefix.Length &&
+			    path.StartsWith(prefix, _fileSystem.Execute.StringComparisonMode) &&
+			    !key.Equals(location) &&
+			    path.IndexOf(separator, prefix.Length) is var index && (index < 0 || index == path.Length - 1))
+			{
+				children.Add(key);
+			}
+		}
+
+		return children.OrderBy(x => x.FullPath).ToList();
+	}
+
 	private bool IsAccessGrantedDuringEnumeration(string fullPath,
 		IFileSystemExtensibility extensibility,
 		EnumerationOptions enumerationOptions)
@@ -1179,7 +1211,7 @@ internal sealed class InMemoryStorage : IStorage
 		// A file has no children, and enumerating them would scan all containers once per moved file.
 		List<IStorageLocation> children = container.Type == FileSystemTypes.File
 			? []
-			: EnumerateLocations(source, FileSystemTypes.DirectoryOrFile, false).ToList();
+			: GetDirectChildren(source);
 		if (children.Any() && !recursive)
 		{
 			throw ExceptionFactory.DirectoryNotEmpty(_fileSystem.Execute, source.FullPath);
