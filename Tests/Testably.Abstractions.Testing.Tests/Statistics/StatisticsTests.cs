@@ -145,39 +145,43 @@ public sealed partial class StatisticsTests
 			.IsEqualTo(Enumerable.Range(1, directories.Length)).InAnyOrder();
 	}
 
-#if FEATURE_FILESYSTEM_ASYNC
 	[Test]
-	public async Task Statistics_WhenHeldAcrossAwait_ShouldOnlyAffectOwnAsyncFlow()
+	public async Task Statistics_WhenGateIsHeldAcrossIncompleteTask_ShouldOnlyDisableOwnFlow()
 	{
-		int parallelTasks = 100;
 		MockFileSystem sut = new();
-		string[] files = Enumerable.Range(1, parallelTasks)
-			.Select(i => $"foo-{i}.txt")
-			.ToArray();
-		foreach (string file in files)
-		{
-			sut.File.WriteAllText(file, file);
-		}
-
 		CancellationToken token = TestContext.Current!.Execution.CancellationToken;
-
-		await Task.WhenAll(files.Select(file => Task.Run(async () =>
+		TaskCompletionSource<bool> gateIsHeld = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		TaskCompletionSource<bool> otherFlowHasCalled =
+			new(TaskCreationOptions.RunContinuationsAsynchronously);
+		Task otherFlow = Task.Run(async () =>
 		{
-			await Task.Yield();
-			await sut.File.ReadAllTextAsync(file, token);
-			sut.File.Exists(file);
-		}, token)));
+			await gateIsHeld.Task;
+			sut.Path.GetFileName("other-flow");
+			otherFlowHasCalled.SetResult(true);
+		}, token);
 
-		await That(sut.Statistics.File.Methods
-				.Count(x => string.Equals(x.Name, nameof(IFile.ReadAllTextAsync), StringComparison.Ordinal)))
-			.IsEqualTo(parallelTasks)
-			.Because("the gate is held across the await of the inner overload, which must not be registered");
-		await That(sut.Statistics.File.Methods
-				.Count(x => string.Equals(x.Name, nameof(IFile.Exists), StringComparison.Ordinal)))
-			.IsEqualTo(parallelTasks)
-			.Because("neither the own completed call nor a concurrent async flow may leave the gate disabled");
+		bool isAcquired = sut.Registration.TryGetLock(out IDisposable release);
+		gateIsHeld.SetResult(true);
+		await otherFlowHasCalled.Task;
+		Thread thread = new(() => sut.Path.GetFileName("own-flow-on-new-thread"));
+		thread.Start();
+		thread.Join();
+		sut.Path.GetFileName("own-flow");
+		release.Dispose();
+		sut.Path.GetFileName("after-release");
+		await otherFlow;
+
+		await That(isAcquired).IsTrue();
+		await That(sut.Statistics.Path.Methods.Count(x => x.Parameters[0].Is("other-flow"))).IsEqualTo(1)
+			.Because("another flow must not see the gate that this flow holds");
+		await That(sut.Statistics.Path.Methods.Count(x => x.Parameters[0].Is("own-flow-on-new-thread")))
+			.IsEqualTo(0)
+			.Because("a thread started while the gate is held inherits the execution context of this flow");
+		await That(sut.Statistics.Path.Methods.Count(x => x.Parameters[0].Is("own-flow"))).IsEqualTo(0)
+			.Because("the gate stays held across the incomplete task, also when the flow resumes on another thread");
+		await That(sut.Statistics.Path.Methods.Count(x => x.Parameters[0].Is("after-release"))).IsEqualTo(1)
+			.Because("disposing the release enables the registration again");
 	}
-#endif
 
 	[Test]
 	public async Task Statistics_ShouldUseGlobalIncrement()
