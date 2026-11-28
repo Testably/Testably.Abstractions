@@ -141,7 +141,65 @@ jobs:
                 with:
                     comment_mode: always
                     files: "artifacts/**/**/*.trx"
-    
+
+    benchmarks:
+        name: "Benchmarks (${{ matrix.benchmark }})"
+        if: github.ref == 'refs/heads/main'
+        strategy:
+            fail-fast: false
+            matrix:
+                benchmark:
+                    - CompleteTestBenchmarks
+                    - EnumerationBenchmarks
+                    - MockCreationBenchmarks
+        runs-on: ubuntu-latest
+        env:
+            DOTNET_NOLOGO: true
+        steps:
+            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+                with:
+                    fetch-depth: 0
+            -   name: Setup .NET SDKs
+                uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+                with:
+                    dotnet-version: |
+                        10.0.x
+                    global-json-file: global.json
+            -   name: Run benchmarks
+                run: ./build.sh Benchmarks --benchmark-filter "*${{ matrix.benchmark }}*"
+            -   name: Upload artifacts
+                if: always()
+                uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+                with:
+                    name: Benchmarks-${{ matrix.benchmark }}
+                    path: |
+                        ./Artifacts/*
+                    if-no-files-found: ignore
+
+    publish-benchmark-report:
+        name: "Publish benchmark report"
+        needs: [ benchmarks ]
+        if: github.ref == 'refs/heads/main'
+        runs-on: ubuntu-latest
+        permissions:
+            actions: read
+            contents: write
+        steps:
+            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+                with:
+                    fetch-depth: 0
+            -   name: Setup .NET SDKs
+                uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+                with:
+                    dotnet-version: |
+                        10.0.x
+                    global-json-file: global.json
+            -   name: Publish benchmark report
+                run: ./build.sh PublishBenchmarkReport
+                env:
+                    GithubToken: ${{ secrets.GITHUB_TOKEN }}
+                    WorkflowRunId: ${{ github.run_id }}
+
     pack:
         name: "Pack"
         runs-on: ubuntu-latest

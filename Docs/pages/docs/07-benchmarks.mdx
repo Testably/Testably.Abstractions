@@ -1,0 +1,95 @@
+---
+description: Benchmarks that compare the mock and the real file system of Testably.Abstractions with System.IO.Abstractions.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import AbstractionsBenchmarkResult from '@site/src/components/AbstractionsBenchmarkResult';
+
+# Benchmarks
+
+These benchmarks compare Testably.Abstractions with [System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions) for the same calls. The mock file system of Testably.Abstractions models more of the real behavior, such as file locks, timestamps and the rules of each operating system, so some of its extra time is the cost of behaving like the real file system.
+
+<Tabs groupId="abstractionsBenchmark" className="benchmark-tabs">
+
+<TabItem value="Complete" label="Complete test" default>
+
+A complete unit test: seed a small project, let the code under test read its configuration, write the sources into one output file, back it up and delete a source, then check the result. Both libraries run the same calls.
+
+<AbstractionsBenchmarkResult name="Complete" />
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.Directory.CreateDirectory("project/src");
+fileSystem.File.WriteAllText("project/config.json", "{\"output\":\"out/bundle.txt\"}");
+for (int i = 0; i < 5; i++)
+{
+    fileSystem.File.WriteAllText($"project/src/file{i}.cs", $"class C{i} {{ }}");
+}
+
+string config = fileSystem.File.ReadAllText("project/config.json");
+fileSystem.Directory.CreateDirectory("project/out");
+using (StreamWriter writer = fileSystem.File.CreateText("project/out/bundle.txt"))
+{
+    foreach (string file in fileSystem.Directory.EnumerateFiles("project/src", "*.cs"))
+    {
+        writer.WriteLine(fileSystem.File.ReadAllText(file));
+    }
+}
+
+fileSystem.File.Copy("project/out/bundle.txt", "project/out/bundle.bak");
+fileSystem.File.Delete("project/src/file0.cs");
+```
+
+[View source on GitHub](https://github.com/Testably/Testably.Abstractions/blob/main/Benchmarks/Testably.Abstractions.Benchmarks/CompleteTestBenchmarks.cs)
+
+</TabItem>
+
+<TabItem value="CreateMock" label="Create mock">
+
+The cost of creating an empty mock file system, which every test pays.
+
+<AbstractionsBenchmarkResult name="CreateMock" />
+
+```csharp
+new MockFileSystem();
+```
+
+[View source on GitHub](https://github.com/Testably/Testably.Abstractions/blob/main/Benchmarks/Testably.Abstractions.Benchmarks/MockCreationBenchmarks.cs)
+
+</TabItem>
+
+<TabItem value="Enumerate" label="Enumerate">
+
+Recursively enumerate a mock file system with `N` files in folders of ten, either all files (`*`) or only the `.txt` files, which are half of them.
+
+<AbstractionsBenchmarkResult
+  name="Enumerate"
+  labels={{
+    'N=10&Pattern=*': 'N=10',
+    'N=1000&Pattern=*': 'N=1000',
+    'N=10&Pattern=*.txt': 'N=10, Pattern=*.txt',
+    'N=1000&Pattern=*.txt': 'N=1000, Pattern=*.txt',
+  }}
+/>
+
+```csharp
+fileSystem.Directory.EnumerateFiles("root", Pattern, SearchOption.AllDirectories).Count();
+```
+
+[View source on GitHub](https://github.com/Testably/Testably.Abstractions/blob/main/Benchmarks/Testably.Abstractions.Benchmarks/EnumerationBenchmarks.cs)
+
+</TabItem>
+
+</Tabs>
+
+<details>
+<summary>How these numbers are measured</summary>
+
+- **Suite**: [`Testably.Abstractions.Benchmarks`](https://github.com/Testably/Testably.Abstractions/tree/main/Benchmarks/Testably.Abstractions.Benchmarks) driven by [BenchmarkDotNet](https://benchmarkdotnet.org/).
+- **Job**: `MediumRun` with the in-process toolchain on .NET 10.
+- **Runner**: `ubuntu-latest` GitHub Actions agent, refreshed on every push to `main`.
+- **Parameters**: the enumeration benchmark runs with 10 and 1,000 files (`N=10`, `N=1000`) and with the patterns `*` and `*.txt`, each combination selectable in the chart.
+- **Charts**: every multiple is relative to Testably.Abstractions, and bars longer than four times the fastest library are cut so the others stay comparable. Lower is better.
+
+</details>
