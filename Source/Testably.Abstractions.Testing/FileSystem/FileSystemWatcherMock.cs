@@ -644,6 +644,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				}
 				finally
 				{
+					cancellationTokenSource.Cancel();
 					channel.Writer.TryComplete();
 
 					while (reader.TryRead(out _))
@@ -664,7 +665,14 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	{
 		if (_cancellationTokenSource?.IsCancellationRequested == false)
 		{
-			_cancellationTokenSource.Cancel();
+			try
+			{
+				_cancellationTokenSource.Cancel();
+			}
+			catch (ObjectDisposedException)
+			{
+				// The delivery task cancelled and disposed the source after the check above.
+			}
 		}
 
 		_changeHandler?.Dispose();

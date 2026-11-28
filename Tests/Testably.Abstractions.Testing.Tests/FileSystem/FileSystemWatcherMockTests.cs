@@ -34,6 +34,63 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 
 	[Test]
 	[AutoArguments]
+	public async Task EnableRaisingEvents_ReenabledAfterEventHandlerThrew_ShouldDeliverEventsAgain(
+		string path)
+	{
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		await RaiseEventInThrowingHandler(fileSystemWatcher);
+		using ManualResetEventSlim created = new();
+		fileSystemWatcher.Created += (_, _) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				created.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+
+		fileSystemWatcher.EnableRaisingEvents = false;
+		fileSystemWatcher.EnableRaisingEvents = true;
+		FileSystem.Directory.CreateDirectory(path);
+
+		await That(created.Wait(10000, TestContext.Current!.Execution.CancellationToken)).IsTrue()
+			.Because("disabling and enabling the watcher should restart the delivery that ended when the handler threw");
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task Error_AfterEventHandlerThrew_ShouldNotBeTriggered(string path)
+	{
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		await RaiseEventInThrowingHandler(fileSystemWatcher);
+		using ManualResetEventSlim error = new();
+		fileSystemWatcher.Error += (_, _) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				error.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+
+		FileSystem.Directory.CreateDirectory(path);
+
+		await That(error.Wait(200, TestContext.Current!.Execution.CancellationToken)).IsFalse()
+			.Because("the delivery ended because the handler threw, not because the buffer overflowed");
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task Error_DefaultTo64Messages_ShouldBeTriggeredWhenBufferOverflows(
 		string path)
 	{
@@ -232,6 +289,61 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 
 		await That(block2.Wait(100, TestContext.Current!.Execution.CancellationToken)).IsFalse();
 		await That(result).IsNull();
+	}
+
+	[Test]
+	[Arguments(nameof(IFileSystemWatcher.BeginInit))]
+	[Arguments(nameof(IFileSystemWatcher.Dispose))]
+	[Arguments(nameof(IFileSystemWatcher.EnableRaisingEvents))]
+	[Arguments(nameof(IFileSystemWatcher.EndInit))]
+	[Arguments(nameof(IFileSystemWatcher.InternalBufferSize))]
+	public async Task MemberThatStopsTheWatcher_AfterEventHandlerThrew_ShouldNotThrow(
+		string member)
+	{
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		await RaiseEventInThrowingHandler(fileSystemWatcher);
+
+		void Act()
+		{
+			switch (member)
+			{
+				case nameof(IFileSystemWatcher.BeginInit):
+					fileSystemWatcher.BeginInit();
+					break;
+				case nameof(IFileSystemWatcher.Dispose):
+					fileSystemWatcher.Dispose();
+					break;
+				case nameof(IFileSystemWatcher.EnableRaisingEvents):
+					fileSystemWatcher.EnableRaisingEvents = false;
+					break;
+				case nameof(IFileSystemWatcher.EndInit):
+					fileSystemWatcher.EndInit();
+					break;
+				case nameof(IFileSystemWatcher.InternalBufferSize):
+					fileSystemWatcher.InternalBufferSize = 4096;
+					break;
+			}
+		}
+
+		await That(Act).DoesNotThrow();
+	}
+
+	private async Task RaiseEventInThrowingHandler(IFileSystemWatcher fileSystemWatcher)
+	{
+		using ManualResetEventSlim invoked = new();
+		void ThrowingHandler(object sender, FileSystemEventArgs e)
+		{
+			invoked.Set();
+			throw new InvalidOperationException("handler failed");
+		}
+
+		fileSystemWatcher.Created += ThrowingHandler;
+		fileSystemWatcher.EnableRaisingEvents = true;
+		FileSystem.Directory.CreateDirectory("throwing-handler");
+		await That(invoked.Wait(10000, TestContext.Current!.Execution.CancellationToken)).IsTrue();
+		fileSystemWatcher.Created -= ThrowingHandler;
+		await Task.Delay(200, TestContext.Current!.Execution.CancellationToken);
 	}
 
 #if CAN_SIMULATE_OTHER_OS
