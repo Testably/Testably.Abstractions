@@ -46,14 +46,19 @@ public static class Notification
 
 	private sealed class NotificationFactory<TValue> : INotificationFactory<TValue>
 	{
-		private readonly ConcurrentDictionary<Guid, CallbackWaiter> _callbackWaiters =
-			new();
+		private ConcurrentDictionary<Guid, CallbackWaiter>? _callbackWaiters;
 
 		#region INotificationFactory<TValue> Members
 
 		public void InvokeCallbacks(TValue value)
 		{
-			foreach (CallbackWaiter callback in _callbackWaiters.Values)
+			ConcurrentDictionary<Guid, CallbackWaiter>? callbackWaiters = _callbackWaiters;
+			if (callbackWaiters == null)
+			{
+				return;
+			}
+
+			foreach (CallbackWaiter callback in callbackWaiters.Values)
 			{
 				callback.Invoke(value);
 			}
@@ -65,7 +70,8 @@ public static class Notification
 		{
 			Guid key = Guid.NewGuid();
 			CallbackWaiter callbackWaiter = new(this, key, callback, predicate);
-			_callbackWaiters.TryAdd(key, callbackWaiter);
+			LazyInitializer.EnsureInitialized(ref _callbackWaiters,
+				() => new ConcurrentDictionary<Guid, CallbackWaiter>())!.TryAdd(key, callbackWaiter);
 			return callbackWaiter;
 		}
 
@@ -79,8 +85,14 @@ public static class Notification
 
 		public Action<TValue> SnapshotInvocations()
 		{
+			ConcurrentDictionary<Guid, CallbackWaiter>? callbackWaiters = _callbackWaiters;
+			if (callbackWaiters == null)
+			{
+				return _ => { };
+			}
+
 			System.Collections.Generic.ICollection<CallbackWaiter> snapshot =
-				_callbackWaiters.Values;
+				callbackWaiters.Values;
 			return value =>
 			{
 				foreach (CallbackWaiter callback in snapshot)
@@ -94,7 +106,7 @@ public static class Notification
 
 		private void UnRegisterCallback(Guid key)
 		{
-			_callbackWaiters.TryRemove(key, out _);
+			_callbackWaiters?.TryRemove(key, out _);
 		}
 
 		private sealed class CallbackWaiter : IAwaitableCallback<TValue>

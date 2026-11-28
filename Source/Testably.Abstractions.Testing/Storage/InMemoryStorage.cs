@@ -791,7 +791,7 @@ internal sealed class InMemoryStorage : IStorage
 				access, share, deleteAccess);
 			_fileHandles.AddOrUpdate(key, _ =>
 			{
-				ConcurrentDictionary<Guid, FileHandle> dict = new();
+				ConcurrentDictionary<Guid, FileHandle> dict = new(1, 1);
 				dict.TryAdd(guid, handle);
 				return dict;
 			}, (_, dict) =>
