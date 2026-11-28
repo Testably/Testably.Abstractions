@@ -42,3 +42,33 @@ jobs:
                     WorkflowRunHeadOwner: ${{ github.event.workflow_run.head_repository.owner.login }}
                     WorkflowRunHeadBranch: ${{ github.event.workflow_run.head_branch }}
                     WorkflowRunHeadSha: ${{ github.event.workflow_run.head_sha }}
+
+    benchmarks:
+        name: "Benchmarks"
+        if: ${{ github.event.workflow_run.conclusion != 'cancelled' }}
+        runs-on: ubuntu-latest
+        permissions:
+            actions: read
+            contents: read
+            pull-requests: write
+        steps:
+            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+                with:
+                    fetch-depth: 0
+            -   name: Setup .NET SDKs
+                uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+                with:
+                    dotnet-version: |
+                        10.0.x
+                    global-json-file: global.json
+            -   name: Create benchmark comment
+                run: ./build.sh BenchmarkComment
+                # The artifacts of the workflow run are untrusted, because a pull request controls the code that
+                # produces them, so the build identifies the pull request by these values of the event alone.
+                env:
+                    GithubToken: ${{ secrets.GITHUB_TOKEN }}
+                    WorkflowRunId: ${{ github.event.workflow_run.id }}
+                    WorkflowRunEvent: ${{ github.event.workflow_run.event }}
+                    WorkflowRunHeadOwner: ${{ github.event.workflow_run.head_repository.owner.login }}
+                    WorkflowRunHeadBranch: ${{ github.event.workflow_run.head_branch }}
+                    WorkflowRunHeadSha: ${{ github.event.workflow_run.head_sha }}

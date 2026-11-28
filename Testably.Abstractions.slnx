@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Benchmarks/">
+    <Project Path="Benchmarks/Testably.Abstractions.Benchmarks/Testably.Abstractions.Benchmarks.csproj" />
+  </Folder>
   <Folder Name="/Core/">
     <Project Path="Source/Testably.Abstractions.FileSystem.Interface/Testably.Abstractions.FileSystem.Interface.csproj" />
     <Project Path="Source/Testably.Abstractions.Interface/Testably.Abstractions.Interface.csproj" />

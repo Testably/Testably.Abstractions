@@ -8,6 +8,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ProductHeaderValue = Octokit.ProductHeaderValue;
@@ -133,7 +134,17 @@ public static class BuildExtensions
 		return markdown;
 	}
 
-	public static async Task DownloadArtifactTo(this string artifactName, string artifactsDirectory,
+	public static Task DownloadArtifactTo(this string artifactName, string artifactsDirectory,
+		string? githubToken)
+		=> DownloadArtifactsWhere(name => name.Equals(artifactName, StringComparison.OrdinalIgnoreCase),
+			artifactsDirectory, githubToken);
+
+	public static Task DownloadArtifactsStartingWith(this string artifactNamePrefix, string artifactsDirectory,
+		string? githubToken)
+		=> DownloadArtifactsWhere(name => name.StartsWith(artifactNamePrefix, StringComparison.OrdinalIgnoreCase),
+			artifactsDirectory, githubToken);
+
+	private static async Task DownloadArtifactsWhere(Func<string, bool> namePredicate, string artifactsDirectory,
 		string? githubToken)
 	{
 		string? runId = Environment.GetEnvironmentVariable("WorkflowRunId");
@@ -162,7 +173,7 @@ public static class BuildExtensions
 			foreach (JsonElement artifact in jsonDocument.RootElement.GetProperty("artifacts").EnumerateArray())
 			{
 				string name = artifact.GetProperty("name").GetString()!;
-				if (name.Equals(artifactName, StringComparison.OrdinalIgnoreCase))
+				if (namePredicate(name))
 				{
 					long artifactId = artifact.GetProperty("id").GetInt64();
 					HttpResponseMessage fileResponse = await client.GetAsync(
@@ -196,4 +207,61 @@ public static class BuildExtensions
 			Log.Error($"Could not parse JSON: {e.Message}\n{responseContent}");
 		}
 	}
+
+	/// <summary>
+	///     Reads a file from the <paramref name="branch" />, or <see langword="null" /> when it does not exist there.
+	/// </summary>
+	public static async Task<GithubFile?> ReadBranchFileAsync(string path, string branch, string? githubToken)
+	{
+		using HttpClient client = CreateGithubClient(githubToken);
+		HttpResponseMessage response = await client.GetAsync(
+			$"https://api.github.com/repos/Testably/Testably.Abstractions/contents/{path}?ref={Uri.EscapeDataString(branch)}");
+		if (!response.IsSuccessStatusCode)
+		{
+			return null;
+		}
+
+		using JsonDocument document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+		string sha = document.RootElement.GetProperty("sha").GetString()!;
+		string content = await client.GetStringAsync(
+			$"https://raw.githubusercontent.com/Testably/Testably.Abstractions/refs/heads/{branch}/{path}");
+		return new GithubFile(content, sha);
+	}
+
+	public static async Task WriteBranchFileAsync(string path, string branch, string commitMessage, string content,
+		string existingSha, string? githubToken)
+	{
+		using HttpClient client = CreateGithubClient(githubToken);
+		string body = JsonSerializer.Serialize(new Dictionary<string, string>
+		{
+			["message"] = commitMessage,
+			["content"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(content)),
+			["sha"] = existingSha,
+			["branch"] = branch,
+		});
+		HttpResponseMessage response = await client.PutAsync(
+			$"https://api.github.com/repos/Testably/Testably.Abstractions/contents/{path}",
+			new StringContent(body, Encoding.UTF8, "application/json"));
+		if (!response.IsSuccessStatusCode)
+		{
+			throw new InvalidOperationException(
+				$"Could not update '{path}' on branch '{branch}': {await response.Content.ReadAsStringAsync()}");
+		}
+
+		Log.Information("Updated {Path} on branch '{Branch}'.", path, branch);
+	}
+
+	private static HttpClient CreateGithubClient(string? githubToken)
+	{
+		HttpClient client = new();
+		client.DefaultRequestHeaders.UserAgent.ParseAdd("Testably.Abstractions");
+		if (!string.IsNullOrEmpty(githubToken))
+		{
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", githubToken);
+		}
+
+		return client;
+	}
+
+	public record GithubFile(string Content, string Sha);
 }
