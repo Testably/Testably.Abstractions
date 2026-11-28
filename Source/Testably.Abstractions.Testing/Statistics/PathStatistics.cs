@@ -38,12 +38,21 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		get
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			return Statistics.GetOrAdd(key,
-				k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
+			return GetOrAddStatistics(key);
 		}
 	}
 
 	#endregion
+
+	/// <summary>
+	///     Looks the statistics up first, because the factory of <c>GetOrAdd</c> captures <see langword="this" /> and
+	///     would allocate a delegate on every registered call, although the statistics almost always exist.
+	/// </summary>
+	private CallStatistics<TType> GetOrAddStatistics(string key)
+		=> Statistics.TryGetValue(key, out CallStatistics<TType>? statistics)
+			? statistics
+			: Statistics.GetOrAdd(key,
+				k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
 
 	/// <summary>
 	///     Registers the <paramref name="name" /> callback without parameters under <paramref name="path" />.
@@ -54,9 +63,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			CallStatistics<TType> callStatistics =
-				Statistics.GetOrAdd(key,
-					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
+			CallStatistics<TType> callStatistics = GetOrAddStatistics(key);
 			return callStatistics.RegisterMethodWithoutLock(release, name);
 		}
 
@@ -73,9 +80,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			CallStatistics<TType> callStatistics =
-				Statistics.GetOrAdd(key,
-					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
+			CallStatistics<TType> callStatistics = GetOrAddStatistics(key);
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1));
 		}
@@ -94,9 +99,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			CallStatistics<TType> callStatistics =
-				Statistics.GetOrAdd(key,
-					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
+			CallStatistics<TType> callStatistics = GetOrAddStatistics(key);
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1));
 		}
@@ -116,9 +119,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			CallStatistics<TType> callStatistics =
-				Statistics.GetOrAdd(key,
-					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
+			CallStatistics<TType> callStatistics = GetOrAddStatistics(key);
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1));
 		}
@@ -138,9 +139,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			CallStatistics<TType> callStatistics =
-				Statistics.GetOrAdd(key,
-					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
+			CallStatistics<TType> callStatistics = GetOrAddStatistics(key);
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2));
@@ -160,9 +159,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			CallStatistics<TType> callStatistics =
-				Statistics.GetOrAdd(key,
-					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
+			CallStatistics<TType> callStatistics = GetOrAddStatistics(key);
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
@@ -183,9 +180,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			CallStatistics<TType> callStatistics =
-				Statistics.GetOrAdd(key,
-					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
+			CallStatistics<TType> callStatistics = GetOrAddStatistics(key);
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
@@ -208,9 +203,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			CallStatistics<TType> callStatistics =
-				Statistics.GetOrAdd(key,
-					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
+			CallStatistics<TType> callStatistics = GetOrAddStatistics(key);
 			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
@@ -232,9 +225,7 @@ internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			CallStatistics<TType> callStatistics =
-				Statistics.GetOrAdd(key,
-					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
+			CallStatistics<TType> callStatistics = GetOrAddStatistics(key);
 			return callStatistics.RegisterPropertyWithoutLock(release, name, access);
 		}
 
