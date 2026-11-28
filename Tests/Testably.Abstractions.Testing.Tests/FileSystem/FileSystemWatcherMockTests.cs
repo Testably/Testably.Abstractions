@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 using Testably.Abstractions.Testing.Initializer;
 
@@ -340,10 +342,35 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 
 		fileSystemWatcher.Created += ThrowingHandler;
 		fileSystemWatcher.EnableRaisingEvents = true;
+		CancellationTokenSource deliveryCancellation = (CancellationTokenSource)fileSystemWatcher
+			.GetType()
+			.GetField("_cancellationTokenSource", BindingFlags.Instance | BindingFlags.NonPublic)!
+			.GetValue(fileSystemWatcher)!;
 		FileSystem.Directory.CreateDirectory("throwing-handler");
 		await That(invoked.Wait(10000, TestContext.Current!.Execution.CancellationToken)).IsTrue();
 		fileSystemWatcher.Created -= ThrowingHandler;
-		await Task.Delay(200, TestContext.Current!.Execution.CancellationToken);
+
+		Stopwatch stopwatch = Stopwatch.StartNew();
+		while (!IsDisposed(deliveryCancellation) && stopwatch.Elapsed < TimeSpan.FromSeconds(10))
+		{
+			await Task.Delay(10, TestContext.Current!.Execution.CancellationToken);
+		}
+
+		await That(IsDisposed(deliveryCancellation)).IsTrue()
+			.Because("the delivery task disposes its token source once it ended because the handler threw");
+
+		static bool IsDisposed(CancellationTokenSource source)
+		{
+			try
+			{
+				_ = source.Token;
+				return false;
+			}
+			catch (ObjectDisposedException)
+			{
+				return true;
+			}
+		}
 	}
 
 #if CAN_SIMULATE_OTHER_OS
