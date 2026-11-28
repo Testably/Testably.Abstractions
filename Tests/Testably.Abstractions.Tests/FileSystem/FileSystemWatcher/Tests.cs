@@ -112,6 +112,57 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	}
 
 	[Test]
+	public async Task InternalBufferSize_ChangesExcludedByNotifyFilter_ShouldNotOverflow()
+	{
+		FileSystem.Initialize();
+		using ManualResetEventSlim blocked = new();
+		using ManualResetEventSlim release = new();
+		using ManualResetEventSlim lastCreated = new();
+		int errorCount = 0;
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		fileSystemWatcher.InternalBufferSize = 4096;
+		fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
+		fileSystemWatcher.Created += (_, e) =>
+		{
+			// ReSharper disable AccessToDisposedClosure
+			try
+			{
+				if (e.Name == "first")
+				{
+					blocked.Set();
+					release.Wait(ExpectSuccess, CancellationToken);
+				}
+				else if (e.Name == "last")
+				{
+					lastCreated.Set();
+				}
+			}
+			catch (Exception ex) when (ex is ObjectDisposedException or OperationCanceledException)
+			{
+				// Ignore exceptions after the test completed
+			}
+			// ReSharper restore AccessToDisposedClosure
+		};
+		fileSystemWatcher.Error += (_, _) => Interlocked.Increment(ref errorCount);
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.Directory.CreateDirectory("first");
+		await That(blocked.Wait(ExpectSuccess, CancellationToken)).IsTrue();
+		for (int i = 0; i < 100; i++)
+		{
+			FileSystem.File.WriteAllText($"file-{i}.txt", "content");
+		}
+
+		release.Set();
+		FileSystem.Directory.CreateDirectory("last");
+
+		await That(lastCreated.Wait(ExpectSuccess, CancellationToken)).IsTrue();
+		await That(Volatile.Read(ref errorCount)).IsEqualTo(0)
+			.Because("file changes excluded by the NotifyFilter must not fill the internal buffer");
+	}
+
+	[Test]
 	[Arguments(-1, 4096)]
 	[Arguments(4095, 4096)]
 	[Arguments(4097, 4097)]

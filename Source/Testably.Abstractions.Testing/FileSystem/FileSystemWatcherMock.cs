@@ -56,6 +56,9 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	private readonly MockFileSystem _fileSystem;
 	private readonly Collection<string> _filters = [];
 	private bool _isInitializing;
+	private volatile NotifyFilters _notifyFilter = NotifyFilters.FileName |
+	                                               NotifyFilters.DirectoryName |
+	                                               NotifyFilters.LastWrite;
 
 	private string _path = string.Empty;
 
@@ -195,7 +198,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(NotifyFilter), PropertyAccess.Get);
 
-			return field;
+			return _notifyFilter;
 		}
 		set
 		{
@@ -203,11 +206,9 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(NotifyFilter), PropertyAccess.Set);
 
-			field = value;
+			_notifyFilter = value;
 		}
-	} = NotifyFilters.FileName |
-	    NotifyFilters.DirectoryName |
-	    NotifyFilters.LastWrite;
+	}
 
 	/// <inheritdoc cref="IFileSystemWatcher.Path" />
 	public string Path
@@ -618,7 +619,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 					ExceptionFactory.InternalBufferOverflowException(
 						InternalBufferSize, channelCapacity)));
 			}
-		});
+		}, c => (_notifyFilter & c.NotifyFilters) != 0);
 		_ = Task.Run(async () =>
 			{
 				try
