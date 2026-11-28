@@ -121,15 +121,15 @@ internal sealed class LockableContainer(
 		BytesChanged?.Invoke(this, EventArgs.Empty);
 	}
 
-	/// <inheritdoc cref="IStorageContainer.WriteRange(byte[], long)" />
-	public void WriteRange(byte[] bytes, long offset)
+	/// <inheritdoc cref="IStorageContainer.WriteRange(byte[], int, int, long)" />
+	public void WriteRange(byte[] buffer, int index, int count, long offset)
 	{
-		long newLength = Math.Max(_bytes.Length, offset + bytes.Length);
+		long newLength = Math.Max(_bytes.Length, offset + count);
 		byte[] newBytes = new byte[newLength];
 		Array.Copy(_bytes, newBytes, _bytes.Length);
-		Array.Copy(bytes, 0L, newBytes, offset, bytes.Length);
+		Array.Copy(buffer, index, newBytes, offset, count);
 		_bytes = newBytes;
-		BytesChanged?.Invoke(this, new BytesChangedEventArgs(bytes, offset));
+		BytesChanged?.Invoke(this, new BytesChangedEventArgs(newBytes, offset, count));
 	}
 
 	#endregion

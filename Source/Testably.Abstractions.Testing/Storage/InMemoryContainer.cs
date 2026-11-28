@@ -255,15 +255,15 @@ internal sealed class InMemoryContainer : IStorageContainer
 	public void WriteBytes(byte[] bytes)
 		=> WriteBytesInternal(bytes, EventArgs.Empty);
 
-	/// <inheritdoc cref="IStorageContainer.WriteRange(byte[], long)" />
-	public void WriteRange(byte[] bytes, long offset)
+	/// <inheritdoc cref="IStorageContainer.WriteRange(byte[], int, int, long)" />
+	public void WriteRange(byte[] buffer, int index, int count, long offset)
 	{
 		byte[] currentBytes = _data.Bytes;
-		long newLength = Math.Max(currentBytes.Length, offset + bytes.Length);
+		long newLength = Math.Max(currentBytes.Length, offset + count);
 		byte[] newBytes = new byte[newLength];
 		Array.Copy(currentBytes, newBytes, currentBytes.Length);
-		Array.Copy(bytes, 0L, newBytes, offset, bytes.Length);
-		WriteBytesInternal(newBytes, new BytesChangedEventArgs(bytes, offset));
+		Array.Copy(buffer, index, newBytes, offset, count);
+		WriteBytesInternal(newBytes, new BytesChangedEventArgs(newBytes, offset, count));
 	}
 
 	private void WriteBytesInternal(byte[] bytes, EventArgs eventArgs)

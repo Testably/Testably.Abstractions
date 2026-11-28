@@ -369,7 +369,7 @@ internal sealed class RandomAccessMock : IRandomAccess
 		// started from the same snapshot.
 		lock (Gate(container))
 		{
-			container.WriteRange(buffer, fileOffset);
+			container.WriteRange(buffer, 0, buffer.Length, fileOffset);
 		}
 	}
 

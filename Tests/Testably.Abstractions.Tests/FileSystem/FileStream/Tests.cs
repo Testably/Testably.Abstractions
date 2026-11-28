@@ -376,6 +376,25 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 
 	[Test]
 	[AutoArguments]
+	public async Task SetLength_Truncate_AfterPendingWriteBeyondNewLength_ShouldPersistNewLength(
+		string path)
+	{
+		FileSystem.File.WriteAllBytes(path, new byte[] { 1, 2, 3, 4, 5 });
+
+		using (FileSystemStream stream = FileSystem.File.Open(path, FileMode.Open))
+		{
+			stream.Write(new byte[] { 9, 9, 9, 9, 9, 9, 9, 9, 9, 9 }, 0, 10);
+			stream.SetLength(5);
+
+			await That(stream.Length).IsEqualTo(5);
+		}
+
+		await That(FileSystem.File.ReadAllBytes(path)).IsEqualTo(new byte[] { 9, 9, 9, 9, 9 })
+			.Because("the truncated part of the pending write must not be persisted");
+	}
+
+	[Test]
+	[AutoArguments]
 	public async Task Write_ScatteredWrites_WhenOtherStreamFlushes_ShouldKeepAllPendingWrites(
 		string path)
 	{

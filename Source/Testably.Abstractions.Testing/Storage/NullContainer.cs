@@ -127,8 +127,8 @@ internal sealed class NullContainer : IStorageContainer
 		// Do nothing in NullContainer
 	}
 
-	/// <inheritdoc cref="IStorageContainer.WriteRange(byte[], long)" />
-	public void WriteRange(byte[] bytes, long offset)
+	/// <inheritdoc cref="IStorageContainer.WriteRange(byte[], int, int, long)" />
+	public void WriteRange(byte[] buffer, int index, int count, long offset)
 	{
 		// Do nothing in NullContainer
 	}
