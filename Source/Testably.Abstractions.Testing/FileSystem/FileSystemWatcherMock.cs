@@ -51,6 +51,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 	} = string.Empty;
 
+#if NET9_0_OR_GREATER
+	private readonly System.Threading.Lock _cancellationLock = new();
+#else
+	private readonly object _cancellationLock = new();
+#endif
 	private CancellationTokenSource? _cancellationTokenSource;
 	private IDisposable? _changeHandler;
 	private readonly MockFileSystem _fileSystem;
@@ -645,6 +650,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				}
 				finally
 				{
+					cancellationTokenSource.Cancel();
 					channel.Writer.TryComplete();
 
 					while (reader.TryRead(out _))
@@ -654,7 +660,10 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 					_ = channel.Reader.Completion.ContinueWith(_ =>
 					{
-						cancellationTokenSource.Dispose();
+						lock (_cancellationLock)
+						{
+							cancellationTokenSource.Dispose();
+						}
 					}, CancellationToken.None);
 				}
 			},
@@ -663,9 +672,12 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private void Stop()
 	{
-		if (_cancellationTokenSource?.IsCancellationRequested == false)
+		lock (_cancellationLock)
 		{
-			_cancellationTokenSource.Cancel();
+			if (_cancellationTokenSource?.IsCancellationRequested == false)
+			{
+				_cancellationTokenSource.Cancel();
+			}
 		}
 
 		_changeHandler?.Dispose();
