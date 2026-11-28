@@ -431,9 +431,20 @@ internal sealed class InMemoryStorage : IStorage
 
 		driveName = driveName.RemoveNtDeviceAliasPrefix(_fileSystem.Execute);
 
+		// The usual roots are already in the normalized form of a drive name, so the lookup needs no new drive.
+		if (IsNormalizedDriveName(driveName))
+		{
+			return _drives.GetValueOrDefault(driveName);
+		}
+
 		DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
 		return _drives.GetValueOrDefault(drive.GetName());
 	}
+
+	private bool IsNormalizedDriveName(string driveName)
+		=> _fileSystem.Execute.IsWindows
+			? driveName.Length == 3 && driveName[1] == ':' && driveName[2] == '\\' && char.IsLetter(driveName[0])
+			: driveName.Length == 1 && driveName[0] == '/';
 
 	/// <inheritdoc cref="IStorage.GetDrives()" />
 	public IEnumerable<IStorageDrive> GetDrives()
