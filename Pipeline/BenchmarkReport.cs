@@ -37,7 +37,8 @@ static class BenchmarkReport
 	/// </summary>
 	static readonly string[] BenchmarkOrder =
 	[
-		"CompleteTestBenchmarks", "MockCreationBenchmarks", "EnumerationBenchmarks",
+		"CompleteTestBenchmarks", "InitializationBenchmarks", "MockCreationBenchmarks", "FileRoundTripBenchmarks",
+		"FileInfoBenchmarks", "FileStreamBenchmarks", "DirectoryTreeBenchmarks", "EnumerationBenchmarks",
 	];
 
 	/// <param name="mainCommitUrl">The link to the commit of <c>main</c> that ran, or <see langword="null" /> when it is unknown.</param>

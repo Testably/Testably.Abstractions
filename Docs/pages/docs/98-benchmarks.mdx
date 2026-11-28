@@ -1,5 +1,5 @@
 ---
-description: Benchmarks that compare the mock and the real file system of Testably.Abstractions with System.IO.Abstractions.
+description: Benchmarks that compare the mock file system of Testably.Abstractions with System.IO.Abstractions.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -45,6 +45,27 @@ fileSystem.File.Delete("project/src/file0.cs");
 
 </TabItem>
 
+<TabItem value="Initialize" label="Initialize">
+
+Seed a test fixture with `N` files in one directory, each library the way its documentation recommends: Testably.Abstractions with its initializer, System.IO.Abstractions with a dictionary of files.
+
+<AbstractionsBenchmarkResult name="Initialize" />
+
+```csharp
+MockFileSystem fileSystem = new();
+fileSystem.Initialize().WithSubdirectory("project").Initialized(project =>
+{
+    for (int i = 0; i < N; i++)
+    {
+        project.WithFile($"file{i}.txt").Which(f => f.HasStringContent($"content of file {i}"));
+    }
+});
+```
+
+[View source on GitHub](https://github.com/Testably/Testably.Abstractions/blob/main/Benchmarks/Testably.Abstractions.Benchmarks/InitializationBenchmarks.cs)
+
+</TabItem>
+
 <TabItem value="CreateMock" label="Create mock">
 
 The cost of creating an empty mock file system, which every test pays.
@@ -56,6 +77,84 @@ new MockFileSystem();
 ```
 
 [View source on GitHub](https://github.com/Testably/Testably.Abstractions/blob/main/Benchmarks/Testably.Abstractions.Benchmarks/MockCreationBenchmarks.cs)
+
+</TabItem>
+
+<TabItem value="RoundTrip" label="Read and write">
+
+Write a text file and read it back, like code that stores and loads a configuration or a document.
+
+<AbstractionsBenchmarkResult
+  name="RoundTrip"
+  labels={{
+    'Size=1024': '1 KB',
+    'Size=65536': '64 KB',
+  }}
+/>
+
+```csharp
+fileSystem.File.WriteAllText("document.txt", content);
+fileSystem.File.ReadAllText("document.txt");
+```
+
+[View source on GitHub](https://github.com/Testably/Testably.Abstractions/blob/main/Benchmarks/Testably.Abstractions.Benchmarks/FileRoundTripBenchmarks.cs)
+
+</TabItem>
+
+<TabItem value="Inspect" label="File info">
+
+Inspect the metadata of a file, like code that decides whether a file is new or large enough to process.
+
+<AbstractionsBenchmarkResult name="Inspect" />
+
+```csharp
+IFileInfo file = fileSystem.FileInfo.New("data/report.csv");
+_ = (file.Exists, file.Length, file.LastWriteTimeUtc, file.Name, file.DirectoryName);
+```
+
+[View source on GitHub](https://github.com/Testably/Testably.Abstractions/blob/main/Benchmarks/Testably.Abstractions.Benchmarks/FileInfoBenchmarks.cs)
+
+</TabItem>
+
+<TabItem value="Chunks" label="File stream">
+
+Write 64 KB through a file stream in chunks of 4 KB and read it back the same way, like code that copies or hashes a file.
+
+<AbstractionsBenchmarkResult name="Chunks" />
+
+```csharp
+using (Stream stream = fileSystem.FileStream.New("data.bin", FileMode.Create))
+{
+    for (int i = 0; i < 16; i++)
+    {
+        stream.Write(chunk, 0, 4096);
+    }
+}
+
+using (Stream stream = fileSystem.FileStream.New("data.bin", FileMode.Open))
+{
+    while (stream.Read(chunk, 0, 4096) > 0)
+    {
+    }
+}
+```
+
+[View source on GitHub](https://github.com/Testably/Testably.Abstractions/blob/main/Benchmarks/Testably.Abstractions.Benchmarks/FileStreamBenchmarks.cs)
+
+</TabItem>
+
+<TabItem value="MoveTree" label="Move directory">
+
+Move a directory with 10 subdirectories of 10 files each and move it back, like code that archives a folder.
+
+<AbstractionsBenchmarkResult name="MoveTree" />
+
+```csharp
+fileSystem.Directory.Move("source", "archive");
+fileSystem.Directory.Move("archive", "source");
+```
+
+[View source on GitHub](https://github.com/Testably/Testably.Abstractions/blob/main/Benchmarks/Testably.Abstractions.Benchmarks/DirectoryTreeBenchmarks.cs)
 
 </TabItem>
 
@@ -89,7 +188,7 @@ fileSystem.Directory.EnumerateFiles("root", Pattern, SearchOption.AllDirectories
 - **Suite**: [`Testably.Abstractions.Benchmarks`](https://github.com/Testably/Testably.Abstractions/tree/main/Benchmarks/Testably.Abstractions.Benchmarks) driven by [BenchmarkDotNet](https://benchmarkdotnet.org/).
 - **Job**: `MediumRun` with the in-process toolchain on .NET 10.
 - **Runner**: `ubuntu-latest` GitHub Actions agent, refreshed on every push to `main`.
-- **Parameters**: the enumeration benchmark runs with 10 and 1,000 files (`N=10`, `N=1000`) and with the patterns `*` and `*.txt`, each combination selectable in the chart.
+- **Parameters**: the initialization benchmark runs with 10 and 100 files, the read and write benchmark with 1 KB and 64 KB of text, and the enumeration benchmark with 10 and 1,000 files and with the patterns `*` and `*.txt`; each value can be selected in the chart.
 - **Charts**: every multiple is relative to Testably.Abstractions, and bars longer than four times the fastest library are cut so the others stay comparable. Lower is better.
 
 </details>
