@@ -13,17 +13,17 @@ internal static class StorageContainerExtensions
 		TimeAdjustments timeAdjustments)
 	{
 		DateTime now = container.TimeSystem.DateTime.UtcNow;
-		if (timeAdjustments.HasFlag(TimeAdjustments.CreationTime))
+		if ((timeAdjustments & TimeAdjustments.CreationTime) == TimeAdjustments.CreationTime)
 		{
 			container.CreationTime.Set(now, DateTimeKind.Utc);
 		}
 
-		if (timeAdjustments.HasFlag(TimeAdjustments.LastAccessTime))
+		if ((timeAdjustments & TimeAdjustments.LastAccessTime) == TimeAdjustments.LastAccessTime)
 		{
 			container.LastAccessTime.Set(now, DateTimeKind.Utc);
 		}
 
-		if (timeAdjustments.HasFlag(TimeAdjustments.LastWriteTime))
+		if ((timeAdjustments & TimeAdjustments.LastWriteTime) == TimeAdjustments.LastWriteTime)
 		{
 			container.LastWriteTime.Set(now, DateTimeKind.Utc);
 		}
