@@ -6,15 +6,18 @@ namespace Testably.Abstractions.Testing.Storage;
 internal sealed class FileHandle : IStorageAccessHandle
 {
 	public static IStorageAccessHandle Ignore { get; } = new IgnoreFileHandle();
+	private readonly object _accessKey;
 	private readonly MockFileSystem _fileSystem;
-	private readonly Guid _key;
-	private readonly Action<Guid> _releaseCallback;
+	private readonly long _key;
+	private readonly Action<long, object> _releaseCallback;
 
-	public FileHandle(MockFileSystem fileSystem, Guid key, Action<Guid> releaseCallback,
+	public FileHandle(MockFileSystem fileSystem, long key, object accessKey,
+		Action<long, object> releaseCallback,
 		FileAccess access,
 		FileShare share, bool deleteAccess)
 	{
 		_fileSystem = fileSystem;
+		_accessKey = accessKey;
 		_releaseCallback = releaseCallback;
 		Access = access;
 		DeleteAccess = deleteAccess;
@@ -46,7 +49,7 @@ internal sealed class FileHandle : IStorageAccessHandle
 	/// <inheritdoc cref="IDisposable.Dispose()" />
 	public void Dispose()
 	{
-		_releaseCallback.Invoke(_key);
+		_releaseCallback.Invoke(_key, _accessKey);
 	}
 
 	#endregion
