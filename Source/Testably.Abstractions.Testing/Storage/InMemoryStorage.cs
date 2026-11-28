@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Testably.Abstractions.Helpers;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
@@ -21,8 +22,18 @@ internal sealed class InMemoryStorage : IStorage
 	/// <summary>
 	///     The open file handles, keyed by the file instead of its path, so that all hard links to a file share them.
 	/// </summary>
-	private readonly ConcurrentDictionary<object, ConcurrentDictionary<Guid, FileHandle>>
+	private readonly ConcurrentDictionary<object, ConcurrentDictionary<long, FileHandle>>
 		_fileHandles = new();
+
+	/// <summary>
+	///     Created once, so that a file handle needs no closure to release its access.
+	/// </summary>
+	private readonly Action<long, object> _releaseAccess;
+
+	/// <summary>
+	///     A cheap unique key per file handle, as a random <see cref="Guid" /> is costly to create.
+	/// </summary>
+	private long _lastFileHandleKey;
 
 	private readonly List<(GlobPattern, bool, FileVersionInfoContainer)>
 		_fileVersions = new();
@@ -35,6 +46,7 @@ internal sealed class InMemoryStorage : IStorage
 	public InMemoryStorage(MockFileSystem fileSystem)
 	{
 		_fileSystem = fileSystem;
+		_releaseAccess = ReleaseAccess;
 		CurrentDirectory = string.Empty.PrefixRoot(_fileSystem);
 		DriveInfoMock mainDrive = DriveInfoMock.New(CurrentDirectory, _fileSystem);
 		_drives.TryAdd(mainDrive.GetName(), mainDrive);
@@ -786,19 +798,26 @@ internal sealed class InMemoryStorage : IStorage
 		object key = GetAccessKey(container);
 		if (CanGetAccess(key, access, share, deleteAccess, ignoreFileShare))
 		{
-			Guid guid = Guid.NewGuid();
-			FileHandle handle = new(_fileSystem, guid, g => ReleaseAccess(g, key),
+			long handleKey = Interlocked.Increment(ref _lastFileHandleKey);
+			FileHandle handle = new(_fileSystem, handleKey, key, _releaseAccess,
 				access, share, deleteAccess);
-			_fileHandles.AddOrUpdate(key, _ =>
+			// Like `AddOrUpdate`, but without allocating its factory closures on every access.
+			while (true)
 			{
-				ConcurrentDictionary<Guid, FileHandle> dict = new(1, 1);
-				dict.TryAdd(guid, handle);
-				return dict;
-			}, (_, dict) =>
-			{
-				dict.TryAdd(guid, handle);
-				return dict;
-			});
+				if (_fileHandles.TryGetValue(key, out ConcurrentDictionary<long, FileHandle>? handles))
+				{
+					handles.TryAdd(handleKey, handle);
+					break;
+				}
+
+				ConcurrentDictionary<long, FileHandle> newHandles = new(1, 1);
+				newHandles.TryAdd(handleKey, handle);
+				if (_fileHandles.TryAdd(key, newHandles))
+				{
+					break;
+				}
+			}
+
 			fileHandle = handle;
 			return true;
 		}
@@ -810,11 +829,11 @@ internal sealed class InMemoryStorage : IStorage
 	private static object GetAccessKey(IStorageContainer container)
 		=> (container as InMemoryContainer)?.AccessKey ?? container;
 
-	private void ReleaseAccess(Guid guid, object key)
+	private void ReleaseAccess(long handleKey, object key)
 	{
-		if (_fileHandles.TryGetValue(key, out ConcurrentDictionary<Guid, FileHandle>? dict))
+		if (_fileHandles.TryGetValue(key, out ConcurrentDictionary<long, FileHandle>? dict))
 		{
-			dict.TryRemove(guid, out _);
+			dict.TryRemove(handleKey, out _);
 			if (dict.IsEmpty)
 			{
 				_fileHandles.TryRemove(key, out _);
@@ -829,9 +848,9 @@ internal sealed class InMemoryStorage : IStorage
 		bool deleteAccess,
 		bool ignoreFileShare)
 	{
-		if (_fileHandles.TryGetValue(key, out ConcurrentDictionary<Guid, FileHandle>? dict))
+		if (_fileHandles.TryGetValue(key, out ConcurrentDictionary<long, FileHandle>? dict))
 		{
-			foreach (KeyValuePair<Guid, FileHandle> fileHandle in dict)
+			foreach (KeyValuePair<long, FileHandle> fileHandle in dict)
 			{
 				if (!fileHandle.Value.GrantAccess(access, share, deleteAccess, ignoreFileShare))
 				{
@@ -1350,7 +1369,7 @@ internal sealed class InMemoryStorage : IStorage
 	{
 		if (!_fileSystem.Execute.IsWindows &&
 		    _fileHandles.TryGetValue(GetAccessKey(container),
-			    out ConcurrentDictionary<Guid, FileHandle>? handles) &&
+			    out ConcurrentDictionary<long, FileHandle>? handles) &&
 		    !handles.IsEmpty)
 		{
 			throw ExceptionFactory.ProcessCannotAccessTheFile(location.FullPath,
