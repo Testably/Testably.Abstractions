@@ -93,10 +93,23 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(_path,
 					nameof(EnableRaisingEvents), PropertyAccess.Set);
 
+			if (field == value)
+			{
+				return;
+			}
+
 			field = value;
 			if (field)
 			{
-				Start();
+				try
+				{
+					Start();
+				}
+				catch (Exception) when (!_fileSystem.Execute.IsNetFramework)
+				{
+					field = false;
+					throw;
+				}
 			}
 			else
 			{
@@ -232,14 +245,25 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.FileSystemWatcher.RegisterPathProperty(value,
 					nameof(Path), PropertyAccess.Set);
 
-			if (!string.IsNullOrEmpty(value) &&
-			    !_fileSystem.Directory.Exists(value))
+			value ??= string.Empty;
+			if (string.Equals(value, _path, _fileSystem.Execute.StringComparisonMode))
+			{
+				return;
+			}
+
+			if (value.Length == 0)
+			{
+				throw ExceptionFactory.DirectoryNameIsInvalid(value, nameof(Path));
+			}
+
+			if (!_fileSystem.Directory.Exists(value))
 			{
 				throw ExceptionFactory.DirectoryNameDoesNotExist(value, nameof(Path));
 			}
 
 			_path = value;
 			FullPath = _path;
+			Restart();
 		}
 	}
 
@@ -311,7 +335,10 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			.FileSystemWatcher.RegisterPathMethod(_path, nameof(EndInit));
 
 		_isInitializing = false;
-		Restart();
+		if (!string.IsNullOrEmpty(_path))
+		{
+			Restart();
+		}
 	}
 
 	/// <inheritdoc cref="IFileSystemWatcher.Error" />
@@ -387,6 +414,28 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 
 		base.Dispose(disposing);
+	}
+
+	/// <summary>
+	///     The real watcher never watches anything without a path: on Linux it raises the <see cref="Error" /> event,
+	///     on the other platforms it throws.
+	/// </summary>
+	private void FailToStartWithoutPath()
+	{
+#if !FEATURE_FILESYSTEMWATCHER_LINUX_THROWS_WITHOUT_PATH
+		if (_fileSystem.Execute.IsLinux)
+		{
+			Error?.Invoke(this, new ErrorEventArgs(ExceptionFactory.DirectoryNotFound()));
+			return;
+		}
+
+#endif
+		if (_fileSystem.Execute.IsWindows && !_fileSystem.Execute.IsNetFramework)
+		{
+			throw ExceptionFactory.ErrorReadingTheDirectory(_path);
+		}
+
+		throw ExceptionFactory.PathCannotBeEmpty(_fileSystem.Execute);
 	}
 
 	private string GetNormalizedFullPath(string path)
@@ -606,6 +655,12 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 
 		Stop();
+		if (string.IsNullOrEmpty(_path))
+		{
+			FailToStartWithoutPath();
+			return;
+		}
+
 		CancellationTokenSource cancellationTokenSource = new();
 		_cancellationTokenSource = cancellationTokenSource;
 

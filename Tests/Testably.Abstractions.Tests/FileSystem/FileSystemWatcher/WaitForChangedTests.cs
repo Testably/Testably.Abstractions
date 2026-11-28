@@ -112,4 +112,48 @@ public class WaitForChangedTests(FileSystemTestData testData) : FileSystemTestBa
 			ms.Set();
 		}
 	}
+
+	[Test]
+	public async Task WaitForChanged_WithoutPath_ShouldFailToStart()
+	{
+		List<Exception> errors = [];
+		IWaitForChangedResult? result = null;
+		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New();
+		fileSystemWatcher.Error += (_, e) => errors.Add(e.GetException());
+
+		Exception? exception = Record.Exception(() =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			result = fileSystemWatcher.WaitForChanged(WatcherChangeTypes.All, 100);
+		});
+
+#if !FEATURE_FILESYSTEMWATCHER_LINUX_THROWS_WITHOUT_PATH
+		if (Test.RunsOnLinux)
+		{
+			await That(exception).IsNull();
+			await That(result!.TimedOut).IsTrue();
+			await That(errors).HasSingle()
+				.Because("inotify_add_watch fails for the empty path");
+			await That(fileSystemWatcher.EnableRaisingEvents).IsFalse();
+			return;
+		}
+
+#endif
+		if (Test.IsNetFramework)
+		{
+			await That(exception).IsExactly<ArgumentException>();
+			await That(fileSystemWatcher.EnableRaisingEvents).IsTrue()
+				.Because("the exception skips restoring the previous value");
+		}
+		else if (Test.RunsOnMac || Test.RunsOnLinux)
+		{
+			await That(exception).IsExactly<ArgumentException>();
+			await That(fileSystemWatcher.EnableRaisingEvents).IsFalse();
+		}
+		else
+		{
+			await That(exception).IsExactly<FileNotFoundException>();
+			await That(fileSystemWatcher.EnableRaisingEvents).IsFalse();
+		}
+	}
 }

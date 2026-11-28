@@ -163,6 +163,67 @@ public class Tests(FileSystemTestData testData) : FileSystemTestBase(testData)
 	}
 
 	[Test]
+	[AutoArguments]
+	public async Task EndInit_WithoutPath_ShouldNotStartListening(string path)
+	{
+		using ManualResetEventSlim ms = new();
+		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New();
+		fileSystemWatcher.IncludeSubdirectories = true;
+		fileSystemWatcher.Created += (_, _) => SetIgnoringDisposed(ms);
+		fileSystemWatcher.Error += (_, _) => SetIgnoringDisposed(ms);
+		fileSystemWatcher.BeginInit();
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		fileSystemWatcher.EndInit();
+		FileSystem.Directory.CreateDirectory(path);
+
+		await That(fileSystemWatcher.EnableRaisingEvents).IsTrue();
+		await That(ms.Wait(ExpectTimeout, CancellationToken)).IsFalse()
+			.Because("EndInit only starts a watcher that has a path");
+
+		static void SetIgnoringDisposed(ManualResetEventSlim ms)
+		{
+			try
+			{
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		}
+	}
+
+	[Test]
+	[AutoArguments]
+	public async Task EndInit_WithoutPath_SetPathAfterwards_ShouldStartListening(string path)
+	{
+		using ManualResetEventSlim ms = new();
+		using IFileSystemWatcher fileSystemWatcher = FileSystem.FileSystemWatcher.New();
+		fileSystemWatcher.Created += (_, _) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+		fileSystemWatcher.BeginInit();
+		fileSystemWatcher.EnableRaisingEvents = true;
+		fileSystemWatcher.EndInit();
+
+		fileSystemWatcher.Path = BasePath;
+		FileSystem.Directory.CreateDirectory(path);
+
+		await That(ms.Wait(ExpectSuccess, CancellationToken)).IsTrue()
+			.Because("setting the path restarts an enabled watcher");
+	}
+
+	[Test]
 	[Arguments(-1, 4096)]
 	[Arguments(4095, 4096)]
 	[Arguments(4097, 4097)]

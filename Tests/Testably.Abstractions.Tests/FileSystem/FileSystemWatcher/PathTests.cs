@@ -34,6 +34,24 @@ public class PathTests(FileSystemTestData testData) : FileSystemTestBase(testDat
 	}
 
 	[Test]
+	public async Task Path_SetToEmptyAfterValidPath_ShouldThrowArgumentException()
+	{
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+
+		void Act()
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			fileSystemWatcher.Path = "";
+		}
+
+		await That(Act).Throws<ArgumentException>()
+			.WithHResult(-2147024809)
+			.AndIf(!Test.IsNetFramework, x => x.WithParamName("Path"));
+		await That(fileSystemWatcher.Path).IsEqualTo(BasePath);
+	}
+
+	[Test]
 	[AutoArguments]
 	public async Task Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
 	{
