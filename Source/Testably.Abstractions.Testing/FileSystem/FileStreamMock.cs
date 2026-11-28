@@ -828,7 +828,15 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 
 		_pendingWrites.Clear();
-		_container.WriteBytes(canAdoptBuffer ? buffer : _stream.ToArray());
+		if (canAdoptBuffer)
+		{
+			// Closed before publishing, so that nothing can write to the adopted buffer, even when publishing throws.
+			_stream.Dispose();
+			_container.WriteBytes(buffer);
+			return;
+		}
+
+		_container.WriteBytes(_stream.ToArray());
 	}
 
 	private void OnBytesChanged(object? sender, EventArgs e)
