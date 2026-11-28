@@ -1,14 +1,28 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Threading;
 
 namespace Testably.Abstractions.Testing.Statistics;
 
 internal class CallStatistics<TType> : IStatistics<TType>
 {
-	private readonly ConcurrentQueue<MethodStatistic> _methods = new();
 	private readonly string _name;
-	private readonly ConcurrentQueue<PropertyStatistic> _properties = new();
 	private readonly IStatisticsGate _statisticsGate;
+
+	/// <summary>
+	///     Created on the first registration, because most of the statistics of a file system are never used and an
+	///     empty <see cref="ConcurrentQueue{T}" /> already allocates its first segment.
+	/// </summary>
+	private ConcurrentQueue<MethodStatistic>? _methods;
+
+	/// <inheritdoc cref="_methods" />
+	private ConcurrentQueue<PropertyStatistic>? _properties;
+
+	private ConcurrentQueue<MethodStatistic> MethodQueue
+		=> LazyInitializer.EnsureInitialized(ref _methods)!;
+
+	private ConcurrentQueue<PropertyStatistic> PropertyQueue
+		=> LazyInitializer.EnsureInitialized(ref _properties)!;
 
 	public CallStatistics(IStatisticsGate statisticsGate, string name)
 	{
@@ -19,10 +33,10 @@ internal class CallStatistics<TType> : IStatistics<TType>
 	#region IStatistics<TType> Members
 
 	/// <inheritdoc cref="IStatistics.Methods" />
-	public MethodStatistic[] Methods => _methods.ToArray();
+	public MethodStatistic[] Methods => _methods?.ToArray() ?? [];
 
 	/// <inheritdoc cref="IStatistics.Properties" />
-	public PropertyStatistic[] Properties => _properties.ToArray();
+	public PropertyStatistic[] Properties => _properties?.ToArray() ?? [];
 
 	#endregion
 
@@ -39,7 +53,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name, parameters));
+			MethodQueue.Enqueue(new MethodStatistic(counter, name, parameters));
 		}
 
 		return release;
@@ -54,7 +68,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name,
+			MethodQueue.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1)));
 		}
 
@@ -70,7 +84,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name));
+			MethodQueue.Enqueue(new MethodStatistic(counter, name));
 		}
 
 		return release;
@@ -86,7 +100,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name,
+			MethodQueue.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2)));
 		}
@@ -105,7 +119,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name,
+			MethodQueue.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
 				ParameterDescription.FromParameter(parameter3)));
@@ -125,7 +139,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name,
+			MethodQueue.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
 				ParameterDescription.FromParameter(parameter3),
@@ -146,7 +160,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name,
+			MethodQueue.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
 				ParameterDescription.FromParameter(parameter3),
@@ -169,7 +183,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name,
+			MethodQueue.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
 				ParameterDescription.FromParameter(parameter3),
@@ -193,7 +207,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name,
+			MethodQueue.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
 				ParameterDescription.FromParameter(parameter3),
@@ -217,7 +231,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name,
+			MethodQueue.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1)));
 		}
 
@@ -235,7 +249,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name,
+			MethodQueue.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2)));
 		}
@@ -254,7 +268,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name,
+			MethodQueue.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
 				ParameterDescription.FromParameter(parameter3)));
@@ -276,7 +290,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name,
+			MethodQueue.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2)));
 		}
@@ -297,7 +311,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name,
+			MethodQueue.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
 				ParameterDescription.FromParameter(parameter3)));
@@ -319,7 +333,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name,
+			MethodQueue.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
 				ParameterDescription.FromParameter(parameter3),
@@ -338,7 +352,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		params ParameterDescription[] parameters)
 	{
 		int counter = _statisticsGate.GetCounter();
-		_methods.Enqueue(new MethodStatistic(counter, name, parameters));
+		MethodQueue.Enqueue(new MethodStatistic(counter, name, parameters));
 		return release;
 	}
 
@@ -351,7 +365,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_properties.Enqueue(new PropertyStatistic(counter, name, access));
+			PropertyQueue.Enqueue(new PropertyStatistic(counter, name, access));
 		}
 
 		return release;
@@ -365,7 +379,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		PropertyAccess access)
 	{
 		int counter = _statisticsGate.GetCounter();
-		_properties.Enqueue(new PropertyStatistic(counter, name, access));
+		PropertyQueue.Enqueue(new PropertyStatistic(counter, name, access));
 		return release;
 	}
 }

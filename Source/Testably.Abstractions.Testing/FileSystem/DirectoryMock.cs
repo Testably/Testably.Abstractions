@@ -705,14 +705,15 @@ internal sealed class DirectoryMock : IDirectory
 			.AdjustLocationFromSearchPattern(_fileSystem,
 				path,
 				searchPattern);
+		Func<string, string, string> getSubdirectoryPath =
+			_fileSystem.CreateSubdirectoryPathResolver(adjustedLocation.GivenPath);
 		return _fileSystem.Storage.EnumerateLocations(
 				adjustedLocation.Location,
 				fileSystemTypes,
 				true,
 				adjustedLocation.SearchPattern,
 				enumerationOptions)
-			.Select(x => _fileSystem
-				.GetSubdirectoryPath(x.FullPath, x.FriendlyName, adjustedLocation.GivenPath)
+			.Select(x => getSubdirectoryPath(x.FullPath, x.FriendlyName)
 				.TrimTrailingDirectorySeparator(_fileSystem));
 	}
 
