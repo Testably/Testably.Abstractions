@@ -19,10 +19,10 @@ internal class CallStatistics<TType> : IStatistics<TType>
 	private ConcurrentQueue<PropertyStatistic>? _properties;
 
 	private ConcurrentQueue<MethodStatistic> MethodQueue
-		=> LazyInitializer.EnsureInitialized(ref _methods);
+		=> LazyInitializer.EnsureInitialized(ref _methods)!;
 
 	private ConcurrentQueue<PropertyStatistic> PropertyQueue
-		=> LazyInitializer.EnsureInitialized(ref _properties);
+		=> LazyInitializer.EnsureInitialized(ref _properties)!;
 
 	public CallStatistics(IStatisticsGate statisticsGate, string name)
 	{
