@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics;
@@ -143,6 +144,40 @@ public sealed partial class StatisticsTests
 		await That(sut.Statistics.Directory.Methods.Select(x => x.Counter))
 			.IsEqualTo(Enumerable.Range(1, directories.Length)).InAnyOrder();
 	}
+
+#if FEATURE_FILESYSTEM_ASYNC
+	[Test]
+	public async Task Statistics_WhenHeldAcrossAwait_ShouldOnlyAffectOwnAsyncFlow()
+	{
+		int parallelTasks = 100;
+		MockFileSystem sut = new();
+		string[] files = Enumerable.Range(1, parallelTasks)
+			.Select(i => $"foo-{i}.txt")
+			.ToArray();
+		foreach (string file in files)
+		{
+			sut.File.WriteAllText(file, file);
+		}
+
+		CancellationToken token = TestContext.Current!.Execution.CancellationToken;
+
+		await Task.WhenAll(files.Select(file => Task.Run(async () =>
+		{
+			await Task.Yield();
+			await sut.File.ReadAllTextAsync(file, token);
+			sut.File.Exists(file);
+		}, token)));
+
+		await That(sut.Statistics.File.Methods
+				.Count(x => string.Equals(x.Name, nameof(IFile.ReadAllTextAsync), StringComparison.Ordinal)))
+			.IsEqualTo(parallelTasks)
+			.Because("the gate is held across the await of the inner overload, which must not be registered");
+		await That(sut.Statistics.File.Methods
+				.Count(x => string.Equals(x.Name, nameof(IFile.Exists), StringComparison.Ordinal)))
+			.IsEqualTo(parallelTasks)
+			.Because("neither the own completed call nor a concurrent async flow may leave the gate disabled");
+	}
+#endif
 
 	[Test]
 	public async Task Statistics_ShouldUseGlobalIncrement()
