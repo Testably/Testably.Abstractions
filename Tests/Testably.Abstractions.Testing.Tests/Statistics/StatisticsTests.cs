@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics;
@@ -142,6 +143,44 @@ public sealed partial class StatisticsTests
 
 		await That(sut.Statistics.Directory.Methods.Select(x => x.Counter))
 			.IsEqualTo(Enumerable.Range(1, directories.Length)).InAnyOrder();
+	}
+
+	[Test]
+	public async Task Statistics_WhenGateIsHeldAcrossIncompleteTask_ShouldOnlyDisableOwnFlow()
+	{
+		MockFileSystem sut = new();
+		CancellationToken token = TestContext.Current!.Execution.CancellationToken;
+		TaskCompletionSource<bool> gateIsHeld = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		TaskCompletionSource<bool> otherFlowHasCalled =
+			new(TaskCreationOptions.RunContinuationsAsynchronously);
+		Task otherFlow = Task.Run(async () =>
+		{
+			await gateIsHeld.Task;
+			sut.Path.GetFileName("other-flow");
+			otherFlowHasCalled.SetResult(true);
+		}, token);
+
+		bool isAcquired = sut.Registration.TryGetLock(out IDisposable release);
+		gateIsHeld.SetResult(true);
+		await otherFlowHasCalled.Task;
+		Thread thread = new(() => sut.Path.GetFileName("own-flow-on-new-thread"));
+		thread.Start();
+		thread.Join();
+		sut.Path.GetFileName("own-flow");
+		release.Dispose();
+		sut.Path.GetFileName("after-release");
+		await otherFlow;
+
+		await That(isAcquired).IsTrue();
+		await That(sut.Statistics.Path.Methods.Count(x => x.Parameters[0].Is("other-flow"))).IsEqualTo(1)
+			.Because("another flow must not see the gate that this flow holds");
+		await That(sut.Statistics.Path.Methods.Count(x => x.Parameters[0].Is("own-flow-on-new-thread")))
+			.IsEqualTo(0)
+			.Because("a thread started while the gate is held inherits the execution context of this flow");
+		await That(sut.Statistics.Path.Methods.Count(x => x.Parameters[0].Is("own-flow"))).IsEqualTo(0)
+			.Because("the gate stays held across the incomplete task, also when the flow resumes on another thread");
+		await That(sut.Statistics.Path.Methods.Count(x => x.Parameters[0].Is("after-release"))).IsEqualTo(1)
+			.Because("disposing the release enables the registration again");
 	}
 
 	[Test]
