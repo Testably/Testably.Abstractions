@@ -1176,8 +1176,10 @@ internal sealed class InMemoryStorage : IStorage
 
 		sourceType ??= container.Type;
 
-		List<IStorageLocation> children =
-			EnumerateLocations(source, FileSystemTypes.DirectoryOrFile, false).ToList();
+		// A file has no children, and enumerating them would scan all containers once per moved file.
+		List<IStorageLocation> children = container.Type == FileSystemTypes.File
+			? []
+			: EnumerateLocations(source, FileSystemTypes.DirectoryOrFile, false).ToList();
 		if (children.Any() && !recursive)
 		{
 			throw ExceptionFactory.DirectoryNotEmpty(_fileSystem.Execute, source.FullPath);
