@@ -130,7 +130,11 @@ internal sealed class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
 	public void AppendBytes(byte[] bytes)
 	{
-		WriteBytes(_data.Bytes.Concat(bytes).ToArray());
+		byte[] currentBytes = _data.Bytes;
+		byte[] newBytes = new byte[currentBytes.Length + bytes.Length];
+		Array.Copy(currentBytes, newBytes, currentBytes.Length);
+		Array.Copy(bytes, 0, newBytes, currentBytes.Length, bytes.Length);
+		WriteBytes(newBytes);
 	}
 
 	/// <inheritdoc cref="IStorageContainer.BytesChanged" />
