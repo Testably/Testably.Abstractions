@@ -458,7 +458,7 @@ internal sealed class InMemoryStorage : IStorage
 		string fullPath;
 		if (path.IsUncPath(_fileSystem) &&
 		    _fileSystem.Execute is { IsNetFramework: true } or { IsWindows: false } &&
-		    path.LastIndexOf(_fileSystem.Path.DirectorySeparatorChar, StringComparison.Ordinal) <= 2)
+		    path.LastIndexOf(_fileSystem.Execute.Path.DirectorySeparatorChar, StringComparison.Ordinal) <= 2)
 		{
 			fullPath = path;
 		}

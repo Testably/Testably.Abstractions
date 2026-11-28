@@ -232,6 +232,22 @@ public sealed class DirectoryStatisticsTests
 	}
 
 	[Test]
+	public async Task Method_EnumerateFiles_WhenEnumeratedOnUncPath_ShouldOnlyRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.WithUncDrive("server");
+		string root = sut.Path.Combine(new string(sut.Path.DirectorySeparatorChar, 2) + "server", "root");
+		sut.Directory.CreateDirectory(sut.Path.Combine(root, "sub"));
+		sut.File.WriteAllText(sut.Path.Combine(root, "sub", "file.txt"), "");
+		int countBefore = sut.Statistics.TotalCount;
+
+		_ = sut.Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories).ToList();
+
+		await That(sut.Statistics.TotalCount).IsEqualTo(countBefore + 1)
+			.Because("resolving UNC ancestors outside Windows and on .NET Framework must not register internal calls");
+	}
+
+	[Test]
 	public async Task Method_EnumerateFiles_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
