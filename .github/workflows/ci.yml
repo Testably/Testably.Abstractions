@@ -164,7 +164,12 @@ jobs:
             matrix:
                 benchmark:
                     - CompleteTestBenchmarks
+                    - DirectoryTreeBenchmarks
                     - EnumerationBenchmarks
+                    - FileInfoBenchmarks
+                    - FileRoundTripBenchmarks
+                    - FileStreamBenchmarks
+                    - InitializationBenchmarks
                     - MockCreationBenchmarks
         runs-on: ubuntu-latest
         env:
